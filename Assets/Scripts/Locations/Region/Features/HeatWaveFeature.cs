@@ -32,7 +32,7 @@ namespace Locations.Features {
             RescheduleHeatWaveCheck(tile);
 
             //schedule removal of this feature after x amount of ticks.
-            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
             GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Heat_Wave);
             _effect = go;
@@ -133,7 +133,7 @@ namespace Locations.Features {
         }
         private void RescheduleHeatWaveCheck(HexTile hex) {
             if (hex.featureComponent.HasFeature(name) == false) { return; }
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
+            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
             _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForOverheating(hex), this);
         }
         #endregion

@@ -140,7 +140,7 @@ public class GoapPlanner {
             JOB_TYPE jobType = goapThread.job.jobType;
             if (jobType.IsNeedsTypeJob()) {
                 //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
-                if (owner.trapStructure.structure != null) {
+                if (owner.trapStructure.IsTrapped()) {
                     owner.trapStructure.SetStructureAndDuration(null, 0);
                 }
             }

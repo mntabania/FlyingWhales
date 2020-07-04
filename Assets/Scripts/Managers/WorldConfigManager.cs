@@ -20,7 +20,6 @@ public class WorldConfigManager : MonoBehaviour {
     [SerializeField] private List<TutorialManager.Tutorial> _demoTutorials;
 
     [Header("Testing")] 
-    [SerializeField] private bool _unlimitedCast;
     [SerializeField] private bool _disableLogs;
     public MapGenerationData mapGenerationData;
 
@@ -29,10 +28,8 @@ public class WorldConfigManager : MonoBehaviour {
     public List<SPELL_TYPE> availableSpellsInDemoBuild => _availableSpellsInDemoBuild;
     public List<TutorialManager.Tutorial> demoTutorials => _demoTutorials;
 #if UNITY_EDITOR
-    public bool unlimitedCast => _unlimitedCast;
     public bool disableLogs => _disableLogs;
 #else
-    public bool unlimitedCast => false;
     public bool disableLogs => true;
 #endif
     #endregion

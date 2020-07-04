@@ -4539,8 +4539,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (ownParty.icon.isTravelling) {
             marker.StopMovement();
         }
-        if (trapStructure.structure != null) {
+        if (trapStructure.IsTrapped()) {
             trapStructure.SetStructureAndDuration(null, 0);
+            trapStructure.SetForcedStructure(null);
         }
         minion?.OnSeize();
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");

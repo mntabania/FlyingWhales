@@ -138,7 +138,7 @@ namespace Traits {
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
-            if (character.trapStructure.structure != null) {
+            if (character.trapStructure.IsTrapped()) {
                 //clear all trap structures when triggering flaw
                 character.trapStructure.SetStructureAndDuration(null, 0);
             }

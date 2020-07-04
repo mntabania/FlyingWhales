@@ -412,7 +412,7 @@ public class DrinkBloodData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation == null || (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure)) {
+        if (poiTarget.gridTileLocation == null || actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
             return false;
         }
         if (actor != poiTarget) {

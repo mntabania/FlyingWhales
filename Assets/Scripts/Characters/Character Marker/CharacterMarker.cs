@@ -376,7 +376,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Pathfinding Movement
     public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
-        if (character.trapStructure.structure != null && character.trapStructure.structure != destinationTile.structure) {
+        if (character.trapStructure.IsTrappedAndTrapStructureIsNot(destinationTile.structure)) {
             character.trapStructure.SetStructureAndDuration(null, 0);
         }
         pathfindingAI.ClearAllCurrentPathData();

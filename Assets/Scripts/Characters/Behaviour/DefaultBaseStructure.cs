@@ -9,7 +9,7 @@ public class DefaultBaseStructure : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        if (character.trapStructure.structure != null && character.currentStructure == character.trapStructure.structure) {
+        if (character.trapStructure.IsTrappedAndTrapStructureIs(character.currentStructure)) {
             log += $"\n-{character.name}'s Base Structure is not empty and current structure is the Base Structure";
             log += "\n-15% chance to trigger a Chat conversation if there is anyone chat-compatible in range";
             int chance = UnityEngine.Random.Range(0, 100);

@@ -27,6 +27,7 @@ namespace Inner_Maps.Location_Structures {
         public InnerMapHexTile occupiedHexTile { get; private set; }
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
+        public List<LocationGridTile> passableTiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
         //public List<LocationGridTile> outerTiles { get; private set; }
         public bool isInterior { get; private set; }
@@ -57,6 +58,7 @@ namespace Inner_Maps.Location_Structures {
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
+            passableTiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
@@ -77,6 +79,7 @@ namespace Inner_Maps.Location_Structures {
             structureTags = new List<STRUCTURE_TAG>();
             //outerTiles = new List<LocationGridTile>();
             tiles = new List<LocationGridTile>();
+            passableTiles = new List<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
             SetMaxHPAndReset(3000);
@@ -540,9 +543,11 @@ namespace Inner_Maps.Location_Structures {
         //         }
         //     }
         // }
-        #endregion   
-    
+        #endregion
+
         #region Tiles
+        protected virtual void OnTileAddedToStructure(LocationGridTile tile) { }
+        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) { }
         public void AddTile(LocationGridTile tile) {
             if (!tiles.Contains(tile)) {
                 tiles.Add(tile);
@@ -550,6 +555,11 @@ namespace Inner_Maps.Location_Structures {
                     AddUnoccupiedTile(tile);
                 } else {
                     RemoveUnoccupiedTile(tile);
+                }
+                if (tile.IsPassable()) {
+                    AddPassableTile(tile);
+                } else {
+                    RemovePassableTile(tile);
                 }
                 if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
                     SetSettlementLocation(settlement);
@@ -563,8 +573,12 @@ namespace Inner_Maps.Location_Structures {
             }
             RemoveUnoccupiedTile(tile);
         }
-        protected virtual void OnTileAddedToStructure(LocationGridTile tile) { }
-        protected virtual void OnTileRemovedFromStructure(LocationGridTile tile) { }
+        public void AddPassableTile(LocationGridTile tile) {
+            passableTiles.Add(tile);
+        }
+        public void RemovePassableTile(LocationGridTile tile) {
+            passableTiles.Remove(tile);
+        }
         public void AddUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.AddLast(tile);
         }
@@ -576,6 +590,12 @@ namespace Inner_Maps.Location_Structures {
                 return null;
             }
             return tiles[Random.Range(0, tiles.Count)];
+        }
+        public LocationGridTile GetRandomPassableTile() {
+            if (passableTiles.Count <= 0) {
+                return null;
+            }
+            return passableTiles[Random.Range(0, passableTiles.Count)];
         }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {

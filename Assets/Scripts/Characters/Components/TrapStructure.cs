@@ -48,5 +48,14 @@ public class TrapStructure {
     public bool IsTrapped() {
         return forcedStructure != null || structure != null;
     }
+    public bool IsTrapStructure(LocationStructure structure) {
+        return structure != null && (structure == this.structure || structure == forcedStructure);
+    }
+    public bool IsTrappedAndTrapStructureIs(LocationStructure structure) {
+        return IsTrapped() && IsTrapStructure(structure);
+    }
+    public bool IsTrappedAndTrapStructureIsNot(LocationStructure structure) {
+        return IsTrapped() && !IsTrapStructure(structure);
+    }
     #endregion
 }
