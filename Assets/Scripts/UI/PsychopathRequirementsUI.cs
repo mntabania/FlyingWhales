@@ -44,23 +44,23 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     private void PopulateRequirementsDescriptions() {
         reqDescriptionDropdown.ClearOptions();
         victimDescriptions.Clear();
-        if (victimType == SERIAL_VICTIM_TYPE.NONE) {
+        if (victimType == SERIAL_VICTIM_TYPE.None) {
             reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData("NONE"));
             HideAddRemoveButtons();
-        } else if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
+        } else if (victimType == SERIAL_VICTIM_TYPE.Gender) {
             reqDescriptionDropdown.AddOptions(UtilityScripts.Utilities.GetEnumChoices<GENDER>());
             HideAddRemoveButtons();
-        } else if (victimType == SERIAL_VICTIM_TYPE.RACE) {
+        } else if (victimType == SERIAL_VICTIM_TYPE.Race) {
             reqDescriptionDropdown.AddOptions(criteriaRaces);
             HideAddRemoveButtons();
-        } else if (victimType == SERIAL_VICTIM_TYPE.CLASS) {
+        } else if (victimType == SERIAL_VICTIM_TYPE.Class) {
             //List<CharacterClass> allClasses = CharacterManager.Instance.GetAllClasses();
             //for (int i = 0; i < allClasses.Count; i++) {
             //    reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData(allClasses[i].className));
             //}
             reqDescriptionDropdown.AddOptions(criteriaClasses);
             ShowAddRemoveButtons();
-        } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
+        } else if (victimType == SERIAL_VICTIM_TYPE.Trait) {
             //foreach (Trait trait in TraitManager.Instance.allTraits.Values) {
             //    if (trait.type != TRAIT_TYPE.STATUS) {
             //        reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData(trait.name));
@@ -83,7 +83,7 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     }
     private void UpdateRequirementsLabel() {
         string desc = string.Empty;
-        if (victimType == SERIAL_VICTIM_TYPE.GENDER || victimType == SERIAL_VICTIM_TYPE.RACE) {
+        if (victimType == SERIAL_VICTIM_TYPE.Gender || victimType == SERIAL_VICTIM_TYPE.Race) {
             desc = reqDescriptionDropdown.options[reqDescriptionDropdown.value].text;
         } else {
             if (victimDescriptions.Count > 0) {

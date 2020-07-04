@@ -128,11 +128,11 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
                 if ((currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || 
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 
-                    && character.trapStructure.forcedStructure == null) {
+                    && character.trapStructure.IsTrapped() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 25 && character.trapStructure.IsTrapped() == false) {
+                    if (chance < 25) {
                         log +=
                             $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
                         character.jobComponent.PlanIdleStrollOutside(out producedJob); //character.currentStructure

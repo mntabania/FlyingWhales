@@ -31,7 +31,7 @@ namespace Locations.Features {
             RescheduleFreezingCheck(tile); //this will start the freezing check loop
         
             //schedule removal of this feature after x amount of ticks.
-            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
             GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Blizzard);
             _effect = go; //go.GetComponent<BlizzardParticleEffect>()
@@ -118,7 +118,7 @@ namespace Locations.Features {
         }
         private void RescheduleFreezingCheck(HexTile hex) {
             if (hex.featureComponent.HasFeature(name) == false) { return; }
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(15));
+            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(10));
             _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(hex), this);
         }
         #endregion

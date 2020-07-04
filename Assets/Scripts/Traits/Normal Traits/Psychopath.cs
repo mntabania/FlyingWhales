@@ -115,7 +115,7 @@ namespace Traits {
             log.AddLogToInvolvedObjects();
             // PlayerManager.Instance.player.ShowNotification(log);
         }
-        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, List<string> victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, List<string> victimSecondDesc) {
+        public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
             SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
 
         }
@@ -434,8 +434,8 @@ namespace Traits {
     public class SerialVictim {
         public SERIAL_VICTIM_TYPE victimFirstType;
         public SERIAL_VICTIM_TYPE victimSecondType;
-        public List<string> victimFirstDescription;
-        public List<string> victimSecondDescription;
+        public string victimFirstDescription;
+        public string victimSecondDescription;
 
         public string text { get; private set; }
 
@@ -444,7 +444,7 @@ namespace Traits {
         //    this.victimSecondType = victimSecondType;
         //    GenerateVictim();
         //}
-        public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, List<string> victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, List<string> victimSecondDesc) {
+        public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
             this.victimFirstType = victimFirstType;
             this.victimSecondType = victimSecondType;
             victimFirstDescription = victimFirstDesc;
@@ -489,21 +489,21 @@ namespace Traits {
             //}
 
             //If there is a Gender, it is always the first text
-            if(victimFirstType == SERIAL_VICTIM_TYPE.GENDER) {
+            if(victimFirstType == SERIAL_VICTIM_TYPE.Gender) {
                 isFirstTypeProcessed = true;
-                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
-            } else if (victimSecondType == SERIAL_VICTIM_TYPE.GENDER) {
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription);
+            } else if (victimSecondType == SERIAL_VICTIM_TYPE.Gender) {
                 isFirstTypeProcessed = false;
-                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription);
             }
             if(firstText == string.Empty) {
                 //If there is no Gender, the first text must be Race
-                if (victimFirstType == SERIAL_VICTIM_TYPE.RACE) {
+                if (victimFirstType == SERIAL_VICTIM_TYPE.Race) {
                     isFirstTypeProcessed = true;
-                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
-                } else if (victimSecondType == SERIAL_VICTIM_TYPE.RACE) {
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription);
+                } else if (victimSecondType == SERIAL_VICTIM_TYPE.Race) {
                     isFirstTypeProcessed = false;
-                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription);
                 }
                 if (firstText == string.Empty) {
                     //If there is no Race or Gender victim type, generate description normally
@@ -522,18 +522,13 @@ namespace Traits {
             this.text = $"{firstText} {secondText}";
         }
         private string GetDescriptionText(bool fromSecondType) {
-            List<string> secondDescriptions = victimSecondDescription;
+            string secondDescriptions = victimSecondDescription;
             if (!fromSecondType) {
                 secondDescriptions = victimFirstDescription;
             }
             string newDesc = string.Empty;
-            if(secondDescriptions != null) {
-                for (int i = 0; i < secondDescriptions.Count; i++) {
-                    if (i > 0) {
-                        newDesc += ", ";
-                    }
-                    newDesc += UtilityScripts.Utilities.PluralizeString(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions[i]));
-                }
+            if(secondDescriptions != string.Empty) {
+                newDesc += UtilityScripts.Utilities.PluralizeString(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions));
             }
             return newDesc;
         }
@@ -551,33 +546,29 @@ namespace Traits {
             return DoesCharacterFitVictimTypeDescription(victimFirstType, victimFirstDescription, character)
                 && DoesCharacterFitVictimTypeDescription(victimSecondType, victimSecondDescription, character);
         }
-        private bool DoesCharacterFitVictimTypeDescription(SERIAL_VICTIM_TYPE victimType, List<string> victimDesc, Character character) {
-            if(victimType == SERIAL_VICTIM_TYPE.NONE) {
+        private bool DoesCharacterFitVictimTypeDescription(SERIAL_VICTIM_TYPE victimType, string victimDesc, Character character) {
+            if(victimType == SERIAL_VICTIM_TYPE.None) {
                 return true;
             }
             string comparer = string.Empty;
-            if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
+            if (victimType == SERIAL_VICTIM_TYPE.Gender) {
                 comparer = character.gender.ToString();
                 //return victimDesc == character.gender.ToString();
-            } else if (victimType == SERIAL_VICTIM_TYPE.RACE) {
+            } else if (victimType == SERIAL_VICTIM_TYPE.Race) {
                 comparer = character.race.ToString();
                 //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
-            } else if (victimType == SERIAL_VICTIM_TYPE.CLASS) {
+            } else if (victimType == SERIAL_VICTIM_TYPE.Class) {
                 comparer = character.characterClass.className;
                 //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
-            } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-                for (int i = 0; i < victimDesc.Count; i++) {
-                    if(character.traitContainer.HasTrait(victimDesc[i])) {
-                        return true;
-                    }
+            } else if (victimType == SERIAL_VICTIM_TYPE.Trait) {
+                if (character.traitContainer.HasTrait(victimDesc)) {
+                    return true;
                 }
                 //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             }
             if(comparer != string.Empty) {
-                for (int i = 0; i < victimDesc.Count; i++) {
-                    if (victimDesc[i] == comparer) {
-                        return true;
-                    }
+                if (victimDesc.ToLower() == comparer.ToLower()) {
+                    return true;
                 }
             }
             return false;

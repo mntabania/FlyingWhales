@@ -60,14 +60,7 @@ public class Eat : GoapAction {
                     }
                 } else {
                     //not starving
-                    bool isTrapped = false;
-                    if (actor.trapStructure.IsTrapped()) {
-                        LocationStructure trapStructure = actor.trapStructure.structure;
-                        if (trapStructure == null) {
-                            trapStructure = actor.trapStructure.forcedStructure;
-                        }
-                        isTrapped = table.gridTileLocation.structure == trapStructure;
-                    }
+                    bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure);
                     if (isTrapped) {
                         cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                         costLog += $" +{cost}(Actor is currently visiting)";
@@ -148,7 +141,7 @@ public class Eat : GoapAction {
             if (!poiTarget.IsAvailable()) {
                 return false;
             }
-            if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
             if (actor.traitContainer.HasTrait("Vampiric")) {
@@ -196,7 +189,7 @@ public class EatData : GoapActionData {
         if (!poiTarget.IsAvailable()) {
             return false;
         }
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
             return false;
         }
         if (poiTarget.gridTileLocation != null) {

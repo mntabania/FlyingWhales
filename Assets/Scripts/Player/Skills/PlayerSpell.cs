@@ -326,7 +326,7 @@ public class SpellData : IPlayerSkill {
     //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
     //}
     public void OnExecuteSpellActionAffliction() {
-        if (WorldConfigManager.Instance.unlimitedCast == false) {
+        if (PlayerSkillManager.Instance.unlimitedCast == false) {
             if(hasCharges && charges > 0) {
                 charges--;
             }

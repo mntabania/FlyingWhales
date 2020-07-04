@@ -4317,7 +4317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e84516e6c42154a95deac0b8f2b562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expText: {fileID: 0}
 --- !u!1 &494236303
 GameObject:
   m_ObjectHideFlags: 0
@@ -10288,7 +10287,6 @@ MonoBehaviour:
   newGameButton: {fileID: 34324860}
   invadeButton: {fileID: 946698399}
   researchButton: {fileID: 1708245836}
-  _skillTreeSelector: {fileID: 0}
   startButton: {fileID: 1903149706}
   settingsButton: {fileID: 907672820}
 --- !u!1 &615913016
@@ -21118,7 +21116,6 @@ MonoBehaviour:
   _isDemoWorld: 0
   _availableSpellsInDemoBuild: 10000000040000000200000009000000170000002c0000001e000000200000002d0000002a000000160000004e0000004f00000050000000030000004a000000480000004c000000
   _demoTutorials: 00000000010000000300000004000000090000000a0000000b0000000c0000000d0000000e000000050000000f0000001000000011000000120000001300000014000000150000001600000017000000
-  _unlimitedCast: 0
   _disableLogs: 0
 --- !u!1 &1640311955
 GameObject:
@@ -30095,6 +30092,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: unlockAllSkills
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _unlimitedCast
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
+        type: 3}
+      propertyPath: _unlockAllSkills
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}

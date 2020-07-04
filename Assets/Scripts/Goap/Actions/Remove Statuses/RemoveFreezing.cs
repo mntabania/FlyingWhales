@@ -38,13 +38,13 @@ public class RemoveFreezing : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Frozen");
 
         //**Effect 2**: Remove Tool from Actor's inventory
-        TileObject ember = goapNode.actor.GetItem(TILE_OBJECT_TYPE.EMBER);
+        TileObject ember = goapNode.actor.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
         if (ember != null) {
             goapNode.actor.UnobtainItem(ember);
         } else {
             //the actor does not have a tool, log for now
             goapNode.actor.logComponent.PrintLogErrorIfActive(
-                $"{goapNode.actor.name} does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+                $"{goapNode.actor.name} does not have a tool for removing freezing! Freezing was still removed, but thought you should know.");
         }
        
     }

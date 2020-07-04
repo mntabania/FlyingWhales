@@ -511,6 +511,7 @@ namespace Inner_Maps {
 
         #region Points of Interest
         public void SetObjectHere(IPointOfInterest poi) {
+            bool isPassablePreviously = IsPassable();
             if (poi is TileObject tileObject) {
                 if (tileObject.OccupiesTile()) {
                     objHere = poi;
@@ -522,6 +523,11 @@ namespace Inner_Maps {
             poi.SetGridTileLocation(this);
             poi.OnPlacePOI();
             SetTileState(Tile_State.Occupied);
+            if (IsPassable() && !isPassablePreviously) {
+                structure.AddPassableTile(this);
+            } else if (!IsPassable() && isPassablePreviously) {
+                structure.RemovePassableTile(this);
+            }
             Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
         }
         public IPointOfInterest RemoveObjectHere(Character removedBy) {
@@ -784,6 +790,53 @@ namespace Inner_Maps {
                 return unoccupiedNeighbours[Random.Range(0, unoccupiedNeighbours.Count)];
             }
             return null;
+        }
+        public LocationStructure GetNearestInteriorStructureFromThis() {
+            LocationStructure nearestStructure = null;
+            if (structure != null) {
+                if (structure.location.allStructures.Count > 0) {
+                    float nearestDist = 99999f;
+                    for (int i = 0; i < structure.location.allStructures.Count; i++) {
+                        LocationStructure currStructure = structure.location.allStructures[i];
+                        if (currStructure != structure && currStructure.isInterior) {
+                            LocationGridTile randomPassableTile = currStructure.GetRandomPassableTile();
+                            if (randomPassableTile != null && PathfindingManager.Instance.HasPath(this, randomPassableTile)) {
+                                float dist = Vector2.Distance(randomPassableTile.localLocation, localLocation);
+                                if (nearestStructure == null || dist < nearestDist) {
+                                    nearestStructure = currStructure;
+                                    nearestDist = dist;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return nearestStructure;
+        }
+        public LocationStructure GetNearestInteriorStructureFromThisExcept(List<LocationStructure> exclusions) {
+            LocationStructure nearestStructure = null;
+            if (structure != null) {
+                if (structure.location.allStructures.Count > 0) {
+                    float nearestDist = 99999f;
+                    for (int i = 0; i < structure.location.allStructures.Count; i++) {
+                        LocationStructure currStructure = structure.location.allStructures[i];
+                        if (currStructure != structure && currStructure.isInterior) {
+                            if (exclusions != null && exclusions.Contains(currStructure)) {
+                                continue;
+                            }
+                            LocationGridTile randomPassableTile = currStructure.GetRandomPassableTile();
+                            if (randomPassableTile != null && PathfindingManager.Instance.HasPath(this, randomPassableTile)) {
+                                float dist = Vector2.Distance(randomPassableTile.localLocation, localLocation);
+                                if (nearestStructure == null || dist < nearestDist) {
+                                    nearestStructure = currStructure;
+                                    nearestDist = dist;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return nearestStructure;
         }
         public LocationGridTile GetNearestUnoccupiedTileFromThisWithStructure(STRUCTURE_TYPE structureType) {
             List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;

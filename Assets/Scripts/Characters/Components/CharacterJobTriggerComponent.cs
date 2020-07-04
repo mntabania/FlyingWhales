@@ -1932,5 +1932,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     #endregion
-    
+
+    #region Seek Shelter
+    public bool TriggerSeekShelterJob() {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.SEEK_SHELTER) && _owner.gridTileLocation != null) {
+            List<LocationStructure> exclusions = null;
+            if (_owner.traitContainer.HasTrait("Freezing")) {
+                Freezing freezing = _owner.traitContainer.GetNormalTrait<Freezing>("Freezing");
+                exclusions = freezing.excludedStructuresInSeekingShelter;
+            } else if (_owner.traitContainer.HasTrait("Overheating")) {
+                Overheating overheating = _owner.traitContainer.GetNormalTrait<Overheating>("Overheating");
+                exclusions = overheating.excludedStructuresInSeekingShelter;
+            }
+            LocationStructure nearestInteriorStructure = _owner.gridTileLocation.GetNearestInteriorStructureFromThisExcept(exclusions);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEEK_SHELTER, INTERACTION_TYPE.TAKE_SHELTER, _owner, _owner);
+            job.AddOtherData(INTERACTION_TYPE.TAKE_SHELTER, new object[] { nearestInteriorStructure });
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
+    #endregion
 }

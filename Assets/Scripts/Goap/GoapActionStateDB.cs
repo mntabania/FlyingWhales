@@ -561,6 +561,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.BURN, new[]{
             new StateNameAndDuration(){ name = "Burn Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.TAKE_SHELTER, new[]{
+            new StateNameAndDuration(){ name = "Take Shelter Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

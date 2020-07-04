@@ -334,8 +334,9 @@ namespace Traits {
             if (form.ownParty.icon.isTravelling) {
                 form.marker.StopMovement();
             }
-            if (form.trapStructure.structure != null) {
+            if (form.trapStructure.IsTrapped()) {
                 form.trapStructure.SetStructureAndDuration(null, 0);
+                form.trapStructure.SetForcedStructure(null);
             }
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //ForceCancelAllJobsTargettingThisCharacter();

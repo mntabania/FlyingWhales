@@ -13,8 +13,16 @@ public class PlayerSkillManager : MonoBehaviour {
 
     public PLAYER_ARCHETYPE selectedArchetype { get; private set; }
 
-    public bool unlockAllSkills;
-    //public List<PlayerSkillData> allPlayerSkillsData;
+    [SerializeField] private bool _unlockAllSkills;
+    [SerializeField] private bool _unlimitedCast;
+
+#if UNITY_EDITOR
+    public bool unlimitedCast => _unlimitedCast;
+    public bool unlockAllSkills => _unlockAllSkills;
+#else
+    public bool unlimitedCast => false;
+    public bool unlockAllSkills => false;
+#endif
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
 
