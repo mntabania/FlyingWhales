@@ -120,9 +120,10 @@ public class PlayerSkillComponent {
                 //be seen, but instead, should not be clickable.
                 shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(data.skill) == false ||
                                  WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(data.skill))
-                                 && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER;
+                                 && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
+                                 && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             } else {
-                shouldAddSpell = data.skill != SPELL_TYPE.RAIN;
+                shouldAddSpell = data.skill != SPELL_TYPE.RAIN && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             }
             if (shouldAddSpell) {
                 SetPlayerSkillData(data);
