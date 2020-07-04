@@ -59,7 +59,7 @@ public class Artifact : TileObject {
         //    () => true,
         //    null,
         //    ActivateArtifactEffect);
-        AddPlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
+        AddPlayerAction(SPELL_TYPE.ACTIVATE);
         AddPlayerAction(SPELL_TYPE.SEIZE_OBJECT);
     }
     public override void OnPlacePOI() {

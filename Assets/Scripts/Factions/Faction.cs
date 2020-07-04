@@ -464,7 +464,7 @@ public class Faction {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += $"\n\n-{member.name}";
-            if (member.isDead || member.isMissing || member.isBeingSeized) {
+            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized) {
                 log += "\nEither dead or missing or seized, will not be part of candidates for faction leader";
                 continue;
             }

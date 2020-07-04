@@ -101,6 +101,7 @@ public static class Signals {
     public static string ON_UNSEIZE_POI = "OnUnseizePOI";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
+    public static string CHARACTER_PRESUMED_DEAD = "OnCharacterPresumedDead";
     public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";
     public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
     public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";

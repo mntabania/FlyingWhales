@@ -15,7 +15,7 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            AddPlayerAction(SPELL_TYPE.DEFEND);
+            //AddPlayerAction(SPELL_TYPE.DEFEND);
         }
         protected override void DestroyStructure() {
             if (hasBeenDestroyed) {

@@ -18,7 +18,7 @@ public class PoisonVent : TileObject {
     #region Overrides
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        AddPlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
+        AddPlayerAction(SPELL_TYPE.ACTIVATE);
         RemovePlayerAction(SPELL_TYPE.SEIZE_OBJECT);
     }
     public override void OnPlacePOI() {

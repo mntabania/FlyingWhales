@@ -64,11 +64,11 @@ namespace Inner_Maps.Location_Structures {
         #region Activate
         private void AddActivateAction() {
             //PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, null, OnClickActivateArtifact);
-            AddPlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
+            AddPlayerAction(SPELL_TYPE.ACTIVATE);
         }
         private void RemoveActivateAction() {
             //RemovePlayerAction(GetPlayerAction(PlayerDB.Activate_Artifact_Action));
-            RemovePlayerAction(SPELL_TYPE.ACTIVATE_TILE_OBJECT);
+            RemovePlayerAction(SPELL_TYPE.ACTIVATE);
         }
         private bool CanDoActivateArtifactAction() {
             return PlayerManager.Instance.player.mana >= 50;

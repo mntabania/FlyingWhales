@@ -75,12 +75,14 @@ public class CharacterManager : MonoBehaviour {
     public List<Emotion> allEmotions { get; private set; }
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
     public SUMMON_TYPE[] summonsPool { get; private set; }
-    public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public COMBAT_MODE[] combatModes { get; private set; }
     public List<string> rumorWorthyActions { get; private set; }
     public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
     public Character necromancerInTheWorld { get; private set; }
     public bool hasSpawnedNecromancerOnce { get; private set; }
+
+    public int CHARACTER_MISSING_THRESHOLD { get; private set; }
+    public int CHARACTER_PRESUMED_DEAD_THRESHOLD { get; private set; }
 
     private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
     private Dictionary<string, System.Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
@@ -224,6 +226,7 @@ public class CharacterManager : MonoBehaviour {
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
+        CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood, Destroy_Action };

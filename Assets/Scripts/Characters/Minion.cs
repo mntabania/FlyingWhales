@@ -376,6 +376,7 @@ public class Minion {
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
+        Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType) as SpellData);
         //PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
@@ -383,7 +384,9 @@ public class Minion {
         this.character.AdjustHP(25, ELEMENTAL_TYPE.Normal);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
-            PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).SetCharges(1);
+            MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+            minionPlayerSkill.SetCharges(1);
+            Messenger.Broadcast(Signals.SPELL_COOLDOWN_FINISHED, minionPlayerSkill as SpellData);
             Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
         }
     }

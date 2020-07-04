@@ -328,7 +328,7 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nCan Witness: " + activeMonster.canWitness)}";
         summary = $"{summary}{("\nCan Be Attacked: " + activeMonster.canBeAttacked)}";
         summary = $"{summary}{("\nCan Perform: " + activeMonster.canPerform)}";
-        summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
+        //summary = $"{summary}{("\nIs Missing: " + activeMonster.isMissing)}";
         summary = $"{summary}{("\n" + activeMonster.needsComponent.GetNeedsSummary())}";
         summary = $"{summary}{("\nFullness Time: " + (activeMonster.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.fullnessForcedTick)))}";
         summary = $"{summary}{("\nTiredness Time: " + (activeMonster.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeMonster.needsComponent.tirednessForcedTick)))}";

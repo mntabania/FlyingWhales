@@ -570,4 +570,18 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return Acquaintance;
     }
     #endregion
+
+    #region Awareness
+    public AWARENESS_STATE GetAwarenessState(Character character) {
+        if (relationships.ContainsKey(character.id)) {
+            return relationships[character.id].awareness.state;
+        }
+        return AWARENESS_STATE.None;
+    }
+    public void SetAwarenessState(Character character, AWARENESS_STATE state) {
+        if (relationships.ContainsKey(character.id)) {
+            relationships[character.id].awareness.SetAwarenessState(state);
+        }
+    }
+    #endregion
 }

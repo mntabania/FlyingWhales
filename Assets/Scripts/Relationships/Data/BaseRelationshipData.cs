@@ -8,10 +8,12 @@ public class BaseRelationshipData : IRelationshipData {
     public GENDER targetGender { get; private set; }
     public List<RELATIONSHIP_TYPE> relationships { get; }
     public OpinionData opinions { get; }
+    public AwarenessData awareness { get; private set; }
     
     public BaseRelationshipData() {
         relationships = new List<RELATIONSHIP_TYPE>();
         opinions = ObjectPoolManager.Instance.CreateNewOpinionData();
+        awareness = new AwarenessData();
     }
 
     #region Utilities

@@ -139,7 +139,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             for (int i = 0; i < PlayerSkillManager.Instance.allSpells.Length; i++) {
                 SPELL_TYPE skillType = PlayerSkillManager.Instance.allSpells[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!loadout.spells.fixedSkills.Contains(skillType) && !spellsSkillSlotItems.HasExtraSkill(skillType)) {
+                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.spells.fixedSkills.Contains(skillType) && !spellsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
                     }
                 }
@@ -148,7 +148,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             for (int i = 0; i < PlayerSkillManager.Instance.allAfflictions.Length; i++) {
                 SPELL_TYPE skillType = PlayerSkillManager.Instance.allAfflictions[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!loadout.afflictions.fixedSkills.Contains(skillType) && !afflictionsSkillSlotItems.HasExtraSkill(skillType)) {
+                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.afflictions.fixedSkills.Contains(skillType) && !afflictionsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
                     }
                 }
@@ -157,7 +157,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             for (int i = 0; i < PlayerSkillManager.Instance.allMinionPlayerSkills.Length; i++) {
                 SPELL_TYPE skillType = PlayerSkillManager.Instance.allMinionPlayerSkills[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!loadout.minions.fixedSkills.Contains(skillType) && !minionsSkillSlotItems.HasExtraSkill(skillType)) {
+                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.minions.fixedSkills.Contains(skillType) && !minionsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
                     }
                 }
@@ -166,7 +166,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             for (int i = 0; i < PlayerSkillManager.Instance.allDemonicStructureSkills.Length; i++) {
                 SPELL_TYPE skillType = PlayerSkillManager.Instance.allDemonicStructureSkills[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!loadout.structures.fixedSkills.Contains(skillType) && !structuresSkillSlotItems.HasExtraSkill(skillType)) {
+                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.structures.fixedSkills.Contains(skillType) && !structuresSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
                     }
                 }
@@ -175,7 +175,7 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
             for (int i = 0; i < PlayerSkillManager.Instance.allPlayerActions.Length; i++) {
                 SPELL_TYPE skillType = PlayerSkillManager.Instance.allPlayerActions[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!loadout.miscs.fixedSkills.Contains(skillType) && !miscsSkillSlotItems.HasExtraSkill(skillType)) {
+                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.miscs.fixedSkills.Contains(skillType) && !miscsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
                     }
                 }
