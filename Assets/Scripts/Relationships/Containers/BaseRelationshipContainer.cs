@@ -187,7 +187,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //OnOpinionReduced(owner, target, lastStrawReason);
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            OnOpinionReduced(owner, target, lastStrawReason, opinionValue);
+            CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
@@ -211,7 +211,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //OnOpinionReduced(owner, target, lastStrawReason);
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            OnOpinionReduced(owner, target, lastStrawReason, opinionValue);
+            CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
@@ -238,14 +238,14 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                     //OnOpinionChanged(owner, targetCharacter, lastStrawReason);
                     Messenger.Broadcast<Character, Character, string>(Signals.OPINION_INCREASED, owner, null, lastStrawReason);
                 } else if (opinionValue < 0) {
-                    OnOpinionReduced(owner, targetCharacter, lastStrawReason, opinionValue);
+                    CreateJobsOnOpinionReduced(owner, targetCharacter, lastStrawReason, opinionValue);
                     Messenger.Broadcast<Character, Character, string>(Signals.OPINION_DECREASED, owner, null, lastStrawReason);
                 }
             }
         }
     }
-    public void OnOpinionReduced(Character owner, Character targetCharacter, string reason, int amountReduced) {
-        if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+    private void CreateJobsOnOpinionReduced(Character owner, Character targetCharacter, string reason, int amountReduced) {
+        if (owner.relationshipContainer.IsEnemiesWith(targetCharacter) && GameManager.Instance.gameHasStarted) {
             //Character spreadRumorTarget = owner.rumorComponent.GetRandomSpreadRumorTarget(targetCharacter);
             //if (spreadRumorTarget != null) {
             //    Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorTarget, targetCharacter);

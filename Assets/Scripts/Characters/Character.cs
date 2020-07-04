@@ -1191,6 +1191,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (newFaction != null && newFaction == FactionManager.Instance.undeadFaction) {
             behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
         }
+        Debug.Log($"{name} changed faction from {prevFaction?.name ?? "Null"} to {newFaction?.name ?? "Null"}");
         // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
         //     ClearPlayerActions();
         // }
@@ -2616,7 +2617,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             homeStructure.RemoveResident(this);
         }
         //Added checking, because character can sometimes change home from dwelling to nothing.
-        if(dwelling != null && dwelling.AddResident(this)) {
+        if(dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
             jobComponent.PlanReturnHomeUrgent();
             return true;
         }
@@ -5171,7 +5172,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
     
     #region Territorries
-    public void AddTerritory([NotNull]HexTile tile) {
+    public void AddTerritory([NotNull]HexTile tile, bool returnHome = true) {
         if (territorries.Contains(tile) == false) {
             territorries.Add(tile);
             HexTile firstTerritory = territorries[0];
@@ -5184,7 +5185,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (homeStructure != null && homeStructure.hasBeenDestroyed) {
                 MigrateHomeStructureTo(null, affectSettlement: false);
             }
-            jobComponent.PlanReturnHomeUrgent();
+            if (returnHome) {
+                jobComponent.PlanReturnHomeUrgent();    
+            }
         }
     }
     public void RemoveTerritory(HexTile tile) {
