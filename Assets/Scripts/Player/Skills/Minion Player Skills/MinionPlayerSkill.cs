@@ -23,7 +23,7 @@ public class MinionPlayerSkill : SpellData {
         minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
-        minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner);
+        minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
         minion.character.jobQueue.CancelAllJobs();
         base.ActivateAbility(targetTile);
     }

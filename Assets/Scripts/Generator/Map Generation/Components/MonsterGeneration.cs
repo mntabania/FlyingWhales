@@ -41,11 +41,11 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
 		} else {
-			summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner);
+			summon.AddTerritory(chosenTile.collectionOwner.partOfHextile.hexTileOwner, false);
 			if (territories != null) {
 				for (int i = 0; i < territories.Length; i++) {
 					HexTile territory = territories[i];
-					summon.AddTerritory(territory);
+					summon.AddTerritory(territory, false);
 				}
 			}	
 		}
