@@ -245,6 +245,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (gameObject.activeSelf == false) {
             return;
         }
+        if (gridTileLocation == null) {
+            return;
+        }
         List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];

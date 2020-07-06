@@ -28,7 +28,9 @@ public class SaveDataPlayer {
             PlayerSkillTree currSkillTree = PlayerSkillManager.Instance.allSkillTrees[i];
             for (int j = 0; j < currSkillTree.initialLearnedSkills.Length; j++) {
                 SPELL_TYPE node = currSkillTree.initialLearnedSkills[j];
-                LearnSkill(node, currSkillTree.nodes[node]);
+                if (PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(node) != null) {
+                    LearnSkill(node, currSkillTree.nodes[node]);    
+                }
             }
         }
 
