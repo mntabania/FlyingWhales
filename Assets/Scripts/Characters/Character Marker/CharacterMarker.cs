@@ -342,7 +342,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Action Icon
     public void UpdateActionIcon() {
-        _nameplate.UpdateActionIcon();
+        if (_nameplate) {
+            _nameplate.UpdateActionIcon();    
+        }
     }
     #endregion
 

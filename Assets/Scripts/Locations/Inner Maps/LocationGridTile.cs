@@ -329,12 +329,10 @@ namespace Inner_Maps {
                             createEdge = true;
                         } else if (groundType == Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Bone && currNeighbour.groundType != Ground_Type.Corrupted) {
                             createEdge = true;
-                        } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Demon_Stone) {
+                        } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Bone) {
                             createEdge = true;
-                        } else if (groundType == Ground_Type.Bone) {
+                        } else if (groundType == Ground_Type.Bone && (currNeighbour.groundType == Ground_Type.Corrupted || currNeighbour.groundType == Ground_Type.Demon_Stone)) {
                             createEdge = true;
-                        } else if (currNeighbour.groundType == Ground_Type.Bone) {
-                            createEdge = false;
                         } else if (groundType != Ground_Type.Corrupted && currNeighbour.groundType == Ground_Type.Corrupted) {
                             createEdge = false;
                         } else if (groundType == Ground_Type.Snow && currNeighbour.groundType != Ground_Type.Snow) {
