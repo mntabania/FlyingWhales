@@ -53,7 +53,11 @@ public class StateAwarenessComponent {
     public void OnCharacterWasSeenBy(Character characterThatSaw) {
         if (characterThatSaw.isNormalCharacter) {
             StopMissingTimer();
-            characterThatSaw.relationshipContainer.SetAwarenessState(owner, AWARENESS_STATE.Available);
+            if (owner.isDead) {
+                characterThatSaw.relationshipContainer.SetAwarenessState(owner, AWARENESS_STATE.Presumed_Dead);
+            } else {
+                characterThatSaw.relationshipContainer.SetAwarenessState(owner, AWARENESS_STATE.Available);
+            }
         }
     }
 

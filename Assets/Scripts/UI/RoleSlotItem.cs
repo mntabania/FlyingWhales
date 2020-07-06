@@ -9,7 +9,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
 
     public CharacterPortrait portrait;
 
-    public JOB slotJob { get; private set; }
+    //public JOB slotJob { get; private set; }
     [SerializeField] private Image jobIcon;
     [SerializeField] private TextMeshProUGUI jobNameLbl;
     [SerializeField] private Image cooldownProgress;
@@ -35,8 +35,8 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     }
 
     private void AddListeners() {
-        Messenger.AddListener<JOB, Minion>(Signals.MINION_ASSIGNED_TO_JOB, OnMinionAssignedToJob);
-        Messenger.AddListener<JOB, Minion>(Signals.MINION_UNASSIGNED_FROM_JOB, OnMinionUnassignedFromJob);
+        //Messenger.AddListener<JOB, Minion>(Signals.MINION_ASSIGNED_TO_JOB, OnMinionAssignedToJob);
+        //Messenger.AddListener<JOB, Minion>(Signals.MINION_UNASSIGNED_FROM_JOB, OnMinionUnassignedFromJob);
         //Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
     }
 
@@ -62,16 +62,16 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             portrait.gameObject.SetActive(true);
         }
     }    
-    private void OnMinionAssignedToJob(JOB job, Minion minion) {
-        if (slotJob == job) {
-            SetMinion(minion);
-        }
-    }
-    private void OnMinionUnassignedFromJob(JOB job, Minion minion) {
-        if (slotJob == job) {
-            SetMinion(null);
-        }
-    }
+    //private void OnMinionAssignedToJob(JOB job, Minion minion) {
+    //    if (slotJob == job) {
+    //        SetMinion(minion);
+    //    }
+    //}
+    //private void OnMinionUnassignedFromJob(JOB job, Minion minion) {
+    //    if (slotJob == job) {
+    //        SetMinion(null);
+    //    }
+    //}
 
     //#region Cooldown
     //private void OnJobCooldownActivated(PlayerJobAction action) {

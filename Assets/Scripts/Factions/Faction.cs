@@ -35,7 +35,6 @@ public class Faction {
     public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
 
     public MORALITY morality { get; private set; }
-    public FACTION_SIZE size { get; private set; }
     public FACTION_TYPE factionType { get; private set; }
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
@@ -73,7 +72,6 @@ public class Faction {
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetRace(race);
         SetMorality(MORALITY.GOOD);
-        SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
         //level = 1;
         factionType = UtilityScripts.Utilities.GetRandomEnumValue<FACTION_TYPE>();
@@ -99,7 +97,7 @@ public class Faction {
         SetFactionColor(data.factionColor);
         SetRace(data.race);
         SetMorality(data.morality);
-        SetSize(data.size);
+        //SetSize(data.size);
         SetFactionActiveState(data.isActive);
         //initialLeaderClass = data.initialLeaderClass;
         //initialLeaderRace = data.initialLeaderRace;
@@ -594,9 +592,6 @@ public class Faction {
     }
     public void SetRace(RACE race) {
         this.race = race;
-    }
-    public void SetSize(FACTION_SIZE size) {
-        this.size = size;
     }
     public void SetFactionColor(Color color) {
         factionColor = color;

@@ -10,7 +10,6 @@ public struct LandmarkData {
     public LANDMARK_TYPE landmarkType;
     public int buildDuration; //how many ticks to build this landmark
     public string description;
-    public List<LANDMARK_TAG> uniqueTags;
     public Sprite landmarkObjectSprite;
     [FormerlySerializedAs("landmarkPortrait")] public Sprite defaultLandmarkPortrait;
     public BiomeLandmarkSpriteListDictionary biomeTileSprites;

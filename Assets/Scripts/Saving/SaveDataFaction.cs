@@ -27,7 +27,6 @@ public class SaveDataFaction {
     //public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
 
     public MORALITY morality;
-    public FACTION_SIZE size;
     public FACTION_TYPE factionType;
     //public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive;
@@ -49,7 +48,7 @@ public class SaveDataFaction {
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         factionColor = faction.factionColor;
         morality = faction.morality;
-        size = faction.size;
+        //size = faction.size;
         factionType = faction.factionType;
         isActive = faction.isActive;
         //requirementForJoining = faction.requirementForJoining;

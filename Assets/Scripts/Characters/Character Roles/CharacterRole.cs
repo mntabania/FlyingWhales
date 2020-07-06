@@ -10,7 +10,7 @@ using System;
 
 
 public class CharacterRole {
-    public static readonly CharacterRole NONE = new CharacterRole(CHARACTER_ROLE.NONE, "Any", null);
+    public static readonly CharacterRole NONE = new CharacterRole(CHARACTER_ROLE.NONE, "Any");
     public static readonly CharacterRole CIVILIAN = new Civilian();
     public static readonly CharacterRole PLAYER = new PlayerRole();
     public static readonly CharacterRole BANDIT = new Bandit();
@@ -25,16 +25,14 @@ public class CharacterRole {
     public string classNameOrIdentifier { get; protected set; }
     public string name { get; protected set; }
     public CHARACTER_ROLE roleType { get; protected set; }
-    public INTERACTION_CATEGORY[] interactionCategories { get; protected set; }
     //public INTERACTION_TYPE[] allowedInteractions { get; protected set; }
     public virtual int reservedSupply { get { return 0; } }
     // public SPECIAL_TOKEN[] requiredItems { get; protected set; }//this is the list of items that the character must own.
 
-    protected CharacterRole(CHARACTER_ROLE roleType, string classNameOrIdentifier, INTERACTION_CATEGORY[] interactionCategories) {
+    protected CharacterRole(CHARACTER_ROLE roleType, string classNameOrIdentifier) {
         this.roleType = roleType;
         this.name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(roleType.ToString());
         this.classNameOrIdentifier = classNameOrIdentifier;
-        this.interactionCategories = interactionCategories;
     }
 
     public static CharacterRole GetRoleByRoleType(CHARACTER_ROLE roleType) {

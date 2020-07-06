@@ -104,11 +104,6 @@ public class PlayerSpell {
         //    //ResetCooldown(); //only reset cooldown if the assigned character dies
         //}
     }
-    protected virtual void OnCharacterUnassignedFromJob(JOB job, Character character) {
-        //if (character.id == assignedCharacter.id) {
-        //    DeactivateAction();
-        //}
-    }
     /// <summary>
     /// Can this action currently be performed.
     /// </summary>
