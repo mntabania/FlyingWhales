@@ -1787,17 +1787,48 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Sabotage
-    public bool TryCreateSabotageNeighbourJob(out JobQueueItem producedJob) {
-	    List<Character> choices = new List<Character>();
+    public bool TryCreateSabotageNeighbourJob(Character target, out JobQueueItem producedJob) {
+	    //create predetermined plan and job
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, _owner);
+	    List<JobNode> jobNodes = new List<JobNode>();
+	    if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
+		    //Pick up cultist kit at home
+		    TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
+		    Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to sabotage neighbour but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
+		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
+		    jobNodes.Add(new SingleJobNode(pickupNode));
+	    }
+	    
+	    ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], _owner, target, null, 0);
+	    jobNodes.Add(new SingleJobNode(removeBuffNode));
+	    
+	    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    
+	    producedJob = job;
+	    return true;
+
+    }
+    private bool IsValidSabotageNeighbourTarget(Character character) {
+	    AWARENESS_STATE awarenessState = _owner.relationshipContainer.GetAwarenessState(character);
+	    return character.isNormalCharacter && character.traitContainer.HasTrait("Resting", "Unconscious") &&
+	           character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) &&
+	           character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character) &&
+	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
+    }
+    public bool TryGetValidSabotageNeighbourTarget(out Character targetCharacter) {
+	    List<Character> choices = null;
 	    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
 		    Character character = CharacterManager.Instance.allCharacters[i];
-		    if (character.isNormalCharacter && character.traitContainer.HasTrait("Resting", "Unconscious")
-		        && character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) 
-		        && character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character)) {
+		    if (IsValidSabotageNeighbourTarget(character)) {
+			    if (choices == null) { choices = new List<Character>(); }
 			    choices.Add(character);
 		    }
 	    }
-	    if (choices.Count > 0) {
+
+	    if (choices != null) {
 		    WeightedDictionary<Character> targetWeights = new WeightedDictionary<Character>();
 		    for (int i = 0; i < choices.Count; i++) {
 			    Character character = choices[i];
@@ -1814,45 +1845,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    }
 			    targetWeights.AddElement(character, weight);
 		    }
-		    
 		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{_owner.name}'s Sabotage Neighbour Weights:");
-		    
-		    Character target = targetWeights.PickRandomElementGivenWeights();
-		    
-		    //create predetermined plan and job
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, _owner);
-		    List<JobNode> jobNodes = new List<JobNode>();
-		    if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
-			    //Pick up cultist kit at home
-			    TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
-			    Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to sabotage neighbour but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
-			    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
-			    jobNodes.Add(new SingleJobNode(pickupNode));
-		    }
-		    
-		    ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], _owner, target, null, 0);
-		    jobNodes.Add(new SingleJobNode(removeBuffNode));
-		    
-		    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
-		    goapPlan.SetDoNotRecalculate(true);
-		    job.SetCannotBePushedBack(true);
-		    job.SetAssignedPlan(goapPlan);
-		    
-		    producedJob = job;
-		    return true;
-	    }
-	    producedJob = null;
-	    return false;
-    }
-    public bool HasValidSabotageNeighbourTarget() {
-	    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-		    Character character = CharacterManager.Instance.allCharacters[i];
-		    if (character.isNormalCharacter && character.traitContainer.HasTrait("Resting", "Unconscious") && 
-		        character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) && 
-		        character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character)) {
+		    if (targetWeights.GetTotalOfWeights() > 0) {
+			    targetCharacter = targetWeights.PickRandomElementGivenWeights();
 			    return true;
 		    }
 	    }
+	    targetCharacter = null;
 	    return false;
     }
     #endregion
