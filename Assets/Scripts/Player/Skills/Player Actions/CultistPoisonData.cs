@@ -21,7 +21,8 @@ public class CultistPoisonData : PlayerAction {
                     choices.Add(resident);
                 }
             }
-            UIManager.Instance.ShowClickableObjectPicker(choices, o =>  OnChooseCharacter(o, character), showCover: true, shouldShowConfirmationWindowOnPick: true, layer: 20);
+            UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                layer: 20, asButton: false, shouldShowConfirmationWindowOnPick: false);
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {

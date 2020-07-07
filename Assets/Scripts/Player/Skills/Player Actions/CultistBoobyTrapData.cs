@@ -21,7 +21,8 @@ public class CultistBoobyTrapData : PlayerAction {
                     choices.Add(resident);
                 }
             }
-            UIManager.Instance.ShowClickableObjectPicker(choices, o =>  OnChooseCharacter(o, character), showCover: true, shouldShowConfirmationWindowOnPick: true, layer: 20);
+            UIManager.Instance.ShowClickableObjectPicker(choices, o => OnChooseCharacter(o, character), showCover: true,
+                shouldShowConfirmationWindowOnPick: false, layer: 20, asButton: false);
         }
         // base.ActivateAbility(targetPOI);
     }

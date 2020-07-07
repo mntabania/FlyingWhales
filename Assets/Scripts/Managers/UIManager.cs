@@ -698,7 +698,7 @@ public class UIManager : MonoBehaviour {
         string identifier = "", bool showCover = false, int layer = 9, bool closable = true, Func<string,Sprite> portraitGetter = null, bool shouldShowConfirmationWindowOnPick = false, bool asButton = false) {
 
         objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction,
-            onHoverExitAction, identifier, showCover, layer, portraitGetter, shouldShowConfirmationWindowOnPick, asButton);
+            onHoverExitAction, identifier, showCover, layer, portraitGetter, asButton, shouldShowConfirmationWindowOnPick);
         Messenger.Broadcast(Signals.OBJECT_PICKER_SHOWN, identifier);
         //Pause();
         //SetSpeedTogglesState(false);
