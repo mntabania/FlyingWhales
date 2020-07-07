@@ -269,6 +269,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
         string gainTraitSummary =
             $"{GameManager.Instance.TodayLogString()}{characterThatGainedTrait.name} has <color=green>gained</color> trait <b>{trait.name}</b>";
+       
         if (!characterThatGainedTrait.canPerform) {
             if (character.combatComponent.isInCombat) {
                 characterThatGainedTrait.stateComponent.ExitCurrentState();
@@ -278,6 +279,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //Once a character has a negative disabler trait, clear hostile and avoid list
             character.combatComponent.ClearHostilesInRange(false);
             character.combatComponent.ClearAvoidInRange(false);
+        }
+        if (trait is Cultist) {
+            UpdateName();
         }
         UpdateAnimation();
         UpdateActionIcon();

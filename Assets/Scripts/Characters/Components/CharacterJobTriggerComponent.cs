@@ -1305,8 +1305,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.logComponent.AddHistory(log);
         return true;
     }
-    private bool CreatePlaceTrapPOIJob(IPointOfInterest target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
+    private bool CreatePlaceTrapPOIJob(IPointOfInterest target, JOB_TYPE jobType = JOB_TYPE.PLACE_TRAP) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
         _owner.jobQueue.AddJobInQueue(job);
         return true;
     }
@@ -1315,7 +1315,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = job;
 	    return true;
     }
-    public bool CreatePlaceTrapJob(Character targetCharacter) {
+    public bool CreatePlaceTrapJob(Character targetCharacter, JOB_TYPE jobType = JOB_TYPE.PLACE_TRAP) {
         IPointOfInterest chosenObject = null;
         for (int i = 0; i < targetCharacter.ownedItems.Count; i++) {
             TileObject item = targetCharacter.ownedItems[i];
@@ -1325,7 +1325,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         if(chosenObject != null) {
-            return CreatePlaceTrapPOIJob(chosenObject);
+            return CreatePlaceTrapPOIJob(chosenObject, jobType);
         }
         return false;
     }
@@ -1429,8 +1429,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
     
     #region Undermine
-    public bool CreatePoisonFoodJob(Character targetCharacter) {
-	    if (_owner.jobQueue.HasJob(JOB_TYPE.POISON_FOOD, targetCharacter)) {
+    public bool CreatePoisonFoodJob(Character targetCharacter, JOB_TYPE jobType = JOB_TYPE.POISON_FOOD) {
+	    if (_owner.jobQueue.HasJob(jobType, targetCharacter)) {
 		    return false;
 	    }
 	    if (targetCharacter.isDead) {
@@ -1452,7 +1452,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
 		    return false;
 	    }
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
 	    _owner.jobQueue.AddJobInQueue(job);
 
 	    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
@@ -1844,6 +1844,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
+    public bool HasValidSabotageNeighbourTarget() {
+	    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+		    Character character = CharacterManager.Instance.allCharacters[i];
+		    if (character.isNormalCharacter && character.traitContainer.HasTrait("Resting", "Unconscious") && 
+		        character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) && 
+		        character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character)) {
+			    return true;
+		    }
+	    }
+	    return false;
+    }
     #endregion
 
     #region Pray
@@ -1951,6 +1962,70 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         return false;
+    }
+    #endregion
+
+    #region Dark Ritual
+    public bool TryCreateDarkRitualJob(out JobQueueItem producedJob) {
+	    if (_owner.currentRegion != null) {
+		    MagicCircle magicCircle = null;
+		    if (_owner.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE)) {
+			    List<MagicCircle> magicCircles = _owner.currentRegion.GetTileObjectsOfType<MagicCircle>();
+			    magicCircle = CollectionUtilities.GetRandomElement(magicCircles);
+		    } else {
+			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
+			    List<LocationGridTile> choices = _owner.currentRegion
+				    .GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
+			    if (choices.Count > 0) {
+				    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
+				    targetTile.structure.AddPOI(newCircle, targetTile);
+				    newCircle.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsUnbuiltMagicCircleStillValid);
+				    magicCircle = newCircle;
+			    }
+		    }
+
+		    if (magicCircle != null) {
+			    GoapPlanJob ritualJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DARK_RITUAL,
+				    INTERACTION_TYPE.DARK_RITUAL, magicCircle, _owner);
+
+			    if (magicCircle.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+				    //if provided magic circle is unbuilt, add a pre-made plan to draw that magic circle.
+				    ActualGoapNode drawNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRAW_MAGIC_CIRCLE], _owner, magicCircle, null, 0);
+				    ActualGoapNode ritualNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DARK_RITUAL], _owner, magicCircle, null, 0);
+				    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(drawNode), new SingleJobNode(ritualNode) }, magicCircle);
+				    goapPlan.SetDoNotRecalculate(true);
+				    // ritualJob.SetCannotBePushedBack(true);
+				    ritualJob.SetAssignedPlan(goapPlan);
+			    }
+
+			    producedJob = ritualJob;
+			    Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, CheckIfDarkRitualJobRemoved);
+			    return true;
+		    }
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    private void CheckIfDarkRitualJobRemoved(JobQueueItem job, Character character) {
+	    if (character == _owner && job.jobType == JOB_TYPE.DARK_RITUAL) {
+		    //check if unbuilt magic circle is still valid, if any.
+		    Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
+		    Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, CheckIfDarkRitualJobRemoved);
+	    }
+	    
+    }
+    private bool IsUnbuiltMagicCircleStillValid(BaseMapObject mapObject) {
+	    return _owner.jobQueue.HasJob(JOB_TYPE.DARK_RITUAL);
+    }
+    #endregion
+
+    #region Cultist
+    public void TriggerCultistTransform() {
+	    if (_owner.jobQueue.HasJob(JOB_TYPE.CULTIST_TRANSFORM) == false) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CULTIST_TRANSFORM,
+			    INTERACTION_TYPE.CULTIST_TRANSFORM, _owner, _owner);
+		    _owner.jobQueue.AddJobInQueue(job);
+	    }
     }
     #endregion
 }

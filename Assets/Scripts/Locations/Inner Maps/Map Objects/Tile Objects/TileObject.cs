@@ -952,42 +952,51 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected override void OnMapObjectStateChanged() {
         if (mapVisual == null) { return; }
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            mapVisual.SetVisualAlpha(0f / 255f);
-            SetSlotAlpha(0f / 255f);
-            //store advertised actions
-            if(advertisedActions != null && advertisedActions.Count > 0) {
-                storedActions = new INTERACTION_TYPE[advertisedActions.Count];
-                for (int i = 0; i < advertisedActions.Count; i++) {
-                    storedActions[i] = advertisedActions[i];
-                }
-                advertisedActions.Clear();
-            }
-            AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            UnsubscribeListeners();
-            if (_unbuiltObjectValidityChecker != null) {
-                Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-            }
+            OnSetObjectAsUnbuilt();
         } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
-            mapVisual.SetVisualAlpha(128f / 255f);
-            SetSlotAlpha(128f / 255f);
-            _unbuiltObjectValidityChecker = null;
-            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+            OnSetObjectAsBuilding();
         } else {
-            _unbuiltObjectValidityChecker = null;
-            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-            mapVisual.SetVisualAlpha(255f / 255f);
-            SetSlotAlpha(255f / 255f);
-            if (advertisedActions != null && advertisedActions.Count > 0) {
-                RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
-            }
-            if (storedActions != null) {
-                for (int i = 0; i < storedActions.Length; i++) {
-                    AddAdvertisedAction(storedActions[i]);
-                }
-            }
-            storedActions = null;
-            SubscribeListeners();
+            OnSetObjectAsBuilt();
         }
+    }
+    protected virtual void OnSetObjectAsUnbuilt() {
+        mapVisual.SetVisualAlpha(0f / 255f);
+        SetSlotAlpha(0f / 255f);
+        //store advertised actions
+        if(advertisedActions != null && advertisedActions.Count > 0) {
+            storedActions = new INTERACTION_TYPE[advertisedActions.Count];
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                storedActions[i] = advertisedActions[i];
+            }
+            advertisedActions.Clear();
+        }
+        AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+        UnsubscribeListeners();
+        if (_unbuiltObjectValidityChecker != null) {
+            Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        }
+    }
+    protected virtual void OnSetObjectAsBuilding() {
+        mapVisual.SetVisualAlpha(128f / 255f);
+        SetSlotAlpha(128f / 255f);
+        _unbuiltObjectValidityChecker = null;
+        Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+    }
+    protected virtual void OnSetObjectAsBuilt(){
+        _unbuiltObjectValidityChecker = null;
+        Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+        mapVisual.SetVisualAlpha(255f / 255f);
+        SetSlotAlpha(255f / 255f);
+        if (advertisedActions != null && advertisedActions.Count > 0) {
+            RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+        }
+        if (storedActions != null) {
+            for (int i = 0; i < storedActions.Length; i++) {
+                AddAdvertisedAction(storedActions[i]);
+            }
+        }
+        storedActions = null;
+        SubscribeListeners();
     }
     protected void CheckUnbuiltObjectValidity() {
         if (_unbuiltObjectValidityChecker != null) {

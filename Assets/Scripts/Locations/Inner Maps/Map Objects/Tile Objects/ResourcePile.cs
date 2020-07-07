@@ -65,42 +65,9 @@ public abstract class ResourcePile : TileObject {
         // Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, this as IPointOfInterest);
         Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
     }
-    private INTERACTION_TYPE[] storedActions;
-    protected override void OnMapObjectStateChanged() {
-        if (mapVisual == null) { return; }
-        if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
-            mapVisual.SetVisualAlpha(0f / 255f);
-            SetSlotAlpha(0f / 255f);
-            //store advertised actions
-            storedActions = new INTERACTION_TYPE[advertisedActions.Count];
-            for (int i = 0; i < advertisedActions.Count; i++) {
-                storedActions[i] = advertisedActions[i];
-            }
-            advertisedActions.Clear();
-            AddAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
-            UnsubscribeListeners();
-            if (_unbuiltObjectValidityChecker != null) {
-                Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-            }
-        } else if (mapObjectState == MAP_OBJECT_STATE.BUILDING) {
-            mapVisual.SetVisualAlpha(128f / 255f);
-            SetSlotAlpha(128f / 255f);
-            _unbuiltObjectValidityChecker = null;
-            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-        } else {
-            _unbuiltObjectValidityChecker = null;
-            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-            mapVisual.SetVisualAlpha(255f / 255f);
-            SetSlotAlpha(255f / 255f);
-            // RemoveAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
-            if (storedActions != null) {
-                for (int i = 0; i < storedActions.Length; i++) {
-                    AddAdvertisedAction(storedActions[i]);
-                }    
-            }
-            storedActions = null;
-            SubscribeListeners();
-        }
+    protected override void OnSetObjectAsUnbuilt() {
+        base.OnSetObjectAsUnbuilt();
+        AddAdvertisedAction(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE);
     }
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();

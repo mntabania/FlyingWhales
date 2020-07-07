@@ -14,6 +14,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             canBeTriggered = true;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CULTIST_TRANSFORM };
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
@@ -24,8 +25,10 @@ namespace Traits {
                 character.behaviourComponent.AddBehaviourComponent(typeof(CultistBehaviour));
                 character.SetIsAlliedWithPlayer(true);
                 character.AddItemAsInteresting("Cultist Kit");
+                character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
+                character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
+                character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
             }
-            
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -33,6 +36,9 @@ namespace Traits {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(CultistBehaviour));
                 character.SetIsAlliedWithPlayer(false);
                 character.RemoveItemAsInteresting("Cultist Kit");
+                character.RemovePlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
+                character.RemovePlayerAction(SPELL_TYPE.CULTIST_POISON);
+                character.RemovePlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
             }
         }
         public override bool OnDeath(Character character) {

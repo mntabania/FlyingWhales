@@ -567,6 +567,15 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.IS_PLAGUED, new[]{
             new StateNameAndDuration(){ name = "Plague Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DARK_RITUAL, new[]{
+            new StateNameAndDuration(){ name = "Ritual Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.DRAW_MAGIC_CIRCLE, new[]{
+            new StateNameAndDuration(){ name = "Draw Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.CULTIST_TRANSFORM, new[]{
+            new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
+        } },
     };
 }
 
