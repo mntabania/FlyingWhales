@@ -11,7 +11,6 @@ public interface IParty {
     string coloredUrlName { get; }
     string urlName { get; }
     float computedPower { get; }
-    MODE currentMode { get; }
     Faction attackedByFaction { get; set; }
     Faction faction { get; }
     CharacterAvatar icon { get; }

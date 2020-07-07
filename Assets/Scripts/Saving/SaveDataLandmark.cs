@@ -10,14 +10,12 @@ public class SaveDataLandmark {
     public int locationID;
     public int connectedTileID;
     public int invasionTicks;
-    public List<LANDMARK_TAG> landmarkTags;
    
     public virtual void Save(BaseLandmark landmark) {
         id = landmark.id;
         landmarkName = landmark.landmarkName;
         landmarkType = landmark.specificLandmarkType;
         locationID = landmark.tileLocation.id;
-        landmarkTags = landmark.landmarkTags;
         invasionTicks = landmark.invasionTicks;
     }
     public virtual void LoadSpecificLandmarkData(BaseLandmark landmark) { }

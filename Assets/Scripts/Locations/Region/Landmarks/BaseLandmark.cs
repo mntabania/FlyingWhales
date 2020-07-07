@@ -10,7 +10,6 @@ using System.Linq;
 public class BaseLandmark {
     public int id { get; }
     public LandmarkNameplate nameplate { get; }
-    public List<LANDMARK_TAG> landmarkTags { get; private set; }
     public Vector2 nameplatePos { get; }
     public int invasionTicks { get; private set; }
     public Sprite landmarkPortrait { get; private set; }
@@ -34,7 +33,6 @@ public class BaseLandmark {
         _location = location;
         _specificLandmarkType = specificLandmarkType;
         SetName(RandomNameGenerator.GetLandmarkName(specificLandmarkType));
-        ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
         SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
@@ -46,11 +44,9 @@ public class BaseLandmark {
         }
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
-        landmarkTags = data.landmarkTags;
         SetInvasionTicks(data.invasionTicks);
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
@@ -129,15 +125,6 @@ public class BaseLandmark {
     }
     public override string ToString() {
         return this.landmarkName;
-    }
-    #endregion
-
-    #region Tags
-    private void ConstructTags(LandmarkData landmarkData) {
-        landmarkTags = new List<LANDMARK_TAG>(landmarkData.uniqueTags); //add unique tags
-        ////add common tags from base landmark type
-        //BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
-        //_landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
     }
     #endregion
 

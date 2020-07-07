@@ -54,14 +54,14 @@ public class SkillPanelUI : MonoBehaviour {
         //allowedWeaponsOptions.ClearOptions();
 
         //string[] attackCategories = System.Enum.GetNames(typeof(ATTACK_CATEGORY));
-        string[] elements = System.Enum.GetNames(typeof(ELEMENT));
-        string[] targetTypes = System.Enum.GetNames(typeof(TARGET_TYPE));
-        string[] skillTypes = System.Enum.GetNames(typeof(SKILL_TYPE));
+        //string[] elements = System.Enum.GetNames(typeof(ELEMENT));
+        //string[] targetTypes = System.Enum.GetNames(typeof(TARGET_TYPE));
+        //string[] skillTypes = System.Enum.GetNames(typeof(SKILL_TYPE));
 
         //attackTypeOptions.AddOptions(attackCategories.ToList());
-        elementOptions.AddOptions(elements.ToList());
-        targetTypeOptions.AddOptions(targetTypes.ToList());
-        skillTypeOptions.AddOptions(skillTypes.ToList());
+        //elementOptions.AddOptions(elements.ToList());
+        //targetTypeOptions.AddOptions(targetTypes.ToList());
+        //skillTypeOptions.AddOptions(skillTypes.ToList());
         //allowedWeaponsOptions.AddOptions(weaponTypes.ToList());
 
         allSkills = new List<string>();

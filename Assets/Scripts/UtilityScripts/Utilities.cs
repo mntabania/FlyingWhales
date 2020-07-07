@@ -1325,86 +1325,31 @@ namespace UtilityScripts {
         #endregion
 
         #region Characters
-        //This is the list of armor, set by priority, change if needed
-        public static List<ARMOR_TYPE> orderedArmorTypes = new List<ARMOR_TYPE>() {
-            ARMOR_TYPE.SHIRT,
-            ARMOR_TYPE.LEGGINGS,
-            ARMOR_TYPE.HELMET,
-            ARMOR_TYPE.BOOT,
-            ARMOR_TYPE.BRACER
-        };
-        public static WeightedDictionary<ARMOR_TYPE> weightedArmorTypes;
-        public static WeightedDictionary<ARMOR_TYPE> GetWeightedArmorTypes() {
-            if (weightedArmorTypes == null) {
-                weightedArmorTypes = new WeightedDictionary<ARMOR_TYPE>();
-                weightedArmorTypes.AddElement(ARMOR_TYPE.SHIRT, 100);
-                weightedArmorTypes.AddElement(ARMOR_TYPE.LEGGINGS, 80);
-                weightedArmorTypes.AddElement(ARMOR_TYPE.HELMET, 60);
-                weightedArmorTypes.AddElement(ARMOR_TYPE.BRACER, 40);
-                weightedArmorTypes.AddElement(ARMOR_TYPE.BOOT, 20);
-            }
-            return weightedArmorTypes;
-        }
         //public static bool IsRoleClassless(CHARACTER_ROLE role) {
         //    //if (role == CHARACTER_ROLE.WORKER) {
         //    //    return true;
         //    //}
         //    return false;
         //}
-        public static ITEM_TYPE GetItemTypeOfEquipment(EQUIPMENT_TYPE equipmentType) {
-            switch (equipmentType) {
-                case EQUIPMENT_TYPE.SWORD:
-                case EQUIPMENT_TYPE.DAGGER:
-                case EQUIPMENT_TYPE.SPEAR:
-                case EQUIPMENT_TYPE.BOW:
-                case EQUIPMENT_TYPE.STAFF:
-                case EQUIPMENT_TYPE.AXE:
-                    return ITEM_TYPE.WEAPON;
-                case EQUIPMENT_TYPE.SHIRT:
-                case EQUIPMENT_TYPE.BRACER:
-                case EQUIPMENT_TYPE.HELMET:
-                case EQUIPMENT_TYPE.LEGGINGS:
-                case EQUIPMENT_TYPE.BOOT:
-                    return ITEM_TYPE.ARMOR;
-                default:
-                    return ITEM_TYPE.WEAPON;
-            }
-        }
-        public static ATTACK_CATEGORY GetAttackCategoryByClass(Character character) {
-            switch (character.characterClass.className) {
-                case "Warrior":
-                case "Barbarian":
-                    return ATTACK_CATEGORY.PHYSICAL;
-                case "Arcanist":
-                case "Mage":
-                    return ATTACK_CATEGORY.MAGICAL;
-            }
-            return ATTACK_CATEGORY.PHYSICAL;
-        }
-        //0 = 0% combat/no combat, 50 = 50% combat, 100 = 100% combat/combat
-        public static Dictionary<MODE, Dictionary<MODE, int>> combatChanceGrid = new Dictionary<MODE, Dictionary<MODE, int>>() {
-            {MODE.DEFAULT,
-                new Dictionary<MODE, int>(){
-                    {MODE.DEFAULT, 100},
-                    {MODE.ALERT, 100},
-                    {MODE.STEALTH, 0},
-                }
-            },
-            {MODE.ALERT,
-                new Dictionary<MODE, int>(){
-                    {MODE.DEFAULT, 100},
-                    {MODE.ALERT, 100},
-                    {MODE.STEALTH, 50},
-                }
-            },
-            {MODE.STEALTH,
-                new Dictionary<MODE, int>(){
-                    {MODE.DEFAULT, 0},
-                    {MODE.ALERT, 50},
-                    {MODE.STEALTH, 0},
-                }
-            },
-        };
+        //public static ITEM_TYPE GetItemTypeOfEquipment(EQUIPMENT_TYPE equipmentType) {
+        //    switch (equipmentType) {
+        //        case EQUIPMENT_TYPE.SWORD:
+        //        case EQUIPMENT_TYPE.DAGGER:
+        //        case EQUIPMENT_TYPE.SPEAR:
+        //        case EQUIPMENT_TYPE.BOW:
+        //        case EQUIPMENT_TYPE.STAFF:
+        //        case EQUIPMENT_TYPE.AXE:
+        //            return ITEM_TYPE.WEAPON;
+        //        case EQUIPMENT_TYPE.SHIRT:
+        //        case EQUIPMENT_TYPE.BRACER:
+        //        case EQUIPMENT_TYPE.HELMET:
+        //        case EQUIPMENT_TYPE.LEGGINGS:
+        //        case EQUIPMENT_TYPE.BOOT:
+        //            return ITEM_TYPE.ARMOR;
+        //        default:
+        //            return ITEM_TYPE.WEAPON;
+        //    }
+        //}
         public static List<string> specialClasses = new List<string>() {
             "Necromancer",
             "Archmage",
@@ -1445,17 +1390,6 @@ namespace UtilityScripts {
                 return GENDER.MALE;
             }
             return GENDER.FEMALE;
-        }
-        #endregion
-
-        #region Character Tags
-        public static int GetTagWorldGenChance(ATTRIBUTE tag){
-            switch(tag){
-                //case ATTRIBUTE.RITUALIST:
-                //	return 13;
-                default:
-                    return 0;
-            }
         }
         #endregion
 
@@ -1606,20 +1540,6 @@ namespace UtilityScripts {
         public static TKey GetRandomKeyFromDictionary<TKey, TValue>(IDictionary<TKey, TValue> dict) {
             List<TKey> keys = Enumerable.ToList(dict.Keys);
             return keys[Rng.Next(dict.Count)];
-        }
-        #endregion
-
-        #region Magic
-        public static int GetMagicAmountByAbundance(ABUNDANCE abundance) {
-            switch (abundance) {
-                case ABUNDANCE.HIGH:
-                    return Rng.Next(80,101);
-                case ABUNDANCE.MED:
-                    return Rng.Next(30, 80);
-                case ABUNDANCE.LOW:
-                    return Rng.Next(5, 30);
-            }
-            return 0;
         }
         #endregion
 

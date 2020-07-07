@@ -182,21 +182,6 @@ public class CharacterClass {
         return newClass;
     }
 
-    public void SetData(ClassComponent classComponent) {
-        this._className = classComponent.className;
-        //this._baseAttackPower = classComponent.baseAttackPower;
-        //this._attackPowerPerLevel = classComponent.attackPowerPerLevel;
-        //this._baseSpeed = classComponent.baseSpeed;
-        //this._speedPerLevel = classComponent.speedPerLevel;
-        //this._baseHP = classComponent.baseHP;
-        //this._hpPerLevel = (float)classComponent.hpPerLevel;
-        //this._workActionType = classComponent.workActionType;
-        //this._dodgeRate = classComponent.dodgeRate;
-        //this._parryRate = classComponent.parryRate;
-        //this._blockRate = classComponent.blockRate;
-        //this._skillName = classComponent.skill.name;
-    }
-
     public void SetDataFromClassPanelUI() {
         this._className = ClassPanelUI.Instance.classNameInput.text;
         this._identifier = ClassPanelUI.Instance.identifierInput.text;

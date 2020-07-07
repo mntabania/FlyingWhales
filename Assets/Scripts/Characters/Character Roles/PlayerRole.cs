@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class PlayerRole : CharacterRole {
 
-    public PlayerRole() : base(CHARACTER_ROLE.PLAYER, "Normal", null) {
+    public PlayerRole() : base(CHARACTER_ROLE.PLAYER, "Normal") {
     }
 }

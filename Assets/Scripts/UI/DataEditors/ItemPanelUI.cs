@@ -108,14 +108,14 @@ public class ItemPanelUI : MonoBehaviour {
         //attributeOptions.ClearOptions();
         iconOptions.ClearOptions();
 
-        string[] itemTypes = System.Enum.GetNames(typeof(ITEM_TYPE));
-        string[] weaponTypes = System.Enum.GetNames(typeof(WEAPON_TYPE));
-        string[] armorTypes = System.Enum.GetNames(typeof(ARMOR_TYPE));
-        string[] weaponPrefixes = System.Enum.GetNames(typeof(WEAPON_PREFIX));
-        string[] weaponSuffixes = System.Enum.GetNames(typeof(WEAPON_SUFFIX));
-        string[] armorPrefixes = System.Enum.GetNames(typeof(ARMOR_PREFIX));
-        string[] armorSuffixes = System.Enum.GetNames(typeof(ARMOR_SUFFIX));
-        string[] elements = System.Enum.GetNames(typeof(ELEMENT));
+        //string[] itemTypes = System.Enum.GetNames(typeof(ITEM_TYPE));
+        //string[] weaponTypes = System.Enum.GetNames(typeof(WEAPON_TYPE));
+        //string[] armorTypes = System.Enum.GetNames(typeof(ARMOR_TYPE));
+        //string[] weaponPrefixes = System.Enum.GetNames(typeof(WEAPON_PREFIX));
+        //string[] weaponSuffixes = System.Enum.GetNames(typeof(WEAPON_SUFFIX));
+        //string[] armorPrefixes = System.Enum.GetNames(typeof(ARMOR_PREFIX));
+        //string[] armorSuffixes = System.Enum.GetNames(typeof(ARMOR_SUFFIX));
+        //string[] elements = System.Enum.GetNames(typeof(ELEMENT));
 
         //List<string> attributes = new List<string>();
         //string path = Utilities.dataPath + "Attributes/ITEM/";
@@ -130,14 +130,14 @@ public class ItemPanelUI : MonoBehaviour {
             _iconSprites.Add(icons[i].name, icons[i]);
         }
 
-        itemTypeOptions.AddOptions(itemTypes.ToList());
-        weaponTypeOptions.AddOptions(weaponTypes.ToList());
-        armorTypeOptions.AddOptions(armorTypes.ToList());
-        weaponPrefixOptions.AddOptions(weaponPrefixes.ToList());
-        weaponSuffixOptions.AddOptions(weaponSuffixes.ToList());
-        armorPrefixOptions.AddOptions(armorPrefixes.ToList());
-        armorSuffixOptions.AddOptions(armorSuffixes.ToList());
-        elementOptions.AddOptions(elements.ToList());
+        //itemTypeOptions.AddOptions(itemTypes.ToList());
+        //weaponTypeOptions.AddOptions(weaponTypes.ToList());
+        //armorTypeOptions.AddOptions(armorTypes.ToList());
+        //weaponPrefixOptions.AddOptions(weaponPrefixes.ToList());
+        //weaponSuffixOptions.AddOptions(weaponSuffixes.ToList());
+        //armorPrefixOptions.AddOptions(armorPrefixes.ToList());
+        //armorSuffixOptions.AddOptions(armorSuffixes.ToList());
+        //elementOptions.AddOptions(elements.ToList());
         //attributeOptions.AddOptions(attributes);
         iconOptions.AddOptions(_iconSprites.Keys.ToList());
 
@@ -193,14 +193,14 @@ public class ItemPanelUI : MonoBehaviour {
 #endif
     }
     private void SaveItemJson(string path) {
-        ITEM_TYPE itemType = (ITEM_TYPE) System.Enum.Parse(typeof(ITEM_TYPE), itemTypeOptions.options[itemTypeOptions.value].text);
-        if (itemType == ITEM_TYPE.WEAPON) {
-            SaveWeapon(path);
-        } else if (itemType == ITEM_TYPE.ARMOR) {
-            SaveArmor(path);
-        } else {
-            Save(path);
-        }
+        //ITEM_TYPE itemType = (ITEM_TYPE) System.Enum.Parse(typeof(ITEM_TYPE), itemTypeOptions.options[itemTypeOptions.value].text);
+        //if (itemType == ITEM_TYPE.WEAPON) {
+        //    SaveWeapon(path);
+        //} else if (itemType == ITEM_TYPE.ARMOR) {
+        //    SaveArmor(path);
+        //} else {
+        //    Save(path);
+        //}
     }
     private void SaveWeapon(string path) {
         
@@ -297,12 +297,12 @@ public class ItemPanelUI : MonoBehaviour {
         weaponFieldsGO.SetActive(false);
         armorFieldsGO.SetActive(false);
 
-        ITEM_TYPE itemType = (ITEM_TYPE) System.Enum.Parse(typeof(ITEM_TYPE), itemTypeOptions.options[index].text);
-        if(itemType == ITEM_TYPE.WEAPON) {
-            weaponFieldsGO.SetActive(true);
-        }else if (itemType == ITEM_TYPE.ARMOR) {
-            armorFieldsGO.SetActive(true);
-        }
+        //ITEM_TYPE itemType = (ITEM_TYPE) System.Enum.Parse(typeof(ITEM_TYPE), itemTypeOptions.options[index].text);
+        //if(itemType == ITEM_TYPE.WEAPON) {
+        //    weaponFieldsGO.SetActive(true);
+        //}else if (itemType == ITEM_TYPE.ARMOR) {
+        //    armorFieldsGO.SetActive(true);
+        //}
     }
     public void OnIconChange(int index) {
         string iconName = iconOptions.options[index].text;

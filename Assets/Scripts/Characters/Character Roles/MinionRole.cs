@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class MinionRole : CharacterRole {
 
-    public MinionRole() : base(CHARACTER_ROLE.MINION, "Demon", null) {
+    public MinionRole() : base(CHARACTER_ROLE.MINION, "Demon") {
     }
 }

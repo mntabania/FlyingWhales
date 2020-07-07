@@ -199,25 +199,6 @@ public enum LOG_IDENTIFIER{
     APPEND,
     OTHER_2,
 }
-public enum STRUCTURE_STATE {
-    NORMAL,
-    RUINED,
-}
-public enum WAR_SIDE{
-	NONE,
-	A,
-	B,
-}
-public enum ROAD_TYPE{
-    NONE,
-    MAJOR,
-	MINOR,
-	ALL,
-}
-public enum LANDMARK_TAG {
-    CAN_HUNT,
-    CAN_SCAVENGE,
-}
 public enum LANDMARK_TYPE {
     NONE = 0,
     THE_PORTAL = 1,
@@ -247,65 +228,6 @@ public enum LANDMARK_TYPE {
     DEMONIC_PRISON,
     MINE,
 }
-public enum TECHNOLOGY {
-    //Weapon Production
-    BOW_MAKING,
-    SWORD_MAKING,
-    SPEAR_MAKING,
-    DAGGER_MAKING,
-    AXE_MAKING,
-    STAFF_MAKING,
-
-    //Armor Production
-    CHEST_ARMOR_MAKING,
-    LEGGINGS_MAKING,
-    HELMET_MAKING,
-    GLOVE_MAKING,
-    BOOT_MAKING,
-
-    //Construction
-    BASIC_FARMING,
-    ADVANCED_FARMING,
-    BASIC_HUNTING,
-    ADVANCED_HUNTING,
-    BASIC_MINING,
-    ADVANCED_MINING,
-    BASIC_WOODCUTTING,
-    ADVANCED_WOODCUTTING,
-    BASIC_QUARRYING,
-    ADVANCED_QUARRYING,
-
-    //Training Tier 1
-    ARCHER_CLASS,
-    SWORDSMAN_CLASS,
-    SPEARMAN_CLASS,
-    WILDLING_CLASS,
-    ROGUE_CLASS,
-    MAGE_CLASS,
-
-    //Training Tier 2
-    RANGER_CLASS,
-    BATTLEMAGE_CLASS,
-    SCOUT_CLASS,
-    BARBARIAN_CLASS,
-    KNIGHT_CLASS,
-    ARCANIST_CLASS,
-    NIGHTBLADE_CLASS,
-
-    //Unlock character roles
-    ESPIONAGE,
-    DIPLOMACY,
-    NECROMANCY,
-    DRAGON_TAMING,
-
-    //Miscellaneous
-    GOBLIN_LANGUAGE,
-    ELVEN_LANGUAGE,
-    HUMAN_LANGUAGE,
-    TROLL_LANGUAGE,
-
-	NONE,
-}
 public enum CHARACTER_ROLE {
     NONE,
     CIVILIAN,
@@ -318,75 +240,11 @@ public enum CHARACTER_ROLE {
     ADVENTURER,
     MINION,
 }
-public enum CHARACTER_CLASS {
-    WARRIOR,
-    BARBARIAN,
-    SHOPKEEPER,
-    MINER,
-    WOODCUTTER,
-    FARMER,
-    RETIRED_HERO
-}
-public enum QUEST_TYPE { 
-    RELEASE_CHARACTER,
-    BUILD_STRUCTURE,
-    FETCH_ITEM,
-    SURRENDER_ITEMS,
-}
 public enum FACTION_RELATIONSHIP_STATUS {
     FRIENDLY,
     HOSTILE,
     COLD_WAR,
 }
-//---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
-//public enum BODY_PART{
-//	HEAD,
-//	TORSO,
-//	TAIL,
-//	ARM,
-//	HAND,
-//	LEG,
-//	FEET,
-//    HEART,
-//    BRAIN,
-//	EYE,
-//	NOSE,
-//	EAR,
-//	ELBOW,
-//	WRIST,
-//	FINGER,
-//	THIGH,
-//	KNEE,
-//	SHIN,
-//	BREAST,
-//	ABS,
-//	RIB,
-//	MOUTH,
-//	WING,
-//	HORN,
-//	HIP,
-//	CROTCH,
-//	ASS,
-//	PELVIS,
-//}
-
-public enum CHARACTER_CLASS_TYPE {
-    GENERAL,
-	NINJA
-}
-
-public enum SKILL_TYPE {
-    ATTACK,
-    HEAL,
-    OBTAIN_ITEM,
-    FLEE,
-    MOVE
-}
-public enum SKILL_CATEGORY {
-	GENERAL,
-	CLASS,
-}
-
 public enum ATTACK_TYPE {
     PHYSICAL,
     MAGICAL,
@@ -395,275 +253,14 @@ public enum RANGE_TYPE {
     MELEE,
     RANGED,
 }
-public enum DEFEND_TYPE {
-    DODGE,
-    PARRY,
-    BLOCK,
-	NONE,
-}
-public enum DAMAGE_TYPE {
-    NONE,
-    SLASH,
-    PIERCE,
-    MAGIC,
-    BASH,
-}
-public enum STATUS_EFFECT {
-    NONE,
-	INJURED,
-	DECAPITATED,
-    POISONED,
-    STUNNED,
-    BLEEDING,
-    BURNING,
-	CONFUSED,
-}
-public enum ITEM_TYPE{
-	WEAPON,
-	ARMOR,
-	CONSUMABLE,
-	KEY,
-    JUNK,
-    ACCESSORY,
-}
-
-public enum EQUIPMENT_TYPE {
-    NONE,
-    SWORD,
-    DAGGER,
-	SPEAR,
-    BOW,
-	STAFF,
-	AXE,
-    SHIRT,
-    BRACER,
-    HELMET,
-	LEGGINGS,
-	BOOT,
-    GREAT_SWORD,
-}
-
-public enum WEAPON_TYPE{
-	NONE = EQUIPMENT_TYPE.NONE,
-	SWORD = EQUIPMENT_TYPE.SWORD,
-	DAGGER = EQUIPMENT_TYPE.DAGGER,
-	SPEAR = EQUIPMENT_TYPE.SPEAR,
-	BOW = EQUIPMENT_TYPE.BOW,
-    STAFF = EQUIPMENT_TYPE.STAFF,
-	AXE = EQUIPMENT_TYPE.AXE,
-    GREAT_SWORD = EQUIPMENT_TYPE.GREAT_SWORD,
-}
-
-public enum ARMOR_TYPE{
-	NONE = EQUIPMENT_TYPE.NONE,
-	SHIRT = EQUIPMENT_TYPE.SHIRT,
-	BRACER = EQUIPMENT_TYPE.BRACER,
-	HELMET = EQUIPMENT_TYPE.HELMET,
-	LEGGINGS = EQUIPMENT_TYPE.LEGGINGS,
-	BOOT = EQUIPMENT_TYPE.BOOT,
-}
-public enum QUALITY{
-	NORMAL,
-	CRUDE,
-	EXCEPTIONAL,
-}
-public enum ATTRIBUTE{
-    SAPIENT,
-
-    HUNGRY,
-    STARVING,
-
-    FAMISHED,
-
-    TIRED,
-    EXHAUSTED,
-
-    SAD,
-    DEPRESSED,
-    
-    INSECURE,
-    DRUNK,
-
-    DISTURBED,
-    CRAZED,
-
-    ANXIOUS,
-    DEMORALIZED,
-
-    WOUNDED,
-    WRECKED,
-
-    IMPULSIVE,
-    BETRAYED,
-    HEARTBROKEN,
-
-    GREGARIOUS,
-    BOOKWORM,
-    DEAFENED,
-    MUTE,
-    SINGER,
-    ROYALTY,
-    DAYDREAMER,
-    MEDITATOR,
-    LIBERATED,
-    UNFAITHFUL,
-    DIRTY,
-    CLEANER,
-    DO_NOT_DISTURB,
-    INTROVERT,
-    EXTROVERT,
-    BELLIGERENT,
-    HUMAN,
-    STALKER,
-    SPOOKED,
-    MARKED,
-}
-public enum PRODUCTION_TYPE{
-	WEAPON,
-	ARMOR,
-	CONSTRUCTION,
-	TRAINING
-}
-public enum LOCATION_IDENTIFIER{
-	LANDMARK,
-	HEXTILE,
-}
-public enum MODE {
-    DEFAULT,
-    ALERT,
-    STEALTH
-}
-public enum ACTION_TYPE {
-    REST,
-    MOVE_TO,
-    HUNT,
-    DESTROY,
-    EAT,
-    BUILD,
-    REPAIR,
-    DRINK,
-    HARVEST,
-    IDLE,
-    POPULATE,
-    TORTURE,
-    PATROL,
-    ABDUCT,
-    DISPEL,
-    PRAY,
-    ATTACK,
-    JOIN_BATTLE,
-    GO_HOME,
-    RELEASE,
-    CLEANSE,
-    ENROLL,
-    TRAIN,
-    DAYDREAM,
-    BERSERK,
-    PLAY,
-    FLAIL,
-    SELFMUTILATE,
-    DEPOSIT,
-    CHANGE_CLASS,
-    CHAT,
-    WAITING,
-    DISBAND_PARTY,
-    FORM_PARTY,
-    IN_PARTY,
-    JOIN_PARTY,
-    GRIND,
-    MINING,
-    WOODCUTTING,
-    WORKING,
-    PARTY,
-    READ,
-    SING,
-    PLAYING_INSTRUMENT,
-    MEDITATE,
-    FOOLING_AROUND,
-    HOUSEKEEPING,
-    ARGUE,
-    STALK,
-    QUESTING,
-    FETCH,
-    WAIT_FOR_PARTY,
-    TURN_IN_QUEST,
-    SUICIDE,
-    DEFEND,
-    RESEARCH,
-    GIVE_ITEM,
-    ATTACK_LANDMARK,
-    HIBERNATE,
-    DEFENDER,
-    RAID_LANDMARK,
-}
 public enum ACTION_CATEGORY {
     DIRECT,
     INDIRECT,
     CONSUME,
 }
-
-public enum OBJECT_TYPE {
-    CHARACTER,
-    STRUCTURE,
-    ITEM,
-    NPC,
-    LANDMARK,
-    MONSTER,
-}
-
 public enum ACTION_RESULT {
     SUCCESS,
     FAIL,
-}
-public enum NEEDS {
-    FULLNESS,
-    ENERGY,
-    FUN,
-    PRESTIGE,
-    SANITY,
-    SAFETY,
-}
-
-public enum ACTION_FILTER_TYPE {
-    ROLE,
-    LOCATION,
-    CLASS,
-}
-public enum ACTION_FILTER_CONDITION {
-    IS,
-    IS_NOT,
-}
-
-public enum ACTION_FILTER {
-    HERO,
-    VILLAIN,
-    RUINED,
-    CIVILIAN,
-    FARMER,
-    MINER,
-    WOODCUTTER,
-}
-
-public enum PREREQUISITE {
-    RESOURCE,
-    ITEM,
-    POWER,
-}
-
-public enum PASSABLE_TYPE {
-    UNPASSABLE,
-    MAJOR_DEADEND,
-    MINOR_DEADEND,
-    MAJOR_BOTTLENECK,
-    MINOR_BOTTLENECK,
-    CROSSROAD,
-    WIDE_OPEN,
-    OPEN
-}
-public enum LEVEL {
-    HIGH,
-    AVERAGE,
-    LOW
 }
 public enum BASE_AREA_TYPE {
     SETTLEMENT,
@@ -676,120 +273,6 @@ public enum LOCATION_TYPE {
     DEMONIC_INTRUSION,
     DUNGEON,
     EMPTY,
-}
-public enum ELEMENT {
-    NONE,
-    FIRE,
-    WATER,
-    EARTH,
-    WIND,
-}
-public enum MONSTER_CATEGORY {
-    NORMAL,
-    BOSS,
-}
-
-public enum ATTACK_CATEGORY {
-    PHYSICAL,
-    MAGICAL,
-}
-
-public enum WEAPON_PREFIX {
-    NONE,
-}
-
-public enum WEAPON_SUFFIX {
-    NONE,
-}
-
-public enum ARMOR_PREFIX {
-    NONE,
-}
-
-public enum ARMOR_SUFFIX {
-    NONE,
-}
-
-public enum MESSAGE_BOX_MODE {
-    MESSAGE_ONLY,
-    YES_NO
-}
-
-public enum ICHARACTER_TYPE {
-    CHARACTER,
-    MONSTER,
-}
-
-public enum MOVEMENT_TYPE {
-    NORMAL,
-    AVOID
-}
-
-public enum TARGET_TYPE {
-    SINGLE,
-    PARTY,
-}
-public enum ATTRIBUTE_CATEGORY {
-    CHARACTER,
-    ITEM,
-    STRUCTURE,
-}
-public enum ATTRIBUTE_BEHAVIOR {
-    NONE,
-    DEPLETE_FUN,
-}
-public enum SCHEDULE_PHASE_TYPE {
-    WORK,
-    MISC,
-    SPECIAL,
-}
-public enum SCHEDULE_ACTION_CATEGORY {
-    NONE,
-    REST,
-    WORK,
-}
-public enum ABUNDANCE {
-    NONE,
-    HIGH,
-    MED,
-    LOW,
-}
-public enum HIDDEN_DESIRE {
-    NONE,
-    SECRET_AFFAIR,
-    RESEARCH_SCROLL,
-}
-public enum GAME_EVENT {
-    SECRET_MEETING,
-    MONSTER_ATTACK,
-    TEST_EVENT,
-    DRAGON_ATTACK,
-    SUICIDE,
-    RESEARCH_SCROLLS,
-    PARTY_EVENT,
-}
-public enum EVENT_PHASE {
-    PREPARATION,
-    PROPER,
-}
-public enum ABILITY_TYPE {
-    ALL,
-    CHARACTER,
-    STRUCTURE,
-    MONSTER,
-}
-public enum QUEST_GIVER_TYPE {
-    QUEST_BOARD,
-    CHARACTER,
-}
-public enum COMBATANT_TYPE {
-    CHARACTER,
-    ARMY, //Party
-}
-public enum CURRENCY {
-    SUPPLY,
-    MANA,
-    IMP,
 }
 public enum STAT {
     HP,
@@ -819,10 +302,6 @@ public enum MORALITY {
     GOOD,
     EVIL,
     NEUTRAL,
-}
-public enum FACTION_SIZE {
-    MAJOR,
-    MINOR
 }
 public enum FACTION_TYPE {
     HOSTILE,
@@ -1012,28 +491,6 @@ public enum INTERACTION_TYPE {
     DRAW_MAGIC_CIRCLE,
     CULTIST_TRANSFORM
 }
-
-public enum INTERACTION_CATEGORY {
-    INVENTORY,
-    RECRUITMENT,
-    PERSONAL,
-    OFFENSE,
-    DEFENSE,
-    SOCIAL,
-    SUBTERFUGE,
-    SUPPLY,
-    DIPLOMACY,
-    EXPANSION,
-    FULLNESS_RECOVERY,
-    TIREDNESS_RECOVERY,
-    ROMANTIC,
-    SAVE,
-    SABOTAGE,
-    ASSISTANCE,
-    PERSONAL_EMPOWERMENT,
-    WORK,
-    OTHER,
-}
 public enum INTERRUPT {
     None,
     Accident,
@@ -1121,60 +578,6 @@ public enum TRAIT_REQUIREMENT_CHECKER {
     ALL_PARTY_MEMBERS,
     ALL_IN_COMBAT,
     ALL_ENEMIES,
-}
-public enum JOB {
-    NONE,
-    INSTIGATOR,
-    EXPLORER,
-    DIPLOMAT,
-    SEDUCER,
-    RAIDER,
-    SPY,
-    DEBILITATOR,
-    LEADER,
-    WORKER,
-}
-//public enum SPECIAL_TOKEN {
-//    BLIGHTED_POTION,
-//    BOOK_OF_THE_DEAD,
-//    CHARM_SPELL,
-//    FEAR_SPELL,
-//    MARK_OF_THE_WITCH,
-//    BRAND_OF_THE_BEASTMASTER,
-//    BOOK_OF_WIZARDRY,
-//    SECRET_SCROLL,
-//    MUTAGENIC_GOO,
-//    DISPEL_SCROLL,
-//    PANACEA,
-//    JUNK,
-//    HEALING_POTION,
-//    ENCHANTED_AMULET,
-//    GOLDEN_NECTAR,
-//    SCROLL_OF_POWER,
-//    ACID_FLASK,
-//    SCROLL_OF_FRENZY,
-//    TOOL,
-//    WATER_BUCKET,
-//}
-public enum COMBAT_POSITION {
-    FRONTLINE,
-    BACKLINE,
-}
-public enum COMBAT_TARGET {
-    SINGLE,
-    ALL,
-    FRONTROW,
-    BACKROW, //N/A
-    ROW,
-    COLUMN,
-    SINGLE_FRONTROW,
-    SINGLE_BACKROW, //N/A
-}
-public enum COMBAT_OCCUPIED_TILE {
-    SINGLE,
-    COLUMN,
-    ROW,
-    ALL,
 }
 public enum SPELL_TARGET {
     NONE,
