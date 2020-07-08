@@ -244,7 +244,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter, false)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter, false);
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter, false);
             }
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false);
@@ -268,7 +268,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter);
             }
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
@@ -299,7 +299,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter);
             }
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
@@ -371,7 +371,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
-                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+                FactionManager.Instance.vagrantFaction.JoinFaction(newCharacter);
             }
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);

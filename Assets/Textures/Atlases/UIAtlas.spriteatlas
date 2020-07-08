@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 7055522
+    totalSpriteSurfaceArea: 7056099
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -105,16 +105,17 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
   - {fileID: 21300000, guid: 5b15da026bff8444596c56e4941d0a5e, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
+  - {fileID: -7319396352633551538, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -4902642843917760881, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -1876928399738112333, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: 5460844314999936526, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: 8111521169853545773, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -3245737078341706568, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -9117326914685285593, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -249298715137947318, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: -1317307689901790000, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: 8771499588205160709, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
-  - {fileID: 5784058017249625838, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
+  - {fileID: -2974455358559527292, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
+  - {fileID: 6816212366213478964, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
+  - {fileID: -5839074180369450957, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
+  - {fileID: -3821279244680687459, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: 21300000, guid: b6303b1211fb90d498597fc6b939e2e1, type: 3}
   - {fileID: 21300000, guid: 32961622a5d8f21419cf1e02fc3f5f74, type: 3}
   - {fileID: 21300000, guid: cedec622ca7c924479b4d362719e2991, type: 3}
@@ -523,6 +524,7 @@ SpriteAtlas:
   - tutorial_goal_checkbox_complete
   - button_intel_disabled
   - tab_traits_inactive
+  - Text_Sprites_10
   - Text_Sprites_8
   - Text_Sprites_9
   - Text_Sprites_4

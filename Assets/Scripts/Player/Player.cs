@@ -139,7 +139,7 @@ public class Player : ILeader, IObjectManipulator {
 
     #region Faction
     public void CreatePlayerFaction() {
-        Faction faction = FactionManager.Instance.CreateNewFaction(RACE.DEMON, true, "Player faction");
+        Faction faction = FactionManager.Instance.CreateNewFaction(FACTION_TYPE.Demons, "Player faction");
         faction.SetLeader(this);
         faction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(faction);

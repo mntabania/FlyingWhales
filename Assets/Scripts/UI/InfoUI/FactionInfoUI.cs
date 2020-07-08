@@ -248,7 +248,7 @@ public class FactionInfoUI : InfoUIBase {
         //if (!string.IsNullOrEmpty(summary)) {
         //    summary += "\n";
         //}
-        for (int i = 0; i < activeFaction.ideologyComponent.currentIdeologies.Length; i++) {
+        for (int i = 0; i < activeFaction.ideologyComponent.currentIdeologies.Count; i++) {
             FactionIdeology ideology = activeFaction.ideologyComponent.currentIdeologies[i];
             if (ideology != null) {
                 summary += $"\n{ideology.name}";

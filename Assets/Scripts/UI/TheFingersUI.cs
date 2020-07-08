@@ -58,34 +58,19 @@ public class TheFingersUI : MonoBehaviour {
     }
     public void OnClickCreateNewFaction() {
         if (CanCreateNewFaction()) {
-            Faction newFaction = FactionManager.Instance.CreateNewFaction(RACE.NONE, factionName: factionNameInput.text);
-            chosenLeader.ChangeFactionTo(newFaction);
-            newFaction.SetLeader(chosenLeader, false);
-
-            //for (int i = 0; i < ideologies.Count; i++) {
-            //    newFaction.ideologyComponent.SetCurrentIdeology(i, ideologies[i]);
-            //}
-            //newFaction.ideologyComponent.SwitchToIdeology((FACTION_IDEOLOGY) ideologyDropdown.value);
-            //if(newFaction.ideologyComponent.currentIdeologies.ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
-            //    Exclusive exclusiveIdeology = newFaction.ideologyComponent.currentIdeologies as Exclusive;
-            //    exclusiveIdeology.SetIndividualRequirements((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value, exclusiveIdeologyRequirementDropdown.options[exclusiveIdeologyRequirementDropdown.value].text);
-            //}
+            //TODO:
+            // Faction newFaction = FactionManager.Instance.CreateNewFaction(RACE.NONE, factionName: factionNameInput.text);
+            // chosenLeader.ChangeFactionTo(newFaction);
+            // newFaction.SetLeader(chosenLeader, false);
 
             Region regionLocation = chosenLeader.currentRegion;
-            //if (chosenLeader.currentRegion != null) {
-            //    regionLocation = chosenLeader.currentRegion;
-            //} else if (chosenLeader.currentArea != null) {
-            //    regionLocation = chosenLeader.currentArea.region;
-            //}
+            // Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
+            // log.AddToFillers(chosenLeader, chosenLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            // log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+            // log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+            // log.AddLogToInvolvedObjects();
+            // // PlayerManager.Instance.player.ShowNotificationFrom(log);
 
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
-            log.AddToFillers(chosenLeader, chosenLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
-            log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-            log.AddLogToInvolvedObjects();
-            // PlayerManager.Instance.player.ShowNotificationFrom(log);
-
-            //chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
 
             //fingers.Activate();
 
@@ -228,7 +213,7 @@ public class TheFingersUI : MonoBehaviour {
     private int ideologyCategoryIndex;
     public void ShowAppropriateIdeologyContent(FACTION_IDEOLOGY ideologyType, int index) {
         ideologyCategoryIndex = index;
-        if (ideologyType == FACTION_IDEOLOGY.EXCLUSIVE) {
+        if (ideologyType == FACTION_IDEOLOGY.Exclusive) {
             ShowExclusiveIdeology();
         } else {
             HideExclusiveIdeology();
@@ -239,7 +224,7 @@ public class TheFingersUI : MonoBehaviour {
 
     #region Exclusive Ideology
     public void OnClickOkExclusive() {
-        if (CanAddIdeology(FACTION_IDEOLOGY.EXCLUSIVE)) {
+        if (CanAddIdeology(FACTION_IDEOLOGY.Exclusive)) {
             ideologiesPicker[ideologyCategoryIndex].SetExclusiveRequirements((EXCLUSIVE_IDEOLOGY_CATEGORIES) exclusiveIdeologyCategoryDropdown.value, exclusiveIdeologyRequirementDropdown.options[exclusiveIdeologyRequirementDropdown.value].text);
             HideExclusiveIdeology();
         }
@@ -294,12 +279,13 @@ public class TheFingersUI : MonoBehaviour {
             for (int i = 0; i < races.Length; i++) {
                 exclusiveIdeologyRequirementDropdown.options.Add(new TMP_Dropdown.OptionData(races[i]));
             }
-        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
-            string[] traits = FactionManager.Instance.exclusiveIdeologyTraitRequirements;
-            for (int i = 0; i < traits.Length; i++) {
-                exclusiveIdeologyRequirementDropdown.options.Add(new TMP_Dropdown.OptionData(traits[i]));
-            }
-        }
+        } 
+        // else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.TRAIT) {
+        //     string[] traits = FactionManager.Instance.exclusiveIdeologyTraitRequirements;
+        //     for (int i = 0; i < traits.Length; i++) {
+        //         exclusiveIdeologyRequirementDropdown.options.Add(new TMP_Dropdown.OptionData(traits[i]));
+        //     }
+        // }
         exclusiveIdeologyRequirementDropdown.RefreshShownValue();
         exclusiveIdeologyRequirementDropdown.value = 0;
     }

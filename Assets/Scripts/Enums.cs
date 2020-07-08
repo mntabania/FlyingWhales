@@ -241,9 +241,9 @@ public enum CHARACTER_ROLE {
     MINION,
 }
 public enum FACTION_RELATIONSHIP_STATUS {
-    FRIENDLY,
-    HOSTILE,
-    COLD_WAR,
+    Friendly,
+    Hostile,
+    Neutral,
 }
 public enum ATTACK_TYPE {
     PHYSICAL,
@@ -268,8 +268,7 @@ public enum BASE_AREA_TYPE {
     PLAYER,
 }
 public enum LOCATION_TYPE {
-    ELVEN_SETTLEMENT,
-    HUMAN_SETTLEMENT,
+    SETTLEMENT,
     DEMONIC_INTRUSION,
     DUNGEON,
     EMPTY,
@@ -304,9 +303,14 @@ public enum MORALITY {
     NEUTRAL,
 }
 public enum FACTION_TYPE {
-    HOSTILE,
-    BALANCED,
-    DEFENSIVE,
+    Elven_Kingdom,
+    Human_Empire,
+    Demons,
+    Vagrants,
+    Wild_Monsters,
+    Bandits,
+    Undead,
+    Disguised
 }
 
 public enum INTERACTION_TYPE {
@@ -486,7 +490,10 @@ public enum INTERACTION_TYPE {
     BURN,
     LAY_EGG,
     TAKE_SHELTER,
-    IS_PLAGUED
+    IS_PLAGUED,
+    DARK_RITUAL,
+    DRAW_MAGIC_CIRCLE,
+    CULTIST_TRANSFORM
 }
 public enum INTERRUPT {
     None,
@@ -827,7 +834,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, ASSAULT_DEMONIC_STRUCTURE, RECOVER_HP, POISON_FOOD
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
-        , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER,
+        , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP
 }
 public enum JOB_OWNER { CHARACTER, LOCATION, QUEST, }
 public enum Cardinal_Direction { North, South, East, West };
@@ -924,6 +931,9 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
     GIANT_SPIDER, SMALL_SPIDER,
     SKELETON_ARCHER, SKELETON_BARBARIAN, SKELETON_CRAFTSMAN, SKELETON_DRUID, SKELETON_HUNTER, SKELETON_MAGE, SKELETON_KNIGHT, SKELETON_MINER, SKELETON_NOBLE, SKELETON_PEASANT, SKELETON_SHAMAN, SKELETON_STALKER,
     BRAINWASH, UNSUMMON, TRIGGER_FLAW,
+    CULTIST_TRANSFORM,
+    CULTIST_POISON,
+    CULTIST_BOOBY_TRAP
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -975,9 +985,9 @@ public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
-public enum FACTION_IDEOLOGY { INCLUSIVE = 0, EXCLUSIVE = 1, MILITARIST = 2, ECONOMIST = 3, DIVINE_WORSHIP = 4, NATURE_WORSHIP = 5, DEMON_WORSHIP = 6 }
+public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6 }
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
-public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
+public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage,
     Plague_Hysteria
@@ -1465,6 +1475,10 @@ public static class Extensions {
             case JOB_TYPE.DECREASE_MOOD:
             case JOB_TYPE.DISABLE:
             case JOB_TYPE.ARSON:
+            case JOB_TYPE.DARK_RITUAL:
+            case JOB_TYPE.CULTIST_TRANSFORM:
+            case JOB_TYPE.CULTIST_POISON:
+            case JOB_TYPE.CULTIST_BOOBY_TRAP:
                 priority = 830;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
@@ -1794,18 +1808,6 @@ public static class Extensions {
                 }
         }
         
-    }
-    #endregion
-
-    #region Areas
-    public static bool IsSettlementType(this LOCATION_TYPE type) {
-        switch (type) {
-            case LOCATION_TYPE.ELVEN_SETTLEMENT:
-            case LOCATION_TYPE.HUMAN_SETTLEMENT:
-                return true;
-            default:
-                return false;
-        }
     }
     #endregion
 

@@ -755,7 +755,7 @@ namespace UtilityScripts {
             return "<sprite=\"Text_Sprites\" name=\"Monster_Icon\"> ";
         }
         public static string VillagerIcon() {
-            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\">";
+            return "<sprite=\"Text_Sprites\" name=\"Villager_Icon\"> ";
         }
         public static string ManaIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Mana_Icon\"> ";
@@ -768,6 +768,9 @@ namespace UtilityScripts {
         }
         public static string CooldownIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Cooldown_Icon\"> ";
+        }
+        public static string CultistIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\"> ";
         }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
@@ -1298,12 +1301,6 @@ namespace UtilityScripts {
         //             return BASE_LANDMARK_TYPE.NONE;
         //     }
         // }
-        public static LOCATION_TYPE RandomSettlementType() {
-            if (UnityEngine.Random.Range(0, 2) == 0) {
-                return LOCATION_TYPE.ELVEN_SETTLEMENT;
-            }
-            return LOCATION_TYPE.HUMAN_SETTLEMENT;
-        }
         #endregion
 
         #region File Utilities
@@ -1706,6 +1703,6 @@ namespace UtilityScripts {
             int random = UnityEngine.Random.Range(0, values.Length);
             return (T) values.GetValue(random);
         }
-    
+        
     }
 }

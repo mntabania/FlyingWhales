@@ -44,7 +44,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 			var structureTypes = WorldConfigManager.Instance.isDemoWorld ? 
 				new List<STRUCTURE_TYPE>() {STRUCTURE_TYPE.CITY_CENTER, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.MINE_SHACK, STRUCTURE_TYPE.INN} : 
-				GenerateStructures(npcSettlement);
+				GenerateStructures(npcSettlement, faction);
 			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
 			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
 
@@ -86,20 +86,20 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 
 	#region Settlement Structures
-	private List<STRUCTURE_TYPE> GenerateStructures(NPCSettlement settlement) {
+	private List<STRUCTURE_TYPE> GenerateStructures(NPCSettlement settlement, Faction faction) {
 		List<STRUCTURE_TYPE> structureTypes = new List<STRUCTURE_TYPE> { STRUCTURE_TYPE.CITY_CENTER };
 		for (int i = 1; i < settlement.tiles.Count; i++) {
 			HexTile tile = settlement.tiles[i];
-			WeightedDictionary<STRUCTURE_TYPE> structuresChoices = GetStructureWeights(tile, structureTypes, settlement);
+			WeightedDictionary<STRUCTURE_TYPE> structuresChoices = GetStructureWeights(tile, structureTypes, faction);
 			STRUCTURE_TYPE chosenStructureType = structuresChoices.PickRandomElementGivenWeights();
 			structureTypes.Add(chosenStructureType);
 		}
 		return structureTypes;
 	}
-	private WeightedDictionary<STRUCTURE_TYPE> GetStructureWeights(HexTile tile, List<STRUCTURE_TYPE> structureTypes, NPCSettlement settlement) {
+	private WeightedDictionary<STRUCTURE_TYPE> GetStructureWeights(HexTile tile, List<STRUCTURE_TYPE> structureTypes, Faction faction) {
 		WeightedDictionary<STRUCTURE_TYPE> structureWeights = new WeightedDictionary<STRUCTURE_TYPE>();
 
-		if (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT) {
+		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.APOTHECARY) == false) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(STRUCTURE_TYPE.APOTHECARY, 6);
@@ -113,7 +113,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD,
 					structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD) == false ? 15 : 2);
 			}
-		} else if (settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
+		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
 				//Mage Quarter: +6 (disable if already selected from previous hex tile)
 				structureWeights.AddElement(STRUCTURE_TYPE.MAGE_QUARTERS, 6);
@@ -347,24 +347,28 @@ public class SettlementGeneration : MapGenerationComponent {
 	private LOCATION_TYPE GetLocationTypeForRace(RACE race) {
 		switch (race) {
 			case RACE.HUMANS:
-				return LOCATION_TYPE.HUMAN_SETTLEMENT;
 			case RACE.ELVES:
-				return LOCATION_TYPE.ELVEN_SETTLEMENT;
+				return LOCATION_TYPE.SETTLEMENT;
 			default:
 				throw new Exception($"There was no location type provided for race {race.ToString()}");
 		}
 	}
 	private Faction GetFactionToOccupySettlement(RACE race) {
+		FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForRace(race);
 		List<Faction> factions = FactionManager.Instance.GetMajorFactionWithRace(race);
+		Faction chosenFaction;
 		if (factions == null) {
-			return FactionManager.Instance.CreateNewFaction(race);
+			chosenFaction = FactionManager.Instance.CreateNewFaction(factionType);
+			chosenFaction.factionType.SetAsDefault();
 		} else {
 			if (GameUtilities.RollChance(35)) {
-				return CollectionUtilities.GetRandomElement(factions);
+				chosenFaction = CollectionUtilities.GetRandomElement(factions);
 			} else {
-				return FactionManager.Instance.CreateNewFaction(race);	
+				chosenFaction = FactionManager.Instance.CreateNewFaction(factionType);
+				chosenFaction.factionType.SetAsDefault();
 			}
 		}
+		return chosenFaction;
 	}
 	#endregion
 	

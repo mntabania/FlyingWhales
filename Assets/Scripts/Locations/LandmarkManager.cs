@@ -313,7 +313,7 @@ public partial class LandmarkManager : MonoBehaviour {
         List<NPCSettlement> villages = null;
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if(settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
+            if(settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
                 if(villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }
@@ -327,7 +327,7 @@ public partial class LandmarkManager : MonoBehaviour {
         List<NPCSettlement> villages = null;
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.SETTLEMENT)) {
                 if (villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }
@@ -340,7 +340,7 @@ public partial class LandmarkManager : MonoBehaviour {
     public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)
+            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.SETTLEMENT)
                 && settlement.HasAliveResident()) {
                 return settlement;
             }

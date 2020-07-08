@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Factions.Faction_Types;
 using UnityEngine.UI;
 
 public class FactionManager : MonoBehaviour {
@@ -10,7 +12,7 @@ public class FactionManager : MonoBehaviour {
 
     public List<Faction> allFactions = new List<Faction>();
     public Faction neutralFaction { get; private set; }
-    public Faction friendlyNeutralFaction { get; private set; }
+    public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
     private Faction _undeadFaction;
 
@@ -22,9 +24,9 @@ public class FactionManager : MonoBehaviour {
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
     public readonly FACTION_IDEOLOGY[][] categorizedFactionIdeologies = new FACTION_IDEOLOGY[][] { 
-        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.INCLUSIVE }, //, FACTION_IDEOLOGY.EXCLUSIVE
-        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.MILITARIST, FACTION_IDEOLOGY.ECONOMIST },
-        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.NATURE_WORSHIP, FACTION_IDEOLOGY.DIVINE_WORSHIP, FACTION_IDEOLOGY.DEMON_WORSHIP },
+        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.Inclusive }, //, FACTION_IDEOLOGY.EXCLUSIVE
+        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.Warmonger, FACTION_IDEOLOGY.Peaceful },
+        new FACTION_IDEOLOGY[] { FACTION_IDEOLOGY.Nature_Worship, FACTION_IDEOLOGY.Divine_Worship, FACTION_IDEOLOGY.Demon_Worship },
     };
 
     #region getters
@@ -43,69 +45,66 @@ public class FactionManager : MonoBehaviour {
     }
 
     #region Faction Generation
-    public void CreateNeutralFaction() {
-        Faction newFaction = new Faction(RACE.NONE);
-        newFaction.SetName("Neutral");
+    public void CreateWildMonsterFaction() {
+        Faction newFaction = new Faction(FACTION_TYPE.Wild_Monsters);
+        newFaction.SetName("Wild Monsters");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
+        newFaction.factionType.SetAsDefault();
         allFactions.Add(newFaction);
         SetNeutralFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
-    public void CreateFriendlyNeutralFaction() {
-        Faction newFaction = new Faction(RACE.HUMANS);
+    public void CreateVagrantFaction() {
+        Faction newFaction = new Faction(FACTION_TYPE.Vagrants);
         newFaction.SetName("Vagrants");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
+        newFaction.factionType.SetAsDefault();
         allFactions.Add(newFaction);
-        SetFriendlyNeutralFaction(newFaction);
+        SetVagrantFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
     public void CreateDisguisedFaction() {
-        Faction newFaction = new Faction(RACE.NONE);
+        Faction newFaction = new Faction(FACTION_TYPE.Disguised);
         newFaction.SetName("Disguised");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
+        newFaction.factionType.SetAsDefault();
         allFactions.Add(newFaction);
         SetDisguisedFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
-    public void SetNeutralFaction(Faction faction) {
+    private void SetNeutralFaction(Faction faction) {
         neutralFaction = faction;
     }
-    public void SetFriendlyNeutralFaction(Faction faction) {
-        friendlyNeutralFaction = faction;
+    private void SetVagrantFaction(Faction faction) {
+        vagrantFaction = faction;
     }
-    public void SetDisguisedFaction(Faction faction) {
+    private void SetDisguisedFaction(Faction faction) {
         disguisedFaction = faction;
     }
-    public Faction CreateNewFaction(RACE race, bool isPlayerFaction = false, string factionName = "") {
-        Faction newFaction = new Faction(race, isPlayerFaction);
+    public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
+        Faction newFaction = new Faction(factionType);
         allFactions.Add(newFaction);
         CreateRelationshipsForFaction(newFaction);
-        //CreateFavorsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
         }
         newFaction.SetIsMajorFaction(true);
-        if (!isPlayerFaction) {
-            //newFaction.ideologyComponent.RerollIdeologies();
-            //newFaction.ideologyComponent.SwitchToIdeology(FACTION_IDEOLOGY.INCLUSIVE);
+        if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
         return newFaction;
     }
     private Faction CreateUndeadFaction() {
-        Faction undead = CreateNewFaction(RACE.NONE, factionName: "Undead");
+        Faction undead = CreateNewFaction(FACTION_TYPE.Undead, "Undead");
         undead.SetIsMajorFaction(false);
         foreach (KeyValuePair<Faction,FactionRelationship> pair in undead.relationships) {
-            undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+            undead.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.Hostile);
         }
         return undead;
     }
@@ -210,7 +209,7 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Relationships
-    public void CreateRelationshipsForFaction(Faction faction) {
+    private void CreateRelationshipsForFaction(Faction faction) {
         for (int i = 0; i < allFactions.Count; i++) {
             Faction otherFaction = allFactions[i];
             if(otherFaction.id != faction.id) {
@@ -226,21 +225,23 @@ public class FactionManager : MonoBehaviour {
             }
         }
     }
-    /*
-     Create a new relationship between 2 factions,
-     then add add a reference to that relationship, to both of the factions.
-         */
+    /// <summary>
+    /// Create a new relationship between 2 factions,
+    /// then add add a reference to that relationship, to both of the factions.
+    /// </summary>
+    /// <param name="faction1">First faction</param>
+    /// <param name="faction2">Other faction</param>
+    /// <returns>Created relationship</returns>
     public FactionRelationship CreateNewRelationshipBetween(Faction faction1, Faction faction2) {
         FactionRelationship newRel = new FactionRelationship(faction1, faction2);
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
-        // if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
-            if(faction1.isPlayerFaction || faction2.isPlayerFaction || faction1 == neutralFaction || faction2 == neutralFaction
-            || faction1 == _undeadFaction || faction2 == _undeadFaction) {
-                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
-                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
-            }
-        // }
+        if(faction1.isPlayerFaction || faction2.isPlayerFaction || 
+           faction1 == neutralFaction || faction2 == neutralFaction || 
+           faction1 == _undeadFaction || faction2 == _undeadFaction) {
+            faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
+            faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);
+        }
         return newRel;
     }
     /*
@@ -266,12 +267,12 @@ public class FactionManager : MonoBehaviour {
     #endregion
 
     #region Faction Ideologies
-    public FactionIdeology CreateIdeology(FACTION_IDEOLOGY ideologyType) {
+    public T CreateIdeology<T>(FACTION_IDEOLOGY ideologyType) where T : FactionIdeology {
         string ideologyStr = ideologyType.ToString();
         var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
-            FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;
+            T data = System.Activator.CreateInstance(type) as T;
             return data;
         } else {
             throw new System.Exception($"{ideologyStr} has no data!");
@@ -279,6 +280,30 @@ public class FactionManager : MonoBehaviour {
     }
     #endregion
 
+    #region Faction Type
+    public FactionType CreateFactionType(FACTION_TYPE factionType) {
+        string enumStr = factionType.ToString();
+        var typeName = $"Factions.Faction_Types.{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(enumStr)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            FactionType data = Activator.CreateInstance(type) as FactionType;
+            return data;
+        } else {
+            throw new Exception($"{typeName} has no data!");
+        }
+    }
+    #endregion
+
+    public FACTION_TYPE GetFactionTypeForRace(RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+                return FACTION_TYPE.Human_Empire;
+            case RACE.ELVES:
+                return FACTION_TYPE.Elven_Kingdom;
+            default:
+                return FACTION_TYPE.Human_Empire;
+        }
+    }
 }
 
 [System.Serializable]

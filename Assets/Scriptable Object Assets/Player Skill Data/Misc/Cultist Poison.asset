@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
+  m_Name: Cultist Poison
+  m_EditorClassIdentifier: 
+  skill: 142
+  manaCost: -1
+  charges: -1
+  cooldown: 96
+  threat: 0
+  threatPerHour: 0
+  expCost: 0
+  buttonSprite: {fileID: 0}
+  tooltipVideoClip: {fileID: 0}
+  tooltipImage: {fileID: 0}

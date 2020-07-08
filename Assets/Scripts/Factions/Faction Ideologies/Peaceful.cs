@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Economist : FactionIdeology {
-    public Economist() : base(FACTION_IDEOLOGY.ECONOMIST) {
+public class Peaceful : FactionIdeology {
+    public Peaceful() : base(FACTION_IDEOLOGY.Peaceful) {
 
     }
 
     #region Overrides
     public override bool DoesCharacterFitIdeology(Character character) {
-        //Inclusive ideology accepts all characters
         return true;
     }
     #endregion

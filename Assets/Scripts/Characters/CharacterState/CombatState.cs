@@ -134,7 +134,7 @@ public class CombatState : CharacterState {
                     if(stateComponent.character.faction != null) {
                         stateComponent.character.faction.AddBannedCharacter(stateComponent.character);
                     }
-                    stateComponent.character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+                    stateComponent.character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
                 }
                 stateComponent.character.MigrateHomeStructureTo(null);
 

@@ -310,7 +310,7 @@ namespace Interrupts {
                 for (int i = 0; i < actor.faction.ownedSettlements.Count; i++) {
                     BaseSettlement baseSettlement = actor.faction.ownedSettlements[i];
                     if (baseSettlement != actor.homeSettlement) {
-                        if(baseSettlement.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || baseSettlement.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT) {
+                        if(baseSettlement.locationType == LOCATION_TYPE.SETTLEMENT) {
                             if (baseSettlement is NPCSettlement npcSettlement) {
                                 chosenDwelling = GetUnoccupiedDwelling(npcSettlement);
                                 if (chosenDwelling != null) {

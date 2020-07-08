@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Inclusive : FactionIdeology {
 
-    public Inclusive() : base(FACTION_IDEOLOGY.INCLUSIVE) {
+    public Inclusive() : base(FACTION_IDEOLOGY.Inclusive) {
 
     }
 

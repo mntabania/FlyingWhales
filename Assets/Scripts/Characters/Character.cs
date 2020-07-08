@@ -168,7 +168,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
     public bool isFriendlyFactionless { //is the character part of the friendly neutral faction? or no faction?
         get {
-            if (faction == null || FactionManager.Instance.friendlyNeutralFaction == faction) {
+            if (faction == null || FactionManager.Instance.vagrantFaction == faction) {
                 return true;
             } else {
                 return false;
@@ -1201,10 +1201,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnChangeFactionRelationship(Faction faction1, Faction faction2, FACTION_RELATIONSHIP_STATUS newStatus, FACTION_RELATIONSHIP_STATUS oldStatus) {
         if(faction1 == faction) {
-            if(newStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            if(newStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
                 //If at war with another faction, decrease hope 
                 needsComponent.AdjustHope(-5f);
-            }else if(oldStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE && newStatus != FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            }else if(oldStatus == FACTION_RELATIONSHIP_STATUS.Hostile && newStatus != FACTION_RELATIONSHIP_STATUS.Hostile) {
                 //If no longer at war with another faction, increase hope
                 needsComponent.AdjustHope(-5f);
             }

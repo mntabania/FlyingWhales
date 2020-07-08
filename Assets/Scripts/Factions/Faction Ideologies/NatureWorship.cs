@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NatureWorship : FactionIdeology {
 
-    public NatureWorship() : base(FACTION_IDEOLOGY.NATURE_WORSHIP) {
+    public NatureWorship() : base(FACTION_IDEOLOGY.Nature_Worship) {
 
     }
 

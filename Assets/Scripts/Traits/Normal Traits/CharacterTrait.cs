@@ -103,7 +103,7 @@ namespace Traits {
                     if(owner.isNormalCharacter 
                         && targetCharacter.isNormalCharacter 
                         && targetCharacter.gridTileLocation != null 
-                        && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.ELVEN_SETTLEMENT && settlement.locationType != LOCATION_TYPE.HUMAN_SETTLEMENT))
+                        && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
                         && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
                         owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
                     }

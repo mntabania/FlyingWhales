@@ -26,7 +26,7 @@
             //**Requirement:** Actor is in a non-npcSettlement region.
             var region = poiTarget.gridTileLocation.parentMap.region.coreTile.region;
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null &&
-                   region.locationType.IsSettlementType() == false;
+                   region.locationType != LOCATION_TYPE.SETTLEMENT;
         }
         return false;
     }

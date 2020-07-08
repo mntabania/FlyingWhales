@@ -79,8 +79,7 @@ public class CrimeManager : MonoBehaviour {
                     LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
                     if(structureLocation != null) {
                         if (structureLocation.settlementLocation != null
-                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT
-                            || structureLocation.settlementLocation.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.SETTLEMENT)) {
                             return CRIME_TYPE.MISDEMEANOR;
                         }
                     }
