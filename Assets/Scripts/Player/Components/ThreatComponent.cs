@@ -129,7 +129,7 @@ public class ThreatComponent {
                 SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
                 if(UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
                 LocationGridTile spawnTile = spawnHex.GetRandomTile();
-                Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.friendlyNeutralFaction, homeRegion: region);
+                Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
                 CharacterManager.Instance.PlaceSummon(angel, spawnTile);
                 angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
                 characters.Add(angel);

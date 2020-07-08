@@ -241,9 +241,9 @@ public enum CHARACTER_ROLE {
     MINION,
 }
 public enum FACTION_RELATIONSHIP_STATUS {
-    FRIENDLY,
-    HOSTILE,
-    COLD_WAR,
+    Friendly,
+    Hostile,
+    Neutral,
 }
 public enum ATTACK_TYPE {
     PHYSICAL,
@@ -268,8 +268,7 @@ public enum BASE_AREA_TYPE {
     PLAYER,
 }
 public enum LOCATION_TYPE {
-    ELVEN_SETTLEMENT,
-    HUMAN_SETTLEMENT,
+    SETTLEMENT,
     DEMONIC_INTRUSION,
     DUNGEON,
     EMPTY,
@@ -304,9 +303,14 @@ public enum MORALITY {
     NEUTRAL,
 }
 public enum FACTION_TYPE {
-    HOSTILE,
-    BALANCED,
-    DEFENSIVE,
+    Elven_Kingdom,
+    Human_Empire,
+    Demons,
+    Vagrants,
+    Wild_Monsters,
+    Bandits,
+    Undead,
+    Disguised
 }
 
 public enum INTERACTION_TYPE {
@@ -981,9 +985,9 @@ public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
-public enum FACTION_IDEOLOGY { INCLUSIVE = 0, EXCLUSIVE = 1, MILITARIST = 2, ECONOMIST = 3, DIVINE_WORSHIP = 4, NATURE_WORSHIP = 5, DEMON_WORSHIP = 6 }
+public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6 }
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
-public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
+public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage,
     Plague_Hysteria
@@ -1804,18 +1808,6 @@ public static class Extensions {
                 }
         }
         
-    }
-    #endregion
-
-    #region Areas
-    public static bool IsSettlementType(this LOCATION_TYPE type) {
-        switch (type) {
-            case LOCATION_TYPE.ELVEN_SETTLEMENT:
-            case LOCATION_TYPE.HUMAN_SETTLEMENT:
-                return true;
-            default:
-                return false;
-        }
     }
     #endregion
 

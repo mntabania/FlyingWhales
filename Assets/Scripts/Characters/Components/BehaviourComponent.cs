@@ -326,8 +326,7 @@ public class BehaviourComponent {
             settlement => settlement.residents.Count(c => c.isNormalCharacter && c.IsAble()) > 0);
         if (settlementsInRegion != null) {
             List<BaseSettlement> villageChoices = settlementsInRegion.Where(x =>
-                    x.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT ||
-                    x.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)
+                    x.locationType == LOCATION_TYPE.SETTLEMENT)
                 .ToList();
             if (villageChoices.Count > 0) {
                 //a random village occupied by Villagers within current region

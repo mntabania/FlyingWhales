@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class FactionIdeologyComponent {
     public Faction owner { get; private set; }
-    public FactionIdeology[] currentIdeologies { get; private set; }
+    public List<FactionIdeology> currentIdeologies => owner.factionType.ideologies;
 
     public FactionIdeologyComponent(Faction owner) {
         this.owner = owner;
-        currentIdeologies = new FactionIdeology[FactionManager.Instance.categorizedFactionIdeologies.Length];
     }
 
     //public void SwitchToIdeology(FACTION_IDEOLOGY ideologyType) {
@@ -17,40 +16,39 @@ public class FactionIdeologyComponent {
     //    currentIdeologies.SetRequirements(owner);
     //    ReEvaluateFactionMembers();
     //}
-    public void RerollIdeologies(bool willLog = true) {
-        FACTION_IDEOLOGY[][] categorizedIdeologies = FactionManager.Instance.categorizedFactionIdeologies;
-        for (int i = 0; i < currentIdeologies.Length; i++) {
-            FactionIdeology ideology = currentIdeologies[i];
-            FACTION_IDEOLOGY categorizedIdeology =
-                categorizedIdeologies[i][Random.Range(0, categorizedIdeologies[i].Length)];
-            ideology = FactionManager.Instance.CreateIdeology(categorizedIdeology);
-            ideology.SetRequirements(owner);
-            currentIdeologies[i] = ideology;
-        }
-        ReEvaluateFactionMembers(willLog);
-    }
-    public void SetCurrentIdeology(int index, FactionIdeology ideology) {
-        currentIdeologies[index] = ideology;
-    }
+    // public void RerollIdeologies(bool willLog = true) {
+    //     FACTION_IDEOLOGY[][] categorizedIdeologies = FactionManager.Instance.categorizedFactionIdeologies;
+    //     for (int i = 0; i < currentIdeologies.Length; i++) {
+    //         FactionIdeology ideology = currentIdeologies[i];
+    //         FACTION_IDEOLOGY categorizedIdeology =
+    //             categorizedIdeologies[i][Random.Range(0, categorizedIdeologies[i].Length)];
+    //         ideology = FactionManager.Instance.CreateIdeology<FactionIdeology>(categorizedIdeology);
+    //         ideology.SetRequirements(owner);
+    //         currentIdeologies[i] = ideology;
+    //     }
+    //     ReEvaluateFactionMembers(willLog);
+    // }
+    // public void SetCurrentIdeology(int index, FactionIdeology ideology) {
+    //     currentIdeologies[index] = ideology;
+    // }
     public bool DoesCharacterFitCurrentIdeologies(Character character) {
         if(currentIdeologies == null) { return true; }
-        for (int i = 0; i < currentIdeologies.Length; i++) {
+        for (int i = 0; i < currentIdeologies.Count; i++) {
             FactionIdeology ideology = currentIdeologies[i]; ;
             if(ideology != null && !ideology.DoesCharacterFitIdeology(character)) {
                 return false;
             }
         }
         return true;
-        //return currentIdeologies.DoesCharacterFitIdeology(character);
     }
 
-    private void ReEvaluateFactionMembers(bool willLog = true) {
-        for (int i = 0; i < owner.characters.Count; i++) {
-            Character member = owner.characters[i];
-            if(member == owner.leader) { continue; }
-            if (owner.CheckIfCharacterStillFitsIdeology(member, willLog)) {
-                i--;
-            }
-        }
-    }
+    // private void ReEvaluateFactionMembers(bool willLog = true) {
+    //     for (int i = 0; i < owner.characters.Count; i++) {
+    //         Character member = owner.characters[i];
+    //         if(member == owner.leader) { continue; }
+    //         if (owner.CheckIfCharacterStillFitsIdeology(member, willLog)) {
+    //             i--;
+    //         }
+    //     }
+    // }
 }

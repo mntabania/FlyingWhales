@@ -49,7 +49,7 @@ public class JudgeCharacter : GoapAction {
         int exile = 0;
 
         //Base Weights
-        if ((factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) || crimeData == null) {
+        if ((factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) || crimeData == null) {
             whip = 5;
             kill = 100;
             exile = 10;
@@ -79,13 +79,13 @@ public class JudgeCharacter : GoapAction {
             whip = Mathf.RoundToInt(whip * 1.5f);
             debugLog += "\n-Same Faction: absolve = x1.5, whip = x1.5, kill = x1, exile = x1";
         } else {
-            if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.COLD_WAR) {
+            if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
                 absolve = Mathf.RoundToInt(absolve * 0.5f);
                 whip = Mathf.RoundToInt(whip * 0.5f);
                 kill = Mathf.RoundToInt(kill * 1.5f);
                 exile *= 2;
                 debugLog += "\n-Cold War Faction: absolve = x0.5, whip = x0.5, kill = x1.5, exile = x2";
-            } else if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            } else if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
                 absolve = Mathf.RoundToInt(absolve * 0.2f);
                 whip = Mathf.RoundToInt(whip * 0.5f);
                 kill *= 2;

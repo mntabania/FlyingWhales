@@ -36,7 +36,7 @@ public class IdeologyPickerUI : MonoBehaviour {
     }
     public void OnClickEdit() {
         FACTION_IDEOLOGY currentIdeology = GetIdeologyDropdownValue();
-        if(currentIdeology == FACTION_IDEOLOGY.EXCLUSIVE) {
+        if(currentIdeology == FACTION_IDEOLOGY.Exclusive) {
             UIManager.Instance.regionInfoUI.fingersUI.UpdateExclusiveIdeologyContent(exclusiveCategory, exclusiveRequirement, categoryIndex);
         }
     }

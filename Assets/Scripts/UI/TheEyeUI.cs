@@ -30,7 +30,7 @@ public class TheEyeUI : MonoBehaviour {
         List<Character> targets = new List<Character>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.locationType.IsSettlementType() == false) {
+            if (currRegion.locationType != LOCATION_TYPE.SETTLEMENT) {
                 for (int j = 0; j < currRegion.charactersAtLocation.Count; j++) {
                     Character character = currRegion.charactersAtLocation[j];
                     if (character.currentActionNode?.poiTarget is TileObject) {

@@ -1301,12 +1301,6 @@ namespace UtilityScripts {
         //             return BASE_LANDMARK_TYPE.NONE;
         //     }
         // }
-        public static LOCATION_TYPE RandomSettlementType() {
-            if (UnityEngine.Random.Range(0, 2) == 0) {
-                return LOCATION_TYPE.ELVEN_SETTLEMENT;
-            }
-            return LOCATION_TYPE.HUMAN_SETTLEMENT;
-        }
         #endregion
 
         #region File Utilities

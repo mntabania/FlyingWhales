@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DivineWorship : FactionIdeology {
-    public DivineWorship() : base(FACTION_IDEOLOGY.DIVINE_WORSHIP) {
+    public DivineWorship() : base(FACTION_IDEOLOGY.Divine_Worship) {
 
     }
 

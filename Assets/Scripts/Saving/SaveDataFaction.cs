@@ -47,9 +47,9 @@ public class SaveDataFaction {
         race = faction.race;
         emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
         factionColor = faction.factionColor;
-        morality = faction.morality;
+        // morality = faction.morality;
         //size = faction.size;
-        factionType = faction.factionType;
+        // factionType = faction.factionType;
         isActive = faction.isActive;
         //requirementForJoining = faction.requirementForJoining;
 

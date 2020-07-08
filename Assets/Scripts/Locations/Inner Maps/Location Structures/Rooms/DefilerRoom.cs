@@ -74,7 +74,7 @@ namespace Inner_Maps.Location_Structures {
                     chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
                     //spawn skeleton to carry target
                     _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton,
-                        FactionManager.Instance.friendlyNeutralFaction, null, chosenTarget.currentRegion, className: "Archer");
+                        FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
                     _skeleton.SetShowNotificationOnDeath(false);
                     _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     _skeleton.SetDestroyMarkerOnDeath(true);

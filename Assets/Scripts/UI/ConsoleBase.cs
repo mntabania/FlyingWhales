@@ -86,6 +86,7 @@ public class ConsoleBase : InfoUIBase {
             {"/add_item", AddItemToCharacter },
             {"/null_home", ChangeCharacterHomeToNull },
             {"/damage_tile", DamageTile },
+            {"/create_faction", CreateFaction },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -974,6 +975,23 @@ public class ConsoleBase : InfoUIBase {
         }
         character1.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
         AddSuccessMessage($"{character1.name} joined faction {faction.name}");
+    }
+    private void CreateFaction(string[] parameters) {
+        if (parameters.Length != 1) { //parameters character
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of JoinFaction");
+            return;
+        }
+        string character1ParameterString = parameters[0];
+
+        Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
+
+        if (character1 == null) {
+            AddErrorMessage($"There is no character named {character1ParameterString}");
+            return;
+        }
+        character1.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character1);
+        AddSuccessMessage($"{character1.name} created faction {character1.faction.name}");
     }
     private void TriggerEmotion(string[] parameters) {
         if (parameters.Length != 3) { //parameters command, item

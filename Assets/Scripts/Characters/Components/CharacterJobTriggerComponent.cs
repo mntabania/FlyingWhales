@@ -1759,9 +1759,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Apprehend
     public bool TryCreateApprehend(Character target, ref bool canDoJob) {
         NPCSettlement settlementToGoTo = target.currentSettlement as NPCSettlement;
-        if(settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.ELVEN_SETTLEMENT && settlementToGoTo.locationType != LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+        if(settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
             settlementToGoTo = _owner.homeSettlement;
-            if (settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.ELVEN_SETTLEMENT && settlementToGoTo.locationType != LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+            if (settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
                 settlementToGoTo = null;
             }
         }

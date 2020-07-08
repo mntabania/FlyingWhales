@@ -12,7 +12,6 @@ public class FactionIdeology {
     }
 
     #region Virtuals
-    public virtual void SetRequirements(Faction faction) { }
     public virtual bool DoesCharacterFitIdeology(Character character) { return false; }
     public virtual string GetRequirementsForJoiningAsString() { return "None"; }
     #endregion

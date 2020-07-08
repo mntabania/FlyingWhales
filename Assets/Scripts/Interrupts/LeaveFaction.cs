@@ -14,7 +14,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Faction prevFaction = actor.faction;
-            if (actor.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction)) {
+            if (actor.ChangeFactionTo(FactionManager.Instance.vagrantFaction)) {
                 overrideEffectLog  = new Log(GameManager.Instance.Today(), "Interrupt", "Leave Faction", actor.interruptComponent.simultaneousIdentifier);
                 overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(prevFaction, prevFaction.name, LOG_IDENTIFIER.FACTION_1);

@@ -356,8 +356,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile neighbour = AllNeighbours[i];
             if (neighbour.settlementOnTile?.owner != null 
-                && (neighbour.settlementOnTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT 
-                    || neighbour.settlementOnTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT)) {
+                && (neighbour.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT)) {
                 return true;
             }
         }
@@ -391,7 +390,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return IsPartOfVillage() || IsNextToVillage();
     }
     public bool IsPartOfVillage() {
-        return settlementOnTile != null && (settlementOnTile.locationType == LOCATION_TYPE.ELVEN_SETTLEMENT || settlementOnTile.locationType == LOCATION_TYPE.HUMAN_SETTLEMENT);
+        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
     }
     public bool IsNextToVillage() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
