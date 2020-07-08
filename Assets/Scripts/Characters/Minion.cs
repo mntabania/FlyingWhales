@@ -31,7 +31,7 @@ public class Minion {
         character.SetMinion(this);
         //character.StartingLevel();
         SetAssignedDeadlySinName(character.characterClass.className);
-        character.ownParty.icon.SetVisualState(true);
+        character.avatar.SetVisualState(true);
         if (!keepData) {
             character.SetName(RandomNameGenerator.GenerateMinionName());
         }
@@ -54,7 +54,7 @@ public class Minion {
         traitsToAdd = data.traitsToAdd;
         SetIndexDefaultSort(data.indexDefaultSort);
         character.SetMinion(this);
-        character.ownParty.icon.SetVisualState(true);
+        character.avatar.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
         spellExtractionCount = data.spellExtractionCount;
         character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
@@ -93,11 +93,13 @@ public class Minion {
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
+            character.UncarryPOI();
             Character carrier = character.isBeingCarriedBy;
             if (carrier != null) {
                 carrier.UncarryPOI(character);
             }
-            character.ownParty.PartyDeath();
+            //character.ownParty.PartyDeath();
+            character.avatar.gameObject.SetActive(false);
             character.currentRegion?.RemoveCharacterFromLocation(character);
             character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             character.SetCurrentStructureLocation(deathStructure, false);

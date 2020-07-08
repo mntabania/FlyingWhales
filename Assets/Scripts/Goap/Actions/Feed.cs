@@ -44,7 +44,7 @@ public class Feed : GoapAction {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-            if ((poiTarget as Character).IsInOwnParty() == false) {
+            if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }
@@ -106,8 +106,8 @@ public class Feed : GoapAction {
     public void PreFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
-        if(goapNode.actor.ownParty.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        if(goapNode.actor.carryComponent.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             carriedPile.AdjustResourceInPile(-12);
             targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
         }
@@ -220,7 +220,7 @@ public class Feed : GoapAction {
                 }
             }
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is FoodPile) {
+        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is FoodPile) {
             //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             //return carriedPile.resourceInPile >= 12;
             return true;

@@ -29,7 +29,7 @@ public class Summon : Character {
         moodComponent.OnCharacterBecomeMinionOrSummon();
         moodComponent.SetMoodValue(50);
 
-        CreateOwnParty();
+        //CreateOwnParty();
         
         needsComponent.Initialize();
         
@@ -96,11 +96,13 @@ public class Summon : Character {
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
+            UncarryPOI();
             Character carrier = isBeingCarriedBy;
             if (carrier != null) {
                 carrier.UncarryPOI(this);
             }
-            ownParty.PartyDeath();
+            //ownParty.PartyDeath();
+            avatar.gameObject.SetActive(false);
             currentRegion?.RemoveCharacterFromLocation(this);
             SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             SetCurrentStructureLocation(deathStructure, false);

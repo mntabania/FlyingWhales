@@ -186,33 +186,33 @@ public class PartyInfoInfoUi : InfoUIBase {
             //dragged item was invalid
             item.ClearSlot(true);
         }
-        if (characterToAdd != null) {
-            if (characterToAdd.IsInParty()) {
-                if (currentlyShowingParty != null && characterToAdd.currentParty.id == currentlyShowingParty.id) {
-                    //the character to add is already part of the current party, if he/she is not in the party holder, allow placement, 
-                    //because he/she was probably dragged out, and can be returned
-                    if (!partyHolder.characters.Contains(characterToAdd)) {
-                        partyHolder.AddCharacter(characterToAdd);
-                    } else {
-                        //if the character is not in his/her own party (means he/she is already in another party)
-                        item.ClearSlot(true);
-                        Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
-                            $"{characterToAdd.name} is already part of this party!", true);
-                    }
-                } else {
-                    //if the character is not in his/her own party and is not part of the current party(means he/she is already in another party)
-                    item.ClearSlot(true);
-                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
-                        $"{characterToAdd.name} is already part of another party!", true);
-                }
-            } else if (partyHolder.characters.Contains(characterToAdd)) {
-                item.ClearSlot(true);
-                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
-                    $"{characterToAdd.name} is already part of this party!", true);
-            } else {
-                partyHolder.AddCharacter(characterToAdd);
-            }
-        }
+        //if (characterToAdd != null) {
+        //    if (characterToAdd.IsInParty()) {
+        //        if (currentlyShowingParty != null && characterToAdd.currentParty.id == currentlyShowingParty.id) {
+        //            //the character to add is already part of the current party, if he/she is not in the party holder, allow placement, 
+        //            //because he/she was probably dragged out, and can be returned
+        //            if (!partyHolder.characters.Contains(characterToAdd)) {
+        //                partyHolder.AddCharacter(characterToAdd);
+        //            } else {
+        //                //if the character is not in his/her own party (means he/she is already in another party)
+        //                item.ClearSlot(true);
+        //                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
+        //                    $"{characterToAdd.name} is already part of this party!", true);
+        //            }
+        //        } else {
+        //            //if the character is not in his/her own party and is not part of the current party(means he/she is already in another party)
+        //            item.ClearSlot(true);
+        //            Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
+        //                $"{characterToAdd.name} is already part of another party!", true);
+        //        }
+        //    } else if (partyHolder.characters.Contains(characterToAdd)) {
+        //        item.ClearSlot(true);
+        //        Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
+        //            $"{characterToAdd.name} is already part of this party!", true);
+        //    } else {
+        //        partyHolder.AddCharacter(characterToAdd);
+        //    }
+        //}
 
         OnChangesMade();
     }

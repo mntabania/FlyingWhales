@@ -32,7 +32,7 @@ public class DispelMagic : GoapAction {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-            if ((poiTarget as Character).IsInOwnParty() == false) {
+            if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }

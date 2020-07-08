@@ -49,7 +49,7 @@ public class DropResource : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        ResourcePile pile = node.actor.ownParty.carriedPOI as ResourcePile;
+        ResourcePile pile = node.actor.carryComponent.carriedPOI as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -66,7 +66,7 @@ public class DropResource : GoapAction {
 
     #region Preconditions
     private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is ResourcePile) {
             return true;
         }
         return false;
@@ -91,13 +91,13 @@ public class DropResource : GoapAction {
     public void PreDropSuccess(ActualGoapNode goapNode) {
         //int givenFood = goapNode.actor.food;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
-        ResourcePile pile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        ResourcePile pile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.resourceInPile.ToString()), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, pile.providedResource.ToString(), LOG_IDENTIFIER.STRING_2);
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
-        ResourcePile pile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        ResourcePile pile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
         if (goapNode.poiTarget is Table) {
             Table table = goapNode.poiTarget as Table;
             table.AdjustFood(pile.resourceInPile);

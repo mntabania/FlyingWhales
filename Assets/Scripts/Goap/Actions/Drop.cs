@@ -87,7 +87,7 @@ public class Drop : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget.IsAvailable() == false 
-            || (poiTarget.gridTileLocation == null && node.actor.ownParty.IsPOICarried(poiTarget) == false)) {
+            || (poiTarget.gridTileLocation == null && node.actor.carryComponent.IsPOICarried(poiTarget) == false)) {
             return true;
         }
         return false;

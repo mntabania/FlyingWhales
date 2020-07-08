@@ -14,7 +14,7 @@ public class Party {
     protected bool _isDead;
     protected bool _isAttacking;
     protected bool _isDefending;
-    protected CharacterAvatar _icon;
+    protected CharacterAvatar _avatar;
     protected Faction _attackedByFaction;
     //protected Combat _currentCombat;
     //protected NPCSettlement _specificLocation;
@@ -49,8 +49,8 @@ public class Party {
     //public List<Character> characters {
     //    get { return _characters; }
     //}
-    public CharacterAvatar icon {
-        get { return _icon; }
+    public CharacterAvatar avatar {
+        get { return _avatar; }
     }
     //public Character mainCharacter {
     //    get { return _characters[0]; }
@@ -104,17 +104,17 @@ public class Party {
     //}
 
     #region Virtuals
-    public virtual void CreateIcon() {
+    public virtual void CreateAvatar() {
         GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
         Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
 
-        _icon = characterIconGO.GetComponent<CharacterAvatar>();
-        _icon.Init(this);
+        _avatar = characterIconGO.GetComponent<CharacterAvatar>();
+        //_avatar.Init(this);
     }
     public virtual void ReturnToLife() {
         if (_isDead) {
             _isDead = false;
-            CreateIcon();
+            CreateAvatar();
             //this.specificLocation.AddCharacterToLocation(this);
         }
     }
@@ -135,7 +135,7 @@ public class Party {
         //     GameObject.Destroy(_icon.gameObject);
         //     _icon = null;
         // } else {
-            _icon.gameObject.SetActive(false);
+            _avatar.gameObject.SetActive(false);
         // }        
 
         //_currentCombat = null;
@@ -187,8 +187,8 @@ public class Party {
     private bool AddCharacter(Character character, bool isOwner) {
         if (carriedPOI == null) {
             carriedPOI = character;
-            character.SetCurrentParty(this);
-            character.OnAddedToParty(); //this will remove character from his/her location
+            //character.SetCurrentParty(this);
+            //character.OnAddedToParty(); //this will remove character from his/her location
 
             character.SetGridTileLocation(owner.gridTileLocation);
             character.SetCurrentStructureLocation(owner.currentStructure);
@@ -272,7 +272,7 @@ public class Party {
         //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
         //_owner.specificLocation.AddCharacterToLocation(character);
         carriedPOI = null;
-        character.OnRemovedFromParty();
+        //character.OnRemovedFromParty();
         if (dropLocation == null) {
             if (_owner.gridTileLocation.isOccupied) {
                 LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
@@ -293,7 +293,7 @@ public class Party {
         character.marker.transform.eulerAngles = Vector3.zero;
         character.marker.SetNameState(true);
 
-        character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
+        //character.ownParty.avatar.transform.position = owner.currentRegion.coreTile.transform.position;
         Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     public bool IsPOICarried(IPointOfInterest poi) {
@@ -310,7 +310,7 @@ public class Party {
     }
     public bool GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
-        if (_icon.isTravelling && _icon.travelLine != null) {
+        if (_avatar.isTravelling && _avatar.travelLine != null) {
             return true;
         }
         if (owner.currentRegion == targetLocation) {
@@ -331,8 +331,8 @@ public class Party {
     }
     private void MoveToAnotherLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
-        _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
-        _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
+        _avatar.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
+        _avatar.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
     }
     #endregion
 }

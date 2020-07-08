@@ -65,8 +65,8 @@ public class CharacterStateComponent {
         }
 
         //Stop the movement of character because the new state probably has different movement behavior
-        if(character.currentParty.icon.isTravelling) {
-            if (character.currentParty.icon.travelLine == null) {
+        if(character.avatar.isTravelling) {
+            if (character.avatar.travelLine == null) {
                 character.marker.StopMovement();
             }
         }
@@ -141,8 +141,8 @@ public class CharacterStateComponent {
         }
 
         //if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?
-            if (character.currentParty.icon.isTravelling) {
-                if (character.currentParty.icon.travelLine == null) {
+            if (character.avatar.isTravelling) {
+                if (character.avatar.travelLine == null) {
                     character.marker.StopMovement();
                 }
             }

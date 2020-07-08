@@ -75,7 +75,7 @@ public class BreakUp : GoapAction {
             if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
                 return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
             }
-            return target.IsInOwnParty();
+            return target.carryComponent.IsNotBeingCarried();
         }
         return false;
     }
@@ -181,6 +181,6 @@ public class BreakUpData : GoapActionData {
         if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
             return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
         }
-        return target.IsInOwnParty();
+        return target.carryComponent.IsNotBeingCarried();
     }
 }

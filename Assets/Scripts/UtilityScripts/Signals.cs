@@ -77,8 +77,8 @@ public static class Signals {
     public static string CHARACTER_TRAIT_STACKED = "OnCharacterTraitStacked";
     public static string CHARACTER_TRAIT_UNSTACKED = "OnCharacterTraitUnstacked";
     public static string CHARACTER_ADJUSTED_HP = "OnAdjustedHP";
-    public static string PARTY_STARTED_TRAVELLING = "OnPartyStartedTravelling"; //Parameters (Party travellingParty)
-    public static string PARTY_DONE_TRAVELLING = "OnPartyDoneTravelling"; //Parameters (Party travellingParty)
+    public static string CHARACTER_STARTED_TRAVELLING_OUTSIDE = "OnCharacterStartedTravellingOutside"; //Parameters (Character character)
+    public static string CHARACTER_DONE_TRAVELLING_OUTSIDE = "OnCharacterDoneTravellingOutside"; //Parameters (Character character)
     public static string CHARACTER_MIGRATED_HOME = "OnCharacterChangedHome"; //Parameters (Character, NPCSettlement previousHome, NPCSettlement newHome); 
     public static string CHARACTER_CHANGED_RACE = "OnCharacterChangedRace"; //Parameters (Character); 
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 

@@ -498,7 +498,7 @@ public class CombatState : CharacterState {
                 IPointOfInterest newClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostile();
                 if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
                     SetClosestHostile(newClosestHostile);
-                } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
+                } else if (currentClosestHostile != null && stateComponent.character.carryComponent.masterCharacter.avatar.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
                     log += $"\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
                     stateComponent.character.logComponent.PrintLogIfActive(log);
                     return;
@@ -567,7 +567,7 @@ public class CombatState : CharacterState {
 
     #region Attacking
     private void PursueClosestHostile() {
-        if (!stateComponent.character.currentParty.icon.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
+        if (!stateComponent.character.carryComponent.masterCharacter.avatar.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
             stateComponent.character.marker.GoToPOI(currentClosestHostile);    
         }
     }
@@ -684,7 +684,7 @@ public class CombatState : CharacterState {
         string summary = $"{stateComponent.character.name} will attack {currentClosestHostile?.name}";
         
         //When in range and in line of sight, stop movement
-        if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
+        if (stateComponent.character.carryComponent.masterCharacter.avatar.isTravelling && stateComponent.character.carryComponent.masterCharacter.avatar.travelLine == null) {
             stateComponent.character.marker.StopMovement();
             //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
             stateComponent.character.marker.SetTargetPOI(null);

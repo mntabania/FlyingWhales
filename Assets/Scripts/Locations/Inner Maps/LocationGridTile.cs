@@ -483,7 +483,7 @@ namespace Inner_Maps {
                    //&& character.faction.isMajorNonPlayer
                    && character.necromancerTrait == null
                    && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
-                   && character.marker != null && character.IsInOwnParty()
+                   && character.marker != null && character.carryComponent.IsNotBeingCarried()
                    && character.isAlliedWithPlayer == false
                    && !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
                    && (Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Invade_A_Village) || Settings.SettingsManager.Instance.settings.skipTutorials)) {

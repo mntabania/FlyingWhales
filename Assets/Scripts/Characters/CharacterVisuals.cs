@@ -151,9 +151,9 @@ public class CharacterVisuals {
         }
 
         //Travelling
-        if (_owner.currentParty.icon.isTravelling) {
-            if (_owner.currentParty.owner.marker.destinationTile != null) {
-                return $"<b>{_owner.name}</b> is going to {_owner.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
+        if (_owner.carryComponent.masterCharacter.avatar.isTravelling) {
+            if (_owner.carryComponent.masterCharacter.marker.destinationTile != null) {
+                return $"<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
             }
         }
 

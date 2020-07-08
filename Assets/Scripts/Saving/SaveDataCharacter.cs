@@ -306,7 +306,7 @@ public class SaveDataCharacter {
         }
         if (!isMinion && !isSummon && isDead) {
             //Do not process dead save data if character is a minion or summon, there is a separate process for that in Player
-            character.ownParty.PartyDeath();
+            //character.ownParty.PartyDeath();
             Region deathLocation = character.currentRegion;
             LocationStructure deathStructure = character.currentStructure;
             deathLocation?.RemoveCharacterFromLocation(character);

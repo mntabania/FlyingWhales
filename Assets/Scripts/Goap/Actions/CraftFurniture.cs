@@ -72,7 +72,7 @@ public class CraftFurniture : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is WoodPile) {
             //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             //return carriedPile.resourceInPile >= cost;
             return true;
@@ -85,8 +85,8 @@ public class CraftFurniture : GoapAction {
     #region State Effects
     public void PreCraftSuccess(ActualGoapNode goapNode) {
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)goapNode.otherData[1];
-        if(goapNode.actor.ownParty.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        if(goapNode.actor.carryComponent.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             int cost = TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost;
             carriedPile.AdjustResourceInPile(-cost);
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, cost);

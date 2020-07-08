@@ -275,7 +275,7 @@ public class GoapPlanJob : JobQueueItem {
         }
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;
-            return target.IsInOwnParty();
+            return target.carryComponent.IsNotBeingCarried();
             //if (target.IsInOwnParty()) {
             //    if (!allowDeadTargets && target.isDead) {
             //        return false;

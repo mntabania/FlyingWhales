@@ -99,8 +99,8 @@ public class Repair : GoapAction {
         TileObject tileObj = goapNode.poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int cost = (int) (data.constructionCost * 0.5f);
-        if (goapNode.actor.ownParty.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        if (goapNode.actor.carryComponent.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             carriedPile.AdjustResourceInPile(-cost);
             tileObj.AdjustResource(RESOURCE.WOOD, cost);
         }
@@ -133,7 +133,7 @@ public class Repair : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, craftCost)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is WoodPile) {
             //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             //return carriedPile.resourceInPile >= craftCost;
             return true;

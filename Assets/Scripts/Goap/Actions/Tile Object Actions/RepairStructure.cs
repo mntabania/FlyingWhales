@@ -72,14 +72,14 @@ public class RepairStructure : GoapAction {
             return true;
         }
         
-        if (actor.ownParty.isCarryingAnyPOI) {
+        if (actor.carryComponent.isCarryingAnyPOI) {
             switch (neededResourceType) {
                 case RESOURCE.WOOD:
-                    return actor.ownParty.carriedPOI is WoodPile;
+                    return actor.carryComponent.carriedPOI is WoodPile;
                 case RESOURCE.METAL:
-                    return actor.ownParty.carriedPOI is MetalPile;
+                    return actor.carryComponent.carriedPOI is MetalPile;
                 case RESOURCE.STONE:
-                    return actor.ownParty.carriedPOI is StonePile;
+                    return actor.carryComponent.carriedPOI is StonePile;
             }
             return false;
         }
@@ -90,8 +90,8 @@ public class RepairStructure : GoapAction {
     #region State Effects
     public void PreRepairSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-        if (goapNode.actor.ownParty.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        if (goapNode.actor.carryComponent.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             //place needed resources at structure tile object, this is so that if a character has already started 
             //repairing a particular structure, he/she will not need to get more resources if ever he/she is stopped.
             goapNode.poiTarget.AdjustResource(carriedPile.providedResource, carriedPile.resourceInPile);

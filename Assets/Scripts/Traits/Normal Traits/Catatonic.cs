@@ -54,7 +54,7 @@ namespace Traits {
             if (!owner.CanPlanGoap()) {
                 return;
             }
-            if (!owner.IsInOwnParty()) {
+            if (!owner.carryComponent.IsNotBeingCarried()) {
                 return;
             }
             if (owner.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {

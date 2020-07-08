@@ -114,9 +114,9 @@ namespace Traits {
             }
         }
         private void DropTransformingInfected() {
-            if (owner.isBeingCarriedBy != null && owner.isBeingCarriedBy.ownParty.IsPOICarried(owner)) {
+            if (owner.isBeingCarriedBy != null && owner.isBeingCarriedBy.carryComponent.IsPOICarried(owner)) {
                 owner.isBeingCarriedBy.StopCurrentActionNode();
-            } else if (owner.grave != null && owner.grave.isBeingCarriedBy != null && owner.grave.isBeingCarriedBy.ownParty.IsPOICarried(owner.grave)) {
+            } else if (owner.grave != null && owner.grave.isBeingCarriedBy != null && owner.grave.isBeingCarriedBy.carryComponent.IsPOICarried(owner.grave)) {
                 owner.grave.isBeingCarriedBy.StopCurrentActionNode();
             }
             if (owner.isBeingCarriedBy != null) {

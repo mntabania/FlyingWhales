@@ -291,7 +291,7 @@ public class MakeLove : GoapAction {
 
     #region Preconditions
     private bool IsTargetInvited(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        return actor.ownParty.IsPOICarried(poiTarget);
+        return actor.carryComponent.IsPOICarried(poiTarget);
     }
     #endregion
 
@@ -318,7 +318,7 @@ public class MakeLove : GoapAction {
             if (target.returnedToLife) { //do not woo characters that have been raised from the dead
                 return false;
             }
-            if (target.currentParty.icon.isTravellingOutside || target.currentRegion != actor.currentRegion) {
+            if (target.carryComponent.masterCharacter.avatar.isTravellingOutside || target.currentRegion != actor.currentRegion) {
                 return false; //target is outside the map
             }
             if (GetValidBedForActor(actor, target) == null) {
@@ -641,6 +641,6 @@ public class MakeLoveData : GoapActionData {
                 return false; //only lovers and affairs can make love
             }
         }
-        return target.IsInOwnParty();
+        return target.carryComponent.IsNotBeingCarried();
     }
 }

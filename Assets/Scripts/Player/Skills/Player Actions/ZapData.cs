@@ -25,7 +25,7 @@ public class ZapData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || !targetCharacter.IsInOwnParty() || targetCharacter.traitContainer.HasTrait("Zapped")) {
+        if (targetCharacter.isDead || !targetCharacter.carryComponent.IsNotBeingCarried() || targetCharacter.traitContainer.HasTrait("Zapped")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

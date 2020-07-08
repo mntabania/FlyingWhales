@@ -116,10 +116,10 @@ public class Invite : GoapAction {
             if (target.returnedToLife) { //do not woo characters that have been raised from the dead
                 return false;
             }
-            if (target.currentParty.icon.isTravellingOutside || target.currentRegion != actor.currentRegion) {
+            if (target.carryComponent.masterCharacter.avatar.isTravellingOutside || target.currentRegion != actor.currentRegion) {
                 return false; //target is outside the map
             }
-            return target.IsInOwnParty();
+            return target.carryComponent.IsNotBeingCarried();
         }
         return false;
     }
@@ -149,6 +149,6 @@ public class InviteData : GoapActionData {
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
             return false;
         }
-        return target.IsInOwnParty();
+        return target.carryComponent.IsNotBeingCarried();
     }
 }

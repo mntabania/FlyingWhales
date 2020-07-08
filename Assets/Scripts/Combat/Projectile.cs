@@ -28,7 +28,7 @@ public class Projectile : PooledObject {
     #region Monobehaviours
     private void OnDestroy() {
         // Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
@@ -56,7 +56,7 @@ public class Projectile : PooledObject {
             projectileParticles.Play();    
         }
         if (targetObject is Character) {
-            Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+            Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         } else if (targetObject is TileObject) {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
@@ -94,7 +94,7 @@ public class Projectile : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         // Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -131,9 +131,9 @@ public class Projectile : PooledObject {
     //         tween.Play();
     //     }
     // }
-    private void OnCharacterAreaTravelling(Party party) {
+    private void OnCharacterAreaTravelling(Character travellingCharacter) {
         if (targetObject is Character) {
-            if (party.owner == targetObject || party.carriedPOI == targetObject) { //party.characters.Contains(targetPOI as Character)
+            if (travellingCharacter == targetObject || travellingCharacter.carryComponent.carriedPOI == targetObject) { //party.characters.Contains(targetPOI as Character)
                 DestroyProjectile();
             }
         }

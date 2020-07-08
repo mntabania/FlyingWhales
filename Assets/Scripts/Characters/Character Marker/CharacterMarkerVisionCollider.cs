@@ -37,14 +37,14 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         if(!parentMarker || parentMarker.character == null) {
             return;
         }
-        if (!parentMarker.character.IsInOwnParty()) {
+        if (!parentMarker.character.carryComponent.IsNotBeingCarried()) {
             return;
         }
         POIVisionTrigger collidedWith = collision.gameObject.GetComponent<POIVisionTrigger>();
         if (collidedWith != null && collidedWith.damageable != null
             && collidedWith.damageable != parentMarker.character) {
             if (collidedWith.damageable is Character target) {
-                if (!target.IsInOwnParty()) {
+                if (!target.carryComponent.IsNotBeingCarried()) {
                     return;
                 }
             }
