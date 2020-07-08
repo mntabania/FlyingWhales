@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 using Pathfinding;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 
 public class MovementComponent {
@@ -123,6 +125,35 @@ public class MovementComponent {
     public void SetHasMovedOnCorruption(bool state) {
         hasMovedOnCorruption = state;
     }
+
+    #region Go To
+    public bool GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+        Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
+        if (owner.avatar.isTravelling && owner.avatar.travelLine != null) {
+            return true;
+        }
+        if (owner.currentRegion == targetLocation) {
+            //action doer is already at the target location
+            doneAction?.Invoke();
+            return true;
+        } else {
+            //_icon.SetActionOnTargetReached(doneAction);
+            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation.coreTile.region);
+            if (owner.movementComponent.HasPathTo(exitTile)) {
+                //check first if character has path toward the exit tile.
+                owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    private void MoveToAnotherLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+        Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
+        owner.avatar.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
+        owner.avatar.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
+    }
+    #endregion
 
     #region Pathfinding
     public bool HasPathTo(LocationGridTile toTile) {

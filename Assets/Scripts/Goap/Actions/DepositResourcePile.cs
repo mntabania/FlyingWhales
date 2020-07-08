@@ -229,7 +229,7 @@ public class DepositResourcePile : GoapAction {
     private bool IsTargetMissingOverride(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        if (actor.ownParty.IsPOICarried(poiTarget)) {
+        if (actor.carryComponent.IsPOICarried(poiTarget)) {
             return false;
         }
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion) {

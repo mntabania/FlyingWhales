@@ -249,7 +249,7 @@ public class CharacterManager : MonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false);
         }
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         if(homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, false);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -273,7 +273,7 @@ public class CharacterManager : MonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -304,7 +304,7 @@ public class CharacterManager : MonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -319,7 +319,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public Character CreateNewCharacter(SaveDataCharacter data) {
         Character newCharacter = new Character(data);
-        newCharacter.CreateOwnParty();
+        //newCharacter.CreateOwnParty();
         //for (int i = 0; i < data.alterEgos.Count; i++) {
         //    data.alterEgos[i].Load(newCharacter);
         //}
@@ -331,14 +331,14 @@ public class CharacterManager : MonoBehaviour {
                 faction.OnlySetLeader(newCharacter);
             }
         }
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         
         Region currRegion = null;
         if (data.currentLocationID != -1) {
             currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
         }
         if (currRegion != null) {
-            newCharacter.ownParty.icon.SetPosition(currRegion.coreTile.transform.position);
+            newCharacter.avatar.SetPosition(currRegion.coreTile.transform.position);
         }
         // if (data.isDead) {
         //     if (home != null) {
@@ -376,7 +376,7 @@ public class CharacterManager : MonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -605,7 +605,7 @@ public class CharacterManager : MonoBehaviour {
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className) as Summon;
         newCharacter.Initialize();
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {
@@ -645,7 +645,7 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.AssignRace(data.race);
         newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
-        newCharacter.ownParty.CreateIcon();
+        newCharacter.CreateAvatar();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {

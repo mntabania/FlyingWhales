@@ -59,7 +59,7 @@ public class LandmarkCharacterItem : PooledObject {
                 restrainedIcon.SetActive(false);
                 unrestrainedGO.SetActive(true);
             }
-            if ((character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) || character.currentParty.icon.isTravellingOutside) {
+            if ((character.carryComponent.masterCharacter.avatar.isTravelling && character.carryComponent.masterCharacter.avatar.travelLine != null) || character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
@@ -76,7 +76,7 @@ public class LandmarkCharacterItem : PooledObject {
                 restrainedIcon.SetActive(false);
                 unrestrainedGO.SetActive(true);
             }
-            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) {
+            if (character.carryComponent.masterCharacter.avatar.isTravelling && character.carryComponent.masterCharacter.avatar.travelLine != null) {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
@@ -95,26 +95,26 @@ public class LandmarkCharacterItem : PooledObject {
     public void ShowTravellingTooltip() {
         //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.settlementOfTile.name);
         //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.settlementOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
-        if (character.currentParty.icon.targetLocation == null) {
+        if (character.carryComponent.masterCharacter.avatar.targetLocation == null) {
             return;
         }
         Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        if (showingRegion == null || showingRegion.id != character.currentParty.icon.targetLocation.id) {
+        if (showingRegion == null || showingRegion.id != character.carryComponent.masterCharacter.avatar.targetLocation.id) {
             
             float x = UIManager.Instance.locationSmallInfoRT.position.x;
             //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-            UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
+            UIManager.Instance.ShowSmallLocationInfo(character.carryComponent.masterCharacter.avatar.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
         }
     }
     public void ShowArrivedTooltip() {
         //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.name);
         Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        if (showingRegion == null || showingRegion.id != character.currentParty.icon.targetLocation.id) {
-            if (character.currentParty.icon.targetLocation == null) {
+        if (showingRegion == null || showingRegion.id != character.carryComponent.masterCharacter.avatar.targetLocation.id) {
+            if (character.carryComponent.masterCharacter.avatar.targetLocation == null) {
                 return;
             }
             float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-            UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
+            UIManager.Instance.ShowSmallLocationInfo(character.carryComponent.masterCharacter.avatar.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
         }
     }
     public void ShowRestrainedTooltip() {
@@ -139,13 +139,13 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     #region Listeners
-    private void OnPartyStartedTravelling(Party party) {
-        if (character.currentParty == party) {
+    private void OnCharacterStartedTravellingOutside(Character travellingCharacter) {
+        if (character.carryComponent.IsCurrentlyPartOf(travellingCharacter)) {
             UpdateLocationIcons();
         }
     }
-    private void OnPartyDoneTravelling(Party party) {
-        if (character.currentParty == party) {
+    private void OnCharacterDoneTravellingOutside(Character travellingCharacter) {
+        if (character.carryComponent.IsCurrentlyPartOf(travellingCharacter)) {
             UpdateLocationIcons();
         }
     }
@@ -182,19 +182,19 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void OnEnable() {
-        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
-        Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterStartedTravellingOutside);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnCharacterDoneTravellingOutside);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 
     private void OnDisable() {
-        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
-            Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnPartyStartedTravelling);
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE)) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterStartedTravellingOutside);
         }
-        if (Messenger.eventTable.ContainsKey(Signals.PARTY_DONE_TRAVELLING)) {
-            Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnPartyDoneTravelling);
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE)) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnCharacterDoneTravellingOutside);
         }
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);

@@ -64,7 +64,7 @@ public class BuildStructure : GoapAction {
             return true;
         }
         //return actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile;
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is WoodPile) {
             //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
             //return carriedPile.resourceInPile >= 50;
             return true;
@@ -77,8 +77,8 @@ public class BuildStructure : GoapAction {
     #region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
         StructureTileObject target = goapNode.poiTarget as StructureTileObject;
-        if (goapNode.actor.ownParty.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
+        if (goapNode.actor.carryComponent.carriedPOI != null) {
+            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
             int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
             carriedPile.AdjustResourceInPile(-50);
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, 50);

@@ -604,7 +604,7 @@ namespace Inner_Maps {
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
-                if (activeCharacter.marker.pathfindingAI.currentPath != null && activeCharacter.currentParty.icon.isTravelling) {
+                if (activeCharacter.marker.pathfindingAI.currentPath != null && activeCharacter.carryComponent.masterCharacter.avatar.isTravelling) {
                     ShowPath(activeCharacter);
                 } else {
                     HidePath();

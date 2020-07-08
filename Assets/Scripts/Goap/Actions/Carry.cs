@@ -42,7 +42,7 @@ public class Carry : GoapAction {
         //}
         if (goapActionInvalidity.isInvalid == false) {
             if(poiTarget is Character) {
-                if ((poiTarget as Character).IsInOwnParty() == false) {
+                if ((poiTarget as Character).carryComponent.IsNotBeingCarried() == false) {
                     goapActionInvalidity.isInvalid = true;
                 }
             }
@@ -66,7 +66,7 @@ public class Carry : GoapAction {
             // }
             if (poiTarget is Character character) {
                 return actor != poiTarget && poiTarget.mapObjectVisual &&
-                       poiTarget.numOfActionsBeingPerformedOnThis <= 0 && character.IsInOwnParty();    
+                       poiTarget.numOfActionsBeingPerformedOnThis <= 0 && character.carryComponent.IsNotBeingCarried();    
             } else {
                 return actor != poiTarget && poiTarget.mapObjectVisual &&
                        poiTarget.numOfActionsBeingPerformedOnThis <= 0;  

@@ -33,11 +33,11 @@ namespace Traits {
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
-                if (character.currentParty.icon.isTravelling) {
-                    if (character.currentParty.icon.travelLine == null) {
+                if (character.carryComponent.masterCharacter.avatar.isTravelling) {
+                    if (character.carryComponent.masterCharacter.avatar.travelLine == null) {
                         character.marker.StopMovement();
                     } else {
-                        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                        character.carryComponent.masterCharacter.avatar.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }
                 }
                 if (character.stateComponent.currentState != null) {

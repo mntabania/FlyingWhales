@@ -204,7 +204,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
             OnTileObjectRemovedFromTile);
@@ -215,7 +215,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
@@ -240,15 +240,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <summary>
     /// Listener for when a party starts travelling towards another npcSettlement.
     /// </summary>
-    /// <param name="travellingParty">The travelling party.</param>
-    private void OnCharacterAreaTravelling(Party travellingParty) {
-        if (travellingParty.isCarryingAnyPOI) {
-            if (travellingParty.IsPOICarried(targetPOI)) {
+    /// <param name="travellingCharacter">The travelling party.</param>
+    private void OnCharacterAreaTravelling(Character travellingCharacter) {
+        if (travellingCharacter.carryComponent.isCarryingAnyPOI) {
+            if (travellingCharacter.carryComponent.IsPOICarried(targetPOI)) {
                 //If the travelling party is travelling outside and is carrying a poi that is being targetted by this marker, this marker should fail to compute path
                 Action action = failedToComputePathAction;
                 if (action != null) {
-                    if (character.currentParty.icon.isTravellingOutside) {
-                        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                    if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
+                        character.carryComponent.masterCharacter.avatar.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     } else {
                         StopMovement();
                     }
@@ -257,8 +257,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 failedToComputePathAction = null;
                 action?.Invoke();
             }
-            if(travellingParty.carriedPOI is Character) {
-                Character carriedCharacter = travellingParty.carriedPOI as Character;
+            if(travellingCharacter.carryComponent.carriedPOI is Character carriedCharacter) {
                 character.combatComponent.RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the npcSettlement.
                 character.combatComponent.RemoveAvoidInRange(carriedCharacter);
                 RemovePOIFromInVisionRange(carriedCharacter);
@@ -421,8 +420,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     return;
                 }
                 SetTargetTransform(targetCharacter.marker.transform);
-                if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravellingOutside) {
-                    OnCharacterAreaTravelling(targetCharacter.currentParty);
+                if (targetCharacter.carryComponent.masterCharacter.avatar && targetCharacter.carryComponent.masterCharacter.avatar.isTravellingOutside) {
+                    OnCharacterAreaTravelling(targetCharacter);
                 } 
                 break;
             default:
@@ -497,7 +496,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         isMoving = true;
         character.movementComponent.UpdateSpeed();
         pathfindingAI.SetIsStopMovement(false);
-        character.currentParty.icon.SetIsTravelling(true);
+        character.carryComponent.masterCharacter.avatar.SetIsTravelling(true);
         UpdateAnimation();
         // Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
@@ -505,8 +504,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         isMoving = false;
         string log = $"{character.name} StopMovement function is called!";
         character.logComponent.PrintLogIfActive(log);
-        if (ReferenceEquals(character.currentParty.icon, null) == false) {
-            character.currentParty.icon.SetIsTravelling(false);
+        if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false) {
+            character.carryComponent.masterCharacter.avatar.SetIsTravelling(false);
         }
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
@@ -626,7 +625,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         if (gameObject.activeSelf == false) { return; }
-        if (!character.IsInOwnParty()) {
+        if (!character.carryComponent.IsNotBeingCarried()) {
             PlaySleepGround();
             ResetBlood();
             //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -649,7 +648,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 }
             } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
                 PlaySleepGround();
-            } else if (ReferenceEquals(character.currentParty.icon, null) == false && character.currentParty.icon.isTravelling) {
+            } else if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false && character.carryComponent.masterCharacter.avatar.isTravelling) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                 PlayWalkingAnimation();
             } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 

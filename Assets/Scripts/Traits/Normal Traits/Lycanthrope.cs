@@ -331,7 +331,7 @@ namespace Traits {
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == form) {
                 UIManager.Instance.characterInfoUI.CloseMenu();
             }
-            if (form.ownParty.icon.isTravelling) {
+            if (form.avatar.isTravelling) {
                 form.marker.StopMovement();
             }
             if (form.trapStructure.IsTrapped()) {

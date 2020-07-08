@@ -155,10 +155,10 @@ public class ConsoleBase : InfoUIBase {
         //if (character.currentActionNode != null) {
         //    text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
         //}
-        if (character.currentParty.icon != null) {
-            text += $"\n<b>Is Travelling:</b> {character.currentParty.icon.isTravelling}";
-            text += $"\n<b>Target Location:</b> {character.currentParty.icon.targetLocation?.name}" ?? "None";
-            text += $"\n<b>Target Structure:</b> {character.currentParty.icon.targetStructure}" ?? "None";
+        if (character.carryComponent.masterCharacter.avatar != null) {
+            text += $"\n<b>Is Travelling:</b> {character.carryComponent.masterCharacter.avatar.isTravelling}";
+            text += $"\n<b>Target Location:</b> {character.carryComponent.masterCharacter.avatar.targetLocation?.name}" ?? "None";
+            text += $"\n<b>Target Structure:</b> {character.carryComponent.masterCharacter.avatar.targetStructure}" ?? "None";
         }
 
         if (character.marker) {

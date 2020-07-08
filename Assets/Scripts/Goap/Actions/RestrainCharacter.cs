@@ -38,7 +38,7 @@ public class RestrainCharacter : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character target = poiTarget as Character;
-            if (target.IsInOwnParty() == false) {
+            if (target.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }

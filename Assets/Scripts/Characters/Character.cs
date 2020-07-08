@@ -32,6 +32,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //visuals
     public CharacterVisuals visuals { get; }
     public BaseMapObjectVisual mapObjectVisual => marker;
+    public CharacterAvatar avatar { get; private set; }
     public int currentHP { get; protected set; }
     public int doNotRecoverHP { get; protected set; }
     public SEXUALITY sexuality { get; private set; }
@@ -65,8 +66,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
-    public Party ownParty { get; protected set; }
-    public Party currentParty { get; protected set; }
+    //public Party ownParty { get; protected set; }
+    //public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     public bool hasUnresolvedCrime { get; protected set; }
     public bool isConversing { get; protected set; }
@@ -136,6 +137,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public AssumptionComponent assumptionComponent { get; private set; }
     public MovementComponent movementComponent { get; private set; }
     public StateAwarenessComponent stateAwarenessComponent { get; private set; }
+    public CarryComponent carryComponent { get; private set; }
 
 
     #region getters / setters
@@ -175,7 +177,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool isFactionLeader => faction != null && faction.leader == this;
     public bool isHoldingItem => items.Count > 0;
-    public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
+    public bool isAtHomeRegion => currentRegion == homeRegion && !carryComponent.masterCharacter.avatar.isTravellingOutside;
     public bool isAtHomeStructure => currentStructure == homeStructure && homeStructure != null;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home npcSettlement
     //public bool isFlirting => _isFlirting;
@@ -189,8 +191,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //public NPCSettlement currentArea => currentNpcSettlement;
     public Region currentRegion {
         get {
-            if (!IsInOwnParty()) {
-                return currentParty.owner.currentRegion;
+            if (!carryComponent.IsNotBeingCarried()) {
+                return carryComponent.isBeingCarriedBy.currentRegion;
             }
             return _currentRegion;
         }
@@ -205,8 +207,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (ReferenceEquals(marker, null)) {
                 return null;
             }
-            if (!IsInOwnParty()) {
-                return currentParty.owner.gridTileLocation;
+            if (!carryComponent.IsNotBeingCarried()) {
+                return carryComponent.isBeingCarriedBy.gridTileLocation;
             }
             return GetLocationGridTileByXY(gridTilePosition.x, gridTilePosition.y);
         }
@@ -239,8 +241,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public LocationStructure currentStructure {
         get {
-            if (!IsInOwnParty()) {
-                return currentParty.owner.currentStructure;
+            if (!carryComponent.IsNotBeingCarried()) {
+                return carryComponent.isBeingCarriedBy.currentStructure;
             }
             return _currentStructure;
         }
@@ -252,7 +254,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public Transform worldObject => marker.transform;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
-    public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
+    public Character isBeingCarriedBy => carryComponent.isBeingCarriedBy;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
     /// <summary>
@@ -333,6 +335,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         assumptionComponent = new AssumptionComponent(this);
         movementComponent = new MovementComponent(this);
         stateAwarenessComponent = new StateAwarenessComponent(this);
+        carryComponent = new CarryComponent(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -414,7 +417,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         OnUpdateCharacterClass();
 
         moodComponent.SetMoodValue(50);
-        CreateOwnParty();
+        //CreateOwnParty();
 
         if (needsComponent.HasNeeds()) {
             needsComponent.Initialize();    
@@ -465,8 +468,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
-        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
-        Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
+        Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnLeaveArea);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnArrivedAtArea);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
@@ -500,8 +503,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
-        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
-        Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnLeaveArea);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnArrivedAtArea);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
         //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
@@ -1232,68 +1235,62 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Party
+    #region Carry Component
     /*
         Create a new Party with this character as the leader.
             */
-    public virtual Party CreateOwnParty() {
-        //if (_ownParty != null) {
-        //    _ownParty.RemoveCharacter(this);
-        //}
-        Party newParty = new Party(this);
-        SetOwnedParty(newParty);
-        SetCurrentParty(newParty);
-        //newParty.AddCharacter(this, true);
-        //newParty.CreateCharacterObject();
-        return newParty;
-    }
-    public virtual void SetOwnedParty(Party party) {
-        ownParty = party;
-    }
-    public virtual void SetCurrentParty(Party party) {
-        currentParty = party;
-    }
-    public void OnRemovedFromParty() {
-        SetCurrentParty(ownParty); //set the character's party to it's own party
-        //if (ownParty is CharacterParty) {
-        //    if ((ownParty as CharacterParty).actionData.currentAction != null) {
-        //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
-        //    }
-        //}
-        if (marker) {
-            marker.visionTrigger.SetAllCollidersState(true);
-            marker.UpdateAnimation();
-        }
+    //public virtual Party CreateOwnParty() {
+    //    //if (_ownParty != null) {
+    //    //    _ownParty.RemoveCharacter(this);
+    //    //}
+    //    Party newParty = new Party(this);
+    //    SetOwnedParty(newParty);
+    //    SetCurrentParty(newParty);
+    //    //newParty.AddCharacter(this, true);
+    //    //newParty.CreateCharacterObject();
+    //    return newParty;
+    //}
+    //public virtual void SetOwnedParty(Party party) {
+    //    ownParty = party;
+    //}
+    //public virtual void SetCurrentParty(Party party) {
+    //    currentParty = party;
+    //}
+    //public void OnRemovedFromParty() {
+    //    SetCurrentParty(ownParty); //set the character's party to it's own party
+    //    //if (ownParty is CharacterParty) {
+    //    //    if ((ownParty as CharacterParty).actionData.currentAction != null) {
+    //    //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
+    //    //    }
+    //    //}
+    //    if (marker) {
+    //        marker.visionTrigger.SetAllCollidersState(true);
+    //        marker.UpdateAnimation();
+    //    }
 
-        //if (this.minion != null) {
-        //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
-        //}
-    }
-    public void OnAddedToParty() {
-        if (currentParty.id != ownParty.id) {
-            //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
-            //ownParty.specificLocation.RemoveCharacterFromLocation(this);
-            //ownParty.icon.SetVisualState(false);
-            marker.visionTrigger.SetAllCollidersState(false);
-            marker.UpdateAnimation();
-        }
-    }
-    public bool IsInParty() {
-        return currentParty.isCarryingAnyPOI;
-        //if (currentParty.characters.Count > 1) {
-        //    return true; //if the character is in a party that has more than 1 characters
-        //}
-        //return false;
-    }
-    public bool IsInOwnParty() {
-        if (currentParty.id == ownParty.id) {
-            return true;
-        }
-        return false;
-    }
+    //    //if (this.minion != null) {
+    //    //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
+    //    //}
+    //}
+    //public void OnAddedToParty() {
+    //    if (currentParty.id != ownParty.id) {
+    //        //currentRegion.RemoveCharacterFromLocation(this); //Why are we removing the character from location if it is added to a party
+    //        //ownParty.specificLocation.RemoveCharacterFromLocation(this);
+    //        //ownParty.icon.SetVisualState(false);
+    //        marker.visionTrigger.SetAllCollidersState(false);
+    //        marker.UpdateAnimation();
+    //    }
+    //}
+    //public bool IsInParty() {
+    //    return currentParty.isCarryingAnyPOI;
+    //    //if (currentParty.characters.Count > 1) {
+    //    //    return true; //if the character is in a party that has more than 1 characters
+    //    //}
+    //    //return false;
+    //}
     public void CarryPOI(IPointOfInterest poi, bool changeOwnership = false, bool setOwnership = true) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            ownParty.AddPOI(poi);
+            carryComponent.CarryPOI(poi);
         } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             PickUpItem(poi as TileObject, changeOwnership, setOwnership);
         }
@@ -1302,17 +1299,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             return HasItem(poi as TileObject);
         }
-        return ownParty.IsPOICarried(poi);
+        return carryComponent.IsPOICarried(poi);
     }
     public bool IsPOICarriedOrInInventory(string poiName) {
-        return HasItem(poiName) || ownParty.IsPOICarried(poiName);
+        return HasItem(poiName) || carryComponent.IsPOICarried(poiName);
     }
     public void UncarryPOI(IPointOfInterest poi, bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            ownParty.RemovePOI(poi, addToLocation, dropLocation);
+            carryComponent.UncarryPOI(poi, addToLocation, dropLocation);
         } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             TileObject item = poi as TileObject;
-            ownParty.RemovePOI(poi, false);
+            carryComponent.UncarryPOI(poi, false);
             if (!bringBackToInventory) {
                 if (addToLocation) {
                     DropItem(item, dropLocation);
@@ -1323,14 +1320,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void UncarryPOI(bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
-        if(ownParty.isCarryingAnyPOI) {
-            IPointOfInterest poi = ownParty.carriedPOI;
+        if(carryComponent.isCarryingAnyPOI) {
+            IPointOfInterest poi = carryComponent.carriedPOI;
             UncarryPOI(poi, bringBackToInventory, addToLocation, dropLocation);
         }
     }
     public void ShowItemVisualCarryingPOI(TileObject item) {
         if (HasItem(item)) {
-            ownParty.AddPOI(item);
+            carryComponent.CarryPOI(item);
         }
     }
     //public bool HasOtherCharacterInParty() {
@@ -1452,9 +1449,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return nearestEdgeTile;
     }
-    private void OnLeaveArea(Party party) {
-        if (currentParty == party) {
-            //CheckApprehendRelatedJobsOnLeaveLocation();
+    private void OnLeaveArea(Character travellingCharacter) {
+        if (carryComponent.IsCurrentlyPartOf(travellingCharacter)) {
+            //CheckApprehendRelatedJobsOnLeaveLocatio1n();
             //CancelOrUnassignRemoveTraitRelatedJobs();
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, this as IPointOfInterest, "");
             CancelAllJobsExceptForCurrent(false);
@@ -1470,8 +1467,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
         }
     }
-    private void OnArrivedAtArea(Party party) {
-        if (currentParty == party) {
+    private void OnArrivedAtArea(Character travellingCharacter) {
+        if (carryComponent.IsCurrentlyPartOf(travellingCharacter)) {
             //if (isAtHomeArea) {
             //    if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             //        CreateApprehendJob();
@@ -1496,8 +1493,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void OnArriveAtAreaStopMovement() {
-        currentParty.icon.SetTarget(null, null, null, null);
-        currentParty.icon.SetOnPathFinished(null);
+        carryComponent.masterCharacter.avatar.SetTarget(null, null, null, null);
+        carryComponent.masterCharacter.avatar.SetOnPathFinished(null);
     }
     public void AddOnLeaveAreaAction(Action onLeaveAreaAction) {
         onLeaveAreaActions.Add(onLeaveAreaAction);
@@ -1602,13 +1599,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return;
         }
         if (marker) {
-            if (currentParty != null && currentParty.icon != null && currentParty.icon.isTravellingOutside) {
+            if (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
                 if (InnerMapManager.Instance.isAnInnerMapShowing) {
                     InnerMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                WorldMapCameraMove.Instance.CenterCameraOn(currentParty.icon.targetLocation.coreTile.gameObject);
-            } else if (currentParty != null && currentParty.icon != null && currentParty.icon.isTravelling) {
+                WorldMapCameraMove.Instance.CenterCameraOn(avatar.targetLocation.coreTile.gameObject);
+            } else if (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
                     if (currentRegion != null && instantCenter) {
@@ -2865,7 +2862,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
-            && (marker && !marker.hasFleePath) && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted;
+            && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
     }
     public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
@@ -2877,8 +2874,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool CanPerformEndTickJobs() {
         bool canPerformEndTickJobs = !isDead && numOfActionsBeingPerformedOnThis <= 0 /*&& canWitness*/
          && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE && jobQueue.jobsInQueue.Count > 0 
-         && (currentParty.icon && currentParty.icon.isTravellingOutside == false) && (marker && !marker.hasFleePath) 
-         && stateComponent.currentState == null && IsInOwnParty() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
+         && (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside == false) && (marker && !marker.hasFleePath) 
+         && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted; //minion == null && doNotDisturb <= 0 
         return canPerformEndTickJobs;
     }
     /// <summary>
@@ -3662,7 +3659,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         if(character.currentRegion == currentRegion && !isBeingSeized/* && !isMissing*/) {
-            if (!isDead && currentParty.icon.isTravellingOutside) {
+            if (!isDead && carryComponent.masterCharacter.avatar.isTravellingOutside) {
                 return false;
             }
             if (isDead && !marker) {
@@ -3855,7 +3852,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //Wait for the character to be in its own party before doing the action
                     if (currentNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         Character targetCharacter = currentNode.poiTarget as Character;
-                        if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != ownParty) {
+                        if (!targetCharacter.carryComponent.IsNotBeingCarried() && targetCharacter.isBeingCarriedBy != this) {
                             log = $"{log}\n - {targetCharacter.name} is not in its own party, waiting and skipping...";
                             logComponent.PrintLogIfActive(log);
                             return;
@@ -4357,13 +4354,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //        actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         //    }
         //}
-        if (currentParty.icon.isTravelling) {
-            if (ReferenceEquals(currentParty.icon.travelLine, null)) {
+        if (carryComponent.masterCharacter.avatar.isTravelling) {
+            if (ReferenceEquals(carryComponent.masterCharacter.avatar.travelLine, null)) {
                 //This means that the actor currently travelling to another tile in tilemap
                 marker.StopMovement();
             } else {
                 //This means that the actor is currently travelling to another npcSettlement
-                currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+                carryComponent.masterCharacter.avatar.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
             }
         }
         //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
@@ -4376,9 +4373,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetCurrentActionNode(null, null, null);
         
         //Every time current node is stopped, drop carried poi
-        if (IsInOwnParty()) {
-            if (ownParty.isCarryingAnyPOI) {
-                IPointOfInterest carriedPOI = ownParty.carriedPOI;
+        if (carryComponent.IsNotBeingCarried()) {
+            if (carryComponent.isCarryingAnyPOI) {
+                IPointOfInterest carriedPOI = carryComponent.carriedPOI;
                 string log = $"Dropping carried POI: {carriedPOI.name} because current action is stopped!";
                 log += "\nAdditional Info:";
                 if (carriedPOI is ResourcePile) {
@@ -4544,7 +4541,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else if (UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == this) {
             UIManager.Instance.monsterInfoUI.CloseMenu();
         }
-        if (ownParty.icon.isTravelling) {
+        if (avatar.isTravelling) {
             marker.StopMovement();
         }
         if (trapStructure.IsTrapped()) {
@@ -5255,7 +5252,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.ResetFullnessMeter();
             needsComponent.ResetTirednessMeter();
             needsComponent.ResetHappinessMeter();
-            ownParty.ReturnToLife();
+            CreateAvatar();
             marker.OnReturnToLife();
             if (grave != null) {
                 Tombstone tombstone = grave;
@@ -5393,7 +5390,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (carrier != null) {
                 carrier.UncarryPOI(this);
             }
-            ownParty.PartyDeath();
+            avatar.gameObject.SetActive(false);
             currentRegion?.RemoveCharacterFromLocation(this);
             SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
             SetCurrentStructureLocation(deathStructure, false);
@@ -5504,6 +5501,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Necromancer
     public void SetNecromancerTrait(Necromancer necromancer) {
         necromancerTrait = necromancer;
+    }
+    #endregion
+
+    #region Character Avatar
+    public void CreateAvatar() {
+        GameObject characterIconGO = GameObject.Instantiate(CharacterManager.Instance.characterIconPrefab,
+        Vector3.zero, Quaternion.identity, CharacterManager.Instance.characterIconsParent);
+
+        avatar = characterIconGO.GetComponent<CharacterAvatar>();
+        avatar.Init(this);
     }
     #endregion
 }

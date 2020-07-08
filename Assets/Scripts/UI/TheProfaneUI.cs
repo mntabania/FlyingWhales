@@ -123,7 +123,7 @@ public class TheProfaneUI : MonoBehaviour {
         return false;
     }
     private bool CanDoActionsToCharacter(Character character) {
-        return !character.currentParty.icon.isTravellingOutside && character.isAtHomeRegion;
+        return !character.carryComponent.masterCharacter.avatar.isTravellingOutside && character.isAtHomeRegion;
     }
     private void ShowActionTooltip(string action) {
         // if (action == "Corrupt") {

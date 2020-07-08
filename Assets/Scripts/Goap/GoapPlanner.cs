@@ -158,9 +158,9 @@ public class GoapPlanner {
                 }
             }
             //Every time no plan is generated for the job, remove carried poi because this means that the carried poi is part of that job that has no plan, so the character needs to let go of the poi now
-            if (owner.IsInOwnParty()) {
-                if (owner.ownParty.isCarryingAnyPOI) {
-                    IPointOfInterest carriedPOI = owner.ownParty.carriedPOI;
+            if (owner.carryComponent.IsNotBeingCarried()) {
+                if (owner.carryComponent.isCarryingAnyPOI) {
+                    IPointOfInterest carriedPOI = owner.carryComponent.carriedPOI;
                     string log = $"Dropping carried POI: {carriedPOI.name} because no plan was generated.";
                     log += "\nAdditional Info:";
                     if(carriedPOI is ResourcePile) {

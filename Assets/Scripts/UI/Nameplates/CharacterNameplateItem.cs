@@ -82,7 +82,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
 
     private void UpdateStatusIcons() {
-        if (character.currentParty.icon.isTravellingOutside) {
+        if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
             //character is travelling outside
             travellingIcon.SetActive(true);
             arrivedIcon.SetActive(false);

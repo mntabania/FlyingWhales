@@ -30,7 +30,7 @@ public class ReactionComponent {
             Character targetCharacter = target as Character; 
             Assert.IsNotNull(targetCharacter);
             ReactTo(targetCharacter, ref debugLog);
-            if (targetCharacter.ownParty.carriedPOI is TileObject tileObject) {
+            if (targetCharacter.carryComponent.carriedPOI is TileObject tileObject) {
                 ReactToCarriedObject(tileObject, targetCharacter, ref debugLog);
             }
         } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {

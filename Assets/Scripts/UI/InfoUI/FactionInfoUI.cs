@@ -99,18 +99,18 @@ public class FactionInfoUI : InfoUIBase {
         }
         OrderCharacterItems();
     }
-    private LandmarkCharacterItem GetItem(Party party) {
-        LandmarkCharacterItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
-        for (int i = 0; i < items.Length; i++) {
-            LandmarkCharacterItem item = items[i];
-            if (item.character != null) {
-                if (item.character.ownParty.id == party.id) {
-                    return item;
-                }
-            }
-        }
-        return null;
-    }
+    //private LandmarkCharacterItem GetItem(Party party) {
+    //    LandmarkCharacterItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+    //    for (int i = 0; i < items.Length; i++) {
+    //        LandmarkCharacterItem item = items[i];
+    //        if (item.character != null) {
+    //            if (item.character.ownParty.id == party.id) {
+    //                return item;
+    //            }
+    //        }
+    //    }
+    //    return null;
+    //}
     private CharacterNameplateItem GetItem(Character character) {
         CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {

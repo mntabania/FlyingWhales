@@ -75,7 +75,7 @@ public class DropItem : GoapAction {
                 return false;
             }
         }
-        if (actor.ownParty.IsPOICarried(poiTarget)) {
+        if (actor.carryComponent.IsPOICarried(poiTarget)) {
             return false;
         }
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null || actor.currentRegion != poiTarget.currentRegion) {
