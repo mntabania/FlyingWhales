@@ -13,6 +13,18 @@
             DivineWorship divineWorship =
                 FactionManager.Instance.CreateIdeology<DivineWorship>(FACTION_IDEOLOGY.Divine_Worship);
             AddIdeology(divineWorship);
+            
+            //structures
+            AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.INN, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.STONE);
         }
     }
 }
