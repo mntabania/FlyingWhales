@@ -126973,11 +126973,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Skill Details Tooltip
       objectReference: {fileID: 0}
-    - target: {fileID: 5490087281256822442, guid: 29c4742b647766648a7a78449f3565eb,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -127041,7 +127036,7 @@ PrefabInstance:
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -29.2
+      value: 92.85
       objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
@@ -127051,7 +127046,7 @@ PrefabInstance:
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 727
+      value: 503
       objectReference: {fileID: 0}
     - target: {fileID: 7147031280361248744, guid: 29c4742b647766648a7a78449f3565eb,
         type: 3}

@@ -433,9 +433,9 @@ public class GameManager : MonoBehaviour {
         } else if (ticks == ticksPerDay) {
             return "day";
         } else if (ticks > ticksPerHour) {
-            return "hours";
+            return "hrs";
         } else if (ticks == ticksPerHour) {
-            return "hour";
+            return "hr";
         } else {
             return "mins";
         }
