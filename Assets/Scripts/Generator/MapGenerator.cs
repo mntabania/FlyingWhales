@@ -186,7 +186,6 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterHistories();
 
         data.LoadCharacterCurrentStates();
-        data.LoadFactionsActiveQuests();
 
         
         data.LoadNotifications();

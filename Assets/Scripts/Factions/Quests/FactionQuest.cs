@@ -5,7 +5,7 @@ using UnityEngine;
 using UtilityScripts;
 namespace Factions {
     public class FactionQuest : IJobOwner {
-        public JOB_OWNER ownerType { get { return JOB_OWNER.QUEST; } }
+        public JOB_OWNER ownerType { get { return JOB_OWNER.FACTION; } }
         public string name { get; protected set; }
         public string description { get; protected set; }
         public Faction factionOwner { get; protected set; }

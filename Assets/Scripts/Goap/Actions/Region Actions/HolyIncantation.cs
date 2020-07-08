@@ -36,8 +36,6 @@ public class HolyIncantation : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterIncantationSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.faction.activeFactionQuest.AdjustCurrentDuration(GameManager.ticksPerDay);
-    }
+    public void AfterIncantationSuccess(ActualGoapNode goapNode) { }
     #endregion
 }

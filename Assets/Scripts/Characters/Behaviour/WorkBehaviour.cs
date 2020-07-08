@@ -102,12 +102,6 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         if (character.isAtHomeRegion && character.homeSettlement != null && character.canTakeJobs) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
             //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
             JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
-            if (jobToAssign == null) {
-                //if there are none, check the characters faction job queue under the same conditions.
-                if (character.faction?.activeFactionQuest != null) {
-                    jobToAssign = character.faction.activeFactionQuest.GetFirstJobBasedOnVision(character);
-                }
-            }
             if (jobToAssign != null) {
                 producedJob = jobToAssign;
                 //took job based from vision
@@ -116,15 +110,17 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 //if none of the jobs targets can be seen by the character, try and get a job from the npcSettlement or faction
                 //regardless of vision instead.
                 if (character.homeSettlement.HasPathTowardsTileInSettlement(character, 2)) {
+                    if (character.faction != null) {
+                        jobToAssign = character.faction.GetFirstUnassignedJobToCharacterJob(character);
+                    }
+                    
                     //Characters should only take non-vision settlement jobs if they have a path towards the settlement
                     //Reference: https://trello.com/c/SSYDok6x/1106-characters-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
-                    jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);    
-                }
-                if (jobToAssign == null) {
-                    if (character.faction?.activeFactionQuest != null) {
-                        jobToAssign = character.faction.activeFactionQuest.GetFirstUnassignedJobToCharacterJob(character);
+                    if (jobToAssign == null) {
+                        jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
                     }
                 }
+                
                 if (jobToAssign != null) {
                     producedJob = jobToAssign;
                     return true;

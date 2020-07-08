@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using Factions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Factions.Faction_Types;
 using Locations.Settlements;
 
-public class Faction {
+public class Faction : IJobOwner {
     public int id { get; }
     public string name { get; private set; }
     public string description { get; private set; }
@@ -24,27 +24,31 @@ public class Faction {
             }
         }
     } 
+    public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public ILeader leader { get; private set; }
     public Sprite emblem { get; private set; }
     public Color factionColor { get; private set; }
+    public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public List<Character> characters { get; }//List of characters that are part of the faction
     public List<BaseSettlement> ownedSettlements { get; }
-    public List<Character> bannedCharacters { get; }
+    private List<Character> bannedCharacters { get; }
     public Dictionary<Faction, FactionRelationship> relationships { get; }
     public FactionType factionType { get; }
     public bool isActive { get; private set; }
-    public List<Log> history { get; }
-    public FactionQuest activeFactionQuest { get; protected set; }
+    private List<Log> history { get; }
+    public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
-
+    private FactionJobTriggerComponent factionJobTriggerComponent { get; }
+    
     private int newLeaderDesignationChance;
-    private WeightedDictionary<Character> newLeaderDesignationWeights;
+    private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;
     public bool isMajorFriendlyNeutral => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
     public bool isMajorNonPlayerFriendlyNeutral => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
+    public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;
     #endregion
 
     public Faction(FACTION_TYPE _factionType) {
@@ -59,8 +63,11 @@ public class Faction {
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
         history = new List<Log>();
+        availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
+        factionJobTriggerComponent = new FactionJobTriggerComponent();
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -77,8 +84,11 @@ public class Faction {
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
         history = new List<Log>();
+        availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
+        factionJobTriggerComponent = new FactionJobTriggerComponent();
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -344,12 +354,16 @@ public class Faction {
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
     }
     private void SetFactionColor(Color color) {
         factionColor = color;
@@ -362,14 +376,6 @@ public class Faction {
     }
     public void SetIsMajorFaction(bool state) {
         isMajorFaction = state;
-    }
-    public Character GetCharacterByID(int id) {
-        for (int i = 0; i < characters.Count; i++) {
-            if (characters[i].id == id) {
-                return characters[i];
-            }
-        }
-        return null;
     }
     public bool IsHostileWith(Faction faction) {
         if (faction.id == this.id) {
@@ -390,6 +396,12 @@ public class Faction {
     }
     public string GetRaceText() {
         return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
+    }
+    private void OnTickEnded() {
+        ProcessForcedCancelJobsOnTickEnded();
+    }
+    private void OnDayStarted() {
+        ClearAllBlacklistToAllExistingJobs();
     }
     #endregion
 
@@ -555,47 +567,176 @@ public class Faction {
     public void AddHistory(Log log) {
         if (!history.Contains(log)) {
             history.Add(log);
-            if (this.history.Count > 60) {
-                //if (this.history[0].node != null) {
-                //    this.history[0].node.AdjustReferenceCount(-1);
-                //}
-                this.history.RemoveAt(0);
+            if (history.Count > 60) {
+                history.RemoveAt(0);
             }
-            //if (log.node != null) {
-            //    log.node.AdjustReferenceCount(1);
-            //}
-            //Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
         }
     }
     #endregion
-
-    #region Quests
-    public void CreateAndSetActiveQuest(string name, Region region) {
-        var typeName = $"{UtilityScripts.Utilities.RemoveAllWhiteSpace(name)}Quest, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        System.Type type = System.Type.GetType(typeName);
-        FactionQuest factionQuest = null;
-        if(type != null) {
-            factionQuest = System.Activator.CreateInstance(type, this, region) as FactionQuest;
+    
+    #region Jobs
+    public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
+        if (position == -1) {
+            availableJobs.Add(job);    
         } else {
-            factionQuest = new FactionQuest(this, region);
+            availableJobs.Insert(position, job);
         }
-        SetActiveQuest(factionQuest);
+        if (job is GoapPlanJob goapJob) {
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
+        } else {
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");    
+        }
+        
     }
-    public void SetActiveQuest(FactionQuest factionQuest) {
-        if(activeFactionQuest != null) {
-            activeFactionQuest.FinishQuest();
+    public bool RemoveFromAvailableJobs(JobQueueItem job) {
+        if (availableJobs.Remove(job)) {
+            if (job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
+            } else {
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");    
+            }
+            OnJobRemovedFromAvailableJobs(job);
+            return true;
         }
-        activeFactionQuest = factionQuest;
-        if(activeFactionQuest != null) {
-            activeFactionQuest.ActivateQuest();
+        return false;
+    }
+    public int GetNumberOfJobsWith(JOB_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (availableJobs[i].jobType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public bool HasJob(JOB_TYPE job, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi is GoapPlanJob) {
+                GoapPlanJob gpj = jqi as GoapPlanJob;
+                if (job == gpj.jobType && target == gpj.targetPOI) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasJob(params JOB_TYPE[] jobTypes) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (availableJobs[i].jobType == jobTypes[j]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasJob(GoapEffect effect, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi is GoapPlanJob) {
+                GoapPlanJob gpj = jqi as GoapPlanJob;
+                if (effect.conditionType == gpj.goal.conditionType
+                    && effect.conditionKey == gpj.goal.conditionKey
+                    && effect.target == gpj.goal.target
+                    && target == gpj.targetPOI) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            if (availableJobs[i].jobType == jobType && availableJobs[i] is GoapPlanJob) {
+                GoapPlanJob job = availableJobs[i] as GoapPlanJob;
+                if (job.allOtherData != null) {
+                    for (int j = 0; j < job.allOtherData.Count; j++) {
+                        object data = job.allOtherData[j];
+                        if (data == otherData) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            for (int j = 0; j < jobTypes.Length; j++) {
+                JobQueueItem job = availableJobs[i];
+                if (job.jobType == jobTypes[j]) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
+    public List<JobQueueItem> GetJobs(params JOB_TYPE[] jobTypes) {
+        List<JobQueueItem> jobs = new List<JobQueueItem>();
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (jobTypes.Contains(job.jobType)) {
+                jobs.Add(job);
+            }
+        }
+        return jobs;
+    }
+    public JobQueueItem GetJob(JOB_TYPE job, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem jqi = availableJobs[i];
+            if (jqi is GoapPlanJob) {
+                GoapPlanJob gpj = jqi as GoapPlanJob;
+                if (job == gpj.jobType && target == gpj.targetPOI) {
+                    return gpj;
+                }
+            }
+        }
+        return null;
+    }
+    public JobQueueItem GetFirstUnassignedJobToCharacterJob(Character character) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
+                return job;
+            }
+        }
+        return null;
+    }
+    private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
+        JobManager.Instance.OnFinishJob(job);
+    }
+    private void ClearAllBlacklistToAllExistingJobs() {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            availableJobs[i].ClearBlacklist();
         }
     }
     #endregion
-}
-public struct FactionTaskWeight {
-    public int baseWeight; //Must not be changed by npcSettlement
-    public int areaWeight;
-    public int supplyCost;
-    public bool areaCannotDoTask;
-    public bool factionCannotDoTask;
+    
+    #region IJobOwner
+    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
+    public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
+        if (!job.IsJobStillApplicable()) {
+            RemoveFromAvailableJobs(job);
+        }
+    }
+    public bool ForceCancelJob(JobQueueItem job) {
+        return RemoveFromAvailableJobs(job);
+    }
+    public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
+        if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            forcedCancelJobsOnTickEnded.Add(job);
+        }
+    }
+    public void ProcessForcedCancelJobsOnTickEnded() {
+        if (forcedCancelJobsOnTickEnded.Count > 0) {
+            for (int i = 0; i < forcedCancelJobsOnTickEnded.Count; i++) {
+                forcedCancelJobsOnTickEnded[i].ForceCancelJob(false);
+            }
+            forcedCancelJobsOnTickEnded.Clear();
+        }
+    }
+    #endregion
 }

@@ -25,10 +25,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
-    public JOB_OWNER ownerType => JOB_OWNER.QUEST;
+    public JOB_OWNER ownerType => JOB_OWNER.LOCATION;
     public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; }
-    public LocationJobManager jobManager { get; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
 
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
@@ -53,7 +52,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         availableJobs = new List<JobQueueItem>();
         classManager = new LocationClassManager();
         eventManager = new LocationEventManager(this);
-        jobManager = new LocationJobManager(this);
         jobPriorityComponent = new SettlementJobPriorityComponent(this);
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         _plaguedExpiryKey = string.Empty;
@@ -713,13 +711,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         } else {
             availableJobs.Insert(position, job);
         }
-        jobManager.OnAddToAvailableJobs(job);
         if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");    
-        }
-        
+        }    
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
@@ -734,18 +730,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
-    public int GetNumberOfJobsWith(CHARACTER_STATE state) {
-        int count = 0;
-        for (int i = 0; i < availableJobs.Count; i++) {
-            if (availableJobs[i] is CharacterStateJob) {
-                CharacterStateJob job = availableJobs[i] as CharacterStateJob;
-                if (job.targetState == state) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
     public int GetNumberOfJobsWith(JOB_TYPE type) {
         int count = 0;
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -754,23 +738,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         return count;
-    }
-    public int GetNumberOfJobsWith(Func<JobQueueItem, bool> checker) {
-        int count = 0;
-        for (int i = 0; i < availableJobs.Count; i++) {
-            if (checker.Invoke(availableJobs[i])) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public bool HasJob(JobQueueItem job) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            if (job == availableJobs[i]) {
-                return true;
-            }
-        }
-        return false;
     }
     public bool HasJob(JOB_TYPE job, IPointOfInterest target) {
         for (int i = 0; i < availableJobs.Count; i++) {
@@ -976,19 +943,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     private void OnJobRemovedFromAvailableJobs(JobQueueItem job) {
-        jobManager.OnRemoveFromAvailableJobs(job);
         JobManager.Instance.OnFinishJob(job);
         if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
             CheckAreaInventoryJobs(mainStorage, null);
         }
     }
-    //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
-    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
-    //                    { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
-    //    });
-    //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
-    //    AddToAvailableJobs(job);
-    //}
     private void ForceCancelAllJobsTargetingCharacter(IPointOfInterest target, string reason) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
