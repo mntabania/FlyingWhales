@@ -33,6 +33,7 @@ public class CharacterMarkerNameplate : PooledObject {
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        Messenger.AddListener(Signals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
     }
 
     #region Listeners
@@ -104,6 +105,7 @@ public class CharacterMarkerNameplate : PooledObject {
         Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
         Messenger.RemoveListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
         Messenger.RemoveListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        Messenger.RemoveListener(Signals.UI_STATE_SET, UpdateElementsStateBasedOnActiveCharacter);
     }
     #endregion
 
@@ -134,6 +136,27 @@ public class CharacterMarkerNameplate : PooledObject {
         }
         float size = spriteSize - (fovDiff * 4f);
         thisRect.sizeDelta = new Vector2(size, size);
+    }
+    public void UpdateElementsStateBasedOnActiveCharacter() {
+        Character shownCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
+        if (UIManager.Instance.gameObject.activeSelf) {
+            //if UI is shown
+            if (shownCharacter == _parentMarker.character) {
+                ShowThoughts();
+            } else {
+                HideThoughts();
+            }
+        } else {
+            //if UI is not shown
+            if (shownCharacter == _parentMarker.character) {
+                SetNameState(true);
+                ShowThoughts();
+            } else {
+                SetNameState(false);
+                HideThoughts();
+            }    
+        }
+        
     }
     #endregion
 

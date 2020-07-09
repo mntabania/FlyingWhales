@@ -1580,6 +1580,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public void HideThoughts() {
         _nameplate.HideThoughts();
     }
+    public void UpdateNameplateElementsState() {
+        _nameplate.UpdateElementsStateBasedOnActiveCharacter();
+    }
     #endregion
 
     

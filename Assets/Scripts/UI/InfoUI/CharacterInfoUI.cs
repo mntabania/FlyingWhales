@@ -149,20 +149,21 @@ public class CharacterInfoUI : InfoUIBase {
     public override void CloseMenu() {
         base.CloseMenu();
         Selector.Instance.Deselect();
-        if (_activeCharacter != null && ReferenceEquals(_activeCharacter.marker, null) == false) {
-            if (InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+        Character character = _activeCharacter;
+        _activeCharacter = null;
+        if (character != null && ReferenceEquals(character.marker, null) == false) {
+            if (InnerMapCameraMove.Instance.target == character.marker.gameObject.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
-            _activeCharacter.marker.HideThoughts();
+            character.marker.UpdateNameplateElementsState();
         }
-        _activeCharacter = null;
     }
     public override void OpenMenu() {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         base.OpenMenu();
         if (_previousCharacter != null && _previousCharacter.marker != null) {
-            _previousCharacter.marker.HideThoughts();
+            _previousCharacter.marker.UpdateNameplateElementsState();
         }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -172,7 +173,7 @@ public class CharacterInfoUI : InfoUIBase {
         }
         if (_activeCharacter.marker && _activeCharacter.marker.transform != null) {
             Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);
-            _activeCharacter.marker.ShowThoughts();
+            _activeCharacter.marker.UpdateNameplateElementsState();
         }
         UpdateCharacterInfo();
         UpdateTraits();

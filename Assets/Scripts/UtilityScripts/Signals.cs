@@ -258,6 +258,7 @@ public static class Signals {
     public static string UPDATE_BUILD_LIST = "UpdateBuildList";
     public static string RACE_WORLD_OPTION_ITEM_CLICKED = "OnRaceWorldOptionItemClicked";
     public static string BIOME_WORLD_OPTION_ITEM_CLICKED = "OnBiomeWorldOptionItemClicked";
+    public static string UI_STATE_SET = "OnUIStateSet";
     #endregion
 
     #region Quest Signals

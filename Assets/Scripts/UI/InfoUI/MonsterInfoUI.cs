@@ -77,7 +77,7 @@ public class MonsterInfoUI : InfoUIBase {
             if (InnerMapCameraMove.Instance.target == _activeMonster.marker.gameObject.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
-            _activeMonster.marker.HideThoughts();
+            _activeMonster.marker.UpdateNameplateElementsState();
         }
         _activeMonster = null;
     }
@@ -86,7 +86,7 @@ public class MonsterInfoUI : InfoUIBase {
         _activeMonster = _data as Character;
         base.OpenMenu();
         if (previousMonster != null && previousMonster.marker != null) {
-            previousMonster.marker.HideThoughts();
+            previousMonster.marker.UpdateNameplateElementsState();
         }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -96,7 +96,7 @@ public class MonsterInfoUI : InfoUIBase {
         }
         if (_activeMonster.marker && _activeMonster.marker.transform != null) {
             Selector.Instance.Select(_activeMonster, _activeMonster.marker.transform);
-            _activeMonster.marker.ShowThoughts();
+            _activeMonster.marker.UpdateNameplateElementsState();
         }
         UpdateMonsterInfo();
         UpdateTraits();

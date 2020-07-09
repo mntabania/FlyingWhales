@@ -97,7 +97,6 @@ public class UIManager : MonoBehaviour {
     [Header("Nameplate Prefabs")]
     public GameObject characterNameplatePrefab;
     public GameObject stringNameplatePrefab;
-    public GameObject summonMinionPlayerSkillPrefab;
     public GameObject worldEventNameplatePrefab;
     public GameObject factionNameplatePrefab;
 
@@ -719,6 +718,7 @@ public class UIManager : MonoBehaviour {
     #region For Testing
     public void SetUIState(bool state) {
         this.gameObject.SetActive(state);
+        Messenger.Broadcast(Signals.UI_STATE_SET);
     }
     public void DateHover() {
         ShowSmallInfo($"Day: {GameManager.Instance.continuousDays.ToString()} Tick: {GameManager.Instance.Today().tick.ToString()}");
