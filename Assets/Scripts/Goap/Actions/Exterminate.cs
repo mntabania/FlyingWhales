@@ -1,12 +1,13 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
-public class Explore : GoapAction {
+public class Exterminate : GoapAction {
 
-    public Explore() : base(INTERACTION_TYPE.EXPLORE) {
+    public Exterminate() : base(INTERACTION_TYPE.EXTERMINATE) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -20,7 +21,7 @@ public class Explore : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Explore Success", goapNode);
+        SetState("Exterminate Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
@@ -40,8 +41,14 @@ public class Explore : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterExploreSuccess(ActualGoapNode goapNode) {
-        CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Exploration, goapNode.actor);
+    public void AfterExterminateSuccess(ActualGoapNode goapNode) {
+        object[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 2 && otherData[0] is LocationStructure targetStructure && otherData[1] is NPCSettlement originSettlement) {
+            Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Extermination, goapNode.actor);
+            ExterminationParty exterminationParty = party as ExterminationParty;
+            exterminationParty.SetTargetStructure(targetStructure);
+            exterminationParty.SetOriginSettlement(originSettlement);
+        }
     }
     #endregion
 

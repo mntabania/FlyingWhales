@@ -92,7 +92,10 @@ public partial class InteractionManager {
         Party partyToJoin = targetCharacter.partyComponent.currentParty;
         return !character.partyComponent.hasParty && !partyToJoin.isWaitTimeOver && !partyToJoin.isDisbanded && partyToJoin.IsAllowedToJoin(character);
     }
-
+    public bool CanCharacterTakeExterminateJob(Character character) {
+        Party partyToJoin = character.partyComponent.currentParty;
+        return !character.partyComponent.hasParty;
+    }
     #region Job Applicability
     public bool IsJudgementJobStillApplicable(Character criminal) {
         if (criminal.isDead) {

@@ -22,6 +22,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public bool isUnderSiege { get; private set; }
     public bool isPlagued { get; private set; }
+    public LocationStructure exterminateTargetStructure { get; private set; }
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
@@ -104,6 +105,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             isUnderSiege = state;
             Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Under Siege state changed to {isUnderSiege.ToString()}");
             Messenger.Broadcast(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, this, isUnderSiege);
+            if (isUnderSiege) {
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
+            } else {
+                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
+                if(exterminateTargetStructure != null) {
+                    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
+                }
+            }
         }
     }
     public void SetIsPlagued(bool state) {
@@ -391,18 +400,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
-    public bool HasAliveResidentInsideSettlement() {
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if (!resident.isDead
-                && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && resident.gridTileLocation.IsPartOfSettlement(this)) {
-                return true;
-            }
-        }
-        return false;
-    }
     public bool HasAliveResident() {
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
@@ -601,8 +598,35 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
             if (owner.IsHostileWith(character.faction)) {
                 SetIsUnderSiege(true);
+                if(character.homeStructure != null 
+                    && character.homeStructure.settlementLocation != null 
+                    && character.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
+                    && exterminateTargetStructure == null) {
+                    exterminateTargetStructure = character.homeStructure;
+                }
             }
         }
+    }
+    private void CheckIfStillUnderSiege() {
+        bool stillUnderSiege = false;
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if(character.homeSettlement != this) {
+                if (character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(this) && !character.isDead 
+                    && !character.traitContainer.HasTrait("Restrained", "Paralyzed") && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
+                    if (owner.IsHostileWith(character.faction)) {
+                        stillUnderSiege = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!stillUnderSiege) {
+            SetIsUnderSiege(false);
+        }
+    }
+    public void SetExterminateTarget(LocationStructure target) {
+        exterminateTargetStructure = target;
     }
     #endregion
 

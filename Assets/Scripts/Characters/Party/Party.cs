@@ -19,6 +19,7 @@ public class Party {
 
     #region getters
     public virtual IPartyTarget target => null;
+    public virtual HexTile waitingHexArea => null;
     #endregion
 
     public Party(PARTY_TYPE partyType) {
@@ -47,6 +48,7 @@ public class Party {
         }
     }
     protected virtual void OnDisbandParty() {
+        leader.logComponent.PrintLogIfActive("Disbanded " + partyName + " Party of " + leader.name);
         isDisbanded = true;
         CancelAllJoinPartyJobs();
     }
@@ -136,7 +138,7 @@ public class Party {
 
     #region Join Party
     private void ProcessAdditionOfJoinPartyJobs() {
-        if(members.Count < minimumPartySize && !isWaitTimeOver) {
+        if(members.Count < (minimumPartySize + 2) && !isWaitTimeOver) {
             CreateJoinPartyJob();
         }
     }

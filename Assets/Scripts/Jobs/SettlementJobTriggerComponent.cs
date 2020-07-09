@@ -532,7 +532,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	#endregion
 
-	#region Knockout`
+	#region Knockout
 	private void TryCreateRestrainJobs() {
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
 		if (CanCreateRestrainJob()) {
@@ -826,6 +826,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Party
+    public bool TriggerExterminationJob(LocationStructure targetStructure) { //bool forceDoAction = false
+        if (!_owner.HasJob(JOB_TYPE.EXTERMINATE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXTERMINATE, INTERACTION_TYPE.EXTERMINATE, null, _owner);
+            job.AddOtherData(INTERACTION_TYPE.EXTERMINATE, new object[] { targetStructure, _owner });
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeExterminateJob);
+            _owner.AddToAvailableJobs(job);
+            return true;
+        }
+        return false;
+    }
     public void TriggerJoinPartyJob(Party party) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeJoinPartyJob);

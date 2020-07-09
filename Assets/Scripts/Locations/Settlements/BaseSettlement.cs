@@ -173,6 +173,35 @@ namespace Locations.Settlements {
             }
             return false;
         }
+        public bool HasAliveResidentInsideSettlement() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && resident.gridTileLocation.IsPartOfSettlement(this)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public Character GetRandomAliveResidentInsideSettlement() {
+            List<Character> choices = null;
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && resident.gridTileLocation.IsPartOfSettlement(this)) {
+                    if(choices == null) { choices = new List<Character>(); }
+                    choices.Add(resident);
+                }
+            }
+            if(choices != null && choices.Count > 0) {
+                return choices[UnityEngine.Random.Range(0, choices.Count)];
+            }
+            return null;
+        }
         #endregion
 
         #region Faction
@@ -322,6 +351,18 @@ namespace Locations.Settlements {
                 }
             }
             return locationGridTiles;
+        }
+        public HexTile GetAnAdjacentHextile() {
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile hex = tiles[i];
+                for (int j = 0; j < hex.AllNeighbours.Count; j++) {
+                    HexTile neighbour = hex.AllNeighbours[j];
+                    if (!tiles.Contains(neighbour)) {
+                        return neighbour;
+                    }
+                }
+            }
+            return null;
         }
         #endregion
 
