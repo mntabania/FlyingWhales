@@ -487,9 +487,9 @@ public class Region {
             Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
         }
     }
-    public void RemoveCharacterFromLocation(Party party) {
-        RemoveCharacterFromLocation(party.owner);
-    }
+    //public void RemoveCharacterFromLocation(Party party) {
+    //    RemoveCharacterFromLocation(party.owner);
+    //}
     public bool IsResident(Character character) {
         return residents.Contains(character);
     }
@@ -693,6 +693,35 @@ public class Region {
                     if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
                     specialStructures.Add(currStructure);
                 }
+            }
+        }
+        if (specialStructures != null && specialStructures.Count > 0) {
+            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
+        }
+        return null;
+    }
+    public LocationStructure GetRandomSpecialStructure() {
+        List<LocationStructure> specialStructures = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON) {
+                if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
+                specialStructures.Add(currStructure);
+            }
+        }
+        if (specialStructures != null && specialStructures.Count > 0) {
+            return specialStructures[UnityEngine.Random.Range(0, specialStructures.Count)];
+        }
+        return null;
+    }
+    public LocationStructure GetRandomSpecialStructureExcept(List<LocationStructure> exceptions) {
+        List<LocationStructure> specialStructures = null;
+        for (int i = 0; i < allStructures.Count; i++) {
+            LocationStructure currStructure = allStructures[i];
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON) {
+                if(exceptions.Contains(currStructure)) { continue; }
+                if(specialStructures == null) { specialStructures = new List<LocationStructure>(); }
+                specialStructures.Add(currStructure);
             }
         }
         if (specialStructures != null && specialStructures.Count > 0) {

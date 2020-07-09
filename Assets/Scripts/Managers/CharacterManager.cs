@@ -1169,6 +1169,18 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
+    #region Party
+    public Party CreateNewParty(PARTY_TYPE partyType) {
+        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(partyType.ToString())}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        return Activator.CreateInstance(Type.GetType(typeName)) as Party ?? throw new Exception($"provided party type was invalid! {typeName}");
+    }
+    public Party CreateNewParty(PARTY_TYPE partyType, Character leader) {
+        Party newParty = CreateNewParty(partyType);
+        newParty.SetLeader(leader);
+        return newParty;
+    }
+    #endregion
+
 }
 
 [Serializable]

@@ -25,7 +25,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     //structures
     public List<JobQueueItem> availableJobs { get; }
-    public JOB_OWNER ownerType => JOB_OWNER.QUEST;
+    public JOB_OWNER ownerType => JOB_OWNER.SETTLEMENT;
     public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; }
     public LocationJobManager jobManager { get; }
@@ -424,6 +424,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         return true;
+    }
+    public bool HasAResidentThatIsAPartyLeader(PARTY_TYPE partyType) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if(resident.partyComponent.hasParty && resident.partyComponent.currentParty.IsLeader(resident) && resident.partyComponent.currentParty.partyType == partyType) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -1011,6 +1020,17 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     if (goapJob.ForceCancelJob(false, reason)) {
                         i--;
                     }
+                }
+            }
+        }
+    }
+    public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    AddForcedCancelJobsOnTickEnded(goapJob);
                 }
             }
         }

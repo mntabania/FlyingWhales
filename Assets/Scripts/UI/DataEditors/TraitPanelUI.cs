@@ -77,7 +77,7 @@ public class TraitPanelUI : MonoBehaviour {
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             _allTraits.Add(Path.GetFileNameWithoutExtension(file));
         }
-        ItemPanelUI.Instance.UpdateAttributeOptions();
+        //ItemPanelUI.Instance.UpdateAttributeOptions();
         CharacterPanelUI.Instance.UpdateTraitOptions();
         ClassPanelUI.Instance.UpdateTraitOptions();
         RacePanelUI.Instance.UpdateTraitOptions();

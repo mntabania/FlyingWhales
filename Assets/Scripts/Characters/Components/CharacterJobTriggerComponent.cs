@@ -827,6 +827,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
+    public bool TriggerRoamAroundStructure(out JobQueueItem producedJob, LocationGridTile tile = null) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_STRUCTURE)) {
+            LocationGridTile chosenTile = tile;
+            if (chosenTile == null) {
+                if (_owner.currentStructure != null) {
+                    chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
+                }
+            }
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_STRUCTURE, INTERACTION_TYPE.ROAM, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     public bool TriggerAttackDemonicStructure(LocationGridTile tile = null) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE)) {
             LocationGridTile chosenTile = tile;
@@ -2025,6 +2045,23 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    INTERACTION_TYPE.CULTIST_TRANSFORM, _owner, _owner);
 		    _owner.jobQueue.AddJobInQueue(job);
 	    }
+    }
+    #endregion
+
+    #region Party
+    public bool TriggerExploreJob(out JobQueueItem producedJob) { //bool forceDoAction = false
+        if (!_owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EXPLORE], _owner, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXPLORE, INTERACTION_TYPE.EXPLORE, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
     }
     #endregion
 }

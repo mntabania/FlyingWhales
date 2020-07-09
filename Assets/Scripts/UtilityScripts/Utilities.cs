@@ -26,7 +26,7 @@ namespace UtilityScripts {
         private static int _lastFactionID;
         private static int _lastCharacterID;
         private static int _lastAreaID;
-        private static int _lastPartyID;
+        //private static int _lastPartyID;
         private static int _lastTileObjectID;
         private static int _lastStructureID;
         private static int _lastRegionID;
@@ -67,10 +67,10 @@ namespace UtilityScripts {
                 _lastAreaID += 1;
                 return _lastAreaID;
             }
-            if (obj is Party) {
-                _lastPartyID += 1;
-                return _lastPartyID;
-            }
+            //if (obj is Party) {
+            //    _lastPartyID += 1;
+            //    return _lastPartyID;
+            //}
             if (obj is TileObject) {
                 _lastTileObjectID += 1;
                 return _lastTileObjectID;
@@ -111,9 +111,11 @@ namespace UtilityScripts {
                 if (_lastCharacterID <= idToUse) { _lastCharacterID = idToUse; }
             } else if (obj is BaseSettlement) {
                 if (_lastAreaID <= idToUse) { _lastAreaID = idToUse; }
-            } else if (obj is Party) {
-                if (_lastPartyID <= idToUse) { _lastPartyID = idToUse; }
-            } else if (obj is LocationStructure) {
+            } 
+            //else if (obj is Party) {
+            //    if (_lastPartyID <= idToUse) { _lastPartyID = idToUse; }
+            //} 
+            else if (obj is LocationStructure) {
                 if (_lastStructureID <= idToUse) { _lastStructureID = idToUse; }
             } else if (obj is TileObject) {
                 if (_lastTileObjectID <= idToUse) { _lastTileObjectID = idToUse; }

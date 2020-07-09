@@ -256,7 +256,7 @@ namespace Traits {
         //    this.effects = effects;
         //}
         protected bool TryTransferJob(JobQueueItem currentJob, Character characterThatWillDoJob) {
-            if (currentJob.originalOwner.ownerType == JOB_OWNER.LOCATION || currentJob.originalOwner.ownerType == JOB_OWNER.QUEST) {
+            if (currentJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT || currentJob.originalOwner.ownerType == JOB_OWNER.QUEST) {
                 bool canBeTransfered = false;
                 Character assignedCharacter = currentJob.assignedCharacter;
                 if (assignedCharacter != null && assignedCharacter.currentActionNode.action != null

@@ -92,7 +92,7 @@ public class JobQueueItem {
         if (originalOwner.ownerType == JOB_OWNER.CHARACTER) {
             //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
             return CanTakeJob(character);
-        } else if (originalOwner.ownerType == JOB_OWNER.LOCATION) {
+        } else if (originalOwner.ownerType == JOB_OWNER.SETTLEMENT) {
             if (!character.characterClass.CanDoJob(jobType) && character.jobComponent.primaryJob != jobType && !character.jobComponent.priorityJobs.Contains(jobType)) {
                 return false;
             }
