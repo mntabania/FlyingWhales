@@ -823,5 +823,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private bool CanTakeMineJob(Character character, IPointOfInterest target) {
 		return character.characterClass.CanDoJob(JOB_TYPE.MINE);
 	}
-	#endregion
+    #endregion
+
+    #region Party
+    public void TriggerJoinPartyJob(Party party) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeJoinPartyJob);
+        _owner.AddToAvailableJobs(job);
+    }
+    #endregion
 }

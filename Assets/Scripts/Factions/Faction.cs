@@ -38,7 +38,7 @@ public class Faction : IJobOwner {
     private List<Log> history { get; }
     public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
-    private FactionJobTriggerComponent factionJobTriggerComponent { get; }
+    public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
     
     private int newLeaderDesignationChance;
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
@@ -67,7 +67,7 @@ public class Faction : IJobOwner {
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
-        factionJobTriggerComponent = new FactionJobTriggerComponent();
+        factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -88,7 +88,7 @@ public class Faction : IJobOwner {
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
-        factionJobTriggerComponent = new FactionJobTriggerComponent();
+        factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -713,8 +713,19 @@ public class Faction : IJobOwner {
             availableJobs[i].ClearBlacklist();
         }
     }
+    public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.jobType == jobType && job is GoapPlanJob) {
+                GoapPlanJob goapJob = job as GoapPlanJob;
+                if (goapJob.targetPOI == target) {
+                    AddForcedCancelJobsOnTickEnded(goapJob);
+                }
+            }
+        }
+    }
     #endregion
-    
+
     #region IJobOwner
     public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {

@@ -576,6 +576,18 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CULTIST_TRANSFORM, new[]{
             new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(5) },
         } },
+        {INTERACTION_TYPE.JOIN_PARTY, new[]{
+            new StateNameAndDuration(){ name = "Join Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.EXPLORE, new[]{
+            new StateNameAndDuration(){ name = "Explore Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.EXTERMINATE, new[]{
+            new StateNameAndDuration(){ name = "Exterminate Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.RESCUE, new[]{
+            new StateNameAndDuration(){ name = "Rescue Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

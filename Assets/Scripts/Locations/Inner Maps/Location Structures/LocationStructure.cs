@@ -9,7 +9,7 @@ using Locations.Settlements;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyTarget {
         public int id { get; private set; }
         public string name { get; protected set; }
         public string nameWithoutID { get; protected set; }

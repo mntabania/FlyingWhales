@@ -583,9 +583,11 @@ public class UIManager : MonoBehaviour {
             ShowFactionInfo(faction);
         } else if (obj is Minion minion) {
             ShowCharacterInfo(minion.character, true);
-        } else if (obj is Party party) {
-            ShowCharacterInfo(party.owner, true);
-        } else if (obj is TileObject tileObject) {
+        }
+        //else if (obj is Party party) {
+        //    ShowCharacterInfo(party.owner, true);
+        //} 
+        else if (obj is TileObject tileObject) {
             ShowTileObjectInfo(tileObject);
         } else if (obj is Region region) {
             ShowRegionInfo(region);

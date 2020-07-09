@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 using UtilityScripts;
 using JetBrains.Annotations;
 
-public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyTarget {
     private string _name;
     private string _firstName;
     private string _surName;
@@ -138,6 +138,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public MovementComponent movementComponent { get; private set; }
     public StateAwarenessComponent stateAwarenessComponent { get; private set; }
     public CarryComponent carryComponent { get; private set; }
+    public PartyComponent partyComponent { get; private set; }
 
 
     #region getters / setters
@@ -336,6 +337,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         movementComponent = new MovementComponent(this);
         stateAwarenessComponent = new StateAwarenessComponent(this);
         carryComponent = new CarryComponent(this);
+        partyComponent = new PartyComponent(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -5444,6 +5446,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
 
             //RemoveAllNonPersistentTraits();
+            if (partyComponent.hasParty) {
+                if (partyComponent.currentParty.IsLeader(this)) {
+                    partyComponent.currentParty.DisbandParty();
+                } else {
+                    partyComponent.currentParty.RemoveMember(this);
+                }
+            }
 
             SetHP(0);
 

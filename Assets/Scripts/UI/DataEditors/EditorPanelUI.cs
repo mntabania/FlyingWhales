@@ -20,12 +20,12 @@ public class EditorPanelUI : MonoBehaviour {
 
         CharacterPanelUI.Instance.LoadAllData();
         MonsterPanelUI.Instance.LoadAllData();
-        SkillPanelUI.Instance.LoadAllData();
+        //SkillPanelUI.Instance.LoadAllData();
         ClassPanelUI.Instance.LoadAllData();
         RacePanelUI.Instance.LoadAllData();
         TraitPanelUI.Instance.LoadAllData();
         //AttributePanelUI.Instance.LoadAllData();
-        ItemPanelUI.Instance.LoadAllData();
+        //ItemPanelUI.Instance.LoadAllData();
     }
     public void OnClickPage1() {
         page1GO.SetActive(true);

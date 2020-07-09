@@ -41,6 +41,25 @@ public class DefaultAtHome : CharacterBehaviourComponent {
             } else {
                 log += $"\n-{character.name} is in home structure and previous action is not returned home";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
+                log += "\n-If it is Morning";
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING) {
+                    log += "\n-If character is an Archer, Marauder, or Shaman";
+                    if (character.characterClass.className == "Archer" || character.characterClass.className == "Marauder" || character.characterClass.className == "Shaman") {
+                        log += "\n-15% chance to Create Exploration Party if there are no Exploration Party whose leader lives in the same settlement";
+                        if (!character.homeSettlement.HasAResidentThatIsAPartyLeader(PARTY_TYPE.Exploration)) {
+                            int chance = Random.Range(0, 100);
+                            log += $"\nRoll: {chance}";
+                            if (chance < 50) {
+                                character.jobComponent.TriggerExploreJob(out producedJob);
+                                return true;
+                            }
+                        } else {
+                            log += "\n-Already has an Exploration party whose leader lives in the same settlement";
+                        }
+                    }
+                } else {
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
+                }
 
                 log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false) {
