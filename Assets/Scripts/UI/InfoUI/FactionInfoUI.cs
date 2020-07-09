@@ -237,17 +237,7 @@ public class FactionInfoUI : InfoUIBase {
         }
     }
     public void ShowFactionTestingInfo() {
-        string summary = string.Empty;
-        if (activeFaction.activeFactionQuest != null) {
-            summary += activeFaction.activeFactionQuest.name;
-            for (int i = 0; i < activeFaction.activeFactionQuest.availableJobs.Count; i++) {
-                JobQueueItem item = activeFaction.activeFactionQuest.availableJobs[i];
-                summary += $"\n\t- {item.jobType}: {item.assignedCharacter?.name}";
-            }
-        }
-        //if (!string.IsNullOrEmpty(summary)) {
-        //    summary += "\n";
-        //}
+        string summary = $"Faction Type: {activeFaction.factionType.type.ToString()}";
         for (int i = 0; i < activeFaction.ideologyComponent.currentIdeologies.Count; i++) {
             FactionIdeology ideology = activeFaction.ideologyComponent.currentIdeologies[i];
             if (ideology != null) {
@@ -255,6 +245,20 @@ public class FactionInfoUI : InfoUIBase {
                 summary += "\nRequirements for joining:";
                 summary += $"\n\t{ideology.GetRequirementsForJoiningAsString()}";    
             }
+        }
+        summary += $"\n{name} Faction Job Queue:";
+        if (activeFaction.availableJobs.Count > 0) {
+            for (int j = 0; j < activeFaction.availableJobs.Count; j++) {
+                JobQueueItem jqi = activeFaction.availableJobs[j];
+                if (jqi is GoapPlanJob gpj) {
+                    summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>" ;
+                } else {
+                    summary += $"\n<b>{jqi.name}</b>";
+                }
+                summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
+            }
+        } else {
+            summary += "\nNone";
         }
 
         UIManager.Instance.ShowSmallInfo(summary);

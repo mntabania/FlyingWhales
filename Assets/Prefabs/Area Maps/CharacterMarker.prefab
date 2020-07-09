@@ -668,7 +668,7 @@ MonoBehaviour:
   particleEffectParent: {fileID: 4874270362284724053}
   particleEffectParentAllowRotation: {fileID: 2878433674864331503}
   animator: {fileID: 95186138413260264}
-  animationListener: {fileID: 114755964225770220}
+  _animationListener: {fileID: 114755964225770220}
   currentAnimation: 
   defaultController: {fileID: 9100000, guid: ffe6e2853385f4440abc8c2b55a9068f, type: 2}
   monsterController: {fileID: 22100000, guid: 3540b1e5362ee6a4ab77e360bc0c8108, type: 2}
@@ -1166,7 +1166,7 @@ SpriteRenderer:
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
   m_SortingOrder: 20
-  m_Sprite: {fileID: 21300000, guid: f78ab9c9bea663040a096bba6335f350, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 04a0a584933fd734a95e8c2842d829b9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

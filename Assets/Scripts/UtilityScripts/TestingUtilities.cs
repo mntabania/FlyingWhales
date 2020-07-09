@@ -6,13 +6,13 @@ namespace UtilityScripts {
             string summary = $"{region.name} Info:";
             summary += $"\nActive burning sources {region.innerMap.activeBurningSources.Count.ToString()}";
 
-            for (int i = 0; i < region.innerMap.activeBurningSources.Count; i++) {
-                BurningSource source = region.innerMap.activeBurningSources[i];
-                summary += $"\n{source}: ";
-                for (int j = 0; j < source.objectsOnFire.Count; j++) {
-                    summary += $"\n\t{source.objectsOnFire[j]}";    
-                }
-            }
+            // for (int i = 0; i < region.innerMap.activeBurningSources.Count; i++) {
+            //     BurningSource source = region.innerMap.activeBurningSources[i];
+            //     summary += $"\n{source}: ";
+            //     for (int j = 0; j < source.objectsOnFire.Count; j++) {
+            //         summary += $"\n\t{source.objectsOnFire[j]}";    
+            //     }
+            // }
             
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
@@ -21,13 +21,13 @@ namespace UtilityScripts {
                 NPCSettlement npcSettlement = settlements[i];
                 if (npcSettlement.owner == null) { continue; }
                 summary += $"\n{npcSettlement.name}";
-                summary += $"\nDryers: {npcSettlement.settlementJobTriggerComponent.tileDryers.Count.ToString()}";
-                summary += $"\nCleansers: {npcSettlement.settlementJobTriggerComponent.poisonCleansers.Count.ToString()}";
-                summary += $"\nDousers: {npcSettlement.settlementJobTriggerComponent.dousers.Count.ToString()}";
-                for (int j = 0; j < npcSettlement.settlementJobTriggerComponent.dousers.Count; j++) {
-                    Character douser = npcSettlement.settlementJobTriggerComponent.dousers[j];
-                    summary += $"\n\t-{douser.name}";    
-                }
+                // summary += $"\nDryers: {npcSettlement.settlementJobTriggerComponent.tileDryers.Count.ToString()}";
+                // summary += $"\nCleansers: {npcSettlement.settlementJobTriggerComponent.poisonCleansers.Count.ToString()}";
+                // summary += $"\nDousers: {npcSettlement.settlementJobTriggerComponent.dousers.Count.ToString()}";
+                // for (int j = 0; j < npcSettlement.settlementJobTriggerComponent.dousers.Count; j++) {
+                //     Character douser = npcSettlement.settlementJobTriggerComponent.dousers[j];
+                //     summary += $"\n\t-{douser.name}";    
+                // }
                 summary += $"\n{npcSettlement.name} Location Job Queue:";
                 if (npcSettlement.availableJobs.Count > 0) {
                     for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {
@@ -39,20 +39,9 @@ namespace UtilityScripts {
                             summary += $"\n<b>{jqi.name}</b>";
                         }
                         summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
-                        // if (UIManager.Instance.characterInfoUI.isShowing) {
-                        //     summary +=
-                        //         $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)}";
-                        // }
-            
                     }
                 } else {
                     summary += "\nNone";
-                }
-                summary += "\nActive Quest: ";
-                if (npcSettlement.owner != null && npcSettlement.owner.activeFactionQuest != null) {
-                    summary += npcSettlement.owner.activeFactionQuest.name;
-                } else {
-                    summary += "None";
                 }
                 summary += "\n";
                 UIManager.Instance.ShowSmallInfo(summary);

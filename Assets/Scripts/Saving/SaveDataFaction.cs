@@ -67,12 +67,6 @@ public class SaveDataFaction {
         for (int i = 0; i < faction.ownedSettlements.Count; i++) {
             ownedRegionIDs.Add(faction.ownedSettlements[i].id);
         }
-
-        hasActiveQuest = faction.activeFactionQuest != null;
-        if (hasActiveQuest) {
-            activeQuest = new SaveDataQuest();
-            activeQuest.Save(faction.activeFactionQuest);
-        }
     }
 
     public void Load(List<BaseLandmark> allLandmarks) {
@@ -92,14 +86,5 @@ public class SaveDataFaction {
         //     Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);
         //     LandmarkManager.Instance.OwnRegion(faction, region);
         // }
-    }
-
-    public void LoadFactionActiveQuest() {
-        if (hasActiveQuest) {
-            FactionQuest factionQuest = activeQuest.Load();
-            if (activeQuest.isActivated) {
-                factionQuest.factionOwner.SetActiveQuest(factionQuest);
-            }
-        }
     }
 }

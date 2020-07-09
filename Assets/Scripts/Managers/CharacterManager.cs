@@ -788,7 +788,7 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < portraitAssets.Count; i++) {
             RacePortraitAssets racePortraitAssets = portraitAssets[i];
             if (racePortraitAssets.race == race) {
-                if (race.IsGenderNeutral()) {
+                if (race.UsesGenderNeutralPortrait()) {
                     return racePortraitAssets.neutralAssets;
                 } else {
                     return gender == GENDER.MALE ? racePortraitAssets.maleAssets : racePortraitAssets.femaleAssets;
@@ -966,7 +966,7 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < markerAssets.Count; i++) {
             RaceMarkerAsset currRaceAsset = markerAssets[i];
             if (currRaceAsset.race == race) {
-                var asset = race.IsGenderNeutral() ? currRaceAsset.neutralAssets : currRaceAsset.GetMarkerAsset(gender);
+                var asset = race.UsesGenderNeutralMarkerAssets() ? currRaceAsset.neutralAssets : currRaceAsset.GetMarkerAsset(gender);
                 if (asset.characterClassAssets.ContainsKey(characterClassName)) {
                     return asset.characterClassAssets[characterClassName];
                 } else if (asset.characterClassAssets.ContainsKey("Default")) {

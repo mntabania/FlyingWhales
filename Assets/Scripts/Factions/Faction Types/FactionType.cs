@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 namespace Factions.Faction_Types {
     public abstract class FactionType {
         public readonly FACTION_TYPE type;
         public readonly List<FactionIdeology> ideologies;
+        public readonly List<StructureSetting> neededStructures;
         
-        public FactionType(FACTION_TYPE type) {
+        protected FactionType(FACTION_TYPE type) {
             this.type = type;
             ideologies = new List<FactionIdeology>();
+            neededStructures = new List<StructureSetting>();
         }
 
         #region Initialization
@@ -33,5 +36,13 @@ namespace Factions.Faction_Types {
             return true;
         }
         #endregion
+
+        #region Structures
+        public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
+            StructureSetting structureSetting = new StructureSetting(structureType, resource);
+            neededStructures.Add(structureSetting);
+        }
+        #endregion
+        
     }
 }

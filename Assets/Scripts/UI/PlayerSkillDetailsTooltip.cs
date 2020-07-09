@@ -5,18 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Video;
+using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
 
 public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public RectTransform thisRect;
     public TextMeshProUGUI titleText;
     public RuinarchText descriptionText;
-    public TextMeshProUGUI categoryText;
-    public TextMeshProUGUI chargesText;
-    public TextMeshProUGUI manaCostText;
-    public TextMeshProUGUI cooldownText;
-    public TextMeshProUGUI threatText;
-    public TextMeshProUGUI threatPerHourText;
+    public TextMeshProUGUI currenciesText;
     public TextMeshProUGUI additionalText;
     public UIHoverPosition defaultPosition;
     public RawImage tooltipImage;
@@ -29,18 +25,18 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public void ShowPlayerSkillDetails(SpellData spellData, UIHoverPosition position = null) {
         this.spellData = spellData;
         UpdateData(spellData);
-        UpdatePlayerSkillDetails(position);
+        UpdatePositionAndVideo(position);
     }
     public void ShowPlayerSkillDetails(PlayerSkillData skillData, UIHoverPosition position = null) {
         this.skillData = skillData;
         UpdateData(skillData);
-        UpdatePlayerSkillDetails(position);
+        UpdatePositionAndVideo(position);
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
         tooltipVideoPlayer.Stop();
     }
-    private void UpdatePlayerSkillDetails(UIHoverPosition position) {
+    private void UpdatePositionAndVideo(UIHoverPosition position) {
         bool wasActiveBefore = gameObject.activeSelf;
         gameObject.SetActive(true);
         UIHoverPosition positionToUse = position;
@@ -68,21 +64,21 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (skillData != null) {
                 if (skillData.tooltipImage != null) {
                     tooltipImage.texture = skillData.tooltipImage;
-                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 727f);
+                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 503f);
                     tooltipImage.gameObject.SetActive(true);
                 } else if (skillData.tooltipVideoClip != null) {
                     tooltipVideoPlayer.clip = skillData.tooltipVideoClip;
                     tooltipImage.texture = tooltipVideoRenderTexture;
                     tooltipVideoPlayer.Play();
-                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 727f);
+                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 503f);
                     tooltipImage.gameObject.SetActive(true);
                 } else {
-                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 494f);
+                    thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 264f);
                     tooltipImage.texture = null;
                     tooltipImage.gameObject.SetActive(false);
                 }
             } else {
-                thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 494f);
+                thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 264f);
                 tooltipImage.texture = null;
                 tooltipImage.gameObject.SetActive(false);
             }
@@ -91,52 +87,50 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     private void UpdateData(PlayerSkillData skillData) {
         titleText.SetText(skillData.name);
         descriptionText.SetText(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).description);
-        threatText.SetText("" + skillData.threat);
-        threatPerHourText.SetText("" + skillData.threatPerHour);
-
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;
         int cooldown = skillData.cooldown;
-        categoryText.SetText(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).category.ToString()));
 
-        chargesText.SetText("N/A");
-        if (charges != -1) {
-            chargesText.SetText($"{charges.ToString()}");
-        }
-
-        manaCostText.text = "N/A";
+        string currencyStr = string.Empty; 
+        
         if (manaCost != -1) {
-            manaCostText.text = $"{manaCost.ToString()}";
+            currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-
-        string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
-        cooldownText.SetText(cdText);
-
+        if (cooldown != -1) {
+            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
+        }
+        if (charges != -1) {
+            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
+        if (skillData.threat > 0) {
+            currencyStr += $"{skillData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        }
+        
+        currenciesText.text = currencyStr;
+        additionalText.text = string.Empty;
     }
     private void UpdateData(SpellData spellData) {
         titleText.text = spellData.name;
         descriptionText.SetText(spellData.description);
-        threatText.SetText("" + spellData.threat);
-        threatPerHourText.SetText("" + spellData.threatPerHour);
-
         int charges = spellData.charges;
         int manaCost = spellData.manaCost;
         int cooldown = spellData.cooldown;
-        categoryText.SetText(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spellData.category.ToString()));
 
-        chargesText.SetText("N/A");
-        if(charges != -1) {
-            chargesText.SetText($"{charges.ToString()}/{spellData.maxCharges.ToString()}");
-        }
-
-        manaCostText.text = "N/A";
+        string currencyStr = string.Empty; 
+        
         if (manaCost != -1) {
-            manaCostText.text = (HasEnoughMana() ? "<color=\"green\">" : "<color=\"red\">");
-            manaCostText.text += $"{manaCost.ToString()}</color>" ;
+            currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
         }
-
-        string cdText = cooldown == -1 ? "N/A" : $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)}";
-        cooldownText.SetText(cdText);
+        if (cooldown != -1) {
+            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
+        }
+        if (charges != -1) {
+            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
+        if (spellData.threat > 0) {
+            currencyStr += $"{spellData.threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        }
+        currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
         if (UIManager.Instance.characterInfoUI.isShowing) {

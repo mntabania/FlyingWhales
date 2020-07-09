@@ -840,8 +840,11 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE
 }
-public enum JOB_OWNER { CHARACTER, SETTLEMENT, QUEST, }
-public enum Cardinal_Direction { North, South, East, West };
+
+public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
+
+public enum Cardinal_Direction { North, South, East, West }
+
 public enum ACTION_LOCATION_TYPE {
     IN_PLACE,
     NEARBY,
@@ -1865,7 +1868,17 @@ public static class Extensions {
     #endregion
 
     #region Races
-    public static bool IsGenderNeutral(this RACE race) {
+    public static bool UsesGenderNeutralMarkerAssets(this RACE race) {
+        switch (race) {
+            // case RACE.HUMANS:
+            // case RACE.ELVES:
+            case RACE.LESSER_DEMON:
+                return false;
+            default:
+                return true;
+        }
+    }
+    public static bool UsesGenderNeutralPortrait(this RACE race) {
         switch (race) {
             case RACE.HUMANS:
             case RACE.ELVES:

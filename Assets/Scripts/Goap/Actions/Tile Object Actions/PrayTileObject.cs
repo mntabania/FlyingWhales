@@ -39,14 +39,7 @@ public class PrayTileObject : GoapAction {
         TileObject obj = goapNode.poiTarget as TileObject;
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public void AfterPraySuccess(ActualGoapNode goapNode) {
-        if (goapNode.poiTarget is GoddessStatue) {
-            //Speed up divine intervention by 4 hours
-            if(goapNode.actor.faction != null && goapNode.actor.faction.activeFactionQuest != null && goapNode.actor.faction.activeFactionQuest is DivineInterventionFactionQuest) {
-                goapNode.actor.faction.activeFactionQuest.AdjustCurrentDuration(GameManager.Instance.GetTicksBasedOnHour(4));
-            }
-        }
-    }
+    public void AfterPraySuccess(ActualGoapNode goapNode) { }
     #endregion
 
     #region Requirement

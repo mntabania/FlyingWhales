@@ -144,14 +144,15 @@ public class Party {
     private void CreateJoinPartyJob() {
         if(jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
             leader.homeSettlement.settlementJobTriggerComponent.TriggerJoinPartyJob(this);
+        } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
+            leader.faction.factionJobTriggerComponent.TriggerJoinPartyJob(this);
         }
-        //else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
-        //    //TODO
-        //}
     }
     private void CancelAllJoinPartyJobs() {
         if (jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
             leader.homeSettlement.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
+        } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
+            leader.faction.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
         }
     }
     #endregion

@@ -202,12 +202,6 @@ public class Save {
             factionSaves[i].Load(allLandmarks);
         }
     }
-    public void LoadFactionsActiveQuests() {
-        for (int i = 0; i < factionSaves.Count; i++) {
-            factionSaves[i].LoadFactionActiveQuest();
-        }
-    }
-
     public void SaveCharacters(List<Character> characters) {
         characterSaves = new List<SaveDataCharacter>();
         for (int i = 0; i < characters.Count; i++) {
