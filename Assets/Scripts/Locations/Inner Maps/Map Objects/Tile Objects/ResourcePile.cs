@@ -74,5 +74,6 @@ public abstract class ResourcePile : TileObject {
         data = $"{data}\n\tResource in Pile: {resourceInPile.ToString()}";
         return data;
     }
+    public override void SetCharacterOwner(Character characterOwner) { } //do not set character owner of resource pile. Reference: https://trello.com/c/TRzgjik6/1352-resources-like-food-pile-and-wood-pile-should-not-have-owners-at-any-time
     #endregion
 }
