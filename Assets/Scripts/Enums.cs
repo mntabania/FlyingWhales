@@ -1855,7 +1855,17 @@ public static class Extensions {
     #endregion
 
     #region Races
-    public static bool IsGenderNeutral(this RACE race) {
+    public static bool UsesGenderNeutralMarkerAssets(this RACE race) {
+        switch (race) {
+            // case RACE.HUMANS:
+            // case RACE.ELVES:
+            case RACE.LESSER_DEMON:
+                return false;
+            default:
+                return true;
+        }
+    }
+    public static bool UsesGenderNeutralPortrait(this RACE race) {
         switch (race) {
             case RACE.HUMANS:
             case RACE.ELVES:

@@ -142,8 +142,10 @@ public class CharacterMarkerNameplate : PooledObject {
         if (UIManager.Instance.gameObject.activeSelf) {
             //if UI is shown
             if (shownCharacter == _parentMarker.character) {
+                SetNameState(true);
                 ShowThoughts();
             } else {
+                SetNameState(true);
                 HideThoughts();
             }
         } else {
