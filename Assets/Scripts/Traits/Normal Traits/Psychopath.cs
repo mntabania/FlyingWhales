@@ -283,10 +283,10 @@ namespace Traits {
             return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead/* || target.isMissing*/;
         }
         public bool CreateHuntVictimJob() {
-            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
+            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM)) {
                 return false;
             }
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
                 LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {
@@ -305,11 +305,11 @@ namespace Traits {
             return true;
         }
         public bool CreateHuntVictimJob(out JobQueueItem producedJob) {
-            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
+            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM)) {
                 producedJob = null;
                 return false;
             }
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
                 LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {
@@ -376,7 +376,7 @@ namespace Traits {
         }
 
         public void PsychopathSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_saw_no_assist");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "psychopath_saw_no_assist");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);

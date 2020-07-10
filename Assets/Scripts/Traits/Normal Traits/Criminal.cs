@@ -27,6 +27,20 @@ namespace Traits {
                 //TODO: sourceCharacter.homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 owner.CancelOrUnassignRemoveTraitRelatedJobs();
                 CharacterApprehension();
+
+                if (owner.isSettlementRuler) {
+                    owner.ruledSettlement.SetRuler(null);
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                }
+
+                if (owner.isFactionLeader) {
+                    owner.faction.SetLeader(null);
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                }
             }
 
         }
