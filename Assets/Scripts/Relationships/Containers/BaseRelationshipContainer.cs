@@ -34,8 +34,8 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         data.SetTargetName(relatable.relatableName);
         data.SetTargetGender(relatable.gender);
         relationships.Add(relatable.id, data);
-        if (relatable is Character) {
-            charactersWithOpinion.Add(relatable as Character);
+        if (relatable is Character targetCharacter) {
+            charactersWithOpinion.Add(targetCharacter);
         }
         Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, owner, relatable);
         return data;
@@ -45,6 +45,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         data.SetTargetName(name);
         data.SetTargetGender(gender);
         relationships.Add(id, data);
+        Character targetCharacter = CharacterManager.Instance.GetCharacterByID(id);
+        if (targetCharacter != null) {
+            charactersWithOpinion.Add(targetCharacter);
+        }
         Messenger.Broadcast<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, owner, null);
         return data;
     }

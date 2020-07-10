@@ -487,10 +487,9 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
         summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";
         summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
-        // summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
         summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
-        summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
-        summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
+        // summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
+        // summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString(CultureInfo.InvariantCulture))}";
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.combatComponent.attackSpeed.ToString())}";
         summary = $"{summary}{("\nCombat Mode: " + activeCharacter.combatComponent.combatMode.ToString())}";
@@ -526,6 +525,16 @@ public class CharacterInfoUI : InfoUIBase {
         } else {
             summary += "None";
         }
+        
+        // summary += "\nCharacters with opinion: ";
+        // if (activeCharacter.relationshipContainer.charactersWithOpinion.Count > 0) {
+        //     for (int i = 0; i < activeCharacter.relationshipContainer.charactersWithOpinion.Count; i++) {
+        //         Character characterWithOpinion = activeCharacter.relationshipContainer.charactersWithOpinion[i];
+        //         summary += $"{characterWithOpinion}, ";
+        //     }
+        // } else {
+        //     summary += "None";
+        // }
         // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
         UIManager.Instance.ShowSmallInfo(summary);
 #endif
