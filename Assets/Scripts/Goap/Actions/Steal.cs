@@ -46,9 +46,14 @@ public class Steal : GoapAction {
             }
             if(item?.characterOwner != null) {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(item.characterOwner);
-                if(opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                if(actor.moodComponent.moodState == MOOD_STATE.NORMAL || opinionLabel == RelationshipManager.Acquaintance || 
+                   opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     cost += 2000;
                     costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
+                } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+                    cost += UtilityScripts.Utilities.Rng.Next(500, 601);
+                } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    cost += UtilityScripts.Utilities.Rng.Next(120, 201);
                 }
             }
         }
