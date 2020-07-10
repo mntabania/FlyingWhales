@@ -53,7 +53,7 @@ namespace Traits {
             //float pukeRoll = Random.Range(0f, 100f);
             //float septicRoll = Random.Range(0f, 100f);
             int pukeRoll = Random.Range(0, 100);
-            int septicRoll = Random.Range(0, 100);
+            float septicRoll = Random.Range(0f, 100f);
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
