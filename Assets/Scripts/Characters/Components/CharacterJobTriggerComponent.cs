@@ -1625,6 +1625,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool CreateGoToJob(IPointOfInterest target) {
         if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
+            job.SetCannotBePushedBack(true);
             return _owner.jobQueue.AddJobInQueue(job);
         }
         return false;
@@ -1632,7 +1633,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool CreateGoToJob(IPointOfInterest target, out JobQueueItem producedJob) {
 	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
-		    producedJob = job;
+            job.SetCannotBePushedBack(true);
+            producedJob = job;
 		    return true;
 	    }
 	    producedJob = null;
@@ -1641,6 +1643,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
 	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+            job.SetCannotBePushedBack(true);
 		    producedJob = job;
 		    return true;
 	    }
