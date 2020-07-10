@@ -225,9 +225,10 @@ public class MovementComponent {
         //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
         //Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
 
-        if(targetTile != null) {
+        if(targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.objHere, owner);
+                job.SetCannotBePushedBack(true);
                 owner.jobQueue.AddJobInQueue(job);
             }
         }

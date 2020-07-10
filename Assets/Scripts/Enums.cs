@@ -549,7 +549,8 @@ public enum INTERRUPT {
     Order_Attack,
     Recall_Attack,
     Worried,
-    Being_Brainwashed
+    Being_Brainwashed,
+    Cry_Request,
 }
 
 public enum TRAIT_TYPE {

@@ -43,7 +43,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 log += $"\n-{character.name} is in home structure and previous action is not returned home";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
                 log += "\n-If it is Morning";
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING) {
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n-If character is an Archer, Marauder, or Shaman";
                     if (character.characterClass.className == "Archer" || character.characterClass.className == "Marauder" || character.characterClass.className == "Shaman") {
                         log += "\n-15% chance to Create Exploration Party if there are no Exploration Party whose leader lives in the same settlement";
@@ -78,7 +78,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 50) {
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, missingCloseFriend, "Missing " + missingCloseFriend.name);
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry_Request, missingCloseFriend, "Missing " + missingCloseFriend.name);
                                 return true;
                             }
                         }
