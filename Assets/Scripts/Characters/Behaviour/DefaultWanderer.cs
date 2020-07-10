@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class DefaultWanderer : CharacterBehaviourComponent {
 	public DefaultWanderer() {
@@ -129,38 +130,48 @@ public class DefaultWanderer : CharacterBehaviourComponent {
                             int chance = Random.Range(0, 100);
                             log += $"\n  -RNG roll: {chance.ToString()}";
                             if (chance < 25 && character.trapStructure.IsTrapped() == false) {
-                                List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
-                                if (positiveRelatables.Count > 0) {
-                                    Character targetCharacter = null;
-                                    LocationStructure targetStructure = null;
-                                    while (positiveRelatables.Count > 0 && targetStructure == null) {
-                                        int index = Random.Range(0, positiveRelatables.Count);
-                                        Character chosenRelatable = positiveRelatables[index];
-                                        targetCharacter = chosenRelatable;
-                                        targetStructure = chosenRelatable.homeStructure;
-                                        if (targetStructure == null) {
-                                            positiveRelatables.RemoveAt(index);
-                                        } else if (targetStructure == character.homeStructure) {
-                                            targetStructure = null;
-                                            positiveRelatables.RemoveAt(index);
-                                        } else if (chosenRelatable.isDead /*|| chosenRelatable.isMissing*/) {
-                                            targetStructure = null;
-                                            positiveRelatables.RemoveAt(index);
-                                        } else if (character.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomTile()) == false) {
-                                            targetStructure = null;
-                                            positiveRelatables.RemoveAt(index);
-                                        }
-                                    }
-                                    if (targetStructure != null) {
-                                        log +=
-                                            $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
-                                        character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, new object[] { targetStructure, targetCharacter });
-                                        return true;
-                                    }
-                                    log += "\n  -No positive relationship with home structure";
+                                WeightedDictionary<Character> visitWeights = GetCharacterToVisitWeights(character);
+                                if (visitWeights.GetTotalOfWeights() > 0) {
+                                    Character targetCharacter = visitWeights.PickRandomElementGivenWeights();
+                                    LocationStructure targetStructure = targetCharacter.homeStructure;
+                                    Assert.IsNotNull(targetStructure, $"Home structure of visit target {targetCharacter.name} is null!");
+                                    log += $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
+                                    character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, new object[] { targetStructure, targetCharacter });
                                 } else {
-                                    log += "\n  -No character with positive relationship";
+                                    log += "\n  -No valid character to visit.";
                                 }
+                                // List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
+                                // if (positiveRelatables.Count > 0) {
+                                //     Character targetCharacter = null;
+                                //     LocationStructure targetStructure = null;
+                                //     while (positiveRelatables.Count > 0 && targetStructure == null) {
+                                //         int index = Random.Range(0, positiveRelatables.Count);
+                                //         Character chosenRelatable = positiveRelatables[index];
+                                //         targetCharacter = chosenRelatable;
+                                //         targetStructure = chosenRelatable.homeStructure;
+                                //         if (targetStructure == null) {
+                                //             positiveRelatables.RemoveAt(index);
+                                //         } else if (targetStructure == character.homeStructure) {
+                                //             targetStructure = null;
+                                //             positiveRelatables.RemoveAt(index);
+                                //         } else if (chosenRelatable.isDead /*|| chosenRelatable.isMissing*/) {
+                                //             targetStructure = null;
+                                //             positiveRelatables.RemoveAt(index);
+                                //         } else if (character.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomTile()) == false) {
+                                //             targetStructure = null;
+                                //             positiveRelatables.RemoveAt(index);
+                                //         }
+                                //     }
+                                //     if (targetStructure != null) {
+                                //         log +=
+                                //             $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
+                                //         character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, new object[] { targetStructure, targetCharacter });
+                                //         return true;
+                                //     }
+                                //     log += "\n  -No positive relationship with home structure";
+                                // } else {
+                                //     log += "\n  -No character with positive relationship";
+                                // }
                             }
                         } else {
                             log += $"\n  -Time of Day: {currentTimeOfDay}";

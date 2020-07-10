@@ -3052,7 +3052,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         job.SetAssignedPlan(goapPlan);
         jobQueue.AddJobInQueue(job);
     }
-    public Character GetDisabledCharacterToCheckOut() {
+    public Character GetDisabledCharacterToCheckOutThatMeetCriteria(System.Func<Character, bool> validityChecker = null) {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
         List<Character> charactersWithRel = relationshipContainer.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
@@ -3060,6 +3060,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             for (int i = 0; i < charactersWithRel.Count; i++) {
                 Character character = charactersWithRel[i];
                 if(character.isDead /*|| character.isMissing*/ || homeStructure == character.homeStructure) {
+                    continue;
+                }
+                if (validityChecker != null && validityChecker.Invoke(character) == false) {
+                    //character is invalid, because of given 
                     continue;
                 }
                 if (relationshipContainer.HasOpinionLabelWithCharacter(character, RelationshipManager.Acquaintance, 

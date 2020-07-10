@@ -78,4 +78,25 @@ public abstract class CharacterBehaviourComponent {
     }
     #endregion
 
+    #region Utilities
+    protected WeightedDictionary<Character> GetCharacterToVisitWeights(Character actor) {
+        WeightedDictionary<Character> weights = new WeightedDictionary<Character>();
+        List<Character> positiveRelatables = actor.relationshipContainer.GetFriendCharacters();
+        for (int i = 0; i < positiveRelatables.Count; i++) {
+            Character character = positiveRelatables[i];
+            if (character.isDead || character.homeStructure == null || 
+                character.movementComponent.HasPathToEvenIfDiffRegion(character.homeStructure.GetRandomTile()) == false ||
+                (character.faction != null && actor.faction != null && character.faction.GetRelationshipWith(actor.faction)?.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile)) {
+                continue; //skip
+            }
+            int weight = 10;
+            if (character.homeSettlement == actor.homeSettlement) {
+                weight += 100;
+            }
+            weights.AddElement(character, weight);
+        }
+        return weights;
+    }
+    #endregion
+
 }
