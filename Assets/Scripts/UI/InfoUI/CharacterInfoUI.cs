@@ -620,6 +620,8 @@ public class CharacterInfoUI : InfoUIBase {
         
         summary +=
             $"\n\nCompatibility: {RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, targetID).ToString()}";
+        summary +=
+            $"\nState Awareness: {UtilityScripts.Utilities.NotNormalizedConversionEnumToString(targetData.awareness.state.ToString())}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {

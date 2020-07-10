@@ -848,7 +848,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerAttackDemonicStructure(LocationGridTile tile = null) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE)) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
                 if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
@@ -861,7 +861,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], _owner, _owner, new object[] { chosenTile }, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
             goapPlan.SetDoNotRecalculate(true);
             // job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -871,7 +871,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerAttackDemonicStructure(out JobQueueItem producedJob, LocationGridTile tile = null) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE)) {
+	    if (!_owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
 			    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
@@ -884,7 +884,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    }
 		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], _owner, _owner, new object[] { chosenTile }, 0);
 		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASSAULT_DEMONIC_STRUCTURE, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    // job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -2061,6 +2061,48 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         producedJob = null;
+        return false;
+    }
+    public bool TriggerRescueJob(Character targetCharacter, out JobQueueItem producedJob) {
+        if (!_owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], targetCharacter, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    public bool TriggerRescueJob(Character targetCharacter) {
+        if (!_owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], targetCharacter, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            _owner.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
+    #region Party
+    public bool TriggerReleaseJob(Character targetCharacter) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.RELEASE_CHARACTER)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], targetCharacter, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXPLORE, INTERACTION_TYPE.EXPLORE, targetCharacter, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            return _owner.jobQueue.AddJobInQueue(job);
+        }
         return false;
     }
     #endregion

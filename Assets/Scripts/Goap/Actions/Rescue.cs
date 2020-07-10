@@ -1,12 +1,13 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
-public class JoinParty : GoapAction {
+public class Rescue : GoapAction {
 
-    public JoinParty() : base(INTERACTION_TYPE.JOIN_PARTY) {
+    public Rescue() : base(INTERACTION_TYPE.RESCUE) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -20,19 +21,12 @@ public class JoinParty : GoapAction {
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        SetState("Join Success", goapNode);
+        SetState("Rescue Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
-    }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
-        IPointOfInterest poiTarget = node.poiTarget;
-        if (poiTarget is Character partyLeader) {
-            log.AddToFillers(partyLeader.partyComponent.currentParty, partyLeader.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1);
-        }
     }
     #endregion
 
@@ -40,20 +34,17 @@ public class JoinParty : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if(poiTarget is Character partyLeader) {
-                return !partyLeader.isDead && partyLeader.partyComponent.hasParty;
-            }
-            return actor != poiTarget;
+            return !actor.partyComponent.hasParty;
         }
         return false;
     }
     #endregion
 
     #region State Effects
-    public void AfterJoinSuccess(ActualGoapNode goapNode) {
-        if (goapNode.poiTarget is Character partyLeader) {
-            partyLeader.partyComponent.currentParty.AddMember(goapNode.actor);
-        }
+    public void AfterRescueSuccess(ActualGoapNode goapNode) {
+        Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Rescue, goapNode.actor);
+        RescueParty rescueParty = party as RescueParty;
+        rescueParty.SetTargetCharacter(goapNode.poiTarget as Character);
     }
     #endregion
 

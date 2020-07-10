@@ -32,6 +32,7 @@ public interface IRelationshipContainer {
     //Example: If we want to know if the character is lover or affair of another character we will use this function because this will return if their relationship is lover or affair
     RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
     bool IsFamilyMember(Character target);
+    Character GetMissingCharacterWithOpinion(string opinionLabel);
     #endregion
 
     #region Opinions
