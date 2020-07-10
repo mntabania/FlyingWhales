@@ -38,7 +38,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
             List<Character> charactersAtHexTile =
-                tile.GetAllCharactersInsideHexThatMeetCriteria(c => defender.IsHostileWith(c) && c.isDead == false);
+                tile.GetAllCharactersInsideHexThatMeetCriteria(c => defender.IsHostileWith(c) && c.isDead == false && c.isAlliedWithPlayer == false);
             if (charactersAtHexTile != null) {
                 if (characters == null) {
                     characters = new List<Character>();

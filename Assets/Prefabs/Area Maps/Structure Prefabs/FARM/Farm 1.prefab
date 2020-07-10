@@ -3296,6 +3296,7 @@ MonoBehaviour:
   - {x: 5, y: 3, z: 0}
   - {x: 5, y: 4, z: 0}
   - {x: 5, y: 5, z: 0}
+  roomTemplates: []
   wallTileMap: {fileID: 8195094281083376006}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
@@ -3706,7 +3707,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4504039566536522, guid: d2c2cf637970237418614bb4a0293668, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 4504039566536522, guid: d2c2cf637970237418614bb4a0293668, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3812,7 +3813,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4212835542186378, guid: 191a9e123946de349a254ec4c008d174, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4212835542186378, guid: 191a9e123946de349a254ec4c008d174, type: 3}
       propertyPath: m_LocalPosition.y

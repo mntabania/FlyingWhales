@@ -67,7 +67,7 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
                         //if is at territory, check if there are any villagers in its territory,
                         List<Character> charactersAtTerritory =
                             character.hexTileLocation.GetAllCharactersInsideHexThatMeetCriteria(c =>
-                                c.isNormalCharacter && c.isDead == false && c != character);
+                                c.isNormalCharacter && c.isDead == false && c != character && c.isAlliedWithPlayer == false);
                         if (charactersAtTerritory != null) {
                             log += $"\n-There are villagers in territory, will do De-Mood towards them";
                             //if there are villagers in its territory, then do De-Mood action towards them.
