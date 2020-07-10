@@ -62,10 +62,8 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 }
             } else {
                 log += $"\n-Character is not in target structure, go to it";
-                if (rescueParty.target is LocationStructure targetStructure) {
-                    LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                    character.jobComponent.CreateGoToJob(targetTile, out producedJob);
-                }
+                LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(rescueParty.target.currentStructure.passableTiles);
+                character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }
         }
         return true;
