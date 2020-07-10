@@ -139,6 +139,9 @@ public class SeizeComponent {
         return true;
     }
     public bool CanUnseizeHere(LocationGridTile tileLocation) {
+        if(tileLocation == null) {
+            return false;
+        }
         if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             if (tileLocation.objHere != null) {
                 return false;

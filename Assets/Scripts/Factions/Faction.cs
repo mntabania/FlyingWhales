@@ -212,16 +212,14 @@ public class Faction : IJobOwner {
         }
         OnlySetLeader(newLeader);
 
-        if (!isPlayerFaction) {
-            if (newLeader != null) {
-                if (newLeader is Character newRuler) {
-                    newRuler.currentRegion.AddFactionHere(this);
-                    Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
-                }
-            } else {
-                //if no leader was set, then roll every hour for a chance to designate a new leader.
-                Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
+        if (newLeader != null) {
+            if (newLeader is Character newRuler) {
+                newRuler.currentRegion.AddFactionHere(this);
+                Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
             }
+        } else {
+            //if no leader was set, then roll every hour for a chance to designate a new leader.
+            Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
         }
     }
     private void CheckForNewLeaderDesignation() {
