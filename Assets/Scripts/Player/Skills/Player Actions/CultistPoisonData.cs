@@ -16,7 +16,8 @@ public class CultistPoisonData : PlayerAction {
             List<Character> choices = new List<Character>();
             for (int i = 0; i < character.homeSettlement.residents.Count; i++) {
                 Character resident = character.homeSettlement.residents[i];
-                if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false && 
+                if (resident.isNormalCharacter && resident.traitContainer.HasTrait("Cultist") == false &&
+                    resident.isDead == false &&
                     character.relationshipContainer.HasOpinionLabelWithCharacter(resident, BaseRelationshipContainer.Close_Friend) == false) {
                     choices.Add(resident);
                 }

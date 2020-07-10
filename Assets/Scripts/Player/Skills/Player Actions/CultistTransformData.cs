@@ -12,6 +12,10 @@
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character character) {
             character.jobComponent.TriggerCultistTransform();
+            if (UIManager.Instance.characterInfoUI.isShowing && 
+                UIManager.Instance.characterInfoUI.activeCharacter == character) {
+                UIManager.Instance.characterInfoUI.CloseMenu();    
+            }
         }
         base.ActivateAbility(targetPOI);
     }

@@ -32,6 +32,10 @@ public class CultistTransform : GoapAction {
         summon.CreateMarker();
         summon.InitialCharacterPlacement(gridTileLocation, true);
         summon.logComponent.AddHistory(character.deathLog);
+        if (UIManager.Instance.characterInfoUI.isShowing && 
+            UIManager.Instance.characterInfoUI.activeCharacter == character) {
+            UIManager.Instance.characterInfoUI.CloseMenu();    
+        }
     }
     #endregion
 }

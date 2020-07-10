@@ -243,6 +243,12 @@ public class PlayerUI : MonoBehaviour {
         TransferCharacterFromActiveToInactive(character);
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
+        if (trait is Cultist) {
+            CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
+            if (item != null) {
+                ObjectPoolManager.Instance.DestroyObject(item);
+            }
+        }
         //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
         //    TransferCharacterFromActiveToInactive(character);
         //    UpdateKillCount();
