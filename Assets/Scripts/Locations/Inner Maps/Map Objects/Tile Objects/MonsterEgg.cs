@@ -41,14 +41,14 @@ public abstract class MonsterEgg : TileObject {
                     isBeingCarriedBy.UncarryPOI(this);
                 }
                 if (gridTileLocation != null) {
-                    gridTileLocation.structure.RemovePOI(this);
-                    Character monster = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, homeRegion: gridTileLocation.parentMap.region);
+                    Character monster = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: gridTileLocation.parentMap.region);
                     monster.CreateMarker();
                     monster.InitialCharacterPlacement(gridTileLocation, true);
                     if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         monster.ClearTerritory();
                         monster.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
                     }
+                    gridTileLocation.structure.RemovePOI(this);
                     hasHatched = true;
                 }
             }
