@@ -18,15 +18,18 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			for (int j = 0; j < islandsInRegion.Count; j++) {
 				ElevationIsland currIsland = islandsInRegion[j];
 				STRUCTURE_TYPE structureType = GetStructureTypeFor(currIsland.elevation);
-				NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON,
-					currIsland.tilesInIsland.ToArray());
+				NPCSettlement settlement = null;
+				if (structureType == STRUCTURE_TYPE.CAVE) {
+					//only create settlement for caves
+					settlement = LandmarkManager.Instance.CreateNewSettlement(region, LOCATION_TYPE.DUNGEON,
+						currIsland.tilesInIsland.ToArray());	
+				}
 				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
 				
 				yield return MapGenerator.Instance.StartCoroutine(
 					GenerateElevationMap(currIsland, elevationStructure));
 				yield return MapGenerator.Instance.StartCoroutine(
 					RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
-
 			}
 		}
 		yield return null;
