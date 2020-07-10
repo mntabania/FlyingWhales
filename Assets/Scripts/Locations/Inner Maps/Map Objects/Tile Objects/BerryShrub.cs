@@ -15,7 +15,7 @@ public class BerryShrub : Crops {
     #region Overrides
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        AddPlayerAction(SPELL_TYPE.PLANT_GERM);
+        // AddPlayerAction(SPELL_TYPE.PLANT_GERM);
     }
     #endregion
 

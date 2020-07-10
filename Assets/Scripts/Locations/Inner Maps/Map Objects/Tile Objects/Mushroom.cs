@@ -15,7 +15,7 @@ public class Mushroom : Crops {
     #region Override
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        AddPlayerAction(SPELL_TYPE.PLANT_GERM);
+        // AddPlayerAction(SPELL_TYPE.PLANT_GERM);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
