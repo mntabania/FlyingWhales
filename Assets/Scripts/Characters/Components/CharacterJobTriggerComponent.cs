@@ -120,11 +120,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
-		// if (character == _owner && job.jobType == JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM) {
-		// 	TriggerBurySerialKillerVictim(job);
-		// }
-	}
-	private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
+        // if (character == _owner && job.jobType == JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM) {
+        // 	TriggerBuryPsychopathVictim(job);
+        // }
+    }
+    private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
 		if (traitable == _owner) {
 			if (TraitManager.Instance.removeStatusTraits.Contains(trait.name)) {
 				TryCreateRemoveStatusJob(trait);
@@ -335,7 +335,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			_owner.jobQueue.AddJobInQueue(job);
 		}
 	}
-	public void TriggerBurySerialKillerVictim(Character target) {
+	public void TriggerBuryPsychopathVictim(Character target) {
 		JobQueueItem buryJob = target.homeSettlement.GetJob(JOB_TYPE.BURY, target);
 		buryJob?.ForceCancelJob(false);
 		

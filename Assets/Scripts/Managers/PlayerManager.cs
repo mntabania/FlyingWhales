@@ -165,8 +165,8 @@ public class PlayerManager : MonoBehaviour {
                 return new Alcoholic();
             //case SPELL_TYPE.LULLABY:
             //    return new Lullaby();
-            case SPELL_TYPE.PESTILENCE:
-                return new Pestilence();
+            case SPELL_TYPE.PLAGUE:
+                return new Plagued();
             case SPELL_TYPE.AGORAPHOBIA:
                 return new Agoraphobia();
             case SPELL_TYPE.PARALYSIS:

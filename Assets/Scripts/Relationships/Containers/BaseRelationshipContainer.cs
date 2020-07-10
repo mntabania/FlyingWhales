@@ -190,11 +190,11 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
-            Psychopath serialKiller = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
-            serialKiller.AdjustOpinion(target, opinionText, opinionValue);
+            Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+            psychopath.AdjustOpinion(target, opinionText, opinionValue);
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(
-                $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Serial Killer");
+                $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Psychopath");
             opinionValue = 0;
         }
         relationshipData.opinions.AdjustOpinion(opinionText, opinionValue);
@@ -218,7 +218,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(
-                $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Serial Killer, setting the value to zero...");
+                $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Psychopath, setting the value to zero...");
             opinionValue = 0;
         }
         relationshipData.opinions.SetOpinion(opinionText, opinionValue);

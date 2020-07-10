@@ -74,7 +74,7 @@ public class CarryComponent {
             character.marker.transform.eulerAngles = Vector3.zero;
             character.marker.SetNameState(false);
 
-            Plagued targetPlagued = character.traitContainer.GetNormalTrait<Plagued>("Plagued");
+            Traits.Plagued targetPlagued = character.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
             if (targetPlagued != null) {
                 string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
                 int roll = UnityEngine.Random.Range(0, 100);

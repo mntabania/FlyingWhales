@@ -155,8 +155,8 @@ public class PsychopathUI : PopupMenuBase {
         SetVictimType2(SERIAL_VICTIM_TYPE.None);
     }
     public void OnClickConfirm() {
-        Psychopath serialKillerTrait = new Psychopath();
-        character.traitContainer.AddTrait(character, serialKillerTrait);
+        Psychopath psychopathTrait = new Psychopath();
+        character.traitContainer.AddTrait(character, psychopathTrait);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
@@ -174,7 +174,7 @@ public class PsychopathUI : PopupMenuBase {
         if (victimDescription2 == string.Empty) {
             victimType2 = SERIAL_VICTIM_TYPE.None;
         }
-        serialKillerTrait.SetVictimRequirements(victimType1, victimDescription1, victimType2, victimDescription2);
+        psychopathTrait.SetVictimRequirements(victimType1, victimDescription1, victimType2, victimDescription2);
 
         HidePsychopathUI();
         PlayerSkillManager.Instance.GetAfflictionData(SPELL_TYPE.PSYCHOPATHY).OnExecuteSpellActionAffliction();

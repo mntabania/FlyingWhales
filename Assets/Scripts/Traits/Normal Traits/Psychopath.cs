@@ -19,7 +19,7 @@ namespace Traits {
 
         public Psychopath() {
             name = "Psychopath";
-            description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
+            description = "Psychopaths have a specific subset of target victims that they may kidnap and then kill.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
@@ -43,7 +43,7 @@ namespace Traits {
                 //Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
                 //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
                 //Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-                character.behaviourComponent.AddBehaviourComponent(typeof(SerialKillerBehaviour));
+                character.behaviourComponent.AddBehaviourComponent(typeof(PsychopathBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -53,7 +53,7 @@ namespace Traits {
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
                 //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
                 //Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
-                character.behaviourComponent.RemoveBehaviourComponent(typeof(SerialKillerBehaviour));
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(PsychopathBehaviour));
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -103,7 +103,7 @@ namespace Traits {
         }
         public override void OnTickStarted() {
             base.OnTickStarted();
-            CheckSerialKiller();
+            CheckPsychopath();
         }
         #endregion
 
@@ -124,7 +124,7 @@ namespace Traits {
         //}
         public void SetTargetVictim(Character victim) {
             if (targetVictim != null) {
-                //TODO: Add checking if character is the target of any other serial killer
+                //TODO: Add checking if character is the target of any other psychopaths
                 targetVictim.RemoveAdvertisedAction(INTERACTION_TYPE.RITUAL_KILLING);
             }
             if (victim != null) {
@@ -151,7 +151,7 @@ namespace Traits {
                 SetTargetVictim(null);
             }
         }
-        private void CheckSerialKiller() {
+        private void CheckPsychopath() {
             CheckTargetVictimIfStillAvailable();
             //if (character.isDead || !character.canPerform || !character.canMove) { //character.doNotDisturb > 0 || !character.canMove //character.currentArea != InnerMapManager.Instance.currentlyShowingArea
             //    if (hasStartedFollowing) {
@@ -375,7 +375,7 @@ namespace Traits {
             return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
         }
 
-        public void SerialKillerSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
+        public void PsychopathSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_saw_no_assist");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -575,7 +575,7 @@ namespace Traits {
         }
     }
 
-    public class SaveDataSerialKiller : SaveDataTrait {
+    public class SaveDataPsychopath : SaveDataTrait {
         public SerialVictim victim1Requirement;
         //public SerialVictim victim2Requirement;
 
