@@ -22,9 +22,14 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             if (sourcePOI is Character character) {
                 owner = character;
+                string description = "death";
+                if (!responsibleCharacter.isDead) {
+                    description = "presumed death";
+                }
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, "gain");
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddToFillers(null, description, LOG_IDENTIFIER.STRING_1);
                 log.AddLogToInvolvedObjects();
             }
             base.OnAddTrait(sourcePOI);

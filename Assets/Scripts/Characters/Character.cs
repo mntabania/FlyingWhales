@@ -1641,24 +1641,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (isDead) {
                 return;
             }
-            //Non villagers should not feel griefstricken
-            //https://trello.com/c/U0gnV2Rs/1116-zombies-should-no-longer-become-griefstricken-betrayed-etc
+            ////Non villagers should not feel griefstricken
+            ////https://trello.com/c/U0gnV2Rs/1116-zombies-should-no-longer-become-griefstricken-betrayed-etc
 
-            //No more griefstricken feeling to a target that is not a villager anymore
-            //https://trello.com/c/CxFjFHtv/1121-no-more-griefstricken-if-a-zombie-died-unlike-its-first-death
-            if (isNormalCharacter && characterThatDied.isNormalCharacter) {
-                string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
-                if (opinionLabel == RelationshipManager.Close_Friend
-                    || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied)
-                        && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
-                    needsComponent.AdjustHope(-10f);
-                    if (!traitContainer.HasTrait("Psychopath")) {
-                        traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
-                    }
-                } else if (opinionLabel == RelationshipManager.Friend) {
-                    needsComponent.AdjustHope(-5f);
-                }
-            }
+            ////No more griefstricken feeling to a target that is not a villager anymore
+            ////https://trello.com/c/CxFjFHtv/1121-no-more-griefstricken-if-a-zombie-died-unlike-its-first-death
+            //if (isNormalCharacter && characterThatDied.isNormalCharacter) {
+            //    string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
+            //    if (opinionLabel == RelationshipManager.Close_Friend
+            //        || (relationshipContainer.HasSpecialPositiveRelationshipWith(characterThatDied)
+            //            && relationshipContainer.IsEnemiesWith(characterThatDied) == false)) {
+            //        needsComponent.AdjustHope(-10f);
+            //        if (!traitContainer.HasTrait("Psychopath")) {
+            //            traitContainer.AddTrait(this, "Griefstricken", characterThatDied);
+            //        }
+            //    } else if (opinionLabel == RelationshipManager.Friend) {
+            //        needsComponent.AdjustHope(-5f);
+            //    }
+            //}
 
             if (characterThatDied.currentRegion == homeRegion) {
                 //if a hostile character has been killed within the character's home npcSettlement, Hope increases by XX amount.
