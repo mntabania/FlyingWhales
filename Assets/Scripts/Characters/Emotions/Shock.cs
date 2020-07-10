@@ -14,7 +14,7 @@ public class Shock : Emotion {
         witness.needsComponent.AdjustHappiness(-10);
         if(status == REACTION_STATUS.WITNESSED) {
             if(UnityEngine.Random.Range(0, 100) < 30) {
-                witness.combatComponent.Flight(target, "saw something shocking");
+                witness.combatComponent.Flight(target, "shocked");
             } else {
                 witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target);
             }
