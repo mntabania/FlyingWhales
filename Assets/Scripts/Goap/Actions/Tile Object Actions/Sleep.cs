@@ -30,80 +30,57 @@ public class Sleep : GoapAction {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target is Bed) {
-            Bed bed = target as Bed;
-            if (!bed.IsSlotAvailable()) {
+            Bed targetBed = target as Bed;
+            if (!targetBed.IsSlotAvailable()) {
                 cost += 2000;
                 costLog += " +2000(Fully Occupied)";
+            } else if (actor.traitContainer.HasTrait("Travelling")) {
+                cost += 100;
+                costLog += " +100(Travelling)";
             } else {
-                if (bed.IsOwnedBy(actor)) {
-                    cost = UtilityScripts.Utilities.Rng.Next(10, 16);
-                    costLog += $" +{cost}(Owned)";
+                if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
+                    cost += UtilityScripts.Utilities.Rng.Next(30, 51);
+                    costLog += $" +{cost}(Owned/Location is in home structure)";
                 } else {
-                    //List<Character> tableOwners = bed.GetOwners();
-                    //bool isTargetObjectOwnedByFriend = false;
-                    //bool isTargetObjectOwnedByEnemy = false;
-                    //if (tableOwners != null) {
-                    //    for (int i = 0; i < tableOwners.Count; i++) {
-                    //        Character objectOwner = tableOwners[i];
-                    //        if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
-                    //            isTargetObjectOwnedByFriend = true;
-                    //            break;
-                    //        } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
-                    //            isTargetObjectOwnedByEnemy = true;
-                    //        }
-                    //    }
-                    //}
-                    //if (isTargetObjectOwnedByFriend) {
-                    //    cost = UtilityScripts.Utilities.Rng.Next(25, 46);
-                    //    costLog += $" +{cost}(Owned by Friend)";
-                    //} else if (isTargetObjectOwnedByEnemy) {
-                    //    cost += 2000;
-                    //    costLog += " +2000(Owned by Enemy)";
-                    //} else {
-                    //    cost += UtilityScripts.Utilities.Rng.Next(40, 51);
-                    //    costLog += $" +{cost}(Else)";
-                    //}
-
-                    if (bed.characterOwner != null) {
-                        if (actor.relationshipContainer.IsFriendsWith(bed.characterOwner)) {
-                            cost += UtilityScripts.Utilities.Rng.Next(25, 46);
-                            costLog += $" +{cost}(Owned by Friend)";
-                        } else if (actor.relationshipContainer.IsEnemiesWith(bed.characterOwner)) {
+                    if (actor.needsComponent.isExhausted) {
+                        if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
+                            cost += UtilityScripts.Utilities.Rng.Next(130, 151);
+                            costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
+                        } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                             cost += 2000;
-                            costLog += " +2000(Owned by Enemy)";
+                            costLog += " +2000(Exhausted, Is in Enemy home structure)";
                         } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(40, 51);
+                            cost = UtilityScripts.Utilities.Rng.Next(80, 101);
                             costLog += $" +{cost}(Else)";
                         }
                     } else {
-                        cost = UtilityScripts.Utilities.Rng.Next(40, 51);
-                        costLog += $" +{cost}(Else)";
-                    }
-
-
-                    Character alreadySleepingCharacter = null;
-                    for (int i = 0; i < bed.users.Length; i++) {
-                        if (bed.users[i] != null) {
-                            alreadySleepingCharacter = bed.users[i];
-                            break;
-                        }
-                    }
-
-                    if (alreadySleepingCharacter != null) {
-                        string opinionLabel = actor.relationshipContainer.GetOpinionLabel(alreadySleepingCharacter);
-                        if (opinionLabel == RelationshipManager.Friend) {
-                            cost += 20;
-                            costLog += " +20(Friend Occupies)";
-                        } else if (opinionLabel == RelationshipManager.Acquaintance) {
-                            cost += 25;
-                            costLog += " +25(Acquaintance Occupies)";
-                        } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival || opinionLabel == string.Empty) {
-                            cost += 100;
-                            costLog += " +100(Enemy/Rival/None Occupies)";
-                        }
+                        cost += 2000;
+                        costLog += $" +{cost}(Not Exhausted)";
                     }
                 }
-            } 
+
+                Character alreadySleepingCharacter = null;
+                for (int i = 0; i < targetBed.users.Length; i++) {
+                    if (targetBed.users[i] != null) {
+                        alreadySleepingCharacter = targetBed.users[i];
+                        break;
+                    }
+                }
+
+                if (alreadySleepingCharacter != null) {
+                    string opinionLabel = actor.relationshipContainer.GetOpinionLabel(alreadySleepingCharacter);
+                    if (opinionLabel == RelationshipManager.Friend) {
+                        cost += 20;
+                        costLog += " +20(Friend Occupies)";
+                    } else if (opinionLabel == RelationshipManager.Acquaintance) {
+                        cost += 25;
+                        costLog += " +25(Acquaintance Occupies)";
+                    } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival || opinionLabel == string.Empty) {
+                        cost += 100;
+                        costLog += " +100(Enemy/Rival/None Occupies)";
+                    }
+                }
+            }
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;

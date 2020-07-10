@@ -28,6 +28,10 @@ public class RescueParty : Party {
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        for (int i = 0; i < members.Count; i++) {
+            Character member = members[i];
+            member.traitContainer.AddTrait(member, "Travelling");
+        }
     }
     protected override void OnAddMember(Character member) {
         base.OnAddMember(member);
@@ -36,6 +40,7 @@ public class RescueParty : Party {
     protected override void OnRemoveMember(Character member) {
         base.OnRemoveMember(member);
         member.movementComponent.SetEnableDigging(false);
+        member.traitContainer.RemoveTrait(member, "Travelling");
     }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();

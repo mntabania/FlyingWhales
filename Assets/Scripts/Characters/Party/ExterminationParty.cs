@@ -34,10 +34,12 @@ public class ExterminationParty : Party {
     protected override void OnAddMember(Character member) {
         base.OnAddMember(member);
         member.movementComponent.SetEnableDigging(true);
+        member.traitContainer.AddTrait(member, "Travelling");
     }
     protected override void OnRemoveMember(Character member) {
         base.OnRemoveMember(member);
         member.movementComponent.SetEnableDigging(false);
+        member.traitContainer.RemoveTrait(member, "Travelling");
     }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();

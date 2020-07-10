@@ -186,7 +186,7 @@ public class MovementComponent {
     public void SetEnableDigging(bool state) {
         enableDigging = state;
     }
-    public void DigOnReachEndPath(Path path) {
+    public bool DigOnReachEndPath(Path path) {
         Vector3 lastPositionInPath = path.vectorPath.Last();
         //no path to target tile
         //create job to dig wall
@@ -230,8 +230,10 @@ public class MovementComponent {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.objHere, owner);
                 job.SetCannotBePushedBack(true);
                 owner.jobQueue.AddJobInQueue(job);
+                return true;
             }
         }
+        return false;
         // character.behaviourComponent.SetDigForAbductionPath(null); //so behaviour can be run again after job has been added
     }
     #endregion

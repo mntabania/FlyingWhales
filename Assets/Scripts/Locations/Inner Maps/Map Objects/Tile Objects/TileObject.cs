@@ -920,6 +920,20 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool HasCharacterAlreadyAssumed(Character character) {
         return charactersThatAlreadyAssumed.Contains(character);
     }
+    public bool IsInHomeStructureOfCharacterWithOpinion(Character character, params string[] opinion) {
+        if(gridTileLocation != null && structureLocation != null) {
+            for (int i = 0; i < structureLocation.residents.Count; i++) {
+                Character resident = structureLocation.residents[i];
+                string opinionLabel = character.relationshipContainer.GetOpinionLabel(resident);
+                for (int j = 0; j < opinion.Length; j++) {
+                    if (opinionLabel == opinion[j]) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Inspect

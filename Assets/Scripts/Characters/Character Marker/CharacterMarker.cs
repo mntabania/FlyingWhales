@@ -482,9 +482,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
             if (character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath);
-                targetPOI = null;
-                return;
+                if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath)) {
+                    targetPOI = null;
+                    return;
+                }
             }
         }
 

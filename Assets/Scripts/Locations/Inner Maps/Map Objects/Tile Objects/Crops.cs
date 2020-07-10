@@ -22,10 +22,12 @@ public abstract class Crops : TileObject {
             _remainingRipeningTicks = GetRipeningTicks();
             Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
             RemoveAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
+            traitContainer.RemoveTrait(this, "Edible");
         } else if (growthState == Growth_State.Ripe) {
             _remainingRipeningTicks = 0;
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
             AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
+            traitContainer.AddTrait(this, "Edible");
         }
         mapVisual.UpdateTileObjectVisual(this);
     }

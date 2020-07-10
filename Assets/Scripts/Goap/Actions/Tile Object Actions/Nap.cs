@@ -39,26 +39,6 @@ public class Nap : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        //LocationStructure targetStructure = target.gridTileLocation.structure;
-        //if(targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
-        //    Dwelling dwelling = targetStructure as Dwelling;
-        //    if (dwelling.IsResident(actor)) {
-        //        return 8;
-        //    } else {
-        //        for (int i = 0; i < dwelling.residents.Count; i++) {
-        //            Character resident = dwelling.residents[i];
-        //            if (resident != actor) {
-        //                if (actor.RelationshipManager.HasOpinion(resident) && actor.RelationshipManager.GetTotalOpinion(resident) > 0) {
-        //                    return 25;
-        //                }
-        //            }
-        //        }
-        //        return 45;
-        //    }
-        //} else if(targetStructure.structureType == STRUCTURE_TYPE.INN) {
-        //    return 45;
-        //}
-        //return 100;
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target is Bed) {
@@ -66,39 +46,28 @@ public class Nap : GoapAction {
             if (!targetBed.IsSlotAvailable()) {
                 cost += 2000;
                 costLog += " +2000(Fully Occupied)";
+            } else if (actor.traitContainer.HasTrait("Travelling")) {
+                cost += 100;
+                costLog += " +100(Travelling)";
             } else {
-                if (targetBed.IsOwnedBy(actor)) {
-                    cost += UtilityScripts.Utilities.Rng.Next(30, 36);
-                    costLog += $" +{cost}(Owned)";
+                if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
+                    cost += UtilityScripts.Utilities.Rng.Next(30, 51);
+                    costLog += $" +{cost}(Owned/Location is in home structure)";
                 } else {
-                    //List<Character> tableOwners = targetBed.GetOwners();
-                    //bool isTargetObjectOwnedByFriend = false;
-                    //bool isTargetObjectOwnedByEnemy = false;
-                    //if (tableOwners != null) {
-                    //    for (int i = 0; i < tableOwners.Count; i++) {
-                    //        Character objectOwner = tableOwners[i];
-                    //        if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
-                    //            isTargetObjectOwnedByFriend = true;
-                    //            break;
-                    //        } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
-                    //            isTargetObjectOwnedByEnemy = true;
-                    //        }
-                    //    }
-                    //}
-                    if (targetBed.characterOwner != null) {
-                        if (actor.relationshipContainer.IsFriendsWith(targetBed.characterOwner)) {
-                            cost += UtilityScripts.Utilities.Rng.Next(55, 66);
-                            costLog += $" +{cost}(Owned by Friend)";
-                        } else if (actor.relationshipContainer.IsEnemiesWith(targetBed.characterOwner)) {
+                    if (actor.needsComponent.isExhausted) {
+                        if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {
+                            cost += UtilityScripts.Utilities.Rng.Next(130, 151);
+                            costLog += $" +{cost}(Exhausted, Is in Friend home structure)";
+                        } else if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Rival, RelationshipManager.Enemy)) {
                             cost += 2000;
-                            costLog += " +2000(Owned by Enemy)";
+                            costLog += " +2000(Exhausted, Is in Enemy home structure)";
                         } else {
-                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            cost = UtilityScripts.Utilities.Rng.Next(80, 101);
                             costLog += $" +{cost}(Else)";
                         }
                     } else {
-                        cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                        costLog += $" +{cost}(Else)";
+                        cost += 2000;
+                        costLog += $" +{cost}(Not Exhausted)";
                     }
                 }
 

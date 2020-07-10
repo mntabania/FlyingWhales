@@ -172,7 +172,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public Character GetMissingCharacterWithOpinion(string opinionLabel) {
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character target = charactersWithOpinion[i];
-            if (GetAwarenessState(target) == AWARENESS_STATE.Missing) {
+            if (!target.isDead && GetAwarenessState(target) == AWARENESS_STATE.Missing) {
                 if (GetOpinionLabel(target) == opinionLabel) {
                     return target;
                 }

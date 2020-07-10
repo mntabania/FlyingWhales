@@ -52,6 +52,7 @@ public class Party {
         isDisbanded = true;
         CancelAllJoinPartyJobs();
     }
+    protected virtual void OnBeforeDisbandParty() { }
     protected virtual void OnWaitTimeOver() { }
     protected virtual void OnWaitTimeOverButPartyIsDisbanded() { }
     #endregion
@@ -89,6 +90,7 @@ public class Party {
     }
     public void DisbandParty() {
         if (isDisbanded) { return; }
+        OnBeforeDisbandParty();
         for (int i = 0; i < members.Count; i++) {
             OnRemoveMember(members[i]);
         }
