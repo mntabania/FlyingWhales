@@ -397,8 +397,15 @@ public class BehaviourComponent {
                     HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territorries);
                     return character.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
                 }
+            } else if (goapPlanJob.jobType == JOB_TYPE.RESCUE || goapPlanJob.jobType == JOB_TYPE.EXTERMINATE ||
+                       goapPlanJob.jobType == JOB_TYPE.EXPLORE) {
+                //if job allows digging do not check pathfinding, always allow it.
+                //TODO: Add some way to unify this checking instead of using JOB_TYPEs
+                return true;
             }
+            
             if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null) {
+                //if target is self or target is null, job is valid.
                 return true;
             }
             return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation);

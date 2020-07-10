@@ -21,7 +21,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool unlockAllSkills => _unlockAllSkills;
 #else
     public bool unlimitedCast => false || WorldSettings.Instance.worldSettingsData.omnipotentMode;
-    public bool unlockAllSkills => false;
+    public bool unlockAllSkills => _unlockAllSkills;
 #endif
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
@@ -40,7 +40,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [NonSerialized]
     public List<SPELL_TYPE> constantSkills = new List<SPELL_TYPE> { SPELL_TYPE.AFFLICT, SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, SPELL_TYPE.UNSUMMON
-        , SPELL_TYPE.BREED_MONSTER, SPELL_TYPE.TORTURE, SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON };
+        , SPELL_TYPE.BREED_MONSTER, SPELL_TYPE.TORTURE, SPELL_TYPE.BRAINWASH, SPELL_TYPE.UNSUMMON, SPELL_TYPE.CULTIST_BOOBY_TRAP, SPELL_TYPE.CULTIST_TRANSFORM, SPELL_TYPE.CULTIST_POISON };
 
     [NonSerialized]
     public SPELL_TYPE[] allSpells = { SPELL_TYPE.METEOR

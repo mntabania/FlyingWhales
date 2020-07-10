@@ -63,8 +63,8 @@ public class WorldSettings : MonoBehaviour {
 
     #region General
     public void Open() {
-        InitializeData();
         settingsGO.SetActive(true);
+        InitializeData();
     }
     public void Close() {
         settingsGO.SetActive(false);
