@@ -27,7 +27,11 @@ public class CultistBoobyTrapData : PlayerAction {
         // base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return targetCharacter.homeSettlement != null;
+        bool canPerformAbility = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerformAbility) {
+            return targetCharacter.homeSettlement != null;    
+        }
+        return false;
     }
     #endregion
 

@@ -26,7 +26,11 @@ public class CultistPoisonData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        return targetCharacter.homeSettlement != null;
+        bool canPerformAbility = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerformAbility) {
+            return targetCharacter.homeSettlement != null;    
+        }
+        return false;
     }
     #endregion
 
