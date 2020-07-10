@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
-public class Pestilence : PlayerSpell {
+public class Plagued : PlayerSpell {
 
-    public Pestilence() : base(SPELL_TYPE.PESTILENCE) {
+    public Plagued() : base(SPELL_TYPE.PLAGUE) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
@@ -27,7 +27,7 @@ public class Pestilence : PlayerSpell {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Plagued();
+                    Trait newTrait = new Traits.Plagued();
                     newTrait.SetLevel(level);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
@@ -105,14 +105,14 @@ public class Pestilence : PlayerSpell {
     }
 }
 
-public class PestilenceData : SpellData {
-    public override SPELL_TYPE type => SPELL_TYPE.PESTILENCE;
-    public override string name { get { return "Pestilence"; } }
+public class PlagueData : SpellData {
+    public override SPELL_TYPE type => SPELL_TYPE.PLAGUE;
+    public override string name { get { return "Plague"; } }
     public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
-    public PestilenceData() : base() {
+    public PlagueData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
     }
 

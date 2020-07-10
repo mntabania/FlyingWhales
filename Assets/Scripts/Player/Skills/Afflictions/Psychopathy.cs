@@ -61,7 +61,7 @@ public class Psychopathy : PlayerSpell {
 public class PsychopathyData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.PSYCHOPATHY;
     public override string name { get { return "Psychopathy"; } }
-    public override string description { get { return "Turns a character into a serial killer."; } }
+    public override string description { get { return "Turns a character into a psychopath."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

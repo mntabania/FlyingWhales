@@ -42,7 +42,7 @@ namespace Interrupts {
             }
             if(actor != target && witness != target && target is Character targetCharacter) {
                 if(actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
-                    if (witness.relationshipContainer.GetOpinionLabel(targetCharacter) == RelationshipManager.Close_Friend) {
+                    if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                         witness.jobComponent.TriggerRescueJob(targetCharacter);
                     }
                 }

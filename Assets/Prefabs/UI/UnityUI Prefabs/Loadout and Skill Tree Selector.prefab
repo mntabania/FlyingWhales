@@ -3174,6 +3174,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ravager Skill Loadout UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5386774950917876540, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5386774950917876541, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3278,6 +3283,37 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_text
+      value: Terrorize everyone with your plethora of destructive spells, powerful
+        demons and monsters.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: 81
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6979294793568717130, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
@@ -3564,6 +3600,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Puppetmaster Skill Loadout UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5386774950917876540, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5386774950917876541, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3702,7 +3743,7 @@ PrefabInstance:
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 101
+      value: 103
       objectReference: {fileID: 0}
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
@@ -3723,6 +3764,17 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_text
+      value: Pull the strings from behind the curtain and let the world devolve into
+        chaos without lifting a finger.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: 94
       objectReference: {fileID: 0}
     - target: {fileID: 6979294793568717130, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
@@ -4040,6 +4092,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lich Skill Loadout UI
       objectReference: {fileID: 0}
+    - target: {fileID: 5386774950917876540, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5386774950917876541, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4178,27 +4235,37 @@ PrefabInstance:
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 101
+      value: 63
       objectReference: {fileID: 0}
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 17
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 18
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_text
+      value: Use dark necromantic powers to terrify the world of the living.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5386774952887519649, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6979294793568717130, guid: 2a0b6e1cbf28cb54abb0d05055b2d2ba,
         type: 3}

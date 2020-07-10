@@ -239,13 +239,13 @@ public class NonActionEventsComponent {
         owner.SetIsConversing(true);
         target.SetIsConversing(true);
 
-        Plagued ownerPlague = null;
-        Plagued targetPlague = null;
+        Traits.Plagued ownerPlague = null;
+        Traits.Plagued targetPlague = null;
         if (owner.traitContainer.HasTrait("Plagued")) {
-            ownerPlague = owner.traitContainer.GetNormalTrait<Plagued>("Plagued");
+            ownerPlague = owner.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
         }
         if (target.traitContainer.HasTrait("Plagued")) {
-            targetPlague = target.traitContainer.GetNormalTrait<Plagued>("Plagued");
+            targetPlague = target.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
         }
         if (ownerPlague != null && targetPlague == null) {
             ownerPlague.ChatInfection(target);
