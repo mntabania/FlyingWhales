@@ -1039,6 +1039,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
             StopMovement();
             character.PerformGoapAction();
         }
+        if(poi is Character target) {
+            target.stateAwarenessComponent.OnCharacterWasSeenBy(character);
+        }
     }
     public void AddUnprocessedPOI(IPointOfInterest poi, bool reactToInterruptOnly = false) {
         // if (character.minion != null || character is Summon) {
