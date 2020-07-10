@@ -86,8 +86,10 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     private void OnProjectileHit(IDamageable target, CombatState fromState) {
         //fromState.OnAttackHit(character);
         if (parentMarker.character != null) {
-            AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomArrowImpactAudio(),
-                target.gridTileLocation, 1, false);
+            if (target.gridTileLocation != null) {
+                AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomArrowImpactAudio(),
+                    target.gridTileLocation, 1, false);    
+            }
             if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
                 combatState.OnAttackHit(target);
             } else if (target != null) {

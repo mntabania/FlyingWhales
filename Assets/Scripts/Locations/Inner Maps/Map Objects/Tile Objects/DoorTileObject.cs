@@ -5,9 +5,11 @@ using UnityEngine;
 public class DoorTileObject : TileObject {
     public DoorTileObject() {
         Initialize(TILE_OBJECT_TYPE.DOOR_TILE_OBJECT);
+        traitContainer.AddTrait(this, "Immovable");
     }
     public DoorTileObject(SaveDataTileObject data) {
         Initialize(data);
+        traitContainer.AddTrait(this, "Immovable");
     }
     
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
