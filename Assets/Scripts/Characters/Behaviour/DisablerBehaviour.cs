@@ -33,12 +33,12 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
             return character.jobComponent.CreateGoToJob(character.behaviourComponent.invaderToFollow, out producedJob);
         } else {
             if (character.behaviourComponent.canDisable) {
-                if (character.IsAtTerritory()) {
+                if (character.IsAtTerritory() || character.isAtHomeStructure) {
                     log += $"\n-character is at territory";
                     //if is at territory, check if there are any villagers in its territory,
                     List<Character> charactersAtTerritory =
                         character.hexTileLocation.GetAllCharactersInsideHexThatMeetCriteria(c =>
-                            c.isNormalCharacter && c.isDead == false && c != character && c.canMove);
+                            c.isNormalCharacter && c.isDead == false && c != character && c.canMove && c.isAlliedWithPlayer == false);
                     if (charactersAtTerritory != null) {
                         log += $"\n-There are villagers in territory, will do De-Mood towards them";
                         //if there are villagers in its territory, then do De-Mood action towards them.
@@ -54,7 +54,7 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
                     return character.jobComponent.TriggerReturnTerritory(out producedJob);
                 }
             } else {
-                if (character.IsAtTerritory()) {
+                if (character.IsAtTerritory() || character.isAtHomeStructure) {
                     return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
                 } else {
                     return character.jobComponent.TriggerReturnTerritory(out producedJob);

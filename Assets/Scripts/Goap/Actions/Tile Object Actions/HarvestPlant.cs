@@ -28,6 +28,10 @@ public class HarvestPlant : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        log.AddToFillers(null, GetTargetString(node.poiTarget), LOG_IDENTIFIER.STRING_2);
+    }
     #endregion
 
     #region Requirements
@@ -81,6 +85,20 @@ public class HarvestPlant : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     public void AfterTargetMissing(ActualGoapNode goapNode) {
+    }
+    #endregion
+
+    #region Utilities
+    private string GetTargetString(IPointOfInterest poi) {
+        if (poi is BerryShrub) {
+            return "berries";
+        } else if (poi is CornCrop) {
+            return "corn";
+        } else if (poi is Mushroom) {
+            return "mushrooms";
+        } else {
+            return poi.name;
+        }
     }
     #endregion
 }
