@@ -125,33 +125,34 @@ public class CombatState : CharacterState {
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
-            if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-                //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Criminal");
+            //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
+            //if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+            //    //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Criminal");
 
-                //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
-                if (!stateComponent.character.isFriendlyFactionless) {
-                    //Leave current faction and become banned from the current faction
-                    if(stateComponent.character.faction != null) {
-                        stateComponent.character.faction.AddBannedCharacter(stateComponent.character);
-                    }
-                    stateComponent.character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-                }
-                stateComponent.character.MigrateHomeStructureTo(null);
+            //    //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
+            //    if (!stateComponent.character.isFriendlyFactionless) {
+            //        //Leave current faction and become banned from the current faction
+            //        if(stateComponent.character.faction != null) {
+            //            stateComponent.character.faction.AddBannedCharacter(stateComponent.character);
+            //        }
+            //        stateComponent.character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
+            //    }
+            //    stateComponent.character.MigrateHomeStructureTo(null);
 
-                string log =
-                    $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: null";
-                stateComponent.character.logComponent.PrintLogIfActive(log);
+            //    string log =
+            //        $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: null";
+            //    stateComponent.character.logComponent.PrintLogIfActive(log);
 
-                //stateComponent.character.CancelAllJobsAndPlans();
-                //stateComponent.character.PlanIdleReturnHome(true);
-                //stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
+            //    //stateComponent.character.CancelAllJobsAndPlans();
+            //    //stateComponent.character.PlanIdleReturnHome(true);
+            //    //stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
 
-                Log successfulEscapeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "successful_escape_crime");
-                successfulEscapeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                successfulEscapeLog.AddLogToInvolvedObjects();
-                PlayerManager.Instance.player.ShowNotificationFrom(stateComponent.character, successfulEscapeLog);
-                return;
-            }
+            //    Log successfulEscapeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "successful_escape_crime");
+            //    successfulEscapeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //    successfulEscapeLog.AddLogToInvolvedObjects();
+            //    PlayerManager.Instance.player.ShowNotificationFrom(stateComponent.character, successfulEscapeLog);
+            //    return;
+            //}
 
             //Made it so that dead characters no longer check invision characters after exiting a state.
             for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {

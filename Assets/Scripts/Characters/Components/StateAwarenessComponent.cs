@@ -29,12 +29,12 @@ public class StateAwarenessComponent {
     #region Listeners
     private void OnCharacterMissing(Character missingCharacter) {
         if (missingCharacter != owner) {
-            owner.relationshipContainer.SetAwarenessState(missingCharacter, AWARENESS_STATE.Missing);
+            owner.relationshipContainer.SetAwarenessState(owner, missingCharacter, AWARENESS_STATE.Missing);
         }
     }
     private void OnCharacterPresumedDead(Character presumedDeadCharacter) {
         if (presumedDeadCharacter != owner) {
-            owner.relationshipContainer.SetAwarenessState(presumedDeadCharacter, AWARENESS_STATE.Presumed_Dead);
+            owner.relationshipContainer.SetAwarenessState(owner, presumedDeadCharacter, AWARENESS_STATE.Presumed_Dead);
         }
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile hex) {
@@ -54,9 +54,9 @@ public class StateAwarenessComponent {
         if (characterThatSaw.isNormalCharacter) {
             StopMissingTimer();
             if (owner.isDead) {
-                characterThatSaw.relationshipContainer.SetAwarenessState(owner, AWARENESS_STATE.Presumed_Dead);
+                characterThatSaw.relationshipContainer.SetAwarenessState(characterThatSaw, owner, AWARENESS_STATE.Presumed_Dead);
             } else {
-                characterThatSaw.relationshipContainer.SetAwarenessState(owner, AWARENESS_STATE.Available);
+                characterThatSaw.relationshipContainer.SetAwarenessState(characterThatSaw, owner, AWARENESS_STATE.Available);
             }
         }
     }
@@ -74,7 +74,6 @@ public class StateAwarenessComponent {
             if (currentPresumedDeadTicks >= CharacterManager.Instance.CHARACTER_PRESUMED_DEAD_THRESHOLD) {
                 Messenger.Broadcast(Signals.CHARACTER_PRESUMED_DEAD, owner);
                 SetStartMissingTimer(false);
-                SetStartPresumedDeadTimer(false);
             } else {
                 currentPresumedDeadTicks++;
             }
@@ -113,5 +112,15 @@ public class StateAwarenessComponent {
     }
     public void ResetPresumedDeadTimer() {
         currentPresumedDeadTicks = 0;
+    }
+    public void OnSetAwarenessState(Character target, AWARENESS_STATE state) {
+        if(state == AWARENESS_STATE.Presumed_Dead) {
+            if (!owner.traitContainer.HasTrait("Psychopath")) {
+                if(owner.relationshipContainer.GetOpinionLabel(target) == RelationshipManager.Close_Friend
+                    || (owner.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.SIBLING) && !owner.relationshipContainer.IsEnemiesWith(target))) {
+                    owner.traitContainer.AddTrait(owner, "Griefstricken", target);
+                }
+            }
+        }
     }
 }

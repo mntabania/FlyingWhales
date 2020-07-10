@@ -593,9 +593,13 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return AWARENESS_STATE.None;
     }
-    public void SetAwarenessState(Character character, AWARENESS_STATE state) {
-        if (relationships.ContainsKey(character.id)) {
-            relationships[character.id].awareness.SetAwarenessState(state);
+    public void SetAwarenessState(Character source, Character target, AWARENESS_STATE state) {
+        if (relationships.ContainsKey(target.id)) {
+            AwarenessData awareness = relationships[target.id].awareness;
+            if (awareness.state != state) {
+                awareness.SetAwarenessState(state);
+                source.stateAwarenessComponent.OnSetAwarenessState(target, state);
+            }
         }
     }
     #endregion

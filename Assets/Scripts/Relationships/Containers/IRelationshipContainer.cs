@@ -67,7 +67,7 @@ public interface IRelationshipContainer {
     #endregion
 
     #region Awareness
-    void SetAwarenessState(Character character, AWARENESS_STATE state);
+    void SetAwarenessState(Character source, Character target, AWARENESS_STATE state);
     AWARENESS_STATE GetAwarenessState(Character character);
     #endregion
 
