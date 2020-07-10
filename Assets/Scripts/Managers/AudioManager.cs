@@ -150,17 +150,17 @@ public class AudioManager : MonoBehaviour {
         CheckThreatMusic();
     }
     private void OnQuestActivated(Quest quest) {
-        if (quest is Counterattack || quest is DivineIntervention) {
+        if (quest is Quests.Counterattack || quest is DivineIntervention) {
             CheckThreatMusic();
         }
     }
     private void OnQuestDeactivated(Quest quest) {
-        if (quest is Counterattack || quest is DivineIntervention) {
+        if (quest is Quests.Counterattack || quest is DivineIntervention) {
             CheckThreatMusic();
         }
     }
     private void CheckThreatMusic() {
-        if (QuestManager.Instance.IsQuestActive<Counterattack>() 
+        if (QuestManager.Instance.IsQuestActive<Quests.Counterattack>() 
             || QuestManager.Instance.IsQuestActive<DivineIntervention>() 
             || PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT) {
             //play threat music if threat is at max or counterattack quest is active or divine intervention quest is active

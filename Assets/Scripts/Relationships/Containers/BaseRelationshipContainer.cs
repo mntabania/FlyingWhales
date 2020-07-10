@@ -165,6 +165,17 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return RELATIONSHIP_TYPE.NONE;
     }
+    public Character GetMissingCharacterWithOpinion(string opinionLabel) {
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character target = charactersWithOpinion[i];
+            if (GetAwarenessState(target) == AWARENESS_STATE.Missing) {
+                if (GetOpinionLabel(target) == opinionLabel) {
+                    return target;
+                }
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region Opinions

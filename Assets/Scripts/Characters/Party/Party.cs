@@ -53,6 +53,7 @@ public class Party {
         CancelAllJoinPartyJobs();
     }
     protected virtual void OnWaitTimeOver() { }
+    protected virtual void OnWaitTimeOverButPartyIsDisbanded() { }
     #endregion
 
     #region General
@@ -69,12 +70,10 @@ public class Party {
         }
     }
     public bool AddMember(Character character) {
-        if (IsAllowedToJoin(character)) {
-            if (!members.Contains(character)) {
-                members.Add(character);
-                OnAddMember(character);
-                return true;
-            }
+        if (!members.Contains(character)) {
+            members.Add(character);
+            OnAddMember(character);
+            return true;
         }
         return false;
     }
@@ -89,6 +88,7 @@ public class Party {
         return false;
     }
     public void DisbandParty() {
+        if (isDisbanded) { return; }
         for (int i = 0; i < members.Count; i++) {
             OnRemoveMember(members[i]);
         }
@@ -128,6 +128,7 @@ public class Party {
             if(members.Count < minimumPartySize) {
                 //Disband party if minimum party size is not reached by the time wait time is over
                 DisbandParty();
+                OnWaitTimeOverButPartyIsDisbanded();
             } else {
                 OnWaitTimeOver();
             }

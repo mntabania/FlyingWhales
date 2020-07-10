@@ -99,32 +99,41 @@ public class WorkBehaviour : CharacterBehaviourComponent {
         return false;
     }
     private bool PlanWorkActions(Character character, out JobQueueItem producedJob) {
-        if (character.isAtHomeRegion && character.homeSettlement != null && character.canTakeJobs) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-            //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
-            JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
-            if (jobToAssign != null) {
-                producedJob = jobToAssign;
-                //took job based from vision
-                return true;
-            } else {
-                //if none of the jobs targets can be seen by the character, try and get a job from the npcSettlement or faction
-                //regardless of vision instead.
-                if (character.homeSettlement.HasPathTowardsTileInSettlement(character, 2)) {
-                    if (character.faction != null) {
-                        jobToAssign = character.faction.GetFirstUnassignedJobToCharacterJob(character);
+        if (character.canTakeJobs) {
+            if (character.isAtHomeRegion && character.homeSettlement != null) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+                                                                                //check npcSettlement job queue, if it has any jobs that target an object that is in view of the character
+                JobQueueItem jobToAssign = character.homeSettlement.GetFirstJobBasedOnVision(character);
+                if (jobToAssign != null) {
+                    producedJob = jobToAssign;
+                    //took job based from vision
+                    return true;
+                } else {
+                    //if none of the jobs targets can be seen by the character, try and get a job from the npcSettlement or faction
+                    //regardless of vision instead.
+                    if (character.homeSettlement.HasPathTowardsTileInSettlement(character, 2)) {
+                        if (character.faction != null) {
+                            jobToAssign = character.faction.GetFirstUnassignedJobToCharacterJob(character);
+                        }
+
+                        //Characters should only take non-vision settlement jobs if they have a path towards the settlement
+                        //Reference: https://trello.com/c/SSYDok6x/1106-characters-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
+                        if (jobToAssign == null) {
+                            jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
+                        }
                     }
-                    
-                    //Characters should only take non-vision settlement jobs if they have a path towards the settlement
-                    //Reference: https://trello.com/c/SSYDok6x/1106-characters-should-only-take-non-vision-settlement-jobs-if-they-have-a-path-towards-the-settlement
-                    if (jobToAssign == null) {
-                        jobToAssign = character.homeSettlement.GetFirstUnassignedJobToCharacterJob(character);
+
+                    if (jobToAssign != null) {
+                        producedJob = jobToAssign;
+                        return true;
                     }
                 }
-                
+            }
+            if (character.faction != null) {
+                JobQueueItem jobToAssign = character.faction.GetFirstUnassignedJobToCharacterJob(character);
                 if (jobToAssign != null) {
                     producedJob = jobToAssign;
                     return true;
-                }    
+                }
             }
         }
         producedJob = null;

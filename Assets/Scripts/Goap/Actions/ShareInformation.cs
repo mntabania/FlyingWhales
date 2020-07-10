@@ -145,96 +145,97 @@ public class ShareInformation : GoapAction {
         ProcessInformation(sharer, recipient, reactable, goapNode);
     }
     private void ProcessInformation(Character sharer, Character recipient, IReactable reactable, ActualGoapNode shareActionItself) {
-        if (reactable is ActualGoapNode || reactable is InterruptHolder) {
-            if (reactable.actor != recipient) {
-                recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
+        if (reactable.actor != recipient) {
+            string weightLog = "Share Information of " + sharer.name + " to " + recipient.name + ": " + reactable.name + " with actor " + reactable.actor.name + " and target " + reactable.target.name;
+            weightLog += "\nBase Belief Weight: 50";
+            weightLog += "\nBase Disbelief Weight: 50";
+
+            WeightedDictionary<string> weights = new WeightedDictionary<string>();
+            int beliefWeight = 50;
+            int disbeliefWeight = 50;
+            string opinionLabelOfRecipientToSharer = recipient.relationshipContainer.GetOpinionLabel(sharer);
+            string opinionLabelOfRecipientToActor = recipient.relationshipContainer.GetOpinionLabel(reactable.actor);
+
+            if ((reactable is Rumor || reactable is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
+                disbeliefWeight += 2000;
+                weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
             }
-        } else if (reactable is Rumor) {
-            if (reactable.actor != recipient) {
-                string weightLog = "Share Information of " + sharer.name + " to " + recipient.name + ": " + reactable.name + " with actor " + reactable.actor.name + " and target " + reactable.target.name;
-                weightLog += "\nBase Belief Weight: 50";
-                weightLog += "\nBase Disbelief Weight: 50";
+            if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
+                beliefWeight += 100;
+                weightLog += "\nSource is Friend: Belief + 100";
+            } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Close_Friend) {
+                beliefWeight += 250;
+                weightLog += "\nSource is Close Friend: Belief + 250";
+            } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Enemy) {
+                disbeliefWeight += 100;
+                weightLog += "\nSource is Enemy: Disbelief + 100";
+            } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Rival) {
+                disbeliefWeight += 250;
+                weightLog += "\nSource is Rival: Disbelief + 250";
+            }
 
-                WeightedDictionary<string> weights = new WeightedDictionary<string>();
-                int beliefWeight = 50;
-                int disbeliefWeight = 50;
-                string opinionLabelOfRecipientToSharer = recipient.relationshipContainer.GetOpinionLabel(sharer);
-                string opinionLabelOfRecipientToActor = recipient.relationshipContainer.GetOpinionLabel(reactable.actor);
-
-                if (recipient.traitContainer.HasTrait("Suspicious")) {
-                    disbeliefWeight += 2000;
-                    weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
-                }
-                if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
-                    beliefWeight += 100;
-                    weightLog += "\nSource is Friend: Belief + 100";
-                } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Close_Friend) {
-                    beliefWeight += 250;
-                    weightLog += "\nSource is Close Friend: Belief + 250";
-                } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Enemy) {
-                    disbeliefWeight += 100;
-                    weightLog += "\nSource is Enemy: Disbelief + 100";
-                } else if (opinionLabelOfRecipientToSharer == RelationshipManager.Rival) {
+            REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(recipient);
+            if (reactableEffect == REACTABLE_EFFECT.Positive) {
+                if (opinionLabelOfRecipientToActor == RelationshipManager.Friend || opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
+                    beliefWeight += 500;
+                    weightLog += "\nActor is Friend/Close Friend: Belief + 500";
+                } else if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy) {
                     disbeliefWeight += 250;
-                    weightLog += "\nSource is Rival: Disbelief + 250";
+                    weightLog += "\nSource is Enemy: Disbelief + 250";
+                } else if (opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
+                    disbeliefWeight += 500;
+                    weightLog += "\nSource is Rival: Disbelief + 500";
                 }
-
-                REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(recipient);
-                if (reactableEffect == REACTABLE_EFFECT.Positive) {
-                    if (opinionLabelOfRecipientToActor == RelationshipManager.Friend || opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
-                        beliefWeight += 500;
-                        weightLog += "\nActor is Friend/Close Friend: Belief + 500";
-                    } else if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy) {
-                        disbeliefWeight += 250;
-                        weightLog += "\nSource is Enemy: Disbelief + 250";
-                    } else if (opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
-                        disbeliefWeight += 500;
-                        weightLog += "\nSource is Rival: Disbelief + 500";
-                    }
-                } else if (reactableEffect == REACTABLE_EFFECT.Negative) {
-                    if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy || opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
-                        beliefWeight += 250;
-                        weightLog += "\nActor is Enemy/Rival: Belief + 250";
-                    } else if (opinionLabelOfRecipientToActor == RelationshipManager.Friend) {
-                        disbeliefWeight += 250;
-                        weightLog += "\nSource is Friend: Disbelief + 250";
-                    } else if (opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
-                        disbeliefWeight += 500;
-                        weightLog += "\nSource is Close Friend: Disbelief + 500";
-                    }
+            } else if (reactableEffect == REACTABLE_EFFECT.Negative) {
+                if (opinionLabelOfRecipientToActor == RelationshipManager.Enemy || opinionLabelOfRecipientToActor == RelationshipManager.Rival) {
+                    beliefWeight += 250;
+                    weightLog += "\nActor is Enemy/Rival: Belief + 250";
+                } else if (opinionLabelOfRecipientToActor == RelationshipManager.Friend) {
+                    disbeliefWeight += 250;
+                    weightLog += "\nSource is Friend: Disbelief + 250";
+                } else if (opinionLabelOfRecipientToActor == RelationshipManager.Close_Friend) {
+                    disbeliefWeight += 500;
+                    weightLog += "\nSource is Close Friend: Disbelief + 500";
                 }
-                weightLog += "\nTotal Belief Weight: " + beliefWeight;
-                weightLog += "\nTotal Disbelief Weight: " + disbeliefWeight;
-
-                weights.AddElement("Belief", beliefWeight);
-                weights.AddElement("Disbelief", disbeliefWeight);
-
-                string result = weights.PickRandomElementGivenWeights();
-                weightLog += "\nResult: " + result;
-                sharer.logComponent.PrintLogIfActive(weightLog);
-
-                //recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-
-                //CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-                //recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
-
-                if (result == "Belief") {
-                    //Recipient believes
-                    recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
-                } else {
-                    //Recipient does not believe
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
-                    if (UnityEngine.Random.Range(0, 100) < 35) {
-                        recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
-                    }
-                }
-                Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
-                believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
-                believeLog.AddLogToInvolvedObjects();
             }
+            weightLog += "\nTotal Belief Weight: " + beliefWeight;
+            weightLog += "\nTotal Disbelief Weight: " + disbeliefWeight;
+
+            weights.AddElement("Belief", beliefWeight);
+            weights.AddElement("Disbelief", disbeliefWeight);
+
+            string result = weights.PickRandomElementGivenWeights();
+            weightLog += "\nResult: " + result;
+            sharer.logComponent.PrintLogIfActive(weightLog);
+
+            //recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
+
+            //CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
+            //recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+
+            if (result == "Belief") {
+                //Recipient believes
+                recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
+            } else {
+                //Recipient does not believe
+                CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
+                if (UnityEngine.Random.Range(0, 100) < 35) {
+                    recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+                }
+            }
+            Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
+            believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
+            believeLog.AddLogToInvolvedObjects();
         }
+        //if (reactable is ActualGoapNode || reactable is InterruptHolder) {
+        //    if (reactable.actor != recipient) {
+        //        recipient.reactionComponent.ReactTo(reactable, REACTION_STATUS.INFORMED, false);
+        //    }
+        //} else if (reactable is Rumor) {
+
+        //}
     }
     #endregion
 

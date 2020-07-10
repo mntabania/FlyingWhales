@@ -49,13 +49,40 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         if (!character.homeSettlement.HasAResidentThatIsAPartyLeader(PARTY_TYPE.Exploration)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
-                            if (chance < 50) {
+                            if (chance < 15) {
                                 character.jobComponent.TriggerExploreJob(out producedJob);
                                 return true;
                             }
                         } else {
                             log += "\n-Already has an Exploration party whose leader lives in the same settlement";
                         }
+                    }
+
+                    log += "\n-If character has a Close Friend who it considers Missing";
+                    Character missingCloseFriend = character.relationshipContainer.GetMissingCharacterWithOpinion(RelationshipManager.Close_Friend);
+                    if(missingCloseFriend != null) {
+                        log += "\n-Missing close friend: " + missingCloseFriend;
+                        if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
+                            log += "\n-Character is combatant, 5% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
+                            if (!character.homeSettlement.HasAResidentThatIsAPartyLeader(PARTY_TYPE.Rescue)) {
+                                int chance = Random.Range(0, 100);
+                                log += $"\nRoll: {chance}";
+                                if (chance < 50) {
+                                    character.jobComponent.TriggerRescueJob(missingCloseFriend, out producedJob);
+                                    return true;
+                                }
+                            }
+                        } else {
+                            log += "\n-Character is not combatant, 5% chance to Request Rescue";
+                            int chance = Random.Range(0, 100);
+                            log += $"\nRoll: {chance}";
+                            if (chance < 50) {
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, missingCloseFriend, "Missing " + missingCloseFriend.name);
+                                return true;
+                            }
+                        }
+                    } else {
+                        log += "\n-No missing close friend";
                     }
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";

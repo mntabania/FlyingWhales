@@ -64,7 +64,7 @@ public class StateAwarenessComponent {
     public void PerTick() {
         if (startMissingTimer) {
             if(currentMissingTicks >= CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD) {
-                Messenger.Broadcast(Signals.CHARACTER_MISSING, this);
+                Messenger.Broadcast(Signals.CHARACTER_MISSING, owner);
                 SetStartMissingTimer(false);
                 SetStartPresumedDeadTimer(true);
             } else {
@@ -72,7 +72,7 @@ public class StateAwarenessComponent {
             }
         } else if (startPresumedDeadTimer) {
             if (currentPresumedDeadTicks >= CharacterManager.Instance.CHARACTER_PRESUMED_DEAD_THRESHOLD) {
-                Messenger.Broadcast(Signals.CHARACTER_PRESUMED_DEAD, this);
+                Messenger.Broadcast(Signals.CHARACTER_PRESUMED_DEAD, owner);
                 SetStartMissingTimer(false);
                 SetStartPresumedDeadTimer(false);
             } else {

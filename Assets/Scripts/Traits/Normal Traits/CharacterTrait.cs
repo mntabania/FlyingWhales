@@ -97,6 +97,16 @@ namespace Traits {
                                 characterThatWillDoJob.needsComponent.AdjustHope(-10f);
                             }
                         }
+                    } else {
+                        if(targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
+                            if(owner.partyComponent.hasParty && owner.partyComponent.currentParty is RescueParty rescueParty) {
+                                if(rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
+                                    if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
+                                        rescueParty.SetIsReleasing(true);
+                                    }
+                                }
+                            }
+                        }
                     }
                 } else {
                     //If a villager is dead and is seen outside the village, bury it
