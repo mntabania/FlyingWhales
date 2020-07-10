@@ -2068,7 +2068,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TriggerRescueJob(Character targetCharacter, out JobQueueItem producedJob) {
         if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], targetCharacter, _owner, null, 0);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], _owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, _owner);
             goapPlan.SetDoNotRecalculate(true);
@@ -2082,7 +2082,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TriggerRescueJob(Character targetCharacter) {
         if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], targetCharacter, _owner, null, 0);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], _owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, _owner);
             goapPlan.SetDoNotRecalculate(true);
