@@ -13,11 +13,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         priority = 10;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        if (character.territorries.Count > 0) {
-            if (character.hexTileLocation != null && character.territorries.Contains(character.hexTileLocation) == false) {
-                //character is not at territory, go back.
-                return character.jobComponent.TriggerReturnTerritory(out producedJob);
-            }
+        if (character.isAtHomeStructure || character.IsAtTerritory()) {
             List<Character> choices = GetTargetChoices(character.territorries, character);
             if (choices != null) {
                 Character chosenTarget = CollectionUtilities.GetRandomElement(choices);
@@ -29,9 +25,10 @@ public class DefendBehaviour : CharacterBehaviourComponent {
                 //Roam around tile
                 return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
             }
+        } else {
+            //character is not at home, go back.
+            return character.jobComponent.TriggerReturnTerritory(out producedJob);
         }
-        producedJob = null;
-        return false;
     }
     private List<Character> GetTargetChoices(List<HexTile> tiles, Character defender) {
         List<Character> characters = null;

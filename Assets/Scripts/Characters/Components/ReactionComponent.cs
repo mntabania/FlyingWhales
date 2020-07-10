@@ -449,7 +449,7 @@ public class ReactionComponent {
 
     private void ReactTo(Character targetCharacter, ref string debugLog) {
         debugLog += $"{owner.name} is reacting to {targetCharacter.name}";
-        if(owner.faction.IsHostileWith(targetCharacter.faction)) {
+        if(owner.IsHostileWith(targetCharacter)) {
             debugLog += "\n-Target is hostile";
             if (owner.traitContainer.HasTrait("Cultist") && (targetCharacter.faction.isPlayerFaction || targetCharacter.traitContainer.HasTrait("Cultist"))) {
                 debugLog += $"\n-{owner.name} is a cultist and {targetCharacter.name} is part of the demon faction or is also a cultist.";

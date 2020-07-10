@@ -62,7 +62,7 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
                 } else {
                     log += $"\n-De-Mood chance not met.";
                     //if de-mood attack was not triggered, check if is at territory
-                    if (character.hexTileLocation != null && character.territorries.Contains(character.hexTileLocation)) {
+                    if (character.isAtHomeStructure || character.IsAtTerritory()) {
                         log += $"\n-character is at territory";
                         //if is at territory, check if there are any villagers in its territory,
                         List<Character> charactersAtTerritory =
@@ -89,7 +89,7 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
         } else {
             log += $"\n-Cannot De-Mood because ability is in cooldown";
             //if cannot de mood, check if at territory
-            if (character.hexTileLocation != null && character.territorries.Contains(character.hexTileLocation)) {
+            if (character.isAtHomeStructure || character.IsAtTerritory()) {
                 log += $"\n-character is at territory, roaming around territory";
                 //if at territory, trigger roam around territory
                 return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);

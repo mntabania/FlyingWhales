@@ -23,7 +23,12 @@ public class MinionPlayerSkill : SpellData {
         minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
-        minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);
+        if (targetTile.structure?.settlementLocation != null && 
+            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.SETTLEMENT) {
+            minion.character.MigrateHomeStructureTo(targetTile.structure);	
+        } else {
+            minion.character.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    
+        }
         minion.character.jobQueue.CancelAllJobs();
         base.ActivateAbility(targetTile);
     }
