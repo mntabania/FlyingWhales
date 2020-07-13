@@ -63,6 +63,6 @@ public class WorldSettingsData {
                 return biomes.Contains(BIOMES.FOREST) || biomes.Contains(BIOMES.SNOW);
             }
         }
-        return true;
+        return races.Count >= 1 && biomes.Count >= 1;
     }
 }
