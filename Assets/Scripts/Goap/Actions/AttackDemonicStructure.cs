@@ -8,7 +8,8 @@ public class AttackDemonicStructure : GoapAction {
 
 	public AttackDemonicStructure() : base(INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE) {
 		actionIconString = GoapActionStateDB.Hostile_Icon;
-		doesNotStopTargetCharacter = true;
+        actionLocationType = ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL;
+        doesNotStopTargetCharacter = true;
 		advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
 		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.ANGEL };
 	}
@@ -23,11 +24,20 @@ public class AttackDemonicStructure : GoapAction {
 		actor.logComponent.AppendCostLog(costLog);
 		return 10;
 	}
-	public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
+    public override LocationStructure GetTargetStructure(ActualGoapNode node) {
+        object[] otherData = node.otherData;
+        if (otherData != null) {
+            if (otherData.Length == 1 && otherData[0] is LocationGridTile targetTile) { // && otherData[1] is LocationGridTile
+                return targetTile.structure;
+            }
+        }
+        return base.GetTargetStructure(node);
+    }
+    public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
 		object[] otherData = goapNode.otherData;
 		if (otherData != null) {
-			if (otherData.Length == 1 && otherData[0] is LocationGridTile) { // && otherData[1] is LocationGridTile
-				return otherData[0] as LocationGridTile;
+			if (otherData.Length == 1 && otherData[0] is LocationGridTile targetTile) { // && otherData[1] is LocationGridTile
+				return targetTile;
 			}
 		}
 		return base.GetTargetTileToGoTo(goapNode);

@@ -190,6 +190,11 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                     parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
                 }
             }
+
+            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && character.currentActionNode.targetStructure == structure) {
+                parentMarker.StopMovement();
+                character.PerformGoapAction();
+            }
         }
     }
     #endregion

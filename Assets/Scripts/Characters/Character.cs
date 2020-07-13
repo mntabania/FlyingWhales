@@ -494,6 +494,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.SubscribeToSignals();
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
+        combatComponent.SubscribeToSignals();
     }
     public virtual void UnsubscribeSignals() {
         if (!hasSubscribedToSignals) {
@@ -530,6 +531,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.UnsubscribeToSignals();
         jobComponent.UnsubscribeListeners();
         stateAwarenessComponent.UnsubscribeSignals();
+        combatComponent.UnsubscribeToSignals();
     }
     #endregion
 

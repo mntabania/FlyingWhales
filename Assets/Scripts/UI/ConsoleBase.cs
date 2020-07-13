@@ -87,6 +87,8 @@ public class ConsoleBase : InfoUIBase {
             {"/null_home", ChangeCharacterHomeToNull },
             {"/damage_tile", DamageTile },
             {"/create_faction", CreateFaction },
+            {"/cancel_job", CancelJob },
+
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1063,6 +1065,29 @@ public class ConsoleBase : InfoUIBase {
 
         character.MigrateHomeTo(null);
         AddSuccessMessage($"Changed {character.name} home to null");
+    }
+    private void CancelJob(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of CancelJob");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string jobParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage($"There is no character named {characterParameterString}");
+            return;
+        }
+
+        //if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
+        JobQueueItem job = character.jobQueue.GetJobByName(jobParameterString);
+        if(job != null) {
+            job.CancelJob(false);
+            AddSuccessMessage($"Cancelled job {jobParameterString} of {character.name}");
+        }
     }
     #endregion
 

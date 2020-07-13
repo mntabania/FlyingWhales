@@ -244,8 +244,13 @@ public class ActualGoapNode : IReactable, IRumorable {
                 targetTile = actor.gridTileLocation;
             } else {
                 //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
-                targetPOIToGoTo = poiTarget;
-                targetTile = poiTarget.gridTileLocation;
+                IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
+                if (targetToGoTo == null) {
+                    targetTile = action.GetTargetTileToGoTo(this);
+                } else {
+                    targetPOIToGoTo = targetToGoTo;
+                    targetTile = targetToGoTo.gridTileLocation;
+                }
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.OVERRIDE) {
             LocationGridTile tile = action.GetOverrideTargetTile(this);
@@ -255,7 +260,19 @@ public class ActualGoapNode : IReactable, IRumorable {
                 throw new System.Exception(
                     $"{actor.name} override target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
-
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
+            if (actor.currentStructure == targetStructure) {
+                targetTile = actor.gridTileLocation;
+            } else {
+                //No OnArriveAtTargetLocation because it doesn't trigger on arrival on the tile itself, rather, it is triggered upon arrival on the structure
+                IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
+                if (targetToGoTo == null) {
+                    targetTile = action.GetTargetTileToGoTo(this);
+                } else {
+                    targetPOIToGoTo = targetToGoTo;
+                    targetTile = targetToGoTo.gridTileLocation;
+                }
+            }
         }
     }
     private void CheckAndMoveToDoAction(JobQueueItem job) {
@@ -331,7 +348,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         return true;
     }
     private void OnArriveAtTargetLocation() {
-        if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+        if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION && action.actionLocationType != ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
             //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
             actor.PerformGoapAction();
         }
