@@ -4460,8 +4460,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    }
     //}
     public void OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
-
-
         bool stillContinueCurrentAction = true;
 
         List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Start_Perform_Trait);

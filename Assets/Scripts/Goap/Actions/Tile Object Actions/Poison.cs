@@ -37,17 +37,10 @@ public class Poison : GoapAction {
         string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
-        //List<Character> targetObjectOwners = null;
-        //if (target is TileObject) {
-        //    TileObject tileObject = target as TileObject;
-        //    targetObjectOwners = tileObject.GetOwners();
-        //} 
-        // else if (target is SpecialToken) {
-        //     SpecialToken item = target as SpecialToken;
-        //     if (item.characterOwner != null) {
-        //         targetObjectOwners = new List<Character>() { item.characterOwner };
-        //     }
-        // }
+
+        Poisoned poisoned = target.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+        poisoned?.AddAwareCharacter(witness); //make character aware of poisoned trait
+
         Character targetObjectOwner = null;
         if (target is TileObject targetTileObject) {
             targetObjectOwner = targetTileObject.characterOwner;
@@ -66,16 +59,6 @@ public class Poison : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             }
         } else {
-            //bool isTargetObjectOwnedByFriend = false;
-            //if(targetObjectOwners != null) {
-            //    for (int i = 0; i < targetObjectOwners.Count; i++) {
-            //        Character objectOwner = targetObjectOwners[i];
-            //        if (witness.relationshipContainer.IsFriendsWith(objectOwner) || witness.relationshipContainer.HasRelationshipWith(objectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
-            //            isTargetObjectOwnedByFriend = true;
-            //            break;
-            //        }
-            //    }
-            //}
             if (targetObjectOwner != null && (witness.relationshipContainer.IsFriendsWith(targetObjectOwner) || witness.relationshipContainer.HasRelationshipWith(targetObjectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE))) {
                 if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
@@ -103,7 +86,9 @@ public class Poison : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterPoisonSuccess(ActualGoapNode goapNode) {
+    public void PrePoisonSuccess(ActualGoapNode goapNode) {
+        //NOTE: Added poison trait to pre effect so that anyone that can react to this action, can access that trait, 
+        //even though the action has not yet been completed
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Poisoned", goapNode.actor);
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.TOOL);
     }

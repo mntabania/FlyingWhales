@@ -26,6 +26,11 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
 
     public void SetStacks(int stacks) {
         this.stacks = stacks;
+        if (stacks >= 10) {
+            traitContainer.AddTrait(this, "Dangerous");
+        } else {
+            traitContainer.RemoveTrait(this, "Dangerous");
+        }
         UpdateSizeBasedOnPoisonedStacks();
     }
     public void Explode() {
@@ -63,7 +68,6 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        traitContainer.AddTrait(this, "Dangerous");
         traitContainer.RemoveTrait(this, "Flammable");
     }
     #endregion
@@ -95,8 +99,7 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         }
     }
     #endregion
-
-
+    
     #region Expire Effect
     private void ExpireEffect() {
         if (gridTileLocation != null) {

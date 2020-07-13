@@ -288,11 +288,7 @@ public class HexTileSpellsComponent {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
             LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
             GameManager.Instance.CreateParticleEffectAt(chosenTile, PARTICLE_EFFECT.Brimstones);
-            // List<IPointOfInterest> pois = chosenTile.GetPOIsOnTile();
-            // for (int i = 0; i < pois.Count; i++) {
-            //     pois[i].AdjustHP(-120, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
-            // }
-            chosenTile.PerformActionOnTraitables(BrimstoneEffect);
+            // chosenTile.PerformActionOnTraitables(BrimstoneEffect);
         }
     }
     private void BrimstoneEffect(ITraitable traitable) {

@@ -476,9 +476,19 @@ public class ReactionComponent {
                     if (owner.jobQueue.jobsInQueue.Count > 0) {
                         debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";
                     }
-                    //If the target is already unconscious (it cannot fight back), attack it again only if the source is not harassing and not defending and the top priority job is considered lethal
+                    //If the target is already unconscious (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
-                        owner.combatComponent.FightOrFlight(targetCharacter, CombatManager.Hostility, isLethal: isLethal);
+                        //Determine whether to fight or flight.
+                        CombatReaction combatReaction = owner.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
+                        if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                            //if flight was decided
+                            //if target is restrained or resting, do nothing
+                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                                owner.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
+                            }
+                        } else {
+                            owner.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
+                        }
                     }
                 }
             } else {

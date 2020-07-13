@@ -133,11 +133,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
-                additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    
-            }
+        if (UIManager.Instance.characterInfoUI.isShowing && spellData is PlayerAction) {
             if (spellData.CanPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter) == false) {
+                if (UIManager.Instance.characterInfoUI.activeCharacter.traitContainer.HasTrait("Blessed")) {
+                    additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    
+                }
                 string wholeReason = spellData
                     .GetReasonsWhyCannotPerformAbilityTowards(UIManager.Instance.characterInfoUI.activeCharacter);
                 if (string.IsNullOrEmpty(wholeReason) == false) {

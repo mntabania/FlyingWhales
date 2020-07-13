@@ -17,6 +17,8 @@ public class SummonMinionPlayerSkillNameplateItem : SpellItem {
         mainLbl.text = spellData.name;
         subLbl.text = string.Empty;
         SetPortrait();
+        ClearAllHoverEnterActions();
+        AddHoverEnterAction((spellData) => PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.minionListHoverPosition));
     }
     private void SetPortrait() {
         RACE race = RACE.NONE;
@@ -43,9 +45,6 @@ public class SummonMinionPlayerSkillNameplateItem : SpellItem {
         } else {
             countText.text = "" + count;
         }
-    }
-    public override void OnHoverSpell() {
-        PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.minionListHoverPosition);
     }
     #endregion
 }

@@ -172,31 +172,29 @@ public class CombatComponent {
     #endregion
 
     #region Fight or Flight
-    public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
+    public CombatReaction GetFightOrFlightReaction(IPointOfInterest target, string fightReason) {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
         if (!owner.canPerform || !owner.canMove) {
             debugLog += "\n-Character cannot move/perform, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
-            return;
+            return new CombatReaction(COMBAT_REACTION.None);
         }
         if (hostilesInRange.Contains(target) || avoidInRange.Contains(target)) {
             debugLog += "\n-Target is already in hostile/avoid list, will no longer trigger fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
-            return;
+            return new CombatReaction(COMBAT_REACTION.None);
         }
         if (owner.faction == FactionManager.Instance.undeadFaction || owner.race == RACE.SKELETON) {
             debugLog += "\n-Character is zombie";
             debugLog += "\n-FIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
-            Fight(target, fightReason, connectedAction, isLethal);
-            return;
+            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
         }
         if (owner.behaviourComponent.HasBehaviour(typeof(DisablerBehaviour))) {
             debugLog += "\n-Character is a Disabler";
             debugLog += "\n-FLIGHT";
             owner.logComponent.PrintLogIfActive(debugLog);
-            Flight(target);
-            return;
+            return new CombatReaction(COMBAT_REACTION.Flight);
         }
         if (target is Character) {
             debugLog += "\n-Target is character";
@@ -207,11 +205,11 @@ public class CombatComponent {
                     debugLog += "\n-Character is a demon";
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    Fight(target, fightReason, connectedAction, isLethal);
+                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
                     debugLog += "\n-FLIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    Flight(target, "character is a coward");
+                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
                 }
             } else {
                 debugLog += "\n-Character is not coward";
@@ -222,17 +220,17 @@ public class CombatComponent {
                     if (chance < 20) {
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Fight(target, fightReason, connectedAction, isLethal);
+                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else {
                         if (owner.race == RACE.DEMON) {
                             debugLog += "\n-Character is a demon";
                             debugLog += "\n-FIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
-                            Fight(target, fightReason, connectedAction, isLethal);
+                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                         } else {
                             debugLog += "\n-FLIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
-                            Flight(target, "got scared");
+                            return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
                         }
                     }
                 } else {
@@ -241,7 +239,7 @@ public class CombatComponent {
                         debugLog += "\n-Character hp is higher than target";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Fight(target, fightReason, connectedAction, isLethal);
+                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else {
                         debugLog += "\n-Character hp is lower or equal than target";
                         if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
@@ -250,23 +248,23 @@ public class CombatComponent {
                                 debugLog += "\n-Character is a demon";
                                 debugLog += "\n-FIGHT";
                                 owner.logComponent.PrintLogIfActive(debugLog);
-                                Fight(target, fightReason, connectedAction, isLethal);
+                                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                             } else {
                                 debugLog += "\n-FLIGHT";
                                 owner.logComponent.PrintLogIfActive(debugLog);
-                                Flight(target, "got scared");
+                                return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
                             }
                         } else if (CombatManager.Instance.IsImmuneToElement(owner, targetCharacter.combatComponent.elementalDamage.type)) {
                             debugLog += "\n-Character is immune to target elemental damage";
                             debugLog += "\n-FIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
-                            Fight(target, fightReason, connectedAction, isLethal);
+                            return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                         } else {
                             if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.3f)) {
                                 debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
                                 debugLog += "\n-FIGHT";
                                 owner.logComponent.PrintLogIfActive(debugLog);
-                                Fight(target, fightReason, connectedAction, isLethal);
+                                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                             } else {
                                 int fightChance = 25;
                                 for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
@@ -282,17 +280,17 @@ public class CombatComponent {
                                 if (roll < fightChance) {
                                     debugLog += "\n-FIGHT";
                                     owner.logComponent.PrintLogIfActive(debugLog);
-                                    Fight(target, fightReason, connectedAction, isLethal);
+                                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                                 } else {
                                     if (owner.race == RACE.DEMON) {
                                         debugLog += "\n-Character is a demon";
                                         debugLog += "\n-FIGHT";
                                         owner.logComponent.PrintLogIfActive(debugLog);
-                                        Fight(target, fightReason, connectedAction, isLethal);
+                                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                                     } else {
                                         debugLog += "\n-FLIGHT";
                                         owner.logComponent.PrintLogIfActive(debugLog);
-                                        Flight(target, "got scared");
+                                        return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
                                     }
                                 }
                             }
@@ -308,37 +306,51 @@ public class CombatComponent {
                     debugLog += "\n-Character is a demon";
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    Fight(target, fightReason, connectedAction, isLethal);
+                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
                     debugLog += "\n-FLIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
-                    Flight(target, "character is a coward");
+                    return new CombatReaction(COMBAT_REACTION.Flight, "character is a coward");
                 }
             } else if (tileObject.traitContainer.HasTrait("Dangerous")) {
                 debugLog += "\n-Object is dangerous";
                 if (string.IsNullOrEmpty(tileObject.neutralizer) == false && 
                     owner.traitContainer.HasTrait(tileObject.neutralizer)) {
-                    debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";    
-                    Fight(target, fightReason, connectedAction, isLethal);
+                    debugLog += $"\n-Character has neutralizer trait {tileObject.neutralizer}";
+                    owner.logComponent.PrintLogIfActive(debugLog);
+                    return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
                     if (owner.race == RACE.DEMON) {
                         debugLog += "\n-Character is a demon";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Fight(target, fightReason, connectedAction, isLethal);
+                        return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else {
                         debugLog += "\n-FLIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Flight(target, "got scared");
+                        return new CombatReaction(COMBAT_REACTION.Flight, "got scared");
                     }
                 }
-                owner.logComponent.PrintLogIfActive(debugLog);
             } else {
                 debugLog += "\n-Object is not dangerous";
-                Fight(target, fightReason, connectedAction, isLethal);
                 owner.logComponent.PrintLogIfActive(debugLog);
+                return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
             }
         }
+        owner.logComponent.PrintLogIfActive(debugLog);
+        return new CombatReaction(COMBAT_REACTION.None);
+    }
+    public void FightOrFlight(IPointOfInterest target, CombatReaction combatReaction, 
+        ActualGoapNode connectedAction = null, bool isLethal = true) {
+        if (combatReaction.reaction == COMBAT_REACTION.Fight) {
+            Fight(target, combatReaction.reason, connectedAction, isLethal);
+        } else if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+            Flight(target, combatReaction.reason);
+        }
+    }
+    public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
+        CombatReaction combatReaction = GetFightOrFlightReaction(target, fightReason);
+        FightOrFlight(target, combatReaction, connectedAction, isLethal);
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         bool hasFought = false;
@@ -809,5 +821,15 @@ public class CombatData {
     }
     public void SetFlightData(string avoidReason) {
         this.avoidReason = avoidReason;
+    }
+}
+
+public struct CombatReaction {
+    public COMBAT_REACTION reaction;
+    public string reason;
+
+    public CombatReaction(COMBAT_REACTION reaction, string reason = "") {
+        this.reaction = reaction;
+        this.reason = reason;
     }
 }

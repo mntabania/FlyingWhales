@@ -384,14 +384,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		producedJob = null;
 		return false;
 	}
-	private void TriggerRemoveStatus(Trait trait) {
+	private void TriggerSettlementRemoveStatusJob(Trait trait) {
 		if (_owner.isDead) { return; }
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
 			if (_owner.homeSettlement.HasJob(goapEffect, _owner) == false) {
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner.homeSettlement);
 				job.SetCanTakeThisJobChecker((Character character, JobQueueItem jqi) => CanTakeRemoveStatus(character, job, trait));
-				job.SetStillApplicableChecker(() => IsRemoveStatusJobStillApplicable(_owner, job, trait));
+				job.SetStillApplicableChecker(() => IsSettlementRemoveStatusJobStillApplicable(_owner, job, trait));
 				_owner.homeSettlement.AddToAvailableJobs(job);
 			}	
 		}
@@ -406,11 +406,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			}	
 		}
 	}
-    public void TriggerRemoveStatusTarget(Character targetCharacter, string traitName) {
+    public void TriggerRemoveStatusTarget(IPointOfInterest target, string traitName) {
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, target = GOAP_EFFECT_TARGET.TARGET };
         if (_owner.jobQueue.HasJob(goapEffect, _owner) == false) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, targetCharacter, _owner);
-            job.SetStillApplicableChecker(() => IsRemoveStatusSelfJobStillApplicable(targetCharacter, job, traitName));
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, target, _owner);
+            job.SetStillApplicableChecker(() => IsRemoveStatusTargetJobStillApplicable(target, job, traitName));
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
@@ -453,7 +453,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private bool IsDestroyJobApplicable(IPointOfInterest target) {
 		return target.gridTileLocation != null;
 	}
-	private bool IsRemoveStatusJobStillApplicable(Character target, GoapPlanJob job, Trait trait) {
+	private bool IsSettlementRemoveStatusJobStillApplicable(Character target, GoapPlanJob job, Trait trait) {
 		if (target.gridTileLocation == null || target.isDead) {
 			return false;
 		}
@@ -477,7 +477,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return true;
 	}
-    private bool IsRemoveStatusSelfJobStillApplicable(Character target, GoapPlanJob job, string traitName) {
+    private bool IsRemoveStatusSelfJobStillApplicable(IPointOfInterest target, GoapPlanJob job, string traitName) {
         if (target.gridTileLocation == null || target.isDead) {
             return false;
         }
@@ -486,10 +486,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return true;
     }
-    private bool IsRestrainApplicable(Character target, NPCSettlement npcSettlement) {
-		return target.canPerform == false && target.gridTileLocation != null &&
-		       target.gridTileLocation.IsNextToOrPartOfSettlement(npcSettlement);
-	}
+    private bool IsRemoveStatusTargetJobStillApplicable(IPointOfInterest target, GoapPlanJob job, string traitName) {
+	    if (target.gridTileLocation == null || target.isDead) {
+		    return false;
+	    }
+	    if (!target.traitContainer.HasTrait(traitName)) {
+		    return false; //target no longer has the given trait
+	    }
+	    return true;
+    }
 	#endregion
 
 	#region Job Checkers
@@ -595,7 +600,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateRemoveStatusJob(Trait trait) {
 		if (_owner.homeSettlement != null && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
 		    && _owner.traitContainer.HasTrait("Criminal") == false) {
-			TriggerRemoveStatus(trait);
+			TriggerSettlementRemoveStatusJob(trait);
 		}
 	}
 	private void TryCreateRemoveStatusJob() {

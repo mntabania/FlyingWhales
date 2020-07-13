@@ -4,6 +4,7 @@ using DG.Tweening;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -14,7 +15,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     
     private string _expiryKey;
     private Tweener _movement;
-    private List<ITraitable> _objsInRange;
+    private HashSet<ITraitable> _objsInRange;
     private PoisonCloudTileObject _poisonCloud;
     
     public bool wasJustPlaced { get; private set; }
@@ -30,6 +31,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Monobehaviours
     private void Awake() {
         visionTrigger = transform.GetComponentInChildren<TileObjectVisionTrigger>();
+        choices = new List<ITraitable>();
     }
     protected override void Update() {
         base.Update();
@@ -42,7 +44,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Overrides
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
-        _objsInRange = new List<ITraitable>();
+        _objsInRange = new HashSet<ITraitable>();
         _poisonCloud = obj as PoisonCloudTileObject;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
@@ -120,18 +122,25 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #endregion
 
     #region Effects
+    private List<ITraitable> choices;
     private void PerTick() {
         if (isSpawned == false) {
             return;
         }
-        int roll = Random.Range(0, 100);
-        if (roll < 30 && _objsInRange.Count > 0) {
-            string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud. Roll is {roll.ToString()}.";
-            ITraitable traitable = UtilityScripts.CollectionUtilities.GetRandomElement(_objsInRange);
-            traitable.traitContainer.AddTrait(traitable, "Poisoned");
-            summary = $"{summary}\nChance met! Target is {traitable.ToString()}";
-            Debug.Log(summary);
+        choices.Clear();
+        int size = _size / 2;
+        List<LocationGridTile> tiles =
+            gridTileLocation.GetTilesInRadius(size, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile tile = tiles[i];
+            tile.PerformActionOnTraitables(traitable => choices.Add(traitable));
         }
+        Assert.IsTrue(choices.Count > 0);
+        string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud.";
+        ITraitable chosenTraitable = UtilityScripts.CollectionUtilities.GetRandomElement(choices);
+        chosenTraitable.traitContainer.AddTrait(chosenTraitable, "Poisoned");
+        summary = $"{summary}\nChance met! Target is {chosenTraitable.ToString()}";
+        Debug.Log(summary);
     }
     public void Explode() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{this.name} has exploded!");
@@ -210,16 +219,13 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _objsInRange.Remove(obj);
     }
     private void OnAddPOI(ITraitable obj) {
+        if (obj is Character character && character.combatComponent.isInCombat == false && character.isNormalCharacter) {
+            //normal characters that are not in combat, but are in range of a poison cloud should flee
+            character.combatComponent.Flight(_poisonCloud, "inside a poison cloud");
+        }
         if (obj.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
             Explode();
-        } 
-        //else if (obj is PoisonCloudTileObject otherPoisonCloud) {
-        //    if(_poisonCloud.size != _poisonCloud.maxSize) {
-        //        int stacksToCombine = otherPoisonCloud.stacks;
-        //        otherPoisonCloud.Neutralize();
-        //        _poisonCloud.SetStacks(_poisonCloud.stacks + stacksToCombine);
-        //    }
-        //}
+        }
     }
     #endregion
     

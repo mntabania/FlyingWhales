@@ -304,6 +304,17 @@ public class FactionManager : MonoBehaviour {
                 return FACTION_TYPE.Human_Empire;
         }
     }
+    public int GetActiveVillagerFactionCount() {
+        int count = 0;
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction faction = allFactions[i];
+            if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || 
+                faction.factionType.type == FACTION_TYPE.Human_Empire) {
+                count++;
+            }
+        }
+        return count;
+    }
 }
 
 [System.Serializable]

@@ -6,42 +6,29 @@ using Inner_Maps;
 namespace Traits {
     public class BoobyTrapped : Status {
         private ELEMENTAL_TYPE _element;
-
+        
+        public List<Character> awareCharacters { get; } //characters that know about this trait
+        private ITraitable traitable { get; set; } //poi that has the trait
+        
         public BoobyTrapped() {
             name = "Booby Trapped";
             description = "This is booby trapped.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
+            awareCharacters = new List<Character>();
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
         }
 
         #region Overrides
-        //public override void OnAddTrait(ITraitable addedTo) {
-        //    base.OnAddTrait(addedTo);
-        //    if (addedTo is IPointOfInterest poi) {
-        //        _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing);
-        //    }
-        //    if (addedTo is Character) {
-        //        Character character = addedTo as Character;
-        //        character.needsComponent.AdjustComfortDecreaseRate(1f);
-        //        character.needsComponent.AdjustTirednessDecreaseRate(1f);
-        //        character.AdjustSpeedModifier(-0.15f);
-        //    }
-        //}
-        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        //    base.OnRemoveTrait(removedFrom, removedBy);
-        //    if (_freezingGO) {
-        //        ObjectPoolManager.Instance.DestroyObject(_freezingGO);
-        //        _freezingGO = null;
-        //    }
-        //    if (removedFrom is Character) {
-        //        Character character = removedFrom as Character;
-        //        character.needsComponent.AdjustComfortDecreaseRate(-1f);
-        //        character.needsComponent.AdjustTirednessDecreaseRate(-1f);
-        //        character.AdjustSpeedModifier(0.15f);
-        //    }
-        //}
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            traitable = addedTo;
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            traitable = null;
+        }
         public bool OnPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if (node.action.actionCategory == ACTION_CATEGORY.DIRECT || node.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                 if (node.poiTarget.gridTileLocation != null) {
@@ -64,6 +51,30 @@ namespace Traits {
                 }
             }
             return false;
+        }
+        public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
+            data += $"\n\tAware Characters: ";
+            for (int i = 0; i < awareCharacters.Count; i++) {
+                Character character = awareCharacters[i];
+                data += $"{character.name},";    
+            }
+            return data;
+        }
+        #endregion
+        
+        #region Aware Characters
+        public void AddAwareCharacter(Character character) {
+            if (awareCharacters.Contains(character) == false) {
+                awareCharacters.Add(character);
+                if (traitable is TileObject tileObject) {
+                    //create remove poison job
+                    character.jobComponent.TriggerRemoveStatusTarget(tileObject, "Poisoned");
+                }
+            }
+        }
+        public void RemoveAwareCharacter(Character character) {
+            awareCharacters.Remove(character);
         }
         #endregion
 

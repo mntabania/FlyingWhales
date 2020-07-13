@@ -528,7 +528,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7346978857189099379}
-        m_MethodName: OnHoverSpell
+        m_MethodName: OnHoverEnter
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -542,7 +542,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7346978857189099379}
-        m_MethodName: OnHoverOutSpell
+        m_MethodName: OnHoverExit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -706,7 +706,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7346978857189099379}
-        m_MethodName: OnHoverSpell
+        m_MethodName: OnHoverEnter
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -720,7 +720,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7346978857189099379}
-        m_MethodName: OnHoverOutSpell
+        m_MethodName: OnHoverExit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: -2940599799311281061, guid: 2488fadd48ae12d40bfa2a07d6fc1798,
+  m_Material: {fileID: -3483723377981431166, guid: d05f9163c7976d4489ead3e20a8e3964,
     type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
@@ -1155,9 +1155,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_fontAsset: {fileID: 11400000, guid: 199bd5f6bc317894daa134b01e2206a1, type: 2}
-  m_spriteAsset: {fileID: 11400000, guid: 2488fadd48ae12d40bfa2a07d6fc1798, type: 2}
+  m_spriteAsset: {fileID: 11400000, guid: d05f9163c7976d4489ead3e20a8e3964, type: 2}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: -2940599799311281061, guid: 2488fadd48ae12d40bfa2a07d6fc1798,
+  m_sharedMaterial: {fileID: -3483723377981431166, guid: d05f9163c7976d4489ead3e20a8e3964,
     type: 2}
   m_isDefaultMaterial: 1
   m_padding: 0

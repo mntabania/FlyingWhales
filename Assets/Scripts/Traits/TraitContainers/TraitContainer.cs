@@ -140,7 +140,9 @@ namespace Traits {
                     shouldAddTrait = false;
                 }
             } else if (traitName == "Poisoned") {
-                if (HasTrait("Burning")) {
+                if (HasTrait("Wet")) {
+                    shouldAddTrait = false;
+                } else if (HasTrait("Burning")) {
                     RemoveTrait(addTo, "Burning");
                 }
             } else if (traitName == "Overheating") {

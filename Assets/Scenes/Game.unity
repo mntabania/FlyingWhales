@@ -127854,11 +127854,6 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 4072576681277969897, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4072576681419521032, guid: ffdeb35aa1f01c64099694e746a15fa1,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -127969,11 +127964,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ObjectPicker
       objectReference: {fileID: 0}
-    - target: {fileID: 4072576681419521035, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4072576682649937864, guid: ffdeb35aa1f01c64099694e746a15fa1,
         type: 3}
       propertyPath: m_Material
@@ -127984,21 +127974,6 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 1444868644}
-    - target: {fileID: 4072576682649937864, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4072576682933307337, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4072576682933307337, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffdeb35aa1f01c64099694e746a15fa1, type: 3}
 --- !u!1001 &4438200847636598153
