@@ -113,14 +113,23 @@ namespace Traits {
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             data += $"\n\tCleanser: {cleanser?.name ?? "None"}";
+            data += $"\n\tAware Characters: ";
+            for (int i = 0; i < awareCharacters.Count; i++) {
+                Character character = awareCharacters[i];
+                data += $"{character.name},";    
+            }
             return data;
         }
         #endregion
 
         #region Aware Characters
         public void AddAwareCharacter(Character character) {
-            if (awareCharacters.Contains(character)) {
+            if (awareCharacters.Contains(character) == false) {
                 awareCharacters.Add(character);
+                if (traitable is TileObject tileObject) {
+                    //create remove poison job
+                    character.jobComponent.TriggerRemoveStatusTarget(tileObject, "Poisoned");
+                }
             }
         }
         public void RemoveAwareCharacter(Character character) {
@@ -177,6 +186,7 @@ namespace Traits {
             }
         }
         #endregion
+        
     }
 
     public class SaveDataPoisoned : SaveDataTrait {

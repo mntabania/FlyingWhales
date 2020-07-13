@@ -32,6 +32,9 @@ public class BoobyTrap : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
 
+        BoobyTrapped boobyTrapped = target.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+        boobyTrapped?.AddAwareCharacter(witness);
+        
         if (target is TileObject tileObject) {
             if (tileObject.IsOwnedBy(witness)) {
                 if (witness.traitContainer.HasTrait("Coward")) {
@@ -80,7 +83,10 @@ public class BoobyTrap : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterTrapSuccess(ActualGoapNode goapNode) {
+    public void PreTrapSuccess(ActualGoapNode goapNode) {
+        //NOTE: Booby trapped trait added in pre effect so that anyone that witnesses this action, can access that trait,
+        //even if this action has not been finished yet. Booby trap will not be activated by this action, since, booby traps
+        //are activated at the start of the action (before this).
         Character actor = goapNode.actor;
         IPointOfInterest target = goapNode.poiTarget;
 

@@ -236,16 +236,37 @@ public class GoapAction : ICrimeable {
         return false;
     }
     public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool requirementActionSatisfied = !(poiTarget.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
-                                            && poiTarget.traitContainer.HasTrait("Frozen") 
-                                            && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME));
+        // bool requirementActionSatisfied = !(poiTarget.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
+        //                                     && poiTarget.traitContainer.HasTrait("Frozen") 
+        //                                     && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME));
+        bool requirementActionSatisfied = true;
+        if (poiTarget is TileObject tileObject) {
+            if (tileObject.traitContainer.HasTrait("Frozen") && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME)) {
+                //if tile object is frozen and action is direct or consume, do not advertise this action.
+                requirementActionSatisfied = false;
+            }
+            if (actionCategory == ACTION_CATEGORY.CONSUME) {
+                //if action is consume type and actor knows that the object is poisoned, do not advertise this action.
+                Poisoned poisoned = tileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+                if (poisoned != null && poisoned.awareCharacters.Contains(actor)) {
+                    requirementActionSatisfied = false;    
+                }    
+                //if action is consume type and actor knows that the object is booby trapped, do not advertise this action.
+                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                if (boobyTrapped != null && boobyTrapped.awareCharacters.Contains(actor)) {
+                    requirementActionSatisfied = false;    
+                }    
+            } else if (actionCategory == ACTION_CATEGORY.DIRECT) {
+                //if action is direct type and actor knows that the object is booby trapped, do not advertise this action.
+                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                if (boobyTrapped != null && boobyTrapped.awareCharacters.Contains(actor)) {
+                    requirementActionSatisfied = false;    
+                }    
+            }
+            
+        }
         if (requirementActionSatisfied) {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
-            //if (requirementActionSatisfied) {
-            //    if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-            //        requirementActionSatisfied = actor.IsCombatReady();
-            //    }
-            //}
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }

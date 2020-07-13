@@ -5,12 +5,11 @@ using Traits;
 
 public class RemovePoison : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
     public RemovePoison() : base(INTERACTION_TYPE.REMOVE_POISON) {
         actionIconString = GoapActionStateDB.Cure_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
 
