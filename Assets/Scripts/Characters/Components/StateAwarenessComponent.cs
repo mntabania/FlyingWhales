@@ -121,6 +121,13 @@ public class StateAwarenessComponent {
                     owner.traitContainer.AddTrait(owner, "Griefstricken", target);
                 }
             }
+        } else if (state == AWARENESS_STATE.Missing) {
+            if (!owner.traitContainer.HasTrait("Psychopath")) {
+                if (owner.relationshipContainer.GetOpinionLabel(target) == RelationshipManager.Close_Friend
+                    || (owner.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.SIBLING) && !owner.relationshipContainer.IsEnemiesWith(target))) {
+                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, target);
+                }
+            }
         }
     }
 }
