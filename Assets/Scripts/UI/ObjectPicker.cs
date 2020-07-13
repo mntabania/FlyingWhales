@@ -12,13 +12,12 @@ public class ObjectPicker : PopupMenuBase {
     [Header("Object Picker")]
     [SerializeField] private ScrollRect objectPickerScrollView;
     [SerializeField] private GameObject objectPickerCharacterItemPrefab;
-    [SerializeField] private GameObject objectPickerAreaItemPrefab;
     [SerializeField] private GameObject objectPickerRegionItemPrefab;
     [SerializeField] private GameObject objectPickerStringItemPrefab;
     [SerializeField] private GameObject objectPickerRaceClassItemPrefab;
     [SerializeField] private GameObject objectPickerEnumItemPrefab;
-    [SerializeField] private GameObject objectPickerAttackItemPrefab;
     [SerializeField] private GameObject objectPickerSummonSlotItemPrefab;
+    [SerializeField] private GameObject objectPickerSpellItemPrefab;
     [FormerlySerializedAs("objectPickerArtifactSlotItemPrefab")] [SerializeField] private GameObject objectPickerArtifactItemPrefab;
     [SerializeField] private TextMeshProUGUI titleLbl;
     [SerializeField] private GameObject cover;
@@ -81,6 +80,8 @@ public class ObjectPicker : PopupMenuBase {
             ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         } else if (type == typeof(Artifact)) {
             ShowArtifactItems(validItems.Cast<Artifact>().ToList(), invalidItems.Cast<Artifact>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
+        } else if (type == typeof(SpellData)) {
+            ShowSpellItems(validItems.Cast<SpellData>().ToList(), invalidItems.Cast<SpellData>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
         } else if (type.IsEnum) {
             ShowEnumItems(validItems.Cast<Enum>().ToList(), invalidItems.Cast<Enum>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter, asButton);
         } else if (type == typeof(RaceClass)) {
@@ -629,13 +630,76 @@ public class ObjectPicker : PopupMenuBase {
             item.SetInteractableState(false);
         }
     }
+    private void ShowSpellItems<T>(List<SpellData> validItems, List<SpellData> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier, Func<string, Sprite> portraitGetter, bool asButton) {
+        Action<SpellData> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToSpellData(onHoverItemAction);
+        }
+        Action<SpellData> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToSpellData(onHoverExitItemAction);
+        }
+        
+        for (int i = 0; i < invalidItems.Count; i++) {
+            SpellData spellData = invalidItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerSpellItemPrefab.name, objectPickerScrollView.content);
+            SpellItem item = itemGO.GetComponent<SpellItem>();
+            item.SetObject(spellData);
+            item.ClearAllOnClickActions();
+            
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.SetAsButton();
+            } else {
+                item.SetAsToggle();
+            }
+            item.SetInteractableState(false);
+            item.transform.SetAsLastSibling();
+        }
+        
+        for (int i = 0; i < validItems.Count; i++) {
+            SpellData spellData = validItems[i];
+            GameObject itemGO = UIManager.Instance.InstantiateUIObject(objectPickerSpellItemPrefab.name, objectPickerScrollView.content);
+            SpellItem item = itemGO.GetComponent<SpellItem>();
+            item.SetObject(spellData);
+            item.ClearAllOnClickActions();
+
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            if (asButton) {
+                item.AddOnClickAction(OnPickObject);
+                item.SetAsButton();
+            } else {
+                item.AddOnToggleAction(OnPickObject);
+                item.SetAsToggle();
+                item.SetToggleGroup(toggleGroup);
+            }
+            item.transform.SetAsFirstSibling();
+        }
+    }
     #endregion
 
     #region Utilities
     private void UpdateConfirmBtnState() {
         confirmBtn.interactable = pickedObj != null;
     }
-    public void OnPickObject(object obj, bool isOn) {
+    private void OnPickObject(object obj, bool isOn) {
         if (isOn) {
             pickedObj = obj;
             if (_shouldShowConfirmationWindowOnPick) {
@@ -647,19 +711,19 @@ public class ObjectPicker : PopupMenuBase {
             }
         }
     }
-    public void OnPickObject(object obj) {
+    private void OnPickObject(object obj) {
         pickedObj = obj;
         if (pickedObj != null && _shouldShowConfirmationWindowOnPick) {
             OnClickConfirm();
         }
     }
-    public void OnPickObject(RaceClass obj) {
+    private void OnPickObject(RaceClass obj) {
         pickedObj = obj;
         if (pickedObj != null && _shouldShowConfirmationWindowOnPick) {
             OnClickConfirm();
         }
     }
-    public void OnPickObject(RaceClass obj, bool isOn) {
+    private void OnPickObject(RaceClass obj, bool isOn) {
         if (isOn) {
             pickedObj = obj;
             if (_shouldShowConfirmationWindowOnPick) {
@@ -678,15 +742,15 @@ public class ObjectPicker : PopupMenuBase {
 
 
     #region Converters
-    public Action<Character> Convert<T>(Action<T> myActionT) {
+    private Action<Character> Convert<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Character>(o => myActionT((T)(object)o));
     }
-    public Action<SummonSlot> ConvertToSummonSlot<T>(Action<T> myActionT) {
+    private Action<SummonSlot> ConvertToSummonSlot<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<SummonSlot>(o => myActionT((T)(object)o));
     }
-    public Action<Artifact> ConvertToArtifact<T>(Action<T> myActionT) {
+    private Action<Artifact> ConvertToArtifact<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Artifact>(o => myActionT((T)(object)o));
     }
@@ -698,21 +762,25 @@ public class ObjectPicker : PopupMenuBase {
         if (myActionT == null) return null;
         else return new Action<NPCSettlement>(o => myActionT((T)(object)o));
     }
-    public Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
+    private Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Region>(o => myActionT((T)(object)o));
     }
-    public Action<string> ConvertToString<T>(Action<T> myActionT) {
+    private Action<string> ConvertToString<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<string>(o => myActionT((T)(object)o));
     }
-    public Action<Enum> ConvertToEnum<T>(Action<T> myActionT) {
+    private Action<Enum> ConvertToEnum<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Enum>(o => myActionT((T)(object)o));
     }
-    public Action<RaceClass> ConvertToRaceClass<T>(Action<T> myActionT) {
+    private Action<RaceClass> ConvertToRaceClass<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<RaceClass>(o => myActionT((T)(object)o));
+    }
+    private Action<SpellData> ConvertToSpellData<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<SpellData>(o => myActionT((T)(object)o));
     }
     #endregion
 }

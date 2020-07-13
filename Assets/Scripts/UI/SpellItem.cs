@@ -23,6 +23,7 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
         Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        SetAsDefault();
     }
     public void UpdateData() {
         mainLbl.text = spellData.name;
@@ -34,7 +35,7 @@ public class SpellItem : NameplateItem<SpellData> {
             currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost.ToString()} ";
         }
         if (spellData.hasCooldown) {
-            currencyLbl.text += $"{UtilityScripts.Utilities.CooldownIcon()}{spellData.cooldown.ToString()} ";
+            currencyLbl.text += $"{GameManager.GetTimeAsWholeDuration(spellData.cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
         }
         if (spellData.threat > 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.ThreatIcon()}{spellData.threat.ToString()} ";
@@ -83,19 +84,16 @@ public class SpellItem : NameplateItem<SpellData> {
         }
     }
     #endregion
-    
-    public void OnToggleSpell(bool state) {
-        PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-        if (state) {
-            PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(spellData);
-        }
+
+    #region Utilities
+    private void SetAsDefault() {
+        SetAsToggle();
+        ClearAllHoverEnterActions();
+        ClearAllHoverExitActions();
+        AddHoverEnterAction((spellData) => PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.spellListHoverPosition));
+        AddHoverExitAction((spellData) => PlayerUI.Instance.OnHoverOutSpell(spellData));
     }
-    public virtual void OnHoverSpell() {
-        PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.spellListHoverPosition);
-    }
-    public void OnHoverOutSpell() {
-        PlayerUI.Instance.OnHoverOutSpell(spellData);
-    }
+    #endregion
 
     #region Interactability
     public void SetLockedState(bool state) {
@@ -107,6 +105,18 @@ public class SpellItem : NameplateItem<SpellData> {
     private void UpdateInteractableState() {
         SetInteractableState(spellData.CanPerformAbility());
     }
+    public void OnToggleSpell(bool state) {
+        PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
+        if (state) {
+            PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(spellData);
+        }
+    }
+    // public virtual void OnHoverSpell() {
+    //     PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.spellListHoverPosition);
+    // }
+    // public void OnHoverOutSpell() {
+    //     PlayerUI.Instance.OnHoverOutSpell(spellData);
+    // }
     #endregion
 
     public override void Reset() {
