@@ -29,13 +29,13 @@ public class SpellItem : NameplateItem<SpellData> {
         mainLbl.text = spellData.name;
         currencyLbl.text = string.Empty;
         if (spellData.hasCharges) {
-            currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{spellData.charges.ToString()} ";
+            currencyLbl.text += $"{UtilityScripts.Utilities.ChargesIcon()}{spellData.charges.ToString()}  ";
         }
         if (spellData.hasManaCost) {
             currencyLbl.text += $"{UtilityScripts.Utilities.ManaIcon()}{spellData.manaCost.ToString()} ";
         }
         if (spellData.hasCooldown) {
-            currencyLbl.text += $"{GameManager.GetTimeAsWholeDuration(spellData.cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
+            currencyLbl.text += $"{UtilityScripts.Utilities.CooldownIcon()}{GameManager.GetTimeAsWholeDuration(spellData.cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(spellData.cooldown)}  ";
         }
         if (spellData.threat > 0) {
             currencyLbl.text += $"{UtilityScripts.Utilities.ThreatIcon()}{spellData.threat.ToString()} ";

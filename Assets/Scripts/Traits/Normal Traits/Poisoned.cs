@@ -48,12 +48,12 @@ namespace Traits {
                 if (!_isVenomous) {
                     characterOwner.AdjustDoNotRecoverHP(1);
                 }
-            } else if (traitable is GenericTileObject genericTileObject) {
-                genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+            } else if (addedTo is TileObject) {
+                ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+                if (traitable is GenericTileObject genericTileObject) {
+                    genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+                }
             }
-            //else if (addedTo is TileObject) {
-            //    ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
-            //}
         }
         public override void OnStackStatus(ITraitable addedTo) {
             base.OnStackStatus(addedTo);

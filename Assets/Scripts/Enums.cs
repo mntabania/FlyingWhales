@@ -1025,6 +1025,7 @@ public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physi
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
 public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, }
+public enum COMBAT_REACTION { None, Fight, Flight }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
