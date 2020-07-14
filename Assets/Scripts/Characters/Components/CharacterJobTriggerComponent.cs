@@ -86,7 +86,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (character == _owner && character.isDead == false) {
 			//TODO: THIS IS ONLY TEMPORARY! REDO THIS!
 			if (character.interruptComponent.isInterrupted &&
-			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
+			           character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Attack) {
 				//Don't do anything
 			} else if (character.currentActionNode != null && character.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && InteractionManager.Instance.IsActionTirednessRecovery(character.currentActionNode.action)) {
 				character.CancelAllJobsExceptForCurrent();

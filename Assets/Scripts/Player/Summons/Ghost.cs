@@ -51,7 +51,7 @@ public class Ghost : Summon {
                     IPointOfInterest poi = combatComponent.hostilesInRange[i];
                     if (poi is Character character && character.marker.hasFleePath == false && 
                         (character.interruptComponent.isInterrupted == false || 
-                         character.interruptComponent.currentInterrupt.interrupt != INTERRUPT.Cowering)) {
+                         character.interruptComponent.currentInterrupt.interrupt.type != INTERRUPT.Cowering)) {
                         choices.Add(character);
                     }
                 }
@@ -59,7 +59,7 @@ public class Ghost : Summon {
                     IPointOfInterest poi = combatComponent.avoidInRange[i];
                     if (poi is Character character && character.marker.hasFleePath == false && 
                         (character.interruptComponent.isInterrupted == false || 
-                         character.interruptComponent.currentInterrupt.interrupt != INTERRUPT.Cowering)) {
+                         character.interruptComponent.currentInterrupt.interrupt.type != INTERRUPT.Cowering)) {
                         choices.Add(character);
                     }
                 }

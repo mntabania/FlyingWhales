@@ -96,8 +96,8 @@ public class CrimeManager : MonoBehaviour {
         return CRIME_TYPE.NONE;
     }
     public CRIME_TYPE GetCrimeTypeConsideringInterrupt(Character considerer, Character actor, Interrupt interrupt) {
-        if (interrupt.interrupt == INTERRUPT.Transform_To_Wolf
-            || interrupt.interrupt == INTERRUPT.Revert_To_Normal) {
+        if (interrupt.type == INTERRUPT.Transform_To_Wolf
+            || interrupt.type == INTERRUPT.Revert_To_Normal) {
             return CRIME_TYPE.HEINOUS;
         }
         return CRIME_TYPE.NONE;
@@ -188,7 +188,7 @@ public class CrimeManager : MonoBehaviour {
     }
     private void ReactToHeinousCrime(Character reactor, Character actor, Interrupt interrupt) {
         string lastStrawReason = string.Empty;
-        if (interrupt.interrupt == INTERRUPT.Transform_To_Wolf || interrupt.interrupt == INTERRUPT.Revert_To_Normal) {
+        if (interrupt.type == INTERRUPT.Transform_To_Wolf || interrupt.type == INTERRUPT.Revert_To_Normal) {
             lastStrawReason = "is a werewolf";
         }
         reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -40);

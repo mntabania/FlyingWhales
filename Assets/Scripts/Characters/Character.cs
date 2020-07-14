@@ -479,7 +479,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.AddListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
+        Messenger.AddListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
         //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
@@ -515,7 +515,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.RemoveListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
+        Messenger.RemoveListener<InterruptHolder>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
         Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.RemoveListener<IPointOfInterest>(Signals.BEFORE_SEIZING_POI, OnBeforeSeizingPOI);
         //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
@@ -1930,17 +1930,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //ThisCharacterWitnessedEvent(action);
         //ThisCharacterWatchEvent(null, action, state);
     }
-    public virtual void OnInterruptStarted(Character actor, IPointOfInterest target, Interrupt interrupt) {
+    public virtual void OnInterruptStarted(InterruptHolder interruptHolder) {
         if (isDead || !canWitness) {
             return;
         }
-        if (actor == this) {
+        if (interruptHolder.actor == this) {
             return;
         }
         if (marker) {
-            if (marker.inVisionCharacters.Contains(actor)) {
+            if (marker.inVisionCharacters.Contains(interruptHolder.actor)) {
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(actor, true);
+                marker.AddUnprocessedPOI(interruptHolder.actor, true);
             } 
             //else if (marker.inVisionPOIs.Contains(target)) {
             //    //This is done so that the character will react again
@@ -2006,7 +2006,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             targetCharacter = target as Character;
             //React To Interrupt
             if (targetCharacter.interruptComponent.isInterrupted) {
-                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, targetCharacter.interruptComponent.currentEffectLog, REACTION_STATUS.WITNESSED);
+                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, REACTION_STATUS.WITNESSED);
             } else {
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
@@ -3551,7 +3551,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(intel is ActionIntel actionIntel) {
             return reactionComponent.ReactTo(actionIntel.node, REACTION_STATUS.INFORMED);
         } else if (intel is InterruptIntel interruptIntel) {
-            return reactionComponent.ReactTo(interruptIntel.interrupt, interruptIntel.actor, interruptIntel.target, interruptIntel.log, REACTION_STATUS.INFORMED);
+            return reactionComponent.ReactToInformedInterrupt(interruptIntel.interrupt, interruptIntel.actor, interruptIntel.target, interruptIntel.log);
         }
         return "aware";
 
@@ -5463,7 +5463,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             marker.OnDeath(deathTile);
 
-            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
+            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
 

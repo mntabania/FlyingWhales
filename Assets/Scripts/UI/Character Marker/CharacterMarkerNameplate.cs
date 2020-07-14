@@ -182,16 +182,16 @@ public class CharacterMarkerNameplate : PooledObject {
         }
         
         if (character.interruptComponent.isInterrupted) {
-            if (character.interruptComponent.currentInterrupt.interruptIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.currentInterrupt.interruptIconString];
+            if (character.interruptComponent.currentInterrupt.interrupt.interruptIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.currentInterrupt.interrupt.interruptIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);
             }
             return;
         } else if (character.interruptComponent.hasTriggeredSimultaneousInterrupt) {
-            if (character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString != GoapActionStateDB.No_Icon) {
-                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.triggeredSimultaneousInterrupt.interruptIconString];
+            if (character.interruptComponent.triggeredSimultaneousInterrupt.interrupt.interruptIconString != GoapActionStateDB.No_Icon) {
+                actionIcon.sprite = InteractionManager.Instance.actionIconDictionary[character.interruptComponent.triggeredSimultaneousInterrupt.interrupt.interruptIconString];
                 actionIcon.gameObject.SetActive(true);
             } else {
                 actionIcon.gameObject.SetActive(false);

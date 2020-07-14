@@ -6,22 +6,21 @@ using Inner_Maps;
 
 public class InterruptComponent {
     public Character owner { get; private set; }
-    public IPointOfInterest currentTargetPOI { get; private set; }
-    public Interrupt currentInterrupt { get; private set; }
+    public InterruptHolder currentInterrupt { get; private set; }
     public int currentDuration { get; private set; }
     public string identifier { get; private set; }
     public string simultaneousIdentifier { get; private set; }
-    public Interrupt triggeredSimultaneousInterrupt { get; private set; }
+    public InterruptHolder triggeredSimultaneousInterrupt { get; private set; }
     public int currentSimultaneousInterruptDuration { get; private set; }
 
     public Log thoughtBubbleLog { get; private set; }
 
-    private Log _currentEffectLog;
+    //private Log _currentEffectLog;
 
     #region getters
     public bool isInterrupted => currentInterrupt != null;
     public bool hasTriggeredSimultaneousInterrupt => triggeredSimultaneousInterrupt != null;
-    public Log currentEffectLog => _currentEffectLog;
+    //public Log currentEffectLog => _currentEffectLog;
     #endregion
 
     public InterruptComponent(Character owner) {
@@ -41,9 +40,10 @@ public class InterruptComponent {
             }
             owner.logComponent.PrintLogIfActive(
                 $"{owner.name} triggered a non simultaneous interrupt: {triggeredInterrupt.name}");
-            
-            currentInterrupt = triggeredInterrupt;
-            currentTargetPOI = targetPOI;
+
+            InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
+            interruptHolder.Initialize(triggeredInterrupt, owner, targetPOI, identifier);
+            SetNonSimultaneousInterrupt(interruptHolder);
             this.identifier = identifier;
             
             CreateThoughtBubbleLog();
@@ -52,19 +52,19 @@ public class InterruptComponent {
                 owner.marker.StopMovement();
                 owner.marker.SetHasFleePath(false);
             }
-            if (currentInterrupt.doesDropCurrentJob) {
+            if (currentInterrupt.interrupt.doesDropCurrentJob) {
                 owner.currentJob?.CancelJob(false);
             }
-            if (currentInterrupt.doesStopCurrentAction) {
+            if (currentInterrupt.interrupt.doesStopCurrentAction) {
                 owner.currentJob?.StopJobNotDrop();
             }
-            ExecuteStartInterrupt(triggeredInterrupt, targetPOI, actionThatTriggered);
-            Messenger.Broadcast(Signals.INTERRUPT_STARTED, owner, currentTargetPOI, currentInterrupt);
+            ExecuteStartInterrupt(currentInterrupt, actionThatTriggered);
+            Messenger.Broadcast(Signals.INTERRUPT_STARTED, currentInterrupt);
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
 
-            if (currentInterrupt.duration <= 0) {
-                AddEffectLog(currentInterrupt, currentTargetPOI);
-                currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
+            if (currentInterrupt.interrupt.duration <= 0) {
+                AddEffectLog(currentInterrupt);
+                currentInterrupt.interrupt.ExecuteInterruptEndEffect(owner, currentInterrupt.target);
                 EndInterrupt();
             }
         } else {
@@ -72,44 +72,40 @@ public class InterruptComponent {
         }
         return true;
     }
-    public void SetIdentifier(string text, bool isSimultaneous) {
-        if (isSimultaneous) {
-            simultaneousIdentifier = text;
-        } else {
-            identifier = text;
-        }
-    }
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
         bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
-        triggeredSimultaneousInterrupt = interrupt;
+        InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
+        interruptHolder.Initialize(interrupt, owner, targetPOI, identifier);
+        SetSimultaneousInterrupt(interruptHolder);
         simultaneousIdentifier = identifier;
-        ExecuteStartInterrupt(interrupt, targetPOI, actionThatTriggered);
-        AddEffectLog(triggeredSimultaneousInterrupt, currentTargetPOI);
-        interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
+        ExecuteStartInterrupt(triggeredSimultaneousInterrupt, actionThatTriggered);
+        AddEffectLog(triggeredSimultaneousInterrupt);
+        interrupt.ExecuteInterruptEndEffect(owner, targetPOI);
         currentSimultaneousInterruptDuration = 0;
         if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
         }
         return true;
     }
-    private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, ActualGoapNode actionThatTriggered) {
-        _currentEffectLog = null;
-        interrupt.ExecuteInterruptStartEffect(owner, targetPOI, ref _currentEffectLog, actionThatTriggered);
-        if(_currentEffectLog == null) {
-            _currentEffectLog = interrupt.CreateEffectLog(owner, targetPOI);
+    private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
+        Log effectLog = null;
+        interruptHolder.interrupt.ExecuteInterruptStartEffect(owner, interruptHolder.target, ref effectLog, actionThatTriggered);
+        if(effectLog == null) {
+            effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }
+        interruptHolder.SetEffectLog(effectLog);
         if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
-        InnerMapManager.Instance.FaceTarget(owner, targetPOI);
+        InnerMapManager.Instance.FaceTarget(owner, interruptHolder.target);
     }
     public void OnTickEnded() {
         if (isInterrupted) {
             currentDuration++;
-            if(currentDuration >= currentInterrupt.duration) {
-                AddEffectLog(currentInterrupt, currentTargetPOI);
-                currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
+            if(currentDuration >= currentInterrupt.interrupt.duration) {
+                AddEffectLog(currentInterrupt);
+                currentInterrupt.interrupt.ExecuteInterruptEndEffect(owner, currentInterrupt.target);
                 EndInterrupt();
             }
         }
@@ -119,7 +115,7 @@ public class InterruptComponent {
             currentSimultaneousInterruptDuration++;
             if (currentSimultaneousInterruptDuration > 2) {
                 Messenger.RemoveListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
-                triggeredSimultaneousInterrupt = null;
+                SetSimultaneousInterrupt(null);
                 if (owner.marker) {
                     owner.marker.UpdateActionIcon();
                 }
@@ -144,9 +140,9 @@ public class InterruptComponent {
     //    }
     //}
     private void EndInterrupt() {
-        bool willCheckInVision = currentInterrupt.duration > 0;
-        Interrupt finishedInterrupt = currentInterrupt;
-        currentInterrupt = null;
+        bool willCheckInVision = currentInterrupt.interrupt.duration > 0;
+        Interrupt finishedInterrupt = currentInterrupt.interrupt;
+        SetNonSimultaneousInterrupt(null);
         currentDuration = 0;
         if(!owner.isDead && owner.canPerform) {
             if (owner.combatComponent.isInCombat) {
@@ -174,29 +170,29 @@ public class InterruptComponent {
         if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
-        Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
+        Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
     }
     private void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble");
             thoughtBubbleLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            thoughtBubbleLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            thoughtBubbleLog.AddToFillers(currentInterrupt.target, currentInterrupt.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
     }
-    private void AddEffectLog(Interrupt interrupt, IPointOfInterest target) {
-        if(_currentEffectLog != null) {
-            if (interrupt.shouldAddLogs) {
-                if (owner != currentTargetPOI) {
-                    _currentEffectLog.AddLogToInvolvedObjects();
+    private void AddEffectLog(InterruptHolder interruptHolder) {
+        if(interruptHolder.effectLog != null) {
+            if (interruptHolder.interrupt.shouldAddLogs) {
+                if (owner != interruptHolder.target) {
+                    interruptHolder.effectLog.AddLogToInvolvedObjects();
                 } else {
-                    owner.logComponent.AddHistory(_currentEffectLog);
+                    owner.logComponent.AddHistory(interruptHolder.effectLog);
                 }    
             }
-            if (interrupt.isIntel) {
-                PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+            if (interruptHolder.interrupt.isIntel) {
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interruptHolder.interrupt, interruptHolder.actor, interruptHolder.target, interruptHolder.effectLog) as IIntel);
                 // PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
             } else {
-                PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
+                PlayerManager.Instance.player.ShowNotificationFrom(owner, interruptHolder.effectLog);
             }
         }
         //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
@@ -219,5 +215,28 @@ public class InterruptComponent {
     //        PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
     //    }
     //}
+    public void SetIdentifier(string text, bool isSimultaneous) {
+        if (isSimultaneous) {
+            simultaneousIdentifier = text;
+        } else {
+            identifier = text;
+        }
+    }
+    public void SetNonSimultaneousInterrupt(InterruptHolder interrupt) {
+        if (currentInterrupt != interrupt) {
+            if (currentInterrupt != null) {
+                ObjectPoolManager.Instance.ReturnInterruptToPool(currentInterrupt);
+            }
+            currentInterrupt = interrupt;
+        }
+    }
+    public void SetSimultaneousInterrupt(InterruptHolder interrupt) {
+        if(triggeredSimultaneousInterrupt != interrupt) {
+            if(triggeredSimultaneousInterrupt != null) {
+                ObjectPoolManager.Instance.ReturnInterruptToPool(triggeredSimultaneousInterrupt);
+            }
+            triggeredSimultaneousInterrupt = interrupt;
+        }
+    }
     #endregion
 }
