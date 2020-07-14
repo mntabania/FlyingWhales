@@ -203,7 +203,7 @@ public class Butcher : GoapAction {
     #region State Effects
     public void PreTransformSuccess(ActualGoapNode goapNode) {
         Character deadCharacter = GetDeadCharacter(goapNode.poiTarget);
-        int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
+        int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromPOI(deadCharacter);
 
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         goapNode.descriptionLog.AddToFillers(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
@@ -211,21 +211,6 @@ public class Butcher : GoapAction {
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
-        Character deadCharacter = GetDeadCharacter(poiTarget);
-        int transformedFood = CharacterManager.Instance.GetFoodAmountTakenFromDead(deadCharacter);
-        bool isTargetElfOrHuman = false;
-
-        TILE_OBJECT_TYPE foodType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
-
-        if(deadCharacter != null) {
-            if(deadCharacter.race == RACE.HUMANS) {
-                isTargetElfOrHuman = true;
-                foodType = TILE_OBJECT_TYPE.HUMAN_MEAT;
-            } else if (deadCharacter.race == RACE.ELVES) {
-                isTargetElfOrHuman = true;
-                foodType = TILE_OBJECT_TYPE.ELF_MEAT;
-            }
-        }
 
         if (poiTarget is Character character) {
             character.DestroyMarker();
@@ -233,11 +218,11 @@ public class Butcher : GoapAction {
             tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }
 
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(foodType);
-        foodPile.SetResourceInPile(transformedFood);
-        tileLocation.structure.AddPOI(foodPile, tileLocation);
+        FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation);
 
-        if(isTargetElfOrHuman && !goapNode.actor.traitContainer.HasTrait("Cannibal")) {
+        //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
+        if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) && 
+           !goapNode.actor.traitContainer.HasTrait("Cannibal")) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized");
         }
     }

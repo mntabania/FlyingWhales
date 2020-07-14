@@ -97,17 +97,15 @@ public class DropResource : GoapAction {
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterDropSuccess(ActualGoapNode goapNode) {
-        ResourcePile pile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
-        if (goapNode.poiTarget is Table) {
-            Table table = goapNode.poiTarget as Table;
-            table.AdjustFood(pile.resourceInPile);
-        } else if (goapNode.poiTarget is ResourcePile) {
-            ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
-            resourcePile.AdjustResourceInPile(pile.resourceInPile);
+        if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
+            if (goapNode.poiTarget is Table table) {
+                table.AdjustFood(carriedPile.resourceInPile);
+            } else if (goapNode.poiTarget is ResourcePile resourcePile) {
+                resourcePile.AdjustResourceInPile(carriedPile.resourceInPile);
+            }
+            TraitManager.Instance.CopyStatuses(carriedPile, goapNode.poiTarget);
+            carriedPile.AdjustResourceInPile(-carriedPile.resourceInPile);    
         }
-        TraitManager.Instance.CopyStatuses(pile, goapNode.poiTarget);
-        pile.AdjustResourceInPile(-pile.resourceInPile);
-
         //goapNode.actor.ownParty.RemoveCarriedPOI(false);
         //else if (poiTarget is FoodPile) {
         //    FoodPile foodPile = poiTarget as FoodPile;

@@ -1,7 +1,7 @@
 ﻿namespace Traits {
     public class AbominationGerm : Status {
 
-        private GameDate expectedExpiryDate;
+        private IPointOfInterest _owner;
         
         public AbominationGerm() {
             name = "Abomination Germ";
@@ -19,22 +19,28 @@
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            expectedExpiryDate = GameManager.Instance.Today().AddTicks(ticksDuration);
+            if (addedTo is IPointOfInterest pointOfInterest) {
+                _owner = pointOfInterest;
+                if (pointOfInterest is TileObject) {
+                    ticksDuration = 0; //lasts indefinitely on objects.
+                }
+            }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            //to check if trait was removed via expiry, check that this trait was not removed by someone,
-            //and the date today is the same as the expected expiry date.
-            if (removedBy == null && GameManager.Instance.Today().IsSameDate(expectedExpiryDate) 
-                && removedFrom is Character character) {
-                //if trait expired normally trigger abomination death interrupt
+            base.OnRemoveTrait(removedFrom, removedBy);
+            _owner = null;
+        }
+        public override void OnRemoveStatusBySchedule(ITraitable removedFrom) {
+            base.OnRemoveStatusBySchedule(removedFrom);
+            if (removedFrom is Character character && character.isNormalCharacter) {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Abomination_Death, character);
             }
-            base.OnRemoveTrait(removedFrom, removedBy);
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME && goapNode.poiTarget == _owner) {
                 goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Abomination Germ", gainedFromDoing: goapNode);
+                goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Abomination Germ");
             }
         }
         #endregion

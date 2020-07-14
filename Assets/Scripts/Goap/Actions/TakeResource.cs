@@ -172,13 +172,10 @@ public class TakeResource : GoapAction {
         //}
         goapNode.actor.UncarryPOI(bringBackToInventory: true);
 
-        bool setOwnership = true;
-        if (goapNode.associatedJobType == JOB_TYPE.HAUL
-            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL
-            || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT
-            || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
-            setOwnership = false;
-        }
+        bool setOwnership = !(goapNode.associatedJobType == JOB_TYPE.HAUL
+                              || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL
+                              || goapNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT
+                              || goapNode.associatedJobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD);
 
         CarryResourcePile(goapNode.actor, resourcePile, takenResource, setOwnership);
         //goapNode.actor.AdjustResource(resourcePile.providedResource, takenResource);

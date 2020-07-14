@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UtilityScripts;
 
 public class Mushroom : Crops {
 
@@ -13,9 +14,11 @@ public class Mushroom : Crops {
     }
 
     #region Override
-    public override void ConstructDefaultActions() {
-        base.ConstructDefaultActions();
-        // AddPlayerAction(SPELL_TYPE.PLANT_GERM);
+    public override void SetGrowthState(Growth_State growthState) {
+        base.SetGrowthState(growthState);
+        if (growthState == Growth_State.Ripe && GameUtilities.RollChance(3)) {
+            traitContainer.AddTrait(this, "Abomination Germ");
+        }
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
