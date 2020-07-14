@@ -455,29 +455,29 @@ public class BehaviourComponent {
     private void StartCheckingIfShouldStopAttackingDemonicStructure() {
         // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStartedWhileAttackingDemonicStructure);
         // Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
     }
     private void StopCheckingIfShouldStopAttackingDemonicStructure() {
         // Messenger.RemoveListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnActionStartedWhileAttackingDemonicStructure);
         // Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
     }
-    private void OnActionStartedWhileAttackingDemonicStructure(Character actor, ActualGoapNode action) {
-        if (actor == owner) {
-            if (action.action.goapType != INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE) {
-                SetIsAttackingDemonicStructure(false, null);
-            }
-        }
-    }
-    private void OnCharacterCanNoLongerPerform(Character character) {
-        if (character == owner) {
-            if(owner is Summon summon && (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel)) {
-                //Angels should not remove attack demonic structure
-            } else {
-                SetIsAttackingDemonicStructure(false, null);
-            }
-        }
-    }
+    //private void OnActionStartedWhileAttackingDemonicStructure(Character actor, ActualGoapNode action) {
+    //    if (actor == owner) {
+    //        if (action.action.goapType != INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE) {
+    //            SetIsAttackingDemonicStructure(false, null);
+    //        }
+    //    }
+    //}
+    //private void OnCharacterCanNoLongerPerform(Character character) {
+    //    if (character == owner) {
+    //        if(owner is Summon summon && (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel)) {
+    //            //Angels should not remove attack demonic structure
+    //        } else {
+    //            SetIsAttackingDemonicStructure(false, null);
+    //        }
+    //    }
+    //}
     private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
         if (character == owner) {
             //if (job is GoapPlanJob goapJob) {

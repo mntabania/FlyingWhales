@@ -191,7 +191,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 }
             }
 
-            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && character.currentActionNode.targetStructure == structure) {
+            if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL && character.currentActionNode.targetStructure == structure && structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                 parentMarker.StopMovement();
                 character.PerformGoapAction();
             }

@@ -52,7 +52,7 @@ public class AttackDemonicStructure : GoapAction {
         LocationStructure targetStructure = node.targetStructure;
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-        log.AddToFillers(targetStructure, actor.behaviourComponent.attackDemonicStructureTarget.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(targetStructure, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 }

@@ -17,7 +17,7 @@ public class ThreatComponent {
     /// The list of characters that are currently attacking your demonic structure.
     /// NOTE: This is only updated when threat has reached maximum
     /// </summary>
-    public List<Character> attackingCharacters { get; private set; }
+    //public List<Character> attackingCharacters { get; private set; }
 
     public ThreatComponent(Player player) {
         this.player = player;
@@ -61,8 +61,7 @@ public class ThreatComponent {
         threatPerHour = amount;
     }
     private void OnMaxThreat() {
-        AssaultDemonicStructure(out List<Character> _attackingCharacters);
-        attackingCharacters = _attackingCharacters;
+        Counterattack();
         ResetThreatAfterHours(2);
     }
     private void ResetThreatAfterHours(int hours) {
@@ -77,8 +76,9 @@ public class ThreatComponent {
         Messenger.Broadcast(Signals.THREAT_RESET);
     }
 
-    private void AssaultDemonicStructure(out List<Character> attackingCharacters) {
-        string debugLog = GameManager.Instance.TodayLogString() + "Assault Demonic Structure";
+    private void Counterattack() {
+        string debugLog = GameManager.Instance.TodayLogString() + "Counterattack!";
+
         LocationStructure targetDemonicStructure = null;
         if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
             targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
@@ -88,62 +88,103 @@ public class ThreatComponent {
         if (targetDemonicStructure == null) {
             //it is assumed that this only happens if the player casts a spell that is seen by another character,
             //but results in the destruction of the portal
-            attackingCharacters = null;
+            //attackingCharacters = null;
             return;
         }
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
-        List<Character> characters = new List<Character>();
-        int count = 0;
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.allCharacters[i];
-            if (character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
-                && (character.race == RACE.HUMANS || character.race == RACE.ELVES) 
-                && !character.combatComponent.isInCombat
-                && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
-                && character.traitContainer.HasTrait("Combatant")
-                && character.isAlliedWithPlayer == false) {
-                count++;
-                debugLog += "\n-RETALIATOR: " + character.name;
-                characters.Add(character);
-                //character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
-                if (count >= 5) {
-                    break;
-                }
-            }
-        }
-        if (characters.Count < 3) {
-            //Create Angels
-            CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
-            //NPCSettlement spawnSettlement = LandmarkManager.Instance.GetRandomVillageSettlement();
-            //region = spawnSettlement.region;
-            Region region = targetDemonicStructure.location;
-            HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
-            //if (spawnSettlement != null) {
-            //    spawnHex = spawnSettlement.GetRandomHexTile();
-            //} else {
-            //    spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
-            //}
-            characters.Clear();
-            int angelCount = UnityEngine.Random.Range(3, 6);
-            for (int i = 0; i < angelCount; i++) {
-                SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
-                if(UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
-                LocationGridTile spawnTile = spawnHex.GetRandomTile();
-                Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
-                CharacterManager.Instance.PlaceSummon(angel, spawnTile);
-                angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
-                characters.Add(angel);
-            }
-            attackingCharacters = characters;
-            Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
-        } else {
-            for (int i = 0; i < characters.Count; i++) {
-                characters[i].behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
-            }
-            attackingCharacters = characters;
-            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, characters, targetDemonicStructure as DemonicStructure);    
-        }
 
+        Faction chosenFaction = FactionManager.Instance.GetRandomMajorNonPlayerFaction();
+        if(chosenFaction != null) {
+            debugLog += "\n-CHOSEN FACTION: " + chosenFaction.name;
+            chosenFaction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
+        } else {
+            Debug.LogError("No faction for counterattack!");
+        }
         Debug.Log(debugLog);
+        //List<Character> characters = new List<Character>();
+        //int count = 0;
+        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //    Character character = CharacterManager.Instance.allCharacters[i];
+        //    if (character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
+        //        && (character.race == RACE.HUMANS || character.race == RACE.ELVES) 
+        //        && !character.combatComponent.isInCombat
+        //        && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
+        //        && character.traitContainer.HasTrait("Combatant")
+        //        && character.isAlliedWithPlayer == false) {
+        //        count++;
+        //        debugLog += "\n-RETALIATOR: " + character.name;
+        //        characters.Add(character);
+        //        //character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+        //        if (count >= 5) {
+        //            break;
+        //        }
+        //    }
+        //}
+        //if (characters.Count < 3) {
+        //    //Create Angels
+        //    CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+        //    //NPCSettlement spawnSettlement = LandmarkManager.Instance.GetRandomVillageSettlement();
+        //    //region = spawnSettlement.region;
+        //    Region region = targetDemonicStructure.location;
+        //    HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
+        //    //if (spawnSettlement != null) {
+        //    //    spawnHex = spawnSettlement.GetRandomHexTile();
+        //    //} else {
+        //    //    spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
+        //    //}
+        //    characters.Clear();
+        //    int angelCount = UnityEngine.Random.Range(3, 6);
+        //    for (int i = 0; i < angelCount; i++) {
+        //        SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
+        //        if(UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
+        //        LocationGridTile spawnTile = spawnHex.GetRandomTile();
+        //        Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
+        //        CharacterManager.Instance.PlaceSummon(angel, spawnTile);
+        //        angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+        //        characters.Add(angel);
+        //    }
+        //    attackingCharacters = characters;
+        //    Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
+        //} else {
+        //    for (int i = 0; i < characters.Count; i++) {
+        //        characters[i].behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+        //    }
+        //    attackingCharacters = characters;
+        //    Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, characters, targetDemonicStructure as DemonicStructure);    
+        //}
+
+        //Debug.Log(debugLog);
+    }
+
+    public void DivineIntervention() {
+        string debugLog = GameManager.Instance.TodayLogString() + "Divine Intervention";
+        LocationStructure targetDemonicStructure = null;
+        if (InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure()) {
+            targetDemonicStructure = InnerMapManager.Instance.worldKnownDemonicStructures[UnityEngine.Random.Range(0, InnerMapManager.Instance.worldKnownDemonicStructures.Count)];
+        } else {
+            targetDemonicStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
+        }
+        if (targetDemonicStructure == null) {
+            //it is assumed that this only happens if the player casts a spell that is seen by another character,
+            //but results in the destruction of the portal
+            //attackingCharacters = null;
+            return;
+        }
+        debugLog += "\n-TARGET: " + targetDemonicStructure.name;
+        CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+        Region region = targetDemonicStructure.location;
+        HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
+        List<Character> characters = new List<Character>();
+        int angelCount = UnityEngine.Random.Range(3, 6);
+        for (int i = 0; i < angelCount; i++) {
+            SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
+            if (UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
+            LocationGridTile spawnTile = spawnHex.GetRandomTile();
+            Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
+            CharacterManager.Instance.PlaceSummon(angel, spawnTile);
+            angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+            characters.Add(angel);
+        }
+        Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
     }
 }

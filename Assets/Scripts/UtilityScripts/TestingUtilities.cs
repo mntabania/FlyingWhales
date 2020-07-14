@@ -43,6 +43,24 @@ namespace UtilityScripts {
                 } else {
                     summary += "\nNone";
                 }
+                if(npcSettlement.owner != null) {
+                    summary += $"\n-----------------------------";
+                    summary += $"\n{npcSettlement.owner.name} Faction Job Queue:";
+                    if (npcSettlement.owner.availableJobs.Count > 0) {
+                        for (int j = 0; j < npcSettlement.owner.availableJobs.Count; j++) {
+                            JobQueueItem jqi = npcSettlement.owner.availableJobs[j];
+                            if (jqi is GoapPlanJob) {
+                                GoapPlanJob gpj = jqi as GoapPlanJob;
+                                summary += $"\n<b>{gpj.name} Targeting {gpj.targetPOI?.ToString() ?? "None"}</b>";
+                            } else {
+                                summary += $"\n<b>{jqi.name}</b>";
+                            }
+                            summary += $"\n Assigned Character: {jqi.assignedCharacter?.name}";
+                        }
+                    } else {
+                        summary += "\nNone";
+                    }
+                }
                 summary += "\n";
                 UIManager.Instance.ShowSmallInfo(summary);
             }

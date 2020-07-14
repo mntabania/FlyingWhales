@@ -41,10 +41,13 @@ public class CounterattackAction : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterRescueSuccess(ActualGoapNode goapNode) {
-        Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Counterattack, goapNode.actor);
-        //CounterattackParty counterattackParty = party as CounterattackParty;
-        //counterattackParty.SetTargetCharacter(goapNode.poiTarget as Character);
+    public void AfterCounterSuccess(ActualGoapNode goapNode) {
+        object[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure targetStructure) {
+            Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Counterattack, goapNode.actor);
+            CounterattackParty counterattackParty = party as CounterattackParty;
+            counterattackParty.SetTargetStructure(targetStructure);
+        }
     }
     #endregion
 

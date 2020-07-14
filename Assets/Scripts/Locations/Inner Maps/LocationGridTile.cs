@@ -491,7 +491,7 @@ namespace Inner_Maps {
                 } else {
                     //If cannot report flee instead
                     //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
-                    if (!character.behaviourComponent.isAttackingDemonicStructure && character.isAlliedWithPlayer == false) {
+                    if (!character.behaviourComponent.isAttackingDemonicStructure && (!character.partyComponent.hasParty || character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack) && character.isAlliedWithPlayer == false) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
                             genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");

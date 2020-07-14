@@ -352,13 +352,15 @@ namespace Locations.Settlements {
             }
             return locationGridTiles;
         }
-        public HexTile GetAnAdjacentHextile() {
+        public HexTile GetAPlainAdjacentHextile() {
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile hex = tiles[i];
                 for (int j = 0; j < hex.AllNeighbours.Count; j++) {
                     HexTile neighbour = hex.AllNeighbours[j];
-                    if (!tiles.Contains(neighbour)) {
-                        return neighbour;
+                    if(neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnTile == null) {
+                        if (!tiles.Contains(neighbour)) {
+                            return neighbour;
+                        }
                     }
                 }
             }

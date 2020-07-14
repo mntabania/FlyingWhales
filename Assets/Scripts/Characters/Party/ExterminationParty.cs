@@ -69,7 +69,7 @@ public class ExterminationParty : Party {
         originSettlement = settlement;
     }
     private void SetWaitingArea() {
-        waitingArea = targetStructure.settlementLocation.GetAnAdjacentHextile();
+        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
     }
     #endregion
 

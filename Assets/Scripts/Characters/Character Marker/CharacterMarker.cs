@@ -379,6 +379,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Pathfinding Movement
+
     public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
         if (character.trapStructure.IsTrappedAndTrapStructureIsNot(destinationTile.structure)) {
@@ -403,7 +404,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             SetDestination(destinationTile.centeredWorldLocation, destinationTile);
             StartMovement();
         }
-        
     }
     public void GoToPOI(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
         pathfindingAI.ClearAllCurrentPathData();
@@ -1441,7 +1441,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
             chosenTile = character.GetRandomLocationGridTileWithPath();
         }
         if (chosenTile != null) {
-            GoTo(chosenTile, OnFinishedTraversingFleePath);
+            if (character.currentRegion != chosenTile.structure.location) {
+                if (character.carryComponent.masterCharacter.movementComponent.GoToLocation(destinationTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
+                    OnStartFlee();
+                }
+            } else {
+                GoTo(chosenTile, OnFinishedTraversingFleePath);
+            }
         } else {
             OnStartFlee();
         }

@@ -3755,6 +3755,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_CULTIST_KIT);
             AddAdvertisedAction(INTERACTION_TYPE.REMOVE_BUFF);
             AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
+            AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);

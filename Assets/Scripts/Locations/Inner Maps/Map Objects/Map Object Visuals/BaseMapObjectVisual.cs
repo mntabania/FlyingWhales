@@ -225,7 +225,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         }
     }
     public void QuickShowHPBar(IPointOfInterest poi) {
-        StartCoroutine(QuickShowHPBarCoroutine(poi));
+        if (gameObject.activeSelf) {
+            StartCoroutine(QuickShowHPBarCoroutine(poi));
+        }
     }
     private IEnumerator QuickShowHPBarCoroutine(IPointOfInterest poi) {
         ShowHPBar(poi);

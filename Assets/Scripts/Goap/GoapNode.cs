@@ -261,7 +261,7 @@ public class ActualGoapNode : IReactable, IRumorable {
                     $"{actor.name} override target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
-            if (actor.currentStructure == targetStructure) {
+            if (actor.currentStructure == targetStructure && targetStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                 targetTile = actor.gridTileLocation;
             } else {
                 //No OnArriveAtTargetLocation because it doesn't trigger on arrival on the tile itself, rather, it is triggered upon arrival on the structure
@@ -348,7 +348,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         return true;
     }
     private void OnArriveAtTargetLocation() {
-        if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION && action.actionLocationType != ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
+        if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION && (action.actionLocationType != ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL || targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS)) {
             //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
             actor.PerformGoapAction();
         }

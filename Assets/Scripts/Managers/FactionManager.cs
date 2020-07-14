@@ -128,6 +128,20 @@ public class FactionManager : MonoBehaviour {
         //Messenger.Broadcast(Signals.FACTION_DELETED, faction);
         //allFactions.Remove(faction);
     }
+    public Faction GetRandomMajorNonPlayerFaction() {
+        List<Faction> factions = null;
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction faction = allFactions[i];
+            if (faction.isMajorNonPlayer) {
+                if(factions == null) { factions = new List<Faction>(); }
+                factions.Add(faction);
+            }
+        }
+        if(factions != null && factions.Count > 0) {
+            return factions[UnityEngine.Random.Range(0, factions.Count)];
+        }
+        return null;
+    }
     #endregion
 
     #region Emblem
