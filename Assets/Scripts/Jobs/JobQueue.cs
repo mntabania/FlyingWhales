@@ -125,7 +125,7 @@ public class JobQueue {
     public bool RemoveJobInQueue(JobQueueItem job, bool shouldDoAfterEffect = true, string reason = "") {
         if (jobsInQueue.Remove(job)) {
             Messenger.Broadcast(Signals.JOB_REMOVED_FROM_QUEUE, job, owner);
-            
+            owner.combatComponent.OnJobRemovedFromQueue(job);
             job.UnassignJob(shouldDoAfterEffect, reason);
             string ownerName = owner.name;
             string removeLog = $"{job.name} has been removed from {ownerName} job queue.";
@@ -510,6 +510,14 @@ public class JobQueue {
     public JobQueueItem GetJobByID(int id) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i].id == id) {
+                return jobsInQueue[i];
+            }
+        }
+        return null;
+    }
+    public JobQueueItem GetJobByName(string name) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].name == name) {
                 return jobsInQueue[i];
             }
         }

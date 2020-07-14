@@ -9,6 +9,7 @@ public class ReportCorruptedStructure : GoapAction {
 
     public ReportCorruptedStructure() : base(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        actionLocationType = ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
     }

@@ -9,7 +9,7 @@ public class CounterattackParty : Party {
     public LocationStructure targetStructure { get; private set; }
 
     #region getters
-    public override IPartyTarget target => leader.behaviourComponent.attackDemonicStructureTarget;
+    public override IPartyTarget target => targetStructure;
     #endregion
 
     public CounterattackParty() : base(PARTY_TYPE.Counterattack) {

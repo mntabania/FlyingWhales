@@ -19,6 +19,7 @@ public class JobQueueItem {
     //public bool cancelJobOnDropPlan { get; private set; }
     public bool isStealth { get; private set; }
     public bool isNotSavable { get; protected set; }
+    public bool finishedSuccessfully { get; protected set; }
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
 
@@ -258,6 +259,9 @@ public class JobQueueItem {
     public void SetIsStealth(bool state) {
         isStealth = state;
     }
+    public void SetFinishedSuccessfully(bool state) {
+        finishedSuccessfully = state;
+    }
 
     #region Priority
     public int GetPriority() {
@@ -308,6 +312,7 @@ public class JobQueueItem {
         SetPriority(-1);
         SetCannotBePushedBack(false);
         SetStillApplicableChecker(null);
+        SetFinishedSuccessfully(false);
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }

@@ -147,6 +147,28 @@ public class CombatComponent {
         }
         return false;
     }
+    private bool IsInActualCombatWith(IPointOfInterest target) {
+        if (owner.marker && owner.stateComponent.currentState != null && owner.stateComponent.currentState is CombatState combatState) {
+            if (combatState.isAttacking) {
+                //Only become in "actual" combat in attacking mode if character is already in vision of the target or if the target is fleeing
+                if (combatState.currentClosestHostile != null && combatState.currentClosestHostile == target) {
+                    if(combatState.currentClosestHostile is Character hostileCharacter) {
+                        if (owner.marker.inVisionCharacters.Contains(hostileCharacter)) {
+                            return true;
+                        }
+                    } else if (combatState.currentClosestHostile is TileObject hostileTileObject) {
+                        if (owner.marker.inVisionTileObjects.Contains(hostileTileObject)) {
+                            return true;
+                        }
+                    }
+                    if (owner.marker.inVisionPOIsButDiffStructure.Contains(combatState.currentClosestHostile)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Fight or Flight
@@ -713,6 +735,28 @@ public class CombatComponent {
     }
     #endregion
 
+    #region Jobs
+    public void OnJobRemovedFromQueue(JobQueueItem job) {
+        //Dropped Combat Related Jobs should remove target from hostile list if not yet in actual combat with it?
+        //https://trello.com/c/GXzaAAsP/1361-dropped-combat-related-jobs-should-remove-target-from-hostile-list-if-not-yet-in-actual-combat-with-it
+        if (!job.finishedSuccessfully) {
+            bool hasRemoved = false;
+            foreach (KeyValuePair<IPointOfInterest, CombatData> kvp in fightCombatData) {
+                if (kvp.Value.connectedAction != null && kvp.Value.connectedAction.associatedJob == job) {
+                    if (!IsInActualCombatWith(kvp.Key)) {
+                        if (RemoveHostileInRange(kvp.Key, false)){
+                            hasRemoved = true;
+                        }
+                    }
+                }
+            }
+            if (hasRemoved) {
+                SetWillProcessCombat(true);
+            }
+        }
+    }
+    #endregion
+
     #region Basic Data
     public void UpdateBasicData(bool resetHP) {
         UpdateAttack();
@@ -739,6 +783,15 @@ public class CombatComponent {
     public void UpdateMaxHPAndReset() {
         UpdateMaxHP();
         owner.ResetToFullHP();
+    }
+    #endregion
+
+    #region Signals
+    public void SubscribeToSignals() {
+        //Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
+    }
+    public void UnsubscribeToSignals() {
+        //Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
     }
     #endregion
 }
