@@ -16,7 +16,7 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog,
             ActualGoapNode node = null) {
             bool executed = base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, node);
-            Character targetCharacter = target as Character;
+            Character targetCharacter = interruptHolder.target as Character;
             if (node != null) {
                 node.action.OnStoppedInterrupt(node);
                 node.associatedJob?.CancelJob(false);
@@ -24,9 +24,9 @@ namespace Interrupts {
             }
             targetCharacter.currentJob?.CancelJob(false);
             targetCharacter.currentJob?.StopJobNotDrop();
-            if(actor != targetCharacter && node != null) {
+            if(interruptHolder.actor != targetCharacter && node != null) {
                 overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action");
-                overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 overrideEffectLog.AddToFillers(null, node.action.name, LOG_IDENTIFIER.STRING_1);
             }

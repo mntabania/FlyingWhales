@@ -8,8 +8,8 @@ public class InterruptComponent {
     public Character owner { get; private set; }
     public InterruptHolder currentInterrupt { get; private set; }
     public int currentDuration { get; private set; }
-    public string identifier { get; private set; }
-    public string simultaneousIdentifier { get; private set; }
+    //public string identifier { get; private set; }
+    //public string simultaneousIdentifier { get; private set; }
     public InterruptHolder triggeredSimultaneousInterrupt { get; private set; }
     public int currentSimultaneousInterruptDuration { get; private set; }
 
@@ -25,8 +25,8 @@ public class InterruptComponent {
 
     public InterruptComponent(Character owner) {
         this.owner = owner;
-        identifier = string.Empty;
-        simultaneousIdentifier = string.Empty;
+        //identifier = string.Empty;
+        //simultaneousIdentifier = string.Empty;
     }
 
     #region General
@@ -44,7 +44,7 @@ public class InterruptComponent {
             InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
             interruptHolder.Initialize(triggeredInterrupt, owner, targetPOI, identifier);
             SetNonSimultaneousInterrupt(interruptHolder);
-            this.identifier = identifier;
+            //this.identifier = identifier;
             
             CreateThoughtBubbleLog();
 
@@ -64,7 +64,7 @@ public class InterruptComponent {
 
             if (currentInterrupt.interrupt.duration <= 0) {
                 AddEffectLog(currentInterrupt);
-                currentInterrupt.interrupt.ExecuteInterruptEndEffect(TODO);
+                currentInterrupt.interrupt.ExecuteInterruptEndEffect(currentInterrupt);
                 EndInterrupt();
             }
         } else {
@@ -78,10 +78,10 @@ public class InterruptComponent {
         InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
         interruptHolder.Initialize(interrupt, owner, targetPOI, identifier);
         SetSimultaneousInterrupt(interruptHolder);
-        simultaneousIdentifier = identifier;
+        //simultaneousIdentifier = identifier;
         ExecuteStartInterrupt(triggeredSimultaneousInterrupt, actionThatTriggered);
         AddEffectLog(triggeredSimultaneousInterrupt);
-        interrupt.ExecuteInterruptEndEffect(TODO);
+        interrupt.ExecuteInterruptEndEffect(triggeredSimultaneousInterrupt);
         currentSimultaneousInterruptDuration = 0;
         if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
@@ -90,7 +90,7 @@ public class InterruptComponent {
     }
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
         Log effectLog = null;
-        interruptHolder.interrupt.ExecuteInterruptStartEffect(TODO, ref effectLog, actionThatTriggered);
+        interruptHolder.interrupt.ExecuteInterruptStartEffect(interruptHolder, ref effectLog, actionThatTriggered);
         if(effectLog == null) {
             effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }
@@ -105,7 +105,7 @@ public class InterruptComponent {
             currentDuration++;
             if(currentDuration >= currentInterrupt.interrupt.duration) {
                 AddEffectLog(currentInterrupt);
-                currentInterrupt.interrupt.ExecuteInterruptEndEffect(TODO);
+                currentInterrupt.interrupt.ExecuteInterruptEndEffect(currentInterrupt);
                 EndInterrupt();
             }
         }
@@ -215,13 +215,13 @@ public class InterruptComponent {
     //        PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
     //    }
     //}
-    public void SetIdentifier(string text, bool isSimultaneous) {
-        if (isSimultaneous) {
-            simultaneousIdentifier = text;
-        } else {
-            identifier = text;
-        }
-    }
+    //public void SetIdentifier(string text, bool isSimultaneous) {
+    //    if (isSimultaneous) {
+    //        simultaneousIdentifier = text;
+    //    } else {
+    //        identifier = text;
+    //    }
+    //}
     public void SetNonSimultaneousInterrupt(InterruptHolder interrupt) {
         if (currentInterrupt != interrupt) {
             if (currentInterrupt != null) {

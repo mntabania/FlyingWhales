@@ -22,24 +22,24 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            string randomNegativeTrait = GetRandomValidNegativeTrait(actor);
-            string randomNegativeStatus = GetRandomValidNegativeStatus(actor);
+            string randomNegativeTrait = GetRandomValidNegativeTrait(interruptHolder.actor);
+            string randomNegativeStatus = GetRandomValidNegativeStatus(interruptHolder.actor);
 
             List<string> tortureTexts =
                 LocalizationManager.Instance.GetKeysLike("Interrupt", "Being Tortured", "torture");
             string chosenTortureKey = CollectionUtilities.GetRandomElement(tortureTexts);
             Log randomTorture = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey);
-            randomTorture.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            randomTorture.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             
             Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text");
             log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(randomTorture), LOG_IDENTIFIER.APPEND);
             log.AddToFillers(randomTorture.fillers);
             log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);
-            actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+            interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
 
-            actor.traitContainer.AddTrait(actor, randomNegativeStatus);
-            actor.traitContainer.AddTrait(actor, randomNegativeTrait);
+            interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeStatus);
+            interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeTrait);
             
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }

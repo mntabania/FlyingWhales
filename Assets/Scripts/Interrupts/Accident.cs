@@ -15,7 +15,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            if(actor.traitContainer.AddTrait(actor, "Injured")) {
+            if(interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Injured")) {
                 return true;
             }
             return base.ExecuteInterruptEndEffect(interruptHolder);

@@ -14,11 +14,11 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            actor.traitContainer.AddTrait(actor, "Resting");
+            interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Resting");
             return true;
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            actor.traitContainer.RemoveTrait(actor, "Resting");
+            interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Resting");
             return true;
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,

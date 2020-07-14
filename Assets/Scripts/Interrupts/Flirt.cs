@@ -14,7 +14,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            actor.nonActionEventsComponent.NormalFlirtCharacter(target as Character, ref overrideEffectLog);
+            interruptHolder.actor.nonActionEventsComponent.NormalFlirtCharacter(interruptHolder.target as Character, ref overrideEffectLog);
             return true;
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,

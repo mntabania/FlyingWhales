@@ -16,12 +16,12 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             int randomHpToLose = UnityEngine.Random.Range(1, 6);
             float percentMaxHPToLose = randomHpToLose / 100f;
-            int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);
+            int actualHPToLose = Mathf.CeilToInt(interruptHolder.actor.maxHP * percentMaxHPToLose);
             Debug.Log(
-                $"Stumble of {actor.name} percent: {percentMaxHPToLose}, max hp: {actor.maxHP}, lost hp: {actualHPToLose}");
-            actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
-            if (actor.currentHP <= 0) {
-                actor.Death("Stumble");
+                $"Stumble of {interruptHolder.actor.name} percent: {percentMaxHPToLose}, max hp: {interruptHolder.actor.maxHP}, lost hp: {actualHPToLose}");
+            interruptHolder.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal, showHPBar: true);
+            if (interruptHolder.actor.currentHP <= 0) {
+                interruptHolder.actor.Death("Stumble");
             }
             return true;
         }

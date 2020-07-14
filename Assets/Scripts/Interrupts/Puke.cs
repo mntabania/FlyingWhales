@@ -14,11 +14,11 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            actor.SetPOIState(POI_STATE.INACTIVE);
+            interruptHolder.actor.SetPOIState(POI_STATE.INACTIVE);
             return true;
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            actor.SetPOIState(POI_STATE.ACTIVE);
+            interruptHolder.actor.SetPOIState(POI_STATE.ACTIVE);
             return true;
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,

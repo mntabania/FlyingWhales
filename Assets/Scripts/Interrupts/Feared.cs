@@ -14,7 +14,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            actor.combatComponent.Flight(target, "Feared");
+            interruptHolder.actor.combatComponent.Flight(interruptHolder.target, "Feared");
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion

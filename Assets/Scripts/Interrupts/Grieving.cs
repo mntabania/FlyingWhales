@@ -13,8 +13,8 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            actor.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, target, "grieving");
+            interruptHolder.actor.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+            interruptHolder.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, interruptHolder.target, "grieving");
             return true;
         }
         #endregion

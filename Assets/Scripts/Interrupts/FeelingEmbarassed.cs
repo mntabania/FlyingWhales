@@ -12,7 +12,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            actor.combatComponent.Flight(target, "embarassed");
+            interruptHolder.actor.combatComponent.Flight(interruptHolder.target, "embarassed");
             return true;
         }
         #endregion

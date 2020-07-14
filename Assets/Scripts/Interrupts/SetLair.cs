@@ -14,25 +14,25 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            string log = "Setting new lair for " + actor.name;
+            string log = "Setting new lair for " + interruptHolder.actor.name;
             log += "\n-Setting lair in current region";
-            Region currentRegion = actor.currentRegion;
+            Region currentRegion = interruptHolder.actor.currentRegion;
             LocationStructure lair = GetLairInRegion(currentRegion);
             if(lair != null) {
-                actor.necromancerTrait.SetLairStructure(lair);
+                interruptHolder.actor.necromancerTrait.SetLairStructure(lair);
             } else {
                 log += "\n-Setting lair in all regions";
-                actor.necromancerTrait.SetLairStructure(GetLairInAllRegions());
+                interruptHolder.actor.necromancerTrait.SetLairStructure(GetLairInAllRegions());
             }
-            if(actor.necromancerTrait.lairStructure != null) {
-                log += "\n-Lair is set: " + actor.necromancerTrait.lairStructure.GetNameRelativeTo(actor) + " in " + actor.necromancerTrait.lairStructure.location.name;
+            if(interruptHolder.actor.necromancerTrait.lairStructure != null) {
+                log += "\n-Lair is set: " + interruptHolder.actor.necromancerTrait.lairStructure.GetNameRelativeTo(interruptHolder.actor) + " in " + interruptHolder.actor.necromancerTrait.lairStructure.location.name;
                 log += "\n-Migrating home to lair";
-                actor.MigrateHomeStructureTo(actor.necromancerTrait.lairStructure);
-                actor.ClearTerritory();
-                actor.logComponent.PrintLogIfActive(log);
+                interruptHolder.actor.MigrateHomeStructureTo(interruptHolder.actor.necromancerTrait.lairStructure);
+                interruptHolder.actor.ClearTerritory();
+                interruptHolder.actor.logComponent.PrintLogIfActive(log);
                 return true;
             }
-            actor.logComponent.PrintLogIfActive(log);
+            interruptHolder.actor.logComponent.PrintLogIfActive(log);
             return false;
         }
         #endregion
