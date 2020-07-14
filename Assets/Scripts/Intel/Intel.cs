@@ -5,31 +5,41 @@ using Interrupts;
 
 public class ActionIntel : IIntel {
     public ActualGoapNode node { get; private set; }
-    public Log log { get { return node.descriptionLog; } }
-    public Character actor { get { return node.actor; } }
-    public IPointOfInterest target { get { return node.poiTarget; } }
+
+    #region getters
+    public IReactable reactable => node;
+    public Log log => node.descriptionLog;
+    public Character actor => node.actor;
+    public IPointOfInterest target => node.target;
+    #endregion
 
     public ActionIntel(ActualGoapNode node) {
         this.node = node;
     }
 }
 public class InterruptIntel : IIntel {
-    public Interrupt interrupt { get; private set; }
-    public Character actor { get; private set; }
-    public IPointOfInterest target { get; private set; }
-    public Log effectLog { get; private set; }
+    //public Interrupt interrupt { get; private set; }
+    //public Character actor { get; private set; }
+    //public IPointOfInterest target { get; private set; }
+    //public Log effectLog { get; private set; }
+    public InterruptHolder interruptHolder { get; private set; }
 
-    public Log log { get { return effectLog; } }
+    #region getters
+    public IReactable reactable => interruptHolder;
+    public Log log => interruptHolder.effectLog;
+    public Character actor => interruptHolder.actor;
+    public IPointOfInterest target => interruptHolder.target;
+    #endregion
 
     public InterruptIntel(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
-        this.interrupt = interrupt;
-        this.actor = actor;
-        this.target = target;
-        this.effectLog = effectLog;
+        interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
+        interruptHolder.Initialize(interrupt, actor, target, string.Empty);
+        interruptHolder.SetEffectLog(effectLog);
     }
 }
 
 public interface IIntel {
+    IReactable reactable { get; }
     Log log { get; }
     Character actor { get; }
     IPointOfInterest target { get; }

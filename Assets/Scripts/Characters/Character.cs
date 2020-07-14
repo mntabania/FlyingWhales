@@ -3548,12 +3548,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //}
     public string ShareIntel(IIntel intel) {
         // PlayerManager.Instance.player.RemoveIntel(intel);
-        if(intel is ActionIntel actionIntel) {
-            return reactionComponent.ReactTo(actionIntel.node, REACTION_STATUS.INFORMED);
-        } else if (intel is InterruptIntel interruptIntel) {
-            return reactionComponent.ReactToInformedInterrupt(interruptIntel.interrupt, interruptIntel.actor, interruptIntel.target, interruptIntel.log);
-        }
-        return "aware";
+        return reactionComponent.ReactTo(intel.reactable, REACTION_STATUS.INFORMED);
+        //if(intel is ActionIntel actionIntel) {
+        //    return reactionComponent.ReactTo(actionIntel.node, REACTION_STATUS.INFORMED);
+        //} else if (intel is InterruptIntel interruptIntel) {
+        //    return reactionComponent.ReactToInformedInterrupt(interruptIntel.interrupt, interruptIntel.actor, interruptIntel.target, interruptIntel.log);
+        //}
+        //return "aware";
 
     }
     #endregion
