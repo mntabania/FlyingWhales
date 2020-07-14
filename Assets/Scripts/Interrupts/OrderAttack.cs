@@ -12,7 +12,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             for (int i = 0; i < actor.faction.characters.Count; i++) {
                 Character follower = actor.faction.characters[i];

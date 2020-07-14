@@ -64,7 +64,7 @@ public class InterruptComponent {
 
             if (currentInterrupt.interrupt.duration <= 0) {
                 AddEffectLog(currentInterrupt);
-                currentInterrupt.interrupt.ExecuteInterruptEndEffect(owner, currentInterrupt.target);
+                currentInterrupt.interrupt.ExecuteInterruptEndEffect(TODO);
                 EndInterrupt();
             }
         } else {
@@ -81,7 +81,7 @@ public class InterruptComponent {
         simultaneousIdentifier = identifier;
         ExecuteStartInterrupt(triggeredSimultaneousInterrupt, actionThatTriggered);
         AddEffectLog(triggeredSimultaneousInterrupt);
-        interrupt.ExecuteInterruptEndEffect(owner, targetPOI);
+        interrupt.ExecuteInterruptEndEffect(TODO);
         currentSimultaneousInterruptDuration = 0;
         if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
@@ -90,7 +90,7 @@ public class InterruptComponent {
     }
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
         Log effectLog = null;
-        interruptHolder.interrupt.ExecuteInterruptStartEffect(owner, interruptHolder.target, ref effectLog, actionThatTriggered);
+        interruptHolder.interrupt.ExecuteInterruptStartEffect(TODO, ref effectLog, actionThatTriggered);
         if(effectLog == null) {
             effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }
@@ -105,7 +105,7 @@ public class InterruptComponent {
             currentDuration++;
             if(currentDuration >= currentInterrupt.interrupt.duration) {
                 AddEffectLog(currentInterrupt);
-                currentInterrupt.interrupt.ExecuteInterruptEndEffect(owner, currentInterrupt.target);
+                currentInterrupt.interrupt.ExecuteInterruptEndEffect(TODO);
                 EndInterrupt();
             }
         }

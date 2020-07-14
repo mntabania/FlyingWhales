@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break");
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

@@ -14,11 +14,11 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             if(actor.traitContainer.AddTrait(actor, "Injured")) {
                 return true;
             }
-            return base.ExecuteInterruptEndEffect(actor, target);
+            return base.ExecuteInterruptEndEffect(interruptHolder);
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
             Interrupt interrupt, REACTION_STATUS status) {

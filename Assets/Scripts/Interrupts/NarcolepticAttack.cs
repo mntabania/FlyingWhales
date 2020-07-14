@@ -12,12 +12,12 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             actor.traitContainer.AddTrait(actor, "Resting");
             return true;
         }
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             actor.traitContainer.RemoveTrait(actor, "Resting");
             return true;
         }

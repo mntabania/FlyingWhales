@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character targetCharacter = target as Character;
             targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, actor, "Base", -3);

@@ -21,7 +21,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             string randomNegativeTrait = GetRandomValidNegativeTrait(actor);
             string randomNegativeStatus = GetRandomValidNegativeStatus(actor);
 
@@ -41,7 +41,7 @@ namespace Interrupts {
             actor.traitContainer.AddTrait(actor, randomNegativeStatus);
             actor.traitContainer.AddTrait(actor, randomNegativeTrait);
             
-            return base.ExecuteInterruptEndEffect(actor, target);
+            return base.ExecuteInterruptEndEffect(interruptHolder);
         }
         #endregion
 

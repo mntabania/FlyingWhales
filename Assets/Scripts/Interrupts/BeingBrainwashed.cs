@@ -13,7 +13,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             WeightedDictionary<bool> brainwashWeightedDictionary = new WeightedDictionary<bool>();
 
             int failWeight = 100;

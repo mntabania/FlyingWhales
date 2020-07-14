@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(target is Character) {
                 Character targetCharacter = target as Character;
@@ -24,7 +24,7 @@ namespace Interrupts {
                     return true;
                 }
             }
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

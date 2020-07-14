@@ -13,7 +13,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             LocationGridTile gridTileLocation = actor.gridTileLocation;
             actor.SetDestroyMarkerOnDeath(true);
             actor.Death("Abomination Germ", interrupt: this);

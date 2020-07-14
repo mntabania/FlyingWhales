@@ -14,7 +14,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             actor.traitContainer.AddTrait(actor, "Worried");
             Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, actor.marker.transform.position, 2, actor.currentRegion.innerMap);
