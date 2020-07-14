@@ -22,58 +22,84 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         }
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            if (character.behaviourComponent.currentAbductTarget != null 
-                && (character.behaviourComponent.currentAbductTarget.isDead 
-                    || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained"))) {
-                character.behaviourComponent.SetAbductionTarget(null);
-            }
-            
-            //set abduction target if none, and chance met
-            if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && Random.Range(0, 100) < 8) {
-                List<Character> characterChoices = character.currentRegion.charactersAtLocation
-                    .Where(c => c.isNormalCharacter && c.canMove).ToList();
-                if (characterChoices.Count > 0) {
-                    Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
-                    character.behaviourComponent.SetAbductionTarget(chosenCharacter);
+            List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
+            if (webbedCharacters == null || webbedCharacters.Count <= 2) { //check if there are only 2 or less abducted "Food" at home structure
+                if (character.behaviourComponent.currentAbductTarget != null 
+                    && (character.behaviourComponent.currentAbductTarget.isDead 
+                        || character.behaviourComponent.currentAbductTarget.traitContainer.HasTrait("Restrained"))) {
+                    character.behaviourComponent.SetAbductionTarget(null);
                 }
-            }
+            
+                //set abduction target if none, and chance met
+                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(8)) {
+                    //check if there are any available animals first
+                    List<Character> characterChoices = character.currentRegion.charactersAtLocation
+                        .Where(c => c is Animal).ToList();
+                    if (characterChoices.Count == 0) {
+                        //no available animals, check sleeping characters instead
+                        characterChoices = character.currentRegion.charactersAtLocation
+                            .Where(c => c.isNormalCharacter && c.traitContainer.HasTrait("Resting")).ToList();
+                    }
+                    if (characterChoices.Count > 0) {
+                        Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
+                        character.behaviourComponent.SetAbductionTarget(chosenCharacter);
+                    }
+                }
 
-            Character targetCharacter = character.behaviourComponent.currentAbductTarget;
-            if (targetCharacter != null) {
-                //create job to abduct target character.
-                return character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob);
-                ////try to go to abduct target
-                //if (PathfindingManager.Instance.HasPath(character.gridTileLocation, targetCharacter.gridTileLocation)) {
-                //    character.behaviourComponent.SetDigForAbductionPath(null);
-                //    Debug.Log($"Has Path for {character.name} towards {targetCharacter.name}!");
-                //    //create job to abduct target character.
-                //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
-                //        INTERACTION_TYPE.DROP, targetCharacter, character);
-                //    job.SetCannotBePushedBack(true);
-                //    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});
-                //    producedJob = job;
-                //} else {
-                //    //if not path towards target, compute path to nearest block wall, then do dig action
-                //    ABPath p = ABPath.Construct(character.worldPosition, targetCharacter.worldPosition, (path) => OnPathComplete(path, character));
-                //    AstarPath.StartPath(p);
-                //    character.behaviourComponent.SetDigForAbductionPath(p);    
-                //}    
-                // return true;
-            }
-        } else {
-            //Try and eat a webbed character at this spiders home cave
-            if (character.homeStructure != null) {
-                List<Character> webbedCharacters =
-                    character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
-                if (webbedCharacters.Count > 0) {
-                    Character webbedCharacter = CollectionUtilities.GetRandomElement(webbedCharacters);
-                    return character.jobComponent.TriggerEatAlive(webbedCharacter, out producedJob);
+                Character targetCharacter = character.behaviourComponent.currentAbductTarget;
+                if (targetCharacter != null) {
+                    //create job to abduct target character.
+                    return character.jobComponent.TriggerMonsterAbduct(targetCharacter, out producedJob);
                 }
             }
         }
-        return false;
+
+        //try to lay an egg
+        if (GameUtilities.RollChance(10)) {
+            int residentCount = 0;
+            if (character.homeStructure != null) {
+                residentCount = character.homeStructure.residents.Count;
+            } else if (character.territorries.Count > 0) {
+                residentCount = character.homeRegion.GetCharactersWithSameTerritory(character)?.Count ?? 0;
+            }
+            if (residentCount < 5) {
+                return character.jobComponent.TriggerLayEgg(out producedJob);
+            }
+        }
+
+        if (GameUtilities.RollChance(30)) {
+            //Try and eat a webbed character at this spiders home cave
+            List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
+            if (webbedCharacters != null && webbedCharacters.Count > 0) {
+                Character webbedCharacter = CollectionUtilities.GetRandomElement(webbedCharacters);
+                return character.jobComponent.TriggerEatAlive(webbedCharacter, out producedJob);
+            }    
+        }
+        
+        return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
     }
 
+    private List<Character> GetWebbedCharactersAtHome(Character character) {
+        if (character.homeStructure != null) {
+            return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
+        } else if (character.territorries != null && character.territorries.Count > 0) {
+            List<Character> characters = null;
+            for (int i = 0; i < character.territorries.Count; i++) {
+                HexTile territory = character.territorries[i];
+                List<Character> validCharacters =
+                    territory.GetAllCharactersInsideHexThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
+                if (validCharacters != null) {
+                    if (characters == null) {
+                        characters = new List<Character>();
+                    }
+                    characters.AddRange(validCharacters);
+                }
+            }
+            return characters;
+        }
+        return null;
+    }
+    
     //private void OnPathComplete(Path path, Character character) {
     //    //current abduct path was set to null because path towards target character is already possible, do not process this
     //    if (character.behaviourComponent.currentAbductDigPath == null) { return; } 

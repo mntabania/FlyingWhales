@@ -32,7 +32,7 @@ public class AbominationBehaviour : CharacterBehaviourComponent {
         if (actor.hexTileLocation != null) {
             for (int i = 0; i < actor.hexTileLocation.AllNeighbours.Count; i++) {
                 HexTile neighbour = actor.hexTileLocation.AllNeighbours[i];
-                if (neighbour.elevationType != ELEVATION.WATER && actor.movementComponent.HasPathTo(neighbour)) {
+                if (neighbour.elevationType != ELEVATION.WATER && neighbour.region == actor.currentRegion && actor.movementComponent.HasPathTo(neighbour)) {
                     if (choices == null) {
                         choices = new List<HexTile>();
                     }

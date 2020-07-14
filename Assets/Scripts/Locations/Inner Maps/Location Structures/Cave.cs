@@ -10,9 +10,16 @@ namespace Inner_Maps.Location_Structures {
         public const string Yield_Gold = "Gold";
 
         public WeightedDictionary<string> resourceYield { get; }
-
+        /// <summary>
+        /// Separate field for the occupied hex tiles of this cave.
+        /// Since caves can occupy multiple hex tiles.
+        /// </summary>
+        public List<InnerMapHexTile> occupiedHexTiles { get; }
+        public override InnerMapHexTile occupiedHexTile => occupiedHexTiles.Count > 0 ? occupiedHexTiles[0] : null;
+        
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
             resourceYield = GetRandomResourceYield();
+            occupiedHexTiles = new List<InnerMapHexTile>();
         }
 
         public Cave(Region location, SaveDataLocationStructure data) : base(location, data) { }
@@ -58,6 +65,10 @@ namespace Inner_Maps.Location_Structures {
         protected override void OnTileAddedToStructure(LocationGridTile tile) {
             base.OnTileAddedToStructure(tile);
             tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
+            if (tile.collectionOwner.isPartOfParentRegionMap && 
+                occupiedHexTiles.Contains(tile.collectionOwner.partOfHextile) == false) {
+                occupiedHexTiles.Add(tile.collectionOwner.partOfHextile);
+            }
         }
         protected override void OnTileRemovedFromStructure(LocationGridTile tile) {
             base.OnTileRemovedFromStructure(tile);

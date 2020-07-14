@@ -21,7 +21,7 @@
     
     #region State Effects
     public void PerTickEatAliveSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(-50, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
+        goapNode.poiTarget.AdjustHP(-10, ELEMENTAL_TYPE.Normal, true, goapNode.actor, showHPBar: true);
     }
     #endregion
 }

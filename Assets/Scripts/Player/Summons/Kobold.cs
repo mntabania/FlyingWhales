@@ -10,13 +10,16 @@ public class Kobold : Summon {
     public Kobold() : base(SUMMON_TYPE.Kobold, ClassName, RACE.KOBOLD,
         UtilityScripts.Utilities.GetRandomGender()) {
 		//combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
+        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
     public Kobold(string className) : base(SUMMON_TYPE.Kobold, className, RACE.KOBOLD,
         UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
+        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
     public Kobold(SaveDataCharacter data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
+        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
     public override void Initialize() {
         base.Initialize();

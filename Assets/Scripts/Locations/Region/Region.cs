@@ -505,6 +505,24 @@ public class Region {
             character.SetHomeRegion(null);
         }
     }
+    public List<Character> GetCharactersWithSameTerritory(Character character) {
+        List<Character> validCharacters = null;
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (resident != character && resident.territorries.Count > 0) {
+                for (int j = 0; j < character.territorries.Count; j++) {
+                    HexTile territory = character.territorries[j];
+                    if (resident.territorries.Contains(territory)) {
+                        if (validCharacters == null) {
+                            validCharacters = new List<Character>();
+                        }
+                        validCharacters.Add(resident);
+                    }
+                }
+            }
+        }
+        return validCharacters;
+    }
     #endregion
 
     #region Faction

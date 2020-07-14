@@ -795,6 +795,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI == target) {
+                    if (reason == GoapPlanJob.Target_Already_Dead_Reason) {
+                        //if reason for cancellation is because of death, check if job should be cancelled if target dies.
+                        if (goapJob.shouldBeCancelledOnDeath == false) {
+                            continue; //skip
+                        }
+                    }
                     if (goapJob.ForceCancelJob(false, reason)) {
                         i--;
                     }
@@ -3719,6 +3725,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
+            if (this is GiantSpider) {
+                AddAdvertisedAction(INTERACTION_TYPE.LAY_EGG);
+            }
         }
         if (this is Animal) {
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
@@ -5352,7 +5361,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //if (jobQueue.jobsInQueue.Count > 0) {
             //    jobQueue.CancelAllJobs();
             //}
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
             
             behaviourComponent.OnDeath();
             CancelAllJobs();

@@ -1079,6 +1079,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return tileObjects;
     }
+    public List<T> GetTileObjectsInHexTile<T>() where T : TileObject {
+        List<T> tileObjects = null;
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.objHere is T obj) {
+                if (tileObjects == null) {
+                    tileObjects = new List<T>();
+                }
+                tileObjects.Add(obj);
+            }
+        }
+        return tileObjects;
+    }
     #endregion
 
     #region Listeners
