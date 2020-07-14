@@ -12,9 +12,9 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            return actor.jobComponent.CreateGoToJob(target);
+            return interruptHolder.actor.jobComponent.CreateGoToJob(interruptHolder.target);
             //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, actor);
             //return actor.jobQueue.AddJobInQueue(job);
         }

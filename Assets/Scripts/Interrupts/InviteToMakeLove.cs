@@ -12,10 +12,10 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if(target is Character targetCharacter) {
-                string debugLog = $"{actor.name} invite to make love interrupt with {targetCharacter.name}";
+            if(interruptHolder.target is Character targetCharacter) {
+                string debugLog = $"{interruptHolder.actor.name} invite to make love interrupt with {targetCharacter.name}";
 
                 //if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null 
                 //    || targetCharacter.combatComponent.isInCombat
@@ -40,8 +40,8 @@ namespace Interrupts {
 
 
                 int targetOpinionToActor = 0;
-                if (targetCharacter.relationshipContainer.HasRelationshipWith(actor)) {
-                    targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(actor);
+                if (targetCharacter.relationshipContainer.HasRelationshipWith(interruptHolder.actor)) {
+                    targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(interruptHolder.actor);
                 }
                 acceptWeight += (3 * targetOpinionToActor);
                 debugLog += $"\n-Target opinion towards Actor: +(3 x {targetOpinionToActor}) to Accept Weight";
@@ -72,23 +72,23 @@ namespace Interrupts {
 
                 string chosen = weights.PickRandomElementGivenWeights();
                 debugLog += $"\n\nCHOSEN RESPONSE: {chosen}";
-                actor.logComponent.PrintLogIfActive(debugLog);
+                interruptHolder.actor.logComponent.PrintLogIfActive(debugLog);
 
 
                 overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen);
-                overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                overrideEffectLog.AddToFillers(target, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
-                actor.interruptComponent.SetIdentifier(chosen, true);
+                interruptHolder.SetIdentifier(chosen);
                 if (chosen == "Reject") {
-                    actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
-                    actor.traitContainer.AddTrait(actor, "Annoyed");
-                    actor.currentJob.CancelJob(false);
-                    if(actor.faction == FactionManager.Instance.disguisedFaction) {
-                        actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
-                        if (!targetCharacter.marker.HasUnprocessedPOI(actor)) {
-                            targetCharacter.marker.AddUnprocessedPOI(actor);
+                    interruptHolder.actor.relationshipContainer.AdjustOpinion(interruptHolder.actor, targetCharacter, "Base", -3, "rejected sexual advances");
+                    interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Annoyed");
+                    interruptHolder.actor.currentJob.CancelJob(false);
+                    if(interruptHolder.actor.faction == FactionManager.Instance.disguisedFaction) {
+                        interruptHolder.actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+                        if (!targetCharacter.marker.HasUnprocessedPOI(interruptHolder.actor)) {
+                            targetCharacter.marker.AddUnprocessedPOI(interruptHolder.actor);
                         }
                     }
                     return false;

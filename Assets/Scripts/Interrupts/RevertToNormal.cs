@@ -14,9 +14,9 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.lycanData.RevertToNormal();
-            return base.ExecuteInterruptEndEffect(actor, target);
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            interruptHolder.actor.lycanData.RevertToNormal();
+            return base.ExecuteInterruptEndEffect(interruptHolder);
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
             Interrupt interrupt, REACTION_STATUS status) {

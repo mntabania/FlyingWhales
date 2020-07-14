@@ -4,6 +4,7 @@ using EZObjectPools;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Interrupts;
 
 public class ObjectPoolManager : MonoBehaviour {
 
@@ -19,6 +20,7 @@ public class ObjectPoolManager : MonoBehaviour {
     public List<OpinionData> opinionDataPool { get; private set; }
     public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
     public List<CombatData> combatDataPool { get; private set; }
+    public List<InterruptHolder> interruptPool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -40,6 +42,7 @@ public class ObjectPoolManager : MonoBehaviour {
         ConstructOpinionDataPool();
         ConstructTraitRemoveSchedulePool();
         ConstructCombatDataPool();
+        ConstructInterruptPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -204,6 +207,28 @@ public class ObjectPoolManager : MonoBehaviour {
             return data;
         }
         return new CombatData();
+    }
+    #endregion
+
+    #region Interrupts
+    private void ConstructInterruptPool() {
+        interruptPool = new List<InterruptHolder>();
+    }
+    public InterruptHolder CreateNewInterrupt() {
+        InterruptHolder data = GetInterruptFromPool();
+        return data;
+    }
+    public void ReturnInterruptToPool(InterruptHolder data) {
+        data.Reset();
+        interruptPool.Add(data);
+    }
+    private InterruptHolder GetInterruptFromPool() {
+        if (interruptPool.Count > 0) {
+            InterruptHolder data = interruptPool[0];
+            interruptPool.RemoveAt(0);
+            return data;
+        }
+        return new InterruptHolder();
     }
     #endregion
 }

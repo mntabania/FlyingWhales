@@ -11,14 +11,14 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            Character targetCharacter = target as Character;
+            Character targetCharacter = interruptHolder.target as Character;
             if (targetCharacter.canWitness) {
                 targetCharacter.traitContainer.AddTrait(targetCharacter, "Ashamed");
                 return true;
             }
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

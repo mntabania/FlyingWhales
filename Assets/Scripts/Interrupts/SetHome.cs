@@ -13,15 +13,15 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if(target != null) {
+            if(interruptHolder.target != null) {
                 //This means that the new home is predetermined
-                if(target is Character targetCharacter) {
-                    actor.MigrateHomeStructureTo(targetCharacter.homeStructure);
+                if(interruptHolder.target is Character targetCharacter) {
+                    interruptHolder.actor.MigrateHomeStructureTo(targetCharacter.homeStructure);
                 }
             } else {
-                SetNewHomeSettlement(actor);
+                SetNewHomeSettlement(interruptHolder.actor);
             }
             //if(actor.homeStructure != null && actor.homeStructure.settlementLocation != null) {
             //    if(actor is Summon) {

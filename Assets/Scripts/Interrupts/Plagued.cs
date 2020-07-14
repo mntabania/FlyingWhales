@@ -11,15 +11,15 @@ namespace Interrupts {
 		}
 
 		#region Overrides
-		public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+		public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
 			ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-			if (actor.traitContainer.AddTrait(actor, "Plagued")) {
+			if (interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Plagued")) {
 				overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
-				overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				//log.AddLogToInvolvedObjects();
 				return true;
 			}
-			return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
+			return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
 		}
 		#endregion
 	}

@@ -145,7 +145,7 @@ public class Summon : Character {
 
             marker?.OnDeath(deathTile);
 
-            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt != interrupt) {
+            if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
 

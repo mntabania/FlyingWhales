@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Interrupts {
     public class Interrupt : ICrimeable {
-        public INTERRUPT interrupt { get; protected set; }
+        public INTERRUPT type { get; protected set; }
         public string name { get; protected set; }
         public int duration { get; protected set; }
         public bool isSimulateneous { get; protected set; }
@@ -13,18 +13,19 @@ namespace Interrupts {
         public string interruptIconString { get; protected set; }
         public bool isIntel { get; protected set; }
         public bool shouldAddLogs { get; protected set; } //Does this interrupt add logs to the involved characters
-        protected Interrupt(INTERRUPT interrupt) {
-            this.interrupt = interrupt;
-            this.name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(interrupt.ToString());
+        protected Interrupt(INTERRUPT type) {
+            this.type = type;
+            this.name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(type.ToString());
             isSimulateneous = false;
             interruptIconString = GoapActionStateDB.No_Icon;
             shouldAddLogs = true;
         }
 
         #region Virtuals
-        public virtual bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) { return false; }
-        public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
+        public virtual bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, 
+            ActualGoapNode goapNode = null) { return false; }
+
         public virtual string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
             Interrupt interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual string ReactionToTarget(Character witness, Character actor, IPointOfInterest target,
@@ -57,6 +58,7 @@ namespace Interrupts {
         public Character actor { get; private set; }
         public IPointOfInterest target { get; private set; }
         public Log effectLog { get; private set; }
+        public string identifier { get; private set; }
         public Rumor rumor { get; private set; }
         public List<Character> awareCharacters { get; private set; }
 
@@ -68,13 +70,19 @@ namespace Interrupts {
         public bool isRumor => rumor != null;
         #endregion
 
-        public InterruptHolder(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
-            this.interrupt = interrupt;
-            this.actor = actor;
-            this.target = target;
-            this.effectLog = effectLog;
+        public InterruptHolder() {
+            identifier = string.Empty;
             awareCharacters = new List<Character>();
         }
+
+        #region General
+        public void SetEffectLog(Log effectLog) {
+            this.effectLog = effectLog;
+        }
+        public void SetIdentifier(string identifier) {
+            this.identifier = identifier;
+        }
+        #endregion
 
         #region IReactable
         public string ReactionToActor(Character witness, REACTION_STATUS status) {
@@ -101,6 +109,24 @@ namespace Interrupts {
             if (rumor != newRumor) {
                 rumor = newRumor;
             }
+        }
+        #endregion
+
+        #region Object Pool
+        public void Initialize(Interrupt interrupt, Character actor, IPointOfInterest target, string identifier) {
+            this.interrupt = interrupt;
+            this.actor = actor;
+            this.target = target;
+            SetIdentifier(identifier);
+        }
+        public void Reset() {
+            interrupt = null;
+            actor = null;
+            target = null;
+            effectLog = null;
+            rumor = null;
+            identifier = string.Empty;
+            awareCharacters.Clear();
         }
         #endregion
     }

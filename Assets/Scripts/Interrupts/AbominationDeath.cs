@@ -13,18 +13,18 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            LocationGridTile gridTileLocation = actor.gridTileLocation;
-            actor.SetDestroyMarkerOnDeath(true);
-            actor.Death("Abomination Germ", interrupt: this);
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            LocationGridTile gridTileLocation = interruptHolder.actor.gridTileLocation;
+            interruptHolder.actor.SetDestroyMarkerOnDeath(true);
+            interruptHolder.actor.Death("Abomination Germ", interrupt: this);
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Abomination,
                     FactionManager.Instance.neutralFaction);
-            summon.SetName(actor.name);
+            summon.SetName(interruptHolder.actor.name);
             summon.CreateMarker();
             summon.InitialCharacterPlacement(gridTileLocation, true);
-            summon.logComponent.AddHistory(actor.deathLog);
+            summon.logComponent.AddHistory(interruptHolder.actor.deathLog);
             if (UIManager.Instance.characterInfoUI.isShowing && 
-                UIManager.Instance.characterInfoUI.activeCharacter == actor) {
+                UIManager.Instance.characterInfoUI.activeCharacter == interruptHolder.actor) {
                 UIManager.Instance.characterInfoUI.CloseMenu();    
             }
             return true;

@@ -12,11 +12,11 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if (!actor.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, actor, actor);
-                actor.jobQueue.AddJobInQueue(job);
+            if (!interruptHolder.actor.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, interruptHolder.actor, interruptHolder.actor);
+                interruptHolder.actor.jobQueue.AddJobInQueue(job);
                 //bool triggerBrokenhearted = false;
                 //Heartbroken heartbroken = actor.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
                 //if (heartbroken != null) {
@@ -33,7 +33,7 @@ namespace Interrupts {
                 //}
                 return true;
             }
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

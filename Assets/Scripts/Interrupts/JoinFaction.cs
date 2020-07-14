@@ -11,20 +11,19 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if(target is Character) {
-                Character targetCharacter = target as Character;
+            if(interruptHolder.target is Character targetCharacter) {
                 Faction factionToJoinTo = targetCharacter.faction;
-                if (actor.ChangeFactionTo(factionToJoinTo)) {
-                    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", actor.interruptComponent.simultaneousIdentifier);
-                    overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (interruptHolder.actor.ChangeFactionTo(factionToJoinTo)) {
+                    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", interruptHolder.identifier);
+                    overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     overrideEffectLog.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
                     //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                     return true;
                 }
             }
-            return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog, goapNode);
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         #endregion
     }

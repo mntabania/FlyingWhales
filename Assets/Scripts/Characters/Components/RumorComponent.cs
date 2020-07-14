@@ -179,7 +179,12 @@ public class RumorComponent {
                 interrupt = InteractionManager.Instance.GetInterruptData(INTERRUPT.Transform_To_Wolf);
                 effectLog = interrupt.CreateEffectLog(rumoredCharacter, targetOfRumoredCharacter);
             }
-            rumorable = new InterruptHolder(interrupt, rumoredCharacter, targetOfRumoredCharacter, effectLog);
+            //Note: This particular interrupt holder, if used, will not be brought back to the object pool because we do not exactly know when this particular rumorable will not be used anymore
+            //It is uncertain when this will be not used, so we must not reset its data
+            InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
+            interruptHolder.Initialize(interrupt, rumoredCharacter, targetOfRumoredCharacter, string.Empty);
+            interruptHolder.SetEffectLog(effectLog);
+            rumorable = interruptHolder;
         } else {
             INTERACTION_TYPE actionType = INTERACTION_TYPE.NONE;
             if (identifier == CharacterManager.Make_Love) {

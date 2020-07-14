@@ -33,7 +33,7 @@ public class Invite : GoapAction {
             if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null
                     || targetCharacter.combatComponent.isInCombat
                     || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
-                    || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Cowering)) {
+                    || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Cowering)) {
                 string debugLog = $"{targetCharacter.name} is unconscious/in combat/in douse fire state/cowering. Invite fail.";
                 actor.logComponent.PrintLogIfActive(debugLog);
 

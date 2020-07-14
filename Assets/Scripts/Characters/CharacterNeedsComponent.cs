@@ -170,15 +170,15 @@ public class CharacterNeedsComponent {
     public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
         if (HasNeeds() == false) { return; }
         string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} will check his/her needs.";
-        if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Grieving)) {
+        if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
             summary += $"\n{_owner.name} is starving. Planning fullness recovery actions...";
             PlanFullnessRecoveryActions(_owner);
         }
-        if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Feeling_Spooked)) {
+        if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
             summary += $"\n{_owner.name} is exhausted. Planning tiredness recovery actions...";
             PlanTirednessRecoveryActions(_owner);
         }
-        if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Feeling_Brokenhearted)) {
+        if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
             summary += $"\n{_owner.name} is sulking. Planning happiness recovery actions...";
             PlanHappinessRecoveryActions(_owner);
         }

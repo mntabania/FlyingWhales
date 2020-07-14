@@ -12,13 +12,13 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target,
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            actor.SetPOIState(POI_STATE.INACTIVE);
+            interruptHolder.actor.SetPOIState(POI_STATE.INACTIVE);
             return true;
         }
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.SetPOIState(POI_STATE.ACTIVE);
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            interruptHolder.actor.SetPOIState(POI_STATE.ACTIVE);
             return true;
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,

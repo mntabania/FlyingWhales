@@ -11,8 +11,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) {
-            actor.combatComponent.Flight(target, "embarassed");
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
+            interruptHolder.actor.combatComponent.Flight(interruptHolder.target, "embarassed");
             return true;
         }
         #endregion
