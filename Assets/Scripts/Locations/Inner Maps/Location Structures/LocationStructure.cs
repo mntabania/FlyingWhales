@@ -24,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
         public POI_STATE state { get; private set; }
         public LocationStructureObject structureObj {get; private set;}
-        public InnerMapHexTile occupiedHexTile { get; private set; }
+        public virtual InnerMapHexTile occupiedHexTile { get; private set; }
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }

@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class GoapPlanJob : JobQueueItem {
+
+    public static string Target_Already_Dead_Reason = "target is already dead";
+    
     public GoapEffect goal { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
     //public GoapPlan targetPlan { get; protected set; }
@@ -27,6 +30,7 @@ public class GoapPlanJob : JobQueueItem {
     //public bool allowDeadTargets { get; private set; }
 
     public List<object> allOtherData { get; private set; }
+    public bool shouldBeCancelledOnDeath { get; private set; } //should this job be cancelled when the target dies?
 
     public GoapPlanJob() : base() {
         otherData = new Dictionary<INTERACTION_TYPE, object[]>();
@@ -37,6 +41,7 @@ public class GoapPlanJob : JobQueueItem {
         Initialize(jobType, owner);
         this.goal = goal;
         this.targetPOI = targetPOI;
+        shouldBeCancelledOnDeath = true;
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         //allowDeadTargets = false;
     }
@@ -91,6 +96,7 @@ public class GoapPlanJob : JobQueueItem {
         //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
+        shouldBeCancelledOnDeath = true;
         //this.otherData = otherData;
         //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         //allowDeadTargets = false;
@@ -439,6 +445,9 @@ public class GoapPlanJob : JobQueueItem {
                 }
         }
     }
+    public void SetCancelOnDeath(bool state) {
+        shouldBeCancelledOnDeath = state;
+    }
     #endregion
 
     #region Goap Effects
@@ -470,6 +479,7 @@ public class GoapPlanJob : JobQueueItem {
         otherData.Clear();
         allOtherData.Clear();
         SetAssignedPlan(null);
+        shouldBeCancelledOnDeath = true;
     }
     #endregion
 }

@@ -10,7 +10,7 @@ public class Butcher : GoapAction {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         isNotificationAnIntel = true;
     }
@@ -35,7 +35,10 @@ public class Butcher : GoapAction {
                 cost += 2000;
                 costLog += " +2000(Actor/Target Same)";
             } else {
-                if (actor.traitContainer.HasTrait("Cannibal")) {
+                if (actor.isNormalCharacter == false) {
+                    cost += 10;
+                    costLog += " +10(Actor is not a normal character)";
+                } else if (actor.traitContainer.HasTrait("Cannibal")) {
                     if (actor.traitContainer.HasTrait("Malnourished")) {
                         if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
                             int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
@@ -166,6 +169,8 @@ public class Butcher : GoapAction {
                 return false;
             }
             if(poiTarget is Animal) {
+                return true;
+            } else if (actor.isNormalCharacter == false) {
                 return true;
             } else {
                 Character deadCharacter = GetDeadCharacter(poiTarget);
