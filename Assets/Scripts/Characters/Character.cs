@@ -3725,6 +3725,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         if (this is Summon) {
             AddAdvertisedAction(INTERACTION_TYPE.PLAY);
+            if (this is GiantSpider) {
+                AddAdvertisedAction(INTERACTION_TYPE.LAY_EGG);
+            }
         }
         if (this is Animal) {
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);

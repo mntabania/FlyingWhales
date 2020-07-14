@@ -28,9 +28,9 @@ public class CultistTransform : GoapAction {
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Abomination, 
             FactionManager.Instance.neutralFaction);
         summon.SetName(character.name);
-        summon.CreateMarker();
-        summon.InitialCharacterPlacement(gridTileLocation, true);
         summon.logComponent.AddHistory(character.deathLog);
+        
+        CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
         if (UIManager.Instance.characterInfoUI.isShowing && 
             UIManager.Instance.characterInfoUI.activeCharacter == character) {
             UIManager.Instance.characterInfoUI.CloseMenu();    
