@@ -36,7 +36,8 @@ public class CharacterManager : MonoBehaviour {
         Disabler_Behaviour = "Disabler Behaviour",
         Infestor_Behaviour = "Infestor Behaviour",
         Abductor_Behaviour = "Abductor Behaviour",
-        Arsonist_Behaviour = "Arsonist Behaviour";
+        Arsonist_Behaviour = "Arsonist Behaviour",
+        Abomination_Behaviour = "Abomination Behaviour";
 
     public const int MAX_HISTORY_LOGS = 300;
 
@@ -205,6 +206,13 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(ArsonistBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Abomination_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(AbominationBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -442,31 +450,37 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
-    public int GetFoodAmountTakenFromDead(Character deadCharacter) {
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.WOLF) {
+    public int GetFoodAmountTakenFromPOI(IPointOfInterest poi) {
+        if (poi is Character character) {
+            if (character.race == RACE.WOLF) {
                 return 150;
-            } else if (deadCharacter.race == RACE.HUMANS) {
+            } else if (character.race == RACE.HUMANS) {
                 return 200;
-            } else if (deadCharacter.race == RACE.ELVES) {
+            } else if (character.race == RACE.ELVES) {
                 return 200;
+            } else {
+                return 100;
             }
         }
-        return 100;
+        return 50;
     }
-    public void CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
+    public FoodPile CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
         LocationGridTile targetTile = tileOverride;
         Character deadCharacter = null;
+        //determine if target is a character
         if (poi is Character character) {
             deadCharacter = character;
+        } else if (poi is Tombstone tombstone) {
+            deadCharacter = tombstone.character;
         }
+        
         if(targetTile == null) {
             targetTile = poi.gridTileLocation;
         }
         if (targetTile.objHere != null) {
             targetTile = targetTile.GetNearestUnoccupiedTileFromThis();
         }
-        int food = GetFoodAmountTakenFromDead(deadCharacter);
+        int food = GetFoodAmountTakenFromPOI(poi);
         
         //determine tile object type based on what poi to convert to food pile.
         TILE_OBJECT_TYPE tileObjectType;
@@ -487,22 +501,30 @@ public class CharacterManager : MonoBehaviour {
                 tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;    
             }
         } else {
-            tileObjectType = TILE_OBJECT_TYPE.ANIMAL_MEAT;
+            tileObjectType = poi is Crops ? TILE_OBJECT_TYPE.VEGETABLES : TILE_OBJECT_TYPE.ANIMAL_MEAT;
         }
         
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(tileObjectType);
         if (poi.traitContainer.HasTrait("Infected")) {
             foodPile.traitContainer.AddTrait(foodPile, "Infected");
         }
+        if (poi.traitContainer.HasTrait("Abomination Germ")) {
+            //transfer abomination germ to created food pile
+            foodPile.traitContainer.AddTrait(foodPile, "Abomination Germ");
+            poi.traitContainer.RemoveStatusAndStacks(poi, "Abomination Germ");
+        }
+        
         if (deadCharacter != null) {
+            //add log if food pile came from character
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile");
             log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddLogToInvolvedObjects();
         }
+        
         foodPile.SetResourceInPile(food);
         targetTile.structure.AddPOI(foodPile, targetTile);
-        // targetTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+        return foodPile;
     }
     public void RaiseFromDeath(Character characterToCopy, Faction faction, RACE race = RACE.SKELETON, string className = "") {
         if (!characterToCopy.hasRisen) {

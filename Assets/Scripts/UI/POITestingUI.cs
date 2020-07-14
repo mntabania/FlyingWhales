@@ -186,6 +186,15 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void HarvestPlant() {
+        if (poi is Crops) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.HARVEST_PLANT, poi, activeCharacter);
+            activeCharacter.jobQueue.AddJobInQueue(job);
+        } else {
+            Debug.LogWarning($"{poi.name} is not a crop!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Grid Tile Testing

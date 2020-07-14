@@ -25,9 +25,8 @@ public class CultistTransform : GoapAction {
         LocationGridTile gridTileLocation = character.gridTileLocation;
         character.SetDestroyMarkerOnDeath(true);
         character.Death(_deathLog: goapNode.descriptionLog);
-        Summon summon =
-            CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Abomination,
-                FactionManager.Instance.neutralFaction);
+        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Abomination, 
+            FactionManager.Instance.neutralFaction);
         summon.SetName(character.name);
         summon.CreateMarker();
         summon.InitialCharacterPlacement(gridTileLocation, true);

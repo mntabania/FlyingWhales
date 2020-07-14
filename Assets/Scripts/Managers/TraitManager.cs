@@ -239,10 +239,16 @@ public class TraitManager : MonoBehaviour {
         }
     }
     public void CopyStatuses(ITraitable from, ITraitable to) {
-        for (int i = 0; i < from.traitContainer.statuses.Count; i++) {
-            Status status = from.traitContainer.statuses[i];
+        List<Status> statuses = new List<Status>(from.traitContainer.statuses);
+        for (int i = 0; i < statuses.Count; i++) {
+            Status status = statuses[i];
             if (!to.traitContainer.HasTrait(status.name)) {
                 CopyTraitOrStatus(status, from, to);
+                if (status is AbominationGerm) {
+                    //if copied status is abomination germ, then remove that trait from the object it came from,
+                    //since it was transferred to the other object
+                    from.traitContainer.RemoveTrait(from, status);
+                }
             }
         }
     }

@@ -50,23 +50,16 @@ public class HarvestPlant : GoapAction {
 
     #region State Effects
     public void PreHarvestSuccess(ActualGoapNode goapNode) {
-        //EdiblePlant plant = goapNode.poiTarget as EdiblePlant;
-        //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(null, "50", LOG_IDENTIFIER.STRING_1);
-        //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterHarvestSuccess(ActualGoapNode goapNode) {
         IPointOfInterest poiTarget = goapNode.poiTarget;
-        //EdiblePlant plant = goapNode.poiTarget as EdiblePlant;
-        //goapNode.actor.AdjustSupply(ore.GetSupplyPerMine());
         if (poiTarget is Crops crop) {
             crop.SetGrowthState(Crops.Growth_State.Growing);
             
             List<LocationGridTile> choices = poiTarget.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true, includeImpassable: false);
             if (choices.Count > 0) {
-                FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.VEGETABLES);
-                foodPile.SetResourceInPile(50);
-                crop.gridTileLocation.structure.AddPOI(foodPile, CollectionUtilities.GetRandomElement(choices));    
+                CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, CollectionUtilities.GetRandomElement(choices));
             }
         }else {
             LocationGridTile tile = poiTarget.gridTileLocation;
@@ -76,15 +69,6 @@ public class HarvestPlant : GoapAction {
             foodPile.SetResourceInPile(50);
             tile.structure.AddPOI(foodPile, tile);
         }
-        
-
-        
-        // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
-    }
-    //public void PreTargetMissing(ActualGoapNode goapNode) {
-    //    goapNode.descriptionLog.AddToFillers(goapNode.actor.currentStructure.location, goapNode.actor.currentStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
-    public void AfterTargetMissing(ActualGoapNode goapNode) {
     }
     #endregion
 

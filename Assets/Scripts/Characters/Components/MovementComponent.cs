@@ -7,6 +7,7 @@ using Pathfinding;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class MovementComponent {
     public Character owner { get; private set; }
@@ -167,6 +168,10 @@ public class MovementComponent {
             //If digging is enabled, always return true, because the digging will handle the blocked path
             return true;
         }
+    }
+    public bool HasPathTo(HexTile toTile) {
+        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toTile.locationGridTiles);
+        return HasPathTo(targetTile);
     }
     public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;

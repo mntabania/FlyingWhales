@@ -66,6 +66,9 @@ public class BehaviourComponent {
     private readonly int _arsonCooldownPeriod;
     public List<HexTile> arsonVillageTarget { get; private set; }
     
+    //Abomination
+    public HexTile abominationTarget { get; private set; }
+    
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
 
@@ -404,8 +407,8 @@ public class BehaviourComponent {
                 return true;
             }
             
-            if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null) {
-                //if target is self or target is null, job is valid.
+            if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null || (goapPlanJob.targetPOI is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT)) {
+                //if target is self, target is null or target is an unbuilt tile object, job is valid.
                 return true;
             }
             return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation);
@@ -786,6 +789,18 @@ public class BehaviourComponent {
             //once arson starts fleeing, clear target village and start cooldown.
             SetArsonistVillageTarget(null);
             StartArsonistCooldown();
+        }
+    }
+    #endregion
+
+    #region Abomination
+    public void SetAbominationTarget(HexTile tile) {
+        abominationTarget = tile;
+        if (abominationTarget != null) {
+            //schedule it to be cleared after 5 hours
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+            SchedulingManager.Instance.AddEntry(dueDate, () => SetAbominationTarget(null), owner);
         }
     }
     #endregion

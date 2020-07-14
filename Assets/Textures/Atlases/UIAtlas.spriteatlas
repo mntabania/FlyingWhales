@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 7056099
+    totalSpriteSurfaceArea: 7069059
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -181,6 +181,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 896b9e64b8b9bf742a5398c84e545bb8, type: 3}
   - {fileID: 21300000, guid: 1b102574e7da9824e94ee38c58a70873, type: 3}
   - {fileID: 21300000, guid: ffea6c7456045d04593708f96b6426bd, type: 3}
+  - {fileID: 21300000, guid: 41d6d4941cbd8df42aa9bda6e90fae43, type: 3}
   - {fileID: 21300000, guid: f7ee7c945d0975e428753db44b1f9b00, type: 3}
   - {fileID: 21300000, guid: e56c49a4ba8bcc14eab66b241b334d43, type: 3}
   - {fileID: 21300000, guid: 7860c0b467a4d234eb6b0a78ba29bb45, type: 3}
@@ -261,6 +262,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e01f268796ea2a541aa719a287d06ec1, type: 3}
   - {fileID: 21300000, guid: 148a9c971172ed84a819d1c4d31b5fae, type: 3}
   - {fileID: 21300000, guid: b8f42da7ae8930d449c6b6e94e9642dc, type: 3}
+  - {fileID: 21300000, guid: bfac10c74e2686f49ac43b1b5e5396cf, type: 3}
   - {fileID: 21300000, guid: 7a103ac722a0a654ab82413b52f4e2b4, type: 3}
   - {fileID: 21300000, guid: 46b8cfc737d17154193cf793e2409bb5, type: 3}
   - {fileID: 21300000, guid: 40f495e7989feca46a68da06a4d488b8, type: 3}
@@ -395,6 +397,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9e6ac31dc22c6c74c87fa0351f9a63c3, type: 3}
   - {fileID: 21300000, guid: 62cc391ddf5e0c54b90366603efc2e32, type: 3}
   - {fileID: 21300000, guid: 4e72ca1dca662654c8f2748b29510203, type: 3}
+  - {fileID: 21300000, guid: 1f13213d95129204dacae33a6f588c54, type: 3}
   - {fileID: 21300000, guid: 4056713ddb1e4b94182250758aaf544a, type: 3}
   - {fileID: 21300000, guid: fc1f343d7f4b3b742a313e70faa55e61, type: 3}
   - {fileID: 21300000, guid: 18c0cd4d4155c0146a09c12bc894defa, type: 3}
@@ -467,6 +470,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 75da5defc5340a6438ce876a8abfc2ee, type: 3}
   - {fileID: 21300000, guid: 7a9533ffeedeb3443924db0e8be0bf6f, type: 3}
   - {fileID: 21300000, guid: b1f635ffb61a0dd42819f237385eaadb, type: 3}
+  - {fileID: 21300000, guid: 10af85ffde05ed64987c2f5abf99cc19, type: 3}
   - {fileID: 21300000, guid: f9c56cffd6570ee4aa91ddfe15f4831a, type: 3}
   m_PackedSpriteNamesToIndex:
   - assault_icon
@@ -600,6 +604,7 @@ SpriteAtlas:
   - Normal-Border-Gray
   - button_portal_disabled
   - button_psychopathdetail_clicked
+  - button_cultists_hover
   - Icon-Ravager3
   - button_portal_hover
   - minion_tab_traits_disabled
@@ -680,6 +685,7 @@ SpriteAtlas:
   - 2x_button_clicked
   - button_profane_default
   - button_interfere_clicked
+  - button_cultists_disabled
   - tab_default
   - button_psychopathdetail_hover
   - button_anvil_default
@@ -814,6 +820,7 @@ SpriteAtlas:
   - traveller_clicked
   - interaction_tab_unselected
   - location_ui_visitors_icon
+  - button_cultists_clicked
   - AddButton
   - BgOverlay
   - button_invade_disabled
@@ -886,6 +893,7 @@ SpriteAtlas:
   - portrait_container_slot_invalid
   - world_button_default
   - button_switch_default
+  - button_cultists_default
   - quest_fail_mark
   m_Tag: UIAtlas
   m_IsVariant: 0
