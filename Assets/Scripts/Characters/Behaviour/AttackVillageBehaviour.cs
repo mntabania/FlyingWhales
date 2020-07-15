@@ -45,7 +45,19 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                     character.behaviourComponent.RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
                 }
             } else {
-                character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                if(character.behaviourComponent.attackHexTarget != null) {
+                    Character chosenTarget = character.behaviourComponent.attackHexTarget.GetRandomAliveResidentInsideHex<Character>();
+                    if(chosenTarget != null) {
+                        log += "\n-Will attack combatant resident: " + chosenTarget.name;
+                        character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
+                    } else {
+                        log += "\n-No resident found in settlement, remove behaviour";
+                        character.behaviourComponent.SetAttackVillageTarget(null);
+                        character.behaviourComponent.RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
+                    }
+                } else {
+                    character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                }
             }
         } else {
             log += "\n-Is not in the target npcSettlement";

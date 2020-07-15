@@ -269,6 +269,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GameObject visualGO => marker.gameObject;
     public Character characterOwner => null;
     public bool isSettlementRuler => ruledSettlement != null;
+    public BaseSettlement targetSettlement => currentStructure.settlementLocation;
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
@@ -5193,6 +5194,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return territorries.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
         }
         return false;
+    }
+    public bool IsTerritory(HexTile hex) {
+        return territorries.Contains(hex);
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;

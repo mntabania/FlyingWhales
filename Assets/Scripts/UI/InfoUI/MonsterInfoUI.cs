@@ -342,6 +342,7 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nAttack Speed: " + activeMonster.combatComponent.attackSpeed)}";
         summary = $"{summary}{("\nCombat Mode: " + activeMonster.combatComponent.combatMode.ToString())}";
         summary = $"{summary}{("\nElemental Type: " + activeMonster.combatComponent.elementalDamage.name)}";
+        summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName + ": " + (activeMonster.partyComponent.currentParty.IsLeader(activeMonster) ? "Leader" : "Member (Leader: " + activeMonster.partyComponent.currentParty.leader.name + ")") : "None"))}";
 
         if (activeMonster.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeMonster.stateComponent.currentState}";

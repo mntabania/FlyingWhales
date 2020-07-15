@@ -91,27 +91,27 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Not enough skeleton followers, will try to create more";
                     bool hasCreated = false;
                     if (character.necromancerTrait.energy > 0) {
-                        hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
+                        //hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
+                        if (character.necromancerTrait.lifeAbsorbed <= 0) {
+                            log += $"\n-Life absorbed is none, will try to absorb life";
+                            character.jobComponent.TriggerAbsorbLife(out producedJob);
+                        } else {
+                            log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
+                            if (UnityEngine.Random.Range(0, 100) < 10) {
+                                log += $"\n-Absorb life";
+                                character.jobComponent.TriggerAbsorbLife(out producedJob);
+                            } else {
+                                log += $"\n-Spawn skeleton";
+                                //Create Skeleton
+                                hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
+                            }
+                        }
                     } else {
                         hasCreated = character.jobComponent.TriggerRegainEnergy(out producedJob);
                     }
                     if (!hasCreated) {
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);
                     }
-                    //if (character.necromancerTrait.lifeAbsorbed <= 0) {
-                    //    log += $"\n-Life absorbed is none, will try to absorb life";
-                    //    character.jobComponent.TriggerAbsorbLife();
-                    //} else {
-                    //    log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
-                    //    if (UnityEngine.Random.Range(0, 100) < 10) {
-                    //        log += $"\n-Absorb life";
-                    //        character.jobComponent.TriggerAbsorbLife();
-                    //    } else {
-                    //        log += $"\n-Spawn skeleton";
-                    //        //Create Skeleton
-                    //        character.jobComponent.TriggerSpawnSkeleton();
-                    //    }
-                    //}
                 }
             } else {
                 log += $"\n-It is not Early Night, Late Night, or After Midnight";

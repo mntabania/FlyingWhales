@@ -499,6 +499,7 @@ public enum INTERACTION_TYPE {
     EXTERMINATE,
     RESCUE,
     COUNTERATTACK_ACTION,
+    MONSTER_INVADE,
 }
 public enum INTERRUPT {
     None,
@@ -841,7 +842,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
-        , ROAM_AROUND_STRUCTURE
+        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
@@ -1026,7 +1027,7 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, }
+public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, }
 public enum COMBAT_REACTION { None, Fight, Flight }
 
 #region Crime Subcategories
@@ -1481,6 +1482,7 @@ public static class Extensions {
             case JOB_TYPE.EXPLORE:
             case JOB_TYPE.EXTERMINATE:
             case JOB_TYPE.RESCUE:
+            case JOB_TYPE.MONSTER_INVADE:
                 priority = 900;
                 break;
             case JOB_TYPE.RESTRAIN:

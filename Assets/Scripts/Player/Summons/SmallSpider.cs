@@ -8,7 +8,9 @@ public class SmallSpider : Summon {
     public const string ClassName = "Small Spider";
     
     public override string raceClassName => $"Small Spider";
-    
+
+    public override SUMMON_TYPE adultSummonType => SUMMON_TYPE.Giant_Spider;
+
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
