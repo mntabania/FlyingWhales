@@ -1683,6 +1683,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
+    public void TriggerAbsorbLife(out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+            GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, _owner, _owner);
+            producedJob = job;
+        }
+    }
     public void TriggerAbsorbLife(IPointOfInterest target) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, _owner);
@@ -2096,6 +2104,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
             return true;
         }
+        return false;
+    }
+    public bool TriggerMonsterInvadeJob(LocationStructure targetStructure, out JobQueueItem producedJob) {
+        if (!_owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.MONSTER_INVADE], _owner, _owner, new object[] { targetStructure }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_INVADE, INTERACTION_TYPE.MONSTER_INVADE, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    public bool TriggerMonsterInvadeJob(HexTile targetHex, out JobQueueItem producedJob) {
+        if (!_owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.MONSTER_INVADE], _owner, _owner, new object[] { targetHex }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_INVADE, INTERACTION_TYPE.MONSTER_INVADE, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
         return false;
     }
     #endregion

@@ -46,7 +46,8 @@ public class LayEgg : GoapAction {
             if(summon.gridTileLocation != null && summon.gridTileLocation.objHere == null) {
                 TILE_OBJECT_TYPE eggType = CharacterManager.Instance.GetEggType(summon.summonType);
                 if(eggType != TILE_OBJECT_TYPE.NONE) {
-                    TileObject egg = InnerMapManager.Instance.CreateNewTileObject<TileObject>(eggType);
+                    MonsterEgg egg = InnerMapManager.Instance.CreateNewTileObject<MonsterEgg>(eggType);
+                    egg.SetCharacterThatLay(summon);
                     summon.gridTileLocation.structure.AddPOI(egg, summon.gridTileLocation);
                     summon.behaviourComponent.SetHasLayedAnEgg(true);
                 }

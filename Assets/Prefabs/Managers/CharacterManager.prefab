@@ -126,6 +126,35 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+  - raceName: ANGEL
+    race: 32
+    neutralAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   - raceName: CHICKEN
     race: 26
     neutralAssets:
@@ -1437,6 +1466,7 @@ MonoBehaviour:
       characterClassAssets:
         m_keys:
         - Ghost
+        - Vengeful Ghost
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 73b300d1a236b024db515b3f4adb5357,
             type: 3}
@@ -1444,6 +1474,12 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 7aef4be6078a0cd4ab0ae6203e31dfae, type: 3}
           - {fileID: 21300000, guid: 73b300d1a236b024db515b3f4adb5357, type: 3}
           - {fileID: 21300000, guid: 206b39fed6b572142bac6c29ae6d9a57, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 8c0dc3499fbb32e4e93f147f6dacbb29,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 48f47e8517da0eb4899e2e6525ae73e0, type: 3}
+          - {fileID: 21300000, guid: 8c0dc3499fbb32e4e93f147f6dacbb29, type: 3}
+          - {fileID: 21300000, guid: a8dd7b341b3f4054db66c956cce3807d, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

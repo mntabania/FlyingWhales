@@ -11,7 +11,7 @@ public class AttackDemonicStructure : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL;
         doesNotStopTargetCharacter = true;
 		advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.ANGEL };
+		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.ANGEL, RACE.GHOST };
 	}
 
 	#region Overrides

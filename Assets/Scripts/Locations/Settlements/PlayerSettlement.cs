@@ -1,5 +1,8 @@
-﻿using Inner_Maps.Location_Structures;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps.Location_Structures;
+
 namespace Locations.Settlements {
     public class PlayerSettlement : BaseSettlement{
         
@@ -40,6 +43,21 @@ namespace Locations.Settlements {
             return false; //resident capacity is never full for player npcSettlement
         }
         #endregion
-        
+
+        public LocationStructure GetRandomStructureInRegion(Region region) {
+            List<LocationStructure> structuresInRegion = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if(structure.location == region) {
+                    if(structuresInRegion == null) { structuresInRegion = new List<LocationStructure>(); }
+                    structuresInRegion.Add(structure);
+                }
+            }
+            if(structuresInRegion != null) {
+                return UtilityScripts.CollectionUtilities.GetRandomElement(structuresInRegion);
+            }
+            return null;
+        }
+
     }
 }

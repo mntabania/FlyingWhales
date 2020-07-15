@@ -21,6 +21,9 @@ public class SeizeObjectData : PlayerAction {
     public override bool CanPerformAbilityTowards(TileObject targetTileObject) {
         bool canPerform = base.CanPerformAbilityTowards(targetTileObject);
         if (canPerform) {
+            if(targetTileObject is AnkhOfAnubis ankh && ankh.isActivated) {
+                return false;
+            }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && targetTileObject.mapVisual != null && 
                    (targetTileObject.isBeingCarriedBy != null || targetTileObject.gridTileLocation != null);
         }

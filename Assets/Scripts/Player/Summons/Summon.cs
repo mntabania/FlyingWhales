@@ -12,6 +12,8 @@ public class Summon : Character {
 	public SUMMON_TYPE summonType { get; }
     private bool showNotificationOnDeath { get; set; }
 
+    public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
+
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         showNotificationOnDeath = true;

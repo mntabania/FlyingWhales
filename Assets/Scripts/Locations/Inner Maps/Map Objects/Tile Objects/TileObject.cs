@@ -397,6 +397,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_POI, this as IPointOfInterest, 5);
     }
     public virtual void OnTileObjectAddedToInventoryOf(Character inventoryOwner) { }
+    public virtual void OnTileObjectDroppedBy(Character inventoryOwner, LocationGridTile tile) { }
     #endregion
 
     #region IPointOfInterest

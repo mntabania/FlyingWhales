@@ -55,6 +55,8 @@ public class CombatManager : MonoBehaviour {
             FireElementProcess(target);
         } else if (elementalType == ELEMENTAL_TYPE.Water) {
             WaterElementProcess(target);
+        } else if (elementalType == ELEMENTAL_TYPE.Electric) {
+            ElectricElementProcess(target);
         }
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
@@ -312,6 +314,11 @@ public class CombatManager : MonoBehaviour {
     private void WaterElementProcess(ITraitable target) {
         if (target is DesertRose desertRose) {
             desertRose.DesertRoseEffect();
+        }
+    }
+    private void ElectricElementProcess(ITraitable target) {
+        if (target.traitContainer.HasTrait("Hibernating")) {
+            target.traitContainer.RemoveTrait(target, "Hibernating");
         }
     }
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {

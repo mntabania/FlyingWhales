@@ -591,6 +591,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.COUNTERATTACK_ACTION, new[]{
             new StateNameAndDuration(){ name = "Counter Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.MONSTER_INVADE, new[]{
+            new StateNameAndDuration(){ name = "Invade Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

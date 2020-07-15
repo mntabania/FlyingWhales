@@ -5,7 +5,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements {
-    public class BaseSettlement {
+    public class BaseSettlement : IPartyTarget {
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
         public string name { get; private set; }
@@ -16,7 +16,12 @@ namespace Locations.Settlements {
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
-        
+
+        #region getters
+        public LocationStructure currentStructure => null;
+        public BaseSettlement targetSettlement => this;
+        #endregion
+
         protected BaseSettlement(LOCATION_TYPE locationType) {
             id = UtilityScripts.Utilities.SetID(this);
             SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));

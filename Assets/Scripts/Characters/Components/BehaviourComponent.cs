@@ -401,7 +401,7 @@ public class BehaviourComponent {
                     return character.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
                 }
             } else if (goapPlanJob.jobType == JOB_TYPE.RESCUE || goapPlanJob.jobType == JOB_TYPE.EXTERMINATE ||
-                       goapPlanJob.jobType == JOB_TYPE.EXPLORE) {
+                       goapPlanJob.jobType == JOB_TYPE.EXPLORE || goapPlanJob.jobType == JOB_TYPE.COUNTERATTACK || goapPlanJob.jobType == JOB_TYPE.MONSTER_INVADE) {
                 //if job allows digging do not check pathfinding, always allow it.
                 //TODO: Add some way to unify this checking instead of using JOB_TYPEs
                 return true;

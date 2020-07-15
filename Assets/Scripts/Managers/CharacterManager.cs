@@ -38,7 +38,10 @@ public class CharacterManager : MonoBehaviour {
         Abductor_Behaviour = "Abductor Behaviour",
         Arsonist_Behaviour = "Arsonist Behaviour",
         Abomination_Behaviour = "Abomination Behaviour",
-        Small_Spider_Behaviour = "Small Spider Behaviour";
+        Small_Spider_Behaviour = "Small Spider Behaviour",
+        Golem_Behaviour = "Golem Behaviour",
+        Baby_Infestor_Behaviour = "Baby Infestor Behaviour",
+        Vengeful_Ghost_Behaviour = "Vengeful Ghost Behaviour";
 
     public const int MAX_HISTORY_LOGS = 300;
 
@@ -220,6 +223,20 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(SmallSpiderBehaviour),
                 typeof(MovementProcessing),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Golem_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(GolemBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Vengeful_Ghost_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(VengefulGhostBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
