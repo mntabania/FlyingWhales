@@ -85,7 +85,7 @@ public class CharacterClassManager : MonoBehaviour {
             //}
             //identifierClasses["All"].Add(currentClass);
 
-            if (currentClass.IsCombatant() && currentClass.identifier == "Normal") {
+            if (currentClass.IsCombatant() && currentClass.identifier == "Normal" && currentClass.className != "Hero") { //TODO: Change checking of Hero, cannot change identifier since hero might be expected to join parties.
                 normalCombatantClasses.Add(currentClass);
             }
         }
