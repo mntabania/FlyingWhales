@@ -20,10 +20,10 @@ public class VengefulGhostBehaviour : CharacterBehaviourComponent {
                     summon.AddTerritory(hex);
                 }
                 if (!summon.behaviourComponent.isAttackingDemonicStructure) {
-                    log += $"\n-5% chance to attack a demonic structure";
+                    log += $"\n-15% chance to attack a demonic structure";
                     int rollAttackDemonicStructure = UnityEngine.Random.Range(0, 100);
                     log += $"\n-Roll: " + rollAttackDemonicStructure;
-                    if (rollAttackDemonicStructure < 5) {
+                    if (rollAttackDemonicStructure < 15) {
                         LocationStructure targetStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructureInRegion(summon.currentRegion);
                         if(targetStructure != null) {
                             log += $"\n-Chosen target structure: " + targetStructure.name;
@@ -35,10 +35,10 @@ public class VengefulGhostBehaviour : CharacterBehaviourComponent {
                     }
                 }
 
-                log += $"\n-10% chance to a character of the player faction";
+                log += $"\n-20% chance to a character of the player faction";
                 int rollAttackMinion = UnityEngine.Random.Range(0, 100);
                 log += $"\n-Roll: " + rollAttackMinion;
-                if(rollAttackMinion < 10) {
+                if(rollAttackMinion < 20) {
                     Character targetCharacter = summon.currentRegion.GetRandomCharacterWithPathAndFaction(summon);
                     if (targetCharacter != null) {
                         log += $"\n-Chosen target character: " + targetCharacter.name;
