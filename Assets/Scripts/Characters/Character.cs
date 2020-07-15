@@ -3237,7 +3237,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void DropItem(TileObject item, LocationGridTile gridTile = null) {
+    public bool DropItem(TileObject item, LocationGridTile gridTile = null) {
         if (UnobtainItem(item)) {
             //if (item.specialTokenType.CreatesObjectWhenDropped()) {
             //    structure.AddItem(item, gridTile);
@@ -3256,43 +3256,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 logComponent.PrintLogErrorIfActive(
                     $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
             }
+            item.OnTileObjectDroppedBy(this, targetTile);
+            return true;
         }
+        return false;
     }
     public void DropAllItems(LocationGridTile tile) { //, bool removeFactionOwner = false
-        List<TileObject> itemsToDrop = new List<TileObject>(items);
-        for (int i = 0; i < itemsToDrop.Count; i++) {
-            TileObject item = itemsToDrop[i];
-            if (UnobtainItem(item)) {
-                LocationGridTile targetTile = tile;
-                if (targetTile == null || targetTile.objHere != null) {
-                    targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
-                }
-                if (targetTile != null) {
-                    targetTile.structure.AddPOI(item, targetTile);
-                } else {
-                    //items dropped on death that have no place to go will be discarded  
-                    Debug.LogWarning($"{name} wants to drop {item.name} but no unoccupied tile is available. Item will be discarded.");
-                }
+        for (int i = 0; i < items.Count; i++) {
+            TileObject item = items[i];
+            if (DropItem(item)) {
+                i--;
             }
         }
-        // while (isHoldingItem) {
-        //     TileObject item = items[0];
-        //     if (UnobtainItem(item)) {
-        //         // if (removeFactionOwner) {
-        //         //     item.SetFactionOwner(null);
-        //         // }
-        //         LocationGridTile targetTile = tile;
-        //         if (targetTile == null || targetTile.objHere != null) {
-        //             targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
-        //         }
-        //         if (targetTile != null) {
-        //             targetTile.structure.AddPOI(item, targetTile);
-        //         } else {
-        //             //items dropped on death that have no place to go will be discarded  
-        //             break;
-        //         }
-        //     }
-        // }
     }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         item.isBeingCarriedBy?.UnobtainItem(item);
@@ -5370,15 +5345,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             behaviourComponent.OnDeath();
             CancelAllJobs();
 
-            if (currentSettlement != null && isHoldingItem) {
-                DropAllItems(deathTile);
-            } else {
-                for (int i = 0; i < items.Count; i++) {
-                    if (RemoveItem(i)) {
-                        i--;
-                    }
-                }
-            }
+            DropAllItems(deathTile);
+
+            //if (currentSettlement != null && isHoldingItem) {
+            //    DropAllItems(deathTile);
+            //} else {
+            //    for (int i = 0; i < items.Count; i++) {
+            //        if (RemoveItem(i)) {
+            //            i--;
+            //        }
+            //    }
+            //}
             //if (currentRegion == null) {
             //    if (currentArea != null && isHoldingItem) {
             //        DropAllTokens(currentArea, currentStructure, deathTile, true);

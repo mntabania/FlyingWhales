@@ -523,6 +523,20 @@ public class Region {
         }
         return validCharacters;
     }
+    public Character GetRandomCharacterWithPathAndFaction(Character source) {
+        List<Character> validCharacters = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
+            if (source != character && source.movementComponent.HasPathTo(character.gridTileLocation) && !character.isDead && character.faction == source.faction) {
+                if (validCharacters == null) { validCharacters = new List<Character>(); }
+                validCharacters.Add(character);
+            }
+        }
+        if(validCharacters != null) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        return null;
+    }
     #endregion
 
     #region Faction

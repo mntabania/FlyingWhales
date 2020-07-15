@@ -25,5 +25,11 @@ public class ActivateData : PlayerAction {
         }
         return canPerform;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(target is AnkhOfAnubis) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }
