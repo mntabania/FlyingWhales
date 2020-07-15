@@ -710,10 +710,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddItemAsInteresting(_characterClass.interestedItemNames);    
         }
         visuals.UpdateAllVisuals(this);
-        if (minion != null) {
-            minion.SetAssignedDeadlySinName(_characterClass.className);
-        }
+        minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
+        if (_characterClass.className == "Hero") {
+            //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
+            traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_hero");
+            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToInvolvedObjects();
+            traitContainer.AddTrait(this, "Blessed");
+        }
     }
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
@@ -2437,25 +2443,30 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetHP(int amount) {
         currentHP = amount;
     }
-    //Adjust current HP based on specified paramater, but HP must not go below 0
+    //Adjust current HP based on specified parameter, but HP must not go below 0
     public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
         
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
-        int previous = currentHP;
-        currentHP += amount;
-        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount, source);
-        if (marker && showHPBar) {
-            if (marker.hpBarGO.activeSelf) {
-                marker.UpdateHP(this);
-            } else {
-                if (amount < 0 && currentHP > 0) {
-                    //only show hp bar if hp was reduced and hp is greater than 0
-                    marker.QuickShowHPBar(this);
+        
+        if ((amount < 0  && CanBeDamaged()) || amount > 0) {
+            //only added checking here because even if objects cannot be damaged,
+            //they should still be able to react to the elements
+            currentHP += amount;
+            currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+            Messenger.Broadcast(Signals.CHARACTER_ADJUSTED_HP, this, amount, source);
+            if (marker && showHPBar) {
+                if (marker.hpBarGO.activeSelf) {
+                    marker.UpdateHP(this);
+                } else {
+                    if (amount < 0 && currentHP > 0) {
+                        //only show hp bar if hp was reduced and hp is greater than 0
+                        marker.QuickShowHPBar(this);
+                    }
                 }
             }
         }
+        
         if (amount < 0) {
             //hp was reduced
             jobComponent.OnHPReduced();
@@ -5015,7 +5026,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region IDamageable
     public bool CanBeDamaged() {
-        return true;
+        return traitContainer.HasTrait("Indestructible") == false;
     }
     #endregion
 

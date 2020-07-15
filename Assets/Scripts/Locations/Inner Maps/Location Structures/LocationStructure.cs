@@ -257,15 +257,13 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Points Of Interest
-        public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
+        public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
             if (!pointsOfInterest.Contains(poi)) {
                 pointsOfInterest.Add(poi);
-                if (placeObject) {
-                    if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
-                            pointsOfInterest.Remove(poi);
-                            return false;
-                        }
+                if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    if (!PlaceAreaObjectAtAppropriateTile(poi, tileLocation)) {
+                        pointsOfInterest.Remove(poi);
+                        return false;
                     }
                 }
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {

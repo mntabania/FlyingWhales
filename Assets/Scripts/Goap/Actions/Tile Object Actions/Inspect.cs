@@ -40,11 +40,10 @@ public class Inspect : GoapAction {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterInspectSuccess(ActualGoapNode goapNode) {
-        if (goapNode.poiTarget is TileObject) {
-            TileObject to = goapNode.poiTarget as TileObject;
+        if (goapNode.poiTarget is TileObject to) {
             goapNode.actor.defaultCharacterTrait.AddAlreadyInspectedObject(to);
+            to.OnInspect(goapNode.actor);
         }
-        (goapNode.poiTarget as TileObject).OnInspect(goapNode.actor);
     }
     //public void PreTargetMissing(ActualGoapNode goapNode) {
     //    goapNode.descriptionLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

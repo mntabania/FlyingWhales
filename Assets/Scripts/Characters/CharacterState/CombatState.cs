@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using Inner_Maps;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using UtilityScripts;
 
 public class CombatState : CharacterState {
 
@@ -25,6 +26,10 @@ public class CombatState : CharacterState {
     public bool isBeingApprehended { get; private set; }
     private int fleeChance;
     private bool isFleeToHome;
+    /// <summary>
+    /// The number of times this character has hit his/her current target
+    /// </summary>
+    private int _timesHitCurrentTarget;
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -579,6 +584,7 @@ public class CombatState : CharacterState {
         currentClosestHostile = newClosestHostile;
         //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
+            _timesHitCurrentTarget = 0;
             CreateNewCombatTargetLog();
         }
     }
@@ -589,6 +595,7 @@ public class CombatState : CharacterState {
         currentClosestHostile = newClosestHostile;
         //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
+            _timesHitCurrentTarget = 0;
             CreateNewCombatTargetLog();
         }
     }
@@ -598,6 +605,7 @@ public class CombatState : CharacterState {
         currentClosestHostile = poi;
         //StopPursueTimer(); //stop pursue timer, any time target changes. This is so that pursue timer is reset when target changes
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
+            _timesHitCurrentTarget = 0;
             CreateNewCombatTargetLog();
         }
     }
@@ -726,7 +734,6 @@ public class CombatState : CharacterState {
             
             damageable.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
 
-            //If the hostile reaches 0 hp, evaluate if he/she dies, get knock out, or get injured
             if (damageable.currentHP > 0) {
                 attackSummary += $"\n{damageable.name} still has remaining hp {damageable.currentHP.ToString()}/{damageable.maxHP.ToString()}";
                 if (damageable is Character hitCharacter) {
@@ -748,6 +755,18 @@ public class CombatState : CharacterState {
                         }
                     }
                 }
+            }
+
+            if (damageable == currentClosestHostile) {
+                //if object cannot be damaged then 10% * X chance to trigger flight response towards target
+                //Where X is number of times this character has hit that object
+                if (damageable.CanBeDamaged() == false) {
+                    int chance = 10 * _timesHitCurrentTarget;
+                    if (GameUtilities.RollChance(chance)) {
+                        stateComponent.character.combatComponent.Flight(currentClosestHostile, "got scared");
+                    }
+                }
+                _timesHitCurrentTarget++;
             }
         }
         

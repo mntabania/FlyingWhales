@@ -39,17 +39,6 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            // if (targetPOI is TileObject tileObj) {
-            //     if ((tileObj.isSummonedByPlayer || tileObj.lastManipulatedBy is Player) 
-            //         && !characterThatWillDoJob.traitContainer.HasTrait("Suspicious") 
-            //         && !alreadyInspectedTileObjects.Contains(tileObj)) {
-            //         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
-            //             GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
-            //             characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
-            //             return true;
-            //         }
-            //     }
-            // }
             if (targetPOI is TileObject item) {
                 if (item is TreasureChest) {
                     if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.OPEN_CHEST, item) == false 
@@ -63,6 +52,10 @@ namespace Traits {
                     if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, item) == false) {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.TriggerDestroy(item);
+                    }
+                } else if (item is Excalibur excalibur && excalibur.lockedState == Excalibur.Locked_State.Locked && characterThatWillDoJob.isNormalCharacter) {
+                    if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) == false) {
+                        characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))) {
                     if ((characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority()) 

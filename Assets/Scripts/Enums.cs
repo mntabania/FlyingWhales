@@ -809,6 +809,7 @@ public enum TILE_OBJECT_TYPE {
     SPIDER_EGG = 149,
     REPTILE_EGG = 150,
     GOOSE_EGG = 151,
+    EXCALIBUR = 152,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1352,6 +1353,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL:
             case TILE_OBJECT_TYPE.ICE_CRYSTAL:
             case TILE_OBJECT_TYPE.ICE:
+            case TILE_OBJECT_TYPE.EXCALIBUR:
                 return true;
             default:
                 return false;
@@ -1361,6 +1363,7 @@ public static class Extensions {
         switch (tileObjectType) {
             case TILE_OBJECT_TYPE.TOMBSTONE:
             case TILE_OBJECT_TYPE.TREASURE_CHEST:
+            case TILE_OBJECT_TYPE.EXCALIBUR:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -1539,6 +1542,7 @@ public static class Extensions {
                 priority = 520;
                 break;
             case JOB_TYPE.TAKE_ITEM:
+            case JOB_TYPE.INSPECT:
                 priority = 510;
                 break;
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:

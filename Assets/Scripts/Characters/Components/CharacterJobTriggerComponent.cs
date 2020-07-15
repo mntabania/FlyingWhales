@@ -2150,4 +2150,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     #endregion
+
+    public void TriggerInspect(TileObject item) {
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, item, _owner);
+	    //create predetermined plan
+	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.INSPECT],
+		    _owner, item, null, 0);
+	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, item);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    _owner.jobQueue.AddJobInQueue(job);
+    }
 }

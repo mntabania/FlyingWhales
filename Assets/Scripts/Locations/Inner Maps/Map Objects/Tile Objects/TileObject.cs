@@ -413,23 +413,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
         }
     }
-    public void SetIsSummonedByPlayer(bool state) {
-        if(isSummonedByPlayer != state) {
-            isSummonedByPlayer = state;
-            if (isSummonedByPlayer) {
-                if(advertisedActions == null) {
-                    advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-                }
-                if (!advertisedActions.Contains(INTERACTION_TYPE.INSPECT)) {
-                    advertisedActions.Add(INTERACTION_TYPE.INSPECT);
-                }
-            } else {
-                if (advertisedActions != null) {
-                    advertisedActions.Remove(INTERACTION_TYPE.INSPECT);
-                }
-            }
-        }
-    }
     public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
         if (advertisedActions == null) {
             advertisedActions = new List<INTERACTION_TYPE>(); //{ INTERACTION_TYPE.ASSAULT }
@@ -481,7 +464,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP == 0 && amount < 0) { return; } //hp is already at minimum, do not allow any more negative adjustments
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
 
-        if (CanBeDamaged()) {
+        if ((amount < 0  && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
             if (amount < 0 &&  Mathf.Abs(amount) > currentHP) {
@@ -615,9 +598,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region GOAP
-    private void ConstructInitialGoapAdvertisements() {
-        advertisedActions.Add(INTERACTION_TYPE.INSPECT);
-    }
     /// <summary>
     /// Does this tile object advertise a given action type.
     /// </summary>
@@ -803,7 +783,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     //     isBeingCarriedBy = carrier;
     // }
     public virtual bool CanBeDamaged() {
-        return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
+        return mapObjectState != MAP_OBJECT_STATE.UNBUILT && traitContainer.HasTrait("Indestructible") == false;
     }
     private void OccupyTiles(Point size, LocationGridTile tile) {
         List<LocationGridTile> overlappedTiles = tile.parentMap.GetTiles(size, tile);
@@ -833,6 +813,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     // public void SetFactionOwner(Faction factionOwner) {
     //     this.factionOwner = factionOwner;
     // }
+    /// <summary>
+    /// Set which character officially owns this item.
+    /// </summary>
+    /// <param name="characterOwner">The character that should own this item.</param>
     public virtual void SetCharacterOwner(Character characterOwner) {
         if(this.characterOwner != characterOwner) {
             Character prevOwner = this.characterOwner;
@@ -847,9 +831,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 AddAdvertisedAction(INTERACTION_TYPE.STEAL);
             }
         }
-
     }
-    public void SetInventoryOwner(Character character) {
+    /// <summary>
+    /// Set who currently has this item.
+    /// This can be any character, and is not limited to just the owner of this object (i.e. if the object was stolen)
+    /// </summary>
+    /// <param name="character"></param>
+    public virtual void SetInventoryOwner(Character character) {
         Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
         this.isBeingCarriedBy = character;
     }

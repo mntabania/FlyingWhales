@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 129c2b5e0c8f0e14d9fb8b1c30296b6d, type: 3}
-    totalSpriteSurfaceArea: 3513493
+    totalSpriteSurfaceArea: 3521685
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -171,6 +171,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ae40eb92eb4f1ec429a90d1bec4f48c8, type: 3}
   - {fileID: 21300000, guid: e4afae924d3638a48929ce4ed9c475c8, type: 3}
   - {fileID: 21300000, guid: e94b30a2fd325964bbf14fe81b0cd71f, type: 3}
+  - {fileID: 21300000, guid: c233aaa27c266f343bf402fffa75e4bd, type: 3}
   - {fileID: 21300000, guid: 41dd6ea24235fe24d905aa79a806c686, type: 3}
   - {fileID: 21300000, guid: f3185fa2e33216241acb54207d287713, type: 3}
   - {fileID: 21300000, guid: 9cafbfa29aebf7d4fb097d4a39120ee0, type: 3}
@@ -205,6 +206,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 22ebd6437bc8c3c49bac6c2fa1654004, type: 3}
   - {fileID: 21300000, guid: 21026743ceb7c414fa9dab72a7a5cf0c, type: 3}
   - {fileID: 21300000, guid: fc098a437ccd49b47a7582f9279fbaf1, type: 3}
+  - {fileID: 21300000, guid: 43b5f153583a4a542adf06f2b89a3fb3, type: 3}
   - {fileID: 21300000, guid: 861a88531e5d1264b8f809ccfa1ee965, type: 3}
   - {fileID: 21300000, guid: 433ec56307549ad42bdfab0084104ce8, type: 3}
   - {fileID: 21300000, guid: 11906c63aaedadb42843a1861b2d282b, type: 3}
@@ -919,6 +921,7 @@ SpriteAtlas:
   - water_crystal
   - demonRackEmpty00
   - PLANT#3
+  - excalibur2
   - BRAZIER#1_LIT
   - shore11110101-00
   - floorStone00
@@ -953,6 +956,7 @@ SpriteAtlas:
   - demonManaRunes02
   - humanMeat
   - cobblestone_h00
+  - excalibur
   - demonBarsVertical01
   - desertRocks03
   - winter_rose
