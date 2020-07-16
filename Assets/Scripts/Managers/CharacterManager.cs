@@ -1171,7 +1171,10 @@ public class CharacterManager : MonoBehaviour {
     }
     public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status, ActualGoapNode action = null) {
         if (emoter.isNormalCharacter) {
-            return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";
+            if (emoter.CanFeelEmotion(emotionType)) {
+                return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";    
+            }
+            return string.Empty;
         } else {
             //Non villager characters cannot feel emotion
             return string.Empty;

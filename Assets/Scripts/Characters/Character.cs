@@ -5530,4 +5530,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         avatar.Init(this);
     }
     #endregion
+
+    #region Emotions
+    public bool CanFeelEmotion(EMOTION emotion) {
+        switch (emotion) {
+            case EMOTION.Anger:
+            case EMOTION.Rage:
+                return characterClass.className != "Hero";
+            default:
+                return true;
+        }
+    }
+    #endregion
 }
