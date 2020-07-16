@@ -212,7 +212,7 @@ public class TraitManager : MonoBehaviour {
             //In the loop, override duration to zero so that it will not reset the trait's timer
             Trait duplicateTrait = null;
             for (int i = 0; i < numOfStacks; i++) {
-                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0);
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0, bypassElementalChance: true);
             }
             if(duplicateTrait != null) {
                 //Copy the trait's responsible characters and gainedFromDoing

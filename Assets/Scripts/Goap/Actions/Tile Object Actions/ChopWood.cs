@@ -48,24 +48,22 @@ public class ChopWood : GoapAction {
         goapNode.descriptionLog.AddToFillers(null, tree.yield.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
+    public void PerTickChopSuccess(ActualGoapNode goapNode) {
+        TreeObject tree = goapNode.poiTarget as TreeObject;
+        tree.AdjustHP(-1, ELEMENTAL_TYPE.Normal);
+    }
+    
     public void AfterChopSuccess(ActualGoapNode goapNode) {
         TreeObject tree = goapNode.poiTarget as TreeObject;
-        //goapNode.actor.AdjustSupply(tree.GetSupplyPerMine());
-        int wood = tree.yield;
         LocationGridTile tile = tree.gridTileLocation;
+        int wood = tree.yield;
         tree.AdjustYield(-wood);
 
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         woodPile.SetResourceInPile(wood);
         tile.structure.AddPOI(woodPile, tile);
-        // woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
+        
     }
-    //public void PreTargetMissing(ActualGoapNode goapNode) {
-    //    goapNode.descriptionLog.AddToFillers(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
-    //public void AfterTargetMissing(ActualGoapNode goapNode) {
-    //    actor.RemoveAwareness(poiTarget);
-    //}
     #endregion
 }
 
