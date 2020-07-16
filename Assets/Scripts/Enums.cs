@@ -810,6 +810,8 @@ public enum TILE_OBJECT_TYPE {
     REPTILE_EGG = 150,
     GOOSE_EGG = 151,
     EXCALIBUR = 152,
+    PLINTH = 153,
+    SARCOPHAGUS = 154,
 }
 public enum POI_STATE {
     ACTIVE,

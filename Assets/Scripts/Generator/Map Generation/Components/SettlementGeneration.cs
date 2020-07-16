@@ -98,7 +98,6 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private WeightedDictionary<STRUCTURE_TYPE> GetStructureWeights(HexTile tile, List<STRUCTURE_TYPE> structureTypes, Faction faction) {
 		WeightedDictionary<STRUCTURE_TYPE> structureWeights = new WeightedDictionary<STRUCTURE_TYPE>();
-
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.APOTHECARY) == false) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
@@ -112,6 +111,10 @@ public class SettlementGeneration : MapGenerationComponent {
 			if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
 				structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD,
 					structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD) == false ? 15 : 2);
+			}
+			if (structureTypes.Contains(STRUCTURE_TYPE.CEMETERY) == false) {
+				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
+				structureWeights.AddElement(STRUCTURE_TYPE.CEMETERY, 2);
 			}
 		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
@@ -138,6 +141,10 @@ public class SettlementGeneration : MapGenerationComponent {
 			if (tile.HasNeighbourWithFeature(TileFeatureDB.Game_Feature)) {
 				structureWeights.AddElement(STRUCTURE_TYPE.HUNTER_LODGE,
 					structureTypes.Contains(STRUCTURE_TYPE.HUNTER_LODGE) == false ? 15 : 2);
+			}
+			if (structureTypes.Contains(STRUCTURE_TYPE.CEMETERY) == false) {
+				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
+				structureWeights.AddElement(STRUCTURE_TYPE.CEMETERY, 2);
 			}
 		}
 		return structureWeights;

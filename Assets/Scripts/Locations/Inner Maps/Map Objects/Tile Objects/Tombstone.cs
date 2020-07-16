@@ -31,6 +31,7 @@ public class Tombstone : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
+        character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
         character.marker.TryCancelExpiry();
         character.SetGrave(this);

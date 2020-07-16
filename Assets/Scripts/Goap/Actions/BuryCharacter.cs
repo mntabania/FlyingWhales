@@ -49,6 +49,9 @@ public class BuryCharacter : GoapAction {
                 } else if (goapNode.actor.gridTileLocation != null) {
                     return goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThisWithStructure(targetStructure.structureType);
                 }
+            } else if (targetStructure.structureType == STRUCTURE_TYPE.CEMETERY) {
+                List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.groundType != LocationGridTile.Ground_Type.Ruined_Stone).ToList();
+                return CollectionUtilities.GetRandomElement(validTiles);
             }
         }
         return null; //allow normal logic to pick target tile
