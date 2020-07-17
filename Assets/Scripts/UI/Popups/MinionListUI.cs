@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Traits;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ public class MinionListUI : PopupMenuBase {
     [SerializeField] private ScrollRect minionListScrollView;
     [SerializeField] private Toggle minionListToggle;
     [SerializeField] private RectTransform reserveHeader;
+    [SerializeField] private UIHoverPosition _hoverPosition;
 
     private List<SummonMinionPlayerSkillNameplateItem> _minionItems;
 
@@ -41,19 +43,25 @@ public class MinionListUI : PopupMenuBase {
         item.SetObject(minion.character);
         item.SetAsDefaultBehaviour();
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
+
+        if (TraitManager.Instance.allTraits.ContainsKey(minion.character.characterClass.traitNameOnTamedByPlayer)) {
+            Trait trait = TraitManager.Instance.allTraits[minion.character.characterClass.traitNameOnTamedByPlayer];
+            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.description, PlayerUI.Instance.minionListHoverPosition, trait.name));
+            item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
+        }
     }
     private void CreateNewReserveMinionItem(SPELL_TYPE minionPlayerSkillType) {
         MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         SummonMinionPlayerSkillNameplateItem spellItem = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
         spellItem.SetObject(minionPlayerSkill);
-        // SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
-        // item.SetObject(minionPlayerSkill);
-        // item.SetCount(minionPlayerSkill.charges, true);
-        // item.ClearAllOnClickActions();
-        // item.ClearAllHoverEnterActions();
-        // item.AddHoverEnterAction(OnHoverEnterReserveMinion);
-        // item.AddHoverExitAction(OnHoverExitReserveMinion);
+        
+        spellItem.ClearAllHoverEnterActions();
+        spellItem.ClearAllHoverExitActions();
+        
+        spellItem.AddHoverEnterAction(OnHoverEnterReserveMinion);
+        spellItem.AddHoverExitAction(OnHoverExitReserveMinion);
+        
         _minionItems.Add(spellItem);
     }
     private void DeleteMinionItem(Minion minion) {
@@ -83,9 +91,17 @@ public class MinionListUI : PopupMenuBase {
         DeleteMinionItem(minion);
     }
     private void OnHoverEnterReserveMinion(SpellData spellData) {
-        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData);
+        if (spellData is MinionPlayerSkill minionPlayerSkill) {
+            CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
+            if (TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
+                Trait trait = TraitManager.Instance.allTraits[characterClass.traitNameOnTamedByPlayer];
+                UIManager.Instance.ShowSmallInfo(trait.description, _hoverPosition, trait.name);
+            }
+        }
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, PlayerUI.Instance.minionListHoverPosition);
     }
     private void OnHoverExitReserveMinion(SpellData spellData) {
+        UIManager.Instance.HideSmallInfo();
         PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
     public void ToggleMinionList(bool isOn) {

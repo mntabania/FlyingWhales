@@ -6,7 +6,7 @@ namespace Traits {
         
         public Abductor() {
             name = "Abductor";
-            description = "This is an Abductor.";
+            description = "Abducts one villager at a time and drops them where you summoned it. Eats them.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

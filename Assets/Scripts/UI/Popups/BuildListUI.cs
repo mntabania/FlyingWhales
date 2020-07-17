@@ -73,7 +73,10 @@ public class BuildListUI : PopupMenuBase {
             }
             if (structureType == SPELL_TYPE.MEDDLER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
                 canChooseLandmark = false; //only 1 finger at a time.
-            }    
+            }
+            if (canChooseLandmark) {
+                canChooseLandmark = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
+            }
         }
         
         if (canChooseLandmark) {

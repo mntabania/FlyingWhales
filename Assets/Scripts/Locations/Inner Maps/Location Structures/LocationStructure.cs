@@ -131,13 +131,13 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.CITY_CENTER:
                     return $"the {location.name} city center";
                 default:
-                    string normalizedStructure =
-                        UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-                    if (normalizedStructure.Contains("The")) {
-                        return normalizedStructure;
+                    // string normalizedStructure =
+                    //     UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                    if (nameplateName.Contains("The")) {
+                        return nameplateName;
                     } else {
                         return
-                            $"the {normalizedStructure}";    
+                            $"the {nameplateName}";    
                     }
             }
         }

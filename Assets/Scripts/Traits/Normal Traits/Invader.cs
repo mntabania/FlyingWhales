@@ -6,7 +6,7 @@ namespace Traits {
         
         public Invader() {
             name = "Invader";
-            description = "This is an Invader.";
+            description = "Attacks nearest Village or occupied Special Structure.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

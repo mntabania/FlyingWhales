@@ -696,6 +696,8 @@ public static class Signals {
             new SignalMethod() { methodName = "PerTickEffect", objectType = typeof(GoapActionState) },
             new SignalMethod() { methodName = "PerTickGoapPlanGeneration", objectType = typeof(Character) },
             new SignalMethod() { methodName = "PerTickInterventionAbility", objectType = typeof(Player) },
+            new SignalMethod() { methodName = "PerTickCooldown", objectType = typeof(SpellData) },
+            new SignalMethod() { methodName = "UnsummonedHPRecovery", objectType = typeof(Minion) },
         }},
         { TICK_ENDED, new[] {
             new SignalMethod() { methodName = "CheckSchedule", objectType = typeof(SchedulingManager) },

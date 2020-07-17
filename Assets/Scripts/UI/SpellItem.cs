@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using EZObjectPools;
 using TMPro;
@@ -13,6 +14,8 @@ public class SpellItem : NameplateItem<SpellData> {
 
     public SpellData spellData { get; private set; }
 
+    private Image _coverImg;
+    
     public override void SetObject(SpellData spellData) {
         base.SetObject(spellData);
         name = spellData.name;
@@ -24,6 +27,10 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
         Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
         SetAsDefault();
+
+        _coverImg = coverGO.GetComponent<Image>();
+        _coverImg.type = Image.Type.Filled;
+        _coverImg.fillMethod = Image.FillMethod.Radial360;
     }
     public void UpdateData() {
         mainLbl.text = spellData.name;
@@ -54,21 +61,27 @@ public class SpellItem : NameplateItem<SpellData> {
     }
     private void OnSpellCooldownStarted(SpellData spellData) {
         if (this.spellData == spellData) {
-            if (spellData.hasCharges && spellData.charges <= 0) {
+            UpdateData();
+            UpdateInteractableState();
+            if (spellData is MinionPlayerSkill) {
+                //do not check charges if spell is minion, because minion spells always regenerate, even if they have no more charges.
+                SetCooldownState(spellData.isInCooldown);
+                StartCooldownFill();
+            } else if (spellData.hasCharges && spellData.charges <= 0) {
                 //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
                 SetCooldownState(false);
             } else {
                 SetCooldownState(spellData.isInCooldown);
+                StartCooldownFill();
             }
-            UpdateData();
-            UpdateInteractableState();
         }
     }
     private void OnSpellCooldownFinished(SpellData spellData) {
         if (this.spellData == spellData) {
             SetCooldownState(spellData.isInCooldown);
             UpdateData();
-            UpdateInteractableState();
+            // UpdateInteractableState();
+            StopCooldownFill();
         }
     }
     private void OnExecuteSpell(SpellData spellData) {
@@ -111,12 +124,28 @@ public class SpellItem : NameplateItem<SpellData> {
             PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(spellData);
         }
     }
-    // public virtual void OnHoverSpell() {
-    //     PlayerUI.Instance.OnHoverSpell(spellData, PlayerUI.Instance.spellListHoverPosition);
-    // }
-    // public void OnHoverOutSpell() {
-    //     PlayerUI.Instance.OnHoverOutSpell(spellData);
-    // }
+    public override void SetInteractableState(bool state) {
+        base.SetInteractableState(state);
+        if (coverGO.activeSelf) {
+            _coverImg.fillAmount = 1f;    
+        }
+    }
+    #endregion
+
+    #region Cooldown
+    private void StartCooldownFill() {
+        _coverImg.fillAmount = 1f;
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+    }
+    protected void PerTickCooldown() {
+        float fillAmount = 1f - ((float)spellData.currentCooldownTick / spellData.cooldown);
+        // _coverImg.fillAmount = fillAmount;
+        _coverImg.DOFillAmount(fillAmount, 0.4f);
+    }
+    private void StopCooldownFill() {
+        _coverImg.DOFillAmount(0f, 0.4f).OnComplete(UpdateInteractableState);
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+    }
     #endregion
 
     public override void Reset() {

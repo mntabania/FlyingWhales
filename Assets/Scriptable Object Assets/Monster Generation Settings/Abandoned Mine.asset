@@ -16,7 +16,7 @@ MonoBehaviour:
     lowerBound: 1
     upperBound: 1
   _monsterChoices:
-    m_keys: 0600000000000000040000000100000003000000
+    m_keys: 06000000
     m_values:
     - data:
       - monsterType: 1
@@ -56,26 +56,6 @@ MonoBehaviour:
           lowerBound: 1
           upperBound: 1
       - monsterType: 11
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-    - data:
-      - monsterType: 18
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-    - data:
-      - monsterType: 16
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-    - data:
-      - monsterType: 17
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-    - data:
-      - monsterType: 15
         minMaxRange:
           lowerBound: 1
           upperBound: 1

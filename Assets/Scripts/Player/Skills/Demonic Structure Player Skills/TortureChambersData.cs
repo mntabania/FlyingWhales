@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TortureChambersData : DemonicStructurePlayerSkill {
-    public override string name => "Torture Chambers";
+    public override string name => "Prison";
     public override SPELL_TYPE type => SPELL_TYPE.TORTURE_CHAMBERS;
     public override string description => 
         $"This Structure allows the player to torture Villagers. " +

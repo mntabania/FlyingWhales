@@ -6,7 +6,7 @@ namespace Traits {
         
         public Defender() {
             name = "Defender";
-            description = "This is a Defender.";
+            description = "Defends area where it was summoned.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

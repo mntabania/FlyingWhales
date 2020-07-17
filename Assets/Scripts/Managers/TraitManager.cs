@@ -129,8 +129,9 @@ public class TraitManager : MonoBehaviour {
     private void AddInstancedTraits() {
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {
-            Trait trait = CreateNewInstancedTraitClass(instancedTraits[i]);
-            _allTraits.Add(trait.name, trait);
+            string traitName = instancedTraits[i];
+            Trait trait = CreateNewInstancedTraitClass(traitName);
+            _allTraits.Add(traitName, trait);
         }
     }
     public Sprite GetTraitPortrait(string traitName) {

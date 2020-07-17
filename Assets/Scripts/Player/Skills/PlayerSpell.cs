@@ -324,6 +324,7 @@ public class SpellData : IPlayerSkill {
         if (PlayerSkillManager.Instance.unlimitedCast == false) {
             if(hasCharges && charges > 0) {
                 charges--;
+                Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
             }
             if (hasManaCost) {
                 PlayerManager.Instance.player.AdjustMana(-manaCost);
@@ -379,6 +380,9 @@ public class SpellData : IPlayerSkill {
     public void SetCooldown(int amount) {
         cooldown = amount;
         currentCooldownTick = cooldown;
+    }
+    public void SetCurrentCooldownTick(int amount) {
+        currentCooldownTick = amount;
     }
     public void SetThreat(int amount) {
         threat = amount;
