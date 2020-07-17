@@ -41,10 +41,11 @@ public class CharacterManager : MonoBehaviour {
         Small_Spider_Behaviour = "Small Spider Behaviour",
         Golem_Behaviour = "Golem Behaviour",
         Baby_Infestor_Behaviour = "Baby Infestor Behaviour",
-        Vengeful_Ghost_Behaviour = "Vengeful Ghost Behaviour";
+        Vengeful_Ghost_Behaviour = "Vengeful Ghost Behaviour",
+        Ent_Behaviour = "Ent Behaviour",
+        Mimic_Behaviour = "Mimic Behaviour";
 
     public const int MAX_HISTORY_LOGS = 300;
-
     
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
@@ -237,6 +238,20 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(VengefulGhostBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Ent_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(EntBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Mimic_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(MimicBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -759,7 +774,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
         summon.homeRegion?.RemoveCharacterFromLocation(summon);
-        summon.CreateMarker();
+        summon.CreateMarker();    
         summon.marker.InitialPlaceMarkerAt(locationTile);
         summon.OnPlaceSummon(locationTile);
     }

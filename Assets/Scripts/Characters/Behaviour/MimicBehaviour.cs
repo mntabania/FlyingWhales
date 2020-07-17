@@ -4,17 +4,17 @@ using Inner_Maps;
 using UnityEngine;
 using UtilityScripts;
 
-public class EntBehaviour : CharacterBehaviourComponent {
+public class MimicBehaviour : CharacterBehaviourComponent {
     private readonly WeightedDictionary<string> _actionWeights;
     
-	public EntBehaviour() {
-		priority = 9;
-		_actionWeights = new WeightedDictionary<string>();
+    public MimicBehaviour() {
+        priority = 9;
+        _actionWeights = new WeightedDictionary<string>();
         _actionWeights.AddElement("Roam", 50);
         _actionWeights.AddElement("Stand", 20);
         _actionWeights.AddElement("Revert", 5);
-	}
-	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+    }
+    public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is Ent";
 
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
@@ -24,14 +24,14 @@ public class EntBehaviour : CharacterBehaviourComponent {
             return character.jobComponent.TriggerStandStill(out producedJob);
         } else {
             producedJob = null;
-            Ent ent = character as Ent;
-            ent.SetIsTree(true);
+            Mimic mimic = character as Mimic;
+            mimic.SetIsTreasureChest(true);
             LocationGridTile tile = character.gridTileLocation;
             character.DisableMarker();
-            TreeObject treeObject =
-                InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
-            tile.structure.AddPOI(treeObject, tile);
-            treeObject.SetOccupyingEnt(ent);
+            TreasureChest chest =
+                InnerMapManager.Instance.CreateNewTileObject<TreasureChest>(TILE_OBJECT_TYPE.TREASURE_CHEST); 
+            tile.structure.AddPOI(chest, tile);
+            chest.SetObjectInside(mimic);
             return true;
         }
         producedJob = null;

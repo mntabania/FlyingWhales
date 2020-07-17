@@ -77,7 +77,7 @@ public class CombatComponent {
                     }
                 } else {
                     log += "\n-Combat job not added";
-                    if (owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
+                    if (owner.marker != null && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
                         CombatState combatState = owner.stateComponent.currentState as CombatState;
                         combatState.CheckFlee(ref log);
                     }

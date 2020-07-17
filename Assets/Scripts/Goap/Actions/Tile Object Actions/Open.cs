@@ -30,8 +30,8 @@ public class Open  : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        if (node.poiTarget is TreasureChest treasureChest && treasureChest.objectThatWasObtained != null) {
-            log.AddToFillers(treasureChest.objectThatWasObtained, treasureChest.objectThatWasObtained.name, LOG_IDENTIFIER.CHARACTER_3);
+        if (node.poiTarget is TreasureChest treasureChest && treasureChest.objectInside != null) {
+            log.AddToFillers(treasureChest.objectInside, treasureChest.objectInside.name, LOG_IDENTIFIER.CHARACTER_3);
         }
     }
     #endregion
@@ -51,29 +51,22 @@ public class Open  : GoapAction {
         TreasureChest treasureChest = goapNode.poiTarget as TreasureChest;
         LocationStructure structure = treasureChest.gridTileLocation.structure;
         LocationGridTile gridTileLocation = treasureChest.gridTileLocation;
-        if (treasureChest.objectThatWasObtained is Summon summon) {
-            CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
-            if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                summon.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);    
+        if (treasureChest.objectInside is Mimic summon) {
+            if (summon.marker == null) {
+                treasureChest.SpawnInitialMimic(gridTileLocation, summon);
             } else {
-                List<HexTile> tiles = (gridTileLocation.parentMap.region as Region).tiles.Where(x =>
-                    x.settlementOnTile == null || x.settlementOnTile.locationType == LOCATION_TYPE.DUNGEON).ToList();
-                summon.AddTerritory(UtilityScripts.CollectionUtilities.GetRandomElement(tiles));
-                Debug.LogWarning($"{summon.name} was awakened from a mimic, but its gridTileLocation " +
-                                 $"{gridTileLocation.localPlace.ToString()} is not linked to a hextile, so its territory was " +
-                                 $"set to a random hextile inside the region {summon.territorries[0]}.");  
+                summon.marker.PlaceMarkerAt(gridTileLocation);
+                summon.SetIsTreasureChest(false);
+                TraitManager.Instance.CopyStatuses(treasureChest, summon);
             }
-            for (int i = 0; i < treasureChest.traitContainer.allTraitsAndStatuses.Count; i++) {
-                Trait trait = treasureChest.traitContainer.allTraitsAndStatuses[i];
-                summon.traitContainer.AddTrait(summon, trait.name);
-            }
+            
             goapNode.actor.currentStructure.RemovePOI(goapNode.poiTarget);
         } else {
             goapNode.actor.currentStructure.RemovePOI(goapNode.poiTarget);
-            if (treasureChest.objectThatWasObtained is ResourcePile resourcePile) {
+            if (treasureChest.objectInside is ResourcePile resourcePile) {
                 resourcePile.SetResourceInPile(50);
             }
-            structure.AddPOI(treasureChest.objectThatWasObtained, gridTileLocation);
+            structure.AddPOI(treasureChest.objectInside, gridTileLocation);
         }
     }
     #endregion

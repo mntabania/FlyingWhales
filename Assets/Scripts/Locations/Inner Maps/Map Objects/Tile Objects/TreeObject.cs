@@ -87,7 +87,6 @@ public class TreeObject : TileObject {
         yield = amount;
     }
     #endregion
-   
 
     #region Occupant
     public void SetOccupyingEnt(Ent ent) {
@@ -125,7 +124,7 @@ public class TreeObject : TileObject {
                         break;
                 }
             }
-            Ent ent = CharacterManager.Instance.CreateNewSummon(entType, FactionManager.Instance.neutralFaction) as Ent;
+            Ent ent = CharacterManager.Instance.CreateNewSummon(entType, FactionManager.Instance.neutralFaction, homeRegion: location.parentMap.region) as Ent;
             Assert.IsNotNull(ent);
             CharacterManager.Instance.PlaceSummon(ent, location);
             ent.AddTerritory(location.collectionOwner.GetNearestHexTileWithinRegion());
