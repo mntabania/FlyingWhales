@@ -223,10 +223,11 @@ public enum LANDMARK_TYPE {
     THE_PIT = 56,
     LUMBERYARD = 57,
     QUARRY = 58,
-    HOUSES,
-    TORTURE_CHAMBERS,
-    DEMONIC_PRISON,
-    MINE,
+    HOUSES = 59,
+    TORTURE_CHAMBERS = 60,
+    DEMONIC_PRISON = 61,
+    MINE = 62,
+    ANCIENT_GRAVEYARD = 63,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -638,6 +639,7 @@ public enum STRUCTURE_TYPE {
     FARM = 39,
     LUMBERYARD = 40,
     MINE_SHACK = 41,
+    ANCIENT_GRAVEYARD = 42,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1081,17 +1083,9 @@ public static class Extensions {
             case STRUCTURE_TYPE.POND:
             case STRUCTURE_TYPE.CITY_CENTER:
             case STRUCTURE_TYPE.THE_PORTAL:
-            // case STRUCTURE_TYPE.THE_SPIRE:
-            // case STRUCTURE_TYPE.THE_KENNEL:
-            // case STRUCTURE_TYPE.THE_CRYPT:
-            // case STRUCTURE_TYPE.THE_GOADER:
-            // case STRUCTURE_TYPE.THE_PROFANE:
-            // case STRUCTURE_TYPE.THE_ANVIL:
             case STRUCTURE_TYPE.EYE:
-            // case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.OCEAN:
-                // case STRUCTURE_TYPE.CAVE:
-                // case STRUCTURE_TYPE.MONSTER_LAIR:
+            case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
                 return true;
             default:
                 return false;

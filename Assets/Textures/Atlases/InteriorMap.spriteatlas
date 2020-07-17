@@ -973,7 +973,7 @@ SpriteAtlas:
   - dirtSnow_v01
   - fireplace01
   - demonTortureWheel00
-  - SHRINE_CANDLES#1
+  - TOMBSTONE#1
   - horizontal_1
   - demonStone_v00
   - grass00
@@ -1007,7 +1007,7 @@ SpriteAtlas:
   - templeStatueGoddess00
   - rack_weapons
   - laidWallA10101111-00
-  - SHRINE_CANDLES#2
+  - TOMBSTONE#2
   - skulls_line00
   - portalGlow00
   - FLOWER#2

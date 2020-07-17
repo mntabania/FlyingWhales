@@ -652,7 +652,7 @@ public class PlayerUI : MonoBehaviour {
         return item;
     }
     private void InitialUpdateKillCountCharacterItems() {
-        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter).ToList();
+        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter && x.isDead == false).ToList();
         int allVillagersCount = villagers.Count;
         LoadVillagerItems(allVillagersCount);
         

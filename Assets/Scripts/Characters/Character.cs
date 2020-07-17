@@ -5492,7 +5492,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //AddHistory(deathLog);
                 deathLog.AddLogToInvolvedObjects();
                 //specificLocation.AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);
+                PlayerManager.Instance.player?.ShowNotificationFrom(this, deathLog);
             } else {
                 deathLog = _deathLog;
             }
