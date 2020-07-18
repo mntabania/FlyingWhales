@@ -205,10 +205,15 @@ public class ActualGoapNode : IReactable, IRumorable {
                 targetPOIToGoTo = targetToGoTo;
                 targetTile = targetToGoTo.gridTileLocation;
             }
+            if (actor.movementComponent.isStationary) {
+                if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                    targetTile = null;
+                }
+            }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.IN_PLACE) {
             targetTile = actor.gridTileLocation;
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
-            if (actor.canMove) {
+            if (actor.canMove && !actor.movementComponent.isStationary) {
                 List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3);
                 if (choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
@@ -219,6 +224,10 @@ public class ActualGoapNode : IReactable, IRumorable {
                 targetTile = actor.gridTileLocation;
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
+            if (actor.movementComponent.isStationary) {
+                targetTile = null;
+                return;
+            }
             List<LocationGridTile> choices = targetStructure.tiles; //targetStructure.unoccupiedTiles.ToList();
             if (choices.Count > 0) {
                 targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
@@ -227,6 +236,10 @@ public class ActualGoapNode : IReactable, IRumorable {
                     $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
+            if (actor.movementComponent.isStationary) {
+                targetTile = null;
+                return;
+            }
             targetTile = action.GetTargetTileToGoTo(this);
             if(targetTile == null) {
                 List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
@@ -243,6 +256,10 @@ public class ActualGoapNode : IReactable, IRumorable {
             if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
                 targetTile = actor.gridTileLocation;
             } else {
+                if (actor.movementComponent.isStationary) {
+                    targetTile = null;
+                    return;
+                }
                 //No OnArriveAtTargetLocation because it doesn't trigger on arrival, rather, it is triggered by on vision
                 IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
                 if (targetToGoTo == null) {
@@ -260,6 +277,11 @@ public class ActualGoapNode : IReactable, IRumorable {
                 throw new System.Exception(
                     $"{actor.name} override target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
+            if (actor.movementComponent.isStationary) {
+                if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                    targetTile = null;
+                }
+            }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
             if (actor.currentStructure == targetStructure && targetStructure.structureType != STRUCTURE_TYPE.WILDERNESS) {
                 targetTile = actor.gridTileLocation;
@@ -271,6 +293,11 @@ public class ActualGoapNode : IReactable, IRumorable {
                 } else {
                     targetPOIToGoTo = targetToGoTo;
                     targetTile = targetToGoTo.gridTileLocation;
+                }
+                if (actor.movementComponent.isStationary) {
+                    if (actor.gridTileLocation != targetTile && !actor.gridTileLocation.IsNeighbour(targetTile)) {
+                        targetTile = null;
+                    }
                 }
             }
         }
@@ -294,20 +321,23 @@ public class ActualGoapNode : IReactable, IRumorable {
     }
     //We only pass the job because we need to cancel it if the target tile is null
     private bool MoveToDoAction(JobQueueItem job) {
+        if (targetTile == null) {
+            //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
+            Debug.LogWarning(
+                $"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
+            job.CancelJob(false);
+            return false;
+        }
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.location) { //different core locations
+            if(targetTile == null) {
+
+            }
             if (actor.carryComponent.masterCharacter.movementComponent.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job)) == false) {
                 //character cannot exit region.
                 return false;
             }
         } else {
-            if (targetTile == null) {
-                //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
-                Debug.LogWarning(
-                    $"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
-                job.CancelJob(false);
-                return false;
-            }
             // LocationGridTile tileToGoTo = targetTile;
             // if (targetPOIToGoTo != null) {
             //     tileToGoTo = targetPOIToGoTo.gridTileLocation;

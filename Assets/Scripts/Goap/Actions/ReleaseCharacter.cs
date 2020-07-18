@@ -52,7 +52,7 @@ public class ReleaseCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return target.traitContainer.HasTrait("Restrained", "Unconscious");
+            return target.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared");
         }
         return false;
     }
@@ -61,10 +61,12 @@ public class ReleaseCharacter : GoapAction {
     #region State Effects
     public void AfterReleaseSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.poiTarget as Character;
-        target.traitContainer.RemoveTrait(target, "Restrained");
-        target.traitContainer.RemoveTrait(target, "Unconscious");
+        target.traitContainer.RemoveStatusAndStacks(target, "Restrained");
+        target.traitContainer.RemoveStatusAndStacks(target, "Unconscious");
+        target.traitContainer.RemoveStatusAndStacks(target, "Frozen");
+        target.traitContainer.RemoveStatusAndStacks(target, "Ensnared");
 
-        if(goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty is RescueParty rescueParty) {
+        if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty is RescueParty rescueParty) {
             if(rescueParty.targetCharacter == goapNode.poiTarget) {
                 rescueParty.DisbandParty();
             }

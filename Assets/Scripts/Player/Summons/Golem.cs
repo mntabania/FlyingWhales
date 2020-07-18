@@ -10,11 +10,13 @@ public class Golem : Summon {
     public Golem() : base(SUMMON_TYPE.Golem, "Golem", RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         visuals.SetHasBlood(false);
+        traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Hibernating");
     }
     public Golem(string className) : base(SUMMON_TYPE.Golem, className, RACE.GOLEM, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         visuals.SetHasBlood(false);
+        traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Hibernating");
     }
     public Golem(SaveDataCharacter data) : base(data) { }

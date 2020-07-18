@@ -18,7 +18,7 @@ public class ExplorationParty : Party {
 
     public ExplorationParty() : base(PARTY_TYPE.Exploration) {
         minimumPartySize = 3;
-        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(4);
+        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(ExploreBehaviour);
         jobQueueOwnerType = JOB_OWNER.SETTLEMENT;
         alreadyExplored = new List<LocationStructure>();

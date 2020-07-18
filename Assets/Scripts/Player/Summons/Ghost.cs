@@ -5,6 +5,8 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Ghost : Summon {
+    public Character betrayedBy { get; private set; }
+
     public override string raceClassName => characterClass.className;
     public Ghost() : base(SUMMON_TYPE.Ghost, "Ghost", RACE.GHOST,
         UtilityScripts.Utilities.GetRandomGender()) {
@@ -30,6 +32,10 @@ public class Ghost : Summon {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
     }
     #endregion
+
+    public void SetBetrayedBy(Character character) {
+        betrayedBy = character;
+    }
     
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this && state.characterState == CHARACTER_STATE.COMBAT) {

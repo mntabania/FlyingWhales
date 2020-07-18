@@ -573,6 +573,9 @@ public class CombatState : CharacterState {
 
     #region Attacking
     private void PursueClosestHostile() {
+        if (stateComponent.character.movementComponent.isStationary) {
+            return;
+        }
         if (!stateComponent.character.carryComponent.masterCharacter.avatar.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
             stateComponent.character.marker.GoToPOI(currentClosestHostile);    
         }

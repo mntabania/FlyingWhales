@@ -15,7 +15,7 @@ public class RescueParty : Party {
 
     public RescueParty() : base(PARTY_TYPE.Rescue) {
         minimumPartySize = 1;
-        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(4);
+        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(RescueBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
     }

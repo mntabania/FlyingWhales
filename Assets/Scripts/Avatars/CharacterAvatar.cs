@@ -237,7 +237,7 @@ public class CharacterAvatar : MonoBehaviour {
             SetOnArriveAction(null);
         }
         if (targetStructure != null) {
-            _owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+            _owner.movementComponent.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
         } else {
             if(onPathFinished != null) {
                 onPathFinished();

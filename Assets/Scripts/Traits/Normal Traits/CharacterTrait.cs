@@ -90,7 +90,7 @@ namespace Traits {
                             }
                         }
                     } else {
-                        if(targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
+                        if(targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
                             if(owner.partyComponent.hasParty && owner.partyComponent.currentParty is RescueParty rescueParty) {
                                 if(rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
                                     if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {

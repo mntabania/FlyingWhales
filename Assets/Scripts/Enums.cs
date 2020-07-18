@@ -66,6 +66,8 @@ public enum RACE{
     SLUDGE = 30,
     GHOST = 31,
     ANGEL = 32,
+    WURM = 33,
+    REVENANT = 34,
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -950,7 +952,8 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
     BRAINWASH, UNSUMMON, TRIGGER_FLAW,
     CULTIST_TRANSFORM,
     CULTIST_POISON,
-    CULTIST_BOOBY_TRAP
+    CULTIST_BOOBY_TRAP,
+    VENGEFUL_GHOST, WURM,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -990,6 +993,8 @@ public enum SUMMON_TYPE {
     Warrior_Angel,
     Magical_Angel,
     Vengeful_Ghost,
+    Wurm,
+    Revenant,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

@@ -73,6 +73,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Faction factionOwner => characterOwner?.faction;
     public bool canBeRepaired => repairCounter <= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
+    public bool isHidden => false;
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {

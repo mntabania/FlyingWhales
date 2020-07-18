@@ -70,6 +70,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public BaseSettlement settlementOnTile { get; private set; }
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
+    public List<HexTile> ValidTilesWithinRegion { get { return AllNeighbours.Where(o => o.region == region && o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public bool isCurrentlyBeingCorrupted { get; private set; }
     public List<LocationGridTile> locationGridTiles { get; private set; }
     public List<LocationGridTile> borderTiles { get; private set; }
@@ -362,6 +363,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
         return false;
     }
+    public bool HasAliveVillagerResident() {
+        //Does not count if hextile is only a territory
+        return settlementOnTile != null && settlementOnTile.HasAliveVillagerResident();
+    }
     public string GetDisplayName() {
         if (settlementOnTile != null) {
             return settlementOnTile.name;
@@ -400,6 +405,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             }
         }
         return false;
+    }
+    public HexTile GetRandomAdjacentHextileWithinRegion(bool includeSelf = false) {
+        if (includeSelf) {
+            if(UnityEngine.Random.Range(0, 100) < 15) {
+                return this;
+            } else {
+                List<HexTile> neighbours = ValidTilesWithinRegion;
+                if(neighbours != null && neighbours.Count > 0) {
+                    return neighbours[UnityEngine.Random.Range(0, neighbours.Count)];
+                }
+            }
+        } else {
+            List<HexTile> neighbours = ValidTilesWithinRegion;
+            if (neighbours != null && neighbours.Count > 0) {
+                return neighbours[UnityEngine.Random.Range(0, neighbours.Count)];
+            }
+        }
+        return null;
     }
     #endregion
 

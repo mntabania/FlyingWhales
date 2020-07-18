@@ -380,8 +380,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Pathfinding Movement
-
     public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        if (character.movementComponent.isStationary) {
+            return;
+        }
         //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
         if (character.trapStructure.IsTrappedAndTrapStructureIsNot(destinationTile.structure)) {
             character.trapStructure.SetStructureAndDuration(null, 0);
@@ -407,6 +409,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void GoToPOI(IPointOfInterest targetPOI, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        if (character.movementComponent.isStationary) {
+            return;
+        }
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.arrivalAction = arrivalAction;
@@ -439,6 +444,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StartMovement();
     }
     public void GoTo(ITraitable target, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        if (character.movementComponent.isStationary) {
+            return;
+        }
         if (target is IPointOfInterest poi) {
             GoToPOI(poi, arrivalAction, failedToComputePathAction, notAllowedStructures);
         } else {
@@ -498,6 +506,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         targetPOI = null;
     }
     private void StartMovement() {
+        if (character.movementComponent.isStationary) {
+            return;
+        }
         isMoving = true;
         character.movementComponent.UpdateSpeed();
         pathfindingAI.SetIsStopMovement(false);
@@ -602,6 +613,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void UpdateVisualBasedOnCurrentAnimationFrame() {
         string currSpriteName = mainImg.sprite.name;
+        //Temporary fix for Wurm, if the sprite name is has "hidden", change it to "idle"
+        //Ex: hidden_1 -> idle_1
+        //if (currSpriteName.Contains("hidden")) {
+        //    currSpriteName = currSpriteName.Replace("hidden", "idle");
+        //}
+        if(currSpriteName == "hidden_1") {
+            currSpriteName = "idle_1";
+        } else if (currSpriteName == "hidden_2") {
+            currSpriteName = "idle_2";
+        } else if (currSpriteName == "hidden_3") {
+            currSpriteName = "idle_3";
+        } else if (currSpriteName == "hidden_4") {
+            currSpriteName = "idle_4";
+        }
         if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
             Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
             mainImg.sprite = newSprite;
@@ -646,12 +671,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             ResetBlood();
             if (character.numOfActionsBeingPerformedOnThis > 0) {
-                if (character.canMove == false || (!character.canPerform && !character.canWitness)) {
+                if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && !character.traitContainer.HasTrait("Hibernating")) {
                     PlaySleepGround();
                 } else {
                     PlayIdle();
                 }
-            } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
+            } else if ((character.canMove == false || (!character.canPerform && !character.canWitness) && !character.traitContainer.HasTrait("Hibernating")) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
                 PlaySleepGround();
             } else if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false && character.carryComponent.masterCharacter.avatar.isTravelling) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
@@ -995,7 +1020,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             RemoveUnprocessedPOI(poi);
-            if (!IsStillInRange(poi)) {
+            if (!inVisionPOIsButDiffStructure.Contains(poi)) {
                 character.combatComponent.RemoveHostileInRangeSchedule(poi);
                 character.combatComponent.RemoveAvoidInRangeSchedule(poi);
             }
@@ -1099,6 +1124,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {
                         log += $"\n-{poi.nameWithID}'s map visual has been destroyed. Skipping...";
+                        continue;
+                    }
+                    if (poi.isHidden) {
+                        log += $"\n-{poi.nameWithID} is hidden. Skipping...";
                         continue;
                     }
                     log += $"\n-{poi.nameWithID}";

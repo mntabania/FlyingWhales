@@ -16,7 +16,7 @@ public class CounterattackParty : Party {
 
     public CounterattackParty() : base(PARTY_TYPE.Counterattack) {
         minimumPartySize = 3;
-        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
+        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(AttackDemonicStructureBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
     }

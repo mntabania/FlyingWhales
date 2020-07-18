@@ -4,7 +4,6 @@ using UnityEngine;
 
 [System.Serializable]
 public struct PortraitSettings {
-
     public RACE race;
     public GENDER gender;
     public int head;

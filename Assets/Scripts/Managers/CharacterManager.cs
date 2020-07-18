@@ -42,6 +42,10 @@ public class CharacterManager : MonoBehaviour {
         Golem_Behaviour = "Golem Behaviour",
         Baby_Infestor_Behaviour = "Baby Infestor Behaviour",
         Vengeful_Ghost_Behaviour = "Vengeful Ghost Behaviour",
+        Ghost_Behaviour = "Ghost Behaviour",
+        Wurm_Behaviour = "Wurm Behaviour",
+        Tower_Behaviour = "Tower Behaviour",
+        Revenant_Behaviour = "Revenant Behaviour",
         Ent_Behaviour = "Ent Behaviour",
         Mimic_Behaviour = "Mimic Behaviour";
 
@@ -238,6 +242,30 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(VengefulGhostBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Wurm_Behaviour,
+            new []{
+                typeof(WurmBehaviour),
+            }
+        },
+        { Tower_Behaviour,
+            new []{
+                typeof(TowerBehaviour),
+            }
+        },
+        { Ghost_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(GhostBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Revenant_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(RevenantBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -777,6 +805,14 @@ public class CharacterManager : MonoBehaviour {
         summon.CreateMarker();    
         summon.marker.InitialPlaceMarkerAt(locationTile);
         summon.OnPlaceSummon(locationTile);
+    }
+    public void Teleport(Character character, LocationGridTile tile) {
+        if (!character.marker) {
+            character.CreateMarker();
+            character.marker.InitialPlaceMarkerAt(tile);
+        } else {
+            character.marker.PlaceMarkerAt(tile);
+        }
     }
     public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
         currentDemonicStructureTargetOfAngels = demonicStructure;

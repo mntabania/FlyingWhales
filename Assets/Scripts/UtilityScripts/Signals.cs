@@ -50,6 +50,7 @@ public static class Signals {
     /// Parameters: TIME_IN_WORDS (current time of day)
     /// </summary>
     public static string UPDATE_INNER_MAP_LIGHT = "UpdateInnerMapLight";
+    public static string BECOME_A_TERRITORY = "OnBecomeATerritory";
     #endregion
 
     #region Landmarks
@@ -67,6 +68,7 @@ public static class Signals {
 
     #region Character
     public static string CHARACTER_DEATH = "OnCharacterDied"; //Parameters (Character characterThatDied)
+    public static string BEFORE_CHARACTER_DEATH = "OnBeforeCharacterDeath"; //Parameters (Character characterThatDied)
     public static string CHARACTER_CREATED = "OnCharacterCreated"; //Parameters (Character createdCharacter)
     public static string ROLE_CHANGED = "OnCharacterRoleChanged"; //Parameters (Character characterThatChangedRole)
     public static string CHARACTER_REMOVED = "OnCharacterRemoved"; //Parameters (Character removedCharacter)
