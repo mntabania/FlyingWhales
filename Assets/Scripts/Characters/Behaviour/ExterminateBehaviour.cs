@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 
 public class ExterminateBehaviour : CharacterBehaviourComponent {
     public ExterminateBehaviour() {
-        priority = 900;
+        priority = 450;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;

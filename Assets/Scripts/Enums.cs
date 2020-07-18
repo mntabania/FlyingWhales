@@ -1484,8 +1484,6 @@ public static class Extensions {
                 break;
             case JOB_TYPE.FEED:
             case JOB_TYPE.JOIN_PARTY:
-            case JOB_TYPE.EXPLORE:
-            case JOB_TYPE.EXTERMINATE:
             case JOB_TYPE.RESCUE:
             case JOB_TYPE.MONSTER_INVADE:
                 priority = 900;
@@ -1555,6 +1553,8 @@ public static class Extensions {
                 priority = 480;
                 break;
             case JOB_TYPE.PATROL:
+            case JOB_TYPE.EXPLORE:
+            case JOB_TYPE.EXTERMINATE:
                 priority = 450;
                 break;
             case JOB_TYPE.MINE:
