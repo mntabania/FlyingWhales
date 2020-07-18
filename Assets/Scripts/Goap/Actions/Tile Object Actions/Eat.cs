@@ -44,9 +44,8 @@ public class Eat : GoapAction {
             } else if (actor.traitContainer.HasTrait("Travelling")) {
                 if(table.structureLocation.structureType == STRUCTURE_TYPE.INN || table.structureLocation == actor.homeStructure) {
                     cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                    costLog += $" +{cost}(Travelling, Inside Tavern)";
-                }
-                if (actor.needsComponent.isStarving) {
+                    costLog += $" +{cost}(Travelling, Inside Tavern or in actor home structure)\n";
+                } else if (actor.needsComponent.isStarving) {
                     Character tableOwner = table.characterOwner;
                     if (tableOwner != null) {
                         if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
