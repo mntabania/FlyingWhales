@@ -57,12 +57,18 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         //try to lay an egg
         if (GameUtilities.RollChance(10)) {
             int residentCount = 0;
+            int eggCount = 0;
             if (character.homeStructure != null) {
-                residentCount = character.homeStructure.residents.Count;
+                residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
+                eggCount = character.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
             } else if (character.territorries.Count > 0) {
                 residentCount = character.homeRegion.GetCharactersWithSameTerritory(character)?.Count ?? 0;
+                for (int i = 0; i < character.territorries.Count; i++) {
+                    HexTile hexTile = character.territorries[i];
+                    eggCount += hexTile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
+                }
             }
-            if (residentCount < 5) {
+            if (residentCount < 5 && eggCount < 2) {
                 return character.jobComponent.TriggerLayEgg(out producedJob);
             }
         }

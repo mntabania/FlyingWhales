@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Worldwide Settings
   m_EditorClassIdentifier: 
   _iterations:
-    lowerBound: 2
-    upperBound: 6
+    lowerBound: 1
+    upperBound: 4
   _itemChoices:
     m_keys: 06000000030000000100000002000000
     m_values:
@@ -28,22 +28,6 @@ MonoBehaviour:
           lowerBound: 5
           upperBound: 6
       - itemType: 104
-        minMaxRange:
-          lowerBound: 5
-          upperBound: 6
-      - itemType: 3
-        minMaxRange:
-          lowerBound: 5
-          upperBound: 6
-      - itemType: 103
-        minMaxRange:
-          lowerBound: 5
-          upperBound: 6
-      - itemType: 104
-        minMaxRange:
-          lowerBound: 5
-          upperBound: 6
-      - itemType: 102
         minMaxRange:
           lowerBound: 5
           upperBound: 6

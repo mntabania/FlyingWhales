@@ -18,6 +18,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private LogItem plansLblLogItem;
+    [SerializeField] private GameObject leaderIcon;
 
     [Space(10)] [Header("Location")]
     [SerializeField] private TextMeshProUGUI factionLbl;
@@ -239,6 +240,7 @@ public class CharacterInfoUI : InfoUIBase {
     public void UpdateBasicInfo() {
         nameLbl.text = _activeCharacter.visuals.GetNameplateName();
         lvlClassLbl.text = _activeCharacter.raceClassName;
+        leaderIcon.SetActive(_activeCharacter.isFactionLeader || _activeCharacter.isSettlementRuler);
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {

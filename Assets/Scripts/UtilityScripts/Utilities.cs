@@ -774,6 +774,9 @@ namespace UtilityScripts {
         public static string CultistIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Cultist_Icon\"> ";
         }
+        public static string LeaderIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Leader_Icon\"> ";
+        }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }

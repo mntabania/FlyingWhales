@@ -214,7 +214,8 @@ MonoBehaviour:
       overrideLandmarkPortrait: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
-    monsterGenerationSetting: {fileID: 0}
+    monsterGenerationSetting: {fileID: 11400000, guid: baa9efab444793b4b8a31f058c89963a,
+      type: 2}
     itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Temple
     landmarkType: 30
@@ -248,7 +249,8 @@ MonoBehaviour:
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
       overrideLandmarkPortrait: {fileID: 0}
-    monsterGenerationSetting: {fileID: 0}
+    monsterGenerationSetting: {fileID: 11400000, guid: 9d740b1e5b1366740b5297ab1ed36bb2,
+      type: 2}
     itemGenerationSetting: {fileID: 11400000, guid: 721ae9951663539439b7a9134ae4facf,
       type: 2}
   - landmarkTypeString: Barracks

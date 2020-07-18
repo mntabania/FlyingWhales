@@ -103,11 +103,11 @@ public class MonsterGeneration : MapGenerationComponent {
 			else {
 				MonsterGenerationSetting monsterGenerationSetting =
 					WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
-				List<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+				WeightedDictionary<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
 				if (monsterChoices != null) {
 					int iterations = monsterGenerationSetting.iterations.Random();
 					for (int j = 0; j < iterations; j++) {
-						MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+						MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
 						int randomAmount = randomMonsterSetting.minMaxRange.Random();
 						for (int k = 0; k < randomAmount; k++) {
 							Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
@@ -155,12 +155,11 @@ public class MonsterGeneration : MapGenerationComponent {
 					LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
 					LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
 					if (landmarkData.monsterGenerationSetting != null) {
-						List<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.
-							GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
+						WeightedDictionary<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
 						if (monsterChoices != null) {
 							int iterations = landmarkData.monsterGenerationSetting.iterations.Random();
 							for (int j = 0; j < iterations; j++) {
-								MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+								MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
 								int randomAmount = randomMonsterSetting.minMaxRange.Random();
 								for (int k = 0; k < randomAmount; k++) {
 									CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
@@ -217,12 +216,12 @@ public class MonsterGeneration : MapGenerationComponent {
 					}
 				}
 				else {
-					List<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+					WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
 					for (int j = 0; j < caves.Count; j++) {
 						LocationStructure cave = caves[j];
 						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
 						for (int k = 0; k < hexTilesOfCave.Count; k++) {
-							MonsterSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(monsterChoices);
+							MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
 							int randomAmount = randomMonsterSetting.minMaxRange.Random();
 							for (int l = 0; l < randomAmount; l++) {
 								CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());	

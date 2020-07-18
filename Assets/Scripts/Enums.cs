@@ -1170,6 +1170,19 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsSpecialStructure(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.MAGE_TOWER:
+            case STRUCTURE_TYPE.ABANDONED_MINE:
+            case STRUCTURE_TYPE.ANCIENT_GRAVEYARD:
+            case STRUCTURE_TYPE.ANCIENT_RUIN:
+            case STRUCTURE_TYPE.MONSTER_LAIR:
+            case STRUCTURE_TYPE.CAVE:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static LANDMARK_TYPE GetLandmarkType(this STRUCTURE_TYPE structureType) {
         if (System.Enum.TryParse(structureType.ToString(), out LANDMARK_TYPE parsed)) {
             return parsed;

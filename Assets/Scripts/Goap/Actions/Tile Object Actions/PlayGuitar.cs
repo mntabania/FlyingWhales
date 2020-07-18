@@ -109,7 +109,7 @@ public class PlayGuitar : GoapAction {
                    && RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2)
                    && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
                     int value = 50;
-                    if (actor.traitContainer.HasTrait("Ugly")) {
+                    if (actor.traitContainer.HasTrait("Unattractive")) {
                         value = 20;
                     }
                     if(UnityEngine.Random.Range(0, 100) < value) {

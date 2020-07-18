@@ -1,4 +1,6 @@
-﻿public class SpiderEgg : MonsterEgg {
+﻿using Inner_Maps.Location_Structures;
+
+public class SpiderEgg : MonsterEgg {
 
     public SpiderEgg() : base(TILE_OBJECT_TYPE.SPIDER_EGG, SUMMON_TYPE.Giant_Spider, GameManager.Instance.GetTicksBasedOnHour(1)) { }
 
@@ -16,7 +18,10 @@
             }
             monster.CreateMarker();
             monster.InitialCharacterPlacement(gridTileLocation, true);
-            if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+
+            if (gridTileLocation.structure.structureType.IsSpecialStructure()) {
+                monster.ClearTerritoryAndMigrateHomeStructureTo(gridTileLocation.structure);
+            } else if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 monster.ClearTerritory();
                 monster.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
             }

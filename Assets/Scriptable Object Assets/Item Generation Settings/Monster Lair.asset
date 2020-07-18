@@ -23,3 +23,7 @@ MonoBehaviour:
         minMaxRange:
           lowerBound: 1
           upperBound: 1
+      - itemType: 87
+        minMaxRange:
+          lowerBound: 2
+          upperBound: 3

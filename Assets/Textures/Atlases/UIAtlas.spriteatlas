@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 7069059
+    totalSpriteSurfaceArea: 7070209
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -105,6 +105,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
   - {fileID: 21300000, guid: 5b15da026bff8444596c56e4941d0a5e, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
+  - {fileID: 8525357217409305892, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -7319396352633551538, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -4902642843917760881, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -1876928399738112333, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
@@ -245,6 +246,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 64bc17278d4066b419c756ddcf6c216d, type: 3}
   - {fileID: 21300000, guid: aa654727f4e499a4a89864471ac67231, type: 3}
   - {fileID: 21300000, guid: 25955337d7833ea4d82d3857f171ec2e, type: 3}
+  - {fileID: 21300000, guid: 239554371ab27c34e8bde733072906c5, type: 3}
   - {fileID: 21300000, guid: 11815637b8aa8f94e84dc405f959a589, type: 3}
   - {fileID: 21300000, guid: 7b372837c69147942ace704a44848bab, type: 3}
   - {fileID: 21300000, guid: 2fb3e9472179d114f90b5ab9b3246177, type: 3}
@@ -528,6 +530,7 @@ SpriteAtlas:
   - tutorial_goal_checkbox_complete
   - button_intel_disabled
   - tab_traits_inactive
+  - Text_Sprites_11
   - Text_Sprites_10
   - Text_Sprites_8
   - Text_Sprites_9
@@ -668,6 +671,7 @@ SpriteAtlas:
   - transparent_bg
   - button_spire_disabled
   - button_villagers_default
+  - faction_leader_icon
   - button_monsters_clicked
   - Icon-Puppetmaster-3
   - button1_invalid

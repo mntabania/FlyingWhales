@@ -10,6 +10,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     [SerializeField] private GameObject travellingIcon;
     [SerializeField] private GameObject arrivedIcon;
     [SerializeField] private GameObject restrainedIcon;
+    [SerializeField] private GameObject leaderIcon;
 
     public Character character { get; private set; }
     public bool isActive { get; private set; }
@@ -30,6 +31,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         this.character = character;
         mainLbl.text = character.visuals.GetNameplateName();
         subLbl.text = character.raceClassName;
+        leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
         UpdateText();
@@ -39,6 +41,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         this.character = character;
         mainLbl.text = character.visuals.GetNameplateName();
         subLbl.text = character.raceClassName;
+        leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
         UpdateText();

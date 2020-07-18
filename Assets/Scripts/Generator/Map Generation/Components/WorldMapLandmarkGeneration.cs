@@ -29,8 +29,17 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 						GridMap.Instance.map[2, 2]
 					};
 				} else {
+					
 					choices = GridMap.Instance.normalHexTiles
-						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
+						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
+						            x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && //with no Features yet
+						            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+							            n => n.landmarkOnTile != null && 
+							                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+							                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+						            )
 						.ToList();
 				}
 				if (choices.Count > 0) {
@@ -57,8 +66,14 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
-					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null)
-					.ToList();
+					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null
+					            &&  x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+						            n => n.landmarkOnTile != null && 
+						                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+						                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ABANDONED_MINE);
@@ -83,8 +98,14 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					};
 				} else {
 					choices = GridMap.Instance.normalHexTiles
-						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
-						.ToList();
+						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && 
+						            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+							            n => n.landmarkOnTile != null && 
+							                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+							                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+						).ToList();
 				}
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
@@ -109,8 +130,15 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null)
-					.ToList();
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && 
+					            x.landmarkOnTile == null &&  
+					            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+						            n => n.landmarkOnTile != null && 
+						                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+						                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MAGE_TOWER);
@@ -129,8 +157,14 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null)
-					.ToList();
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
+					            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+							n => n.landmarkOnTile != null && 
+							     n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+							     (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+							      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+							      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_GRAVEYARD);

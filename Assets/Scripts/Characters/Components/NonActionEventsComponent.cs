@@ -330,7 +330,7 @@ public class NonActionEventsComponent {
     private string TriggerFlirtCharacter(Character target) {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
-            if (owner.traitContainer.HasTrait("Ugly")) {
+            if (owner.traitContainer.HasTrait("Unattractive")) {
                 owner.relationshipContainer.AdjustOpinion(owner, target, "Base", -4, "engaged in disastrous flirting");
                 target.relationshipContainer.AdjustOpinion(target, owner, "Base", -2, "engaged in disastrous flirting");
                 return "ugly";
