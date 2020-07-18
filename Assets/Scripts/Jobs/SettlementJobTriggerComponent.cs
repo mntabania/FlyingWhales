@@ -395,9 +395,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		//if target is in this npcSettlement and is not in the main storage, then create a haul job.
 		//if target is not in this npcSettlement, check if it is in the wilderness, if it is, then create haul job
 		bool isAtValidLocation = true;
-		if (target.gridTileLocation.IsPartOfSettlement(_owner) && target.gridTileLocation.structure != _owner.mainStorage) {
+		if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) && target.gridTileLocation.structure != _owner.mainStorage) {
 			isAtValidLocation = false;
-		} else if (target.gridTileLocation.IsPartOfSettlement(_owner) == false && target.gridTileLocation.structure is Wilderness == false) {
+		} else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) == false && target.gridTileLocation.structure is Wilderness == false) {
 			isAtValidLocation = false;
 		}
 		

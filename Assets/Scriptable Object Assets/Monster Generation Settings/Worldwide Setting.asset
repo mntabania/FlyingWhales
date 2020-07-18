@@ -19,93 +19,95 @@ MonoBehaviour:
     m_keys: 060000000100000003000000
     m_values:
     - data:
-      - monsterType: 1
+      - weight: 10
+        monsterType: 1
+        minMaxRange:
+          lowerBound: 1
+          upperBound: 2
+      - weight: 10
+        monsterType: 2
+        minMaxRange:
+          lowerBound: 2
+          upperBound: 3
+      - weight: 10
+        monsterType: 3
         minMaxRange:
           lowerBound: 1
           upperBound: 1
-      - monsterType: 2
+      - weight: 10
+        monsterType: 4
         minMaxRange:
           lowerBound: 1
           upperBound: 1
-      - monsterType: 3
+      - weight: 10
+        monsterType: 5
         minMaxRange:
           lowerBound: 1
           upperBound: 1
-      - monsterType: 4
+      - weight: 10
+        monsterType: 6
         minMaxRange:
           lowerBound: 1
           upperBound: 1
-      - monsterType: 5
+      - weight: 10
+        monsterType: 7
+        minMaxRange:
+          lowerBound: 1
+          upperBound: 2
+      - weight: 10
+        monsterType: 8
+        minMaxRange:
+          lowerBound: 1
+          upperBound: 2
+      - weight: 10
+        monsterType: 10
+        minMaxRange:
+          lowerBound: 2
+          upperBound: 3
+      - weight: 10
+        monsterType: 11
         minMaxRange:
           lowerBound: 1
           upperBound: 1
-      - monsterType: 6
+      - weight: 10
+        monsterType: 25
+        minMaxRange:
+          lowerBound: 2
+          upperBound: 4
+      - weight: 10
+        monsterType: 23
+        minMaxRange:
+          lowerBound: 2
+          upperBound: 4
+      - weight: 10
+        monsterType: 24
+        minMaxRange:
+          lowerBound: 2
+          upperBound: 4
+      - weight: 10
+        monsterType: 21
         minMaxRange:
           lowerBound: 1
-          upperBound: 1
-      - monsterType: 7
+          upperBound: 3
+      - weight: 10
+        monsterType: 22
         minMaxRange:
           lowerBound: 1
-          upperBound: 1
-      - monsterType: 8
+          upperBound: 3
+      - weight: 10
+        monsterType: 26
         minMaxRange:
           lowerBound: 1
-          upperBound: 1
-      - monsterType: 10
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 11
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 12
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 13
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 14
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 25
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 23
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 24
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 27
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 21
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 22
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 26
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
+          upperBound: 2
     - data:
-      - monsterType: 20
+      - weight: 10
+        monsterType: 20
         minMaxRange:
           lowerBound: 1
-          upperBound: 1
+          upperBound: 3
     - data:
-      - monsterType: 25
+      - weight: 10
+        monsterType: 25
         minMaxRange:
           lowerBound: 1
-          upperBound: 1
+          upperBound: 3

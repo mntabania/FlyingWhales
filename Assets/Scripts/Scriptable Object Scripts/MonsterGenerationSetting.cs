@@ -13,20 +13,30 @@ using UnityEngine;
      public IntRange iterations => _iterations;
      #endregion
 
-     public List<MonsterSetting> GetMonsterChoicesForBiome(BIOMES biome) {
-         List<MonsterSetting> settings = new List<MonsterSetting>();
+     public WeightedDictionary<MonsterSetting> GetMonsterChoicesForBiome(BIOMES biome) {
+         WeightedDictionary<MonsterSetting> settings = new WeightedDictionary<MonsterSetting>();
          if (_monsterChoices.ContainsKey(biome)) {
-             settings.AddRange(_monsterChoices[biome]);
+             List<MonsterSetting> biomeChoices = _monsterChoices[biome];
+             for (int i = 0; i < biomeChoices.Count; i++) {
+                 MonsterSetting monsterSetting = biomeChoices[i];
+                 settings.AddElement(monsterSetting, monsterSetting.weight);
+             }
          }
          if (_monsterChoices.ContainsKey(BIOMES.NONE)) {
-             settings.AddRange(_monsterChoices[BIOMES.NONE]);
+             List<MonsterSetting> neutralChoices = _monsterChoices[BIOMES.NONE];
+             for (int i = 0; i < neutralChoices.Count; i++) {
+                 MonsterSetting monsterSetting = neutralChoices[i];
+                 settings.AddElement(monsterSetting, monsterSetting.weight);
+             }
          }
          return settings;
      }
+     
  }
 
 [System.Serializable]
 public struct MonsterSetting {
+    public int weight;
     public SUMMON_TYPE monsterType;
     public IntRange minMaxRange;
 }

@@ -297,9 +297,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 weight += (numberOfEnemies * -10);
                 log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
             }
-            if (resident.traitContainer.HasTrait("Ugly")) {
+            if (resident.traitContainer.HasTrait("Unattractive")) {
                 weight += -20;
-                log += "\n  -Ugly: -20";
+                log += "\n  -Unattractive: -20";
             }
             if (resident.hasUnresolvedCrime) {
                 weight += -50;

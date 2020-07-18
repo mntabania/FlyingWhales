@@ -23,7 +23,7 @@ public class PsychopathRequirementsUI : MonoBehaviour {
         , "Fast", "Fireproof", "Glutton", "Hothead", "Inspiring", "Kleptomaniac"
         , "Lazy", "Lustful", "Lycanthrope", "Music Hater", "Music Lover", "Narcoleptic"
         , "Nocturnal", "Optimist", "Pessimist", "Psychopath", "Purifier", "Pyrophobic"
-        , "Robust", "Suspicious", "Treacherous", "Ugly", "Unfaithful", "Vampiric", "Vigilant" }; 
+        , "Robust", "Suspicious", "Treacherous", "Unattractive", "Unfaithful", "Vampiric", "Vigilant" }; 
 
 
     public void ShowRequirementsUI() {

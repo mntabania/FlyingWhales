@@ -19,43 +19,23 @@ MonoBehaviour:
     m_keys: 06000000
     m_values:
     - data:
-      - monsterType: 1
+      - weight: 10
+        monsterType: 3
         minMaxRange:
           lowerBound: 1
           upperBound: 1
-      - monsterType: 2
+      - weight: 10
+        monsterType: 8
         minMaxRange:
           lowerBound: 1
-          upperBound: 1
-      - monsterType: 3
+          upperBound: 3
+      - weight: 10
+        monsterType: 10
         minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 4
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 5
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 6
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 7
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 8
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 10
-        minMaxRange:
-          lowerBound: 1
-          upperBound: 1
-      - monsterType: 11
+          lowerBound: 2
+          upperBound: 3
+      - weight: 10
+        monsterType: 6
         minMaxRange:
           lowerBound: 1
           upperBound: 1

@@ -133,11 +133,11 @@ namespace Inner_Maps.Location_Structures {
                 default:
                     // string normalizedStructure =
                     //     UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-                    if (nameplateName.Contains("The")) {
-                        return nameplateName;
+                    if (nameWithoutID.Contains("The")) {
+                        return nameWithoutID;
                     } else {
                         return
-                            $"the {nameplateName}";    
+                            $"the {nameWithoutID}";    
                     }
             }
         }

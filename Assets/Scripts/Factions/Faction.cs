@@ -287,9 +287,9 @@ public class Faction : IJobOwner {
                 weight += (numberOfEnemies * -10);
                 log += $"\n  -Num of Enemies/Rivals in the NPCSettlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
             }
-            if (member.traitContainer.HasTrait("Ugly")) {
+            if (member.traitContainer.HasTrait("Unattractive")) {
                 weight += -20;
-                log += "\n  -Ugly: -20";
+                log += "\n  -Unattractive: -20";
             }
             if (member.hasUnresolvedCrime) {
                 weight += -50;
