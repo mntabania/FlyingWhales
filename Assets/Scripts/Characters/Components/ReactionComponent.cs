@@ -17,6 +17,7 @@ public class ReactionComponent {
 
     private List<Character> _assumptionSuspects;
     public List<Character> charactersThatSawThisDead { get; private set; }
+    public bool isHidden { get; private set; }
 
     public ReactionComponent(Character owner) {
         this.owner = owner;
@@ -1156,6 +1157,22 @@ public class ReactionComponent {
     }
     public void AddCharacterThatSawThisDead(Character character) {
         charactersThatSawThisDead.Add(character);
+    }
+    public void SetIsHidden(bool state) {
+        if(isHidden != state) {
+            isHidden = state;
+            owner.OnSetIsHidden();
+            if (!isHidden) {
+                //If character comes out from being hidden, all characters in vision should process this character
+                if (owner.marker) {
+                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                        Character inVision = owner.marker.inVisionCharacters[i];
+                        inVision.marker.AddUnprocessedPOI(owner);
+                    }
+                }
+            }
+            
+        }
     }
     #endregion
 }

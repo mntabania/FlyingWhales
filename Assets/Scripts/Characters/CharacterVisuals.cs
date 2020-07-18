@@ -82,6 +82,17 @@ public class CharacterVisuals {
             // character.marker.UpdateNameplatePosition();    
         }
     }
+    public void ChangeMarkerAnimationSprite(string key, Sprite sprite) {
+        if (markerAnimations.ContainsKey(key)) {
+            markerAnimations[key] = sprite;
+        }
+    }
+    public Sprite GetMarkerAnimationSprite(string key) {
+        if (markerAnimations.ContainsKey(key)) {
+            return markerAnimations[key];
+        }
+        return null;
+    }
 
     #region Blood
     public bool HasBlood() {

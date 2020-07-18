@@ -222,6 +222,17 @@ public class GhostData : SummonPlayerSkill {
         className = "Ghost";
     }
 }
+public class VengefulGhostData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.VENGEFUL_GHOST;
+    public override string name { get { return "Vengeful Ghost"; } }
+    public override string description { get { return "Vengeful Ghost"; } }
+
+    public VengefulGhostData() {
+        summonType = SUMMON_TYPE.Vengeful_Ghost;
+        race = RACE.GHOST;
+        className = "Vengeful Ghost";
+    }
+}
 public class AbominationData : SummonPlayerSkill {
     public override SPELL_TYPE type => SPELL_TYPE.ABOMINATION;
     public override string name { get { return "Abomination"; } }
@@ -429,5 +440,16 @@ public class SmallSpiderData : SummonPlayerSkill {
         summonType = SUMMON_TYPE.Small_Spider;
         race = RACE.SPIDER;
         className = "Small Spider";
+    }
+}
+public class WurmData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.WURM;
+    public override string name { get { return "Wurm"; } }
+    public override string description { get { return "Wurm"; } }
+
+    public WurmData() {
+        summonType = SUMMON_TYPE.Wurm;
+        race = RACE.WURM;
+        className = "Wurm";
     }
 }

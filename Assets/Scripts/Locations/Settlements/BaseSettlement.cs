@@ -190,6 +190,15 @@ namespace Locations.Settlements {
             }
             return false;
         }
+        public bool HasAliveVillagerResident() {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead && resident.isNormalCharacter) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public Character GetRandomAliveResidentInsideSettlement() {
             List<Character> choices = null;
             for (int i = 0; i < residents.Count; i++) {

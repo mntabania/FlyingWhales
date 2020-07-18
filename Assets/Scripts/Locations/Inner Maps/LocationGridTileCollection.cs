@@ -87,15 +87,48 @@ namespace Inner_Maps {
 
         #region Data Getting
         public HexTile GetNearestHexTileWithinRegion() {
-            if(isPartOfParentRegionMap) { return partOfHextile.hexTileOwner; }
+            if(isPartOfParentRegionMap) {
+                if (partOfHextile.hexTileOwner.elevationType != ELEVATION.WATER && partOfHextile.hexTileOwner.elevationType != ELEVATION.MOUNTAIN) {
+                    return partOfHextile.hexTileOwner;
+                }
+            }
             foreach (LocationGridTileCollection collection in neighbours.Values) {
                 if(collection.partOfHextile != null && collection.region == region) {
-                    return collection.partOfHextile.hexTileOwner;
+                    if (collection.partOfHextile.hexTileOwner.elevationType != ELEVATION.WATER && collection.partOfHextile.hexTileOwner.elevationType != ELEVATION.MOUNTAIN) {
+                        return collection.partOfHextile.hexTileOwner;
+                    }
                 }
             }
             foreach (LocationGridTileCollection collection in neighbours.Values) {
                 if(collection.region == region) {
                     HexTile nearestHex = collection.GetNearestHexTileWithinRegion();
+                    if (nearestHex != null) {
+                        return nearestHex;
+                    }
+                }
+            }
+            return null;
+        }
+        public HexTile GetNearestPlainHexTileWithNoResident() {
+            if (isPartOfParentRegionMap) {
+                if(partOfHextile.hexTileOwner.elevationType != ELEVATION.WATER && partOfHextile.hexTileOwner.elevationType != ELEVATION.MOUNTAIN) {
+                    if (!partOfHextile.hexTileOwner.HasAliveVillagerResident()) {
+                        return partOfHextile.hexTileOwner;
+                    }
+                }
+            }
+            foreach (LocationGridTileCollection collection in neighbours.Values) {
+                if (collection.partOfHextile != null && collection.region == region) {
+                    if (collection.partOfHextile.hexTileOwner.elevationType != ELEVATION.WATER && collection.partOfHextile.hexTileOwner.elevationType != ELEVATION.MOUNTAIN) {
+                        if (!collection.partOfHextile.hexTileOwner.HasAliveVillagerResident()) {
+                            return collection.partOfHextile.hexTileOwner;
+                        }
+                    }
+                }
+            }
+            foreach (LocationGridTileCollection collection in neighbours.Values) {
+                if (collection.region == region) {
+                    HexTile nearestHex = collection.GetNearestPlainHexTileWithNoResident();
                     if (nearestHex != null) {
                         return nearestHex;
                     }

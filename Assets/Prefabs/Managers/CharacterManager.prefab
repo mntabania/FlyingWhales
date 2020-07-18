@@ -832,6 +832,36 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+  - raceName: WURM
+    race: 33
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 4e988cd7d035c5f4c912ac30b3ef0421, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
   portraitFrames:
     m_keys: 030000000700000002000000010000000500000004000000060000000800000009000000
     m_values:
@@ -1474,12 +1504,12 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 7aef4be6078a0cd4ab0ae6203e31dfae, type: 3}
           - {fileID: 21300000, guid: 73b300d1a236b024db515b3f4adb5357, type: 3}
           - {fileID: 21300000, guid: 206b39fed6b572142bac6c29ae6d9a57, type: 3}
-        - defaultSprite: {fileID: 21300000, guid: 8c0dc3499fbb32e4e93f147f6dacbb29,
+        - defaultSprite: {fileID: 21300000, guid: bee75259060f1fb44a26506a25de123b,
             type: 3}
           animationSprites:
-          - {fileID: 21300000, guid: 48f47e8517da0eb4899e2e6525ae73e0, type: 3}
-          - {fileID: 21300000, guid: 8c0dc3499fbb32e4e93f147f6dacbb29, type: 3}
-          - {fileID: 21300000, guid: a8dd7b341b3f4054db66c956cce3807d, type: 3}
+          - {fileID: 21300000, guid: 92d831d042c3d0246bf015698fbbb1ae, type: 3}
+          - {fileID: 21300000, guid: bee75259060f1fb44a26506a25de123b, type: 3}
+          - {fileID: 21300000, guid: 1a0354a39d650594488e98aa5edeb9f5, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []
@@ -2158,6 +2188,38 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 6d16b37e4428a85479f15ddbeb89d6ea, type: 3}
           - {fileID: 21300000, guid: 116225e411cae314287d4b9ab172dc06, type: 3}
           - {fileID: 21300000, guid: 14af5f16f894b34469f4bc00de7a86d3, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+  - raceName: WURM
+    race: 33
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Wurm
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: 8051693e9903b2143937a6442636a6ad,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 3c96569c272a7bd4584ab231e002b983, type: 3}
+          - {fileID: 21300000, guid: 8378afac017b0974787e0cf34d82f85e, type: 3}
+          - {fileID: 21300000, guid: b38640457029c0942a343471a79debea, type: 3}
+          - {fileID: 21300000, guid: c3df71d23474263489ceb1241b1436d9, type: 3}
+          - {fileID: 21300000, guid: 77555749530acd946bf952ab7860bb7a, type: 3}
+          - {fileID: 21300000, guid: 9a066bd8a679ac64ab213556fd432106, type: 3}
+          - {fileID: 21300000, guid: 0e3103d656f68ea409e304ee8a085e1b, type: 3}
+          - {fileID: 21300000, guid: d29ba7a0739256c4fbd06b0bbae72fcc, type: 3}
+          - {fileID: 21300000, guid: d0304b340e3e76944b8c483ce9fb72e4, type: 3}
+          - {fileID: 21300000, guid: 8051693e9903b2143937a6442636a6ad, type: 3}
+          - {fileID: 21300000, guid: 526a5377ea6e5a446bd096574a1bf350, type: 3}
+          - {fileID: 21300000, guid: 385a90f164ac0774880ebcf097681c5d, type: 3}
+          - {fileID: 21300000, guid: b8c06b21056a43e44bda2b8ce37b27ba, type: 3}
+          - {fileID: 21300000, guid: a939d24c0ae83044788972fdfe2c38be, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

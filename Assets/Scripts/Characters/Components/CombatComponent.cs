@@ -345,7 +345,12 @@ public class CombatComponent {
         if (combatReaction.reaction == COMBAT_REACTION.Fight) {
             Fight(target, combatReaction.reason, connectedAction, isLethal);
         } else if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-            Flight(target, combatReaction.reason);
+            if (owner.movementComponent.isStationary) {
+                owner.logComponent.PrintLogIfActive($"Supposed to FLIGHT for {owner.name} against {target.nameWithID} but character is STATIONARY, fight insted");
+                Fight(target, combatReaction.reason, connectedAction, isLethal);
+            } else {
+                Flight(target, combatReaction.reason);
+            }
         }
     }
     public void FightOrFlight(IPointOfInterest target, string fightReason, ActualGoapNode connectedAction = null, bool isLethal = true) {
@@ -385,6 +390,10 @@ public class CombatComponent {
         return hasFought;
     }
     public bool Flight(IPointOfInterest target, string reason = "") {
+        if (owner.movementComponent.isStationary) {
+            owner.logComponent.PrintLogIfActive($"Triggered FLIGHT response for {owner.name} against {target.nameWithID} but character is STATIONARY, cannot flee");
+            return false;
+        }
         bool hasFled = false;
         if (hostilesInRange.Remove(target)) {
             //if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -427,6 +436,10 @@ public class CombatComponent {
         return hasFled;
     }
     public void FlightAll(string reason = "") {
+        if (owner.movementComponent.isStationary) {
+            owner.logComponent.PrintLogIfActive($"Triggered FLIGHT ALL response for {owner.name} but character is STATIONARY, cannot flee");
+            return;
+        }
         //Demons no longer trigger Flight
         //https://trello.com/c/D4bdwPhH/1104-demons-and-monsters-no-longer-trigger-flight
         if (owner.race == RACE.DEMON) {

@@ -532,6 +532,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (hasStartedScreamCheck) {
 			return;
 		}
+        if (!_owner.isNormalCharacter) {
+            return;
+        }
 		if ((_owner.canMove == false && 
 		     _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
             || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {

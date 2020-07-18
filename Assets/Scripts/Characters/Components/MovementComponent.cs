@@ -21,6 +21,7 @@ public class MovementComponent {
     public float runSpeedModifier { get; private set; }
     public bool hasMovedOnCorruption { get; private set; }
     public bool enableDigging { get; private set; }
+    public bool isStationary { get; private set; }
     public ABPath currentDigPath { get; private set; }
 
     #region getters
@@ -126,6 +127,9 @@ public class MovementComponent {
     public void SetHasMovedOnCorruption(bool state) {
         hasMovedOnCorruption = state;
     }
+    public void SetIsStationary(bool state) {
+        isStationary = state;
+    } 
 
     #region Go To
     public bool GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
@@ -153,6 +157,40 @@ public class MovementComponent {
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         owner.avatar.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
         owner.avatar.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
+    }
+    /// <summary>
+    /// Move this character to another structure in the same npcSettlement.
+    /// </summary>
+    /// <param name="newStructure">New structure the character is going to.</param>
+    /// <param name="destinationTile">LocationGridTile where the character will go to (Must be inside the new structure).</param>
+    /// <param name="targetPOI">The Point of Interest this character will interact with</param>
+    /// <param name="arrivalAction">What should this character do when it reaches its target tile?</param>
+    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile destinationTile, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
+        if (isStationary) {
+            return;
+        }
+        //if the character is already at the destination tile, just do the specified arrival action, if any.
+        if (owner.gridTileLocation == destinationTile) {
+            if (arrivalAction != null) {
+                arrivalAction();
+            }
+            //marker.PlayIdle();
+        } else {
+            if (destinationTile == null) {
+                if (targetPOI != null) {
+                    //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
+                    owner.marker.GoToPOI(targetPOI, arrivalAction);
+                } else {
+                    if (arrivalAction != null) {
+                        arrivalAction();
+                    }
+                }
+            } else {
+                //if destination tile is not null, got there, regardless of target poi
+                owner.marker.GoTo(destinationTile, arrivalAction);
+            }
+
+        }
     }
     #endregion
 

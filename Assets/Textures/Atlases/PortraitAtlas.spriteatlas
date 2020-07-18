@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3601826
+    totalSpriteSurfaceArea: 3613490
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -206,6 +206,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fa0619b7cb438ad43bd60489182d2aa1, type: 3}
   - {fileID: 21300000, guid: 9a9cfbb763b6b7143acf3b6e466ed907, type: 3}
   - {fileID: 21300000, guid: de6de7d732a47da468c0414c1c057cb1, type: 3}
+  - {fileID: 21300000, guid: 4e988cd7d035c5f4c912ac30b3ef0421, type: 3}
   - {fileID: 21300000, guid: 80140ce7aa60f744daa1588464813534, type: 3}
   - {fileID: 21300000, guid: a47cf3f70cf2899499589b832767709d, type: 3}
   - {fileID: 21300000, guid: e88cd608eb8aa774aa9cb9e855f04a6c, type: 3}
@@ -518,6 +519,7 @@ SpriteAtlas:
   - Head
   - elf_f_top
   - goblin_m_skin
+  - Head
   - mail_human_hair3
   - female_human_hair6
   - female_human_eyes5

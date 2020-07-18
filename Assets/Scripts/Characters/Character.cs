@@ -270,6 +270,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Character characterOwner => null;
     public bool isSettlementRuler => ruledSettlement != null;
     public BaseSettlement targetSettlement => currentStructure.settlementLocation;
+    public bool isHidden => reactionComponent.isHidden;
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
@@ -593,6 +594,36 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 float distance = Vector2.Distance(tile.centeredWorldLocation, gridTileLocation.centeredWorldLocation);
                 if (distance <= 5f) {
                     PlayerManager.Instance.player.threatComponent.AdjustThreat(amount);
+                }
+            }
+        }
+    }
+    private void ProcessBeforeDeath(string cause, Character responsibleCharacter) {
+        if(cause == "attacked" && responsibleCharacter != null) {
+            //Death by attacked
+            if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction) {
+                //Killed by a character from another villager faction
+                if (IsInHomeSettlement()) {
+                    Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
+                    CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
+                    Revenant revenant = summon as Revenant;
+                    if (responsibleCharacter.partyComponent.hasParty) {
+                        for (int i = 0; i < responsibleCharacter.partyComponent.currentParty.members.Count; i++) {
+                            Character member = responsibleCharacter.partyComponent.currentParty.members[i];
+                            revenant.AddBetrayer(member);
+                        }
+                    } else {
+                        revenant.AddBetrayer(responsibleCharacter);
+                    }
+
+                    int numOfGhosts = UnityEngine.Random.Range(1, 4);
+                    //revenant.AdjustNumOfSummonedGhosts(numOfGhosts);
+                    for (int i = 0; i < numOfGhosts; i++) {;
+                        Character betrayer = revenant.GetRandomBetrayer();
+                        Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
+                        (ghost as Ghost).SetBetrayedBy(betrayer);
+                        CharacterManager.Instance.PlaceSummon(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
+                    }
                 }
             }
         }
@@ -1372,37 +1403,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    /// <summary>
-    /// Move this character to another structure in the same npcSettlement.
-    /// </summary>
-    /// <param name="newStructure">New structure the character is going to.</param>
-    /// <param name="destinationTile">LocationGridTile where the character will go to (Must be inside the new structure).</param>
-    /// <param name="targetPOI">The Point of Interest this character will interact with</param>
-    /// <param name="arrivalAction">What should this character do when it reaches its target tile?</param>
-    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile destinationTile, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
-        //if the character is already at the destination tile, just do the specified arrival action, if any.
-        if (gridTileLocation == destinationTile) {
-            if (arrivalAction != null) {
-                arrivalAction();
-            }
-            //marker.PlayIdle();
-        } else {
-            if (destinationTile == null) {
-                if (targetPOI != null) {
-                    //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
-                    marker.GoToPOI(targetPOI, arrivalAction);
-                } else {
-                    if (arrivalAction != null) {
-                        arrivalAction();
-                    }
-                }
-            } else {
-                //if destination tile is not null, got there, regardless of target poi
-                marker.GoTo(destinationTile, arrivalAction);
-            }
-
-        }
-    }
     public void SetGridTileLocation(LocationGridTile tile) {
         //NOTE: Tile location is being computed every time.
         //this.tile = tile;
@@ -1881,6 +1881,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool IsAtTerritory() {
         return territorries.Count > 0 && hexTileLocation != null && territorries.Contains(hexTileLocation);
     }
+    public virtual void OnSetIsHidden() { }
     #endregion    
 
     #region History/Logs
@@ -4969,8 +4970,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region IJobOwner
-    public void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
-    public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
+    public virtual void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
+    public virtual void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
         if(this == character && job == jobComponent.finalJobAssignment) {
             jobComponent.SetFinalJobAssignment(null);
             Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
@@ -5132,6 +5133,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (territorries.Contains(tile) == false) {
             territorries.Add(tile);
             HexTile firstTerritory = territorries[0];
+            Messenger.Broadcast(Signals.BECOME_A_TERRITORY, tile, this);
             if(firstTerritory.region != homeRegion) {
                 if(homeRegion != null) {
                     homeRegion.RemoveResident(this);
@@ -5171,7 +5173,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public bool IsTerritory(HexTile hex) {
-        return territorries.Contains(hex);
+        if(territorries.Count > 0) {
+            return territorries.Contains(hex);
+        }
+        return false;
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;
@@ -5318,6 +5323,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
+            ProcessBeforeDeath(cause, responsibleCharacter);
             traitContainer.RemoveTrait(this, "Necromancer"); //Necromancer trait must be removed when the necromancer dies so that another necromancer can take its place
             if (currentRegion == null) {
                 throw new Exception(

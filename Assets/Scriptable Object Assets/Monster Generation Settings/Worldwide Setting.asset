@@ -99,6 +99,10 @@ MonoBehaviour:
         minMaxRange:
           lowerBound: 1
           upperBound: 1
+      - monsterType: 31
+        minMaxRange:
+          lowerBound: 1
+          upperBound: 3
     - data:
       - monsterType: 18
         minMaxRange:
