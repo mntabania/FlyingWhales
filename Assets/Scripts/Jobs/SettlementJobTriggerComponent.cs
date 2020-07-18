@@ -397,7 +397,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		bool isAtValidLocation = true;
 		if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) && target.gridTileLocation.structure != _owner.mainStorage) {
 			isAtValidLocation = false;
-		} else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) == false && target.gridTileLocation.structure is Wilderness == false) {
+		} else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) == false && target.gridTileLocation.structure is Wilderness) {
 			isAtValidLocation = false;
 		}
 		

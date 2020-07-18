@@ -76,7 +76,7 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
         onClickNameplate = null;
         onRightClickNameplate = null;
         onToggleNameplate = null;
-        toggle.isOn = false;
+        toggle.SetIsOnWithoutNotify(false);
         obj = default(T);
         SetToggleGroup(null);
         SetInteractableState(true);
