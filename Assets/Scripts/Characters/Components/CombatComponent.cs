@@ -7,7 +7,9 @@ using Inner_Maps;
 public class CombatComponent {
 	public Character owner { get; private set; }
     public int attack { get; private set; }
+    public int attackModification { get; private set; }
     public int maxHP { get; private set; }
+    public int maxHPModification { get; private set; }
     public int attackSpeed { get; private set; }  //in milliseconds, The lower the amount the faster the attack rate
 
     public COMBAT_MODE combatMode { get; private set; }
@@ -30,6 +32,12 @@ public class CombatComponent {
     #region getters
     public bool isInCombat => owner.stateComponent.currentState != null && owner.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
     public bool isInActualCombat => IsInActualCombat();
+    public int unModifiedMaxHP => Mathf.RoundToInt(owner.characterClass.baseHP *
+                                                   (owner.raceSetting.hpMultiplier == 0f ? 
+                                                       1f : owner.raceSetting.hpMultiplier));
+    public int unModifiedAttack => Mathf.RoundToInt(owner.characterClass.baseAttackPower *
+                                                    (owner.raceSetting.attackMultiplier == 0f
+                                                        ? 1f : owner.raceSetting.attackMultiplier));
     #endregion
 
     public CombatComponent(Character owner) {
@@ -69,7 +77,7 @@ public class CombatComponent {
                     }
                 } else {
                     log += "\n-Combat job not added";
-                    if (owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
+                    if (owner.marker != null && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
                         CombatState combatState = owner.stateComponent.currentState as CombatState;
                         combatState.CheckFlee(ref log);
                     }
@@ -780,22 +788,30 @@ public class CombatComponent {
             UpdateMaxHP();
         }
     }
-    public void UpdateAttack() {
-        attack = Mathf.RoundToInt(owner.characterClass.baseAttackPower * (owner.raceSetting.attackMultiplier == 0f ? 1f : owner.raceSetting.attackMultiplier));
+    private void UpdateAttack() {
+        attack = Mathf.RoundToInt(owner.characterClass.baseAttackPower * (owner.raceSetting.attackMultiplier == 0f ? 1f : owner.raceSetting.attackMultiplier)) + attackModification;
     }
-    public void UpdateMaxHP() {
-        maxHP = Mathf.RoundToInt(owner.characterClass.baseHP * (owner.raceSetting.hpMultiplier == 0f ? 1f : owner.raceSetting.hpMultiplier));
+    private void UpdateMaxHP() {
+        maxHP = Mathf.RoundToInt(owner.characterClass.baseHP * (owner.raceSetting.hpMultiplier == 0f ? 1f : owner.raceSetting.hpMultiplier)) + maxHPModification;
         if (maxHP < 0) {
             maxHP = 1;
         }
     }
-    public void UpdateAttackSpeed() {
+    private void UpdateAttackSpeed() {
         attackSpeed = owner.characterClass.baseAttackSpeed;
         //attackSpeed = Mathf.RoundToInt(owner.characterClass.baseAttackSpeed * (owner.raceSetting.attackSpeedMultiplier == 0f ? 1f : owner.raceSetting.attackSpeedMultiplier));
     }
     public void UpdateMaxHPAndReset() {
         UpdateMaxHP();
         owner.ResetToFullHP();
+    }
+    public void AdjustMaxHPModifier(int modification) {
+        maxHPModification += modification;
+        UpdateMaxHP();
+    }
+    public void AdjustAttackModifier(int modification) {
+        attackModification += modification;
+        UpdateAttack();
     }
     #endregion
 

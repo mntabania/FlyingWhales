@@ -43,7 +43,7 @@ public class TraitManager : MonoBehaviour {
         "Fire Prone", "Electric", "Venomous", "Booby Trapped", "Betrayed", "Abomination Germ", "Ensnared", "Melting",
         "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", 
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
-        "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower",
+        "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty"
     };
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
@@ -129,8 +129,9 @@ public class TraitManager : MonoBehaviour {
     private void AddInstancedTraits() {
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {
-            Trait trait = CreateNewInstancedTraitClass(instancedTraits[i]);
-            _allTraits.Add(trait.name, trait);
+            string traitName = instancedTraits[i];
+            Trait trait = CreateNewInstancedTraitClass(traitName);
+            _allTraits.Add(traitName, trait);
         }
     }
     public Sprite GetTraitPortrait(string traitName) {
@@ -212,7 +213,7 @@ public class TraitManager : MonoBehaviour {
             //In the loop, override duration to zero so that it will not reset the trait's timer
             Trait duplicateTrait = null;
             for (int i = 0; i < numOfStacks; i++) {
-                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0);
+                to.traitContainer.AddTrait(to, trait.name, out duplicateTrait, overrideDuration: 0, bypassElementalChance: true);
             }
             if(duplicateTrait != null) {
                 //Copy the trait's responsible characters and gainedFromDoing

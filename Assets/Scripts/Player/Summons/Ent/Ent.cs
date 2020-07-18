@@ -5,22 +5,24 @@ using Traits;
 public abstract class Ent : Summon {
 
     public override string raceClassName => "Ent";
+    
+    /// <summary>
+    /// Is this ent pretending to be a tree
+    /// </summary>
+    public bool isTree { get; private set; }
+    
 
     protected Ent(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.ENT,
         UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     protected Ent(SaveDataCharacter data) : base(data) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public override void Initialize() {
         base.Initialize();
         SetDestroyMarkerOnDeath(true);
-        //behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
-        //behaviourComponent.RemoveBehaviourComponent(typeof(MovementProcessing));
-        behaviourComponent.AddBehaviourComponent(typeof(EntBehaviour));
-        //behaviourComponent.AddBehaviourComponent(typeof(MovementProcessing));
-        //traitContainer.AddTrait(this, "Fire Prone");
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Ent_Behaviour);
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
@@ -49,4 +51,22 @@ public abstract class Ent : Summon {
         placeForWoodPile.structure.AddPOI(woodPile, placeForWoodPile);
         // placeForWoodPile.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
     }
+    protected override void OnTickEnded() {
+        if (isTree) {
+            return;
+        }
+        base.OnTickEnded();
+    }
+    protected override void OnTickStarted() {
+        if (isTree) {
+            return;
+        }
+        base.OnTickStarted();
+    }
+
+    #region General
+    public void SetIsTree(bool state) {
+        isTree = state;
+    }
+    #endregion
 }

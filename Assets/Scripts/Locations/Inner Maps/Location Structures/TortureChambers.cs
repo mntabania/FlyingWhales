@@ -8,7 +8,7 @@ namespace Inner_Maps.Location_Structures {
         public override Vector2 selectableSize { get; }
         private TortureChamberStructureObject _tortureChamberStructureObject;
         public LocationGridTile entrance => _tortureChamberStructureObject.entrance;
-        
+        public override string nameplateName => "Prison";
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             selectableSize = new Vector2(10f, 10f);
         }

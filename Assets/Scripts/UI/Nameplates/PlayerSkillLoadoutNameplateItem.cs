@@ -51,4 +51,7 @@ public class PlayerSkillLoadoutNameplateItem : MonoBehaviour {
     public void OnHoverExit() {
         onHoverExit(skillData);
     }
+    public void SetInteractableState(bool state) {
+        toggle.interactable = state;
+    }
 }

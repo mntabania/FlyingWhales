@@ -55,6 +55,12 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				yield return null;	
 			}
 		}
+
+		Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+		TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
+		randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
+		Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
+
 	}
 	private IEnumerator RegionalItemGeneration() {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {

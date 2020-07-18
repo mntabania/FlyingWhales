@@ -445,6 +445,14 @@ namespace Traits {
             }
             return removedTraits;
         }
+        public void RemoveAllTraitsByType(ITraitable removeFrom, TRAIT_TYPE traitType) {
+            for (int i = 0; i < traits.Count; i++) {
+                Trait trait = traits[i];
+                if (trait.type == traitType) {
+                    RemoveTrait(removeFrom, i);
+                }
+            }
+        }
         public void RemoveAllTraitsAndStatusesByName(ITraitable removeFrom, string name) {
             //List<Trait> removedTraits = new List<Trait>();
             //List<Trait> all = new List<Trait>(allTraits);

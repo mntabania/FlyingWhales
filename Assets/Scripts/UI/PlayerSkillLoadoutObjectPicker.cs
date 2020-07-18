@@ -57,6 +57,14 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
             item.SetToggleAction(OnPickSkill);
             item.SetOnHoverEnterAction(onHoverEnterAction);
             item.SetOnHoverExitAction(onHoverExitAction);
+            if (skillType == SPELL_TYPE.MEDDLER || skillType == SPELL_TYPE.OSTRACIZER) {
+                //disable meddler and ostracizer
+                item.SetInteractableState(false);
+                item.transform.SetAsLastSibling();
+            } else {
+                item.SetInteractableState(true);
+                item.transform.SetAsFirstSibling();
+            }
         }
         UpdateConfirmBtnState();
         Open();

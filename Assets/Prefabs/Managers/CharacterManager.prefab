@@ -91,7 +91,7 @@ MonoBehaviour:
   characterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
     type: 3}
   characterIconsParent: {fileID: 0}
-  lessenCharacterLogs: 0
+  lessenCharacterLogs: 1
   maxLevel: 30
   _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
     type: 3}
@@ -1106,6 +1106,7 @@ MonoBehaviour:
         - Barbarian
         - Craftsman
         - Druid
+        - Hero
         - Hunter
         - Knight
         - Leader
@@ -1202,6 +1203,27 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 81e2379c3e850f24aa6231209d9bfa01, type: 3}
           - {fileID: 21300000, guid: 30c749fd1dc8e9848b4ddfc84a30835f, type: 3}
           - {fileID: 21300000, guid: 60da041cbd7da304e9a2139235d7e597, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 5b6cc1efebf4344438bdd54e8802ecb8,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 71ba7b34eb8afdf49a8f29fe9db65dfc, type: 3}
+          - {fileID: 21300000, guid: 3a80bff9ddca29947baa31a735d902c9, type: 3}
+          - {fileID: 21300000, guid: 6d3689ca343a1ff46a9c290413c1c54b, type: 3}
+          - {fileID: 21300000, guid: 9f712e82376805949a8fa22ca68feff2, type: 3}
+          - {fileID: 21300000, guid: 5b6cc1efebf4344438bdd54e8802ecb8, type: 3}
+          - {fileID: 21300000, guid: 555a7ae013b04564eae82891cc86219b, type: 3}
+          - {fileID: 21300000, guid: 8ff4edd588994564289aca876d79ad1f, type: 3}
+          - {fileID: 21300000, guid: 948bc5c0283d7364083ddc64e0c8fbad, type: 3}
+          - {fileID: 21300000, guid: 1d5b335eef1c01c47bd4c52c9851d0c7, type: 3}
+          - {fileID: 21300000, guid: db12b25dd364e3e4a8ddb7983d4a67b6, type: 3}
+          - {fileID: 21300000, guid: b1e7b9ae9f504684ea462f8a412fb57f, type: 3}
+          - {fileID: 21300000, guid: ece173acd51b0b549bbe1df82f9786d0, type: 3}
+          - {fileID: 21300000, guid: eaae10904786ead4c8c2b33fb2af125d, type: 3}
+          - {fileID: 21300000, guid: 627286f25faac5f4cb22fbae8c230bc3, type: 3}
+          - {fileID: 21300000, guid: a52e67214439cbb48b8acd45fc830bae, type: 3}
+          - {fileID: 21300000, guid: 83cbfd6f7164a894bb8076985d2a0448, type: 3}
+          - {fileID: 21300000, guid: e4ff2f225feeec844a67bddedc2cae3c, type: 3}
+          - {fileID: 21300000, guid: 108a4e2edf9e009458bf8cac04966f45, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 60ad7fdf91cbb484fa0ab78dfcbb8602,
             type: 3}
           animationSprites:
@@ -1548,6 +1570,7 @@ MonoBehaviour:
         - Barbarian
         - Craftsman
         - Druid
+        - Hero
         - Hunter
         - Knight
         - Leader
@@ -1644,6 +1667,27 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 0449b18b51671c2439223d53a83716b3, type: 3}
           - {fileID: 21300000, guid: d088385016410b04da0eced1b4f63bbb, type: 3}
           - {fileID: 21300000, guid: c9651c4c32f892a43b5b08157299a9e7, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: ccf2612ea0eeba94d9d4d115c983b0d2,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 081da08b7420c9d45b34996f5010f790, type: 3}
+          - {fileID: 21300000, guid: 0e11b5c057e2447428c6c4e6520dc98e, type: 3}
+          - {fileID: 21300000, guid: 1b2a7dcc15b3fa445b8f3217b30d9555, type: 3}
+          - {fileID: 21300000, guid: 6e98797622f33e746bcfb7b12d29c15f, type: 3}
+          - {fileID: 21300000, guid: ccf2612ea0eeba94d9d4d115c983b0d2, type: 3}
+          - {fileID: 21300000, guid: 4da1ffde561a4ce48a730b4931931b7c, type: 3}
+          - {fileID: 21300000, guid: eb7fd1752750def4ca6f89a7509abf20, type: 3}
+          - {fileID: 21300000, guid: 6e5e3bc0c4f61124993cb9d19266f34d, type: 3}
+          - {fileID: 21300000, guid: 28077a1b6d0a2814a80fe9683bb424f7, type: 3}
+          - {fileID: 21300000, guid: 6fc7e7d2370a1b448ba603a00cdfa7ba, type: 3}
+          - {fileID: 21300000, guid: 6fa09ea0a7ee6cb44a26f0984ac525a7, type: 3}
+          - {fileID: 21300000, guid: 73b7e1dd836a3e5479c86b2aeee826e4, type: 3}
+          - {fileID: 21300000, guid: ab2300b469d253c46bafa6c27f0482a0, type: 3}
+          - {fileID: 21300000, guid: cc0e787e3b47f7a4da07e7dde10315c0, type: 3}
+          - {fileID: 21300000, guid: a59941a142b3f194e9babff20d3316d0, type: 3}
+          - {fileID: 21300000, guid: db7ba4c48461f874cad549220e90db30, type: 3}
+          - {fileID: 21300000, guid: 39ce2957ab5de434ca3f96ac2b71d290, type: 3}
+          - {fileID: 21300000, guid: e9d74c187662a7c46bf8e0722caad9e2, type: 3}
         - defaultSprite: {fileID: 21300000, guid: 36fc20a731d9bae46b17ec88752a887b,
             type: 3}
           animationSprites:

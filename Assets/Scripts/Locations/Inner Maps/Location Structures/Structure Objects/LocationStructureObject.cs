@@ -109,20 +109,19 @@ public class LocationStructureObject : PooledObject {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
             Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
-            // tile.SetReservedType(preplacedObj.tileObjectType);
-
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             newTileObject.SetIsPreplaced(true, structure);
-            tile.structure.AddPOI(newTileObject, tile);
-            newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
-            newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
-            newTileObject.RevalidateTileObjectSlots();
-            if (structure is Inner_Maps.Location_Structures.ThePortal 
-                && newTileObject.tileObjectType == TILE_OBJECT_TYPE.PORTAL_TILE_OBJECT) {
-                structure.AddObjectAsDamageContributor(newTileObject);    
-            }
+            
+            PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
         }
         SetPreplacedObjectsState(false);
+    }
+    protected virtual void PreplacedObjectProcessing(StructureTemplateObjectData preplacedObj,
+        LocationGridTile tile, LocationStructure structure, TileObject newTileObject) {
+        tile.structure.AddPOI(newTileObject, tile);
+        newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
+        newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
+        newTileObject.RevalidateTileObjectSlots();
     }
     public void PlacePreplacedObjectsAsBlueprints(LocationStructure structure, InnerTileMap areaMap, NPCSettlement npcSettlement) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();

@@ -8,9 +8,4 @@ public class IronMaiden : TileObject {
     public IronMaiden(SaveDataTileObject data) {
         Initialize(data);
     }
-    public override bool CanBeDamaged() {
-        //prevent iron maiden in torture chamber from being damaged.
-        return structureLocation != null 
-               && structureLocation.structureType != STRUCTURE_TYPE.TORTURE_CHAMBERS; 
-    }
 }

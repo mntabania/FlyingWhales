@@ -179,6 +179,11 @@ public class NonActionEventsComponent {
             strLog += "\n\nActor is Diplomatic, modified weights...";
             strLog += "\nInsult: -30, Praise: +30";
         }
+        
+        if (owner.traitContainer.HasTrait("Hero") || target.traitContainer.HasTrait("Hero")) {
+            chatWeights.RemoveElement(Argument);
+            strLog += "\n\nActor or target is Hero, removing argument weight...";
+        }
 
         strLog += $"\n\n{chatWeights.GetWeightsSummary("FINAL WEIGHTS")}";
 

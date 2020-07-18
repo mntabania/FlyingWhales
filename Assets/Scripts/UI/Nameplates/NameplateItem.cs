@@ -28,7 +28,7 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     [SerializeField] protected Toggle _toggle;
 
     [Header("Cover")]
-    [SerializeField] private GameObject coverGO;   
+    [SerializeField] protected GameObject coverGO;   
 
     //Hover Delegates
     public delegate void OnHoverEnterNameplate(T obj);
@@ -216,7 +216,7 @@ public class NameplateItem<T> : PooledObject, INameplateItem {
     /// Set this nameplates interactability state. This will also affect the cover of the nameplate. (Setting the nameplate as un-interactable will activate the cover)
     /// </summary>
     /// <param name="state">The state the interactable will be set to.</param>
-    public void SetInteractableState(bool state) {
+    public virtual void SetInteractableState(bool state) {
         button.interactable = state;
         toggle.interactable = state;
         coverGO.SetActive(!state);

@@ -45,10 +45,11 @@ public class CharacterManager : MonoBehaviour {
         Ghost_Behaviour = "Ghost Behaviour",
         Wurm_Behaviour = "Wurm Behaviour",
         Tower_Behaviour = "Tower Behaviour",
-        Revenant_Behaviour = "Revenant Behaviour";
+        Revenant_Behaviour = "Revenant Behaviour",
+        Ent_Behaviour = "Ent Behaviour",
+        Mimic_Behaviour = "Mimic Behaviour";
 
     public const int MAX_HISTORY_LOGS = 300;
-
     
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
@@ -265,6 +266,20 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(RevenantBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Ent_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(EntBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Mimic_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(MimicBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },
@@ -787,7 +802,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public void PlaceSummon(Summon summon, LocationGridTile locationTile) {
         summon.homeRegion?.RemoveCharacterFromLocation(summon);
-        summon.CreateMarker();
+        summon.CreateMarker();    
         summon.marker.InitialPlaceMarkerAt(locationTile);
         summon.OnPlaceSummon(locationTile);
     }
@@ -1207,7 +1222,10 @@ public class CharacterManager : MonoBehaviour {
     }
     public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status, ActualGoapNode action = null) {
         if (emoter.isNormalCharacter) {
-            return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";
+            if (emoter.CanFeelEmotion(emotionType)) {
+                return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status, action)}";    
+            }
+            return string.Empty;
         } else {
             //Non villager characters cannot feel emotion
             return string.Empty;

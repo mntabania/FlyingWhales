@@ -45,6 +45,7 @@ namespace Traits {
         void RemoveAllNonPersistentTraitAndStatuses(ITraitable traitable);
         void RemoveAllTraitsAndStatuses(ITraitable traitable);
         void RemoveAllTraits(ITraitable traitable);
+        void RemoveAllTraitsByType(ITraitable traitable, TRAIT_TYPE traitType);
         #endregion
 
         #region Getting

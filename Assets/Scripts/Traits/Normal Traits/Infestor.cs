@@ -8,7 +8,7 @@ namespace Traits {
 
         public Infestor() {
             name = "Infestor";
-            description = "This is an infestor.";
+            description = "Grows and multiplies over time.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

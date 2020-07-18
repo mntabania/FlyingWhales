@@ -34,6 +34,7 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI speedLbl;
     [SerializeField] private TextMeshProUGUI raceLbl;
     [SerializeField] private TextMeshProUGUI elementLbl;
+    [SerializeField] private TextMeshProUGUI behaviourLbl;
 
     [Space(10)]
     [Header("Traits")]
@@ -65,7 +66,6 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         
         InitializeLogsMenu();
-
         ConstructCombatModes();
     }
 
@@ -174,9 +174,16 @@ public class MonsterInfoUI : InfoUIBase {
         speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
         raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
         elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
-        //if(characterPortrait.character != null) {
-        //    characterPortrait.UpdateLvl();
-        //}
+        behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";
+    }
+    public void OnHoverBehaviour(object obj) {
+        if (TraitManager.Instance.allTraits.ContainsKey(_activeMonster.characterClass.traitNameOnTamedByPlayer)) {
+            Trait trait = TraitManager.Instance.allTraits[_activeMonster.characterClass.traitNameOnTamedByPlayer];
+            UIManager.Instance.ShowSmallInfo(trait.description);    
+        }
+    }
+    public void OnHoverOutBehaviour() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 

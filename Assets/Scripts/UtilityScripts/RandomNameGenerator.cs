@@ -285,6 +285,9 @@ public static class RandomNameGenerator {
     }
 
     private static string GenerateSpiderName() {
+	    if (availableSpiderNames.Count <= 0) {
+		    availableSpiderNames.AddRange(spiderNames);
+	    }
         string chosenName = availableSpiderNames[Random.Range(0, availableSpiderNames.Count)];
         availableSpiderNames.Remove(chosenName);
         return chosenName;

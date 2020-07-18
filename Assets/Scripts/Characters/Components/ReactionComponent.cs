@@ -926,7 +926,9 @@ public class ReactionComponent {
                     owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
                 }
             }
-            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !owner.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject)) {
+            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && 
+               !owner.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && 
+               targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP)) {
                 owner.jobComponent.CreateTakeItemJob(targetTileObject);
             }
         }

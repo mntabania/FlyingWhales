@@ -49,7 +49,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                 producedJob = null;
                 return true;
             } else {
-                if (character.traitContainer.HasTrait("Diplomatic") == false) {
+                if (character.traitContainer.HasTrait("Diplomatic") == false && character.characterClass.className != "Hero") {
                     log += $"\n-{character.name} will try to trigger Undermine";
                     int roll = UnityEngine.Random.Range(0, 100);
                     log += $"\n-Undermine Roll: " + roll;

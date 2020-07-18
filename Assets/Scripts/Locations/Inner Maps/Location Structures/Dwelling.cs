@@ -66,8 +66,8 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Residents
-        public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
-            if (base.AddPOI(poi, tileLocation, placeObject)) {
+        public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
+            if (base.AddPOI(poi, tileLocation)) {
                 if (poi is TileObject) {
                     UpdateFacilityValues();
                 }

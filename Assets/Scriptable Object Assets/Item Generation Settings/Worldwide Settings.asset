@@ -51,6 +51,10 @@ MonoBehaviour:
         minMaxRange:
           lowerBound: 5
           upperBound: 6
+      - itemType: 87
+        minMaxRange:
+          lowerBound: 5
+          upperBound: 6
     - data:
       - itemType: 100
         minMaxRange:

@@ -80,6 +80,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } 
     }
+    public bool isMainVisualActive => mainImg.gameObject.activeSelf;
     public CharacterMarkerAnimationListener animationListener => _animationListener;
     public int sortingOrder => mainImg.sortingOrder;
     private LocationGridTile _previousGridTile;

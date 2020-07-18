@@ -1293,13 +1293,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void StartBuildConfirmation(object structureObj) {
         SPELL_TYPE structureType = (SPELL_TYPE) structureObj;
         string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
+
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(structureType);
+        
         string question = string.Empty;
         if (IsNextToOrPartOfVillage()) {
             question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
-            question += "\nAre you sure you want to build " + landmarkName + "?";
+            question += "\nAre you sure you want to build " + spellData.name + "?";
         } else {
-            question = "Are you sure you want to build " + landmarkName + "?";
+            question = "Are you sure you want to build " + spellData.name + "?";
         }
         UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => StartBuild(structureType));
     }
@@ -1408,6 +1410,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation == null) { continue; }
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
                 if (characters == null) { characters = new List<Character>(); }
@@ -1426,6 +1429,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation == null) { continue; }
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax
                 && validityChecker.Invoke(character)) {

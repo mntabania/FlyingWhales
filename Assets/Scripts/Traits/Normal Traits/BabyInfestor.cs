@@ -8,7 +8,7 @@ namespace Traits {
 
         public BabyInfestor() {
             name = "Baby Infestor";
-            description = "This is a baby infestor.";
+            description = "Grows and transforms to older Infestor types";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.ticksPerHour;

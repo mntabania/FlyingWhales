@@ -15,6 +15,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		yield return null;
 		CreateMageTowers(GetLoopCount(LANDMARK_TYPE.MAGE_TOWER, data), GetChance(LANDMARK_TYPE.MAGE_TOWER, data));
 		yield return null;
+		CreateAncientGraveyard(GetLoopCount(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data), GetChance(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data));
+		yield return null;
 	}
 
 	private void CreateMonsterLairs(int loopCount, int chance) {
@@ -122,6 +124,26 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Mage Towers");
 	}
+	private void CreateAncientGraveyard(int loopCount, int chance) {
+		int createdCount = 0;
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) {
+				List<HexTile> choices = GridMap.Instance.normalHexTiles
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null)
+					.ToList();
+				if (choices.Count > 0) {
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_GRAVEYARD);
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
+						chosenTile);
+					createdCount++;
+				} else {
+					break;
+				}
+			}
+		}
+		Debug.Log($"Created {createdCount.ToString()} Ancient Graveyards");
+	}
 
 	private int GetLoopCount(LANDMARK_TYPE landmarkType, MapGenerationData data) {
 		switch (landmarkType) {
@@ -173,6 +195,19 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				} else {
 					return 3;
 				}
+			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
+				if (WorldConfigManager.Instance.isDemoWorld) {
+					return 0;
+				}
+				bool graveyardWasBuilt =
+					LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.ANCIENT_GRAVEYARD) != null;
+				if (data.regionCount == 1) {
+					return graveyardWasBuilt ? 0 : 1;
+				} else if (data.regionCount == 2 || data.regionCount == 3) {
+					return graveyardWasBuilt ? 1 : 2;
+				} else {
+					return 3;
+				}
 			default:
 				return 0;
 		}
@@ -187,6 +222,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				return WorldConfigManager.Instance.isDemoWorld ? 100 : 35;
 			case LANDMARK_TYPE.MAGE_TOWER:
 				return WorldConfigManager.Instance.isDemoWorld ? 0 : 35;
+			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
+				return WorldConfigManager.Instance.isDemoWorld ? 0 : 75;
 			default:
 				return 0;
 		}

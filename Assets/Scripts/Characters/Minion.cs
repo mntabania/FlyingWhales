@@ -368,7 +368,7 @@ public class Minion {
         if(character.currentHP < 0) {
             character.SetHP(0);
         }
-        Messenger.AddListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+        Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         UnSubscribeListeners();
         SetIsSummoned(false);
         character.behaviourComponent.SetIsHarassing(false, null);
@@ -378,18 +378,27 @@ public class Minion {
         character.interruptComponent.ForceEndNonSimultaneousInterrupt();
         character.combatComponent.ClearAvoidInRange(false);
         character.combatComponent.ClearHostilesInRange(false);
-        Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType) as SpellData);
-        //PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType).StartCooldown();
+        
+        SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        
+        int missingHealth = character.maxHP - character.currentHP;
+        int cooldown = Mathf.CeilToInt((float)missingHealth / 25);
+        spellData.SetCooldown(cooldown);
+        spellData.SetCurrentCooldownTick(0);
+
+        Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, spellData);
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
         this.character.AdjustHP(25, ELEMENTAL_TYPE.Normal);
+        SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
+        spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
-            MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
-            minionPlayerSkill.SetCharges(1);
-            Messenger.Broadcast(Signals.SPELL_COOLDOWN_FINISHED, minionPlayerSkill as SpellData);
-            Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);
+            spellData.SetCooldown(-1);
+            spellData.SetCharges(1);
+            Messenger.Broadcast(Signals.SPELL_COOLDOWN_FINISHED, spellData);
+            Messenger.RemoveListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         }
     }
     public void OnSeize() {

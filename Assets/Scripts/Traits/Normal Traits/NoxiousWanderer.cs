@@ -8,7 +8,7 @@ namespace Traits {
 
         public NoxiousWanderer() {
             name = "Noxious Wanderer";
-            description = "This is a noxious wanderer.";
+            description = "Spews out poison clouds from time to time.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
