@@ -320,6 +320,9 @@ public class CombatManager : MonoBehaviour {
         if (target.traitContainer.HasTrait("Hibernating")) {
             target.traitContainer.RemoveTrait(target, "Hibernating");
         }
+        if(target is Golem) {
+            target.traitContainer.RemoveTrait(target, "Indestructible");
+        }
     }
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {
         if (trait is Burning burning) {
