@@ -676,7 +676,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 } else {
                     PlayIdle();
                 }
-            } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
+            } else if ((character.canMove == false || (!character.canPerform && !character.canWitness) && !character.traitContainer.HasTrait("Hibernating")) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
                 PlaySleepGround();
             } else if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false && character.carryComponent.masterCharacter.avatar.isTravelling) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
