@@ -737,11 +737,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob) {
+    public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossible = false) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    LocationGridTile chosenTile;
 		    if (_owner.homeStructure != null) {
-			    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+			    if (checkIfPathPossible) {
+				    List<LocationGridTile> choices = _owner.homeStructure.unoccupiedTiles
+					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+			    } else {
+				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);    
+			    }
 		    } else {
 			    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
 			    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);

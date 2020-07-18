@@ -82,7 +82,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             }    
         }
         
-        return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
+        return character.jobComponent.TriggerRoamAroundTerritory(out producedJob, true);
     }
 
     private List<Character> GetWebbedCharactersAtHome(Character character) {

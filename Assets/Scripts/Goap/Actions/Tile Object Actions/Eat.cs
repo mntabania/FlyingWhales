@@ -41,72 +41,68 @@ public class Eat : GoapAction {
             if (isTrapped) {
                 cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                 costLog += $" +{cost}(Actor is currently visiting)";
-            } else {
-                if(table.gridTileLocation != null && table.structureLocation.settlementLocation != null && table.structureLocation.settlementLocation == actor.homeSettlement) {
-                    if (table.structureLocation == actor.homeStructure) {
-                        cost = UtilityScripts.Utilities.Rng.Next(20, 36);
-                        costLog += $" +{cost}(Table is in actor's home)";
-                    } else {
-                        if (actor.needsComponent.isStarving) {
-                            Character tableOwner = table.characterOwner;
-                            if (tableOwner != null) {
-                                if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
-                                    cost = UtilityScripts.Utilities.Rng.Next(70, 81);
-                                    costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
-                                } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                                    cost = 300;
-                                    costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
-                                } else {
-                                    cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                    costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
-                                }
-                            } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                costLog += $" +{cost}(Table not owned)";
-                            }
+            } else if (actor.traitContainer.HasTrait("Travelling")) {
+                if(table.structureLocation.structureType == STRUCTURE_TYPE.INN || table.structureLocation == actor.homeStructure) {
+                    cost = UtilityScripts.Utilities.Rng.Next(400, 451);
+                    costLog += $" +{cost}(Travelling, Inside Tavern)";
+                }
+                if (actor.needsComponent.isStarving) {
+                    Character tableOwner = table.characterOwner;
+                    if (tableOwner != null) {
+                        if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                            cost = UtilityScripts.Utilities.Rng.Next(400, 451);
+                            costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
+                        } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
+                            cost = 800;
+                            costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
                         } else {
-                            //not starving
-                            if (table.characterOwner != null && !table.IsOwnedBy(actor)
-                                && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
-                                && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
-                                cost += 2000;
-                                costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
-                            } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
-                                costLog += $" +{cost}(Table not owned)";
-                            }
+                            cost = UtilityScripts.Utilities.Rng.Next(450, 501);
+                            costLog += $" +{cost}(Travelling, Table owned by someone that is not friend or enemy and actor is starving)";
                         }
+                    } else {
+                        cost = UtilityScripts.Utilities.Rng.Next(450, 501);
+                        costLog += $" +{cost}(Travelling, Table not owned)";
                     }
                 } else {
-                    if (actor.traitContainer.HasTrait("Travelling")) {
-                        if(table.structureLocation.structureType == STRUCTURE_TYPE.INN) {
-                            cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                            costLog += $" +{cost}(Travelling, Inside Tavern)";
-                        }
-                        if (actor.needsComponent.isStarving) {
-                            Character tableOwner = table.characterOwner;
-                            if (tableOwner != null) {
-                                if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
-                                    cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-                                    costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
-                                } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
-                                    cost = 800;
-                                    costLog += $" +{cost}(Travelling, Table is owned by friend/close friend and actor is starving)";
-                                } else {
-                                    cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                                    costLog += $" +{cost}(Travelling, Table owned by someone that is not friend or enemy and actor is starving)";
-                                }
+                    cost += 2000;
+                    costLog += $" +{cost}(Travelling but not starving)";
+                } 
+            } else if (table.gridTileLocation != null && table.structureLocation.settlementLocation != null && table.structureLocation.settlementLocation == actor.homeSettlement) {
+                if (table.structureLocation == actor.homeStructure) {
+                    cost = UtilityScripts.Utilities.Rng.Next(20, 36);
+                    costLog += $" +{cost}(Table is in actor's home)";
+                } else {
+                    if (actor.needsComponent.isStarving) {
+                        Character tableOwner = table.characterOwner;
+                        if (tableOwner != null) {
+                            if (actor.relationshipContainer.IsFriendsWith(tableOwner)) {
+                                cost = UtilityScripts.Utilities.Rng.Next(70, 81);
+                                costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
+                            } else if (actor.relationshipContainer.IsEnemiesWith(tableOwner)) {
+                                cost = 300;
+                                costLog += $" +{cost}(Table is owned by friend/close friend and actor is starving)";
                             } else {
-                                cost = UtilityScripts.Utilities.Rng.Next(450, 501);
-                                costLog += $" +{cost}(Travelling, Table not owned)";
+                                cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                                costLog += $" +{cost}(Table owned by someone that is not friend or enemy and actor is starving)";
                             }
+                        } else {
+                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            costLog += $" +{cost}(Table not owned)";
                         }
                     } else {
-                        cost += 2000;
-                        costLog += $" +{cost}(Not Travelling)";
+                        //not starving
+                        if (table.characterOwner != null && !table.IsOwnedBy(actor)
+                            && table.characterOwner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR) == false
+                            && table.characterOwner.relationshipContainer.IsFamilyMember(actor) == false) {
+                            cost += 2000;
+                            costLog += $" +{cost}(Table personally owned by someone else who is not the Actor's Lover, Affair or Relative)";
+                        } else {
+                            cost = UtilityScripts.Utilities.Rng.Next(50, 71);
+                            costLog += $" +{cost}(Table not owned)";
+                        }
                     }
                 }
-            }
+            } 
         } else {
             cost = UtilityScripts.Utilities.Rng.Next(400, 451);
             costLog += $" +{cost}(Not Table)";
