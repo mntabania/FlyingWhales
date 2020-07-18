@@ -144,14 +144,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnSettlementUnderSiegeChanged(NPCSettlement npcSettlement, bool siegeState) {
-		if (npcSettlement == _owner.currentSettlement && siegeState 
-			&& (_owner.stateComponent.currentState is CombatState) == false && _owner.isNormalCharacter) {
-            //characters current npcSettlement is under siege
-            if (!_owner.combatComponent.isInCombat) {
-                _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
-                // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
-            }
-        }
+		//if (npcSettlement == _owner.currentSettlement && siegeState 
+		//	&& (_owner.stateComponent.currentState is CombatState) == false && _owner.isNormalCharacter) {
+  //          //characters current npcSettlement is under siege
+  //          if (!_owner.combatComponent.isInCombat) {
+  //              _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, _owner);
+  //              // Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfStopInterruptFinished);
+  //          }
+  //      }
 	}
 	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
 		if (character == _owner) {

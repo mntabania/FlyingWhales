@@ -671,7 +671,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             ResetBlood();
             if (character.numOfActionsBeingPerformedOnThis > 0) {
-                if (character.canMove == false || (!character.canPerform && !character.canWitness)) {
+                if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && !character.traitContainer.HasTrait("Hibernating")) {
                     PlaySleepGround();
                 } else {
                     PlayIdle();

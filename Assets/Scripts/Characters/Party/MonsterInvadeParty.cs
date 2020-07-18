@@ -17,7 +17,7 @@ public class MonsterInvadeParty : Party {
 
     public MonsterInvadeParty() : base(PARTY_TYPE.Monster_Invade) {
         minimumPartySize = 3;
-        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
+        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(MonsterInvadeBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
     }

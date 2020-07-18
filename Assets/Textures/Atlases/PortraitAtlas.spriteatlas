@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3613490
+    totalSpriteSurfaceArea: 3625154
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -285,6 +285,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d21ec97cd0517b84495ddf3310830a23, type: 3}
   - {fileID: 21300000, guid: 51b57d7ccfa6a0c43b7d82e502e9eb3a, type: 3}
   - {fileID: 21300000, guid: de27fb9c13f204f42abef4acbf2a610e, type: 3}
+  - {fileID: 21300000, guid: 6a7b5bac1c96118428f50fc9cd5ba1f4, type: 3}
   - {fileID: 21300000, guid: bda1deac126da4548966400b0d9c047c, type: 3}
   - {fileID: 21300000, guid: 54aa40bc58c59bd448edd0cf903711ef, type: 3}
   - {fileID: 21300000, guid: 7acfc5bc61f73a141ad190bb96a66cea, type: 3}
@@ -598,6 +599,7 @@ SpriteAtlas:
   - goblin_m_hair
   - female_human_head1
   - female_human_hair2
+  - Head
   - TheSpire
   - female_human_mouth2
   - M-Incubus

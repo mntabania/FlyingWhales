@@ -7,6 +7,8 @@ public class Succubus : SeducerSummon {
 
     public const string ClassName = "Succubus";
     public override string raceClassName => ClassName;
+
+    public Character copiedCharacter { get; private set; }
     
     public Succubus() : base(SUMMON_TYPE.Succubus, GENDER.FEMALE, ClassName){
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
@@ -20,5 +22,11 @@ public class Succubus : SeducerSummon {
     
     public override string GetClassForRole(CharacterRole role) {
         return ClassName;
+    }
+
+    public void SetCopiedCharacter(Character character) {
+        if(copiedCharacter != character) {
+            copiedCharacter = character;
+        }
     }
 }
