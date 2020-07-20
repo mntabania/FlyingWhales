@@ -23,6 +23,8 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
+    private Character owner;
+
     public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -36,6 +38,10 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         //this.category = category;
         this.job = job;
+        owner = actor;
+        //if (actor.traitContainer.HasTrait("Disguised")) {
+        //    actor = actor.traitContainer.GetNormalTrait<Traits.Disguised>("Disguised").disguisedCharacter;
+        //}
         //this.allowDeadTargets = allowDeadTargets;
     }
     //public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority
@@ -69,6 +75,10 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         //this.category = category;
         this.job = job;
+        owner = actor;
+        //if (actor.traitContainer.HasTrait("Disguised")) {
+        //    actor = actor.traitContainer.GetNormalTrait<Traits.Disguised>("Disguised").disguisedCharacter;
+        //}
         //this.allowDeadTargets = allowDeadTargets;
     }
     //public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority
@@ -99,6 +109,11 @@ public class GoapThread : Multithread {
         this.isPersonalPlan = isPersonalPlan;
         //this.category = category;
         this.job = job;
+
+        owner = actor;
+        //if (actor.traitContainer.HasTrait("Disguised")) {
+        //    actor = actor.traitContainer.GetNormalTrait<Traits.Disguised>("Disguised").disguisedCharacter;
+        //}
         //this.allowDeadTargets = allowDeadTargets;
         //this.otherData = otherData;
     }
@@ -107,6 +122,10 @@ public class GoapThread : Multithread {
         this.actor = actor;
         this.recalculationPlan = currentPlan;
         this.job = job;
+        owner = actor;
+        //if (actor.traitContainer.HasTrait("Disguised")) {
+        //    actor = actor.traitContainer.GetNormalTrait<Traits.Disguised>("Disguised").disguisedCharacter;
+        //}
         //this.actorAllowedActions = actorAllowedActions;
         //this.usableActions = usableActions;
     }

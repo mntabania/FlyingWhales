@@ -47,7 +47,8 @@ public class CharacterManager : MonoBehaviour {
         Tower_Behaviour = "Tower Behaviour",
         Revenant_Behaviour = "Revenant Behaviour",
         Ent_Behaviour = "Ent Behaviour",
-        Mimic_Behaviour = "Mimic Behaviour";
+        Mimic_Behaviour = "Mimic Behaviour",
+        Succubus_Behaviour = "Succubus Behaviour";
 
     public const int MAX_HISTORY_LOGS = 300;
     
@@ -278,6 +279,13 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(MimicBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Succubus_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(SuccubusBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },

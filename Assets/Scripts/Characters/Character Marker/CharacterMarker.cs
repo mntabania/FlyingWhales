@@ -765,6 +765,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         return mainImg.gameObject.activeSelf;
     }
     private void UpdateHairVisuals() {
+        Character character = this.character;
+        if (character.reactionComponent.disguisedCharacter != null) {
+            character = character.reactionComponent.disguisedCharacter;
+        }
         Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
         hairImg.sprite = hair;
         hairImg.color = Color.white;

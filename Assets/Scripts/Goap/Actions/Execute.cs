@@ -23,15 +23,15 @@ public class Execute : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
-        Character target = poiTarget as Character;
-        Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal"); 
+        string response = base.ReactionToActor(actor, target, witness, node, status);
+        Character poiTarget = target as Character;
+        Criminal criminalTrait = poiTarget.traitContainer.GetNormalTrait<Criminal>("Criminal"); 
         if (criminalTrait != null && criminalTrait.crimeData.target == witness) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, node.actor, status, node);
         } else {
-            if (witness.relationshipContainer.IsFriendsWith(target) 
+            if (witness.relationshipContainer.IsFriendsWith(poiTarget) 
                 && witness.traitContainer.HasTrait("Psychopath") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, node.actor, status, node);
             }
@@ -53,21 +53,21 @@ public class Execute : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(actor, poiTarget, witness, node, status);
-        Character target = poiTarget as Character;
-        if (witness.relationshipContainer.HasOpinionLabelWithCharacter(target, BaseRelationshipContainer.Acquaintance)) {
+        string response = base.ReactionToTarget(actor, target, witness, node, status);
+        Character targetCharacter = target as Character;
+        if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Acquaintance)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, target, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
             }
-        } else if (witness.relationshipContainer.IsFriendsWith(target)) {
+        } else if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, target, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
             }
-        } else if (witness.relationshipContainer.HasOpinionLabelWithCharacter(target, BaseRelationshipContainer.Rival)) {
+        } else if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
             if (witness.traitContainer.HasTrait("Diplomatic") == false) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, target, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status, node);
             }
         }
         return response;

@@ -64,22 +64,27 @@ public class ExplorationParty : Party {
         }
     }
     private void ProcessSettingTargetStructure() {
-        LocationStructure target = leader.currentRegion.GetRandomSpecialStructureExcept(alreadyExplored);
-        if(target != null) {
-            SetTargetStructure(target);
-        } else {
-            List<Region> adjacentRegions = leader.currentRegion.AdjacentRegions();
-            if(adjacentRegions != null) {
-                for (int i = 0; i < adjacentRegions.Count; i++) {
-                    target = adjacentRegions[i].GetRandomSpecialStructureExcept(alreadyExplored);
-                    if(target != null) {
-                        SetTargetStructure(target);
-                        break;
-                    }
+        List<Region> adjacentRegions = leader.currentRegion.AdjacentRegions();
+        LocationStructure target = null;
+        if (adjacentRegions != null) {
+            adjacentRegions.Add(leader.currentRegion);
+            while (target == null && adjacentRegions.Count > 0) {
+                Region chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
+                target = chosenRegion.GetRandomSpecialStructureExcept(alreadyExplored);
+                if (target == null) {
+                    adjacentRegions.Remove(chosenRegion);
                 }
             }
+            if (target != null) {
+                SetTargetStructure(target);
+            }
+        } else {
+            target = leader.currentRegion.GetRandomSpecialStructureExcept(alreadyExplored);
+            if (target != null) {
+                SetTargetStructure(target);
+            }
         }
-        if(target == null) {
+        if (target == null) {
             DisbandParty();
         }
     }

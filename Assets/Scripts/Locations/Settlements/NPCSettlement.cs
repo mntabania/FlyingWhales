@@ -593,6 +593,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         AssignPrison();
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+        if(character.reactionComponent.disguisedCharacter != null) {
+            character = character.reactionComponent.disguisedCharacter;
+        }
         if(owner != null 
             && character.gridTileLocation != null 
             && character.gridTileLocation.IsPartOfSettlement(this) 

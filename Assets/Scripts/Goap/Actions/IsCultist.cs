@@ -15,10 +15,10 @@
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
-        Character target = poiTarget as Character;
+        string response = base.ReactionToActor(actor, target, witness, node, status);
+        Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
@@ -31,7 +31,7 @@
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
             }
 
-            if (target != null && witness.relationshipContainer.IsEnemiesWith(target) == false) {
+            if (poiTarget != null && witness.relationshipContainer.IsEnemiesWith(poiTarget) == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
             }
         }

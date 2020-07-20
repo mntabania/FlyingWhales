@@ -31,10 +31,11 @@ public class GoapPlanner {
             job.SetAssignedPlan(null);
         }
         status = GOAP_PLANNING_STATUS.RUNNING;
-        
+
         //_numOfWaitingForGoapThread++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
-        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(owner, target, goal, isPersonalPlan, job));
+        Character actor = owner;
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, target, goal, isPersonalPlan, job));
     }
     public void StartGOAP(GoapAction goal, IPointOfInterest target, GoapPlanJob job, bool isPersonalPlan = true) {
         if (status == GOAP_PLANNING_STATUS.RUNNING) {

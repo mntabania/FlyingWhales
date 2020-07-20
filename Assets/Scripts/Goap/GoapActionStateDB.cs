@@ -594,6 +594,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.MONSTER_INVADE, new[]{
             new StateNameAndDuration(){ name = "Invade Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.DISGUISE, new[]{
+            new StateNameAndDuration(){ name = "Disguise Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
     };
 }
 

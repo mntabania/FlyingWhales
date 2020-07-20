@@ -115,9 +115,20 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
+    public bool HasRelationship(params RELATIONSHIP_TYPE[] type) {
+        return GetRelatablesWithRelationshipCount(type) > 0;
+    }
     #endregion
 
     #region Getting
+    public Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type) {
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type)) {
+                return CharacterManager.Instance.GetCharacterByID(kvp.Key);
+            }
+        }
+        return null;
+    }
     public int GetFirstRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type) {
         foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
             if (kvp.Value.HasRelationship(type)) {

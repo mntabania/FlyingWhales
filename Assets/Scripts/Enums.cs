@@ -503,6 +503,7 @@ public enum INTERACTION_TYPE {
     RESCUE,
     COUNTERATTACK_ACTION,
     MONSTER_INVADE,
+    DISGUISE,
 }
 public enum INTERRUPT {
     None,

@@ -537,6 +537,34 @@ public class Region {
         }
         return null;
     }
+    public Character GetRandomAliveVillagerCharacterWithGender(GENDER gender) {
+        List<Character> validCharacters = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
+            if (!character.isDead && character.isNormalCharacter && character.gender == gender) {
+                if (validCharacters == null) { validCharacters = new List<Character>(); }
+                validCharacters.Add(character);
+            }
+        }
+        if (validCharacters != null) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        return null;
+    }
+    public Character GetRandomAliveVillagerCharacterWithGenderAndRelationship(GENDER gender, params RELATIONSHIP_TYPE[] rels) {
+        List<Character> validCharacters = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
+            if (!character.isDead && character.isNormalCharacter && character.gender == gender && character.relationshipContainer.HasRelationship(rels)) {
+                if (validCharacters == null) { validCharacters = new List<Character>(); }
+                validCharacters.Add(character);
+            }
+        }
+        if (validCharacters != null) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        return null;
+    }
     #endregion
 
     #region Faction

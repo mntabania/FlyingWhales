@@ -85,10 +85,9 @@ public class RitualKilling : GoapAction {
         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
         return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(actor, poiTarget, witness, node, status);
-        IPointOfInterest target = node.poiTarget;
+        string response = base.ReactionToTarget(actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!witness.traitContainer.HasTrait("Psychopath")) {

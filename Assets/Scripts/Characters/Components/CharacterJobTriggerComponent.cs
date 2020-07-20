@@ -2143,12 +2143,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         return false;
     }
-    #endregion
-
-    #region Party
     public bool TriggerReleaseJob(Character targetCharacter) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.RELEASE_CHARACTER)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], targetCharacter, _owner, null, 0);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], _owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RELEASE_CHARACTER, INTERACTION_TYPE.RELEASE_CHARACTER, targetCharacter, _owner);
             goapPlan.SetDoNotRecalculate(true);
@@ -2156,6 +2153,36 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             job.SetAssignedPlan(goapPlan);
             return _owner.jobQueue.AddJobInQueue(job);
         }
+        return false;
+    }
+    #endregion
+
+    #region Disguise
+    public bool TriggerDisguiseJob(Character targetCharacter, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DISGUISE], _owner, targetCharacter, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.DISGUISE, targetCharacter, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    #endregion
+
+    #region Succubus
+    public bool TriggerMakeLoveJob(Character targetCharacter, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MAKE_LOVE, targetCharacter, _owner);
+            job.SetCannotBePushedBack(true);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
         return false;
     }
     #endregion
