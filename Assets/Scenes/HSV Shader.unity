@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -128,7 +128,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1331368784}
     m_Modifications:
+    - target: {fileID: 1421302858361430, guid: cdfed07929227104599994075478446b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1748718637801916, guid: cdfed07929227104599994075478446b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1992512687103308, guid: cdfed07929227104599994075478446b, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -136,6 +144,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterPortrait
       objectReference: {fileID: 0}
+    - target: {fileID: 114132303872503446, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f4050a24f408d2945aebf0cff738a313,
+        type: 3}
     - target: {fileID: 114181092265369096, guid: cdfed07929227104599994075478446b,
         type: 3}
       propertyPath: m_Material
@@ -146,6 +160,18 @@ PrefabInstance:
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 2100000, guid: 4f1995ec43a3fc14cb91dcd56050fd9e, type: 2}
+    - target: {fileID: 114236030611697968, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5c14fe530bcccae4c8b3b2c528c022c1,
+        type: 3}
+    - target: {fileID: 114518820517338810, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a506aef3bf28dcb40939be1b5a7e6739,
+        type: 3}
     - target: {fileID: 114599517752204020, guid: cdfed07929227104599994075478446b,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -166,6 +192,24 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114694949205517784, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: c7155dee93dd0b44e9521906d629ef73,
+        type: 3}
+    - target: {fileID: 114734689534470442, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d4740915052439b42b8605c6ffa0e012,
+        type: 3}
+    - target: {fileID: 114869696986236404, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: eb95285e5b4bfed4aa021eaf823e2e85,
+        type: 3}
     - target: {fileID: 114932724567522114, guid: cdfed07929227104599994075478446b,
         type: 3}
       propertyPath: m_Material
@@ -276,6 +320,12 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6828215290693499528, guid: cdfed07929227104599994075478446b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d4740915052439b42b8605c6ffa0e012,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cdfed07929227104599994075478446b, type: 3}
 --- !u!224 &578913762 stripped

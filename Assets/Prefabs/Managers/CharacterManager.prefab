@@ -92,7 +92,6 @@ MonoBehaviour:
     type: 3}
   characterIconsParent: {fileID: 0}
   lessenCharacterLogs: 1
-  maxLevel: 30
   _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
     type: 3}
   portraitAssets:
@@ -108,6 +107,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -117,6 +117,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -126,6 +127,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: ANGEL
     race: 32
     neutralAssets:
@@ -137,6 +139,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -146,6 +149,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -155,6 +159,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: CHICKEN
     race: 26
     neutralAssets:
@@ -167,6 +172,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -176,6 +182,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -185,6 +192,40 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
+  - raceName: DRAGON
+    race: 8
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 5483171b9e7c90743943dbbd7fa20a7a, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: ELEMENTAL
     race: 19
     neutralAssets:
@@ -197,6 +238,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -206,6 +248,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -215,6 +258,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: ELVES
     race: 2
     neutralAssets:
@@ -226,110 +270,102 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head:
-      - {fileID: 21300000, guid: 63770e2e66034404c93e0ecd0493070c, type: 3}
-      - {fileID: 21300000, guid: 2a27ddcc4b754f94089422a6126aaeef, type: 3}
-      - {fileID: 21300000, guid: aa5d717836b493d4fa663057349c245d, type: 3}
-      - {fileID: 21300000, guid: 115fd927328207a4dbc310da6ebb3182, type: 3}
+      - {fileID: 21300000, guid: 79a393715d76bbf449513e6ec37b00dd, type: 3}
+      - {fileID: 21300000, guid: 84016ddfb8674d648bf5f363de762402, type: 3}
+      - {fileID: 21300000, guid: 1b059dea75021604198792780a3eda4e, type: 3}
+      - {fileID: 21300000, guid: 84a354b15cd3a3e40a79642393ca60fb, type: 3}
+      - {fileID: 21300000, guid: cd9cb89bacbdb1849938079f67a045f2, type: 3}
       brows:
-      - {fileID: 21300000, guid: 3ac977351aa0c0640ba4e8dcb5d39441, type: 3}
-      - {fileID: 21300000, guid: 7fba7bbbf291e554e928b975caf9b7b6, type: 3}
-      - {fileID: 21300000, guid: 3700c295659c86742b0e783fbe49b9a7, type: 3}
-      - {fileID: 21300000, guid: 15e50ff2bfb8d3f488c47b9da5547816, type: 3}
+      - {fileID: 21300000, guid: e1e522fa56236994e865d9a2ba0d03e2, type: 3}
+      - {fileID: 21300000, guid: e252097856f314d4abd5b6b0c5712a92, type: 3}
+      - {fileID: 21300000, guid: 7f4ef6fa23069b449bebfe5578b48bd8, type: 3}
+      - {fileID: 21300000, guid: 591fb730474c1304fab2d96257e2f720, type: 3}
       eyes:
-      - {fileID: 21300000, guid: 4f624290721412c4c85d2fc5a5d785a7, type: 3}
-      - {fileID: 21300000, guid: 0ffb6748cd1a5cd46a077404cbead42f, type: 3}
-      - {fileID: 21300000, guid: 5912b833b16118f4388d9d0ecd491931, type: 3}
-      - {fileID: 21300000, guid: 18162bcb1d1cb7347a98746c85b62e2c, type: 3}
-      - {fileID: 21300000, guid: 75a9d8e82a1c46a42a1a54fa7cd4e8f7, type: 3}
-      - {fileID: 21300000, guid: 29271a1cbffbabe40ac3521e390a02ca, type: 3}
+      - {fileID: 21300000, guid: 1aef3bbac3ef1f447901ee1f3f904657, type: 3}
+      - {fileID: 21300000, guid: 934bd434be619a046a2e414048091958, type: 3}
+      - {fileID: 21300000, guid: d4269d17148e0a34ebf0b72e49688303, type: 3}
+      - {fileID: 21300000, guid: 6fdc005307832d64fa853e8aa5db90f7, type: 3}
       mouth:
-      - {fileID: 21300000, guid: a7d85b269a8f0b940be6cc48c663c117, type: 3}
-      - {fileID: 21300000, guid: 2f0f1e5e1dd59d44a9e00d56d60b191f, type: 3}
-      - {fileID: 21300000, guid: 9a329b1f5ea28f14f8e0b7dfd823292f, type: 3}
-      - {fileID: 21300000, guid: b53c8c171e943184a92f1dbeb3f813fb, type: 3}
-      - {fileID: 21300000, guid: 462bd7b9075f57040b04ae7b7a55ec70, type: 3}
-      - {fileID: 21300000, guid: e02a23c5b706b2b40b45266e4ee1860c, type: 3}
+      - {fileID: 21300000, guid: e40fd2fa1f5f1f34cbb41ca28e16cc4c, type: 3}
+      - {fileID: 21300000, guid: 234c4f93cab84904d9a808435eb2acfd, type: 3}
+      - {fileID: 21300000, guid: 519654f75c76fc740a03c3944790d514, type: 3}
+      - {fileID: 21300000, guid: 8befbc06ae20c6145b10595935721c32, type: 3}
       nose:
-      - {fileID: 21300000, guid: 61b570f5147214e4dba25a4132e2f6be, type: 3}
-      - {fileID: 21300000, guid: 3df244b395a119345b2116a6192bcc50, type: 3}
-      - {fileID: 21300000, guid: b8a165e36b7a65e449644fe0c716b8e4, type: 3}
-      - {fileID: 21300000, guid: 82f16a1e45100fd449873e0cb3f891b5, type: 3}
-      - {fileID: 21300000, guid: fdbaf843b1cfe274191cfce10482c684, type: 3}
-      - {fileID: 21300000, guid: b6579f814b8f3b440a50422999d585ea, type: 3}
+      - {fileID: 21300000, guid: f26017566351fd445a08b6dce92bedb8, type: 3}
+      - {fileID: 21300000, guid: 716bb68b956ad2f43af89451fe9680d8, type: 3}
+      - {fileID: 21300000, guid: 975c482941c711f4c86f69852843c3c1, type: 3}
+      - {fileID: 21300000, guid: 48f6269ed8a689447ad8a7b11a34435b, type: 3}
+      - {fileID: 21300000, guid: 702e2d10a6176974dbc912ec712bca24, type: 3}
+      - {fileID: 21300000, guid: 259b59b34a3089342ae9be5e8b9f5002, type: 3}
       hair:
-      - {fileID: 21300000, guid: cb0acb61abcb9674b9b490ed22ff1571, type: 3}
-      - {fileID: 21300000, guid: ad395faf452a54f4488d7485f246235f, type: 3}
-      - {fileID: 21300000, guid: 80140ce7aa60f744daa1588464813534, type: 3}
-      - {fileID: 21300000, guid: 0244065206680ce448b2783a99eadc66, type: 3}
-      - {fileID: 21300000, guid: a344b434bafe59c4880441e249501a13, type: 3}
-      - {fileID: 21300000, guid: 95192beb92ac1c3458b481e22b02fbb5, type: 3}
-      - {fileID: 21300000, guid: 912e48cab756ee141954951e196a7b95, type: 3}
-      - {fileID: 21300000, guid: a913f88ec8672ad49a1fa0b1110cfdf2, type: 3}
-      - {fileID: 21300000, guid: 6ff5fc4dc5eddd04db848ae3ff3cd57a, type: 3}
-      mustache:
-      - {fileID: 21300000, guid: 24efa84ff38951940869da5a41c5e539, type: 3}
-      - {fileID: 21300000, guid: 371c0329ad3bac3429d02cc0308f4afd, type: 3}
-      - {fileID: 21300000, guid: d84a1e9be29dd6246846a6bc0752b954, type: 3}
-      - {fileID: 21300000, guid: 1c7f3aea4961b8c49b1f04b2ae5b72ea, type: 3}
-      beard:
-      - {fileID: 21300000, guid: 84836b6378521724abf01da51320da56, type: 3}
-      - {fileID: 21300000, guid: a4815d6a357685845a2416346a7b8a7b, type: 3}
-      - {fileID: 21300000, guid: ab91e37b01444bd4d9b2a73127564c78, type: 3}
-      - {fileID: 21300000, guid: 916e6b3f3f314cd49a07acd0232286e1, type: 3}
-      - {fileID: 21300000, guid: e38ddfcbd4a4bfc41a3ab2f196e4b5a5, type: 3}
-      - {fileID: 21300000, guid: e86d8cd52b50b334a8ed0b34e9b33737, type: 3}
-      - {fileID: 21300000, guid: f20a0b5fb87e29342832df6364258a61, type: 3}
-      - {fileID: 21300000, guid: 1e01f905ac9814d4b89e8844cf5ffd32, type: 3}
-    femaleAssets:
-      head:
-      - {fileID: 21300000, guid: 8f12727a6c45217488871d508aaf5086, type: 3}
-      - {fileID: 21300000, guid: 9b192c114386a504eb1a08ccea935166, type: 3}
-      - {fileID: 21300000, guid: 9a7589ec1abaa4945b072535db2db100, type: 3}
-      - {fileID: 21300000, guid: 11979596ad117574ebc84efcc583b5af, type: 3}
-      - {fileID: 21300000, guid: f6426827041bf4343af4d3d042b9cd5c, type: 3}
-      brows:
-      - {fileID: 21300000, guid: b6b3676f0c4bbc947b13e3338a34f48c, type: 3}
-      - {fileID: 21300000, guid: 1db698eb1b1438248955c1dc2fa358fb, type: 3}
-      - {fileID: 21300000, guid: 2a1d92a3678d3ac49993ea4b7dae1efc, type: 3}
-      - {fileID: 21300000, guid: 181bb9fa8b480ad46893d62c0a50df31, type: 3}
-      eyes:
-      - {fileID: 21300000, guid: 5284fd5e335d6c54e8c2779b475c571d, type: 3}
-      - {fileID: 21300000, guid: 01b79f56d391a12498082cacac7f9d7a, type: 3}
-      - {fileID: 21300000, guid: f872167e6495e1349a255f9afe3a4290, type: 3}
-      - {fileID: 21300000, guid: 841b181b894c8904c96aa9f21014adf4, type: 3}
-      - {fileID: 21300000, guid: 53b1a61916abd71439cf65b544e8bad2, type: 3}
-      - {fileID: 21300000, guid: c6d0433fe5fcb3640a5d00cb2c5773b1, type: 3}
-      - {fileID: 21300000, guid: f09d058f366c1344eab2dec0814d878f, type: 3}
-      mouth:
-      - {fileID: 21300000, guid: ef66d9fdaf1929f42947f5556ffa6218, type: 3}
-      - {fileID: 21300000, guid: ba0f1a52f0ed20540890efcb0edd2efa, type: 3}
-      - {fileID: 21300000, guid: eec2ac25f878c8444afb8b48a8939328, type: 3}
-      - {fileID: 21300000, guid: f3047a41fc067e647b7ea8a5b27e41bc, type: 3}
-      - {fileID: 21300000, guid: 1b808e2d40ab4ba4985d9ebdac657cf1, type: 3}
-      - {fileID: 21300000, guid: 1ad02e91e13597f4ab982a35c280f6e1, type: 3}
-      - {fileID: 21300000, guid: 78fb792e0af2b0442916a13987d65056, type: 3}
-      nose:
-      - {fileID: 21300000, guid: eba6a899e71793840a718e2b71411f89, type: 3}
-      - {fileID: 21300000, guid: a2fa3212751f60543b352c7f00c9abad, type: 3}
-      - {fileID: 21300000, guid: 02de9a37b703a5d47b5e520153b1cef5, type: 3}
-      - {fileID: 21300000, guid: 3cff21c56bcf60640a62a454b6f7664f, type: 3}
-      - {fileID: 21300000, guid: 29f5658739116e74f81f5635698a8fa8, type: 3}
-      hair:
-      - {fileID: 21300000, guid: 9d1aaf1632137af4fa72533226d0fd1c, type: 3}
-      - {fileID: 21300000, guid: 1d721efc2a0733f41913e563f3a85955, type: 3}
-      - {fileID: 21300000, guid: a592b6c6a087315458c52f92b5ab68f4, type: 3}
-      - {fileID: 21300000, guid: de27fb9c13f204f42abef4acbf2a610e, type: 3}
-      - {fileID: 21300000, guid: 1d76d483d75603d408ce37b20e99fa0f, type: 3}
-      - {fileID: 21300000, guid: b75af179bff70f84b8f420eda473a10d, type: 3}
-      - {fileID: 21300000, guid: 834e5a7f40f1d2c4ea70658bb9c5dfb2, type: 3}
-      - {fileID: 21300000, guid: a47cf3f70cf2899499589b832767709d, type: 3}
-      - {fileID: 21300000, guid: a9ae73cfb8b4a19489834df49340e08a, type: 3}
-      - {fileID: 21300000, guid: cf734b3d45c26af4dad18fccc18ac32c, type: 3}
-      - {fileID: 21300000, guid: 7a59ed47152fec34eb2339c84d04aa31, type: 3}
+      - {fileID: 21300000, guid: f0c25e61a6a5fe242b73d8190632b3b8, type: 3}
+      - {fileID: 21300000, guid: a56f24c4ef4765541a12de228beecac9, type: 3}
+      - {fileID: 21300000, guid: 7125bdb76b847cc448836f1605675c42, type: 3}
+      - {fileID: 21300000, guid: 94250dcedb49183449de96e3d34f6e2d, type: 3}
+      - {fileID: 21300000, guid: 4d1b68241fa614a4b8dd9e64fe63cd5c, type: 3}
+      - {fileID: 21300000, guid: f85e66a926e2c2a4d8f90c5042d16132, type: 3}
+      - {fileID: 21300000, guid: 0654d4bd9682b194eb1bb75fe48d4716, type: 3}
+      - {fileID: 21300000, guid: 4146d3e350ac08e45a5f8e0001dc8d6d, type: 3}
+      - {fileID: 21300000, guid: 83c820757c7a74b489ab9c72daeb0fd4, type: 3}
+      - {fileID: 21300000, guid: a50211475c2109f4c8522954f775f932, type: 3}
       mustache: []
       beard: []
+      ears:
+      - {fileID: 21300000, guid: 9178512c96957d74a9107fce70f9a498, type: 3}
+      - {fileID: 21300000, guid: c397e1822b5ed124f90f57c2fdf710ab, type: 3}
+      - {fileID: 21300000, guid: d38fb521664a8c74abab0cae98c31877, type: 3}
+      - {fileID: 21300000, guid: c29f96f9060abe34ab5d3822d82b82b9, type: 3}
+      - {fileID: 21300000, guid: 3fe76c1144f7df743aee5663796dd624, type: 3}
+    femaleAssets:
+      head:
+      - {fileID: 21300000, guid: f4050a24f408d2945aebf0cff738a313, type: 3}
+      - {fileID: 21300000, guid: 41c3cc6dfca174c4db0d50fc344cb436, type: 3}
+      - {fileID: 21300000, guid: 470eebd2a50dd5749a5319c8ae215e0c, type: 3}
+      - {fileID: 21300000, guid: f7f2c2ba22cbeae4db852c466b31d36d, type: 3}
+      - {fileID: 21300000, guid: 6a60f06697749dd4588ef4df797b110b, type: 3}
+      brows:
+      - {fileID: 21300000, guid: a506aef3bf28dcb40939be1b5a7e6739, type: 3}
+      - {fileID: 21300000, guid: 003212dc83781b545ae3db4300852022, type: 3}
+      - {fileID: 21300000, guid: cf6cf0700fd7ef04083b9d20bb3ed598, type: 3}
+      - {fileID: 21300000, guid: 8847b5333c6c4bc429114dcad373d8f3, type: 3}
+      eyes:
+      - {fileID: 21300000, guid: d4740915052439b42b8605c6ffa0e012, type: 3}
+      - {fileID: 21300000, guid: 008c4a28aa544154cac3d1725ba62046, type: 3}
+      - {fileID: 21300000, guid: ca1a4fc9d1d701f49a129a9fb030a9f0, type: 3}
+      - {fileID: 21300000, guid: 49970b5d947987945b23fad358e82ea1, type: 3}
+      mouth:
+      - {fileID: 21300000, guid: c7155dee93dd0b44e9521906d629ef73, type: 3}
+      - {fileID: 21300000, guid: 56fa9d1349ee0394092b040e9ed8d4ad, type: 3}
+      - {fileID: 21300000, guid: e0a176743f8746b49b486df8b9bab3d7, type: 3}
+      - {fileID: 21300000, guid: 5a4956d826e0f89479571b31fd3d1622, type: 3}
+      nose:
+      - {fileID: 21300000, guid: eb95285e5b4bfed4aa021eaf823e2e85, type: 3}
+      - {fileID: 21300000, guid: b96224fb6da78634094b169ea4cce888, type: 3}
+      - {fileID: 21300000, guid: 91791662e1933534eae0821cdb338e52, type: 3}
+      - {fileID: 21300000, guid: 77fcc5a5c62d2b543b3f57c21030e34a, type: 3}
+      - {fileID: 21300000, guid: 5cc6d47cff6ad0f4bbb9bd64a9bbbba6, type: 3}
+      hair:
+      - {fileID: 21300000, guid: 5c14fe530bcccae4c8b3b2c528c022c1, type: 3}
+      - {fileID: 21300000, guid: 8e9489bba9fe18c4da79a39f7369761c, type: 3}
+      - {fileID: 21300000, guid: bbd953a7e3b51a548aa006c6b78b2576, type: 3}
+      - {fileID: 21300000, guid: aba9c763bddd4714c85e6c921f0ac5b3, type: 3}
+      - {fileID: 21300000, guid: 0cb8e3d4bacb34b4ba7372a186571ac7, type: 3}
+      - {fileID: 21300000, guid: e6811e16cec9d6448a251477f0046316, type: 3}
+      - {fileID: 21300000, guid: 5799ddd9bf2cb0f478d1c0d465ab1efe, type: 3}
+      - {fileID: 21300000, guid: bb8b107ac1619d143a08088b4382bc9f, type: 3}
+      - {fileID: 21300000, guid: 7fadc3eed19dc5c49bd65691acebe1a7, type: 3}
+      - {fileID: 21300000, guid: 06d838b6677bd874bac3dd6f9ebe815f, type: 3}
+      mustache: []
+      beard: []
+      ears:
+      - {fileID: 21300000, guid: 40db3a2e00143a14cbc7a0156c676cf1, type: 3}
+      - {fileID: 21300000, guid: 56106638e18d8b3429bbcb1103b62af3, type: 3}
+      - {fileID: 21300000, guid: 4ce22e48a7bcfd64ba4d61940a39b1cf, type: 3}
+      - {fileID: 21300000, guid: 35a3791950f0e3b4e93cdd4bd78a0fc6, type: 3}
+      - {fileID: 21300000, guid: c0512fbea76344946bf751d6e821f9fa, type: 3}
   - raceName: ENT
     race: 22
     neutralAssets:
@@ -341,6 +377,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -350,6 +387,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -359,6 +397,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: GHOST
     race: 31
     neutralAssets:
@@ -371,6 +410,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -380,6 +420,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -389,6 +430,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: GOLEM
     race: 18
     neutralAssets:
@@ -401,6 +443,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -410,6 +453,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -419,6 +463,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: HUMANS
     race: 1
     neutralAssets:
@@ -430,12 +475,14 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head:
       - {fileID: 21300000, guid: 37ca32002f93f0d42adcaa5d97aaadf3, type: 3}
       - {fileID: 21300000, guid: be4a5b381ee08a44fb38f4231f8955e6, type: 3}
       - {fileID: 21300000, guid: e7ed28e4088901b44abdf90055f857a6, type: 3}
       - {fileID: 21300000, guid: 64f66803f86c746439e21001ac813e80, type: 3}
+      - {fileID: 21300000, guid: 04666f52b21550f438961f6127ce72ae, type: 3}
       brows:
       - {fileID: 21300000, guid: 9d3ce8178f5bb35478f3dafc4d259284, type: 3}
       - {fileID: 21300000, guid: 069b3a11c714dfb4a8e95d8b64f42d51, type: 3}
@@ -486,6 +533,7 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 7775cc93bc5c8e5418297f536d68820f, type: 3}
       - {fileID: 21300000, guid: 0f72a4f380a7505449fe061883609d51, type: 3}
       - {fileID: 21300000, guid: 74855c26ebb5ecd458d725598626c440, type: 3}
+      ears: []
     femaleAssets:
       head:
       - {fileID: 21300000, guid: 51b57d7ccfa6a0c43b7d82e502e9eb3a, type: 3}
@@ -493,11 +541,15 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 06ec2e605be1fff49ac27118f4801cc1, type: 3}
       - {fileID: 21300000, guid: 9cd7c17da0b879644bdd33ba57a04054, type: 3}
       - {fileID: 21300000, guid: dfc0dadde54370f469219a045b6f4d6d, type: 3}
+      - {fileID: 21300000, guid: 9e6265b52b591dd41ab07ef45fea45df, type: 3}
       brows:
       - {fileID: 21300000, guid: e5d9fd985aee8be40a03df8b4c567c3c, type: 3}
       - {fileID: 21300000, guid: 2e0deab37199dba47b53e45040c924b5, type: 3}
       - {fileID: 21300000, guid: 54e18915b63296441851c0072d2280a7, type: 3}
       - {fileID: 21300000, guid: f6e8830f64304df4ab724d09811293f8, type: 3}
+      - {fileID: 21300000, guid: 23155af263f488645bbff2c93b8d7979, type: 3}
+      - {fileID: 21300000, guid: 591f1c03258c37445becdb481ad5c9f0, type: 3}
+      - {fileID: 21300000, guid: e80724b17f1557747bf2cae9a760edf7, type: 3}
       eyes:
       - {fileID: 21300000, guid: b388b89f6ed8ee14f866d8e77b7d1853, type: 3}
       - {fileID: 21300000, guid: 9ad94965a6829494e9cb4d99a98c1873, type: 3}
@@ -520,6 +572,8 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 70f830329e6c25e4fa78b54cb5fb8567, type: 3}
       - {fileID: 21300000, guid: 3a641b12296c62440b4445f671127d76, type: 3}
       - {fileID: 21300000, guid: 80f7feb10d7beb9409be78e160c16772, type: 3}
+      - {fileID: 21300000, guid: db389eafa22f0ee4cae0cdb4542d57f1, type: 3}
+      - {fileID: 21300000, guid: 92163ce8a5818244caf0584031447ef9, type: 3}
       hair:
       - {fileID: 21300000, guid: 4412bb51c12937f4aa49e78856767003, type: 3}
       - {fileID: 21300000, guid: feb3d3fb40f06214ca9b4d4e383a29af, type: 3}
@@ -534,6 +588,7 @@ MonoBehaviour:
       - {fileID: 21300000, guid: 31817397d853d484fb120d4203a6bb6e, type: 3}
       mustache: []
       beard: []
+      ears: []
   - raceName: KOBOLD
     race: 20
     neutralAssets:
@@ -546,6 +601,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -555,6 +611,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -564,6 +621,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: MIMIC
     race: 21
     neutralAssets:
@@ -576,6 +634,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -585,6 +644,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -594,6 +654,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: NYMPH
     race: 28
     neutralAssets:
@@ -605,6 +666,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -614,6 +676,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -623,6 +686,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: PIG
     race: 24
     neutralAssets:
@@ -635,6 +699,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -644,6 +709,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -653,6 +719,40 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
+  - raceName: REVENANT
+    race: 34
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 6a7b5bac1c96118428f50fc9cd5ba1f4, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: SHEEP
     race: 25
     neutralAssets:
@@ -665,6 +765,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -674,6 +775,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -683,6 +785,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: SKELETON
     race: 13
     neutralAssets:
@@ -695,6 +798,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -704,6 +808,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -713,6 +818,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: SLUDGE
     race: 30
     neutralAssets:
@@ -725,6 +831,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -734,6 +841,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -743,6 +851,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: SPIDER
     race: 17
     neutralAssets:
@@ -755,6 +864,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -764,6 +874,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -773,6 +884,40 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
+  - raceName: TROLL
+    race: 7
+    neutralAssets:
+      head:
+      - {fileID: 21300000, guid: 372b94906660deb43b5bd3f454be6217, type: 3}
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    maleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
+    femaleAssets:
+      head: []
+      brows: []
+      eyes: []
+      mouth: []
+      nose: []
+      hair: []
+      mustache: []
+      beard: []
+      ears: []
   - raceName: WISP
     race: 29
     neutralAssets:
@@ -784,6 +929,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -793,6 +939,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -802,6 +949,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: WOLF
     race: 10
     neutralAssets:
@@ -814,6 +962,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -823,6 +972,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -832,6 +982,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   - raceName: WURM
     race: 33
     neutralAssets:
@@ -844,6 +995,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     maleAssets:
       head: []
       brows: []
@@ -853,6 +1005,7 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
     femaleAssets:
       head: []
       brows: []
@@ -862,27 +1015,19 @@ MonoBehaviour:
       hair: []
       mustache: []
       beard: []
+      ears: []
   portraitFrames:
     m_keys: 030000000700000002000000010000000500000004000000060000000800000009000000
     m_values:
     - baseBG: {fileID: 21300000, guid: 15f890e3e4e2dbe489f30640f9216043, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 1a3fc1ca90050a74aa21609e4eeb7ebc, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: c18f5d6f944cfbc48819debe987cdaba, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: fd831390331f6a9438bcbbdbc410df2b, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 76281f5e595b10341a1cfcf28ada49f0, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 76777303e5e4de04ca96fb3200b75bf9, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 94079e3476351c243b5ce1bc5dfdd56c, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: b1facc086f831d64990f9d4056411274, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
     - baseBG: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
-      frameOutline: {fileID: 21300000, guid: 7cbb3446f1ca8a64b8c1e2f0e6649137, type: 3}
   classPortraits:
     m_keys:
     - Envy

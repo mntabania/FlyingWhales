@@ -25910,7 +25910,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   ignoreInteractions: 0
   baseBG: {fileID: 1963080940}
-  lockedFrame: {fileID: 530603765}
   lvlTxt: {fileID: 167992779}
   lvlGO: {fileID: 267340940}
   head: {fileID: 0}
@@ -25921,6 +25920,7 @@ MonoBehaviour:
   hair: {fileID: 660061554}
   mustache: {fileID: 0}
   beard: {fileID: 0}
+  ears: {fileID: 0}
   wholeImage: {fileID: 2088909824}
   factionEmblem: {fileID: 1738818157}
   hoverObj: {fileID: 1252989945}
@@ -27615,7 +27615,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   ignoreInteractions: 0
   baseBG: {fileID: 891674952}
-  lockedFrame: {fileID: 1193188475}
   lvlTxt: {fileID: 13948694}
   lvlGO: {fileID: 840082603}
   head: {fileID: 0}
@@ -27626,6 +27625,7 @@ MonoBehaviour:
   hair: {fileID: 246064092}
   mustache: {fileID: 0}
   beard: {fileID: 0}
+  ears: {fileID: 0}
   wholeImage: {fileID: 1071798443}
   factionEmblem: {fileID: 344982732}
   hoverObj: {fileID: 1578288530}
@@ -48439,7 +48439,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   ignoreInteractions: 0
   baseBG: {fileID: 1390554064}
-  lockedFrame: {fileID: 1799839864}
   lvlTxt: {fileID: 232709905}
   lvlGO: {fileID: 922186765}
   head: {fileID: 0}
@@ -48450,6 +48449,7 @@ MonoBehaviour:
   hair: {fileID: 693307717}
   mustache: {fileID: 0}
   beard: {fileID: 0}
+  ears: {fileID: 0}
   wholeImage: {fileID: 1254699228}
   factionEmblem: {fileID: 646289240}
   hoverObj: {fileID: 660505146}
@@ -72359,7 +72359,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   ignoreInteractions: 0
   baseBG: {fileID: 1457915988}
-  lockedFrame: {fileID: 1862095733}
   lvlTxt: {fileID: 256133919}
   lvlGO: {fileID: 899659322}
   head: {fileID: 0}
@@ -72370,6 +72369,7 @@ MonoBehaviour:
   hair: {fileID: 1232941207}
   mustache: {fileID: 0}
   beard: {fileID: 0}
+  ears: {fileID: 0}
   wholeImage: {fileID: 2016431523}
   factionEmblem: {fileID: 1941830669}
   hoverObj: {fileID: 1954152186}
@@ -78896,7 +78896,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   ignoreInteractions: 0
   baseBG: {fileID: 1634433277}
-  lockedFrame: {fileID: 1160532560}
   lvlTxt: {fileID: 935368268}
   lvlGO: {fileID: 385115335}
   head: {fileID: 0}
@@ -78907,6 +78906,7 @@ MonoBehaviour:
   hair: {fileID: 1392551767}
   mustache: {fileID: 0}
   beard: {fileID: 0}
+  ears: {fileID: 0}
   wholeImage: {fileID: 107525896}
   factionEmblem: {fileID: 2084430041}
   hoverObj: {fileID: 1986258473}
@@ -92693,7 +92693,6 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   ignoreInteractions: 0
   baseBG: {fileID: 41833874}
-  lockedFrame: {fileID: 2108784127}
   lvlTxt: {fileID: 1522029066}
   lvlGO: {fileID: 1722605996}
   head: {fileID: 0}
@@ -92704,6 +92703,7 @@ MonoBehaviour:
   hair: {fileID: 1478334236}
   mustache: {fileID: 0}
   beard: {fileID: 0}
+  ears: {fileID: 0}
   wholeImage: {fileID: 1926155603}
   factionEmblem: {fileID: 1953087923}
   hoverObj: {fileID: 1423005839}
@@ -127289,16 +127289,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1538653384}
     m_Modifications:
-    - target: {fileID: 625001371972452853, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 625001371972452853, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1284202786584909259, guid: b029ec5865ca327468e73d3be5ee78e2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -127408,86 +127398,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MonsterInfo
-      objectReference: {fileID: 0}
-    - target: {fileID: 1393942756025051609, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1393942756025051609, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394084503223807171, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394084503223807171, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394484915232124483, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394484915232124483, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394576102626676089, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394576102626676089, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394597601978493061, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1394597601978493061, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3869575280023816788, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3869575280023816788, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4613456320324772520, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4613456320324772520, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6943928695916794145, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6943928695916794145, guid: b029ec5865ca327468e73d3be5ee78e2,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b029ec5865ca327468e73d3be5ee78e2, type: 3}

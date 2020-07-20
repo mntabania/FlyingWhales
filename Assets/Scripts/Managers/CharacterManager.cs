@@ -54,9 +54,8 @@ public class CharacterManager : MonoBehaviour {
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
     public bool lessenCharacterLogs;
-
-    public int maxLevel;
     private List<CharacterAvatar> _allCharacterAvatars;
+    
     [Header("Character Portrait Assets")]
     [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
@@ -66,23 +65,23 @@ public class CharacterManager : MonoBehaviour {
     public Material hairUIMaterial;
     public Material spriteLightingMaterial;
 
-    //TODO: Will move this once other hair assets arrive
+    [Header("Character Marker Assets")]
     [SerializeField] private Sprite[] maleHairSprite;
     [SerializeField] private Sprite[] femaleHairSprite;
     [SerializeField] private Sprite[] maleKnockoutHairSprite;
     [SerializeField] private Sprite[] femaleKnockoutHairSprite;
-    
-    [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
+    
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
     [Header("Character Marker Effects")] 
     public Sprite webbedEffect;
-    public Dictionary<string, DeadlySin> deadlySins { get; private set; }
-    public Dictionary<EMOTION, Emotion> emotionData { get; private set; }
-    public List<Emotion> allEmotions { get; private set; }
+    
+    private Dictionary<string, DeadlySin> deadlySins { get; set; }
+    private Dictionary<EMOTION, Emotion> emotionData { get; set; }
+    private List<Emotion> allEmotions { get; set; }
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
     public SUMMON_TYPE[] summonsPool { get; private set; }
     public COMBAT_MODE[] combatModes { get; private set; }
@@ -90,12 +89,11 @@ public class CharacterManager : MonoBehaviour {
     public DemonicStructure currentDemonicStructureTargetOfAngels { get; private set; }
     public Character necromancerInTheWorld { get; private set; }
     public bool hasSpawnedNecromancerOnce { get; private set; }
-
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
     public int CHARACTER_PRESUMED_DEAD_THRESHOLD { get; private set; }
 
-    private Dictionary<System.Type, CharacterBehaviourComponent> behaviourComponents;
-    private Dictionary<string, System.Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
+    private Dictionary<Type, CharacterBehaviourComponent> behaviourComponents;
+    private readonly Dictionary<string, Type[]> defaultBehaviourSets = new Dictionary<string, Type[]>() {
         { Default_Resident_Behaviour,
             new []{
                 typeof(DefaultFactionRelated),
@@ -923,8 +921,10 @@ public class CharacterManager : MonoBehaviour {
             ps.eyes = CollectionUtilities.GetRandomIndexInList(pac.eyes);
             ps.mouth = CollectionUtilities.GetRandomIndexInList(pac.mouth);
             ps.nose = CollectionUtilities.GetRandomIndexInList(pac.nose);
-
-            if (UnityEngine.Random.Range(0, 100) < 10 && gender != GENDER.FEMALE) { //females have no chance to be bald
+            ps.ears = CollectionUtilities.GetRandomIndexInList(pac.ears);
+            
+            //NOTE: females and elves have no chance to be bald
+            if (UnityEngine.Random.Range(0, 100) < 10 && gender != GENDER.FEMALE && race != RACE.ELVES) { 
                 ps.hair = -1; //chance to have no hair
             } else {
                 ps.hair = CollectionUtilities.GetRandomIndexInList(pac.hair);
@@ -940,7 +940,7 @@ public class CharacterManager : MonoBehaviour {
                 ps.beard = CollectionUtilities.GetRandomIndexInList(pac.beard);
             }
             ps.hairColorHue = UnityEngine.Random.Range(0f, 1f);
-            ps.hairColorSaturation = UnityEngine.Random.Range(0f, 1f);
+            ps.hairColorSaturation = UnityEngine.Random.Range(0f, 0.35f);
             ps.hairColorValue = UnityEngine.Random.Range(0f, 0.1f);
             ps.wholeImageColor = 0f;
         }
@@ -989,6 +989,9 @@ public class CharacterManager : MonoBehaviour {
                 break;
             case "beard":
                 listToUse = pac.beard;
+                break;
+            case "ears":
+                listToUse = pac.ears;
                 break;
             default:
                 listToUse = null;
@@ -1286,7 +1289,6 @@ public class CharacterManager : MonoBehaviour {
 [Serializable]
 public class PortraitFrame {
     public Sprite baseBG;
-    public Sprite frameOutline;
 }
 
 [Serializable]

@@ -13,6 +13,7 @@ public class PortraitAssetCollection {
     public List<Sprite> hair;
     public List<Sprite> mustache;
     public List<Sprite> beard;
+    public List<Sprite> ears;
 
     public PortraitAssetCollection() {
         head = new List<Sprite>();
@@ -23,6 +24,7 @@ public class PortraitAssetCollection {
         hair = new List<Sprite>();
         mustache = new List<Sprite>();
         beard = new List<Sprite>();
+        ears = new List<Sprite>();
     }
 
     public void AddSpriteToCollection(string identifier, Sprite sprite) {
@@ -50,6 +52,9 @@ public class PortraitAssetCollection {
                 break;
             case "Beard":
                 beard.Add(sprite);
+                break;
+            case "Ears":
+                ears.Add(sprite);
                 break;
             default:
                 break;
