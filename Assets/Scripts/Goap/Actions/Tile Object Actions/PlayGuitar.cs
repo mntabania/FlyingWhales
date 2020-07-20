@@ -85,9 +85,9 @@ public class PlayGuitar : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {

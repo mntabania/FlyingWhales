@@ -91,10 +91,10 @@ public class RemoveBuff : GoapAction {
         }
         return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest poiTarget, ActualGoapNode node,
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
         REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(actor, poiTarget, node, status);
-        if (poiTarget is Character targetCharacter) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
+        if (target is Character targetCharacter) {
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             if (targetCharacter.traitContainer.HasTrait("Coward")) {

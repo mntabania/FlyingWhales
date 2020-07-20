@@ -1975,10 +1975,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         IPointOfInterest poiTarget = target;
         Character copiedTarget = null;
-        if (target.traitContainer.HasTrait("Disguised")) {
-            //Whenever a disguised character is being processed, process the original instead
-            Disguised disguised = target.traitContainer.GetNormalTrait<Disguised>("Disguised");
-            copiedTarget = disguised.disguisedCharacter;
+        Character targetCharacter = null;
+        if (target is Character targetChar) {
+            targetCharacter = targetChar;
+            if(targetCharacter.reactionComponent.disguisedCharacter != null) {
+                //Whenever a disguised character is being processed, process the original instead
+                copiedTarget = targetCharacter.reactionComponent.disguisedCharacter;
+            }
         }
         if(copiedTarget != null) {
             poiTarget = copiedTarget;
@@ -2024,9 +2027,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //React To Actions
         ActualGoapNode targetCharacterCurrentActionNode = null;
-        Character targetCharacter = null;
-        if (target is Character) {
-            targetCharacter = target as Character;
+        //Character targetCharacter = null;
+        if (targetCharacter != null) {
+            //targetCharacter = target as Character;
             //React To Interrupt
             if (targetCharacter.interruptComponent.isInterrupted) {
                 reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, REACTION_STATUS.WITNESSED);

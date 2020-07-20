@@ -12,11 +12,22 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a succubus";
-        if (character.traitContainer.HasTrait("Disguised")) {
+        if (character.reactionComponent.disguisedCharacter != null) {
             Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.MALE);
             if (targetCharacter != null) {
                 log += $"\n-Target for make love is: " + targetCharacter.name;
                 if (character.jobComponent.TriggerMakeLoveJob(targetCharacter, out producedJob)) {
+                    return true;
+                }
+            }
+            if (character.currentStructure == character.homeStructure || character.IsInTerritory()) {
+                if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                    character.reactionComponent.SetDisguisedCharacter(null);
+                    return true;
+                }
+            }
+            if (character.currentStructure != character.homeStructure && !character.IsInTerritory()) {
+                if(character.jobComponent.PlanIdleReturnHome(out producedJob)) {
                     return true;
                 }
             }

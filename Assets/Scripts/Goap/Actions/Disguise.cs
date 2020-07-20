@@ -46,10 +46,7 @@ public class Disguise : GoapAction {
     #region State Effects
     public void AfterDisguiseSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Stealthy");
-
-        Trait trait = null;
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Disguised", out trait);
-        (trait as Disguised).SetDisguisedCharacter(goapNode.poiTarget as Character);
+        goapNode.actor.reactionComponent.SetDisguisedCharacter(goapNode.poiTarget as Character);
     }
     #endregion
 

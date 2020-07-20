@@ -75,10 +75,9 @@ public class Assault : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(actor, poiTarget, witness, node, status);
-        IPointOfInterest target = node.poiTarget;
+        string response = base.ReactionToTarget(actor, target, witness, node, status);
         if(status == REACTION_STATUS.INFORMED) {
             if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                 Character targetCharacter = target as Character;

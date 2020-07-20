@@ -38,7 +38,9 @@ public class CombatManager : MonoBehaviour {
             }
 
             //Damage should remove disguise
-            target.traitContainer.RemoveTrait(target, "Disguised");
+            if(target is Character targetCharacter) {
+                targetCharacter.reactionComponent.SetDisguisedCharacter(null);
+            }
         }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 

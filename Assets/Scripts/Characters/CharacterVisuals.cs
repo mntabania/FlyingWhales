@@ -69,8 +69,8 @@ public class CharacterVisuals {
     }
 
     private void UpdateMarkerAnimations(Character character) {
-        if (character.traitContainer.HasTrait("Disguised")) {
-            character = character.traitContainer.GetNormalTrait<Traits.Disguised>("Disguised").disguisedCharacter;
+        if (character.reactionComponent.disguisedCharacter != null) {
+            character = character.reactionComponent.disguisedCharacter;
         }
         CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
         defaultSprite = assets.defaultSprite;

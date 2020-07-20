@@ -37,9 +37,9 @@ public class Cry : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
         if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
             if (UnityEngine.Random.Range(0, 2) == 0) {

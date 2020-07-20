@@ -188,11 +188,11 @@ public class GoapAction : ICrimeable {
     /// <param name="goapNode"></param>
     /// <returns>List of tile choices</returns>
     public virtual List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) { return null; }
-    public virtual string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+    public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
-    public virtual string ReactionToTarget(Character actor, IPointOfInterest poiTarget, Character witness,
+    public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
-    public virtual string ReactionOfTarget(Character actor, IPointOfInterest poiTarget, ActualGoapNode node,
+    public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
         REACTION_STATUS status) { return string.Empty; }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     public virtual void OnStoppedInterrupt(ActualGoapNode node) { }

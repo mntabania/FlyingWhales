@@ -766,8 +766,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void UpdateHairVisuals() {
         Character character = this.character;
-        if (character.traitContainer.HasTrait("Disguised")) {
-            character = character.traitContainer.GetNormalTrait<Traits.Disguised>("Disguised").disguisedCharacter;
+        if (character.reactionComponent.disguisedCharacter != null) {
+            character = character.reactionComponent.disguisedCharacter;
         }
         Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);
         hairImg.sprite = hair;
