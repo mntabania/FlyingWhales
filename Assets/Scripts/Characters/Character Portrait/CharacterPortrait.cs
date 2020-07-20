@@ -18,7 +18,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     [Header("BG")]
     [SerializeField] private Image baseBG;
-    [SerializeField] private Image lockedFrame;
     [SerializeField] private TextMeshProUGUI lvlTxt;
     [SerializeField] private GameObject lvlGO;
 
@@ -31,6 +30,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private Image hair;
     [SerializeField] private Image mustache;
     [SerializeField] private Image beard;
+    [SerializeField] private Image ears;
     [SerializeField] private Image wholeImage;
 
     [Header("Other")]
@@ -41,7 +41,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private bool _isSubscribedToListeners;
     #region getters/setters
     public Character character => _character;
-    public PortraitSettings portraitSettings => _portraitSettings;
     #endregion
 
     private bool isPixelPerfect;
@@ -87,29 +86,34 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             SetPortraitAsset("hair", _portraitSettings.hair, _portraitSettings.race, _portraitSettings.gender, hair);
             SetPortraitAsset("mustache", _portraitSettings.mustache, _portraitSettings.race, _portraitSettings.gender, mustache);
             SetPortraitAsset("beard", _portraitSettings.beard, _portraitSettings.race, _portraitSettings.gender, beard);
+            SetPortraitAsset("ears", _portraitSettings.ears, _portraitSettings.race, _portraitSettings.gender, ears);
 
-            if (makePixelPerfect) {
-                head.SetNativeSize();
-                brows.SetNativeSize();
-                eyes.SetNativeSize();
-                mouth.SetNativeSize();
-                nose.SetNativeSize();
-                hair.SetNativeSize();
-                mustache.SetNativeSize();
-                beard.SetNativeSize();
-
-                head.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                brows.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                eyes.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                mouth.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                nose.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                hair.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                mustache.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-                beard.rectTransform.anchoredPosition = new Vector2(55f, 55f);
-            }
+            // if (makePixelPerfect) {
+            //     head.SetNativeSize();
+            //     brows.SetNativeSize();
+            //     eyes.SetNativeSize();
+            //     mouth.SetNativeSize();
+            //     nose.SetNativeSize();
+            //     hair.SetNativeSize();
+            //     mustache.SetNativeSize();
+            //     beard.SetNativeSize();
+            //     ears.SetNativeSize();
+            //
+            //     head.rectTransform.anchorMin = Vector2.zero;
+            //     head.rectTransform.anchorMax = Vector2.one;
+            //
+            //     // head.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // brows.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // eyes.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // mouth.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // nose.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // hair.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // mustache.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // beard.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            //     // ears.rectTransform.anchoredPosition = new Vector2(55f, 55f);
+            // }
         }
-        //UpdateLvl();
-        UpdateFrame();
+        // UpdateFrame();
         UpdateFactionEmblem();
 
         wholeImage.rectTransform.SetSiblingIndex(0);
@@ -117,17 +121,15 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         brows.rectTransform.SetSiblingIndex(2);
         eyes.rectTransform.SetSiblingIndex(3);
         hair.rectTransform.SetSiblingIndex(4);
-        beard.rectTransform.SetSiblingIndex(5);
-        mouth.rectTransform.SetSiblingIndex(6);
-        nose.rectTransform.SetSiblingIndex(7);
-        mustache.rectTransform.SetSiblingIndex(8);
+        ears.rectTransform.SetSiblingIndex(5);
+        beard.rectTransform.SetSiblingIndex(6);
+        mouth.rectTransform.SetSiblingIndex(7);
+        nose.rectTransform.SetSiblingIndex(8);
+        mustache.rectTransform.SetSiblingIndex(9);
         lvlGO.SetActive(false);
     }
 
     #region Utilities
-    //public void UpdateLvl() {
-    //    lvlTxt.text = _character.level.ToString();
-    //}
     private void SetWholeImageSprite(Sprite sprite) {
         wholeImage.sprite = sprite;
     }
@@ -154,9 +156,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
                 // frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
             }
             baseBG.sprite = frame.baseBG;
-            if (lockedFrame != null) {
-                lockedFrame.sprite = frame.frameOutline;    
-            }
+
             SetBaseBGState(true);
         }
     }
@@ -180,44 +180,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             currImage.raycastTarget = state;
         }
     }
-    public void SetSize(float size) {
-        Vector2 newSize = new Vector2(size, size);
-        head.rectTransform.sizeDelta = newSize;
-        brows.rectTransform.sizeDelta = newSize;
-        eyes.rectTransform.sizeDelta = newSize;
-        mouth.rectTransform.sizeDelta = newSize;
-        nose.rectTransform.sizeDelta = newSize;
-        hair.rectTransform.sizeDelta = newSize;
-        mustache.rectTransform.sizeDelta = newSize;
-        beard.rectTransform.sizeDelta = newSize;
-
-        Vector2 newPos = new Vector2(size / 2f, size / 2f);
-
-        head.rectTransform.anchoredPosition = newPos;
-        head.rectTransform.anchorMin = Vector2.zero;
-
-        brows.rectTransform.anchoredPosition = newPos;
-        head.rectTransform.anchorMin = Vector2.zero;
-
-        eyes.rectTransform.anchoredPosition = newPos;
-        head.rectTransform.anchorMin = Vector2.zero;
-
-        mouth.rectTransform.anchoredPosition = newPos;
-        head.rectTransform.anchorMin = Vector2.zero;
-
-        nose.rectTransform.anchoredPosition = newPos;
-        head.rectTransform.anchorMin = Vector2.zero;
-
-        hair.rectTransform.anchoredPosition = newPos;
-        mustache.rectTransform.anchoredPosition = newPos;
-        beard.rectTransform.anchoredPosition = newPos;
-    }
     #endregion
 
     #region Pointer Actions
-    //public void SetClickButton(PointerEventData.InputButton btn) {
-    //    interactionBtn = btn;
-    //}
     public void OnPointerClick(PointerEventData eventData) {
 #if !WORLD_CREATION_TOOL
         if (ignoreInteractions) {
@@ -241,7 +206,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     public void SetHoverHighlightState(bool state) {
         hoverObj.SetActive(state);
     }
-    public void ShowCharacterMenu() {
+    private void ShowCharacterMenu() {
         if (_character != null) {
             UIManager.Instance.ShowCharacterInfo(_character, true);
         }
@@ -250,8 +215,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
 
     #region Body Parts
     private void SetPortraitAsset(string identifier, int index, RACE race, GENDER gender, Image renderer) {
-        Sprite sprite;
-        if (CharacterManager.Instance.TryGetPortraitSprite(identifier, index, race, gender, out sprite)) {
+        if (CharacterManager.Instance.TryGetPortraitSprite(identifier, index, race, gender, out var sprite)) {
             renderer.sprite = sprite;
             renderer.gameObject.SetActive(true);
         } else {
@@ -267,6 +231,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         hair.gameObject.SetActive(state);
         mustache.gameObject.SetActive(state);
         beard.gameObject.SetActive(state);
+        ears.gameObject.SetActive(state);
     }
     #endregion
 
@@ -338,12 +303,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     private void OnCharacterSetAsFactionLeader(Character character) {
         if (_character != null && _character == character) {
-            UpdateFrame();
+            // UpdateFrame();
         }
     }
     private void OnCharacterSetAsSettlementRuler(Character character) {
         if (_character != null && _character == character) {
-            UpdateFrame();
+            // UpdateFrame();
         }
     }
 }
