@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Traits;
 
 namespace Interrupts {
     public class Interrupt : ICrimeable {
@@ -27,9 +26,9 @@ namespace Interrupts {
         public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, 
             ActualGoapNode goapNode = null) { return false; }
 
-        public virtual string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+        public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
             Interrupt interrupt, REACTION_STATUS status) { return string.Empty; }
-        public virtual string ReactionToTarget(Character witness, Character actor, IPointOfInterest target,
+        public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
             Interrupt interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, Interrupt interrupt,
             REACTION_STATUS status) { return string.Empty; }
@@ -86,13 +85,17 @@ namespace Interrupts {
         #endregion
 
         #region IReactable
-        public string ReactionToActor(Character witness, REACTION_STATUS status) {
-            return interrupt.ReactionToActor(witness, actor, target, interrupt, status);
+        public string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+            REACTION_STATUS status) {
+            return interrupt.ReactionToActor(actor, target, witness, interrupt, status);
         }
-        public string ReactionToTarget(Character witness, REACTION_STATUS status) {
-            return interrupt.ReactionToTarget(witness, actor, target, interrupt, status);
+
+        public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
+            REACTION_STATUS status) {
+            return interrupt.ReactionToTarget(actor, target, witness, interrupt, status);
         }
-        public string ReactionOfTarget(REACTION_STATUS status) {
+
+        public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
             return interrupt.ReactionOfTarget(actor, target, interrupt, status);
         }
         public REACTABLE_EFFECT GetReactableEffect(Character witness) {
@@ -117,15 +120,6 @@ namespace Interrupts {
             this.actor = actor;
             this.target = target;
             SetIdentifier(identifier);
-
-
-            ////Whenever a disguised character is being set as actor/target, set the original as the actor/target, as if they are the ones who did it
-            //if (actor.traitContainer.HasTrait("Disguised")) {
-            //    this.actor = actor.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
-            //}
-            //if (target.traitContainer.HasTrait("Disguised")) {
-            //    this.target = target.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
-            //}
         }
         public void Reset() {
             interrupt = null;

@@ -27,7 +27,7 @@ public class EntBehaviour : CharacterBehaviourComponent {
             Ent ent = character as Ent;
             ent.SetIsTree(true);
             LocationGridTile tile = character.gridTileLocation;
-            character.DisableMarker();
+            character.marker.SetVisualState(false);
             TreeObject treeObject =
                 InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
             tile.structure.AddPOI(treeObject, tile);

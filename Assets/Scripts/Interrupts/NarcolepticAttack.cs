@@ -21,9 +21,10 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.RemoveTrait(interruptHolder.actor, "Resting");
             return true;
         }
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+        public override string ReactionToActor(Character actor, IPointOfInterest target,
+            Character witness,
             Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Enemy) {

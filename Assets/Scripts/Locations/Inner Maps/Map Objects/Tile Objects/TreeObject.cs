@@ -68,7 +68,7 @@ public class TreeObject : TileObject {
         base.OnPlacePOI();
         if (_ent != null) {
             _ent.marker.PlaceMarkerAt(gridTileLocation);
-            _ent.DisableMarker();
+            _ent.marker.SetVisualState(false);
         }
     }
     #endregion
@@ -137,6 +137,7 @@ public class TreeObject : TileObject {
     }
     private void AwakenOccupant(LocationGridTile location) {
         Assert.IsNotNull(_ent);
+        _ent.marker.SetVisualState(true);
         _ent.marker.PlaceMarkerAt(location);
         _ent.SetIsTree(false);
         location.structure.RemovePOI(this);

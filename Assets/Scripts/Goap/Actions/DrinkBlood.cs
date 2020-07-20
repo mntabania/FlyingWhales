@@ -131,10 +131,9 @@ public class DrinkBlood : GoapAction {
         }
         return actionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         if (!witness.traitContainer.HasTrait("Vampiric")) {
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
@@ -163,10 +162,9 @@ public class DrinkBlood : GoapAction {
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
+        REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);

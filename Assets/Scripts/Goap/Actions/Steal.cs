@@ -88,10 +88,9 @@ public class Steal : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(isInvalid, stateName);
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
 
         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
@@ -104,10 +103,9 @@ public class Steal : GoapAction {
         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
+        REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
         if(target is TileObject tileObject) {
             Character targetCharacter = tileObject.isBeingCarriedBy;
             if(targetCharacter != null) {

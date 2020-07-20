@@ -37,9 +37,10 @@ namespace Interrupts {
 
 			return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
 		}
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
-           Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+        public override string ReactionToActor(Character actor, IPointOfInterest target,
+	        Character witness,
+	        Interrupt interrupt, REACTION_STATUS status) {
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
             if (!witness.relationshipContainer.IsEnemiesWith(actor)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);

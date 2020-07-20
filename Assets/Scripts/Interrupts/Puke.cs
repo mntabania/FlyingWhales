@@ -21,9 +21,10 @@ namespace Interrupts {
             interruptHolder.actor.SetPOIState(POI_STATE.ACTIVE);
             return true;
         }
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+        public override string ReactionToActor(Character actor, IPointOfInterest target,
+            Character witness,
             Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
             if (actor.homeSettlement is NPCSettlement npcSettlement && npcSettlement.isPlagued) {
                 if (witness.relationshipContainer.IsFriendsWith(actor)) {

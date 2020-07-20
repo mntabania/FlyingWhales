@@ -40,10 +40,9 @@ public class CureCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
         if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
@@ -55,10 +54,9 @@ public class CureCharacter : GoapAction {
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
+        REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
         Character targetCharacter = target as Character;
         if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
             if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {

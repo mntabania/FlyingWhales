@@ -58,9 +58,9 @@ public class RemoveBuff : GoapAction {
     #endregion
 
     #region Reactions
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
+    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             //not a cultist
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
@@ -91,10 +91,10 @@ public class RemoveBuff : GoapAction {
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
-        Character actor = node.actor;
-        if (node.poiTarget is Character targetCharacter) {
+    public override string ReactionOfTarget(Character actor, IPointOfInterest poiTarget, ActualGoapNode node,
+        REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, poiTarget, node, status);
+        if (poiTarget is Character targetCharacter) {
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             if (targetCharacter.traitContainer.HasTrait("Coward")) {

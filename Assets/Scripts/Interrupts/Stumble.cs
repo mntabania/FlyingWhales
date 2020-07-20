@@ -25,9 +25,10 @@ namespace Interrupts {
             }
             return true;
         }
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+        public override string ReactionToActor(Character actor, IPointOfInterest target,
+            Character witness,
             Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             if (witness.relationshipContainer.IsFriendsWith(actor)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {

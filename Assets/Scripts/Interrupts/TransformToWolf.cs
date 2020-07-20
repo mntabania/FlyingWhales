@@ -18,9 +18,10 @@ namespace Interrupts {
             interruptHolder.actor.lycanData.TurnToWolf();
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+        public override string ReactionToActor(Character actor, IPointOfInterest target,
+            Character witness,
             Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             Character originalForm = actor;
             if(actor.lycanData != null) {
                 originalForm = actor.lycanData.originalForm;

@@ -23,9 +23,10 @@ public class Execute : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character target = node.target as Character;
+    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
+        Character target = poiTarget as Character;
         Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal"); 
         if (criminalTrait != null && criminalTrait.crimeData.target == witness) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, node.actor, status, node);
@@ -52,9 +53,10 @@ public class Execute : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(witness, node, status);
-        Character target = node.target as Character;
+    public override string ReactionToTarget(Character actor, IPointOfInterest poiTarget, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(actor, poiTarget, witness, node, status);
+        Character target = poiTarget as Character;
         if (witness.relationshipContainer.HasOpinionLabelWithCharacter(target, BaseRelationshipContainer.Acquaintance)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, target, status, node);
@@ -70,9 +72,10 @@ public class Execute : GoapAction {
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
-        Character target = node.poiTarget as Character;
+    public override string ReactionOfTarget(Character actor, IPointOfInterest poiTarget, ActualGoapNode node,
+        REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, poiTarget, node, status);
+        Character target = poiTarget as Character;
         if (Random.Range(0, 100) < 20) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, target, node.actor, status, node);
         }
