@@ -25,14 +25,15 @@ public class Rumor : IReactable {
     }
 
     #region IReactable
-    public string ReactionToActor(Character witness, REACTION_STATUS status) {
-        return rumorable.ReactionToActor(witness, status);
+    public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        return rumorable.ReactionToActor(actor, target, witness, status);
     }
-    public string ReactionToTarget(Character witness, REACTION_STATUS status) {
-        return rumorable.ReactionToTarget(witness, status);
+    public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
+        REACTION_STATUS status) {
+        return rumorable.ReactionToTarget(actor, target, witness, status);
     }
-    public string ReactionOfTarget(REACTION_STATUS status) {
-        return rumorable.ReactionOfTarget(status);
+    public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        return rumorable.ReactionOfTarget(actor, target, status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return REACTABLE_EFFECT.Negative;

@@ -17,9 +17,10 @@ namespace Interrupts {
             interruptHolder.actor.nonActionEventsComponent.NormalFlirtCharacter(interruptHolder.target as Character, ref overrideEffectLog);
             return true;
         }
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target,
+        public override string ReactionToActor(Character actor, IPointOfInterest target,
+            Character witness,
             Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             if(target != witness && target is Character targetCharacter) {
                 bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
                 bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);

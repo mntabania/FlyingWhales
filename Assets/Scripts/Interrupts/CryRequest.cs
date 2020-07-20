@@ -22,8 +22,9 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_1);
             return true;
         }
-        public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt, REACTION_STATUS status) {
-            string response = base.ReactionToActor(witness, actor, target, interrupt, status);
+        public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+            Interrupt interrupt, REACTION_STATUS status) {
+            string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Acquaintance) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {

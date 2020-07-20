@@ -114,10 +114,9 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
 
         if (status == REACTION_STATUS.WITNESSED) {
             //If witnessed
@@ -167,10 +166,9 @@ public class MakeLove : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-       string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+       string response = base.ReactionToTarget(actor, target, witness, node, status);
 
         if (status == REACTION_STATUS.WITNESSED) {
             //If witnessed

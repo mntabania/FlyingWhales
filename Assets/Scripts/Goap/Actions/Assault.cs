@@ -50,10 +50,9 @@ public class Assault : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 50;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         if (status == REACTION_STATUS.INFORMED) {
             if (!witness.IsHostileWith(actor)) {
                 if (target is Character targetCharacter) {
@@ -76,9 +75,9 @@ public class Assault : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(witness, node, status);
-        Character actor = node.actor;
+    public override string ReactionToTarget(Character actor, IPointOfInterest poiTarget, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(actor, poiTarget, witness, node, status);
         IPointOfInterest target = node.poiTarget;
         if(status == REACTION_STATUS.INFORMED) {
             if (node.associatedJobType == JOB_TYPE.APPREHEND) {

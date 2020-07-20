@@ -125,7 +125,7 @@ public class ReactionComponent {
                     owner.logComponent.AddHistory(witnessLog);
                 }
             }
-            string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.WITNESSED);
+            string emotionsToActor = reactable.ReactionToActor(TODO, TODO, owner, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                     string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
@@ -143,7 +143,7 @@ public class ReactionComponent {
                     log.AddLogToInvolvedObjects();
                 }
             }
-            string emotionsToTarget = reactable.ReactionToTarget(owner, REACTION_STATUS.WITNESSED);
+            string emotionsToTarget = reactable.ReactionToTarget(TODO, TODO, owner, REACTION_STATUS.WITNESSED);
             if (emotionsToTarget != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                     string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
@@ -166,7 +166,7 @@ public class ReactionComponent {
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             if (!reactable.isStealth || target.traitContainer.HasTrait("Vigilant")) {
-                string emotionsOfTarget = reactable.ReactionOfTarget(REACTION_STATUS.WITNESSED);
+                string emotionsOfTarget = reactable.ReactionOfTarget(TODO, TODO, REACTION_STATUS.WITNESSED);
                 if (emotionsOfTarget != string.Empty) {
                     if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                         string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
@@ -211,7 +211,7 @@ public class ReactionComponent {
 
         string response = string.Empty;
         if (reactable.actor != owner && reactable.target != owner) {
-            string emotionsToActor = reactable.ReactionToActor(owner, REACTION_STATUS.INFORMED);
+            string emotionsToActor = reactable.ReactionToActor(TODO, TODO, owner, REACTION_STATUS.INFORMED);
             if (emotionsToActor != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                     string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
@@ -229,7 +229,7 @@ public class ReactionComponent {
                     log.AddLogToInvolvedObjects();
                 }
             }
-            string emotionsToTarget = reactable.ReactionToTarget(owner, REACTION_STATUS.INFORMED);
+            string emotionsToTarget = reactable.ReactionToTarget(TODO, TODO, owner, REACTION_STATUS.INFORMED);
             if (emotionsToTarget != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                     string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
@@ -249,7 +249,7 @@ public class ReactionComponent {
             }
             response += $"{emotionsToActor}/{emotionsToTarget}";
         } else if(reactable.target == owner && reactable.target is Character) {
-            string emotionsOfTarget = reactable.ReactionOfTarget(REACTION_STATUS.INFORMED);
+            string emotionsOfTarget = reactable.ReactionOfTarget(TODO, TODO, REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty) {
                 if (!CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";

@@ -872,16 +872,17 @@ public class ActualGoapNode : IReactable, IRumorable {
     #endregion
 
     #region IReactable
-    public string ReactionToActor(Character witness, REACTION_STATUS status) {
-        return action.ReactionToActor(witness, this, status);
+    public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        return action.ReactionToActor(actor, target, witness, this, status);
     }
 
-    public string ReactionToTarget(Character witness, REACTION_STATUS status) {
-        return action.ReactionToTarget(witness, this, status);
+    public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
+        REACTION_STATUS status) {
+        return action.ReactionToTarget(actor, target, witness, this, status);
     }
 
-    public string ReactionOfTarget(REACTION_STATUS status) {
-        return action.ReactionOfTarget(this, status);
+    public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        return action.ReactionOfTarget(actor, target, this, status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return action.GetReactableEffect(this, witness);

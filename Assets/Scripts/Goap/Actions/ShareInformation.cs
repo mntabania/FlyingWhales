@@ -72,12 +72,11 @@ public class ShareInformation : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
+    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
         object[] otherData = node.otherData;
         IReactable reactable = otherData[0] as IReactable;
-        Character actor = node.actor;
-        Character target = node.poiTarget as Character;
 
         REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(witness);
         if (reactableEffect == REACTABLE_EFFECT.Negative) {

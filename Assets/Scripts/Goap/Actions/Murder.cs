@@ -30,10 +30,9 @@ public class Murder : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
@@ -63,10 +62,9 @@ public class Murder : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToTarget(witness, node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(actor, target, witness, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
@@ -80,10 +78,9 @@ public class Murder : GoapAction {
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionOfTarget(node, status);
-        Character actor = node.actor;
-        IPointOfInterest target = node.poiTarget;
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
+        REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {

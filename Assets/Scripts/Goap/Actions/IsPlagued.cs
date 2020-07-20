@@ -18,9 +18,9 @@
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(witness, node, status);
-        Character actor = node.actor;
+    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
         } else if (witness.relationshipContainer.IsEnemiesWith(actor)) {

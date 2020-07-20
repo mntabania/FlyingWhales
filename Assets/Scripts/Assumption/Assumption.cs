@@ -25,14 +25,15 @@ public class Assumption : IReactable {
     }
 
     #region IReactable
-    public string ReactionToActor(Character witness, REACTION_STATUS status) {
-        return assumedAction.ReactionToActor(witness, status);
+    public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+        return assumedAction.ReactionToActor(this.actor, this.target, witness, status);
     }
-    public string ReactionToTarget(Character witness, REACTION_STATUS status) {
-        return assumedAction.ReactionToTarget(witness, status);
+    public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
+        REACTION_STATUS status) {
+        return assumedAction.ReactionToTarget(this.actor, this.target, witness, status);
     }
-    public string ReactionOfTarget(REACTION_STATUS status) {
-        return assumedAction.ReactionOfTarget(status);
+    public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        return assumedAction.ReactionOfTarget(this.actor, this.target, status);
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return REACTABLE_EFFECT.Negative;
