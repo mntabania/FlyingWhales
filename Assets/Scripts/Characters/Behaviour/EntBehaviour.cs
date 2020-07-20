@@ -20,8 +20,8 @@ public class EntBehaviour : CharacterBehaviourComponent {
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
         if (chosenAction == "Roam") {
             return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
-            return character.jobComponent.TriggerStandStill(out producedJob);
         } else if (chosenAction == "Stand") {
+            return character.jobComponent.TriggerStandStill(out producedJob);
         } else {
             producedJob = null;
             Ent ent = character as Ent;
