@@ -21,6 +21,7 @@ public interface IRelationshipContainer {
     bool HasRelationshipWith(Relatable relatable);
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType);
     bool HasRelationshipWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
+    bool HasRelationship(params RELATIONSHIP_TYPE[] type);
     #endregion
 
     #region Getting
@@ -33,6 +34,7 @@ public interface IRelationshipContainer {
     RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
     bool IsFamilyMember(Character target);
     Character GetMissingCharacterWithOpinion(string opinionLabel);
+    Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type);
     #endregion
 
     #region Opinions

@@ -1973,12 +1973,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //if (isDead) {
         //    return;
         //}
+        IPointOfInterest poiTarget = target;
+        Character copiedTarget = null;
+        if (target.traitContainer.HasTrait("Disguised")) {
+            //Whenever a disguised character is being processed, process the original instead
+            Disguised disguised = target.traitContainer.GetNormalTrait<Disguised>("Disguised");
+            copiedTarget = disguised.disguisedCharacter;
+        }
+        if(copiedTarget != null) {
+            poiTarget = copiedTarget;
+        }
 
         List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.See_Poi_Cannot_Witness_Trait);
         if (traitOverrideFunctions != null) {
             for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                 Trait trait = traitOverrideFunctions[i];
-                trait.OnSeePOIEvenCannotWitness(target, this);
+                trait.OnSeePOIEvenCannotWitness(poiTarget, this);
             }
         }
 
@@ -1996,16 +2006,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!canWitness) {
             return;
         }
-
         if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.STARTED && currentActionNode.isStealth) {
-            if (currentActionNode.poiTarget == target) {
+            if (currentActionNode.poiTarget == poiTarget) {
                 //Upon seeing the target while performing a stealth job action, check if it can do the action
-                if (!marker.CanDoStealthActionToTarget(target)) {
+                if (!marker.CanDoStealthActionToTarget(poiTarget)) {
                     currentJob.CancelJob(reason: "There is a witness around");
                 }
             } else {
                 //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
-                if (target is Character seenCharacter && seenCharacter.isNormalCharacter) {
+                if (poiTarget is Character seenCharacter && seenCharacter.isNormalCharacter) {
                     if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
                         currentJob.CancelJob(reason: "There is a witness around");
                     }
@@ -2054,7 +2063,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!reactToActionOnly) {
             //React To Character, Object, and Item
             string debugLog = string.Empty;
-            reactionComponent.ReactTo(target, ref debugLog);
+            if(copiedTarget != null) {
+                reactionComponent.ReactToDisguised(target as Character, copiedTarget, ref debugLog);
+            } else {
+                reactionComponent.ReactTo(target, ref debugLog);
+            }
             if (string.IsNullOrEmpty(debugLog) == false) {
                 logComponent.PrintLogIfActive(debugLog);
             }

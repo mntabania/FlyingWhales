@@ -27,19 +27,60 @@ public class ReactionComponent {
 
     #region Processes
     public void ReactTo(IPointOfInterest target, ref string debugLog) {
+        Character actor = owner;
+        if (actor.traitContainer.HasTrait("Disguised")) {
+            actor = actor.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+        }
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = target as Character; 
             Assert.IsNotNull(targetCharacter);
-            ReactTo(targetCharacter, ref debugLog);
+            ReactTo(actor, targetCharacter, ref debugLog);
+
+            //If reacting to a disguised character, checking the carried poi must be from the disguised one, but the reaction must to the one he is disguised as.
             if (targetCharacter.carryComponent.carriedPOI is TileObject tileObject) {
-                ReactToCarriedObject(tileObject, targetCharacter, ref debugLog);
+                ReactToCarriedObject(actor, tileObject, targetCharacter, ref debugLog);
             }
         } else if (target.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            ReactTo(target as TileObject, ref debugLog);
+            ReactTo(actor, target as TileObject, ref debugLog);
         } 
         // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
         // }
+        if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
+            //Minions or Summons cannot react to its own traits
+            return;
+        }
+        if (actor.combatComponent.isInActualCombat) {
+            return;
+        }
+        debugLog += "\n-Character will loop through all his/her traits to react to Target";
+        List<Trait> traitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.See_Poi_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                debugLog += $"\n - {trait.name}";
+                if (trait.OnSeePOI(target, actor)) {
+                    debugLog += ": triggered";
+                } else {
+                    debugLog += ": not triggered";
+                }
+            }
+        }
+    }
+    public void ReactToDisguised(Character targetCharacter, Character copiedCharacter, ref string debugLog) {
+        if(owner == copiedCharacter) {
+            debugLog += $"{owner.name} is reacting to a copy of himself/herself";
+            debugLog += $"Surprise interrupt and Fight response";
+            owner.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, targetCharacter);
+        } else {
+            ReactTo(copiedCharacter, ref debugLog);
+        }
+
+        //If reacting to a disguised character, checking the carried poi must be from the disguised one, but the reaction must to the one he is disguised as.
+        if (targetCharacter.carryComponent.carriedPOI is TileObject tileObject) {
+            ReactToCarriedObject(owner, tileObject, copiedCharacter, ref debugLog);
+        }
         if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to its own traits
             return;
@@ -53,21 +94,13 @@ public class ReactionComponent {
             for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                 Trait trait = traitOverrideFunctions[i];
                 debugLog += $"\n - {trait.name}";
-                if (trait.OnSeePOI(target, owner)) {
+                if (trait.OnSeePOI(copiedCharacter, owner)) {
                     debugLog += ": triggered";
                 } else {
                     debugLog += ": not triggered";
                 }
             }
         }
-        //for (int i = 0; i < owner.traitContainer.allTraitsAndStatuses.Count; i++) {
-        //    debugLog += $"\n - {owner.traitContainer.allTraitsAndStatuses[i].name}";
-        //    if (owner.traitContainer.allTraitsAndStatuses[i].OnSeePOI(targetTileObject, owner)) {
-        //        debugLog += ": triggered";
-        //    } else {
-        //        debugLog += ": not triggered";
-        //    }
-        //}
     }
     public string ReactTo(IReactable reactable, REACTION_STATUS status, bool addLog = true) {
         if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
@@ -89,7 +122,18 @@ public class ReactionComponent {
         if (owner.combatComponent.isInActualCombat) {
             return;
         }
-        if (owner.faction != reactable.actor.faction && owner.faction.IsHostileWith(reactable.actor.faction)) {
+
+        Character actor = reactable.actor;
+        IPointOfInterest target = reactable.target;
+        //Whenever a disguised character is being set as actor/target, set the original as the actor/target, as if they are the ones who did it
+        if (actor.traitContainer.HasTrait("Disguised")) {
+            actor = actor.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+        }
+        if (target.traitContainer.HasTrait("Disguised")) {
+            target = target.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+        }
+
+        if (owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
         }
@@ -103,7 +147,6 @@ public class ReactionComponent {
             throw new Exception(
                 $"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {reactable.name} by {reactable.actor.name} does not have a log!");
         }
-        IPointOfInterest target = reactable.target;
         if(reactable.target is TileObject item && reactable is ActualGoapNode node) {
             if (node.action.goapType == INTERACTION_TYPE.STEAL) {
                 if (item.isBeingCarriedBy != null) {
@@ -111,7 +154,7 @@ public class ReactionComponent {
                 }
             }
         }
-        if(reactable.actor != owner && target != owner) {
+        if(actor != owner && target != owner) {
             if (addLog) {
                 //Only log witness event if event is not an action. If it is an action, the CharacterManager.Instance.CanAddCharacterLogOrShowNotif must return true
                 if (reactable is ActualGoapNode action && (!action.action.shouldAddLogs || !CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType))) {
@@ -131,14 +174,14 @@ public class ReactionComponent {
                     string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                     error += $"\n-Witness: {owner}";
                     error += $"\n-Action: {reactable.name}";
-                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Actor: {actor.name}";
                     error += $"\n-Target: {reactable.target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
                     //add log of emotions felt
                     Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsToActor, 2), LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                 }
@@ -149,7 +192,7 @@ public class ReactionComponent {
                     string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
                     error += $"\n-Witness: {owner}";
                     error += $"\n-Action: {reactable.name}";
-                    error += $"\n-Actor: {reactable.actor.name}";
+                    error += $"\n-Actor: {actor.name}";
                     error += $"\n-Target: {reactable.target.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 } else {
@@ -162,7 +205,7 @@ public class ReactionComponent {
                 }
             }
             string response =
-                $"Witness action reaction of {owner.name} to {reactable.name} of {reactable.actor.name} with target {reactable.target.name}: {emotionsToActor}{emotionsToTarget}";
+                $"Witness action reaction of {owner.name} to {reactable.name} of {actor.name} with target {reactable.target.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             if (!reactable.isStealth || target.traitContainer.HasTrait("Vigilant")) {
@@ -172,20 +215,20 @@ public class ReactionComponent {
                         string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
                         error += $"\n-Witness: {owner}";
                         error += $"\n-Action: {reactable.name}";
-                        error += $"\n-Actor: {reactable.actor.name}";
+                        error += $"\n-Actor: {actor.name}";
                         error += $"\n-Target: {reactable.target.nameWithID}";
                         owner.logComponent.PrintLogErrorIfActive(error);
                     } else {
                         //add log of emotions felt
                         Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "emotions_reaction_witness");
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(reactable.actor, reactable.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddToFillers(null, UtilityScripts.Utilities.Comafy(emotionsOfTarget), LOG_IDENTIFIER.STRING_1);
                         log.AddLogToInvolvedObjects();
                     }
                 }
                 string response =
-                    $"Witness action reaction of {owner.name} to {reactable.name} of {reactable.actor.name} with target {reactable.target.name}: {emotionsOfTarget}";
+                    $"Witness action reaction of {owner.name} to {reactable.name} of {actor.name} with target {reactable.target.name}: {emotionsOfTarget}";
                 owner.logComponent.PrintLogIfActive(response);
             }
         }
@@ -448,47 +491,47 @@ public class ReactionComponent {
     //    //}
     //}
 
-    private void ReactTo(Character targetCharacter, ref string debugLog) {
-        debugLog += $"{owner.name} is reacting to {targetCharacter.name}";
-        if(owner.IsHostileWith(targetCharacter)) {
+    private void ReactTo(Character actor, Character targetCharacter, ref string debugLog) {
+        debugLog += $"{actor.name} is reacting to {targetCharacter.name}";
+        if(actor.IsHostileWith(targetCharacter)) {
             debugLog += "\n-Target is hostile";
-            if (owner.traitContainer.HasTrait("Cultist") && (targetCharacter.faction.isPlayerFaction || targetCharacter.traitContainer.HasTrait("Cultist"))) {
-                debugLog += $"\n-{owner.name} is a cultist and {targetCharacter.name} is part of the demon faction or is also a cultist.";
+            if (actor.traitContainer.HasTrait("Cultist") && (targetCharacter.faction.isPlayerFaction || targetCharacter.traitContainer.HasTrait("Cultist"))) {
+                debugLog += $"\n-{actor.name} is a cultist and {targetCharacter.name} is part of the demon faction or is also a cultist.";
                 int roll = UnityEngine.Random.Range(0, 100);
                 int inspireChance = 30;
                 if (roll < inspireChance) {
-                    debugLog += $"\n-{owner.name} triggered inspired.";
-                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Inspired, targetCharacter);
+                    debugLog += $"\n-{actor.name} triggered inspired.";
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Inspired, targetCharacter);
                 } else {
                     //pray
-                    debugLog += $"\n-{owner.name} triggered pray.";
-                    owner.jobComponent.TriggerPray();
+                    debugLog += $"\n-{actor.name} triggered pray.";
+                    actor.jobComponent.TriggerPray();
                 }
             } else if (!targetCharacter.isDead && targetCharacter.combatComponent.combatMode != COMBAT_MODE.Passive) {
                 debugLog += "\n-If Target is alive and not in Passive State:";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
-                if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
                     //If the source is harassing or defending, combat should not be lethal
                     //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
-                    bool isLethal = (!owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isDefending)
-                        || ((owner.race == RACE.DEMON && targetCharacter.race == RACE.ANGEL) || (owner.race == RACE.ANGEL && targetCharacter.race == RACE.DEMON));
-                    bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
-                    if (owner.jobQueue.jobsInQueue.Count > 0) {
-                        debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";
+                    bool isLethal = (!actor.behaviourComponent.isHarassing && !actor.behaviourComponent.isDefending)
+                        || ((actor.race == RACE.DEMON && targetCharacter.race == RACE.ANGEL) || (actor.race == RACE.ANGEL && targetCharacter.race == RACE.DEMON));
+                    bool isTopPrioJobLethal = actor.jobQueue.jobsInQueue.Count <= 0 || actor.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
+                    if (actor.jobQueue.jobsInQueue.Count > 0) {
+                        debugLog += $"\n-{actor.jobQueue.jobsInQueue[0].jobType}";
                     }
                     //If the target is already unconscious (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
                         //Determine whether to fight or flight.
-                        CombatReaction combatReaction = owner.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
+                        CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
                         if (combatReaction.reaction == COMBAT_REACTION.Flight) {
                             //if flight was decided
                             //if target is restrained or resting, do nothing
                             if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
-                                owner.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
+                                actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
                             }
                         } else {
-                            owner.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
+                            actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
                         }
                     }
                 }
@@ -496,32 +539,32 @@ public class ReactionComponent {
                 debugLog += "\n-Target is dead or is passive";
                 debugLog += "\n-Do nothing";
             }
-        } else if (!owner.combatComponent.isInActualCombat) {
+        } else if (!actor.combatComponent.isInActualCombat) {
             debugLog += "\n-Target is not hostile and Character is not in combat";
-            if (owner.isNormalCharacter && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
+            if (actor.isNormalCharacter && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
                 debugLog += "\n-Character is a villager and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
-                    if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter) 
+                    if (!actor.isConversing && !targetCharacter.isConversing && actor.nonActionEventsComponent.CanInteract(targetCharacter) 
                         //only allow chat if characters current action is not have affair or if his action is have affair but the character he is reacting to is not the target of that action.
-                        && (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.HAVE_AFFAIR || owner.currentActionNode.poiTarget != targetCharacter))) {
+                        && (actor.currentActionNode == null || (actor.currentActionNode.action.goapType != INTERACTION_TYPE.HAVE_AFFAIR || actor.currentActionNode.poiTarget != targetCharacter))) {
                         debugLog += "\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
                         int chance = UnityEngine.Random.Range(0, 100);
                         debugLog += $"\n-Roll: {chance.ToString()}";
                         if (chance < 3) {
                             debugLog += "\n-Chat triggered";
-                            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
+                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
                         } else {
                             debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
-                            if (RelationshipManager.IsSexuallyCompatibleOneSided(owner.sexuality, targetCharacter.sexuality, owner.gender, targetCharacter.gender)
-                                && owner.relationshipContainer.IsFamilyMember(targetCharacter) == false) {
-                                if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                                    || owner.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
-                                    || owner.traitContainer.HasTrait("Unfaithful")) {
+                            if (RelationshipManager.IsSexuallyCompatibleOneSided(actor.sexuality, targetCharacter.sexuality, actor.gender, targetCharacter.gender)
+                                && actor.relationshipContainer.IsFamilyMember(targetCharacter) == false) {
+                                if (actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
+                                    || actor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
+                                    || actor.traitContainer.HasTrait("Unfaithful")) {
                                     debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
-                                    int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
+                                    int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(actor, targetCharacter);
                                     int baseChance = 1;
-                                    if (owner.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                                    if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
                                         debugLog += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
                                         baseChance += 2;
                                     }
@@ -537,7 +580,7 @@ public class ReactionComponent {
                                     int flirtRoll = UnityEngine.Random.Range(0, 100);
                                     debugLog += $"\n-Roll: {flirtRoll.ToString()}";
                                     if (flirtRoll < flirtChance) {
-                                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                     } else {
                                         debugLog += "\n-Flirt did not trigger";
                                     }
@@ -548,22 +591,22 @@ public class ReactionComponent {
                         }
                     }
 
-                    if (targetCharacter.isNormalCharacter && owner.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Criminal")
+                    if (targetCharacter.isNormalCharacter && actor.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Criminal")
                         && !targetCharacter.traitContainer.HasTrait("Restrained")) {
                         debugLog += "\n-Target Character is a criminal and is not restrained";
                         bool cannotReactToCriminal = false;
-                        if (owner.currentJob != null && owner.currentJob is GoapPlanJob planJob) {
+                        if (actor.currentJob != null && actor.currentJob is GoapPlanJob planJob) {
                             cannotReactToCriminal = planJob.jobType == JOB_TYPE.APPREHEND && planJob.targetPOI == targetCharacter;
                             debugLog += "\n-Character is current job is already apprehend targeting target";
                         }
                         if (!cannotReactToCriminal) {
-                            if (owner.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                            if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
                                 debugLog += "\n-Character is friends with target";
                                 Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                                if (!criminalTrait.HasCharacterThatIsAlreadyWorried(owner)) {
+                                if (!criminalTrait.HasCharacterThatIsAlreadyWorried(actor)) {
                                     debugLog += "\n-Character will worry";
-                                    criminalTrait.AddCharacterThatIsAlreadyWorried(owner);
-                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                                    criminalTrait.AddCharacterThatIsAlreadyWorried(actor);
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
                                 } else {
                                     debugLog += "\n-Character already worried about this target";
                                 }
@@ -571,30 +614,30 @@ public class ReactionComponent {
                                 debugLog += "\n-Character is not friends with target";
                                 debugLog += "\n-Character will try to apprehend";
                                 bool canDoJob = false;
-                                owner.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
                                 if (!canDoJob) {
                                     debugLog += "\n-Character cannot do apprehend, will flee instead";
-                                    owner.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+                                    actor.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
                                 }
                             }
                         }
                     }
 
-                    if (owner.faction == targetCharacter.faction || owner.homeSettlement == targetCharacter.homeSettlement) {
+                    if (actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
                         debugLog += "\n-Character and Target are with the same faction or npcSettlement";
-                        if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                        if (actor.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
-                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && owner.moodComponent.moodState != MOOD_STATE.NORMAL) {
+                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && actor.moodComponent.moodState != MOOD_STATE.NORMAL) {
                                 debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
                                 if (UnityEngine.Random.Range(0, 2) == 0) {
                                     debugLog += "\n-Character triggered Mock interrupt";
-                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
                                 } else {
                                     debugLog += "\n-Character triggered Laugh At interrupt";
-                                    owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
                             }
-                        } else if (!owner.traitContainer.HasTrait("Psychopath")) {
+                        } else if (!actor.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
                             bool targetIsParalyzedOrEnsnared =
                                 targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
@@ -605,14 +648,14 @@ public class ReactionComponent {
                                 debugLog += $"\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()})";
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
-                                    owner.jobComponent.TryTriggerFeed(targetCharacter);
+                                    actor.jobComponent.TryTriggerFeed(targetCharacter);
                                 } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared) {
                                     debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (targetCharacter.homeStructure != null) {
                                         Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure, bed.gridTileLocation);
+                                            actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure, bed.gridTileLocation);
                                         } else {
                                             debugLog += "\n-Target has a home but does not have an available bed or already in bed, will not trigger Move Character job";
                                         }
@@ -625,7 +668,7 @@ public class ReactionComponent {
                                         //Pray
                                         if (targetCharacter.currentStructure != targetCharacter.homeStructure) {
                                             debugLog += "\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure);
+                                            actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure);
                                         } else {
                                             debugLog += "\n-Target chose Pray but is already inside his/her house, will not trigger Move Character job";
                                         }
@@ -633,7 +676,7 @@ public class ReactionComponent {
                                         //Daydream
                                         if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                             debugLog += "\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                            owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                            actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                                         } else {
                                             debugLog += "\n-Target chose Daydream but is already in an open space structure, will not trigger Move Character job";
                                         }
@@ -643,8 +686,8 @@ public class ReactionComponent {
 
                             //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
                             //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
-                            if (owner.isNormalCharacter && targetCharacter.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Restrained") && !targetCharacter.traitContainer.HasTrait("Criminal")) {
-                                owner.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                            if (actor.isNormalCharacter && targetCharacter.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Restrained") && !targetCharacter.traitContainer.HasTrait("Criminal")) {
+                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
                             }
 
                         }
@@ -652,40 +695,40 @@ public class ReactionComponent {
                 } else {
                     debugLog += "\n-Target is dead";
                     //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-                    if(!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(owner)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
-                        targetCharacter.reactionComponent.AddCharacterThatSawThisDead(owner);
+                    if(!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(actor)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
+                        targetCharacter.reactionComponent.AddCharacterThatSawThisDead(actor);
                         debugLog += "\n-Target saw dead for the first time";
-                        string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
+                        string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                         if(opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                             debugLog += "\n-Target is Friend/Close Friend";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 debugLog += "\n-Target will Cry";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
                             } else {
                                 debugLog += "\n-Target will Puke";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
                             }
                         } else if (opinionLabel == RelationshipManager.Rival) {
                             debugLog += "\n-Target is Rival";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 debugLog += "\n-Target will Mock";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
                             } else {
                                 debugLog += "\n-Target will Laugh At";
-                                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                             }
                         }
 
-                        if (owner.marker && targetCharacter.isNormalCharacter) {
-                            if(owner.traitContainer.HasTrait("Suspicious") 
-                                || owner.moodComponent.moodState == MOOD_STATE.CRITICAL 
-                                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+                        if (actor.marker && targetCharacter.isNormalCharacter) {
+                            if(actor.traitContainer.HasTrait("Suspicious") 
+                                || actor.moodComponent.moodState == MOOD_STATE.CRITICAL 
+                                || (actor.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
                                 || UnityEngine.Random.Range(0, 100) < 15) {
                                 debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
                                 _assumptionSuspects.Clear();
-                                for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                                    Character inVision = owner.marker.inVisionCharacters[i];
+                                for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
+                                    Character inVision = actor.marker.inVisionCharacters[i];
                                     if (inVision != targetCharacter && inVision.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                                         if(inVision.currentJob != null && inVision.currentJob.jobType == JOB_TYPE.BURY) {
                                             //If the in vision character is going to bury the dead, do not assume
@@ -699,7 +742,7 @@ public class ReactionComponent {
                                     Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
 
                                     debugLog += "\n-Will create Murder assumption on " + chosenSuspect.name;
-                                    owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetCharacter, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
+                                    actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetCharacter, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
                                 }
                             }
 
@@ -711,35 +754,35 @@ public class ReactionComponent {
             }
         }
     }
-    private void ReactTo(TileObject targetTileObject, ref string debugLog) {
-        if (!owner.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
+    private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
+        if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
         }
-        debugLog += $"{owner.name} is reacting to {targetTileObject.nameWithID}";
-        if (!owner.combatComponent.isInActualCombat && !owner.hasSeenFire) {
+        debugLog += $"{actor.name} is reacting to {targetTileObject.nameWithID}";
+        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenFire) {
             if (targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
-                && owner.homeSettlement != null
-                && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && !owner.traitContainer.HasTrait("Pyrophobic")
-                && !owner.traitContainer.HasTrait("Dousing")
-                && owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                && actor.homeSettlement != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                && !actor.traitContainer.HasTrait("Pyrophobic")
+                && !actor.traitContainer.HasTrait("Dousing")
+                && actor.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
-                owner.SetHasSeenFire(true);
-                owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                if (owner.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
-                    Debug.LogWarning($"{owner.name} saw a fire in a settlement but no douse fire jobs were created.");
+                actor.SetHasSeenFire(true);
+                actor.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+                if (actor.homeSettlement.HasJob(JOB_TYPE.DOUSE_FIRE) == false) {
+                    Debug.LogWarning($"{actor.name} saw a fire in a settlement but no douse fire jobs were created.");
                 }
 
-                List<JobQueueItem> douseFireJobs = owner.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
-                    .Where(j => j.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(j)).ToList();
+                List<JobQueueItem> douseFireJobs = actor.homeSettlement.GetJobs(JOB_TYPE.DOUSE_FIRE)
+                    .Where(j => j.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(j)).ToList();
 
                 if (douseFireJobs.Count > 0) {
-                    owner.jobQueue.AddJobInQueue(douseFireJobs[0]);
+                    actor.jobQueue.AddJobInQueue(douseFireJobs[0]);
                 } else {
-                    if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                        owner.combatComponent.Flight(targetTileObject, "saw fire");
+                    if (actor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                        actor.combatComponent.Flight(targetTileObject, "saw fire");
                     }
                 }
 
@@ -757,71 +800,71 @@ public class ReactionComponent {
                 // }
             }
         }
-        if (!owner.combatComponent.isInActualCombat && !owner.hasSeenWet) {
+        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenWet) {
             if (targetTileObject.traitContainer.HasTrait("Wet")
                 && targetTileObject.gridTileLocation != null
-                && owner.homeSettlement != null
-                && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && !owner.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
+                && actor.homeSettlement != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                && !actor.jobQueue.HasJob(JOB_TYPE.DRY_TILES)) {
                 debugLog += "\n-Target is Wet";
-                owner.SetHasSeenWet(true);
-                owner.homeSettlement.settlementJobTriggerComponent.TriggerDryTiles();
-                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                actor.SetHasSeenWet(true);
+                actor.homeSettlement.settlementJobTriggerComponent.TriggerDryTiles();
+                for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+                    JobQueueItem job = actor.homeSettlement.availableJobs[i];
                     if (job.jobType == JOB_TYPE.DRY_TILES) {
-                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-                            owner.jobQueue.AddJobInQueue(job);
+                        if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+                            actor.jobQueue.AddJobInQueue(job);
                         }
                     }
                 }
             }
         }
-        if (!owner.combatComponent.isInActualCombat && !owner.hasSeenPoisoned) {
+        if (!actor.combatComponent.isInActualCombat && !actor.hasSeenPoisoned) {
             if (targetTileObject.traitContainer.HasTrait("Poisoned")
                 && targetTileObject.gridTileLocation != null
-                && owner.homeSettlement != null
-                && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && !owner.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
+                && actor.homeSettlement != null
+                && targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement)
+                && !actor.jobQueue.HasJob(JOB_TYPE.CLEANSE_TILES)) {
                 debugLog += "\n-Target is Poisoned";
-                owner.SetHasSeenPoisoned(true);
-                owner.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
-                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
+                actor.SetHasSeenPoisoned(true);
+                actor.homeSettlement.settlementJobTriggerComponent.TriggerCleanseTiles();
+                for (int i = 0; i < actor.homeSettlement.availableJobs.Count; i++) {
+                    JobQueueItem job = actor.homeSettlement.availableJobs[i];
                     if (job.jobType == JOB_TYPE.CLEANSE_TILES) {
-                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-                            owner.jobQueue.AddJobInQueue(job);
+                        if (job.assignedCharacter == null && actor.jobQueue.CanJobBeAddedToQueue(job)) {
+                            actor.jobQueue.AddJobInQueue(job);
                         }
                     }
                 }
             }
         }
         if (targetTileObject.traitContainer.HasTrait("Dangerous") && targetTileObject.gridTileLocation != null) {
-            if (targetTileObject is TornadoTileObject || owner.currentStructure == targetTileObject.gridTileLocation.structure || (!owner.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
-                if (owner.traitContainer.HasTrait("Berserked")) {
-                    owner.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
-                } else if (owner.stateComponent.currentState == null || owner.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
-                    if (owner.traitContainer.HasTrait("Suicidal")) {
-                        if (!owner.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
-                            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, owner);
-                            owner.jobQueue.AddJobInQueue(job);
+            if (targetTileObject is TornadoTileObject || actor.currentStructure == targetTileObject.gridTileLocation.structure || (!actor.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
+                if (actor.traitContainer.HasTrait("Berserked")) {
+                    actor.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
+                } else if (actor.stateComponent.currentState == null || actor.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {
+                    if (actor.traitContainer.HasTrait("Suicidal")) {
+                        if (!actor.jobQueue.HasJob(JOB_TYPE.SUICIDE_FOLLOW)) {
+                            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, actor);
+                            actor.jobQueue.AddJobInQueue(job);
                         }
-                    } else if (owner.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
                         string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(targetTileObject);
                         if (neutralizingTraitName != string.Empty) {
-                            if (owner.traitContainer.HasTrait(neutralizingTraitName)) {
-                                if (!owner.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetTileObject)) {
+                            if (actor.traitContainer.HasTrait(neutralizingTraitName)) {
+                                if (!actor.jobQueue.HasJob(JOB_TYPE.NEUTRALIZE_DANGER, targetTileObject)) {
                                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.NEUTRALIZE_DANGER,
-                                        INTERACTION_TYPE.NEUTRALIZE, targetTileObject, owner);
-                                    owner.jobQueue.AddJobInQueue(job);
+                                        INTERACTION_TYPE.NEUTRALIZE, targetTileObject, actor);
+                                    actor.jobQueue.AddJobInQueue(job);
                                 }
                             } else {
-                                owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
+                                actor.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
                             }
                         } else {
                             throw new Exception("Trying to neutralize " + targetTileObject.nameWithID + " but it does not have a neutralizing trait!");
                         }
                     } else {
-                        owner.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
+                        actor.combatComponent.Flight(targetTileObject, "saw a " + targetTileObject.name);
                     }
                 }
             }
@@ -836,21 +879,21 @@ public class ReactionComponent {
         //    }
         //}
         if (targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
-            if (!owner.traitContainer.HasTrait("Berserked")) {
+            if (!actor.traitContainer.HasTrait("Berserked")) {
                 if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
-                    if (owner.traitContainer.HasTrait("Coward")) {
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    if (actor.traitContainer.HasTrait("Coward")) {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                     } else {
                         int shockChance = 30;
-                        if (owner.traitContainer.HasTrait("Combatant")) {
+                        if (actor.traitContainer.HasTrait("Combatant")) {
                             shockChance = 70;
                         }
                         if (UnityEngine.Random.Range(0, 100) < shockChance) {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                         } else {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                         }
                     }
                 }
@@ -858,17 +901,17 @@ public class ReactionComponent {
             }
         }
         if (targetTileObject.traitContainer.HasTrait("Surprised Remnant")) {
-            if (!owner.traitContainer.HasTrait("Berserked")) {
+            if (!actor.traitContainer.HasTrait("Berserked")) {
                 if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
-                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                 } else {
-                    if (owner.traitContainer.HasTrait("Coward")) {
-                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                    if (actor.traitContainer.HasTrait("Coward")) {
+                        CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                     } else {
                         if (UnityEngine.Random.Range(0, 100) < 95) {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                         } else {
-                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, owner, targetTileObject, REACTION_STATUS.WITNESSED);
+                            CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
                         }
                     }
                 }
@@ -879,42 +922,42 @@ public class ReactionComponent {
         if (targetTileObject is Tombstone tombstone) {
             Character targetCharacter = tombstone.character;
             //Dead targetDeadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
-            if (!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(owner)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
-                targetCharacter.reactionComponent.AddCharacterThatSawThisDead(owner);
+            if (!targetCharacter.reactionComponent.charactersThatSawThisDead.Contains(actor)) { //targetDeadTrait != null && !targetDeadTrait.charactersThatSawThisDead.Contains(owner)
+                targetCharacter.reactionComponent.AddCharacterThatSawThisDead(actor);
                 debugLog += "\n-Target saw dead for the first time";
-                string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     debugLog += "\n-Target is Friend/Close Friend";
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         debugLog += "\n-Target will Cry";
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
                     } else {
                         debugLog += "\n-Target will Puke";
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
                     }
                 } else if (opinionLabel == RelationshipManager.Rival) {
                     debugLog += "\n-Target is Rival";
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         debugLog += "\n-Target will Mock";
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
                     } else {
                         debugLog += "\n-Target will Laugh At";
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                     }
                 }
             }
         }
 
-        if (targetTileObject.IsOwnedBy(owner)
+        if (targetTileObject.IsOwnedBy(actor)
             && targetTileObject.gridTileLocation != null 
             && targetTileObject.gridTileLocation.structure != null
             && targetTileObject.gridTileLocation.structure is Dwelling
-            && targetTileObject.gridTileLocation.structure != owner.homeStructure) {
+            && targetTileObject.gridTileLocation.structure != actor.homeStructure) {
 
-            if (targetTileObject.gridTileLocation.structure.residents.Count > 0 && !targetTileObject.HasCharacterAlreadyAssumed(owner)) {
-                if (owner.traitContainer.HasTrait("Suspicious")
-                || owner.moodComponent.moodState == MOOD_STATE.CRITICAL
-                || (owner.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+            if (targetTileObject.gridTileLocation.structure.residents.Count > 0 && !targetTileObject.HasCharacterAlreadyAssumed(actor)) {
+                if (actor.traitContainer.HasTrait("Suspicious")
+                || actor.moodComponent.moodState == MOOD_STATE.CRITICAL
+                || (actor.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
                 || UnityEngine.Random.Range(0, 100) < 15
                 || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
                     debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
@@ -923,26 +966,26 @@ public class ReactionComponent {
                     Character chosenSuspect = targetTileObject.gridTileLocation.structure.residents[UnityEngine.Random.Range(0, targetTileObject.gridTileLocation.structure.residents.Count)];
 
                     debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
-                    owner.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                    actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && 
-               !owner.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && 
+               !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && 
                targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP)) {
-                owner.jobComponent.CreateTakeItemJob(targetTileObject);
+                actor.jobComponent.CreateTakeItemJob(targetTileObject);
             }
         }
 
-        if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(owner) == false) {
+        if (targetTileObject is CultistKit && targetTileObject.IsOwnedBy(actor) == false) {
             debugLog += "\n-Object is a cultist kit";
             if (targetTileObject.gridTileLocation != null) {
                 if (targetTileObject.structureLocation is ManMadeStructure && 
-                    targetTileObject.structureLocation.GetNumberOfResidentsExcluding(out var validResidents,owner) > 0) {
+                    targetTileObject.structureLocation.GetNumberOfResidentsExcluding(out var validResidents,actor) > 0) {
                     debugLog += "\n-Cultist kit is at structure with residents excluding the witness";
                     int chanceToCreateAssumption = 0;
-                    if (owner.traitContainer.HasTrait("Suspicious") || owner.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    if (actor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
                         chanceToCreateAssumption = 100;
-                    } else if (owner.moodComponent.moodState == MOOD_STATE.LOW) {
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
                         chanceToCreateAssumption = 50;
                     } else {
                         chanceToCreateAssumption = 15;
@@ -950,17 +993,17 @@ public class ReactionComponent {
                     debugLog += "\n-Rolling for chance to create assumption";
                     if (GameUtilities.RollChance(chanceToCreateAssumption, ref debugLog)) {
                         Character chosenTarget = CollectionUtilities.GetRandomElement(validResidents);
-                        owner.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);    
+                        actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);    
                     }
                 }
             } 
         }
     }
-    private void ReactToCarriedObject(TileObject targetTileObject, Character carrier, ref string debugLog) {
-        debugLog += $"{owner.name} is reacting to {targetTileObject.nameWithID} carried by {carrier.name}";
+    private void ReactToCarriedObject(Character actor, TileObject targetTileObject, Character carrier, ref string debugLog) {
+        debugLog += $"{actor.name} is reacting to {targetTileObject.nameWithID} carried by {carrier.name}";
         if (targetTileObject is CultistKit) {
             debugLog += $"Object is cultist kit, creating assumption...";
-            owner.assumptionComponent.CreateAndReactToNewAssumption(carrier, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED); 
+            actor.assumptionComponent.CreateAndReactToNewAssumption(carrier, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED); 
         }
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 

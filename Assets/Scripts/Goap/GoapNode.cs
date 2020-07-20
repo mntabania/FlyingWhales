@@ -131,6 +131,8 @@ public class ActualGoapNode : IReactable, IRumorable {
     public List<Character> awareCharacters { get; private set; }
 
     private JobQueueItem _associatedJob;
+    private Character _actor;
+    private IPointOfInterest _target;
     //public CRIME_TYPE crimeType { get; private set; }
 
     #region getters
@@ -164,6 +166,14 @@ public class ActualGoapNode : IReactable, IRumorable {
         actionStatus = ACTION_STATUS.NONE;
         currentStateName = string.Empty;
         awareCharacters = new List<Character>();
+
+        ////Whenever a disguised character is being set as actor/target, set the original as the actor/target, as if they are the ones who did it
+        //if (actor.traitContainer.HasTrait("Disguised")) {
+        //    this.actor = actor.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+        //}
+        //if (poiTarget.traitContainer.HasTrait("Disguised")) {
+        //    this.poiTarget = poiTarget.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+        //}
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 

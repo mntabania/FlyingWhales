@@ -354,8 +354,8 @@ namespace Traits {
             return removedOrUnstacked;
         }
         public bool RemoveTrait(ITraitable removeFrom, string traitName, Character removedBy = null, bool bySchedule = false) {
-            Trait trait = GetNormalTrait<Trait>(traitName);
-            if (trait != null) {
+            if (HasTrait(traitName)) {
+                Trait trait = GetNormalTrait<Trait>(traitName);
                 return RemoveTrait(removeFrom, trait, removedBy, bySchedule);
             }
             return false;

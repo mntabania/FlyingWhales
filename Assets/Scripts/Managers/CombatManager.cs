@@ -36,6 +36,9 @@ public class CombatManager : MonoBehaviour {
                     character.jobQueue.CancelFirstJob();
                 }
             }
+
+            //Damage should remove disguise
+            target.traitContainer.RemoveTrait(target, "Disguised");
         }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, 

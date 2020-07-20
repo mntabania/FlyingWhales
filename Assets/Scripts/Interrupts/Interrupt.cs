@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 namespace Interrupts {
     public class Interrupt : ICrimeable {
@@ -88,11 +89,9 @@ namespace Interrupts {
         public string ReactionToActor(Character witness, REACTION_STATUS status) {
             return interrupt.ReactionToActor(witness, actor, target, interrupt, status);
         }
-
         public string ReactionToTarget(Character witness, REACTION_STATUS status) {
             return interrupt.ReactionToTarget(witness, actor, target, interrupt, status);
         }
-
         public string ReactionOfTarget(REACTION_STATUS status) {
             return interrupt.ReactionOfTarget(actor, target, interrupt, status);
         }
@@ -118,6 +117,15 @@ namespace Interrupts {
             this.actor = actor;
             this.target = target;
             SetIdentifier(identifier);
+
+
+            ////Whenever a disguised character is being set as actor/target, set the original as the actor/target, as if they are the ones who did it
+            //if (actor.traitContainer.HasTrait("Disguised")) {
+            //    this.actor = actor.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+            //}
+            //if (target.traitContainer.HasTrait("Disguised")) {
+            //    this.target = target.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
+            //}
         }
         public void Reset() {
             interrupt = null;

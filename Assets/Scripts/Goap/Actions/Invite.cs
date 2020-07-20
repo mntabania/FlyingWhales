@@ -9,7 +9,7 @@ public class Invite : GoapAction {
     public Invite() : base(INTERACTION_TYPE.INVITE) {
         actionIconString = GoapActionStateDB.Flirt_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.LESSER_DEMON };
     }
 
     #region Overrides
