@@ -23,7 +23,7 @@ namespace Traits {
             string successLogKey = base.TriggerFlaw(character);
             if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure.tiles.Count > 0) {
                 if (character.currentStructure != character.homeStructure) {
-                    if (character.currentActionNode.action != null) {
+                    if (character.currentActionNode != null) {
                         character.StopCurrentActionNode(false);
                     }
                     if (character.stateComponent.currentState != null) {

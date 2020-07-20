@@ -20,14 +20,14 @@ public class EntBehaviour : CharacterBehaviourComponent {
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
         if (chosenAction == "Roam") {
             return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
-        } else if (chosenAction == "Stand") {
             return character.jobComponent.TriggerStandStill(out producedJob);
+        } else if (chosenAction == "Stand") {
         } else {
             producedJob = null;
             Ent ent = character as Ent;
             ent.SetIsTree(true);
             LocationGridTile tile = character.gridTileLocation;
-            character.DisableMarker();
+            character.marker.SetVisualState(false);
             TreeObject treeObject =
                 InnerMapManager.Instance.CreateNewTileObject<TreeObject>(TILE_OBJECT_TYPE.BIG_TREE_OBJECT); 
             tile.structure.AddPOI(treeObject, tile);
