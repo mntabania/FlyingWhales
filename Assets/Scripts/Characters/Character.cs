@@ -604,7 +604,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction) {
                 //Killed by a character from another villager faction
                 if (IsInHomeSettlement()) {
-                    Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
+                    Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion);
                     CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
                     Revenant revenant = summon as Revenant;
                     if (responsibleCharacter.partyComponent.hasParty) {

@@ -33,8 +33,9 @@ public class GhostBehaviour : CharacterBehaviourComponent {
                         log += $"\n-15% chance to attack a source of betrayal if still alive and currently in the region";
                         if(!ghost.betrayedBy.isDead && ghost.betrayedBy.currentRegion == ghost.currentRegion) {
                             log += $"\n-Will attack";
-                            ghost.combatComponent.Fight(ghost.betrayedBy, CombatManager.Hostility);
-                            return true;
+                            if(ghost.jobComponent.CreateDemonKillJob(ghost.betrayedBy, out producedJob)) {
+                                return true;
+                            }
                         } else {
                             log += $"\n-Betrayer is either dead or not in current region";
                         }

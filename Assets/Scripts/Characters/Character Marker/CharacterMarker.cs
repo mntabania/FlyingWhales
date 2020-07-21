@@ -962,6 +962,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void UpdateHairState() {
         //TODO: Find another way to unify this
+        Character character = this.character;
+        if(character.reactionComponent.disguisedCharacter != null) {
+            character = character.reactionComponent.disguisedCharacter;
+        }
+
         if (character.characterClass.className == "Mage" || character.characterClass.className == "Necromancer" || character.visuals.portraitSettings.hair == -1 || 
             character.race == RACE.WOLF || character.race == RACE.SKELETON || 
             character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||

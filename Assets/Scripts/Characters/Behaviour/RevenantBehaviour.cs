@@ -22,7 +22,7 @@ public class RevenantBehaviour : CharacterBehaviourComponent {
                         if(revenant.numOfSummonedGhosts < 5) {
                             log += $"\n-Will spawn ghost";
                             Character betrayer = revenant.GetRandomBetrayer();
-                            Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: revenant.homeSettlement, homeRegion: revenant.homeRegion, homeStructure: revenant.homeStructure);
+                            Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: revenant.homeSettlement, homeRegion: revenant.homeRegion);
                             (ghost as Ghost).SetBetrayedBy(betrayer);
                             CharacterManager.Instance.PlaceSummon(ghost, revenant.homeSettlement.GetRandomHexTile().GetRandomTile());
                             revenant.AdjustNumOfSummonedGhosts(1);

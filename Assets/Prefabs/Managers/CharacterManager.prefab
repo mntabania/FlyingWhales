@@ -2205,6 +2205,26 @@ MonoBehaviour:
       characterClassAssets:
         m_keys: []
         m_values: []
+  - raceName: REVENANT
+    race: 34
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Revenant
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: a19b5f90bc6be7947b9de927b1dcc222,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 378199c957979bd4a99755f241f96d3d, type: 3}
+          - {fileID: 21300000, guid: a19b5f90bc6be7947b9de927b1dcc222, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
   - raceName: SHEEP
     race: 25
     neutralAssets:

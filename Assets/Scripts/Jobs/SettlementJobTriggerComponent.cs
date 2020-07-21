@@ -183,6 +183,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (character.homeSettlement == _owner && character.homeSettlement.isUnderSiege 
 		    && character.currentSettlement == character.homeSettlement) {
 			if (seenPOI is Character target && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
+                if(target.reactionComponent.disguisedCharacter != null) {
+                    target = target.reactionComponent.disguisedCharacter;
+                }
 				TryCreateRestrainJobs(target);
 			}	
 		}
