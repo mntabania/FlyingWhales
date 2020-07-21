@@ -11,7 +11,8 @@ public static class RandomNameGenerator {
 		"Corbon", "Cooper", "Digby", "Durandal", "Emory", "Fossard", "Fysher", "Fletcher", "Garin", "Gaveston",
 		"Godfrey", "Hamond", "Harcourt", "Hughes", "Kent", "Knighton", "Lovell", "Manston", "Madley", "Middleton", "Nelond",
 		"Noyers", "Orlebar", "Osmont", "Payne", "Pennant", "Pratt", "Picard", "Raleigh", "Ratcliff", "Renold", "Rolfe", "Talbot",
-		"Thornton", "Thibault", "Walter", "Weston", "Williams", "Webb", "Whyte", "Yate", "Vernon", "Villon"
+		"Thornton", "Thibault", "Walter", "Weston", "Williams", "Webb", "Whyte", "Yate", "Vernon", "Villon", "Trump", "Winchester",
+		"Snow", "Stark", "Constantine"
 	};
 	
 	private static string[] baseElvenSurnames = new[]{
@@ -35,7 +36,8 @@ public static class RandomNameGenerator {
 		"Dalton", "Darren", "Dawson", "Denver", "Dudley", "Easton", "Edgar", "Elton", "Erwan", "Franklin", "Garett", "Gerard", "Gordon", "Hammond", "Holden", "Howard",
 		"Hyde", "Irving", "Ian", "Jamie", "Jeremy", "Jesus", "John", "Keaton", "Kirby", "Kipling", "Lander", "Landon", "Leland", "Macon", "Moses", "Matthew", "Maxwell",
 		"Maven", "Niles", "Nigel", "Nestor", "Oakley", "Oliver", "Oswald", "Payton", "Parker", "Preston", "Quentin", "Ramsey", "Randall", "Rhett", "River", "Robert",
-		"Sawyer", "Shelton", "Silas", "Spencer", "Stewart", "Tanner", "Tim", "Terrence", "Ulmer", "Ulric", "Uther", "Wallace", "Wesley", "William", "Wolfe", "Yates"
+		"Sawyer", "Shelton", "Silas", "Spencer", "Stewart", "Tanner", "Tim", "Terrence", "Ulmer", "Ulric", "Uther", "Wallace", "Wesley", "William", "Wolfe", "Yates",
+		"Donald", "Barrack", "Dante", "Illidan", "Legolas", "Ash", "Rasputin", "Dean", "Leoric", "Deckard", "Jubei", "Alucard", "Taki"
 	};
 
 	private static string[] humanFemaleFirstNames = new[]{
@@ -43,7 +45,8 @@ public static class RandomNameGenerator {
 		"Devon", "Edith", "Edwina", "Elga", "Elvina", "Ermengard", "Evelyn", "Farah", "Faye", "Fiona", "Francesca", "Gidget", "Godiva", "Gunnhild", "Greta", "Hadley",
 		"Hazel", "Hannah", "Holly", "Ingrid", "Ivy", "Kenley", "Kelby", "Karen", "Kate", "Laila", "Letha", "Lily", "Lindsey", "Madison", "Maggie", "Mildred", "Misty",
 		"Norma", "Nyx", "Nana", "Nerissa", "Olga", "Oletha", "Posy", "Patsy", "Piper", "Precious", "Raissa", "Rhiannon", "Rose", "Roxanne", "Sable", "Shea", "Shelby",
-		"Susan", "Suzette", "Tanya", "Tatiana", "Taylor", "Velma", "Vanessa", "Violet", "Whitney", "Willow", "Windy"
+		"Susan", "Suzette", "Tanya", "Tatiana", "Taylor", "Velma", "Vanessa", "Violet", "Whitney", "Willow", "Windy", "Hillary", "Arya", "Leia", "Buffy", "Light",
+		"Prue"
 	};
 
 	private static string[] baseElvenKingdomNames = new[]{
