@@ -1,4 +1,5 @@
 ﻿namespace Inner_Maps.Location_Structures {
+    [System.Serializable]
     public struct StructureSetting {
         public RESOURCE resource;
         public STRUCTURE_TYPE structureType;

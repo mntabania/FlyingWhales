@@ -291,7 +291,6 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region Abstract Member Implementation
     public override void UpdateTileObjectVisual(TileObject obj) { }
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     #endregion
 
     #region Listeners

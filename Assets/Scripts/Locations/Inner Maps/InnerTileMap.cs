@@ -365,6 +365,9 @@ namespace Inner_Maps {
             structureTemplate.transform.localScale = Vector3.one;
             for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
                 LocationStructureObject structureObject = structureTemplate.structureObjects[i];
+                if (structureObject == null) {
+                    throw new Exception($"No LocationStructureObject for {structurePrefab.name}");
+                }
                 structureObject.RefreshAllTilemaps();
                 List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
                 structureObject.SetTilesInStructure(occupiedTiles.ToArray());

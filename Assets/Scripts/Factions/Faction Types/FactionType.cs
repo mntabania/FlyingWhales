@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
 namespace Factions.Faction_Types {
     public abstract class FactionType {
         public readonly FACTION_TYPE type;
@@ -41,6 +42,16 @@ namespace Factions.Faction_Types {
         public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
             StructureSetting structureSetting = new StructureSetting(structureType, resource);
             neededStructures.Add(structureSetting);
+        }
+        public StructureSetting GetStructureSettingFor(STRUCTURE_TYPE structureType) {
+            for (int i = 0; i < neededStructures.Count; i++) {
+                StructureSetting structureSetting = neededStructures[i];
+                if (structureSetting.structureType == structureType) {
+                    return structureSetting;
+                }
+            }
+            Debug.LogWarning($"{type} has no structure setting for {structureType}");
+            return default;
         }
         #endregion
         

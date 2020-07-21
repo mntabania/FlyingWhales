@@ -151,21 +151,6 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        private bool HasUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles[i];
-                if (currTile.objHere == null && currTile.hasFurnitureSpot && currTile.furnitureSpot.allowedFurnitureTypes != null) {
-                    for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
-                        FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
-                        TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
-                        if (tileObject.CanProvideFacility(type)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
         /// <summary>
         /// Does this dwelling have any facilities that are at 0?
         /// </summary>

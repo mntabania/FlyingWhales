@@ -592,8 +592,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type) {
-            return structurePrefabs[type];
+        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
+            StructureSetting structureSetting = new StructureSetting(type, resource);
+            return structurePrefabs[structureSetting];
+        }
+        public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
+            return structurePrefabs[structureSetting];
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

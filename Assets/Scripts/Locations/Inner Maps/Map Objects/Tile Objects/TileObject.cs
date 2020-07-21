@@ -625,7 +625,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region Tile Object Slots
     protected virtual void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         removedBy = null;
-        CheckFurnitureSettings();
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {
@@ -934,16 +933,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //    log = null;
         //}
         
-    }
-    #endregion
-
-    #region Visuals
-    private void CheckFurnitureSettings() {
-        if (gridTileLocation.hasFurnitureSpot) {
-            if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(tileObjectType.ConvertTileObjectToFurniture(), out var furnitureSetting)) {
-                mapVisual.ApplyFurnitureSettings(furnitureSetting);
-            }
-        }
     }
     #endregion
 

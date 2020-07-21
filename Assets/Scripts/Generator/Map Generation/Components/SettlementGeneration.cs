@@ -43,8 +43,12 @@ public class SettlementGeneration : MapGenerationComponent {
 			npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 			var structureTypes = WorldConfigManager.Instance.isDemoWorld ? 
-				new List<STRUCTURE_TYPE>() {STRUCTURE_TYPE.CITY_CENTER, STRUCTURE_TYPE.FARM, STRUCTURE_TYPE.MINE_SHACK, STRUCTURE_TYPE.INN} : 
-				GenerateStructures(npcSettlement, faction);
+				new List<StructureSetting>() {
+					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
+					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 
+					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 
+					new StructureSetting(STRUCTURE_TYPE.INN, RESOURCE.STONE)
+				} : GenerateStructures(npcSettlement, faction);
 			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
 			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
 
@@ -86,65 +90,67 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 
 	#region Settlement Structures
-	private List<STRUCTURE_TYPE> GenerateStructures(NPCSettlement settlement, Faction faction) {
-		List<STRUCTURE_TYPE> structureTypes = new List<STRUCTURE_TYPE> { STRUCTURE_TYPE.CITY_CENTER };
+	private List<StructureSetting> GenerateStructures(NPCSettlement settlement, Faction faction) {
+		List<StructureSetting> structures = new List<StructureSetting> { faction.factionType.GetStructureSettingFor(STRUCTURE_TYPE.CITY_CENTER) };
+		List<STRUCTURE_TYPE> createdStructureTypes = new List<STRUCTURE_TYPE>();
 		for (int i = 1; i < settlement.tiles.Count; i++) {
 			HexTile tile = settlement.tiles[i];
-			WeightedDictionary<STRUCTURE_TYPE> structuresChoices = GetStructureWeights(tile, structureTypes, faction);
-			STRUCTURE_TYPE chosenStructureType = structuresChoices.PickRandomElementGivenWeights();
-			structureTypes.Add(chosenStructureType);
+			WeightedDictionary<StructureSetting> structuresChoices = GetStructureWeights(tile, createdStructureTypes, faction);
+			StructureSetting chosenSetting = structuresChoices.PickRandomElementGivenWeights();
+			structures.Add(chosenSetting);
+			createdStructureTypes.Add(chosenSetting.structureType);
 		}
-		return structureTypes;
+		return structures;
 	}
-	private WeightedDictionary<STRUCTURE_TYPE> GetStructureWeights(HexTile tile, List<STRUCTURE_TYPE> structureTypes, Faction faction) {
-		WeightedDictionary<STRUCTURE_TYPE> structureWeights = new WeightedDictionary<STRUCTURE_TYPE>();
+	private WeightedDictionary<StructureSetting> GetStructureWeights(HexTile tile, List<STRUCTURE_TYPE> structureTypes, Faction faction) {
+		WeightedDictionary<StructureSetting> structureWeights = new WeightedDictionary<StructureSetting>();
 		if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.APOTHECARY) == false) {
 				//Apothecary: +6 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(STRUCTURE_TYPE.APOTHECARY, 6);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD), 6);
 			}
-			structureWeights.AddElement(STRUCTURE_TYPE.FARM, 1); //Farm: +1
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD), 1); //Farm: +1
 			if (tile.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
-				structureWeights.AddElement(STRUCTURE_TYPE.FARM,
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.WOOD),
 					structureTypes.Contains(STRUCTURE_TYPE.FARM) == false ? 15 : 2);
 			}
 			if (tile.HasNeighbourWithFeature(TileFeatureDB.Wood_Source_Feature)) {
-				structureWeights.AddElement(STRUCTURE_TYPE.LUMBERYARD,
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.LUMBERYARD, RESOURCE.WOOD),
 					structureTypes.Contains(STRUCTURE_TYPE.LUMBERYARD) == false ? 15 : 2);
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.CEMETERY) == false) {
 				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(STRUCTURE_TYPE.CEMETERY, 2);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD), 2);
 			}
 		} else if (faction.factionType.type == FACTION_TYPE.Human_Empire) {
 			if (structureTypes.Contains(STRUCTURE_TYPE.MAGE_QUARTERS) == false) {
 				//Mage Quarter: +6 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(STRUCTURE_TYPE.MAGE_QUARTERS, 6);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE), 6);
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.PRISON) == false) {
 				//Prison: +3 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(STRUCTURE_TYPE.PRISON, 3);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 3);
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
 				//Barracks: +6 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(STRUCTURE_TYPE.BARRACKS);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE));
 			}
-			structureWeights.AddElement(STRUCTURE_TYPE.FARM, 1); //Farm: +1
+			structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 1); //Farm: +1
 			if (tile.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
-				structureWeights.AddElement(STRUCTURE_TYPE.FARM,
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE),
 					structureTypes.Contains(STRUCTURE_TYPE.FARM) == false ? 15 : 2);
 			}
 			if (tile.HasNeighbourWithFeature(TileFeatureDB.Metal_Source_Feature)) {
-				structureWeights.AddElement(STRUCTURE_TYPE.MINE_SHACK,
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE),
 					structureTypes.Contains(STRUCTURE_TYPE.MINE_SHACK) == false ? 15 : 2);
 			}
 			if (tile.HasNeighbourWithFeature(TileFeatureDB.Game_Feature)) {
-				structureWeights.AddElement(STRUCTURE_TYPE.HUNTER_LODGE,
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
 					structureTypes.Contains(STRUCTURE_TYPE.HUNTER_LODGE) == false ? 15 : 2);
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.CEMETERY) == false) {
 				//Wooden Graveyard: +2 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(STRUCTURE_TYPE.CEMETERY, 2);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE), 2);
 			}
 		}
 		return structureWeights;

@@ -17,7 +17,7 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public ParticleSystem locustSwarmParticle;
 
     #region Abstract Members Implementation
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
         return true;
     }

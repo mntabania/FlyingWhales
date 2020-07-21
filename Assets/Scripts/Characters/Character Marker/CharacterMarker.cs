@@ -978,7 +978,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 knockedOutHairImg.gameObject.SetActive(false);
                 hairImg.gameObject.SetActive(true);
             }
-            
         }
     }
     public List<Character> GetInVisionCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
@@ -1572,7 +1571,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Map Object Visual
     public override void UpdateTileObjectVisual(Character obj) { }
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public override void SetVisualAlpha(float alpha) {
         base.SetVisualAlpha(alpha);
         

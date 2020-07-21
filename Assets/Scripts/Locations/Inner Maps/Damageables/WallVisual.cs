@@ -93,7 +93,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     }
 
     public override void UpdateTileObjectVisual(StructureWallObject obj) { }
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
         return true; //always true so that this is skipped
     }

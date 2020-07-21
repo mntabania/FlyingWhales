@@ -42,8 +42,6 @@ namespace Inner_Maps {
         public IPointOfInterest objHere { get; private set; }
         public List<Character> charactersHere { get; }
         public bool isOccupied => tileState == Tile_State.Occupied;
-        // public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
-        public FurnitureSpot furnitureSpot { get; private set; }
         public bool hasFurnitureSpot { get; private set; }
         public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
         public bool hasBlueprint { get; private set; }
@@ -55,7 +53,6 @@ namespace Inner_Maps {
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
-        //public bool isOuterTile { get; private set; }
         /// <summary>
         /// The generated perlin noise sample of this tile.
         /// </summary>
@@ -93,7 +90,6 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
-            // SetReservedType(TILE_OBJECT_TYPE.NONE);
             defaultTileColor = Color.white;
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
@@ -106,7 +102,6 @@ namespace Inner_Maps {
             centeredWorldLocation = data.centeredWorldLocation;
             tileType = data.tileType;
             tileState = data.tileState;
-            // SetReservedType(data.reservedObjectType);
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
             defaultTileColor = Color.white;
@@ -1103,42 +1098,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        // #region Tile Objects
-        // public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
-        //     if (structure != null) {
-        //         if (reservedObjectType != TILE_OBJECT_TYPE.NONE && reservedType == TILE_OBJECT_TYPE.NONE && tileState == Tile_State.Empty) {
-        //             structure.AddUnoccupiedTile(this);
-        //         } else if (reservedObjectType == TILE_OBJECT_TYPE.NONE && reservedType != TILE_OBJECT_TYPE.NONE) {
-        //             structure.RemoveUnoccupiedTile(this);
-        //         }
-        //     }
-        //     reservedObjectType = reservedType;
-        // }
-        // #endregion
-
-        #region Furniture Spots
-        public void SetFurnitureSpot(FurnitureSpot spot) {
-            furnitureSpot = spot;
-            hasFurnitureSpot = true;
-        }
-        public FURNITURE_TYPE GetFurnitureThatCanProvide(FACILITY_TYPE facility) {
-            List<FURNITURE_TYPE> choices = new List<FURNITURE_TYPE>();
-            if (furnitureSpot.allowedFurnitureTypes != null) {
-                for (int i = 0; i < furnitureSpot.allowedFurnitureTypes.Length; i++) {
-                    FURNITURE_TYPE currType = furnitureSpot.allowedFurnitureTypes[i];
-                    if (currType.ConvertFurnitureToTileObject().CanProvideFacility(facility)) {
-                        choices.Add(currType);
-                    }
-                }
-                if (choices.Count > 0) {
-                    return choices[Random.Range(0, choices.Count)];
-                }
-            }
-            throw new Exception(
-                $"Furniture spot at {ToString()} cannot provide facility {facility}! Should not reach this point if that is the case!");
-        }
-        #endregion
-
         #region Building
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
@@ -1357,7 +1316,6 @@ namespace Inner_Maps {
             tileState = gridTile.tileState;
             groundType = gridTile.groundType;
             // reservedObjectType = gridTile.reservedObjectType;
-            furnitureSpot = gridTile.furnitureSpot;
             hasFurnitureSpot = gridTile.hasFurnitureSpot;
             hasDetail = gridTile.hasDetail;
 
@@ -1413,9 +1371,6 @@ namespace Inner_Maps {
             }
 
             //tile.SetGroundType(groundType);
-            if (hasFurnitureSpot) {
-                tile.SetFurnitureSpot(furnitureSpot);
-            }
             loadedGridTile = tile;
 
             //load tile assets

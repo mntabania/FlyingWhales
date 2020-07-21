@@ -81,7 +81,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
         this.SetRotation(furnitureSetting.rotation.z);
         //this.OverrideVisual(furnitureSetting.assetToUse);
     }
