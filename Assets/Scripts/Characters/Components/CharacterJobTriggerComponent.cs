@@ -1153,6 +1153,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
         return null;
     }
+    public bool CreateDemonKillJob(Character targetCharacter, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     public GoapPlanJob CreateBerserkAttackJob(IPointOfInterest targetPOI) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, _owner);
