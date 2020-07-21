@@ -33,6 +33,9 @@ public class RepairStructure : GoapAction {
             case RESOURCE.METAL:
                 p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
                 break;
+            default:
+                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                break;
         }
         
         return p;
