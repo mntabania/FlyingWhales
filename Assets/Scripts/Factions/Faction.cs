@@ -5,6 +5,9 @@ using Factions.Faction_Types;
 using Locations.Settlements;
 
 public class Faction : IJobOwner {
+    
+    public const int MAX_HISTORY_LOGS = 60;
+    
     public int id { get; }
     public string name { get; private set; }
     public string description { get; private set; }
@@ -35,7 +38,7 @@ public class Faction : IJobOwner {
     public Dictionary<Faction, FactionRelationship> relationships { get; }
     public FactionType factionType { get; }
     public bool isActive { get; private set; }
-    private List<Log> history { get; }
+    public List<Log> history { get; }
     public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
@@ -139,6 +142,8 @@ public class Faction : IJobOwner {
             }
             if (newLeader is Character character) {
                 Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, character);
+            } else if (newLeader == null) {
+                Messenger.Broadcast(Signals.ON_FACTION_LEADER_REMOVED, this);
             }
         }
     }
@@ -565,9 +570,10 @@ public class Faction : IJobOwner {
     public void AddHistory(Log log) {
         if (!history.Contains(log)) {
             history.Add(log);
-            if (history.Count > 60) {
+            if (history.Count > MAX_HISTORY_LOGS) {
                 history.RemoveAt(0);
             }
+            Messenger.Broadcast(Signals.FACTION_LOG_ADDED, this);
         }
     }
     #endregion

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Inner_Maps;
 using Traits;
+using UnityEngine;
 
 public enum PROGRESSION_SPEED {
     X1,
@@ -1919,6 +1920,19 @@ public static class Extensions {
                 return false;
             default:
                 return true;
+        }
+    }
+    #endregion
+
+    #region Faction
+    public static string FactionRelationshipColor(this FACTION_RELATIONSHIP_STATUS relationshipStatus) {
+        switch (relationshipStatus) {
+            case FACTION_RELATIONSHIP_STATUS.Friendly:
+                return "#19ff00";
+            case FACTION_RELATIONSHIP_STATUS.Hostile:
+                return "#ff0000";
+            default:
+                return "#F8E1A9";
         }
     }
     #endregion

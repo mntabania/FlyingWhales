@@ -3,12 +3,14 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 namespace Factions.Faction_Types {
     public abstract class FactionType {
+        public readonly string name;
         public readonly FACTION_TYPE type;
         public readonly List<FactionIdeology> ideologies;
         public readonly List<StructureSetting> neededStructures;
         
         protected FactionType(FACTION_TYPE type) {
             this.type = type;
+            name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
             ideologies = new List<FactionIdeology>();
             neededStructures = new List<StructureSetting>();
         }

@@ -11,6 +11,6 @@ public class FactionRelationshipItem : MonoBehaviour {
     public void SetData(Faction faction, FactionRelationship rel) {
         emblem.SetFaction(faction);
         nameLbl.text = faction.name;
-        statusLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(rel.relationshipStatus.ToString());
+        statusLbl.text = $"<color={rel.relationshipStatus.FactionRelationshipColor()}>{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(rel.relationshipStatus.ToString())}</color>" ;
     }
 }
