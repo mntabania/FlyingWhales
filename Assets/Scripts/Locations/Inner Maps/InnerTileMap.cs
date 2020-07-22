@@ -583,6 +583,12 @@ namespace Inner_Maps {
                 } else {
                     return InnerMapManager.Instance.assetManager.desertStoneGroundTile;
                 }
+            } else if (biomeType == BIOMES.FOREST) {
+                if (floorSample < 0.8f) {
+                    return InnerMapManager.Instance.assetManager.grassTile;
+                } else {
+                    return InnerMapManager.Instance.assetManager.stoneTile;
+                }
             } else {
                 if (floorSample < 0.5f) {
                     return InnerMapManager.Instance.assetManager.grassTile;

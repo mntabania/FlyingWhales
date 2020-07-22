@@ -727,7 +727,7 @@ namespace Inner_Maps {
 				    tile.SetStructureTilemapVisual(null);
 				    tile.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    tile.SetTileState(LocationGridTile.Tile_State.Empty);
-				    tile.RevertToPreviousGroundVisual();
+				    tile.RevertTileToOriginalPerlin();
 				    tile.SetStructure(wilderness);
 				    locationGridTiles.Remove(tile);
 			    }
@@ -748,7 +748,7 @@ namespace Inner_Maps {
 				    target.SetStructureTilemapVisual(null);
 				    target.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    target.SetStructure(wilderness);
-				    target.RevertToPreviousGroundVisual();
+				    target.RevertTileToOriginalPerlin();
 				    locationGridTiles.Remove(target);
 			    }
 			    else {

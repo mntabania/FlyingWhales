@@ -51,6 +51,10 @@ public static class Signals {
     /// </summary>
     public static string UPDATE_INNER_MAP_LIGHT = "UpdateInnerMapLight";
     public static string BECOME_A_TERRITORY = "OnBecomeATerritory";
+    /// <summary>
+    /// Parameters (HexTile)
+    /// </summary>
+    public static string FREEZE_WET_OBJECTS_IN_TILE = "FreezeObjectsInTile";
     #endregion
 
     #region Landmarks

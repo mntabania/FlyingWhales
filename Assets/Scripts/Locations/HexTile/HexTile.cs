@@ -82,8 +82,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
-    //private List<string> demonicLandmarksThatCanBeBuilt;
     private int _isBeingDefendedCount;
+    private HexTileBiomeEffectTrigger _hexTileBiomeEffectTrigger;
 
     //Components
     public HexTileSpellsComponent spellsComponent { get; private set; }
@@ -127,6 +127,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         featureComponent = new TileFeatureComponent();
         itemsInHex = new List<TileObject>();
         spellsComponent = new HexTileSpellsComponent(this);
+        _hexTileBiomeEffectTrigger = new HexTileBiomeEffectTrigger(this);
         //demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
@@ -138,6 +139,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
             CheckIfStructureVisualsAreStillValid();
         }
+        _hexTileBiomeEffectTrigger.Initialize();
     }
 
     #region Elevation Functions
@@ -148,7 +150,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
     #region Biome Functions
     internal void SetBiome(BIOMES biome) {
+        _hexTileBiomeEffectTrigger.ProcessBeforeBiomeChange();
         data.biomeType = biome;
+        _hexTileBiomeEffectTrigger.ProcessAfterBiomeChange();
     }
     #endregion
 
@@ -842,7 +846,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
     }
     public override string ToString() {
-        return $"{locationName} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
+        return $"{locationName} - {biomeType.ToString()} - {landmarkOnTile?.specificLandmarkType.ToString() ?? "No Landmark"} - {region?.name ?? "No Region"}";
     }
     public void ShowTileInfo() {
         string summary = $"{ToString()}";

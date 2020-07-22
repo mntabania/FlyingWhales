@@ -128,22 +128,33 @@ namespace Inner_Maps {
         public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
             collectionOwner = _collectionOwner;
         }
-        private void SetGroundType(Ground_Type groundType) {
-            this.groundType = groundType;
+        private void SetGroundType(Ground_Type newGroundType) {
+            Ground_Type previousType = this.groundType;
+            this.groundType = newGroundType;
             if (genericTileObject != null) {
-                switch (groundType) {
+                switch (newGroundType) {
                     case Ground_Type.Grass:
                     case Ground_Type.Wood:
                     case Ground_Type.Sand:
                     case Ground_Type.Desert_Grass:
-                    case Ground_Type.Soil:
                     case Ground_Type.Structure_Stone:
                         genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
+                        break;
+                    case Ground_Type.Snow:
+                        genericTileObject.traitContainer.AddTrait(genericTileObject, "Frozen", bypassElementalChance: true, overrideDuration: 0);
+                        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
                         break;
                     default:
                         genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
                         break;
                 }
+            }
+            //if snow ground was set to tundra, schedule snow to grow back after a few hours
+            if (GameManager.Instance.gameHasStarted && previousType == Ground_Type.Snow && newGroundType == Ground_Type.Tundra) {
+                GameDate dueDate = GameManager.Instance.Today();
+                dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
+                SchedulingManager.Instance.AddEntry(dueDate,
+                    () => SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile, true), this);
             }
         }
         public void UpdateWorldLocation() {
@@ -268,7 +279,7 @@ namespace Inner_Maps {
             }
         }
         public TileBase previousGroundVisual { get; private set; }
-        public void SetGroundTilemapVisual(TileBase tileBase) {
+        public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
             SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
             if (genericTileObject.mapObjectVisual != null && genericTileObject.mapObjectVisual.usedSprite != null) {
@@ -276,6 +287,9 @@ namespace Inner_Maps {
                 genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
             UpdateGroundTypeBasedOnAsset();
+            if (updateEdges) {
+                CreateSeamlessEdgesForSelfAndNeighbours();
+            }
         }
         public void SetStructureTilemapVisual(TileBase tileBase) {
             parentMap.structureTilemap.SetTile(localPlace, tileBase);
@@ -377,10 +391,6 @@ namespace Inner_Maps {
                     }
                     Assert.IsNotNull(mapToUse, $"{nameof(mapToUse)} != null");
                     if (createEdge) {
-                        // Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
-                        //     $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
-                        // Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key, 
-                        //     $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} for direction {keyValuePair.Key.ToString()} ");
                         if (InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType) && 
                             InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key) {
                             mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);    
@@ -422,6 +432,46 @@ namespace Inner_Maps {
              TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
              SetGroundTilemapVisual(groundTile);
              SetPreviousGroundVisual(null);
+        }
+        public void DetermineNextGroundTypeAfterDestruction() {
+            TileBase nextGroundAsset;
+            switch (groundType) {
+                case Ground_Type.Grass:
+                case Ground_Type.Stone:
+                case Ground_Type.Water:
+                    //if grass or stone or water revert to soil 
+                    nextGroundAsset = InnerMapManager.Instance.assetManager.soilTile;
+                    break;
+                case Ground_Type.Snow:
+                case Ground_Type.Snow_Dirt:
+                    //if snow revert to tundra
+                    nextGroundAsset = InnerMapManager.Instance.assetManager.tundraTile;
+                    break;
+                case Ground_Type.Cobble:
+                case Ground_Type.Wood:
+                case Ground_Type.Structure_Stone:
+                case Ground_Type.Ruined_Stone:
+                case Ground_Type.Demon_Stone:
+                case Ground_Type.Flesh:
+                case Ground_Type.Cave:
+                case Ground_Type.Corrupted:
+                case Ground_Type.Bone:
+                    //if from structure, revert to original ground asset
+                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+                    break;
+                case Ground_Type.Desert_Grass:
+                case Ground_Type.Sand:
+                    //if desert grass or sand, revert to desert stone
+                    nextGroundAsset = InnerMapManager.Instance.assetManager.desertStoneGroundTile;
+                    break;
+                default:
+                    nextGroundAsset = null;
+                    break;
+            }
+            if (nextGroundAsset != null) {
+                SetGroundTilemapVisual(nextGroundAsset);
+                CreateSeamlessEdgesForSelfAndNeighbours();
+            }
         }
         #endregion
 

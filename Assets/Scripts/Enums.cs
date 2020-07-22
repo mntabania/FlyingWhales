@@ -1936,4 +1936,23 @@ public static class Extensions {
         }
     }
     #endregion
+
+    #region Tiles
+    public static bool IsStructureType(this LocationGridTile.Ground_Type groundType) {
+        switch (groundType) {
+            case LocationGridTile.Ground_Type.Cobble:
+            case LocationGridTile.Ground_Type.Wood:
+            case LocationGridTile.Ground_Type.Structure_Stone:
+            case LocationGridTile.Ground_Type.Ruined_Stone:
+            case LocationGridTile.Ground_Type.Demon_Stone:
+            case LocationGridTile.Ground_Type.Flesh:
+            case LocationGridTile.Ground_Type.Cave:
+            case LocationGridTile.Ground_Type.Corrupted:
+            case LocationGridTile.Ground_Type.Bone:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
 }

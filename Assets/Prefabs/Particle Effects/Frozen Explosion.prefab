@@ -4742,7 +4742,6 @@ GameObject:
   - component: {fileID: 1388984165336604126}
   - component: {fileID: 1649882161034167099}
   - component: {fileID: 2855099583165696497}
-  - component: {fileID: 2221021584379401319}
   m_Layer: 0
   m_Name: Rocks
   m_TagString: Untagged
@@ -9247,15 +9246,3 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 4300078, guid: 4be8c09c43600924bab94d7edf7f8159, type: 3}
   m_Mesh3: {fileID: 4300086, guid: 4be8c09c43600924bab94d7edf7f8159, type: 3}
   m_MaskInteraction: 0
---- !u!114 &2221021584379401319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6840586198662102572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21acea87dee6e0b4da59e52154bf12ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

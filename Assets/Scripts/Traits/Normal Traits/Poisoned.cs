@@ -52,6 +52,12 @@ namespace Traits {
                 ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
                 if (traitable is GenericTileObject genericTileObject) {
                     genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.CLEANSE_TILE);
+                    if (genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
+                        genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
+                        genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
+                        //Reduce duration of poison when put on desert tiles
+                        ticksDuration = GameManager.Instance.GetTicksBasedOnHour(2);
+                    }
                 }
             }
         }

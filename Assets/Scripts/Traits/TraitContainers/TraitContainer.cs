@@ -182,7 +182,8 @@ namespace Traits {
                 }
                 if (HasTrait("Frozen")) {
                     RemoveTrait(addTo, "Frozen");
-                    if (addTo is IPointOfInterest) {
+                    //NOTE: Do not trigger frozen explosion if frozen object is the floor, this is to prevent frozen explosion from getting wild in snow biomes where every tile is frozen
+                    if (addTo is IPointOfInterest && addTo is GenericTileObject == false) { 
                         CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1);
                     }
                     shouldAddTrait = false;
@@ -206,10 +207,6 @@ namespace Traits {
                 if (HasTrait("Frozen")) {
                     AddTrait(addTo, "Frozen");
                     shouldAddTrait = false;
-                }
-            } else if (traitName == "Poisoned") {
-                if(addTo is TileObject) {
-                    overrideDuration = GameManager.Instance.GetTicksBasedOnHour(24);
                 }
             }
             return shouldAddTrait;

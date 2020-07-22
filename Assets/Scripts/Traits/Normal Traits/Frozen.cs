@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -27,7 +28,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if(addedTo is IPointOfInterest poi) {
+            if(addedTo is IPointOfInterest poi && poi is GenericTileObject == false) {
                 _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);
             }
             if (addedTo is Character) {
@@ -36,6 +37,12 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.AdjustDoNotGetDrained(1);
+            }
+            if (addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
+                addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
+                addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
+                //Desert Biomes should immediately remove freezing and frozen status
+                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(5);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -58,7 +65,9 @@ namespace Traits {
                     ObjectPoolManager.Instance.DestroyObject(_frozenEffect);
                     _frozenEffect = null;
                 }
-                _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);
+                if (poi is GenericTileObject == false) {
+                    _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);    
+                }
             }
         }
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {
