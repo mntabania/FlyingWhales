@@ -34,7 +34,7 @@ public class Recruit : GoapAction {
             Character targetCharacter = node.poiTarget as Character;
             Assert.IsNotNull(targetCharacter, $"Recruit of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
             WeightedDictionary<bool> weightDictionary = new WeightedDictionary<bool>();
-            int successWeight = 1000;
+            int successWeight = 100;
             int failWeight = 200;
 
             if (node.actor.traitContainer.HasTrait("Inspiring")) {

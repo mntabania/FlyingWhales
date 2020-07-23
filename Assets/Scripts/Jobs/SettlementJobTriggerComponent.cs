@@ -435,7 +435,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
                     job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(target));
-                    //_owner.AddToAvailableJobs(job);
+                    _owner.AddToAvailableJobs(job);
                 }
             }
 		}
