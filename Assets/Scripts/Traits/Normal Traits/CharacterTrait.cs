@@ -91,10 +91,31 @@ namespace Traits {
                         }
                     } else {
                         if(targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
-                            if(owner.partyComponent.hasParty && owner.partyComponent.currentParty is RescueParty rescueParty) {
-                                if(rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
-                                    if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
-                                        rescueParty.SetIsReleasing(true);
+                            if(owner.partyComponent.hasParty) {
+                                if(owner.partyComponent.currentParty is RescueParty rescueParty) {
+                                    if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
+                                        if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
+                                            rescueParty.SetIsReleasing(true);
+                                        }
+                                    }
+                                } else if (owner.faction != null && owner.faction != targetCharacter.faction) {
+                                    if (owner.partyComponent.currentParty is ExplorationParty exploreParty) {
+                                        if (exploreParty.isWaitTimeOver) {
+                                            if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)){
+                                                if(UnityEngine.Random.Range(0, 100) < 15) {
+                                                    owner.jobComponent.TriggerKidnapJob(targetCharacter);
+                                                }
+                                            } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+                                                owner.jobComponent.TriggerReleaseJob(targetCharacter);
+                                            }
+
+                                        }
+                                    } else if (owner.partyComponent.currentParty is RaidParty raidParty) {
+                                        if (raidParty.isWaitTimeOver) {
+                                            if (UnityEngine.Random.Range(0, 100) < 15) {
+                                                owner.jobComponent.TriggerKidnapJob(targetCharacter);
+                                            }
+                                        }
                                     }
                                 }
                             }

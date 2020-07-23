@@ -245,14 +245,29 @@ namespace Inner_Maps.Location_Structures {
             return count;
         }
         public List<Character> GetCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
-            List<Character> characters = new List<Character>();
+            List<Character> characters = null;
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 if (criteria.Invoke(character)) {
+                    if (characters == null) { characters = new List<Character>(); }
                     characters.Add(character);
                 }
             }
             return characters;
+        }
+        public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
+            List<Character> characters = null;
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                if (criteria.Invoke(character)) {
+                    if(characters == null) { characters = new List<Character>(); }
+                    characters.Add(character);
+                }
+            }
+            if(characters != null && characters.Count > 0) {
+                return characters[UnityEngine.Random.Range(0, characters.Count)];
+            }
+            return null;
         }
         #endregion
 

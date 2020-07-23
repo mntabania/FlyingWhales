@@ -12,6 +12,14 @@ public class DefaultWanderer : CharacterBehaviourComponent {
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is wanderer";
+        if (!character.HasTerritory() && character.currentRegion != null) {
+            HexTile initialTerritory = character.currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+            if (initialTerritory != null) {
+                character.AddTerritory(initialTerritory);
+            } else {
+                character.logComponent.PrintLogIfActive(character.name + " is a wanderer but could not set temporary territory");
+            }
+        }
         if (character.gridTileLocation != null) {
             if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
                 log += "\n-No home structure and territory";

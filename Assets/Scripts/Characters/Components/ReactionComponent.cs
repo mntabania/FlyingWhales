@@ -134,7 +134,7 @@ public class ReactionComponent {
             target = targetCharacter.reactionComponent.disguisedCharacter;
         }
 
-        if (owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
+        if (owner.faction != null && actor.faction != null && owner.faction != actor.faction && owner.faction.IsHostileWith(actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
         }

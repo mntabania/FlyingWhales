@@ -274,10 +274,12 @@ public class GoapAction : ICrimeable {
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public bool DoesCharacterMatchRace(Character character) {
-        if (racesThatCanDoAction != null) {
+        //If no race is specified, assume all races are allowed
+        if (racesThatCanDoAction == null) {
+            return true;
+        } else {
             return racesThatCanDoAction.Contains(character.race);
         }
-        return false;
     }
     private int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
         // if (actor.currentNpcSettlement == null) {
@@ -304,7 +306,13 @@ public class GoapAction : ICrimeable {
         return 1; //Math.Max(basePreconditions.Count * 2, 1);
     }
     public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
+        Log log = null;
+        string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
+        if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
+            log = new Log(GameManager.Instance.Today(), "GoapAction", name, invalidKey);
+        } else {
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
+        }
         log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);

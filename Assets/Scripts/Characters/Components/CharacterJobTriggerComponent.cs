@@ -1673,6 +1673,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
+    public bool CreatePartyGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+            job.SetCannotBePushedBack(true);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
     #endregion
 
     #region Build
@@ -2201,6 +2211,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Inspect
     public void TriggerInspect(TileObject item) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, item, _owner);
 	    //create predetermined plan
@@ -2212,4 +2223,35 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    job.SetAssignedPlan(goapPlan);
 	    _owner.jobQueue.AddJobInQueue(job);
     }
+    #endregion
+
+    #region Kidnap
+    public bool TriggerKidnapJob(Character target) {
+        if (_owner.homeSettlement != null && _owner.homeSettlement.prison != null) {
+            if (!_owner.jobQueue.HasJob(JOB_TYPE.KIDNAP)) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KIDNAP, INTERACTION_TYPE.DROP,
+                    target, _owner);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.homeSettlement.prison });
+                return _owner.jobQueue.AddJobInQueue(job);
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region Disguise
+    public bool TriggerRecruitJob(Character targetCharacter, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.RECRUIT)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RECRUIT], _owner, targetCharacter, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECRUIT, INTERACTION_TYPE.RECRUIT, targetCharacter, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    #endregion
 }

@@ -209,6 +209,7 @@ public class Summon : Character {
         behaviourComponent.SetIsInvading(false, null);
         behaviourComponent.SetIsDefending(false, null);
     }
+    public virtual void OnSummonAsPlayerMonster() { }
     #endregion
 
     #region Player Action Target

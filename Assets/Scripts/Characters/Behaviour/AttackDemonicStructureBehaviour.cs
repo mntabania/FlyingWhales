@@ -8,7 +8,7 @@ using UtilityScripts;
 
 public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
     public AttackDemonicStructureBehaviour() {
-        priority = 1080;
+        priority = 450;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
@@ -26,7 +26,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         } else {
                             log += $"\n-Character is not in waiting area, go to it";
                             LocationGridTile targetTile = counterattackParty.waitingHexArea.GetRandomTile();
-                            character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                            character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                         }
                     }
                 } else {

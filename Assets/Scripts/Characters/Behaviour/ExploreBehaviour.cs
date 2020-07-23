@@ -52,7 +52,7 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
                 if (memberInCombat != null && memberInCombat.currentStructure == exploreParty.target) {
                     if (!character.marker.inVisionCharacters.Contains(memberInCombat)) {
                         log += $"\n-There is a party member in combat inside explore structure, go to it";
-                        character.jobComponent.CreateGoToJob(memberInCombat.gridTileLocation, out producedJob);
+                        character.jobComponent.CreatePartyGoToJob(memberInCombat.gridTileLocation, out producedJob);
                     } else {
                         log += $"\n-Roam around";
                         character.jobComponent.TriggerRoamAroundStructure(out producedJob);
@@ -65,7 +65,7 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character is not in target structure, go to it";
                 if (exploreParty.target is LocationStructure targetStructure) {
                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                    character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                    character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                 }
             }
         }

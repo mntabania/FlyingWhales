@@ -12,8 +12,8 @@ public class ThreatParticleEffect : MonoBehaviour {
     private bool _isPlaying;
     
     private void Start() {
-        Messenger.AddListener(Signals.THREAT_MAXED_OUT, OnThreatMaxed);
-        Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
+        Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
+        Messenger.AddListener(Signals.STOP_THREAT_EFFECT, OnStopThreatEffect);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
         Messenger.AddListener<Quest>(Signals.QUEST_ACTIVATED, OnQuestActivated);
@@ -22,8 +22,8 @@ public class ThreatParticleEffect : MonoBehaviour {
         //Messenger.AddListener<Camera>(Signals.ZOOM_WORLD_MAP_CAMERA, OnZoomWorldMapCamera);
     }
     private void OnDestroy() {
-        Messenger.RemoveListener(Signals.THREAT_MAXED_OUT, OnThreatMaxed);
-        Messenger.RemoveListener(Signals.THREAT_RESET, OnThreatReset);
+        Messenger.RemoveListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
+        Messenger.RemoveListener(Signals.STOP_THREAT_EFFECT, OnStopThreatEffect);
     }
     private void OnInnerMapOpened(Region region) {
         gameObject.transform.SetParent(InnerMapCameraMove.Instance.transform);
@@ -61,10 +61,10 @@ public class ThreatParticleEffect : MonoBehaviour {
     }
 
     #region Listeners
-    private void OnThreatMaxed() {
+    private void OnStartThreatEffect() {
         CheckEffectState();
     }
-    private void OnThreatReset() {
+    private void OnStopThreatEffect() {
         CheckEffectState();
     }
     private void OnQuestActivated(Quest quest) {

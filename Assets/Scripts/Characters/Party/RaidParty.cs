@@ -4,20 +4,21 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class CounterattackParty : Party {
+public class RaidParty : Party {
 
     public LocationStructure targetStructure { get; private set; }
     public HexTile waitingArea { get; private set; }
+    private bool isRaiding;
 
     #region getters
     public override IPartyTarget target => targetStructure;
     public override HexTile waitingHexArea => waitingArea;
     #endregion
 
-    public CounterattackParty() : base(PARTY_TYPE.Counterattack) {
-        minimumPartySize = 3;
+    public RaidParty() : base(PARTY_TYPE.Raid) {
+        minimumPartySize = 4;
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
-        relatedBehaviour = typeof(AttackDemonicStructureBehaviour);
+        relatedBehaviour = typeof(RaidBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
     }
 
@@ -27,32 +28,34 @@ public class CounterattackParty : Party {
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
-        Messenger.Broadcast(Signals.START_THREAT_EFFECT);
-        //for (int i = 0; i < members.Count; i++) {
-        //    Character member = members[i];
-        //    member.traitContainer.AddTrait(member, "Travelling");
-        //}
-    }
-    protected override void OnWaitTimeOverButPartyIsDisbanded() {
-        base.OnWaitTimeOverButPartyIsDisbanded();
-        PlayerManager.Instance.player.threatComponent.DivineIntervention();
-        Messenger.Broadcast(Signals.START_THREAT_EFFECT);
+        for (int i = 0; i < members.Count; i++) {
+            members[i].traitContainer.AddTrait(members[i], "Travelling");
+        }
+        StartRaidTimer();
     }
     protected override void OnAddMember(Character member) {
         base.OnAddMember(member);
         member.movementComponent.SetEnableDigging(true);
-        member.traitContainer.AddTrait(member, "Fervor");
-        member.traitContainer.AddTrait(member, "Travelling");
     }
     protected override void OnRemoveMember(Character member) {
         base.OnRemoveMember(member);
         member.movementComponent.SetEnableDigging(false);
-        member.traitContainer.RemoveTrait(member, "Fervor");
         member.traitContainer.RemoveTrait(member, "Travelling");
+    }
+    protected override void OnDisbandParty() {
+        base.OnDisbandParty();
+        //TODO: notif reason why raid party disbanded
     }
     #endregion
 
     #region General
+    private void ProcessRaidOrDisbandment() {
+        if (!targetStructure.settlementLocation.HasAliveResidentInsideSettlement()) {
+            DisbandParty();
+        } else {
+            StartRaidTimer();
+        }
+    }
     public void SetTargetStructure(LocationStructure structure) {
         if(targetStructure != structure) {
             targetStructure = structure;
@@ -63,6 +66,23 @@ public class CounterattackParty : Party {
     }
     private void SetWaitingArea() {
         waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+    }
+    #endregion
+
+    #region Raid Timer
+    private void StartRaidTimer() {
+        if (!isRaiding) {
+            isRaiding = true;
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30));
+            SchedulingManager.Instance.AddEntry(dueDate, DoneRaidTimer, this);
+        }
+    }
+    private void DoneRaidTimer() {
+        if (isRaiding) {
+            isRaiding = false;
+            ProcessRaidOrDisbandment();
+        }
     }
     #endregion
 }

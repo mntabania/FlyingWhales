@@ -17,7 +17,9 @@ public class ChangeClass : GoapAction {
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
-        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CHANGE_CLASS, conditionKey = (string)otherData[0], target = GOAP_EFFECT_TARGET.ACTOR });
+        if(otherData != null && otherData.Length > 0) {
+            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CHANGE_CLASS, conditionKey = (string) otherData[0], target = GOAP_EFFECT_TARGET.ACTOR });
+        }
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {

@@ -18,6 +18,16 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool TriggerRaidJob(LocationStructure targetStructure) { //bool forceDoAction = false
+        if (!_owner.HasJob(JOB_TYPE.RAID)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAID, INTERACTION_TYPE.RAID, null, _owner);
+            job.AddOtherData(INTERACTION_TYPE.RAID, new object[] { targetStructure, _owner });
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRaidJob);
+            _owner.AddToAvailableJobs(job);
+            return true;
+        }
+        return false;
+    }
     public void TriggerJoinPartyJob(Party party) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeJoinPartyJob);

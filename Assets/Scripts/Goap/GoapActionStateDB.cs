@@ -597,6 +597,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DISGUISE, new[]{
             new StateNameAndDuration(){ name = "Disguise Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
+        {INTERACTION_TYPE.RECRUIT, new[]{
+            new StateNameAndDuration(){ name = "Recruit Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        {INTERACTION_TYPE.RAID, new[]{
+            new StateNameAndDuration(){ name = "Raid Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

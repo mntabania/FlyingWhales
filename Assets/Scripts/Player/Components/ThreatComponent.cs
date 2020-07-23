@@ -22,6 +22,7 @@ public class ThreatComponent {
     public ThreatComponent(Player player) {
         this.player = player;
         Messenger.AddListener(Signals.HOUR_STARTED, PerHour);
+        Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
     }
     private void PerHour() {
         AdjustThreat(threatPerHour);
@@ -62,7 +63,6 @@ public class ThreatComponent {
     }
     private void OnMaxThreat() {
         Counterattack();
-        ResetThreatAfterHours(2);
     }
     private void ResetThreatAfterHours(int hours) {
         GameDate dueDate = GameManager.Instance.Today();
@@ -74,6 +74,10 @@ public class ThreatComponent {
         SetThreatPerHour(0);
         Messenger.Broadcast(Signals.THREAT_UPDATED);
         Messenger.Broadcast(Signals.THREAT_RESET);
+        Messenger.Broadcast(Signals.STOP_THREAT_EFFECT);
+    }
+    private void OnStartThreatEffect() {
+        ResetThreatAfterHours(2);
     }
 
     private void Counterattack() {

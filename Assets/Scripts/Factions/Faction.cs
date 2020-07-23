@@ -97,11 +97,22 @@ public class Faction : IJobOwner {
     }
 
     #region Characters
-    public bool JoinFaction(Character character, bool broadcastSignal = true) {
-        if (ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+    public bool JoinFaction(Character character, bool broadcastSignal = true, bool bypassIdeologyChecking = false) {
+        if (bypassIdeologyChecking || ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             if (!characters.Contains(character)) {
                 characters.Add(character);
+                Faction prevFaction = character.prevFaction;
                 character.SetFaction(this);
+
+                
+                //Once a character joins a non major faction and the previous faction is the owner of the home settlement, leave the settlement also
+                //Reason: One village = One faction, no other faction can co exist in a village, for simplification
+                if (character.homeSettlement != null && character.homeSettlement.owner != null && character.homeSettlement.owner == prevFaction) {
+                    if (!isMajorNonPlayer) {
+                        character.MigrateHomeStructureTo(null);
+                    }
+                }
+
                 if (broadcastSignal) {
                     Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
                 }
@@ -116,11 +127,6 @@ public class Faction : IJobOwner {
                 SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
             character.SetFaction(null);
-            //Once a character leave a faction and that faction is the owner of the home settlement, leave the settlement also
-            //Reason: One village = One faction, no other faction can co exist in a village, for simplification
-            if (character.homeSettlement != null && character.homeSettlement.owner != null && character.homeSettlement.owner == this) {
-                character.MigrateHomeStructureTo(null);
-            }
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
             return true;
         }
@@ -131,13 +137,19 @@ public class Faction : IJobOwner {
             ILeader prevLeader = leader;
             leader = newLeader;
             if(prevLeader != null && prevLeader is Character prevCharacterLeader) {
-                if (!prevCharacterLeader.isSettlementRuler) {
-                    prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                if(isMajorNonPlayer) {
+                    prevCharacterLeader.behaviourComponent.RemoveBehaviourComponent(typeof(FactionLeaderBehaviour));
+                    if (!prevCharacterLeader.isSettlementRuler) {
+                        prevCharacterLeader.jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                    }
                 }
             }
             if(leader != null) {
                 if(leader is Character characterLeader) {
-                    characterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                    if (isMajorNonPlayer) {
+                        characterLeader.behaviourComponent.AddBehaviourComponent(typeof(FactionLeaderBehaviour));
+                        characterLeader.jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
+                    }
                 }
             }
             if (newLeader is Character character) {
@@ -349,6 +361,15 @@ public class Faction : IJobOwner {
             }
         }
     }
+    public bool HasAMemberThatIsAPartyLeader(PARTY_TYPE partyType) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character member = characters[i];
+            if (member.partyComponent.hasParty && member.partyComponent.currentParty.IsLeader(member) && member.partyComponent.currentParty.partyType == partyType) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Utilities
@@ -490,6 +511,19 @@ public class Faction : IJobOwner {
         }
         return false;
     }
+    public Faction GetRandomAtWarFaction() {
+        List<Faction> factions = null;
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (kvp.Key.isActive && kvp.Key.isMajorNonPlayer && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                if(factions == null) { factions = new List<Faction>(); }
+                factions.Add(kvp.Key);
+            }
+        }
+        if(factions != null && factions.Count > 0) {
+            return factions[UnityEngine.Random.Range(0, factions.Count)];
+        }
+        return null;
+    }
     #endregion
 
     #region Death
@@ -546,6 +580,12 @@ public class Faction : IJobOwner {
             }
         }
         return false;
+    }
+    public BaseSettlement GetRandomOwnedSettlement() {
+        if(ownedSettlements.Count > 0) {
+            return ownedSettlements[UnityEngine.Random.Range(0, ownedSettlements.Count)];
+        }
+        return null;
     }
     //public bool HasOwnedStructures() {
     //    return ownedStructures.Count > 0;
