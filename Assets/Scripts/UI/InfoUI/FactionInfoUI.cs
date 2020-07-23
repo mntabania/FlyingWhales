@@ -61,8 +61,8 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
-        Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
-        Messenger.AddListener<Faction>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
+        Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
         Messenger.AddListener<Faction>(Signals.FACTION_LOG_ADDED, UpdateHistory);
         InitializeLogsMenu();
     }
@@ -271,12 +271,12 @@ public class FactionInfoUI : InfoUIBase {
     #endregion
 
     #region Overview
-    private void OnFactionLeaderChanged(Character character) {
+    private void OnFactionLeaderChanged(Character character, ILeader previousLeader) {
         if (isShowing) {
             UpdateOverview();
         }
     }
-    private void OnFactionLeaderRemoved(Faction faction) {
+    private void OnFactionLeaderRemoved(Faction faction, ILeader previousLeader) {
         if (isShowing && faction == activeFaction) {
             UpdateOverview();
         }

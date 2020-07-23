@@ -242,16 +242,16 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
-        Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
-        Messenger.AddListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
     }
     private void RemoveListeners() {
         _isSubscribedToListeners = false;
         Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
-        Messenger.RemoveListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
-        Messenger.RemoveListener<Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
+        Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnCharacterSetAsFactionLeader);
+        Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnCharacterSetAsSettlementRuler);
     }
     #endregion
 
@@ -301,12 +301,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             GeneratePortrait(character, isPixelPerfect);
         }
     }
-    private void OnCharacterSetAsFactionLeader(Character character) {
+    private void OnCharacterSetAsFactionLeader(Character character, ILeader previousLeader) {
         if (_character != null && _character == character) {
             // UpdateFrame();
         }
     }
-    private void OnCharacterSetAsSettlementRuler(Character character) {
+    private void OnCharacterSetAsSettlementRuler(Character character, Character previousRuler) {
         if (_character != null && _character == character) {
             // UpdateFrame();
         }

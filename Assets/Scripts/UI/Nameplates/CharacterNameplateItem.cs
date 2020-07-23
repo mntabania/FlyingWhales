@@ -17,12 +17,21 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     private void OnEnable() {
         Messenger.AddListener(Signals.TICK_ENDED, UpdateText);
+        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+        Messenger.AddListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
         if (character != null) {
-            UpdateText();    
+            UpdateText();
+            UpdateLeaderIcon();
         }
     }
     private void OnDisable() {
         Messenger.RemoveListener(Signals.TICK_ENDED, UpdateText);
+        Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.RemoveListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+        Messenger.RemoveListener<NPCSettlement, Character>(Signals.ON_SETTLEMENT_RULER_REMOVED, OnSettlementRulerRemoved);
     }
     
     #region Overrides
@@ -31,7 +40,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         this.character = character;
         mainLbl.text = character.visuals.GetNameplateName();
         subLbl.text = character.raceClassName;
-        leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
+        UpdateLeaderIcon();
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
         UpdateText();
@@ -41,7 +50,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         this.character = character;
         mainLbl.text = character.visuals.GetNameplateName();
         subLbl.text = character.raceClassName;
-        leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
+        UpdateLeaderIcon();
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
         UpdateText();
@@ -116,6 +125,32 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         mainLbl.text = character.visuals.GetNameplateName();
         supportingLbl.text = character.visuals.GetThoughtBubble(out _);
         SetSupportingLabelState(true);
+    }
+    #endregion
+
+    #region Leader Icon
+    private void UpdateLeaderIcon() {
+        leaderIcon.SetActive(character.isFactionLeader || character.isSettlementRuler);
+    }
+    private void OnSetAsFactionLeader(Character character, ILeader previousLeader) {
+        if (character == this.character || previousLeader == this.character) {
+            UpdateLeaderIcon();
+        }
+    }
+    private void OnFactionLeaderRemoved(Faction faction, ILeader previousLeader) {
+        if (previousLeader == this.character) {
+            UpdateLeaderIcon();
+        }
+    }
+    private void OnSetAsSettlementRuler(Character character, Character previousRuler) {
+        if (character == this.character || previousRuler == this.character) {
+            UpdateLeaderIcon();
+        }
+    }
+    private void OnSettlementRulerRemoved(NPCSettlement settlement, Character previousLeader) {
+        if (previousLeader == this.character) {
+            UpdateLeaderIcon();
+        }
     }
     #endregion
 }

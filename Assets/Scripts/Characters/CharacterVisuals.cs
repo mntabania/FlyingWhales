@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityScripts;
+using Object = UnityEngine.Object;
 
 public class CharacterVisuals {
     //Hair HSV Shader Properties
@@ -24,19 +26,40 @@ public class CharacterVisuals {
 
     public CharacterVisuals(Character character) {
         _owner = character;
-        portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(character.race, character.gender, character.characterClass.className);
+        portraitSettings = CharacterManager.Instance.GeneratePortrait(character);
         _hasBlood = true;
         CreateHairMaterial();
         UpdateMarkerAnimations(character);
     }
+   
     public CharacterVisuals(SaveDataCharacter data) {
         portraitSettings = data.portraitSettings;
         _hasBlood = true;
         CreateHairMaterial();
     }
-    private void UpdatePortraitSettings(Character character) {
-        portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(character.race, character.gender, character.characterClass.className);
+
+    #region Listeners
+    public void SubscribeListeners() {
+        Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.AddListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
     }
+    public void UnsubscribeListeners() {
+        Messenger.RemoveListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnSetAsFactionLeader);
+        Messenger.RemoveListener<Character, Character>(Signals.ON_SET_AS_SETTLEMENT_RULER, OnSetAsSettlementRuler);
+    }
+    private void OnSetAsFactionLeader(Character character, ILeader previousLeader) {
+        if (character == _owner) {
+            UpdatePortrait(character);
+        }
+    }
+    private void OnSetAsSettlementRuler(Character character, Character previousRuler) {
+        if (character == _owner) {
+            UpdatePortrait(character);
+        }
+    }
+    #endregion
+    
+    #region Hair
     private void CreateHairMaterial() {
         hairMaterial = Object.Instantiate(CharacterManager.Instance.hsvMaterial);
         hairMaterial.SetFloat(HairHue, portraitSettings.hairColorHue);
@@ -55,19 +78,30 @@ public class CharacterVisuals {
         hairUIMaterial = Object.Instantiate(CharacterManager.Instance.hairUIMaterial);
         hairUIMaterial.SetVector(HsvaAdjust, new Vector4(portraitSettings.hairColorHue, portraitSettings.hairColorSaturation, portraitSettings.hairColorValue, 0f));
     }
+    #endregion
 
-    public void UpdateAllVisuals(Character character) {
-        //if (character.isSwitchingAlterEgo) {
-        //    return;
-        //}
+    #region Utilities
+    public void UpdateAllVisuals(Character character, bool regeneratePortrait = false) {
         if (character.characterClass.className == "Zombie") { return; } //if character is a zombie do not update visuals, use default.
         UpdateMarkerAnimations(character);
-        UpdatePortraitSettings(character);
+        if (regeneratePortrait) {
+            RegeneratePortrait(character);
+        } else {
+            UpdatePortrait(character);
+        }
         if (character.marker) {
             character.marker.UpdateMarkerVisuals();
         }
     }
+    private void UpdatePortrait(Character character) {
+        portraitSettings = CharacterManager.Instance.UpdatePortraitSettings(character);
+    }
+    private void RegeneratePortrait(Character character) {
+        portraitSettings = CharacterManager.Instance.GeneratePortrait(character);
+    }
+    #endregion
 
+    #region Animations
     private void UpdateMarkerAnimations(Character character) {
         if (character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
@@ -97,6 +131,7 @@ public class CharacterVisuals {
         }
         return null;
     }
+    #endregion
 
     #region Blood
     public bool HasBlood() {
