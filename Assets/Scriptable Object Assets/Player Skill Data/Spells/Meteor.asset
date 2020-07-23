@@ -15,7 +15,7 @@ MonoBehaviour:
   skill: 9
   manaCost: -1
   charges: 4
-  cooldown: 3
+  cooldown: 96
   threat: 10
   threatPerHour: 0
   expCost: 300

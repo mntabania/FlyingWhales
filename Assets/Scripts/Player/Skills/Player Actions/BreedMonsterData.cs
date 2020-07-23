@@ -35,7 +35,8 @@ public class BreedMonsterData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is Summon targetCharacter) {
-            return (targetCharacter is Summon) && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL;
+            return (targetCharacter is Summon) && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null 
+                && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL && !(targetCharacter is Dragon);
         }
         return false;
     }

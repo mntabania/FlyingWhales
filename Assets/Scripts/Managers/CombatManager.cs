@@ -66,18 +66,22 @@ public class CombatManager : MonoBehaviour {
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
         if(damage < 0) {
-            if(IsImmuneToElement(target, elementalType)) {
-                if(target is VaporTileObject) {
-                    damage = 0;
-                } else {
-                    //Immunity - less 85% damage
-                    damage = Mathf.RoundToInt(damage * 0.15f);
+            if (target.traitContainer.HasTrait("Immune")) {
+                damage = 0;
+            } else {
+                if (IsImmuneToElement(target, elementalType)) {
+                    if (target is VaporTileObject) {
+                        damage = 0;
+                    } else {
+                        //Immunity - less 85% damage
+                        damage = Mathf.RoundToInt(damage * 0.15f);
+                    }
+                    return;
                 }
-                return;
-            }
-            if (elementalType == ELEMENTAL_TYPE.Fire) {
-                if (target.traitContainer.HasTrait("Fire Prone")) {
-                    damage *= 2;
+                if (elementalType == ELEMENTAL_TYPE.Fire) {
+                    if (target.traitContainer.HasTrait("Fire Prone")) {
+                        damage *= 2;
+                    }
                 }
             }
         }
@@ -322,10 +326,10 @@ public class CombatManager : MonoBehaviour {
         }
     }
     private void ElectricElementProcess(ITraitable target) {
-        if (target.traitContainer.HasTrait("Hibernating")) {
-            target.traitContainer.RemoveTrait(target, "Hibernating");
-        }
         if(target is Golem) {
+            if (target.traitContainer.HasTrait("Hibernating")) {
+                target.traitContainer.RemoveTrait(target, "Hibernating");
+            }
             target.traitContainer.RemoveTrait(target, "Indestructible");
         }
     }

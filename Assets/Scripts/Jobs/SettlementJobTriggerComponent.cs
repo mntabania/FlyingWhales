@@ -426,7 +426,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Judge Prisoner
 	private void TryCreateJudgePrisoner(Character target) {
-		if (target.traitContainer.HasTrait("Restrained")
+		if (target.traitContainer.HasTrait("Restrained") && target.traitContainer.HasTrait("Criminal")
 		    && target.currentStructure.settlementLocation is NPCSettlement
 		    && target.currentStructure.settlementLocation == _owner) {
             NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;

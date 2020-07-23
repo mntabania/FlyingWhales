@@ -3757,7 +3757,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.DANCE);
             AddAdvertisedAction(INTERACTION_TYPE.SING);
             AddAdvertisedAction(INTERACTION_TYPE.SCREAM_FOR_HELP);
-            AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
+            //AddAdvertisedAction(INTERACTION_TYPE.CHANGE_CLASS);
             AddAdvertisedAction(INTERACTION_TYPE.STUDY_MONSTER);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_HEALING_POTION);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_ANTIDOTE);

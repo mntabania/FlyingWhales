@@ -778,21 +778,21 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    private Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
-        switch (data.summonType) {
-            case SUMMON_TYPE.Wolf:
-                return new Wolf(data);
-            case SUMMON_TYPE.Skeleton:
-                return new Skeleton(data);
-            case SUMMON_TYPE.Succubus:
-                return new Succubus(data);
-            case SUMMON_TYPE.Incubus:
-                return new Incubus(data);
-            case SUMMON_TYPE.Golem:
-                return new Golem(data);
-        }
-        return null;
-    }
+    //private Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
+    //    switch (data.summonType) {
+    //        case SUMMON_TYPE.Wolf:
+    //            return new Wolf(data);
+    //        case SUMMON_TYPE.Skeleton:
+    //            return new Skeleton(data);
+    //        case SUMMON_TYPE.Succubus:
+    //            return new Succubus(data);
+    //        case SUMMON_TYPE.Incubus:
+    //            return new Incubus(data);
+    //        case SUMMON_TYPE.Golem:
+    //            return new Golem(data);
+    //    }
+    //    return null;
+    //}
     private object CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
         var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         if(className != "") {
