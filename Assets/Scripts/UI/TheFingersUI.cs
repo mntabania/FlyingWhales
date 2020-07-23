@@ -114,10 +114,6 @@ public class TheFingersUI : MonoBehaviour {
             characters.Add(PlayerManager.Instance.player.minions[i].character);
         }
         string title = "Select Minion";
-        UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
-    }
-    private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned;
     }
     private void SetChosenMinion(object c) {
         Character character = c as Character;

@@ -17,7 +17,6 @@ public class Minion {
     public List<string> traitsToAdd { get; private set; }
     public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
     public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
-    public bool isAssigned => assignedRegion != null; //true if minion is already assigned somewhere else, maybe in construction or research spells
     public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
     public bool isSummoned { get; private set; }
     public SPELL_TYPE minionPlayerSkillType { get; private set; }
@@ -295,10 +294,6 @@ public class Minion {
             character.PerStartTickActionPlanning();
         }
         character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
-    }
-    public void SetAssignedRegion(Region region) {
-        assignedRegion = region;
-        Messenger.Broadcast(Signals.MINION_CHANGED_ASSIGNED_REGION, this, assignedRegion);
     }
     #endregion
 

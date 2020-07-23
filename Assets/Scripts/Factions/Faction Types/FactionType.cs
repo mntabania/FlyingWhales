@@ -7,12 +7,14 @@ namespace Factions.Faction_Types {
         public readonly FACTION_TYPE type;
         public readonly List<FactionIdeology> ideologies;
         public readonly List<StructureSetting> neededStructures;
+        public readonly List<string> combatantClasses;
         
         protected FactionType(FACTION_TYPE type) {
             this.type = type;
             name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
             ideologies = new List<FactionIdeology>();
             neededStructures = new List<StructureSetting>();
+            combatantClasses = new List<string>();
         }
 
         #region Initialization
@@ -54,6 +56,15 @@ namespace Factions.Faction_Types {
             }
             Debug.LogWarning($"{type} has no structure setting for {structureType}");
             return default;
+        }
+        #endregion
+
+        #region Combatants
+        public void AddCombatantClass(string className) {
+            combatantClasses.Add(className);
+        }
+        public void RemoveCombatantClass(string className) {
+            combatantClasses.Remove(className);
         }
         #endregion
         

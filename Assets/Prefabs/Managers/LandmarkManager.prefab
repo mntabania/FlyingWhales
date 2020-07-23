@@ -218,7 +218,7 @@ MonoBehaviour:
       type: 2}
     itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Temple
-    landmarkType: 30
+    landmarkType: 64
     buildDuration: 0
     description: A Temple is a place of worship. You may be able to obtain an Artifact
       here.
@@ -253,6 +253,40 @@ MonoBehaviour:
       type: 2}
     itemGenerationSetting: {fileID: 11400000, guid: 721ae9951663539439b7a9134ae4facf,
       type: 2}
+  - landmarkTypeString: Ancient Ruin
+    landmarkType: 30
+    buildDuration: 0
+    description: A Temple is a place of worship. You may be able to obtain an Artifact
+      here.
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: b3d93f5810379404ea6a2f6cb30a8235,
+      type: 3}
+    biomeTileSprites:
+      m_keys: 07000000
+      m_values:
+      - data:
+        - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
+          tintSprite: {fileID: 0}
+          animation: {fileID: 0}
+          overrideLandmarkPortrait: {fileID: 0}
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    elvenLandmarkTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   - landmarkTypeString: Barracks
     landmarkType: 34
     buildDuration: 0

@@ -1,4 +1,4 @@
-﻿using Locations.Features;
+﻿using Locations.Tile_Features;
 
 public class HolyIncantation : GoapAction {
     

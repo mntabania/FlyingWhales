@@ -20,11 +20,6 @@ public class SaveDataMinion {
         characterID = minion.character.id;
         exp = minion.exp;
         indexDefaultSort = minion.indexDefaultSort;
-        if (minion.isAssigned) {
-            assignedRegionID = minion.assignedRegion.id;
-        } else {
-            assignedRegionID = -1;
-        }
         spellExtractionCount = minion.spellExtractionCount;
         //unlockedInterventionSlots = minion.unlockedInterventionSlots;
 
@@ -45,11 +40,6 @@ public class SaveDataMinion {
 
     public void Load(Player player) {
         Minion minion = player.CreateNewMinion(this);
-        if(assignedRegionID != -1) {
-            Region region = GridMap.Instance.GetRegionByID(assignedRegionID);
-            minion.SetAssignedRegion(region);
-            region.SetAssignedMinion(minion);
-        }
         player.AddMinion(minion);
     }
 }

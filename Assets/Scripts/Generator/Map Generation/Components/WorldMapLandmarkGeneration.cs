@@ -1,25 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Locations.Region_Features;
 using UnityEngine;
 using UtilityScripts;
 
 public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
 	public override IEnumerator Execute(MapGenerationData data) {
-		CreateMonsterLairs(GetLoopCount(LANDMARK_TYPE.MONSTER_LAIR, data), GetChance(LANDMARK_TYPE.MONSTER_LAIR, data));
+		TryCreateMonsterLairs(GetLoopCount(LANDMARK_TYPE.MONSTER_LAIR, data), GetChance(LANDMARK_TYPE.MONSTER_LAIR, data));
 		yield return null;
-		CreateAbandonedMines(GetLoopCount(LANDMARK_TYPE.ABANDONED_MINE, data), GetChance(LANDMARK_TYPE.ABANDONED_MINE, data));
+		TryCreateAbandonedMines(GetLoopCount(LANDMARK_TYPE.ABANDONED_MINE, data), GetChance(LANDMARK_TYPE.ABANDONED_MINE, data));
 		yield return null;
-		CreateTemples(GetLoopCount(LANDMARK_TYPE.ANCIENT_RUIN, data), GetChance(LANDMARK_TYPE.ANCIENT_RUIN, data));
+		TryCreateTemples(GetLoopCount(LANDMARK_TYPE.TEMPLE, data), GetChance(LANDMARK_TYPE.TEMPLE, data));
 		yield return null;
-		CreateMageTowers(GetLoopCount(LANDMARK_TYPE.MAGE_TOWER, data), GetChance(LANDMARK_TYPE.MAGE_TOWER, data));
+		TryCreateMageTowers(GetLoopCount(LANDMARK_TYPE.MAGE_TOWER, data), GetChance(LANDMARK_TYPE.MAGE_TOWER, data));
 		yield return null;
-		CreateAncientGraveyard(GetLoopCount(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data), GetChance(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data));
+		// TryCreateAncientGraveyard(GetLoopCount(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data), GetChance(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data));
+		// yield return null;
+		LandmarkSecondPass();
 		yield return null;
 	}
 
-	private void CreateMonsterLairs(int loopCount, int chance) {
+	private void TryCreateMonsterLairs(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
@@ -29,7 +32,6 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 						GridMap.Instance.map[2, 2]
 					};
 				} else {
-					
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
 						            x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && //with no Features yet
@@ -44,7 +46,13 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				}
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MONSTER_LAIR);
+					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.MONSTER_LAIR;
+					if (chosenTile.region.regionFeatureComponent.HasFeature<RuinsFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_RUIN;
+					} else if (chosenTile.region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_GRAVEYARD;
+					}
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, landmarkType);
 					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					if (WorldConfigManager.Instance.isDemoWorld) {
@@ -60,7 +68,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Monster Lairs");
 	}
-	private void CreateAbandonedMines(int loopCount, int chance) {
+	private void TryCreateAbandonedMines(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
@@ -76,7 +84,13 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ABANDONED_MINE);
+					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.ABANDONED_MINE;
+					if (chosenTile.region.regionFeatureComponent.HasFeature<RuinsFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_RUIN;
+					} else if (chosenTile.region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_GRAVEYARD;
+					}
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, landmarkType);
 					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					createdCount++;
@@ -87,7 +101,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Mines");
 	}
-	private void CreateTemples(int loopCount, int chance) {
+	private void TryCreateTemples(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
@@ -109,7 +123,13 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				}
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_RUIN);
+					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.TEMPLE;
+					if (chosenTile.region.regionFeatureComponent.HasFeature<RuinsFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_RUIN;
+					} else if (chosenTile.region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_GRAVEYARD;
+					}
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, landmarkType);
 					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					if (WorldConfigManager.Instance.isDemoWorld) {
@@ -125,7 +145,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Temples");
 	}
-	private void CreateMageTowers(int loopCount, int chance) {
+	private void TryCreateMageTowers(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
@@ -141,7 +161,13 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.MAGE_TOWER);
+					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.MAGE_TOWER;
+					if (chosenTile.region.regionFeatureComponent.HasFeature<RuinsFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_RUIN;
+					} else if (chosenTile.region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
+						landmarkType = LANDMARK_TYPE.ANCIENT_GRAVEYARD;
+					}
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, landmarkType);
 					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
 						chosenTile);
 					createdCount++;
@@ -152,33 +178,32 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Mage Towers");
 	}
-	private void CreateAncientGraveyard(int loopCount, int chance) {
-		int createdCount = 0;
-		for (int i = 0; i < loopCount; i++) {
-			if (Random.Range(0, 100) < chance) {
-				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
-					            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-							n => n.landmarkOnTile != null && 
-							     n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-							     (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-							      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-							      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
-					).ToList();
-				if (choices.Count > 0) {
-					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_GRAVEYARD);
-					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
-						chosenTile);
-					createdCount++;
-				} else {
-					break;
-				}
-			}
-		}
-		Debug.Log($"Created {createdCount.ToString()} Ancient Graveyards");
-	}
-
+	// private void TryCreateAncientGraveyard(int loopCount, int chance) {
+	// 	int createdCount = 0;
+	// 	for (int i = 0; i < loopCount; i++) {
+	// 		if (Random.Range(0, 100) < chance) {
+	// 			List<HexTile> choices = GridMap.Instance.normalHexTiles
+	// 				.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
+	// 				            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+	// 						n => n.landmarkOnTile != null && 
+	// 						     n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+	// 						     (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+	// 						      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+	// 						      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+	// 				).ToList();
+	// 			if (choices.Count > 0) {
+	// 				HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+	// 				LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_GRAVEYARD);
+	// 				LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
+	// 					chosenTile);
+	// 				createdCount++;
+	// 			} else {
+	// 				break;
+	// 			}
+	// 		}
+	// 	}
+	// 	Debug.Log($"Created {createdCount.ToString()} Ancient Graveyards");
+	// }
 	private int GetLoopCount(LANDMARK_TYPE landmarkType, MapGenerationData data) {
 		switch (landmarkType) {
 			case LANDMARK_TYPE.MONSTER_LAIR:
@@ -205,7 +230,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				} else {
 					return monsterLairWasBuilt ? 2 : 3;
 				}
-			case LANDMARK_TYPE.ANCIENT_RUIN:
+			case LANDMARK_TYPE.TEMPLE:
 				if (WorldConfigManager.Instance.isDemoWorld) {
 					return 1;
 				}
@@ -252,7 +277,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				return WorldConfigManager.Instance.isDemoWorld ? 100 : 75;
 			case LANDMARK_TYPE.ABANDONED_MINE:
 				return WorldConfigManager.Instance.isDemoWorld ? 0 : 50;
-			case LANDMARK_TYPE.ANCIENT_RUIN:
+			case LANDMARK_TYPE.TEMPLE:
 				return WorldConfigManager.Instance.isDemoWorld ? 100 : 35;
 			case LANDMARK_TYPE.MAGE_TOWER:
 				return WorldConfigManager.Instance.isDemoWorld ? 0 : 35;
@@ -260,6 +285,16 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				return WorldConfigManager.Instance.isDemoWorld ? 0 : 75;
 			default:
 				return 0;
+		}
+	}
+
+	private void LandmarkSecondPass() {
+		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			Region region = GridMap.Instance.allRegions[i];
+			for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
+				RegionFeature feature = region.regionFeatureComponent.features[j];
+				feature.LandmarkGenerationSecondPassActions(region);
+			}
 		}
 	}
 }

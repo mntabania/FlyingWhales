@@ -1,5 +1,5 @@
 ﻿using Inner_Maps;
-using Locations.Features;
+using Locations.Tile_Features;
 using Traits;
 
 public class ForageFoodRegion : GoapAction {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Region_Features;
 using Locations.Settlements;
 using PathFind;
 using SpriteGlow;
@@ -19,7 +20,6 @@ public class Region {
     public HexTile coreTile { get; private set; }
     public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
     public Color regionColor { get; }
-    public Minion assignedMinion { get; private set; }
     public List<Faction> factionsHere { get; }
     public List<Character> residents { get; }
     public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
@@ -33,12 +33,13 @@ public class Region {
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
     public List<IPointOfInterest> pendingAddAwareness { get; }
     public List<IPointOfInterest> pendingRemoveAwareness { get; }
+    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
+    public List<LocationStructure> allStructures { get; private set; }
+    public RegionFeatureComponent regionFeatureComponent { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
     private List<Border> _borders;
-    public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
-    public List<LocationStructure> allStructures { get; private set; }
 
     #region getter/setter
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
@@ -52,6 +53,7 @@ public class Region {
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
         pendingAddAwareness = new List<IPointOfInterest>();
         pendingRemoveAwareness = new List<IPointOfInterest>();
+        regionFeatureComponent = new RegionFeatureComponent();
     }
     public Region(HexTile coreTile) : this() {
         id = UtilityScripts.Utilities.SetID(this);
@@ -322,8 +324,6 @@ public class Region {
     }
     public void StartInvasion(Minion assignedMinion) {
         //PlayerManager.Instance.player.SetInvadingRegion(this);
-        assignedMinion.SetAssignedRegion(this);
-        SetAssignedMinion(assignedMinion);
 
         demonicInvasionData = new DemonicLandmarkInvasionData() {
             beingInvaded = true,
@@ -365,42 +365,15 @@ public class Region {
         //PlayerManager.Instance.AddTileToPlayerArea(coreTile);
         //PlayerManager.Instance.player.SetInvadingRegion(null);
         demonicInvasionData = new DemonicLandmarkInvasionData();
-        assignedMinion.SetAssignedRegion(null);
-        SetAssignedMinion(null);
 
         //This is done so that when a region is invaded by the player, the showing Info UI will update appropriately
         if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion == this) {
             UIManager.Instance.ShowRegionInfo(this);
         }
     }
-    public void SetAssignedMinion(Minion minion) {
-        Minion previouslyAssignedMinion = assignedMinion;
-        assignedMinion = minion;
-        if (assignedMinion != null) {
-            AddCharacterToLocation(assignedMinion.character);
-            mainLandmark.OnMinionAssigned(assignedMinion); //a new minion was assigned 
-        } else if (previouslyAssignedMinion != null) {
-            RemoveCharacterFromLocation(previouslyAssignedMinion.character);
-            mainLandmark.OnMinionUnassigned(previouslyAssignedMinion); //a minion was unassigned
-        }
-    }
     #endregion
 
     #region Player Build Structure
-    public void StartBuildingStructure(LANDMARK_TYPE landmarkType, Minion minion) {
-        SetAssignedMinion(minion);
-        minion.SetAssignedRegion(this);
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        demonicBuildingData = new DemonicLandmarkBuildingData() {
-            landmarkType = landmarkType,
-            landmarkName = landmarkData.landmarkTypeString,
-            buildDuration = landmarkData.buildDuration + Mathf.RoundToInt(landmarkData.buildDuration * PlayerManager.Instance.player.constructionRatePercentageModifier),
-            currentDuration = 0,
-        };
-        coreTile.UpdateBuildSprites();
-        TimerHubUI.Instance.AddItem($"Building {demonicBuildingData.landmarkName} at {name}", demonicBuildingData.buildDuration, () => UIManager.Instance.ShowRegionInfo(this));
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
-    }
     public void LoadBuildingStructure(SaveDataRegion data) {
         demonicBuildingData = data.demonicBuildingData;
         if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
