@@ -312,6 +312,9 @@ public static class Signals {
     /// </summary>
     public static string THREAT_MAXED_OUT = "OnThreatMaxedOut";
     public static string THREAT_RESET = "OnThreatReset";
+    public static string START_THREAT_EFFECT = "OnStartThreatEffect";
+    public static string STOP_THREAT_EFFECT = "OnStopThreatEffect";
+
     /// <summary>
     /// Parameters (Summon placedSummon)
     /// </summary>

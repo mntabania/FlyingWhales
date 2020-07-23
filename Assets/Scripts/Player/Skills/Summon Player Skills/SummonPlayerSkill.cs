@@ -14,6 +14,7 @@ public class SummonPlayerSkill : SpellData {
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: targetTile.parentMap.region as Region, className: className);
+        summon.OnSummonAsPlayerMonster();
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         if (targetTile.structure?.settlementLocation != null && 
             targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.SETTLEMENT) {

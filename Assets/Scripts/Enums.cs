@@ -504,6 +504,8 @@ public enum INTERACTION_TYPE {
     COUNTERATTACK_ACTION,
     MONSTER_INVADE,
     DISGUISE,
+    RECRUIT,
+    RAID,
 }
 public enum INTERRUPT {
     None,
@@ -556,6 +558,7 @@ public enum INTERRUPT {
     Worried,
     Being_Brainwashed,
     Cry_Request,
+    Declare_Raid,
 }
 
 public enum TRAIT_TYPE {
@@ -850,7 +853,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
-        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE,
+        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
@@ -1039,7 +1042,7 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, }
+public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, }
 public enum COMBAT_REACTION { None, Fight, Flight }
 
 #region Crime Subcategories
@@ -1430,12 +1433,11 @@ public static class Extensions {
             case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.DESTROY:
             case JOB_TYPE.BERSERK_STROLL:
-            case JOB_TYPE.GO_TO:
+            //case JOB_TYPE.GO_TO:
                 priority = 1086;
                 break;
             case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
             case JOB_TYPE.COUNTERATTACK:
-            case JOB_TYPE.COUNTERATTACK_PARTY:
                 priority = 1080;
                 break;
             case JOB_TYPE.TRIGGER_FLAW:
@@ -1483,9 +1485,9 @@ public static class Extensions {
             case JOB_TYPE.DEMON_KILL:
                 priority = 930;
                 break;
-            //case JOB_TYPE.GO_TO:
-            //    priority = 925;
-            //    break;
+            case JOB_TYPE.GO_TO:
+                priority = 925;
+                break;
             //case JOB_TYPE.RECOVER_HP:
             //    priority = 920;
             //    break;
@@ -1497,8 +1499,6 @@ public static class Extensions {
                 priority = 910;
                 break;
             case JOB_TYPE.FEED:
-            case JOB_TYPE.JOIN_PARTY:
-            case JOB_TYPE.RESCUE:
             case JOB_TYPE.MONSTER_INVADE:
                 priority = 900;
                 break;
@@ -1543,6 +1543,7 @@ public static class Extensions {
                 priority = 630;
                 break;
             case JOB_TYPE.CLEANSE_CORRUPTION:
+            case JOB_TYPE.RECRUIT:
                 priority = 600;
                 break;
             case JOB_TYPE.JUDGE_PRISONER:
@@ -1550,6 +1551,9 @@ public static class Extensions {
                 break;
             case JOB_TYPE.APPREHEND:
                 priority = 550;
+                break;
+            case JOB_TYPE.KIDNAP:
+                priority = 530;
                 break;
             case JOB_TYPE.MOVE_CHARACTER:
                 priority = 520;
@@ -1563,12 +1567,19 @@ public static class Extensions {
             case JOB_TYPE.HAPPINESS_RECOVERY:
                 priority = 500;
                 break;
+            case JOB_TYPE.PARTY_GO_TO:
+                priority = 490;
+                break;
             case JOB_TYPE.HUNT_PSYCHOPATH_VICTIM:
                 priority = 480;
                 break;
             case JOB_TYPE.PATROL:
             case JOB_TYPE.EXPLORE:
             case JOB_TYPE.EXTERMINATE:
+            case JOB_TYPE.COUNTERATTACK_PARTY:
+            case JOB_TYPE.RESCUE:
+            case JOB_TYPE.JOIN_PARTY:
+            case JOB_TYPE.RAID:
                 priority = 450;
                 break;
             case JOB_TYPE.MINE:
@@ -1751,6 +1762,7 @@ public static class Extensions {
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.LEARN_MONSTER:
             case JOB_TYPE.BRAWL:
+            case JOB_TYPE.KIDNAP:
                 return false;
             default:
                 return true;

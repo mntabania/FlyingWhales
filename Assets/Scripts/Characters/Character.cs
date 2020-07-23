@@ -66,6 +66,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
+    public Faction prevFaction { get; private set; }
     //public Party ownParty { get; protected set; }
     //public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
@@ -1218,7 +1219,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ignore change, because character is already part of that faction
             return;
         }
-        Faction prevFaction = _faction;
+        prevFaction = _faction;
         _faction = newFaction;
         //currentAlterEgo.SetFaction(faction);
         OnChangeFaction(prevFaction, newFaction);
@@ -1227,12 +1228,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.FACTION_SET, this);
         }
     }
-    public bool ChangeFactionTo(Faction newFaction) {
+    public bool ChangeFactionTo(Faction newFaction, bool bypassIdeologyChecking = false) {
         if (faction == newFaction) {
             return false; //if the new faction is the same, ignore change
         }
         faction?.LeaveFaction(this);
-        newFaction.JoinFaction(this);
+        newFaction.JoinFaction(this, bypassIdeologyChecking: bypassIdeologyChecking);
         return true;
     }
     private void OnChangeFaction(Faction prevFaction, Faction newFaction) {
@@ -1861,14 +1862,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(isWanderer != state) {
             isWanderer = state;
             if (isWanderer) {
-                if (!HasTerritory() && currentRegion != null) {
-                    HexTile initialTerritory = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
-                    if(initialTerritory != null) {
-                        AddTerritory(initialTerritory);
-                    } else {
-                        logComponent.PrintLogIfActive(name + " is a wanderer but could not set temporary territory");
-                    }
-                }
+                //Note: I put this in the DefaultWanderer behaviour instead because there will be issues if we add territory here immediately
+                //Sometimes when a character migrates to another home settlement he/she becomes a temporary wanderer for a split second because this is triggered every time his home settlement is set to null
+                //Due to it, he now adds a territory, then when the new home settlement is set, he already has a job to go to the territory, which must not happen
+                //if (!HasTerritory() && currentRegion != null) {
+                //    HexTile initialTerritory = currentRegion.GetRandomNoStructureUncorruptedPlainHex();
+                //    if(initialTerritory != null) {
+                //        AddTerritory(initialTerritory);
+                //    } else {
+                //        logComponent.PrintLogIfActive(name + " is a wanderer but could not set temporary territory");
+                //    }
+                //}
                 behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Wanderer_Behaviour);
             } else {
                 if (HasTerritory()) {
@@ -3768,6 +3772,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_CULTIST_KIT);
             AddAdvertisedAction(INTERACTION_TYPE.REMOVE_BUFF);
             AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
+            AddAdvertisedAction(INTERACTION_TYPE.RAID);
             AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {

@@ -155,6 +155,10 @@ public class ShareInformation : GoapAction {
             string opinionLabelOfRecipientToSharer = recipient.relationshipContainer.GetOpinionLabel(sharer);
             string opinionLabelOfRecipientToActor = recipient.relationshipContainer.GetOpinionLabel(reactable.actor);
 
+            if (sharer.traitContainer.HasTrait("Persuasive")) {
+                beliefWeight += 500;
+            }
+
             if ((reactable is Rumor || reactable is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
                 disbeliefWeight += 2000;
                 weightLog += "\nRecipient is Suspicious: Disbelief + 2000";

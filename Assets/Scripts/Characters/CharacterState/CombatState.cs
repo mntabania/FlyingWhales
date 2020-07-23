@@ -561,6 +561,11 @@ public class CombatState : CharacterState {
             if(combatData != null && combatData.avoidReason != string.Empty) {
                 avoidReason = combatData.avoidReason;
             }
+            if(avoidReason == "critically low health") {
+                if(stateComponent.character.partyComponent.hasParty && stateComponent.character.partyComponent.currentParty.partyType == PARTY_TYPE.Raid) {
+                    stateComponent.character.partyComponent.currentParty.RemoveMember(stateComponent.character);
+                }
+            }
             Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,

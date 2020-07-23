@@ -107,8 +107,8 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<Quest>(Signals.QUEST_SHOWN, OnQuestShown);
         Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnQuestStepCompleted);
         Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnQuestStepFailed);
-        Messenger.AddListener(Signals.THREAT_MAXED_OUT, OnThreatMaxedOut);
-        Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
+        Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
+        Messenger.AddListener(Signals.STOP_THREAT_EFFECT, OnStopThreatEffect);
         Messenger.AddListener<IIntel>(Signals.PLAYER_OBTAINED_INTEL, OnObtainIntel);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntel);
         Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, WorldSelectableLeftClicked);
@@ -143,10 +143,10 @@ public class AudioManager : MonoBehaviour {
         isPlayingThreatMusic = false;
         worldSnapShot.TransitionTo(0.5f);
     }
-    private void OnThreatReset() {
+    private void OnStopThreatEffect() {
         CheckThreatMusic();
     }
-    private void OnThreatMaxedOut() {
+    private void OnStartThreatEffect() {
         CheckThreatMusic();
     }
     private void OnQuestActivated(Quest quest) {

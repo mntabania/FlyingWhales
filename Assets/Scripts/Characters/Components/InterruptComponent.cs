@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
 public class InterruptComponent {
     public Character owner { get; private set; }
@@ -12,6 +13,7 @@ public class InterruptComponent {
     //public string simultaneousIdentifier { get; private set; }
     public InterruptHolder triggeredSimultaneousInterrupt { get; private set; }
     public int currentSimultaneousInterruptDuration { get; private set; }
+    public LocationStructure raidTargetStructure { get; private set; }
 
     public Log thoughtBubbleLog { get; private set; }
 
@@ -237,6 +239,12 @@ public class InterruptComponent {
             }
             triggeredSimultaneousInterrupt = interrupt;
         }
+    }
+    #endregion
+
+    #region Miscellaneous
+    public void SetRaidTargetStructure(LocationStructure structure) {
+        raidTargetStructure = structure;
     }
     #endregion
 }

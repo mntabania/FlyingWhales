@@ -29,6 +29,11 @@ public class Golem : Summon {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Golem_Behaviour);
     }
+    public override void OnSummonAsPlayerMonster() {
+        base.OnSummonAsPlayerMonster();
+        traitContainer.RemoveTrait(this, "Indestructible");
+        traitContainer.RemoveTrait(this, "Hibernating");
+    }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();
         Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);

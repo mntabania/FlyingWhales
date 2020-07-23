@@ -5,7 +5,7 @@ using Inner_Maps.Location_Structures;
 
 public class RescueBehaviour : CharacterBehaviourComponent {
     public RescueBehaviour() {
-        priority = 900;
+        priority = 450;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
@@ -51,7 +51,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 if (memberInCombat != null && memberInCombat.currentStructure == rescueParty.target.currentStructure) {
                     if (!character.marker.inVisionCharacters.Contains(memberInCombat)) {
                         log += $"\n-There is a party member in combat inside explore structure, go to it";
-                        character.jobComponent.CreateGoToJob(memberInCombat.gridTileLocation, out producedJob);
+                        character.jobComponent.CreatePartyGoToJob(memberInCombat.gridTileLocation, out producedJob);
                     } else {
                         log += $"\n-Roam around";
                         character.jobComponent.TriggerRoamAroundStructure(out producedJob);
@@ -63,7 +63,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
             } else {
                 log += $"\n-Character is not in target structure, go to it";
                 LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(rescueParty.target.currentStructure.passableTiles);
-                character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
             }
         }
         return true;

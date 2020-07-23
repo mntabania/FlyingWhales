@@ -96,6 +96,10 @@ public partial class InteractionManager {
         Party partyToJoin = character.partyComponent.currentParty;
         return !character.partyComponent.hasParty;
     }
+    public bool CanCharacterTakeRaidJob(Character character) {
+        Party partyToJoin = character.partyComponent.currentParty;
+        return !character.partyComponent.hasParty;
+    }
     public bool CanCharacterTakeCounterattackPartyJob(Character character) {
         Party partyToJoin = character.partyComponent.currentParty;
         return !character.partyComponent.hasParty;
