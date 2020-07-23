@@ -598,10 +598,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         if(owner != null 
             && character.gridTileLocation != null 
-            && character.gridTileLocation.IsPartOfSettlement(this) 
-            // && character.canPerform 
-            // && character.canMove
+            && character.gridTileLocation.IsPartOfSettlement(this)
             && character.traitContainer.HasTrait("Unconscious") == false
+            && character.isDead == false
             && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
             if (owner.IsHostileWith(character.faction)) {
                 SetIsUnderSiege(true);
