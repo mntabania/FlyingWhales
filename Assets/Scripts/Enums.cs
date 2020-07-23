@@ -1002,6 +1002,7 @@ public enum SUMMON_TYPE {
     Vengeful_Ghost,
     Wurm,
     Revenant,
+    Dragon,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }

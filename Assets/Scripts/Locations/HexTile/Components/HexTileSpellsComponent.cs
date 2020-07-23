@@ -124,7 +124,14 @@ public class HexTileSpellsComponent {
         List<Character> charactersInsideHex = owner.GetAllCharactersInsideHex();
         if (charactersInsideHex != null) {
             for (int i = 0; i < charactersInsideHex.Count; i++) {
-                charactersInsideHex[i].traitContainer.AddTrait(charactersInsideHex[i], "Disoriented");
+                Character character = charactersInsideHex[i];
+                if(character is Dragon dragon) {
+                    if (!dragon.isAwakened) {
+                        dragon.Awaken();
+                    }
+                } else {
+                    charactersInsideHex[i].traitContainer.AddTrait(charactersInsideHex[i], "Disoriented");
+                }
             }
         }
         CameraShake();

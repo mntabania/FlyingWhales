@@ -60,6 +60,15 @@ namespace Traits {
             }
             return CanAddTrait(obj, trait, traitContainer);
         }
+        public static bool CanAddTraitGeneric(ITraitable obj, string traitName, ITraitContainer traitContainer) {
+            if(obj is Dragon) {
+                if(traitName == "Restrained" || traitName == "Zapped" || traitName == "Ensnared") {
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
     }
 }
 

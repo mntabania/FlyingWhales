@@ -234,6 +234,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (poi is MovingTileObject) {
             return;
         }
+        if (poi is Dragon dragon) {
+            return;
+        }
         poi.mapObjectVisual.transform.DOShakeRotation(20f, new Vector3(0f, 0f, 10f));
     }
     #endregion
@@ -256,12 +259,18 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null) {
-                Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
-                if (distance.magnitude < 3f) {
-                    DealDamage(damageable);
+                if(damageable is Dragon dragon) {
+                    if (!dragon.isAwakened) {
+                        dragon.Awaken();
+                    }
                 } else {
-                    //check for suck in
-                    TrySuckIn(damageable);
+                    Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
+                    if (distance.magnitude < 3f) {
+                        DealDamage(damageable);
+                    } else {
+                        //check for suck in
+                        TrySuckIn(damageable);
+                    }
                 }
             }
         }

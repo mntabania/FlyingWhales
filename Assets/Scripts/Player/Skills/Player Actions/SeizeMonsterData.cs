@@ -25,5 +25,11 @@ public class SeizeMonsterData : PlayerAction {
         }
         return canPerform;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is Character targetCharacter) {
+            return !(targetCharacter is Dragon);
+        }
+        return false;
+    }
     #endregion
 }
