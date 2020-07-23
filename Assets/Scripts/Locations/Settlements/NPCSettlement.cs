@@ -219,6 +219,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //}
     }
     public void SetRuler(Character newRuler) {
+        Character previousRuler = ruler; 
         ruler?.SetRuledSettlement(null);
         ruler = newRuler;
         if(ruler != null) {
@@ -227,8 +228,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
             }
-            Messenger.Broadcast(Signals.ON_SET_AS_SETTLEMENT_RULER, ruler);
+            Messenger.Broadcast(Signals.ON_SET_AS_SETTLEMENT_RULER, ruler, previousRuler);
         } else {
+            Messenger.Broadcast(Signals.ON_SETTLEMENT_RULER_REMOVED, this, previousRuler);
             Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
         }
     }

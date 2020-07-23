@@ -497,6 +497,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobComponent.SubscribeToListeners();
         stateAwarenessComponent.SubscribeSignals();
         combatComponent.SubscribeToSignals();
+        visuals.SubscribeListeners();
     }
     public virtual void UnsubscribeSignals() {
         if (!hasSubscribedToSignals) {
@@ -534,6 +535,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobComponent.UnsubscribeListeners();
         stateAwarenessComponent.UnsubscribeSignals();
         combatComponent.UnsubscribeToSignals();
+        visuals.UnsubscribeListeners();
     }
     #endregion
 
@@ -1579,7 +1581,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
         }
         //Update Portrait to use new race
-        visuals.UpdateAllVisuals(this);
+        visuals.UpdateAllVisuals(this, true);
         //update goap interactions that should no longer be valid
         if (race == RACE.SKELETON) {
             RemoveAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);

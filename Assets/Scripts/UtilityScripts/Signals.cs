@@ -109,8 +109,15 @@ public static class Signals {
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
     public static string CHARACTER_PRESUMED_DEAD = "OnCharacterPresumedDead";
     public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";
+    /// <summary>
+    /// Parameters (Faction, Character previousLeader)
+    /// </summary>
     public static string ON_FACTION_LEADER_REMOVED = "OnFactionLeaderRemoved";
-    public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsFactionLeader";
+    public static string ON_SET_AS_SETTLEMENT_RULER = "OnSetAsSettlementLeader";
+    /// <summary>
+    /// Parameters (NPCSettlement, Character previousRuler)
+    /// </summary>
+    public static string ON_SETTLEMENT_RULER_REMOVED = "OnSettlementRulerRemoved";
     public static string ON_SWITCH_FROM_LIMBO = "OnSwitchFromLimbo";
     public static string INCREASE_THREAT_THAT_SEES_POI = "IncreaseThreatThatSeesPOI";
     public static string INCREASE_THREAT_THAT_SEES_TILE = "IncreaseThreatThatSeesTile";

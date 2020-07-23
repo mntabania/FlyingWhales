@@ -33,7 +33,7 @@ public class SummonMinionPlayerSkillNameplateItem : SpellItem {
         }
 
         if(race != RACE.NONE && className != string.Empty) {
-            classPortrait.GeneratePortrait(CharacterManager.Instance.GenerateRandomPortrait(race, GENDER.MALE, className));
+            classPortrait.GeneratePortrait(CharacterManager.Instance.GeneratePortrait(race, GENDER.MALE, className, false));
         } else {
             throw new System.Exception("Trying to create portrait for " + spellData.name + " but Race or Class is None");
         }

@@ -9,6 +9,7 @@ using Locations.Settlements;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Random = UnityEngine.Random;
 
 public class CharacterManager : MonoBehaviour {
 
@@ -62,6 +63,7 @@ public class CharacterManager : MonoBehaviour {
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
     [SerializeField] private RolePortraitFramesDictionary portraitFrames;
     [SerializeField] private StringSpriteDictionary classPortraits;
+    [SerializeField] private Vector3[] hairColors;
     public Material hsvMaterial;
     public Material hairUIMaterial;
     public Material spriteLightingMaterial;
@@ -335,7 +337,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, false);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, false);
+            newCharacter.MigrateHomeTo(homeLocation, null, false, false);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraitsByClass();
@@ -359,7 +361,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             if(homeLocation is NPCSettlement homeNPCSettlement) {
                 homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
             } else if (homeRegion != null) {
@@ -390,7 +392,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
@@ -462,7 +464,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
@@ -698,7 +700,7 @@ public class CharacterManager : MonoBehaviour {
     #region Summons
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
-        Summon newCharacter = CreateNewSummonClassFromType(summonType, className) as Summon;
+        Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
         newCharacter.CreateAvatar();
         if (faction != null) {
@@ -710,7 +712,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             if (homeLocation is NPCSettlement homeNPCSettlement) {
                 homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
             } else if (homeRegion != null) {
@@ -750,7 +752,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false, true);
+            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             if (homeLocation is NPCSettlement homeNPCSettlement) {
                 homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
             } else if (homeRegion != null) {
@@ -793,12 +795,12 @@ public class CharacterManager : MonoBehaviour {
         }
         return null;
     }
-    private object CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
+    private Summon CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
         var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         if(className != "") {
-            return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"), className);
+            return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"), className) as Summon;
         }
-        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
+        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}")) as Summon;
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
@@ -905,7 +907,41 @@ public class CharacterManager : MonoBehaviour {
             return portraitAssets[0].femaleAssets;
         }
     }
-    public PortraitSettings GenerateRandomPortrait(RACE race, GENDER gender, string characterClass) {
+    /// <summary>
+    /// Update a given character's portrait. This function is used to update how a character
+    /// should look, without changing all of their facial features.
+    /// NOTE: This should not be relied on when the character changes Genders or Race. Since this will
+    /// keep the character's original face.
+    /// </summary>
+    /// <param name="character">The character to update</param>
+    /// <returns>The updated portrait settings.</returns>
+    public PortraitSettings UpdatePortraitSettings(Character character) {
+        PortraitSettings portraitSettings = GeneratePortrait(character);
+        
+        if (string.IsNullOrEmpty(portraitSettings.wholeImage) == false) {
+            //keep the following settings from the original face.
+            portraitSettings.head = character.visuals.portraitSettings.head;
+            portraitSettings.brows = character.visuals.portraitSettings.brows;
+            portraitSettings.eyes = character.visuals.portraitSettings.eyes;
+            portraitSettings.mouth = character.visuals.portraitSettings.mouth;
+            portraitSettings.nose = character.visuals.portraitSettings.nose;
+            portraitSettings.hair = character.visuals.portraitSettings.hair;
+            portraitSettings.hairColorHue = character.visuals.portraitSettings.hairColorHue;
+            portraitSettings.hairColorSaturation = character.visuals.portraitSettings.hairColorValue;
+            portraitSettings.hairColorValue = character.visuals.portraitSettings.hairColorValue;
+            //if original portrait settings has beard then keep that.
+            if (character.visuals.portraitSettings.beard != -1) {
+                portraitSettings.beard = character.visuals.portraitSettings.beard;
+            }
+            //if original portrait settings has mustache then keep that.
+            if (character.visuals.portraitSettings.mustache != -1) {
+                portraitSettings.mustache = character.visuals.portraitSettings.mustache;
+            }
+        } 
+        
+        return portraitSettings;
+    }
+    public PortraitSettings GeneratePortrait(RACE race, GENDER gender, string characterClass, bool isLeader) {
         PortraitAssetCollection pac = GetPortraitAssets(race, gender);
         PortraitSettings ps = new PortraitSettings {
             race = race,
@@ -922,7 +958,7 @@ public class CharacterManager : MonoBehaviour {
             ps.mustache = -1;
             ps.beard = -1;
             ps.hairColorHue = 0f;
-            ps.wholeImageColor = UnityEngine.Random.Range(-144f, 144f);
+            ps.wholeImageColor = Random.Range(-144f, 144f);
         } else {
             ps.head = CollectionUtilities.GetRandomIndexInList(pac.head);
             ps.brows = CollectionUtilities.GetRandomIndexInList(pac.brows);
@@ -932,27 +968,42 @@ public class CharacterManager : MonoBehaviour {
             ps.ears = CollectionUtilities.GetRandomIndexInList(pac.ears);
             
             //NOTE: females and elves have no chance to be bald
-            if (UnityEngine.Random.Range(0, 100) < 10 && gender != GENDER.FEMALE && race != RACE.ELVES) { 
+            if (GameUtilities.RollChance(10) && gender != GENDER.FEMALE && race != RACE.ELVES) { 
                 ps.hair = -1; //chance to have no hair
             } else {
                 ps.hair = CollectionUtilities.GetRandomIndexInList(pac.hair);
             }
-            if (UnityEngine.Random.Range(0, 100) < 20) {
-                ps.mustache = -1; //chance to have no mustache
+            
+            //Only human male faction leaders/settlement rulers/nobles should have beards
+            //Reference: https://trello.com/c/FOCAkDBN/1446-only-human-male-faction-leaders-settlement-rulers-nobles-should-have-beards
+            if (gender == GENDER.MALE) {
+                if (isLeader || characterClass == "Noble") {
+                    ps.mustache = CollectionUtilities.GetRandomIndexInList(pac.mustache);
+                    ps.beard = CollectionUtilities.GetRandomIndexInList(pac.beard);
+                } else {
+                    if (GameUtilities.RollChance(35)) {
+                        ps.mustache = CollectionUtilities.GetRandomIndexInList(pac.mustache);
+                    } else {
+                        ps.mustache = -1; //chance to have no mustache
+                    }
+                    ps.beard = -1;
+                }
             } else {
-                ps.mustache = CollectionUtilities.GetRandomIndexInList(pac.mustache);
+                ps.mustache = -1;
+                ps.beard = -1;
             }
-            if (UnityEngine.Random.Range(0, 100) < 10) {
-                ps.beard = -1; //chance to have no beard
-            } else {
-                ps.beard = CollectionUtilities.GetRandomIndexInList(pac.beard);
-            }
-            ps.hairColorHue = UnityEngine.Random.Range(0f, 1f);
-            ps.hairColorSaturation = UnityEngine.Random.Range(0f, 0.35f);
-            ps.hairColorValue = UnityEngine.Random.Range(0f, 0.1f);
+
+            Vector3 chosenHairColor = CollectionUtilities.GetRandomElement(hairColors);
+            ps.hairColorHue = chosenHairColor.x;
+            ps.hairColorSaturation = chosenHairColor.y;
+            ps.hairColorValue = chosenHairColor.z;
             ps.wholeImageColor = 0f;
         }
         return ps;
+    }
+    public PortraitSettings GeneratePortrait(Character character) {
+        return GeneratePortrait(character.race, character.gender, character.characterClass.className,
+            character.isFactionLeader || character.isSettlementRuler);
     }
     public PortraitFrame GetPortraitFrame(CHARACTER_ROLE role) {
         if (portraitFrames.ContainsKey(role)) {
@@ -1129,6 +1180,8 @@ public class CharacterManager : MonoBehaviour {
                         markerAsset = raceAsset.GetMarkerAsset(gender);    
                     } else if (genderName.Equals("Neutral", StringComparison.InvariantCultureIgnoreCase)) {
                         markerAsset = raceAsset.neutralAssets;
+                    } else {
+                        throw new Exception($"No MarkerAsset class for {genderName}");
                     }
                     //loop through all folders found in gender directory. consider all these as character classes
                     string[] characterClasses = Directory.GetDirectories(currGenderPath);
@@ -1281,9 +1334,9 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Party
-    public Party CreateNewParty(PARTY_TYPE partyType) {
+    private Party CreateNewParty(PARTY_TYPE partyType) {
         var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(partyType.ToString())}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        return Activator.CreateInstance(Type.GetType(typeName)) as Party ?? throw new Exception($"provided party type was invalid! {typeName}");
+        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided party type was invalid! {typeName}")) as Party ?? throw new Exception($"provided type not a party! {typeName}");
     }
     public Party CreateNewParty(PARTY_TYPE partyType, Character leader) {
         Party newParty = CreateNewParty(partyType);

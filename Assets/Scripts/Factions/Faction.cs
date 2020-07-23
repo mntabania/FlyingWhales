@@ -141,9 +141,9 @@ public class Faction : IJobOwner {
                 }
             }
             if (newLeader is Character character) {
-                Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, character);
+                Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, character, prevLeader);
             } else if (newLeader == null) {
-                Messenger.Broadcast(Signals.ON_FACTION_LEADER_REMOVED, this);
+                Messenger.Broadcast(Signals.ON_FACTION_LEADER_REMOVED, this, prevLeader);
             }
         }
     }
