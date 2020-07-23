@@ -24,9 +24,9 @@ public class GeneralConfirmation : PopupMenuBase {
         UIManager.Instance.SetSpeedTogglesState(false);
         
         UIManager.Instance.HideSmallInfo();
-        generalConfirmationTitleText.SetText(header.ToUpper());
-        generalConfirmationBodyText.SetText(body);
-        generalConfirmationButtonText.SetText(buttonText);
+        generalConfirmationTitleText.SetTextAndReplaceWithIcons(header.ToUpper());
+        generalConfirmationBodyText.SetTextAndReplaceWithIcons(body);
+        generalConfirmationButtonText.SetTextAndReplaceWithIcons(buttonText);
         generalConfirmationButton.onClick.RemoveAllListeners();
         generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
         if (onClickOK != null) {

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RuinarchText : TextMeshProUGUI {
     
-    public new void SetText(string text) {
+    public void SetTextAndReplaceWithIcons(string text) {
         if (text.Length <= 300) {
             //only replace text if text length is less than X amount. This is for performance reasons
             //villager

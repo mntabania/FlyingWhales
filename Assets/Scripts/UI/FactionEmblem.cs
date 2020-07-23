@@ -24,15 +24,13 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in faction.relationships) {
             text += $"\n{kvp.Key.name} - {kvp.Value.relationshipStatus}";
         }
-        UIManager.Instance.ShowSmallInfo(text);
+        UIManager.Instance.ShowSmallInfo(text, autoReplaceText: false);
     }
     public void HideSmallInfo() {
         if (this.faction == null) {
             return;
         }
-#if !WORLD_CREATION_TOOL
         UIManager.Instance.HideSmallInfo();
-#endif
     }
 
     private void UpdateEmblem() {

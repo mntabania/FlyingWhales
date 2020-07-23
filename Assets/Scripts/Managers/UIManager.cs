@@ -344,7 +344,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tooltips
-    public void ShowSmallInfo(string info, string header = "") {
+    public void ShowSmallInfo(string info, string header = "", bool autoReplaceText = true) {
         Profiler.BeginSample("Show Small Info Sample");
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
@@ -354,7 +354,11 @@ public class UIManager : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoLbl.SetText(message);
+        if (autoReplaceText) {
+            smallInfoLbl.SetTextAndReplaceWithIcons(message);    
+        } else {
+            smallInfoLbl.text = message;
+        }
         if (!IsSmallInfoShowing()) {
             smallInfoGO.transform.SetParent(this.transform);
             smallInfoGO.SetActive(true);
@@ -366,7 +370,7 @@ public class UIManager : MonoBehaviour {
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
         Profiler.EndSample();
     }
-    public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "") {
+    public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "", bool autoReplaceText = true) {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
@@ -375,7 +379,11 @@ public class UIManager : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoLbl.SetText(message);
+        if (autoReplaceText) {
+            smallInfoLbl.SetTextAndReplaceWithIcons(message);    
+        } else {
+            smallInfoLbl.text = message;
+        }
         
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
         

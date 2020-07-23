@@ -28,7 +28,7 @@ public class SmallInfoWithVisual : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoVisualLbl.SetText(message);
+        smallInfoVisualLbl.SetTextAndReplaceWithIcons(message);
         if (!UIManager.Instance.IsSmallInfoShowing()) {
             smallInfoVisualGO.transform.SetParent(transform);
             smallInfoVisualGO.SetActive(true);
@@ -57,7 +57,7 @@ public class SmallInfoWithVisual : MonoBehaviour {
 
         message = message.Replace("\\n", "\n");
 
-        smallInfoVisualLbl.SetText(message);
+        smallInfoVisualLbl.SetTextAndReplaceWithIcons(message);
         if (!UIManager.Instance.IsSmallInfoShowing()) {
             smallInfoVisualGO.transform.SetParent(transform);
             smallInfoVisualGO.SetActive(true);
