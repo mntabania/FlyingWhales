@@ -10,11 +10,11 @@ public class GiantSpider : Summon {
 
     public GiantSpider() : base(SUMMON_TYPE.Giant_Spider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public GiantSpider(SaveDataCharacter data) : base(data) { }
 

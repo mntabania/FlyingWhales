@@ -456,13 +456,30 @@ public partial class LandmarkManager : MonoBehaviour {
     /// </summary>
     /// <param name="settlement">The settlement to create structures for.</param>
     /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
+    /// <param name="structureResource">The resource the structures should be made of.</param>
     /// <param name="structureTypes">The structure types to create.</param>
-    public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
+    public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
         for (int i = 0; i < structureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = structureTypes[i];
             HexTile chosenTile = settlement.GetRandomUnoccupiedHexTile();
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
-            PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType);
+            PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
+            yield return null;
+        }
+    }
+    /// <summary>
+    /// Place structures for settlement. This requires that the settlement has enough unoccupied hex tiles.
+    /// NOTE: This function also creates the LocationStructure instances.
+    /// </summary>
+    /// <param name="settlement">The settlement to create structures for.</param>
+    /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
+    /// <param name="structureSettings">The list of structures with provided settings to place.</param>
+    public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, params StructureSetting[] structureSettings) {
+        for (int i = 0; i < structureSettings.Length; i++) {
+            StructureSetting structureSetting = structureSettings[i];
+            HexTile chosenTile = settlement.GetRandomUnoccupiedHexTile();
+            Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
+            PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
             yield return null;
         }
     }
@@ -474,9 +491,24 @@ public partial class LandmarkManager : MonoBehaviour {
     /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
     /// <param name="tileLocation">The hextile to place the structure object at</param>
     /// <param name="structureType">The structure type to create</param>
-    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, STRUCTURE_TYPE structureType) {
+    /// <param name="structureResource">The resource the structure should be made of.</param>
+    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, STRUCTURE_TYPE structureType, RESOURCE structureResource) {
         List<GameObject> choices =
-            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType);
+            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType, structureResource);
+        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+        innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
+    }
+    /// <summary>
+    /// Place a built structure for a settlement at a given tile.
+    /// NOTE: This function also creates the LocationStructure instances.
+    /// </summary>
+    /// <param name="settlement">The settlement to create structures for.</param>
+    /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
+    /// <param name="tileLocation">The hextile to place the structure object at</param>
+    /// <param name="structureSetting">The settings that the structure should use.</param>
+    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
+        List<GameObject> choices =
+            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }

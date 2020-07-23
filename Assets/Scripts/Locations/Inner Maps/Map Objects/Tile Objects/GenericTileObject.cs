@@ -74,16 +74,13 @@ public class GenericTileObject : TileObject {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
-        // if (amount < 0 && CanBeDamaged() == false) {
-        //     return;
-        // }
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
-        this.currentHP += amount;
-        this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        currentHP += amount;
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount < 0) {
             Character responsibleCharacter = null;
-            if (source != null && source is Character) {
-                responsibleCharacter = source as Character;
+            if (source is Character character) {
+                responsibleCharacter = character;
             }
             CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
@@ -93,9 +90,7 @@ public class GenericTileObject : TileObject {
         
         if (currentHP <= 0) {
             //floor has been destroyed
-            gridTileLocation.RevertTileToOriginalPerlin();
-            gridTileLocation.CreateSeamlessEdgesForSelfAndNeighbours();
-            // gridTileLocation.SetPreviousGroundVisual(null); //so that tile will never revert to old floor
+            gridTileLocation.DetermineNextGroundTypeAfterDestruction();
         } 
         if (amount < 0) {
             structureLocation.OnTileDamaged(gridTileLocation, amount);
@@ -144,8 +139,5 @@ public class GenericTileObject : TileObject {
         SetGridTileLocation(tile);
         AddAdvertisedAction(INTERACTION_TYPE.PLACE_FREEZING_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.GO_TO_TILE);
-        // OnPlacePOI();
-        // DisableGameObject();
-        // RemoveCommonAdvertisements();
     }
 }

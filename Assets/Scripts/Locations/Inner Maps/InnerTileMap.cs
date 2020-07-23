@@ -365,6 +365,9 @@ namespace Inner_Maps {
             structureTemplate.transform.localScale = Vector3.one;
             for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
                 LocationStructureObject structureObject = structureTemplate.structureObjects[i];
+                if (structureObject == null) {
+                    throw new Exception($"No LocationStructureObject for {structurePrefab.name}");
+                }
                 structureObject.RefreshAllTilemaps();
                 List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
                 structureObject.SetTilesInStructure(occupiedTiles.ToArray());
@@ -579,6 +582,12 @@ namespace Inner_Maps {
                     return InnerMapManager.Instance.assetManager.desertSandTile;
                 } else {
                     return InnerMapManager.Instance.assetManager.desertStoneGroundTile;
+                }
+            } else if (biomeType == BIOMES.FOREST) {
+                if (floorSample < 0.8f) {
+                    return InnerMapManager.Instance.assetManager.grassTile;
+                } else {
+                    return InnerMapManager.Instance.assetManager.stoneTile;
                 }
             } else {
                 if (floorSample < 0.5f) {

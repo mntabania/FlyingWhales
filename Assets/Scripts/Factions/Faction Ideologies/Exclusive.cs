@@ -22,6 +22,9 @@ public class Exclusive : FactionIdeology {
     public override string GetRequirementsForJoiningAsString() {
         return $"{category.ToString()}: {GetRequirementAsString()}";
     }
+    public override string GetIdeologyDescription() {
+        return $"{name}: {GetRequirementAsString()}";
+    }
     #endregion
 
     #region Requirements
@@ -37,9 +40,9 @@ public class Exclusive : FactionIdeology {
 
     private string GetRequirementAsString() {
         if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
-            return genderRequirement.ToString();
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genderRequirement.ToString());
         } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
-            return raceRequirement.ToString();
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(raceRequirement.ToString());
         }
         return string.Empty;
     }

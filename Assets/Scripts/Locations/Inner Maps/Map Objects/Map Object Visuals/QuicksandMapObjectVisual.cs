@@ -16,7 +16,7 @@ public class QuicksandMapObjectVisual : MapObjectVisual<TileObject> {
     
     
     #region Abstract Members Implementation
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
         return true;
     }

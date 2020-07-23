@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Inner_Maps;
 using Traits;
+using UnityEngine;
 
 public enum PROGRESSION_SPEED {
     X1,
@@ -1010,7 +1011,7 @@ public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INV
 public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING, CONQUER_REGION, REMOVE_CORRUPTION, INVADE_REGION, ATTACK_DEMONIC_REGION, ATTACK_NON_DEMONIC_REGION }
 public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
-public enum RESOURCE { FOOD, WOOD, STONE, METAL }
+public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
 public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6 }
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
@@ -1931,6 +1932,38 @@ public static class Extensions {
                 return false;
             default:
                 return true;
+        }
+    }
+    #endregion
+
+    #region Faction
+    public static string FactionRelationshipColor(this FACTION_RELATIONSHIP_STATUS relationshipStatus) {
+        switch (relationshipStatus) {
+            case FACTION_RELATIONSHIP_STATUS.Friendly:
+                return "#19ff00";
+            case FACTION_RELATIONSHIP_STATUS.Hostile:
+                return "#ff0000";
+            default:
+                return "#F8E1A9";
+        }
+    }
+    #endregion
+
+    #region Tiles
+    public static bool IsStructureType(this LocationGridTile.Ground_Type groundType) {
+        switch (groundType) {
+            case LocationGridTile.Ground_Type.Cobble:
+            case LocationGridTile.Ground_Type.Wood:
+            case LocationGridTile.Ground_Type.Structure_Stone:
+            case LocationGridTile.Ground_Type.Ruined_Stone:
+            case LocationGridTile.Ground_Type.Demon_Stone:
+            case LocationGridTile.Ground_Type.Flesh:
+            case LocationGridTile.Ground_Type.Cave:
+            case LocationGridTile.Ground_Type.Corrupted:
+            case LocationGridTile.Ground_Type.Bone:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

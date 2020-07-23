@@ -34,7 +34,7 @@ public class DemonicStructurePlayerSkill : SpellData {
     }
     public void BuildDemonicStructureAt(HexTile targetHex) {
         targetHex.StartCorruption();
-        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType);
+        LandmarkManager.Instance.PlaceBuiltStructureForSettlement(targetHex.settlementOnTile, targetHex.region.innerMap, targetHex, structureType, RESOURCE.NONE);
         targetHex.landmarkOnTile?.OnFinishedBuilding();
         Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
     }

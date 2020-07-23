@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Ruinarch;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -54,7 +55,7 @@ public class InterventionAbilityTierDictionary : SerializableDictionary<SPELL_TY
 [System.Serializable]
 public class CharacterClassAssetDictionary : SerializableDictionary<string, CharacterClassAsset> { }
 [System.Serializable]
-public class LocationStructurePrefabDictionary : SerializableDictionary<STRUCTURE_TYPE, List<GameObject>, GameObjectListStorage> { }
+public class LocationStructurePrefabDictionary : SerializableDictionary<StructureSetting, List<GameObject>, GameObjectListStorage> { }
 [System.Serializable]
 public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, WallResouceAssets> { }
 [System.Serializable]

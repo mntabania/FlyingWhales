@@ -15,10 +15,8 @@ public class FactionRelationship {
     public int currentWarCombatCount { get; private set; } //this will be reset once relationship status is set to anything but AT_WAR
 
     #region getters/setters
-    public FACTION_RELATIONSHIP_STATUS relationshipStatus {
-		get { return (FACTION_RELATIONSHIP_STATUS)relationshipStatInt; }
-    }
-	public Faction faction1 {
+    public FACTION_RELATIONSHIP_STATUS relationshipStatus => (FACTION_RELATIONSHIP_STATUS)relationshipStatInt;
+    public Faction faction1 {
 		get { return _faction1; }
 	}
 	public Faction faction2 {

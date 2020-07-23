@@ -19,7 +19,7 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private int _size;
 
     #region Abstract Members Implementation
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public virtual bool IsMapObjectMenuVisible() {
         return true;
     }

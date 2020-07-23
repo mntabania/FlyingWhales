@@ -42,8 +42,6 @@ namespace Inner_Maps {
         public IPointOfInterest objHere { get; private set; }
         public List<Character> charactersHere { get; }
         public bool isOccupied => tileState == Tile_State.Occupied;
-        // public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
-        public FurnitureSpot furnitureSpot { get; private set; }
         public bool hasFurnitureSpot { get; private set; }
         public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
         public bool hasBlueprint { get; private set; }
@@ -55,7 +53,6 @@ namespace Inner_Maps {
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
-        //public bool isOuterTile { get; private set; }
         /// <summary>
         /// The generated perlin noise sample of this tile.
         /// </summary>
@@ -93,7 +90,6 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
-            // SetReservedType(TILE_OBJECT_TYPE.NONE);
             defaultTileColor = Color.white;
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
@@ -106,7 +102,6 @@ namespace Inner_Maps {
             centeredWorldLocation = data.centeredWorldLocation;
             tileType = data.tileType;
             tileState = data.tileState;
-            // SetReservedType(data.reservedObjectType);
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
             defaultTileColor = Color.white;
@@ -133,22 +128,33 @@ namespace Inner_Maps {
         public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
             collectionOwner = _collectionOwner;
         }
-        private void SetGroundType(Ground_Type groundType) {
-            this.groundType = groundType;
+        private void SetGroundType(Ground_Type newGroundType) {
+            Ground_Type previousType = this.groundType;
+            this.groundType = newGroundType;
             if (genericTileObject != null) {
-                switch (groundType) {
+                switch (newGroundType) {
                     case Ground_Type.Grass:
                     case Ground_Type.Wood:
                     case Ground_Type.Sand:
                     case Ground_Type.Desert_Grass:
-                    case Ground_Type.Soil:
                     case Ground_Type.Structure_Stone:
                         genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
+                        break;
+                    case Ground_Type.Snow:
+                        genericTileObject.traitContainer.AddTrait(genericTileObject, "Frozen", bypassElementalChance: true, overrideDuration: 0);
+                        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
                         break;
                     default:
                         genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
                         break;
                 }
+            }
+            //if snow ground was set to tundra, schedule snow to grow back after a few hours
+            if (GameManager.Instance.gameHasStarted && previousType == Ground_Type.Snow && newGroundType == Ground_Type.Tundra) {
+                GameDate dueDate = GameManager.Instance.Today();
+                dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
+                SchedulingManager.Instance.AddEntry(dueDate,
+                    () => SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile, true), this);
             }
         }
         public void UpdateWorldLocation() {
@@ -273,7 +279,7 @@ namespace Inner_Maps {
             }
         }
         public TileBase previousGroundVisual { get; private set; }
-        public void SetGroundTilemapVisual(TileBase tileBase) {
+        public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
             SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
             if (genericTileObject.mapObjectVisual != null && genericTileObject.mapObjectVisual.usedSprite != null) {
@@ -281,6 +287,9 @@ namespace Inner_Maps {
                 genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
             UpdateGroundTypeBasedOnAsset();
+            if (updateEdges) {
+                CreateSeamlessEdgesForSelfAndNeighbours();
+            }
         }
         public void SetStructureTilemapVisual(TileBase tileBase) {
             parentMap.structureTilemap.SetTile(localPlace, tileBase);
@@ -382,10 +391,6 @@ namespace Inner_Maps {
                     }
                     Assert.IsNotNull(mapToUse, $"{nameof(mapToUse)} != null");
                     if (createEdge) {
-                        // Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
-                        //     $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
-                        // Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key, 
-                        //     $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} for direction {keyValuePair.Key.ToString()} ");
                         if (InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType) && 
                             InnerMapManager.Instance.assetManager.edgeAssets[groundType].Count > (int)keyValuePair.Key) {
                             mapToUse.SetTile(localPlace, InnerMapManager.Instance.assetManager.edgeAssets[groundType][(int)keyValuePair.Key]);    
@@ -427,6 +432,46 @@ namespace Inner_Maps {
              TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
              SetGroundTilemapVisual(groundTile);
              SetPreviousGroundVisual(null);
+        }
+        public void DetermineNextGroundTypeAfterDestruction() {
+            TileBase nextGroundAsset;
+            switch (groundType) {
+                case Ground_Type.Grass:
+                case Ground_Type.Stone:
+                case Ground_Type.Water:
+                    //if grass or stone or water revert to soil 
+                    nextGroundAsset = InnerMapManager.Instance.assetManager.soilTile;
+                    break;
+                case Ground_Type.Snow:
+                case Ground_Type.Snow_Dirt:
+                    //if snow revert to tundra
+                    nextGroundAsset = InnerMapManager.Instance.assetManager.tundraTile;
+                    break;
+                case Ground_Type.Cobble:
+                case Ground_Type.Wood:
+                case Ground_Type.Structure_Stone:
+                case Ground_Type.Ruined_Stone:
+                case Ground_Type.Demon_Stone:
+                case Ground_Type.Flesh:
+                case Ground_Type.Cave:
+                case Ground_Type.Corrupted:
+                case Ground_Type.Bone:
+                    //if from structure, revert to original ground asset
+                    nextGroundAsset = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
+                    break;
+                case Ground_Type.Desert_Grass:
+                case Ground_Type.Sand:
+                    //if desert grass or sand, revert to desert stone
+                    nextGroundAsset = InnerMapManager.Instance.assetManager.desertStoneGroundTile;
+                    break;
+                default:
+                    nextGroundAsset = null;
+                    break;
+            }
+            if (nextGroundAsset != null) {
+                SetGroundTilemapVisual(nextGroundAsset);
+                CreateSeamlessEdgesForSelfAndNeighbours();
+            }
         }
         #endregion
 
@@ -1103,42 +1148,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        // #region Tile Objects
-        // public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
-        //     if (structure != null) {
-        //         if (reservedObjectType != TILE_OBJECT_TYPE.NONE && reservedType == TILE_OBJECT_TYPE.NONE && tileState == Tile_State.Empty) {
-        //             structure.AddUnoccupiedTile(this);
-        //         } else if (reservedObjectType == TILE_OBJECT_TYPE.NONE && reservedType != TILE_OBJECT_TYPE.NONE) {
-        //             structure.RemoveUnoccupiedTile(this);
-        //         }
-        //     }
-        //     reservedObjectType = reservedType;
-        // }
-        // #endregion
-
-        #region Furniture Spots
-        public void SetFurnitureSpot(FurnitureSpot spot) {
-            furnitureSpot = spot;
-            hasFurnitureSpot = true;
-        }
-        public FURNITURE_TYPE GetFurnitureThatCanProvide(FACILITY_TYPE facility) {
-            List<FURNITURE_TYPE> choices = new List<FURNITURE_TYPE>();
-            if (furnitureSpot.allowedFurnitureTypes != null) {
-                for (int i = 0; i < furnitureSpot.allowedFurnitureTypes.Length; i++) {
-                    FURNITURE_TYPE currType = furnitureSpot.allowedFurnitureTypes[i];
-                    if (currType.ConvertFurnitureToTileObject().CanProvideFacility(facility)) {
-                        choices.Add(currType);
-                    }
-                }
-                if (choices.Count > 0) {
-                    return choices[Random.Range(0, choices.Count)];
-                }
-            }
-            throw new Exception(
-                $"Furniture spot at {ToString()} cannot provide facility {facility}! Should not reach this point if that is the case!");
-        }
-        #endregion
-
         #region Building
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
@@ -1357,7 +1366,6 @@ namespace Inner_Maps {
             tileState = gridTile.tileState;
             groundType = gridTile.groundType;
             // reservedObjectType = gridTile.reservedObjectType;
-            furnitureSpot = gridTile.furnitureSpot;
             hasFurnitureSpot = gridTile.hasFurnitureSpot;
             hasDetail = gridTile.hasDetail;
 
@@ -1413,9 +1421,6 @@ namespace Inner_Maps {
             }
 
             //tile.SetGroundType(groundType);
-            if (hasFurnitureSpot) {
-                tile.SetFurnitureSpot(furnitureSpot);
-            }
             loadedGridTile = tile;
 
             //load tile assets

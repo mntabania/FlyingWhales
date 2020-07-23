@@ -732,9 +732,9 @@ namespace Inner_Maps.Location_Structures {
                 
                 tile.SetStructure(transferTo);
                 tile.SetTileType(LocationGridTile.Tile_Type.Empty);
-                tile.RevertToPreviousGroundVisual();
-                tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
-                tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+                if (tile.groundType.IsStructureType()) {
+                    tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
+                }
             }
         
             //disable game object. Destruction of structure game object is handled by it's parent structure template.

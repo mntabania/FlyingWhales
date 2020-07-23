@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour {
         }
     }
     public GameDate Today() {
-        return today;
+        return new GameDate(today.month, today.day, today.year, today.tick);
     }
     public void SetToday(GameDate date) {
         today = date;

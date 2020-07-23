@@ -188,6 +188,8 @@ public class InterruptComponent {
                     interruptHolder.effectLog.AddLogToInvolvedObjects();
                 } else {
                     owner.logComponent.AddHistory(interruptHolder.effectLog);
+                    interruptHolder.effectLog.AddLogToSpecificObjects(LOG_IDENTIFIER.FACTION_1,
+                        LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
                 }    
             }
             if (interruptHolder.interrupt.isIntel) {

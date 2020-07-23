@@ -592,8 +592,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type) {
-            return structurePrefabs[type];
+        public List<GameObject> GetStructurePrefabsForStructure(STRUCTURE_TYPE type, RESOURCE resource) {
+            StructureSetting structureSetting = new StructureSetting(type, resource);
+            return structurePrefabs[structureSetting];
+        }
+        public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
+            return structurePrefabs[structureSetting];
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);
@@ -723,7 +727,7 @@ namespace Inner_Maps {
 				    tile.SetStructureTilemapVisual(null);
 				    tile.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    tile.SetTileState(LocationGridTile.Tile_State.Empty);
-				    tile.RevertToPreviousGroundVisual();
+				    tile.RevertTileToOriginalPerlin();
 				    tile.SetStructure(wilderness);
 				    locationGridTiles.Remove(tile);
 			    }
@@ -744,7 +748,7 @@ namespace Inner_Maps {
 				    target.SetStructureTilemapVisual(null);
 				    target.SetTileType(LocationGridTile.Tile_Type.Empty);
 				    target.SetStructure(wilderness);
-				    target.RevertToPreviousGroundVisual();
+				    target.RevertTileToOriginalPerlin();
 				    locationGridTiles.Remove(target);
 			    }
 			    else {

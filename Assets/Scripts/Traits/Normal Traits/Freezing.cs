@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 
@@ -39,6 +40,13 @@ namespace Traits {
                 Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
             } else if (addedTo is IPointOfInterest poi) {
                 _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
+            }
+            
+            if (addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
+                addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
+                addedTo.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
+                //Desert Biomes should immediately remove freezing and frozen status
+                ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(5);
             }
         }
         public override void OnStackStatus(ITraitable addedTo) {

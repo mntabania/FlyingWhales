@@ -68,7 +68,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             tileObject.gridTileLocation?.isCorrupted ?? false));
     }
 
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
+    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) {
         this.SetRotation(furnitureSetting.rotation.z);
     }
 

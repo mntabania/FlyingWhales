@@ -532,6 +532,12 @@ public class ReactionComponent {
                     if (actor.jobQueue.jobsInQueue.Count > 0) {
                         debugLog += $"\n-{actor.jobQueue.jobsInQueue[0].jobType}";
                     }
+                    //NOTE: Added checking for webbed so that spiders won't attack characters that they've webbed up
+                    if (actor.race == RACE.SPIDER && targetCharacter.traitContainer.HasTrait("Webbed")) {
+                        debugLog += "\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
+                        return;
+                    }
+                    
                     //If the target is already unconscious (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
                         //Determine whether to fight or flight.

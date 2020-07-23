@@ -28,7 +28,7 @@ public class QuestItem : PooledObject {
     
     public void SetQuest(Quest quest) {
         _quest = quest;
-        headerLbl.SetText(quest.questName);
+        headerLbl.SetTextAndReplaceWithIcons(quest.questName);
         UpdateSteps();
     }
 

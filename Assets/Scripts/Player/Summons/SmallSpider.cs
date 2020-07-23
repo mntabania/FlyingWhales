@@ -14,7 +14,7 @@ public class SmallSpider : Summon {
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
-        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER,
         UtilityScripts.Utilities.GetRandomGender()) {

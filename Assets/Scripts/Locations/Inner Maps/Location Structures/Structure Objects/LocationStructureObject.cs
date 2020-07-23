@@ -31,15 +31,12 @@ public class LocationStructureObject : PooledObject {
 
     [Header("Objects")]
     [FormerlySerializedAs("_objectsParent")] public Transform objectsParent;
-
-    [Header("Furniture Spots")]
-    [SerializeField] protected Transform _furnitureSpotsParent;
-
+    
     [Header("Walls")] 
     [Tooltip("This is only relevant if blockWallsTilemap is not null.")]
-    [SerializeField] private WALL_TYPE _wallType;
+    [FormerlySerializedAs("_wallType")][SerializeField] private WALL_TYPE _blockWallType;
     [Tooltip("This is only relevant if structure uses thin walls.")]
-    [SerializeField] private RESOURCE _wallResource;
+    [FormerlySerializedAs("_wallResource")][SerializeField] private RESOURCE _thinWallResource;
     
     [Header("Helpers")]
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
@@ -211,24 +208,6 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
-    #region Furniture Spots
-    private void RegisterFurnitureSpots(InnerTileMap areaMap) {
-        if (_furnitureSpotsParent == null) {
-            return;
-        }
-        FurnitureSpotMono[] spots = GetFurnitureSpots();
-        for (int i = 0; i < spots.Length; i++) {
-            FurnitureSpotMono spot = spots[i];
-            Vector3Int tileCoords = areaMap.groundTilemap.WorldToCell(spot.transform.position);
-            LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
-            tile.SetFurnitureSpot(spot.GetFurnitureSpot());
-        }
-    }
-    private FurnitureSpotMono[] GetFurnitureSpots() {
-        return UtilityScripts.GameUtilities.GetComponentsInDirectChildren<FurnitureSpotMono>(_furnitureSpotsParent.gameObject);
-    }
-    #endregion
-
     #region Events
     /// <summary>
     /// Actions to do when a BUILT structure object has been placed.
@@ -250,7 +229,6 @@ public class LocationStructureObject : PooledObject {
         }
         RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
-        RegisterFurnitureSpots(innerMap);
         RegisterPreplacedObjects(structure, innerMap);
         RescanPathfindingGridOfStructure();
         if (structure.settlementLocation is NPCSettlement npcSettlement) {
@@ -419,7 +397,7 @@ public class LocationStructureObject : PooledObject {
                     if (blockWallAsset.name.Contains("Wall")) {
                         BlockWall blockWall =
                             InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-                        blockWall.SetWallType(_wallType);
+                        blockWall.SetWallType(_blockWallType);
                         structure.AddPOI(blockWall, tile);
                         if (structure.structureType != STRUCTURE_TYPE.THE_PORTAL) {
                             structure.AddObjectAsDamageContributor(blockWall);    
@@ -437,7 +415,7 @@ public class LocationStructureObject : PooledObject {
             walls = new StructureWallObject[wallVisuals.Length];
             for (int i = 0; i < wallVisuals.Length; i++) {
                 WallVisual wallVisual = wallVisuals[i];
-                StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _wallResource);
+                StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
                 Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
                 LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
@@ -520,16 +498,16 @@ public class LocationStructureObject : PooledObject {
                     }
                     WallVisual wallVisual = null;
                     if (tile.name.Contains("Left")) {
-                        wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
+                        wallVisual = InstantiateWall(leftWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     } 
                     if (tile.name.Contains("Right")) {
-                        wallVisual = InstantiateWall(rightWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
+                        wallVisual = InstantiateWall(rightWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     }
                     if (tile.name.Contains("Bot")) {
-                        wallVisual = InstantiateWall(bottomWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
+                        wallVisual = InstantiateWall(bottomWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     }
                     if (tile.name.Contains("Top")) {
-                        wallVisual = InstantiateWall(topWall, centeredPos, wallTileMap.transform, _wallResource != RESOURCE.WOOD);
+                        wallVisual = InstantiateWall(topWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     }
 
                     Vector3 cornerPos = centeredPos;
@@ -550,9 +528,9 @@ public class LocationStructureObject : PooledObject {
                         cornerPos.y += 0.5f;
                         Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
                     }
-                    if (_wallResource != RESOURCE.WOOD) {
+                    if (_thinWallResource != RESOURCE.WOOD) {
                         //only update asset if wall resource is not wood.
-                        wallVisual.UpdateWallAssets(_wallResource);    
+                        wallVisual.UpdateWallAssets(_thinWallResource);    
                     }
                 }
             }
@@ -563,7 +541,7 @@ public class LocationStructureObject : PooledObject {
         wallGO.transform.position = centeredPos;
         WallVisual wallVisual = wallGO.GetComponent<WallVisual>();
         if (updateWallAsset) {
-            wallVisual.UpdateWallAssets(_wallResource);    
+            wallVisual.UpdateWallAssets(_thinWallResource);    
         }
         return wallVisual;
     }

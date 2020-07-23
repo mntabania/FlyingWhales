@@ -1987,6 +1987,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    job.SetCannotBePushedBack(true);
 	    job.AddOtherData(INTERACTION_TYPE.DROP,
 		    targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {_owner.homeStructure});
+	    COMBAT_MODE originalCombatMode = _owner.combatComponent.combatMode;
+	    if (originalCombatMode != COMBAT_MODE.Defend) {
+		    job.SetOnTakeJobAction((character, item) => character.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
+		    job.SetOnUnassignJobAction((character, item) => character.combatComponent.SetCombatMode(originalCombatMode));    
+	    }
 	    producedJob = job;
 	    return true;
     }

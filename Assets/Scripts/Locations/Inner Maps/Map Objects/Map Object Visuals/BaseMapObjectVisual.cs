@@ -97,7 +97,6 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         icon.SetIcon(TraitManager.Instance.GetTraitIcon(statusName));
         return icon;
     }
-    public abstract void ApplyFurnitureSettings(FurnitureSetting furnitureSetting);
     /// <summary>
     /// Make this marker look at a specific point (In World Space).
     /// </summary>

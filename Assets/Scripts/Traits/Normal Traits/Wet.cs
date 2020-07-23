@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
-
+using UtilityScripts;
 namespace Traits {
     public class Wet : Status {
 
         private StatusIcon _statusIcon;
         public Character dryer { get; private set; }
+        private ITraitable _owner;
         
         public Wet() {
             name = "Wet";
@@ -26,14 +28,19 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
+            _owner = addedTo;
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
             addedTo.traitContainer.RemoveStatusAndStacks(addedTo, "Overheating");
-            //if (addedTo is Character character) {
-            //    character.needsComponent.AdjustStaminaDecreaseRate(2f);
-            //}
             if (addedTo is GenericTileObject genericTileObject) {
                 genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
+                if (genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Grass || 
+                    genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Desert_Stone || 
+                    genericTileObject.gridTileLocation.groundType == LocationGridTile.Ground_Type.Sand) {
+                    //Reduce duration of wet when put on desert tiles
+                    ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
+                }
             }
+            TryListenForBiomeEffect();
             UpdateVisualsOnAdd(addedTo);
             if (addedTo is DesertRose desertRose) {
                 desertRose.DesertRoseEffect();
@@ -49,16 +56,16 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            //if (removedFrom is Character character) {
-            //    character.needsComponent.AdjustStaminaDecreaseRate(-2f);
-            //}
+            _owner = null;
             if (removedFrom is GenericTileObject genericTileObject) {
                 genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
             }
+            StopListenForBiomeEffect();
             UpdateVisualsOnRemove(removedFrom);
         }
         #endregion
 
+        #region Visuals
         private void UpdateVisualsOnAdd(ITraitable addedTo) {
             if (addedTo is Character character && _statusIcon == null && character.marker != null) {
                 _statusIcon = character.marker.AddStatusIcon(this.name);
@@ -66,9 +73,9 @@ namespace Traits {
                 if (tileObject is GenericTileObject) {
                     tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
                         InnerMapManager.Instance.assetManager.shoreTile, 0.5f);
-                } else if (tileObject.tileObjectType != TILE_OBJECT_TYPE.WATER_WELL && _statusIcon == null){
+                } else if (tileObject.tileObjectType != TILE_OBJECT_TYPE.WATER_WELL && _statusIcon == null && addedTo.mapObjectVisual != null){
                     //add water icon above object
-                    _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
+                    _statusIcon = addedTo.mapObjectVisual.AddStatusIcon(this.name);
                 }
             }
         }
@@ -86,6 +93,7 @@ namespace Traits {
                 }
             }
         }
+        #endregion
 
         #region Dryer
         public void SetDryer(Character character) {
@@ -102,6 +110,24 @@ namespace Traits {
         private void OnJobRemovedFromCharacter(JobQueueItem jqi, Character character) {
             if (dryer == character && jqi.jobType == JOB_TYPE.DRY_TILES) {
                 SetDryer(null); 
+            }
+        }
+        private void TryListenForBiomeEffect() {
+            if (_owner.gridTileLocation?.structure is Ocean) {
+                return; //do not make ocean frozen if it is part of snow biome
+            }
+            Messenger.AddListener<HexTile>(Signals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
+        }
+        private void StopListenForBiomeEffect() {
+            Messenger.RemoveListener<HexTile>(Signals.FREEZE_WET_OBJECTS_IN_TILE, TryFreezeWetObject);
+        }
+        private void TryFreezeWetObject(HexTile hexTile) {
+            if (GameUtilities.RollChance(25)) {
+                if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                    if (_owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hexTile) {
+                        _owner.traitContainer.AddTrait(_owner, "Frozen", bypassElementalChance: true);
+                    }
+                }    
             }
         }
         #endregion

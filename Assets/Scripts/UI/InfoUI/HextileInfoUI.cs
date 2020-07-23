@@ -79,7 +79,7 @@ public class HextileInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowTestingInfo() {
-        string summary = string.Empty;
+        string summary = currentlyShowingHexTile.ToString();
         if (currentlyShowingHexTile.settlementOnTile is NPCSettlement npcSettlement) {
             summary = $"Settlement Ruler: {npcSettlement.ruler?.name ?? "None"}";
             summary += "\nUnlocked classes:";

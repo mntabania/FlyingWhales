@@ -11,14 +11,19 @@ using Locations.Settlements;
 
 public class FactionInfoUI : InfoUIBase {
 
-    private const int MAX_HISTORY_LOGS = 60;
-
     [Space(10)]
     [Header("Content")]
     [SerializeField] private TextMeshProUGUI factionNameLbl;
     [SerializeField] private TextMeshProUGUI factionTypeLbl;
     [SerializeField] private FactionEmblem emblem;
 
+    [Space(10)]
+    [Header("Overview")]
+    [SerializeField] private TextMeshProUGUI overviewFactionNameLbl;
+    [SerializeField] private TextMeshProUGUI overviewFactionTypeLbl;
+    [SerializeField] private CharacterNameplateItem leaderNameplateItem;
+    [SerializeField] private TextMeshProUGUI ideologyLbl;
+    
     [Space(10)]
     [Header("Characters")]
     [SerializeField] private GameObject characterItemPrefab;
@@ -36,6 +41,12 @@ public class FactionInfoUI : InfoUIBase {
     [SerializeField] private RectTransform relationshipsParent;
     [SerializeField] private GameObject relationshipPrefab;
     
+    [Space(10)] [Header("Logs")]
+    [SerializeField] private GameObject logHistoryPrefab;
+    [SerializeField] private ScrollRect historyScrollView;
+    [SerializeField] private UIHoverPosition logHoverPosition;
+    private LogHistoryItem[] logHistoryItems;
+    
     internal Faction currentlyShowingFaction => _data as Faction;
     private Faction activeFaction { get; set; }
 
@@ -50,10 +61,11 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
-        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
-        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener<Character>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
+        Messenger.AddListener<Faction>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<Faction>(Signals.FACTION_LOG_ADDED, UpdateHistory);
+        InitializeLogsMenu();
     }
-
     public override void OpenMenu() {
         Faction previousArea = activeFaction;
         activeFaction = _data as Faction;
@@ -61,10 +73,12 @@ public class FactionInfoUI : InfoUIBase {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
+        UpdateOverview();
         UpdateFactionInfo();
         UpdateAllCharacters();
         UpdateRegions();
         UpdateAllRelationships();
+        UpdateAllHistoryInfo();
         ResetScrollPositions();
     }
     public override void CloseMenu() {
@@ -99,18 +113,6 @@ public class FactionInfoUI : InfoUIBase {
         }
         OrderCharacterItems();
     }
-    //private LandmarkCharacterItem GetItem(Party party) {
-    //    LandmarkCharacterItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
-    //    for (int i = 0; i < items.Length; i++) {
-    //        LandmarkCharacterItem item = items[i];
-    //        if (item.character != null) {
-    //            if (item.character.ownParty.id == party.id) {
-    //                return item;
-    //            }
-    //        }
-    //    }
-    //    return null;
-    //}
     private CharacterNameplateItem GetItem(Character character) {
         CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
@@ -135,8 +137,7 @@ public class FactionInfoUI : InfoUIBase {
         return item;
     }
     private void OrderCharacterItems() {
-        if (activeFaction.leader != null && activeFaction.leader is Character) {
-            Character leader = activeFaction.leader as Character;
+        if (activeFaction.leader != null && activeFaction.leader is Character leader) {
             CharacterNameplateItem leaderItem = GetItem(leader);
             if (leaderItem == null) {
                 throw new System.Exception($"Leader item in {activeFaction.name}'s UI is null! Leader is {leader.name}");
@@ -229,6 +230,7 @@ public class FactionInfoUI : InfoUIBase {
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
         regionsScrollView.verticalNormalizedPosition = 1;
+        historyScrollView.verticalNormalizedPosition = 1;
     }
     private void OnInspectAll() {
         if (isShowing && activeFaction != null) {
@@ -268,8 +270,78 @@ public class FactionInfoUI : InfoUIBase {
     }
     #endregion
 
-    private void OnOpenShareIntelMenu() {
-        // backButton.interactable = false;
+    #region Overview
+    private void OnFactionLeaderChanged(Character character) {
+        if (isShowing) {
+            UpdateOverview();
+        }
     }
-    private void OnCloseShareIntelMenu() { }
+    private void OnFactionLeaderRemoved(Faction faction) {
+        if (isShowing && faction == activeFaction) {
+            UpdateOverview();
+        }
+    }
+    private void UpdateOverview() {
+        overviewFactionNameLbl.text = activeFaction.name;
+        overviewFactionTypeLbl.text = activeFaction.factionType.name;
+
+        if (activeFaction.leader is Character leader) {
+            leaderNameplateItem.gameObject.SetActive(true);
+            leaderNameplateItem.SetObject(leader);
+        } else {
+            leaderNameplateItem.gameObject.SetActive(false);
+        }
+
+        ideologyLbl.text = string.Empty;
+        for (int i = 0; i < activeFaction.factionType.ideologies.Count; i++) {
+            FactionIdeology ideology = activeFaction.factionType.ideologies[i];
+            ideologyLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   <link=\"{i}\">{ideology.GetIdeologyDescription()}</link>\n";
+        }
+    }
+    public void OnHoverIdeology(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            FactionIdeology ideology = activeFaction.factionType.ideologies[index];
+            UIManager.Instance.ShowSmallInfo(ideology.name);
+        }
+    }
+    public void OnHoverOutIdeology() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+    
+    #region History
+    private void InitializeLogsMenu() {
+        logHistoryItems = new LogHistoryItem[Faction.MAX_HISTORY_LOGS];
+        for (int i = 0; i < Faction.MAX_HISTORY_LOGS; i++) {
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
+            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
+            newLogItem.transform.localScale = Vector3.one;
+            newLogItem.SetActive(true);
+        }
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            logHistoryItems[i].gameObject.SetActive(false);
+        }
+    }
+    private void UpdateHistory(Faction faction) {
+        if (isShowing && faction == activeFaction) {
+            UpdateAllHistoryInfo();
+        }
+    }
+    private void UpdateAllHistoryInfo() {
+        int historyCount = activeFaction.history.Count;
+        int historyLastIndex = historyCount - 1;
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            LogHistoryItem currItem = logHistoryItems[i];
+            if(i < historyCount) {
+                Log currLog = activeFaction.history[historyLastIndex - i];
+                currItem.gameObject.SetActive(true);
+                currItem.SetLog(currLog);
+                currItem.SetHoverPosition(logHoverPosition);
+            } else {
+                currItem.gameObject.SetActive(false);
+            }
+        }
+    }
+    #endregion   
 }
