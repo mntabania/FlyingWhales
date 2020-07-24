@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Managers;
 using Settings;
+using TMPro;
 
 public class MainMenuUI : MonoBehaviour {
 
@@ -31,12 +33,16 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Button startButton;
     [SerializeField] private Button settingsButton;
     
+    [Header("Steam")]
+    [SerializeField] private TextMeshProUGUI steamName;
+    
     private void Awake() {
         Instance = this;
     }
     private void Start() {
         newGameButton.interactable = true;
         loadGameButton.interactable = false;
+        steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
     }
     public void ShowMenuButtons() {
         titleTween.OnValueChangedAnimation(true);
