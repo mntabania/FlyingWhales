@@ -61,10 +61,10 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void TryLearnSpell() {
-            List<SPELL_TYPE> spellChoices =
-                CollectionUtilities.GetRandomElements(PlayerManager.Instance.player.unlearnedSpells, 2);
-            UIManager.Instance.ShowClickableObjectPicker(spellChoices, LearnNewSpell, null, null, 
-                "Choose a spell to learn", OnHoverSpell, OnHoverExitSpell, showCover: true);
+            // List<SPELL_TYPE> spellChoices =
+            //     CollectionUtilities.GetRandomElements(PlayerManager.Instance.player.unlearnedSpells, 2);
+            // UIManager.Instance.ShowClickableObjectPicker(spellChoices, LearnNewSpell, null, null, 
+            //     "Choose a spell to learn", OnHoverSpell, OnHoverExitSpell, showCover: true);
         }
         private void LearnNewSpell(object obj) {
             //SPELL_TYPE spellType = (SPELL_TYPE) obj;
@@ -80,10 +80,10 @@ namespace Inner_Maps.Location_Structures {
             
         }
         private void TryLearnAffliction() {
-            List<SPELL_TYPE> afflictionChoices =
-                CollectionUtilities.GetRandomElements(PlayerManager.Instance.player.unlearnedAfflictions, 2);
-            UIManager.Instance.ShowClickableObjectPicker(afflictionChoices, LearnNewAffliction, null, null, 
-                "Choose a spell to learn", OnHoverAffliction, OnHoverExitAffliction, showCover: true, portraitGetter:AfflictionPortraitGetter);
+            // List<SPELL_TYPE> afflictionChoices =
+            //     CollectionUtilities.GetRandomElements(PlayerManager.Instance.player.unlearnedAfflictions, 2);
+            // UIManager.Instance.ShowClickableObjectPicker(afflictionChoices, LearnNewAffliction, null, null, 
+            //     "Choose a spell to learn", OnHoverAffliction, OnHoverExitAffliction, showCover: true, portraitGetter:AfflictionPortraitGetter);
         }
         private void LearnNewAffliction(object obj) {
             //SPELL_TYPE spellType = (SPELL_TYPE)obj;

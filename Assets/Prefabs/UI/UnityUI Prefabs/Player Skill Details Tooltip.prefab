@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: -3483723377981431166, guid: d05f9163c7976d4489ead3e20a8e3964,
+  m_Material: {fileID: -3361069329983075161, guid: c1f181a5dea82774190fe0bd546371d8,
     type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -380,9 +380,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
-  m_spriteAsset: {fileID: 11400000, guid: d05f9163c7976d4489ead3e20a8e3964, type: 2}
+  m_spriteAsset: {fileID: 11400000, guid: c1f181a5dea82774190fe0bd546371d8, type: 2}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: -3483723377981431166, guid: d05f9163c7976d4489ead3e20a8e3964,
+  m_sharedMaterial: {fileID: -3361069329983075161, guid: c1f181a5dea82774190fe0bd546371d8,
     type: 2}
   m_isDefaultMaterial: 1
   m_padding: 0

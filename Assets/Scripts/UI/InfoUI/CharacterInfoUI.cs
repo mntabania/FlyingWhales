@@ -728,16 +728,16 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
         UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
-            "Select Flaw", OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 19, shouldShowConfirmationWindowOnPick: true, asButton: true);
+            "Select Flaw", OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
     }
     private void ActivateTriggerFlawConfirmation(object o) {
         string traitName = (string) o;
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
         string question = "Are you sure you want to trigger " + traitName + "?";
         question += $"\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        question += $"\n<b>Mana Cost</b>: {PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost}";
+        question += $"\n<b>Mana Cost</b>: {PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
-        UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw Confirmation", question, () => ActivateTriggerFlaw(trait));
+        UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", question, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true);
     }
     private void ActivateTriggerFlaw(Trait trait) {
         UIManager.Instance.HideObjectPicker();
@@ -750,16 +750,15 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void OnHoverEnterFlaw(string traitName) {
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
-        UIManager.Instance.ShowSmallInfo($"{trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}");
+        PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
+            traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
+            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost
+        );
     }
     private void OnHoverExitFlaw(string traitName) {
-        UIManager.Instance.HideSmallInfo();
+        PlayerUI.Instance.skillDetailsTooltip.HidePlayerSkillDetails();
     }
-    private Sprite GetTriggerFlawPortrait(string str) {
-        //TODO
-        return null;
-    }
-//    private void OnClickTrait(object obj) {
+    //    private void OnClickTrait(object obj) {
 //#if UNITY_EDITOR
 //        if (obj is string text) {
 //            int index = int.Parse(text);

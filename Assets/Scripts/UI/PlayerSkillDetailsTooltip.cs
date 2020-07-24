@@ -19,24 +19,24 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     public VideoPlayer tooltipVideoPlayer;
     public RenderTexture tooltipVideoRenderTexture;
 
-    private SpellData spellData;
-    private PlayerSkillData skillData;
-
     public void ShowPlayerSkillDetails(SpellData spellData, UIHoverPosition position = null) {
-        this.spellData = spellData;
         UpdateData(spellData);
-        UpdatePositionAndVideo(position);
+        UpdatePositionAndVideo(position, spellData.type);
     }
     public void ShowPlayerSkillDetails(PlayerSkillData skillData, UIHoverPosition position = null) {
-        this.skillData = skillData;
         UpdateData(skillData);
-        UpdatePositionAndVideo(position);
+        UpdatePositionAndVideo(position, skillData.skill);
+    }
+    public void ShowPlayerSkillDetails(string title, string description, int charges = -1, int manaCost = -1, 
+        int cooldown = -1, int threat = -1, string additionalText = "", UIHoverPosition position = null) {
+        UpdateData(title, description, charges, manaCost, cooldown, threat, additionalText);
+        UpdatePositionAndVideo(position, SPELL_TYPE.NONE);
     }
     public void HidePlayerSkillDetails() {
         gameObject.SetActive(false);
         tooltipVideoPlayer.Stop();
     }
-    private void UpdatePositionAndVideo(UIHoverPosition position) {
+    private void UpdatePositionAndVideo(UIHoverPosition position, SPELL_TYPE spellType) {
         bool wasActiveBefore = gameObject.activeSelf;
         gameObject.SetActive(true);
         UIHoverPosition positionToUse = position;
@@ -54,20 +54,15 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         thisRect.anchoredPosition = Vector2.zero;
 
         if (wasActiveBefore == false) {
-            SPELL_TYPE skillType = SPELL_TYPE.NONE;
-            if(spellData != null) {
-                skillType = spellData.type;
-            } else if (this.skillData != null) {
-                skillType = this.skillData.skill;
-            }
-            PlayerSkillData skillData = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
-            if (skillData != null) {
-                if (skillData.tooltipImage != null) {
-                    tooltipImage.texture = skillData.tooltipImage;
+            SPELL_TYPE skillType = spellType;
+            PlayerSkillData data = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>(skillType);
+            if (data != null) {
+                if (data.tooltipImage != null) {
+                    tooltipImage.texture = data.tooltipImage;
                     thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 503f);
                     tooltipImage.gameObject.SetActive(true);
-                } else if (skillData.tooltipVideoClip != null) {
-                    tooltipVideoPlayer.clip = skillData.tooltipVideoClip;
+                } else if (data.tooltipVideoClip != null) {
+                    tooltipVideoPlayer.clip = data.tooltipVideoClip;
                     tooltipImage.texture = tooltipVideoRenderTexture;
                     tooltipVideoPlayer.Play();
                     thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 503f);
@@ -150,15 +145,47 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 
             }
         }
-        if(HasEnoughMana() == false) {
+        if(HasEnoughMana(spellData) == false) {
             additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
         }
-        if(HasEnoughCharges() == false) {
+        if(HasEnoughCharges(spellData) == false) {
             additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
         }
     }
+    private void UpdateData(string title, string description, int charges, int manaCost, int cooldown, int threat, string additionalTextStr) {
+        titleText.text = title;
+        descriptionText.SetTextAndReplaceWithIcons(description);
+        string currencyStr = string.Empty; 
+        
+        if (manaCost != -1) {
+            currencyStr += $"{manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}  ";
+        }
+        if (cooldown != -1) {
+            currencyStr += $"{GameManager.GetTimeAsWholeDuration(cooldown).ToString()} {GameManager.GetTimeIdentifierAsWholeDuration(cooldown)} {UtilityScripts.Utilities.CooldownIcon()}  ";
+        }
+        if (charges != -1) {
+            currencyStr += $"{charges.ToString()} {UtilityScripts.Utilities.ChargesIcon()}  ";
+        }
+        if (threat > 0) {
+            currencyStr += $"{threat.ToString()} {UtilityScripts.Utilities.ThreatIcon()}  ";
+        }
+        currenciesText.text = currencyStr;
+        additionalText.text = additionalTextStr;
 
-    private bool HasEnoughMana() {
+        if (manaCost != -1) {
+            if(HasEnoughMana(manaCost) == false) {
+                additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
+            }    
+        }
+
+        if (charges != -1) {
+            if(HasEnoughCharges(charges) == false) {
+                additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+            }    
+        }
+    }
+
+    private bool HasEnoughMana(SpellData spellData) {
         if (spellData.hasManaCost) {
             if (PlayerManager.Instance.player.mana >= spellData.manaCost) {
                 return true;
@@ -168,7 +195,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //if skill has no mana cost then always has enough mana
         return true;
     }
-    private bool HasEnoughCharges() {
+    private bool HasEnoughCharges(SpellData spellData) {
         if (spellData.hasCharges) {
             if (spellData.charges > 0) {
                 return true;
@@ -178,4 +205,17 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         //if skill has no charges then always has enough charges
         return true;
     }
+    private bool HasEnoughMana(int manaCost) {
+        if (PlayerManager.Instance.player.mana >= manaCost) {
+            return true;
+        }
+        return false;
+    }
+    private bool HasEnoughCharges(int charges) {
+        if (charges > 0) {
+            return true;
+        }
+        return false;
+    }
+    
 }

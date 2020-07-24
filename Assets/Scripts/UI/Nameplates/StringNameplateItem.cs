@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StringNameplateItem : NameplateItem<string> {
 
     [SerializeField] private LocationPortrait _locationPortrait;
+    [SerializeField] private TextMeshProUGUI additionalText;
     public Image img;
 
     public string identifier { get; private set; }
@@ -17,8 +19,7 @@ public class StringNameplateItem : NameplateItem<string> {
         str = o;
         identifier = string.Empty;
         mainLbl.text = str;
-        subLbl.text = string.Empty;
-        
+        additionalText.text = string.Empty;
     }
 
     public void SetIdentifier(string id) {
@@ -38,6 +39,8 @@ public class StringNameplateItem : NameplateItem<string> {
         } else if (identifier == "player skill") {
             img.gameObject.SetActive(true);
             img.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
+        } else if (identifier == "Trigger Flaw") {
+            additionalText.text = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
         }
     }
 }

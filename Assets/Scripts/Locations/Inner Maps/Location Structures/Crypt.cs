@@ -74,8 +74,8 @@ namespace Inner_Maps.Location_Structures {
             return PlayerManager.Instance.player.mana >= 50;
         }
         private void OnClickActivateArtifact() {
-            List<Artifact> artifacts = PlayerManager.Instance.player.artifacts;
-            UIManager.Instance.ShowClickableObjectPicker(artifacts, ActivateArtifact, null, CanActivateArtifact, "Activate an Artifact");
+            // List<Artifact> artifacts = PlayerManager.Instance.player.artifacts;
+            // UIManager.Instance.ShowClickableObjectPicker(artifacts, ActivateArtifact, null, CanActivateArtifact, "Activate an Artifact");
         }
         private void ActivateArtifact(object obj) {
             //_activatedArtifact?.Deactivate();
