@@ -2254,4 +2254,37 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     #endregion
+
+    #region Troll
+    public bool TriggerBuildCookingCauldronJob(out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_COOKING_CAULDRON], _owner, _owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_COOKING_CAULDRON, _owner, _owner);
+            goapPlan.SetDoNotRecalculate(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    public bool TriggerCookJob(Character targetCharacter, TileObject whereToCook, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.COOK, targetCharacter, _owner);
+            job.AddOtherData(INTERACTION_TYPE.COOK, new object[] { whereToCook });
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
+    }
+    public bool TriggerRestrainJob(Character target) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.RESTRAIN)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, _owner);
+            return _owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    #endregion
 }

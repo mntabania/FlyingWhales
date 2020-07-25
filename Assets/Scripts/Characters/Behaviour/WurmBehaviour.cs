@@ -14,10 +14,10 @@ public class WurmBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} is a wurm";
         if (character.gridTileLocation != null) {
             if (character.reactionComponent.isHidden) {
-                log += $"\n-4% chance to move to another place in the current region";
+                log += $"\n-1% chance to move to another place in the current region";
                 int roll = UnityEngine.Random.Range(0, 100);
                 log += $"\n-Roll: " + roll;
-                if (roll < 4) {
+                if (roll < 1) {
                     HexTile chosenHex = null;
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         chosenHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetRandomAdjacentHextileWithinRegion(true);

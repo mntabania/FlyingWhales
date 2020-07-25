@@ -9,16 +9,17 @@ public class Dragon : Summon {
     public override string raceClassName => "Dragon";
 
     public bool isAwakened { get; private set; }
+    public bool isAttackingPlayer { get; private set; }
+    public bool willLeaveWorld { get; private set; }
+    public LocationStructure targetStructure { get; private set; }
 
     public Dragon() : base(SUMMON_TYPE.Dragon, "Dragon", RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
-        visuals.SetHasBlood(false);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
     }
     public Dragon(string className) : base(SUMMON_TYPE.Dragon, className, RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
-        visuals.SetHasBlood(false);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
     }
@@ -27,7 +28,7 @@ public class Dragon : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
-        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Golem_Behaviour);
+        behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
     //public override void SubscribeToSignals() {
     //    base.SubscribeToSignals();
@@ -42,9 +43,50 @@ public class Dragon : Summon {
     #endregion
 
     public void Awaken() {
-        isAwakened = true;
-        traitContainer.RemoveTrait(this, "Immune");
-        traitContainer.RemoveTrait(this, "Hibernating");
+        if (!isAwakened) {
+            isAwakened = true;
+            traitContainer.RemoveTrait(this, "Immune");
+            traitContainer.RemoveTrait(this, "Hibernating");
+            StartLeaveWorldTimer();
+        }
+    }
+
+    public void SetIsAttackingPlayer(bool state) {
+        isAttackingPlayer = state;
+    }
+    public void SetWillLeaveWorld(bool state) {
+        if(willLeaveWorld != state) {
+            willLeaveWorld = state;
+            if (willLeaveWorld) {
+                combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                CancelAllJobs();
+                combatComponent.ClearHostilesInRange();
+                combatComponent.ClearAvoidInRange();
+            }
+        }
+    }
+    private void LeaveWorld() {
+        if (isDead) {
+            return;
+        }
+        SetWillLeaveWorld(true);
+    }
+    private void StartLeaveWorldTimer() {
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+        SchedulingManager.Instance.AddEntry(dueDate, LeaveWorld, this);
+    }
+    public void SetTargetStructure(LocationStructure structure) {
+        targetStructure = structure;
+    }
+    public void SetVillageTargetStructure() {
+        targetStructure = gridTileLocation.GetNearestVillageStructureFromThisWithResidents();
+    }
+    public void SetPlayerTargetStructure() {
+        targetStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructureInRegion(gridTileLocation.structure.location);
+    }
+    public void ResetTargetStructure() {
+        targetStructure = null;
     }
 
     //private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {

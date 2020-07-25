@@ -537,6 +537,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 inVision.reactionComponent.ReactToCombat(combat, this);
             }
         }
+        if(characterThatAttacked is Dragon && this is GenericTileObject) {
+            characterThatAttacked.combatComponent.RemoveHostileInRange(this);
+        }
         //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     public void SetGridTileLocation(LocationGridTile tile) {

@@ -54,7 +54,7 @@ namespace Locations.Settlements {
         }
         #endregion
         
-        #region Residents
+        #region Characters
         public virtual bool AddResident(Character character, LocationStructure chosenHome = null, bool ignoreCapacity = true) {
             if (!residents.Contains(character)) {
                 if (!ignoreCapacity) {
@@ -213,6 +213,16 @@ namespace Locations.Settlements {
             }
             if(choices != null && choices.Count > 0) {
                 return choices[UnityEngine.Random.Range(0, choices.Count)];
+            }
+            return null;
+        }
+        public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> criteria) {
+            Character chosenCharacter = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                chosenCharacter = allStructures[i].GetRandomCharacterThatMeetCriteria(criteria);
+                if(chosenCharacter != null) {
+                    return chosenCharacter;
+                }
             }
             return null;
         }
@@ -430,6 +440,26 @@ namespace Locations.Settlements {
             }
             //default to true even if there are nounoccupied tiles in settlement 
             return true;
+        }
+        #endregion
+
+        #region Tile Object
+        public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
+            for (int i = 0; i < allStructures.Count; i++) {
+                if (allStructures[i].HasTileObjectOfType(type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
+            for (int i = 0; i < allStructures.Count; i++) {
+                T obj = allStructures[i].GetTileObjectOfType<T>(type);
+                if(obj != null) {
+                    return obj as T;
+                }
+            }
+            return null;
         }
         #endregion
     }

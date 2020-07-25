@@ -15,7 +15,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             //effects = new List<TraitEffect>();
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RAISE_CORPSE };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RAISE_CORPSE, INTERACTION_TYPE.COOK };
             hindersMovement = true;
             hindersWitness = true;
             hindersAttackTarget = true;

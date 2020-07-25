@@ -603,6 +603,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.RAID, new[]{
             new StateNameAndDuration(){ name = "Raid Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.COOK, new[]{
+            new StateNameAndDuration(){ name = "Cook Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
+        } },
+        {INTERACTION_TYPE.BUILD_COOKING_CAULDRON, new[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 

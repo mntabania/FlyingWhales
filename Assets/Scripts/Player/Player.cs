@@ -82,7 +82,7 @@ public class Player : ILeader, IObjectManipulator {
     public void SetPortalTile(HexTile tile) {
         portalTile = tile;
     }
-    
+
     #region Listeners
     private void AddListeners() {
         AddWinListener();

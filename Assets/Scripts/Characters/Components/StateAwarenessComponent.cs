@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Traits;
 
 public class StateAwarenessComponent {
     public Character owner { get; private set; }
@@ -120,12 +121,24 @@ public class StateAwarenessComponent {
                     || (owner.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.SIBLING) && !owner.relationshipContainer.IsEnemiesWith(target))) {
                     owner.traitContainer.AddTrait(owner, "Griefstricken", target);
                 }
+            } else {
+                Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+                if(psychopath.targetVictim == target) {
+                    owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM);
+                    psychopath.SetTargetVictim(null);
+                }
             }
         } else if (state == AWARENESS_STATE.Missing) {
             if (!owner.traitContainer.HasTrait("Psychopath")) {
                 if (owner.relationshipContainer.GetOpinionLabel(target) == RelationshipManager.Close_Friend
                     || (owner.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.SIBLING) && !owner.relationshipContainer.IsEnemiesWith(target))) {
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, target);
+                }
+            } else {
+                Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+                if (psychopath.targetVictim == target) {
+                    owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM);
+                    psychopath.SetTargetVictim(null);
                 }
             }
         }
