@@ -270,6 +270,10 @@ public class MonsterGeneration : MapGenerationComponent {
 						WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
 						for (int j = 0; j < caves.Count; j++) {
 							LocationStructure cave = caves[j];
+							if (cave.residents.Count > 0) {
+								//if cave already has occupants, then do not generate monsters for that cave
+								continue;
+							}
 							List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
 							for (int k = 0; k < hexTilesOfCave.Count; k++) {
 								MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
