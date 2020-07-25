@@ -507,7 +507,16 @@ public class ReactionComponent {
         debugLog += $"{actor.name} is reacting to {targetCharacter.name}";
         if(actor.IsHostileWith(targetCharacter)) {
             debugLog += "\n-Target is hostile";
-            if (actor.traitContainer.HasTrait("Cultist") && (targetCharacter.faction.isPlayerFaction || targetCharacter.traitContainer.HasTrait("Cultist"))) {
+            if(actor is Troll && targetCharacter.isNormalCharacter && actor.homeStructure != null) {
+                debugLog += "\n-Actor is a Troll and target is a Villager and actor has a home structure";
+                if (targetCharacter.currentStructure != actor.homeStructure) {
+                    debugLog += "\n-Will engage in combat and move it to its home";
+                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, actor.homeStructure);
+                } else {
+                    debugLog += "\n-Will engage in combat and restrain it";
+                    actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                }
+            } else if (actor.traitContainer.HasTrait("Cultist") && (targetCharacter.faction.isPlayerFaction || targetCharacter.traitContainer.HasTrait("Cultist"))) {
                 debugLog += $"\n-{actor.name} is a cultist and {targetCharacter.name} is part of the demon faction or is also a cultist.";
                 int roll = UnityEngine.Random.Range(0, 100);
                 int inspireChance = 30;
@@ -773,6 +782,13 @@ public class ReactionComponent {
         }
     }
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
+        if(actor is Troll) {
+            if(targetTileObject is BallLightningTileObject || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
+                CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+            } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is Gold || targetTileObject is Diamond) {
+                actor.jobComponent.CreateDropItemJob(targetTileObject, actor.homeStructure);
+            }
+        }
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {
             //Minions or Summons cannot react to objects
             return;
@@ -896,7 +912,7 @@ public class ReactionComponent {
         //        owner.jobComponent.CreateTakeItemJob(targetTileObject);
         //    }
         //}
-        if (targetTileObject.traitContainer.HasTrait("Danger Remnant")) {
+        if (targetTileObject.traitContainer.HasTrait("Danger Remnant", "Lightning Remnant")) {
             if (!actor.traitContainer.HasTrait("Berserked")) {
                 if (targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.isCorrupted) {
                     CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);

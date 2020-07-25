@@ -216,10 +216,9 @@ public class Butcher : GoapAction {
         IPointOfInterest poiTarget = goapNode.poiTarget;
         LocationGridTile tileLocation = poiTarget.gridTileLocation;
 
+        tileLocation.structure.RemoveCharacterAtLocation(poiTarget as Character);
         if (poiTarget is Character character) {
             character.DestroyMarker();
-        } else {
-            tileLocation.structure.RemovePOI(poiTarget, goapNode.actor);
         }
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation);

@@ -1237,6 +1237,26 @@ MonoBehaviour:
       characterClassAssets:
         m_keys: []
         m_values: []
+  - raceName: DRAGON
+    race: 8
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Dragon
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: bc21b881f382910419a8ac910329d678,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: a688e8e52b1d59644bb3a7bc755d5f63, type: 3}
+          - {fileID: 21300000, guid: bc21b881f382910419a8ac910329d678, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
   - raceName: ELEMENTAL
     race: 19
     neutralAssets:
@@ -2335,6 +2355,26 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 64e020ec6cd2f83498bffbe373860057, type: 3}
           - {fileID: 21300000, guid: e5bedffbf427d1846b26d7a41ec8548a, type: 3}
           - {fileID: 21300000, guid: 749f257e1ffec40458b2503145a26d11, type: 3}
+    maleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+    femaleAssets:
+      characterClassAssets:
+        m_keys: []
+        m_values: []
+  - raceName: TROLL
+    race: 7
+    neutralAssets:
+      characterClassAssets:
+        m_keys:
+        - Troll
+        m_values:
+        - defaultSprite: {fileID: 21300000, guid: c0f5569582b99334293e60f15c790983,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: d756e68bd7f471545bfc87dcc1460d03, type: 3}
+          - {fileID: 21300000, guid: c0f5569582b99334293e60f15c790983, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

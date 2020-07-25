@@ -38,7 +38,7 @@ MonoBehaviour:
         monsterType: 4
         minMaxRange:
           lowerBound: 1
-          upperBound: 4
+          upperBound: 1
       - weight: 10
         monsterType: 5
         minMaxRange:
@@ -99,6 +99,11 @@ MonoBehaviour:
         minMaxRange:
           lowerBound: 1
           upperBound: 2
+      - weight: 10
+        monsterType: 33
+        minMaxRange:
+          lowerBound: 1
+          upperBound: 1
     - data:
       - weight: 10
         monsterType: 20

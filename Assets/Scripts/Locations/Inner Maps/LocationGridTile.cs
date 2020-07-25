@@ -881,6 +881,31 @@ namespace Inner_Maps {
             }
             return nearestStructure;
         }
+        public LocationStructure GetNearestVillageStructureFromThisWithResidents() {
+            LocationStructure nearestStructure = null;
+            if (structure != null) {
+                if (structure.location.allStructures.Count > 0) {
+                    float nearestDist = 99999f;
+                    for (int i = 0; i < structure.location.allStructures.Count; i++) {
+                        LocationStructure currStructure = structure.location.allStructures[i];
+                        if (currStructure != structure && currStructure.settlementLocation != null 
+                            && currStructure.settlementLocation.owner != null && currStructure.settlementLocation.residents.Count > 0) {
+                            if (currStructure.settlementLocation.owner.isMajorNonPlayer) {
+                                LocationGridTile randomPassableTile = currStructure.GetRandomPassableTile();
+                                if (randomPassableTile != null && PathfindingManager.Instance.HasPath(this, randomPassableTile)) {
+                                    float dist = Vector2.Distance(randomPassableTile.localLocation, localLocation);
+                                    if (nearestStructure == null || dist < nearestDist) {
+                                        nearestStructure = currStructure;
+                                        nearestDist = dist;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return nearestStructure;
+        }
         public LocationGridTile GetNearestUnoccupiedTileFromThisWithStructure(STRUCTURE_TYPE structureType) {
             List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
             if (unoccupiedNeighbours.Count == 0) {

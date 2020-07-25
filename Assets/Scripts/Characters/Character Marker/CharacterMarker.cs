@@ -89,6 +89,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private HexTile _previousHexTileLocation;
     private CharacterMarkerNameplate _nameplate;
     private LocationGridTile _destinationTile;
+    private int _pauseAnimationCounter;
 
     public void SetCharacter(Character character) {
         base.Initialize(character);
@@ -486,9 +487,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else if (this.destinationTile != null) {
                 destinationTile = this.destinationTile;
             }
-            Vector3 lastPositionInPath = pathfindingAI.currentPath.vectorPath.Last();
-            LocationGridTile attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
-
+            LocationGridTile attainedDestinationTile = null;
+            if (character.gridTileLocation == destinationTile) {
+                attainedDestinationTile = destinationTile;
+            } else {
+                Vector3 lastPositionInPath = pathfindingAI.currentPath.vectorPath.Last();
+                character.currentRegion.innerMap.GetTile(lastPositionInPath);
+            }
             if (character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath)) {
@@ -706,10 +711,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void PauseAnimation() {
-        animator.speed = 0;
+        _pauseAnimationCounter++;
+        UpdatePauseAnimationSpeed();
     }
     public void UnpauseAnimation() {
-        animator.speed = 1;
+        _pauseAnimationCounter--;
+        UpdatePauseAnimationSpeed();
+    }
+    private void UpdatePauseAnimationSpeed() {
+        if(_pauseAnimationCounter > 0) {
+            animator.speed = 0;
+        } else {
+            animator.speed = 1;
+        }
     }
     public void SetAnimationTrigger(string triggerName) {
         if (triggerName == "Attack" && (character.stateComponent.currentState is CombatState) == false) {
@@ -727,7 +741,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         animator.SetBool(name, value);
     }
     private void UpdateAnimationSpeed() {
-        animator.speed = 1f * progressionSpeedMultiplier;
+        if(animator.speed != 0) {
+            animator.speed = 1f * progressionSpeedMultiplier;
+        }
     }
     #endregion
 

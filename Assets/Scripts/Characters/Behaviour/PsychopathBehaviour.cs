@@ -18,11 +18,15 @@ public class PsychopathBehaviour : CharacterBehaviourComponent {
             //psychopath.CheckTargetVictimIfStillAvailable();
             if (psychopath.targetVictim != null) {
                 log += $"\n  -Target victim is {psychopath.targetVictim.name}, will try to Hunt Victim";
-                if (psychopath.CreateHuntVictimJob(out producedJob)) {
-                    log += "\n  -Created Hunt Victim Job";
-                    return true;
+                if (psychopath.targetVictim.isAtHomeStructure || psychopath.targetVictim.IsInHomeSettlement()) {
+                    if (psychopath.CreateHuntVictimJob(out producedJob)) {
+                        log += "\n  -Created Hunt Victim Job";
+                        return true;
+                    } else {
+                        log += "\n  -Cannot hunt victim, already has a Hunt Victim Job in queue";
+                    }
                 } else {
-                    log += "\n  -Cannot hunt victim, already has a Hunt Victim Job in queue";
+                    log += "\n  -Cannot hunt victim, target is not in his home structure/settlement";
                 }
             } else {
                 log += "\n  -No target victim";

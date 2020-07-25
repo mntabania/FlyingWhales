@@ -23,6 +23,9 @@ namespace Factions.Faction_Types {
         public void AddIdeology(FactionIdeology ideology) {
             ideologies.Add(ideology);
         }
+        public void ClearIdeologies() {
+            ideologies.Clear();
+        }
         public bool HasIdeology(FACTION_IDEOLOGY ideology) {
             for (int i = 0; i < ideologies.Count; i++) {
                 FactionIdeology ideal = ideologies[i];

@@ -507,6 +507,8 @@ public enum INTERACTION_TYPE {
     DISGUISE,
     RECRUIT,
     RAID,
+    COOK,
+    BUILD_COOKING_CAULDRON,
 }
 public enum INTERRUPT {
     None,
@@ -821,6 +823,7 @@ public enum TILE_OBJECT_TYPE {
     EXCALIBUR = 152,
     PLINTH = 153,
     SARCOPHAGUS = 154,
+    COOKING_CAULDRON = 155,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1001,6 +1004,7 @@ public enum SUMMON_TYPE {
     Wurm,
     Revenant,
     Dragon,
+    Troll,
 }
 public enum ARTIFACT_TYPE { None, Necronomicon, Ankh_Of_Anubis, Berserk_Orb, Heart_Of_The_Wind, Gorgon_Eye }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
@@ -1171,6 +1175,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.OSTRACIZER:
             case STRUCTURE_TYPE.MEDDLER:
             case STRUCTURE_TYPE.KENNEL:
+            case STRUCTURE_TYPE.CAVE:
                 return true;
             default:
                 return false;
@@ -1490,6 +1495,9 @@ public static class Extensions {
             case JOB_TYPE.GO_TO:
                 priority = 925;
                 break;
+            case JOB_TYPE.MOVE_CHARACTER:
+                priority = 920;
+                break;
             //case JOB_TYPE.RECOVER_HP:
             //    priority = 920;
             //    break;
@@ -1557,9 +1565,9 @@ public static class Extensions {
             case JOB_TYPE.KIDNAP:
                 priority = 530;
                 break;
-            case JOB_TYPE.MOVE_CHARACTER:
-                priority = 520;
-                break;
+            //case JOB_TYPE.MOVE_CHARACTER:
+            //    priority = 520;
+            //    break;
             case JOB_TYPE.TAKE_ITEM:
             case JOB_TYPE.INSPECT:
                 priority = 510;
@@ -1765,6 +1773,8 @@ public static class Extensions {
             case JOB_TYPE.LEARN_MONSTER:
             case JOB_TYPE.BRAWL:
             case JOB_TYPE.KIDNAP:
+            case JOB_TYPE.MOVE_CHARACTER:
+            case JOB_TYPE.RESTRAIN:
                 return false;
             default:
                 return true;
