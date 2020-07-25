@@ -25,7 +25,11 @@ public class OptionsMenu : PopupMenuBase {
         Application.Quit();
     }
     public void AbandonWorld() {
-        UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50);
+        UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50, showCover: true);
+    }
+    public void ReportABug() {
+        UIManager.Instance.ShowYesNoConfirmation("Open Browser", "To report a bug, the game needs to open a Web browser, do you want to proceed?",
+            () => Application.OpenURL("https://forms.gle/gcoa8oHxywFLegNx7"), layer: 50, showCover: true);
     }
     private void Abandon() {
         DOTween.Clear(true);
