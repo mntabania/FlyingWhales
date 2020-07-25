@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Locations.Tile_Features;
 using UnityEngine;
 using Traits;
-using Locations.Features;
 
 public class TakeShelter : GoapAction {
 

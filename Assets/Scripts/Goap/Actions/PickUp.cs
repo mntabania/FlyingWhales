@@ -48,9 +48,9 @@ public class PickUp : GoapAction {
         }
         if(target is TileObject targetTileObject) {
             if(targetTileObject.characterOwner == null) {
-                if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {
+                if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL || job.jobType == JOB_TYPE.REMOVE_STATUS)) {
                     cost += 10;
-                    costLog += $" +10(No personal owner, Take Item Job)";
+                    costLog += $" +10(No personal owner, Take Item/Haul/Remove Status Job)";
                 } else if(actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == actor.homeSettlement) {
                     int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);

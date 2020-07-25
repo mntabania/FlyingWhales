@@ -9,46 +9,6 @@ public class PlayerUpgradeUI : MonoBehaviour {
     
     //private TheAnvil theAnvil;
 
-    #region General
-    public void OnClickUpgrade(BaseLandmark landmark) {
-        //theAnvil = landmark as TheAnvil;
-        // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, string>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), LandmarkManager.Instance.anvilResearchData.Keys.ToList(),
-        //     "Choose Minion", "Choose Upgrade",
-        //     CanChooseMinion, CanChooseUpgrade,
-        //     OnHoverEnterMinion, OnHoverAbilityChoice,
-        //     OnHoverExitMinion, OnHoverExitAbilityChoice,
-        //     OnConfirmUpgrade, "Upgrade");
-    }
-    private void OnHoverEnterMinion(Character character) {
-        if (!CanChooseMinion(character)) {
-            string message = string.Empty;
-            if (character.minion.isAssigned) {
-                message = $"{character.name} is already doing something else.";
-            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.RESEARCHER)) {
-                message = $"{character.name} does not have the required trait: Researcher";
-            }
-            UIManager.Instance.ShowSmallInfo(message);
-        }
-    }
-    private void OnHoverExitMinion(Character character) {
-        UIManager.Instance.HideSmallInfo();
-    }
-    private void OnConfirmUpgrade(object minionObj, object upgradeObj) {
-        Minion minion = (minionObj as Character).minion;
-        string upgrade = upgradeObj as string;
-
-        //minion.SetAssignedRegion(theAnvil.tileLocation.region);
-        //theAnvil.tileLocation.region.SetAssignedMinion(minion);
-        // theAnvil.SetUpgradeIdentifier(upgrade);
-        // theAnvil.StartUpgradeProcess();
-    }
-    #endregion
-
-    #region Minion
-    private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.RESEARCHER);
-    }
-    #endregion
 
     // #region Upgrade
     // private bool CanChooseUpgrade(string upgrade) {

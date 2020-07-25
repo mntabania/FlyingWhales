@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Region_Features;
 using Locations.Settlements;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -32,11 +33,17 @@ public class MonsterGeneration : MapGenerationComponent {
         //	summon.MigrateHomeStructureTo(homeStructure);	
         //}
     }
-    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, params HexTile[] territories) {
-		var chosenTile = homeStructure != null ? CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : CollectionUtilities.GetRandomElement(locationChoices);
+    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, 
+	    LocationStructure homeStructure = null, string className = "", params HexTile[] territories) {
+		var chosenTile = homeStructure != null ? 
+			CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : 
+			CollectionUtilities.GetRandomElement(locationChoices);
+		
 		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
-		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region);
+		
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, 
+			null, chosenTile.parentMap.region, className: className);
 		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
@@ -63,6 +70,9 @@ public class MonsterGeneration : MapGenerationComponent {
 	private IEnumerator RegionalMonsterGeneration() {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
+			if (region.regionFeatureComponent.HasFeature<TeemingFeature>()) {
+				continue; //do not generate monsters in region wilderness if region is Teeming
+			}
 			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
 			region.tiles.Where(h => h.landmarkOnTile == null && 
                 (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && 
@@ -101,26 +111,51 @@ public class MonsterGeneration : MapGenerationComponent {
 				}
 			}
 			else {
-				MonsterGenerationSetting monsterGenerationSetting =
-					WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
-				WeightedDictionary<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
-				if (monsterChoices != null) {
-					int iterations = monsterGenerationSetting.iterations.Random();
-					for (int j = 0; j < iterations; j++) {
-						MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-						int randomAmount = randomMonsterSetting.minMaxRange.Random();
-						for (int k = 0; k < randomAmount; k++) {
-							Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
-							locationChoices.Remove(summon.gridTileLocation);
-						}
+				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
+					//spawn 4-8 ghosts
+					int ghosts = Random.Range(4, 9);
+					for (int j = 0; j < ghosts; j++) {
+						Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices);
+						locationChoices.Remove(summon.gridTileLocation);
 						if (locationChoices.Count == 0) {
 							Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
 							break;
 						}
+					}
+					//spawn 4-8 to Skeletons
+					List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
+					int skeletons = Random.Range(4, 9);
+					for (int j = 0; j < skeletons; j++) {
+						Summon summon = CreateMonster(SUMMON_TYPE.Skeleton, locationChoices, 
+							className: CollectionUtilities.GetRandomElement(randomClassChoices));
+						locationChoices.Remove(summon.gridTileLocation);
+						if (locationChoices.Count == 0) {
+							Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
+							break;
+						}
+					}
+				} else {
+					//spawn monsters base on provided regional settings
+					MonsterGenerationSetting monsterGenerationSetting =
+						WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
+					WeightedDictionary<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+					if (monsterChoices != null) {
+						int iterations = monsterGenerationSetting.iterations.Random();
+						for (int j = 0; j < iterations; j++) {
+							MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
+							int randomAmount = randomMonsterSetting.minMaxRange.Random();
+							for (int k = 0; k < randomAmount; k++) {
+								Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
+								locationChoices.Remove(summon.gridTileLocation);
+							}
+							if (locationChoices.Count == 0) {
+								Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
+								break;
+							}
+						}	
 					}	
-				}	
+				}
 			}
-			
 			yield return null;
 		}
 	}
@@ -190,44 +225,62 @@ public class MonsterGeneration : MapGenerationComponent {
 							//Giant spiders	
 							int randomGiantSpider = Random.Range(2, 5);
 							for (int k = 0; k < randomGiantSpider; k++) {
-								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
 							//Small spiders	
 							int randomSmallSpider = Random.Range(3, 8);
 							for (int k = 0; k < randomSmallSpider; k++) {
-								CreateMonster(SUMMON_TYPE.Small_Spider, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+								CreateMonster(SUMMON_TYPE.Small_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
 						} else if (hasSpawnedGolems == false) {
 							hasSpawnedGolems = true;
 							//Golem	
 							int randomGolem = Random.Range(1, 3);
 							for (int k = 0; k < randomGolem; k++) {
-								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
 							//Abomination	
 							int randomAbomination = Random.Range(1, 3);
 							for (int k = 0; k < randomAbomination; k++) {
-								CreateMonster(SUMMON_TYPE.Abomination, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());
+								CreateMonster(SUMMON_TYPE.Abomination, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
 						}
 						if (hasSpawnedGolems && hasSpawnedSpiders) {
 							break;
 						}
 					}
-				}
-				else {
-					WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
-					for (int j = 0; j < caves.Count; j++) {
-						LocationStructure cave = caves[j];
-						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						for (int k = 0; k < hexTilesOfCave.Count; k++) {
-							MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-							int randomAmount = randomMonsterSetting.minMaxRange.Random();
-							for (int l = 0; l < randomAmount; l++) {
-								CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, hexTilesOfCave.ToArray());	
+				} else {
+					if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
+						for (int j = 0; j < caves.Count; j++) {
+							LocationStructure cave = caves[j];
+							//spawn 2-4 ghosts
+							int ghosts = Random.Range(2, 5);
+							for (int k = 0; k < ghosts; k++) {
+								CreateMonster(SUMMON_TYPE.Ghost, cave.unoccupiedTiles.ToList());
+							}
+							//spawn 2-4 to Skeletons
+							List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
+							int skeletons = Random.Range(2, 5);
+							for (int k = 0; k < skeletons; k++) {
+								CreateMonster(SUMMON_TYPE.Skeleton, cave.unoccupiedTiles.ToList(), 
+									className: CollectionUtilities.GetRandomElement(randomClassChoices));
 							}
 						}
-					}	
+					} else {
+						WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
+						for (int j = 0; j < caves.Count; j++) {
+							LocationStructure cave = caves[j];
+							List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+							for (int k = 0; k < hexTilesOfCave.Count; k++) {
+								MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
+								int randomAmount = randomMonsterSetting.minMaxRange.Random();
+								for (int l = 0; l < randomAmount; l++) {
+									CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());	
+								}
+							}
+						}	
+					}
+						
 				}
 			}
 			yield return null;

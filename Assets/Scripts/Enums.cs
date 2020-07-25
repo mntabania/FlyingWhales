@@ -231,6 +231,7 @@ public enum LANDMARK_TYPE {
     DEMONIC_PRISON = 61,
     MINE = 62,
     ANCIENT_GRAVEYARD = 63,
+    TEMPLE = 64,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -649,6 +650,7 @@ public enum STRUCTURE_TYPE {
     LUMBERYARD = 40,
     MINE_SHACK = 41,
     ANCIENT_GRAVEYARD = 42,
+    TEMPLE = 43,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,

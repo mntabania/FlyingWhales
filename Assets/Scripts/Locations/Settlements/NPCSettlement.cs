@@ -534,28 +534,28 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         AssignPrison();
         switch (structure.structureType) {
-            case STRUCTURE_TYPE.FARM:
-                classManager.AddCombatantClass("Druid");
-                break;
-            case STRUCTURE_TYPE.LUMBERYARD:
-                classManager.AddCombatantClass("Archer");
-                break;
-            case STRUCTURE_TYPE.CEMETERY:
-                classManager.AddCombatantClass("Stalker");
-                break;
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                classManager.AddCombatantClass("Hunter");
-                break;
-            case STRUCTURE_TYPE.PRISON:
-                classManager.AddCombatantClass("Knight");
-                break;
-            case STRUCTURE_TYPE.MAGE_QUARTERS:
-                classManager.AddCombatantClass("Mage");
-                break;
-            case STRUCTURE_TYPE.APOTHECARY:
-                classManager.AddCombatantClass("Shaman");
-                break;
-            case STRUCTURE_TYPE.ABANDONED_MINE:
+            // case STRUCTURE_TYPE.FARM:
+            //     classManager.AddCombatantClass("Druid");
+            //     break;
+            // case STRUCTURE_TYPE.LUMBERYARD:
+            //     classManager.AddCombatantClass("Archer");
+            //     break;
+            // case STRUCTURE_TYPE.CEMETERY:
+            //     classManager.AddCombatantClass("Stalker");
+            //     break;
+            // case STRUCTURE_TYPE.HUNTER_LODGE:
+            //     classManager.AddCombatantClass("Hunter");
+            //     break;
+            // case STRUCTURE_TYPE.PRISON:
+            //     classManager.AddCombatantClass("Knight");
+            //     break;
+            // case STRUCTURE_TYPE.MAGE_QUARTERS:
+            //     classManager.AddCombatantClass("Mage");
+            //     break;
+            // case STRUCTURE_TYPE.APOTHECARY:
+            //     classManager.AddCombatantClass("Shaman");
+            //     break;
+            case STRUCTURE_TYPE.MINE_SHACK:
                 classManager.AddCivilianClass("Miner");
                 break;
         }

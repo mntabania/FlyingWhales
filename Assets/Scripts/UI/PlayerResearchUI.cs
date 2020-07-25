@@ -15,17 +15,6 @@ public class PlayerResearchUI : MonoBehaviour {
         //     .Select(x => x.character).ToList(), "Select minion", CanChooseMinion, OnHoverEnterMinion,
         //     OnHoverExitMinion, OnChooseMinion, OnConfirmExtract, "Extract");
     }
-    private void OnHoverEnterMinion(Character character) {
-        if (!CanChooseMinion(character)) {
-            string message = string.Empty;
-            if (character.minion.isAssigned) {
-                message = $"{character.name} is already doing something else.";
-            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SPELL_SOURCE)) {
-                message = $"{character.name} does not have the required trait: Spell Source";
-            }
-            UIManager.Instance.ShowSmallInfo(message);
-        }
-    }
     private void OnHoverExitMinion(Character character) {
         UIManager.Instance.HideSmallInfo();
     }

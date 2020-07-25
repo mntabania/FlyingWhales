@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Globalization;
+using Generator.Map_Generation.Components;
 using Inner_Maps;
 
 public class MapGenerator : MonoBehaviour {
@@ -18,10 +19,11 @@ public class MapGenerator : MonoBehaviour {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
-            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(),
-            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), 
-            new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new MonsterGeneration(), 
-            new MapGenerationFinalization(), new PlayerDataGeneration(),
+            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new RegionFeatureGeneration(), 
+            new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), new RegionInnerMapGeneration(), 
+            new SettlementGeneration(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
+            new RegionFeatureActivation(), new MonsterGeneration(), new MapGenerationFinalization(), 
+            new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }

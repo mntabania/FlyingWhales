@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Locations.Features;
+using Locations.Tile_Features;
 
 public class CornCrop : Crops {
     public CornCrop() : base() {

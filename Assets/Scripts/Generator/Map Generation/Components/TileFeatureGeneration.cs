@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Locations.Features;
+using Locations.Tile_Features;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -84,27 +84,6 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				HexTile tile = CollectionUtilities.GetRandomElement(gameChoices);
 				tile.featureComponent.AddFeature(TileFeatureDB.Game_Feature, tile);
 				gameChoices.Remove(tile);
-			}	
-		}
-		
-		
-		//vents
-		if (WorldConfigManager.Instance.isDemoWorld) {
-			//add poison vent to 1 tile in demo build
-			HexTile tile = GridMap.Instance.map[7, 5];
-			tile.featureComponent.AddFeature(TileFeatureDB.Poison_Vent_Feature, tile);
-		} else {
-			List<HexTile> ventChoices = GridMap.Instance.normalHexTiles.Where(h => 
-				h.featureComponent.HasFeature(TileFeatureDB.Poison_Vent_Feature) == false 
-				&& h.featureComponent.HasFeature(TileFeatureDB.Vapor_Vent_Feature) == false
-			).ToList();
-			int ventFeatures = Random.Range(1, 6);
-			for (int i = 0; i < ventFeatures; i++) {
-				if (ventChoices.Count <= 0) { break; }
-				HexTile tile = CollectionUtilities.GetRandomElement(ventChoices);
-				tile.featureComponent.AddFeature(
-					Random.Range(0, 2) == 0 ? TileFeatureDB.Poison_Vent_Feature : TileFeatureDB.Vapor_Vent_Feature, tile);
-				ventChoices.Remove(tile);
 			}	
 		}
 	}

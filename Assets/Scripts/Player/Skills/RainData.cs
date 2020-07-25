@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-using Locations.Features;
+using Locations.Tile_Features;
 
 public class RainData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.RAIN;

@@ -25,6 +25,12 @@
             AddNeededStructure(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.STONE);
+            
+            //combatant classes
+            AddCombatantClass("Knight");
+            AddCombatantClass("Barbarian");
+            AddCombatantClass("Mage");
+            AddCombatantClass("Stalker");
         }
     }
 }

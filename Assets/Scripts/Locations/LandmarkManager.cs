@@ -6,8 +6,9 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
-using Locations.Features;
+using Locations.Region_Features;
 using Locations.Settlements;
+using Locations.Tile_Features;
 using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
@@ -41,12 +42,10 @@ public partial class LandmarkManager : MonoBehaviour {
     public STRUCTURE_TYPE[] elfUtilityStructures { get; private set; }
     public STRUCTURE_TYPE[] elfCombatStructures { get; private set; }
 
-    //The Anvil
-    public Dictionary<string, AnvilResearchData> anvilResearchData;
-
     public void Initialize() {
         allSettlements = new List<BaseSettlement>();
         allNonPlayerSettlements = new List<NPCSettlement>();
+        allLandmarks = new List<BaseLandmark>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
         ConstructLocationEventsData();
@@ -86,6 +85,7 @@ public partial class LandmarkManager : MonoBehaviour {
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
         location.UpdateBuildSprites();
+        allLandmarks.Add(newLandmark);
         Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
@@ -98,12 +98,8 @@ public partial class LandmarkManager : MonoBehaviour {
         tile.UpdateBuildSprites();
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
+        allLandmarks.Remove(landmarkOnTile);
         Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile, tile);
-        // if (landmarkOnTile.specificLandmarkType.IsPlayerLandmark() && tile.region.locationType.IsSettlementType() == false) {
-        //     Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, 
-        //         tile.region.regionTileObject as IPointOfInterest, 
-        //         "target has been destroyed", JOB_TYPE.ATTACK_DEMONIC_REGION);    
-        // }
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
@@ -127,16 +123,7 @@ public partial class LandmarkManager : MonoBehaviour {
         return true;
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
-        // if (type.IsPlayerLandmark()) {
-        //     var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
-        //     System.Type systemType = System.Type.GetType(typeName);
-        //     if (systemType != null) {
-        //         return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
-        //     }
-        //     return null;
-        // } else {
-            return new BaseLandmark(location, type);
-        // }
+        return new BaseLandmark(location, type);
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
         if (data.landmarkType.IsPlayerLandmark()) {
@@ -521,9 +508,9 @@ public partial class LandmarkManager : MonoBehaviour {
     //}
     #endregion
 
-    #region Regions
+    #region Tile Features
     public T CreateTileFeature<T>([NotNull] string featureName) where T : TileFeature {
-        string typeName = $"Locations.Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        string typeName = $"Locations.Tile_Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");
         return System.Activator.CreateInstance(type) as T;
@@ -540,6 +527,15 @@ public partial class LandmarkManager : MonoBehaviour {
             return CollectionUtilities.GetRandomElement(choices);
         }
         return null;
+    }
+    #endregion
+
+    #region Region Features
+    public T CreateRegionFeature<T>([NotNull] string featureName) where T : RegionFeature {
+        string typeName = $"Locations.Region_Features.{featureName}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        Assert.IsNotNull(type, $"type for {featureName} is null!");
+        return System.Activator.CreateInstance(type) as T;
     }
     #endregion
 }

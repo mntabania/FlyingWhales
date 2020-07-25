@@ -25,6 +25,12 @@
             AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.WOOD);
+            
+            //combatant classes
+            AddCombatantClass("Archer");
+            AddCombatantClass("Hunter");
+            AddCombatantClass("Druid");
+            AddCombatantClass("Shaman");
         }
     }
 }

@@ -235,30 +235,6 @@ public class RegionInfoUI : InfoUIBase {
         // }
         
     }
-    private bool CanMinionInvade(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER);
-    }
-    private void OnHoverEnterMinionInvade(Character character) {
-        if (!CanMinionInvade(character)) {
-            string message = string.Empty;
-            if (character.minion.isAssigned) {
-                message = $"{character.name} is already doing something else.";
-            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
-                message = $"{character.name} does have not the required trait: Invader";
-            }
-            UIManager.Instance.ShowSmallInfo(message);
-        }
-    }
-    private void OnHoverExitMinionInvade(Character character) {
-        UIManager.Instance.HideSmallInfo();
-    }
-    private void ChooseMinionForInvasion(object c) {
-        Character character = c as Character;
-        chosenMinionToInvade = character.minion;
-        StartInvasion();
-        UIManager.Instance.HideObjectPicker();
-        
-    }
     public void StartInvasion() {
         activeRegion.StartInvasion(chosenMinionToInvade);
         HideStartInvasionConfirmation();

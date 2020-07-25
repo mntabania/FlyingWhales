@@ -67,10 +67,12 @@ public class SpellItem : NameplateItem<SpellData> {
                 //do not check charges if spell is minion, because minion spells always regenerate, even if they have no more charges.
                 SetCooldownState(spellData.isInCooldown);
                 StartCooldownFill();
-            } else if (spellData.hasCharges && spellData.charges <= 0) {
-                //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
-                SetCooldownState(false);
-            } else {
+            } 
+            // else if (spellData.hasCharges && spellData.charges <= 0) {
+            //     //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
+            //     SetCooldownState(false);
+            // } 
+            else {
                 SetCooldownState(spellData.isInCooldown);
                 StartCooldownFill();
             }
@@ -137,13 +139,12 @@ public class SpellItem : NameplateItem<SpellData> {
         _coverImg.fillAmount = 1f;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
-    protected void PerTickCooldown() {
+    private void PerTickCooldown() {
         float fillAmount = 1f - ((float)spellData.currentCooldownTick / spellData.cooldown);
-        // _coverImg.fillAmount = fillAmount;
-        _coverImg.DOFillAmount(fillAmount, 0.4f);
+        _coverImg.DOFillAmount(fillAmount, 0.2f);
     }
     private void StopCooldownFill() {
-        _coverImg.DOFillAmount(0f, 0.4f).OnComplete(UpdateInteractableState);
+        _coverImg.DOFillAmount(0f, 0.2f).OnComplete(UpdateInteractableState);
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     #endregion
@@ -152,6 +153,7 @@ public class SpellItem : NameplateItem<SpellData> {
         base.Reset();
         SetInteractableState(true);
         spellData = null;
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         Messenger.RemoveListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);

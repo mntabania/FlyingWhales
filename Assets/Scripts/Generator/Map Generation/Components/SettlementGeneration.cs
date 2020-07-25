@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
-using Locations.Features;
+using Locations.Tile_Features;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -54,27 +54,32 @@ public class SettlementGeneration : MapGenerationComponent {
 
 			int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
 			
-			//add 2 random combatant classes to the settlement class pool before generating any settlers.
-			List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
-			for (int i = 0; i < npcSettlement.classManager.combatantClasses.Keys.Count; i++) {
-				string unlockedClass = npcSettlement.classManager.combatantClasses.Keys.ElementAt(i);
-				randomClassChoices.Remove(unlockedClass);
-			}
-			string[] randomUnlockedClasses = new string[2];
-			for (int i = 0; i < randomUnlockedClasses.Length; i++) {
-				string randomClass = CollectionUtilities.GetRandomElement(randomClassChoices);
-				randomClassChoices.Remove(randomClass);
-				randomUnlockedClasses[i] = randomClass;
-				npcSettlement.classManager.AddCombatantClass(randomClass);
+			// //add 2 random combatant classes to the settlement class pool before generating any settlers.
+			// List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
+			// for (int i = 0; i < npcSettlement.classManager.combatantClasses.Keys.Count; i++) {
+			// 	string unlockedClass = npcSettlement.classManager.combatantClasses.Keys.ElementAt(i);
+			// 	randomClassChoices.Remove(unlockedClass);
+			// }
+			// string[] randomUnlockedClasses = new string[2];
+			// for (int i = 0; i < randomUnlockedClasses.Length; i++) {
+			// 	string randomClass = CollectionUtilities.GetRandomElement(randomClassChoices);
+			// 	randomClassChoices.Remove(randomClass);
+			// 	randomUnlockedClasses[i] = randomClass;
+			// 	npcSettlement.classManager.AddCombatantClass(randomClass);
+			// }
+
+			//Add combatant classes from faction type to location class manager
+			for (int i = 0; i < faction.factionType.combatantClasses.Count; i++) {
+				npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[i]);
 			}
 			
 			List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
 
-			//remove the 2 random classes from the settlement class pool after settlers have been generated
-			for (int i = 0; i < randomUnlockedClasses.Length; i++) {
-				string randomClass = randomUnlockedClasses[i];
-				npcSettlement.classManager.RemoveCombatantClass(randomClass);
-			}
+			// //remove the 2 random classes from the settlement class pool after settlers have been generated
+			// for (int i = 0; i < randomUnlockedClasses.Length; i++) {
+			// 	string randomClass = randomUnlockedClasses[i];
+			// 	npcSettlement.classManager.RemoveCombatantClass(randomClass);
+			// }
 
 			List<TileObject> objectsInDwellings =
 				npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Locations.Features;
+using Locations.Tile_Features;
 using UnityEngine;
 
 namespace Interrupts {

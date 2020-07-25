@@ -6,8 +6,8 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
-using Locations.Features;
 using Locations.Settlements;
+using Locations.Tile_Features;
 using Settings;
 using SpriteGlow;
 using Tutorial;
@@ -1245,15 +1245,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return false;
     }
     public void OnClickBuild() {
-        //demonicLandmarksThatCanBeBuilt.Clear();
-        //List<LANDMARK_TYPE> demonicLandmarkTypes = ;
-        //for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
-        //    demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
-        //}
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills, 
-            StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
-            , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, 
-            showCover: true, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Demonic Structure");
+        // UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills, 
+        //     StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
+        //     , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, 
+        //     showCover: true, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Demonic Structure");
     }
     private bool CanChooseLandmark(SPELL_TYPE structureType) {
         bool canChooseLandmark = true;

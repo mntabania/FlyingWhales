@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Locations.Features;
 using Locations.Settlements;
+using Locations.Tile_Features;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;

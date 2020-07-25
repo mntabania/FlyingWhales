@@ -21,15 +21,6 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         //     ConfirmSummon, "Summon", column1Optional: true
         // );
     }
-    private void OnHoverEnterMinion(Character character) {
-        if (!CanChooseMinion(character)) {
-            string message = string.Empty;
-            if (character.minion.isAssigned) {
-                message = $"{character.name} is already doing something else.";
-            }
-            UIManager.Instance.ShowSmallInfo(message);
-        }
-    }
     private void OnHoverExitMinion(Character character) {
         UIManager.Instance.HideSmallInfo();
     }
@@ -51,12 +42,6 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         //}
         // portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
         
-    }
-    #endregion
-
-    #region Minion
-    private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned;
     }
     #endregion
 
