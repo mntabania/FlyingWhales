@@ -13,6 +13,7 @@ public class StructureInfoUI : InfoUIBase {
     [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private LocationPortrait locationPortrait;
 
     [Space(10)]
     [Header("Info")]
@@ -64,6 +65,11 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = $"{activeStructure.nameplateName}";
+        if (activeStructure.occupiedHexTile.hexTileOwner != null) {
+            locationPortrait.SetPortrait(activeStructure.occupiedHexTile.hexTileOwner.landmarkOnTile.landmarkPortrait);    
+        } else {
+            locationPortrait.SetPortrait(activeStructure.structureType.GetLandmarkType());
+        }
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";
