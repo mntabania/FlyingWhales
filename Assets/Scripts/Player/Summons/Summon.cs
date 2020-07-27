@@ -226,6 +226,7 @@ public class Summon : Character {
 
         AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
         AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
+        AddPlayerAction(SPELL_TYPE.AGITATE);
     }
     #endregion
 

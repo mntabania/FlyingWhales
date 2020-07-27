@@ -21,9 +21,9 @@
     
     #region State Effects
     public void AfterBurnSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.marker.animationListener.CreateProjectile(goapNode.poiTarget, null, (damagable, state) => OnHitTarget(damagable, state, goapNode.actor));
+        goapNode.actor.marker.animationListener.CreateProjectile(goapNode.poiTarget, null, (damagable, state, projectile) => OnHitTarget(damagable, state, projectile, goapNode.actor));
     }
-    private void OnHitTarget(IDamageable damageable, CombatState state, Character actor) {
+    private void OnHitTarget(IDamageable damageable, CombatState state, Projectile projectile, Character actor) {
         if (damageable is IPointOfInterest poi) {
             poi.traitContainer.AddTrait(poi, "Burning", actor,  bypassElementalChance: true);
         }

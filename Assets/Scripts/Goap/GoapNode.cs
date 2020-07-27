@@ -313,6 +313,9 @@ public class ActualGoapNode : IReactable, IRumorable {
         }
     }
     private void CheckAndMoveToDoAction(JobQueueItem job) {
+        if(actor.currentActionNode != this) {
+            return;
+        }
         if(job.originalOwner == null) {
             //If somehow job is no longer available or is destroyed when trying to move to do action, do not continue
             //This happens when job is cancelled while actor is travelling to another region
@@ -340,9 +343,6 @@ public class ActualGoapNode : IReactable, IRumorable {
         }
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.location) { //different core locations
-            if(targetTile == null) {
-
-            }
             if (actor.carryComponent.masterCharacter.movementComponent.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job)) == false) {
                 //character cannot exit region.
                 return false;

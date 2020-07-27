@@ -43,6 +43,9 @@ namespace Traits {
         /// <returns>If the trait was added or not.</returns>
         public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, 
             ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+            if (TraitValidator.CanAddTraitGeneric(addTo, trait.name, this) == false) {
+                return false;
+            }
             if (TraitManager.Instance.IsTraitElemental(trait.name)) {
                 return TryAddElementalStatus(addTo, trait, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
             }
@@ -50,6 +53,10 @@ namespace Traits {
         }
         public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, 
             ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+            if (TraitValidator.CanAddTraitGeneric(addTo, traitName, this) == false) {
+                trait = null;
+                return false;
+            }
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
                 return TryAddElementalStatus(addTo, traitName, out trait, characterResponsible, 
                     gainedFromDoing, bypassElementalChance, overrideDuration);
@@ -58,6 +65,9 @@ namespace Traits {
         }
         public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, 
             ActualGoapNode gainedFromDoing = null, bool bypassElementalChance = false, int overrideDuration = -1) {
+            if (TraitValidator.CanAddTraitGeneric(addTo, traitName, this) == false) {
+                return false;
+            }
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
                 return TryAddElementalStatus(addTo, traitName, characterResponsible, gainedFromDoing, bypassElementalChance, overrideDuration);
             }

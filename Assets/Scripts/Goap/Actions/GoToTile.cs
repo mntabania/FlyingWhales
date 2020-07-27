@@ -1,4 +1,7 @@
 ﻿public class GoToTile : GoapAction {
+
+    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
+
     public GoToTile() : base(INTERACTION_TYPE.GO_TO_TILE) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL;

@@ -521,6 +521,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         // }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combat, ref string attackSummary) {
+        if (characterThatAttacked == null) {
+            return;
+        }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         //GameManager.Instance.CreateHitEffectAt(this, elementalType);
         if (currentHP <= 0) {

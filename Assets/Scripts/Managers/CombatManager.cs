@@ -15,6 +15,8 @@ public class CombatManager : MonoBehaviour {
         Threatened = "Threatened", Anger = "Anger", Join_Combat = "Join Combat", Drunk = "Drunk", Rage = "Rage", Demon_Kill = "Demon Kill";
 
     [SerializeField] private ProjectileDictionary _projectileDictionary;
+    [SerializeField] private GameObject _dragonProjectile;
+
 
     public delegate void ElementalTraitProcessor(ITraitable target, Trait trait);
     
@@ -52,6 +54,7 @@ public class CombatManager : MonoBehaviour {
                 elementalTraitProcessor?.Invoke(target, trait);
             }
         }
+        GeneralElementProcess(target, characterResponsible);
         if(elementalType == ELEMENTAL_TYPE.Earth) {
             EarthElementProcess(target);
         } else if (elementalType == ELEMENTAL_TYPE.Wind) {
@@ -333,6 +336,13 @@ public class CombatManager : MonoBehaviour {
             target.traitContainer.RemoveTrait(target, "Indestructible");
         }
     }
+    private void GeneralElementProcess(ITraitable target, Character source) {
+        if(source != null && source.faction != null && source.faction.isPlayerFaction) {
+            if(target is Dragon dragon && dragon.isAwakened) {
+                dragon.SetIsAttackingPlayer(true);
+            }
+        }
+    }
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {
         if (trait is Burning burning) {
             //by default, will create new burning source for every burning trait.
@@ -343,10 +353,13 @@ public class CombatManager : MonoBehaviour {
     #endregion
 
     #region Projectiles
-    public Projectile CreateNewProjectile(ELEMENTAL_TYPE elementalType, Transform parent, Vector3 worldPos) {
-        GameObject projectileGO =
-            ObjectPoolManager.Instance.InstantiateObjectFromPool(_projectileDictionary[elementalType].name,
-                worldPos, Quaternion.identity, parent, true);
+    public Projectile CreateNewProjectile(Character actor, ELEMENTAL_TYPE elementalType, Transform parent, Vector3 worldPos) {
+        GameObject projectileGO = null;
+        if (actor != null && actor is Dragon) {
+            projectileGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(_dragonProjectile.name, worldPos, Quaternion.identity, parent, true);
+        } else {
+            projectileGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(_projectileDictionary[elementalType].name, worldPos, Quaternion.identity, parent, true);
+        }
         return projectileGO.GetComponent<Projectile>();
     }
     #endregion

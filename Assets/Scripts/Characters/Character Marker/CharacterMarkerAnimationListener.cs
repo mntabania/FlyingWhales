@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps;
 
 [ExecuteInEditMode]
 public class CharacterMarkerAnimationListener : MonoBehaviour {
-
+    
     [SerializeField] private CharacterMarker parentMarker;
     private float _timeElapsed;
     private bool isExecutingAttack;
@@ -62,12 +63,12 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             }
         }
     }
-    public void CreateProjectile(IDamageable target, CombatState state, Action<IDamageable, CombatState> onHitAction = null) {
+    public void CreateProjectile(IDamageable target, CombatState state, Action<IDamageable, CombatState, Projectile> onHitAction = null) {
         if (target == null || target.currentHP <= 0) {
             return;
         }
         //Create projectile here and set the on hit action to combat state OnAttackHit
-        Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
+        Projectile projectile = CombatManager.Instance.CreateNewProjectile(parentMarker.character, parentMarker.character.combatComponent.elementalDamage.type, parentMarker.character.currentRegion.innerMap.objectsParent, parentMarker.projectileParent.transform.position);
         projectile.SetTarget(target.projectileReceiver.transform, target, state, parentMarker.character);
         if (onHitAction != null) {
             projectile.onHitAction = onHitAction;
@@ -83,7 +84,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     /// </summary>
     /// <param name="target">The character that was hit.</param>
     /// <param name="fromState">The projectile was created from this combat state.</param>
-    private void OnProjectileHit(IDamageable target, CombatState fromState) {
+    private void OnProjectileHit(IDamageable target, CombatState fromState, Projectile projectile) {
         //fromState.OnAttackHit(character);
         if (parentMarker.character != null) {
             if (target.gridTileLocation != null) {
@@ -91,10 +92,26 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                     target.gridTileLocation, 1, false);    
             }
             if (parentMarker.character.stateComponent.currentState is CombatState combatState) {
-                combatState.OnAttackHit(target);
+                if (projectile.isAOE) {
+                    List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, 0, true, true); //radius
+                    for (int i = 0; i < tiles.Count; i++) {
+                        LocationGridTile tile = tiles[i];
+                        tile.PerformActionOnTraitables((traitable) => combatState.OnAttackHit(traitable == parentMarker.character ? null : traitable));
+                    }
+                } else {
+                    combatState.OnAttackHit(target);
+                }
             } else if (target != null) {
                 string attackSummary = $"{parentMarker.character.name} hit {target.name}, outside of combat state";
-                target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
+                if (projectile.isAOE) {
+                    List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, 0, true, true); //radius
+                    for (int i = 0; i < tiles.Count; i++) {
+                        LocationGridTile tile = tiles[i];
+                        tile.PerformActionOnTraitables((traitable) => traitable.OnHitByAttackFrom(traitable == parentMarker.character ? null : parentMarker.character, fromState, ref attackSummary));
+                    }
+                } else {
+                    target.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
+                }
                 parentMarker.character.logComponent.PrintLogIfActive(attackSummary);
             }    
         }

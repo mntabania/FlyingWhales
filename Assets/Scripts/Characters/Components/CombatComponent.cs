@@ -209,7 +209,7 @@ public class CombatComponent {
             Character targetCharacter = target as Character;
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
-                if(owner.race == RACE.DEMON) {
+                if(owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
                     debugLog += "\n-Character is a demon";
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
@@ -230,7 +230,7 @@ public class CombatComponent {
                         owner.logComponent.PrintLogIfActive(debugLog);
                         return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                     } else {
-                        if (owner.race == RACE.DEMON) {
+                        if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
                             debugLog += "\n-Character is a demon";
                             debugLog += "\n-FIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
@@ -252,7 +252,7 @@ public class CombatComponent {
                         debugLog += "\n-Character hp is lower or equal than target";
                         if (CombatManager.Instance.IsImmuneToElement(targetCharacter, elementalDamage.type)) {
                             debugLog += "\n-Target is immune to character elemental damage";
-                            if (owner.race == RACE.DEMON) {
+                            if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
                                 debugLog += "\n-Character is a demon";
                                 debugLog += "\n-FIGHT";
                                 owner.logComponent.PrintLogIfActive(debugLog);
@@ -290,7 +290,7 @@ public class CombatComponent {
                                     owner.logComponent.PrintLogIfActive(debugLog);
                                     return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                                 } else {
-                                    if (owner.race == RACE.DEMON) {
+                                    if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
                                         debugLog += "\n-Character is a demon";
                                         debugLog += "\n-FIGHT";
                                         owner.logComponent.PrintLogIfActive(debugLog);
@@ -310,7 +310,7 @@ public class CombatComponent {
             debugLog += "\n-Target is object";
             if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
-                if (owner.race == RACE.DEMON) {
+                if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
                     debugLog += "\n-Character is a demon";
                     debugLog += "\n-FIGHT";
                     owner.logComponent.PrintLogIfActive(debugLog);
@@ -328,7 +328,7 @@ public class CombatComponent {
                     owner.logComponent.PrintLogIfActive(debugLog);
                     return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                 } else {
-                    if (owner.race == RACE.DEMON) {
+                    if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
                         debugLog += "\n-Character is a demon";
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
@@ -450,7 +450,7 @@ public class CombatComponent {
         }
         //Demons no longer trigger Flight
         //https://trello.com/c/D4bdwPhH/1104-demons-and-monsters-no-longer-trigger-flight
-        if (owner.race == RACE.DEMON) {
+        if (owner.race == RACE.DEMON || owner.race == RACE.DRAGON) {
             return;
         }
         if (hostilesInRange.Count > 0) {

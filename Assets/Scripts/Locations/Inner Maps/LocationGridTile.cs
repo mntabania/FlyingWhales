@@ -881,18 +881,18 @@ namespace Inner_Maps {
             }
             return nearestStructure;
         }
-        public LocationStructure GetNearestVillageStructureFromThisWithResidents() {
+        public LocationStructure GetNearestVillageStructureFromThisWithResidents(Character relativeTo = null) {
             LocationStructure nearestStructure = null;
             if (structure != null) {
                 if (structure.location.allStructures.Count > 0) {
                     float nearestDist = 99999f;
                     for (int i = 0; i < structure.location.allStructures.Count; i++) {
                         LocationStructure currStructure = structure.location.allStructures[i];
-                        if (currStructure != structure && currStructure.settlementLocation != null 
+                        if (currStructure != structure && currStructure.settlementLocation != null && !(currStructure.settlementLocation is PlayerSettlement)
                             && currStructure.settlementLocation.owner != null && currStructure.settlementLocation.residents.Count > 0) {
                             if (currStructure.settlementLocation.owner.isMajorNonPlayer) {
                                 LocationGridTile randomPassableTile = currStructure.GetRandomPassableTile();
-                                if (randomPassableTile != null && PathfindingManager.Instance.HasPath(this, randomPassableTile)) {
+                                if (randomPassableTile != null && ((relativeTo != null && relativeTo.movementComponent.HasPathTo(randomPassableTile)) || PathfindingManager.Instance.HasPath(this, randomPassableTile))) {
                                     float dist = Vector2.Distance(randomPassableTile.localLocation, localLocation);
                                     if (nearestStructure == null || dist < nearestDist) {
                                         nearestStructure = currStructure;

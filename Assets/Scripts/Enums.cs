@@ -510,6 +510,9 @@ public enum INTERACTION_TYPE {
     RAID,
     COOK,
     BUILD_COOKING_CAULDRON,
+    FLEE_CRIME,
+    HOST_SOCIAL_PARTY,
+    SOCIALIZE,
 }
 public enum INTERRUPT {
     None,
@@ -859,7 +862,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
-        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID,
+        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
@@ -963,7 +966,7 @@ public enum SPELL_TYPE { NONE, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNE
     CULTIST_TRANSFORM,
     CULTIST_POISON,
     CULTIST_BOOBY_TRAP,
-    VENGEFUL_GHOST, WURM,
+    VENGEFUL_GHOST, WURM, TROLL,
 }
 //public enum INTERVENTION_ABILITY_TYPE { NONE, AFFLICTION, SPELL, }
 public enum SPELL_CATEGORY { NONE, SPELL, AFFLICTION, PLAYER_ACTION, DEMONIC_STRUCTURE, MINION, SUMMON }
@@ -1050,7 +1053,7 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, }
+public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Social, }
 public enum COMBAT_REACTION { None, Fight, Flight }
 
 #region Crime Subcategories
@@ -1439,6 +1442,7 @@ public static class Extensions {
             case JOB_TYPE.COMBAT:
                 priority = 1090;
                 break;
+            case JOB_TYPE.FLEE_CRIME:
             case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.DESTROY:
             case JOB_TYPE.BERSERK_STROLL:
@@ -1580,6 +1584,7 @@ public static class Extensions {
                 priority = 500;
                 break;
             case JOB_TYPE.PARTY_GO_TO:
+            case JOB_TYPE.PARTYING:
                 priority = 490;
                 break;
             case JOB_TYPE.HUNT_PSYCHOPATH_VICTIM:
@@ -1592,6 +1597,7 @@ public static class Extensions {
             case JOB_TYPE.RESCUE:
             case JOB_TYPE.JOIN_PARTY:
             case JOB_TYPE.RAID:
+            case JOB_TYPE.HOST_SOCIAL_PARTY:
                 priority = 450;
                 break;
             case JOB_TYPE.MINE:

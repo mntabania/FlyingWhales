@@ -14,9 +14,10 @@ public class Projectile : PooledObject {
     [SerializeField] private ParticleSystem collisionParticles;
     [SerializeField] private ParticleCallback collisionParticleCallback;
     [SerializeField] private TrailRenderer _lineRenderer;
+    public bool isAOE;
     
     public IDamageable targetObject { get; private set; }
-    public System.Action<IDamageable, CombatState> onHitAction;
+    public System.Action<IDamageable, CombatState, Projectile> onHitAction;
 
     private Vector3 _pausedVelocity;
     private float _pausedAngularVelocity;
@@ -81,7 +82,7 @@ public class Projectile : PooledObject {
         _hasHit = true;
         tween?.Kill();
         if (projectileParticles != null) { projectileParticles.Stop(); }
-        onHitAction?.Invoke(poi, createdBy);
+        onHitAction?.Invoke(poi, createdBy, this);
         _collider.enabled = false;
         collisionParticles.Play(true);
     }

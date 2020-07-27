@@ -12,16 +12,20 @@ public class Dragon : Summon {
     public bool isAttackingPlayer { get; private set; }
     public bool willLeaveWorld { get; private set; }
     public LocationStructure targetStructure { get; private set; }
+    private int _leaveWorldCounter;
+    private readonly int _leaveWorldTimer;
 
     public Dragon() : base(SUMMON_TYPE.Dragon, "Dragon", RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
+        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(5);
     }
     public Dragon(string className) : base(SUMMON_TYPE.Dragon, className, RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
+        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(5);
     }
     public Dragon(SaveDataCharacter data) : base(data) { }
 
@@ -30,16 +34,12 @@ public class Dragon : Summon {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
-    //public override void SubscribeToSignals() {
-    //    base.SubscribeToSignals();
-    //    Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-    //    Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-    //}
-    //public override void UnsubscribeSignals() {
-    //    base.UnsubscribeSignals();
-    //    Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-    //    Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-    //}
+    protected override void OnTickStarted() {
+        base.OnTickStarted();
+        if (isAwakened && !willLeaveWorld) {
+            CheckLeaveWorld();
+        }
+    }
     #endregion
 
     public void Awaken() {
@@ -47,12 +47,19 @@ public class Dragon : Summon {
             isAwakened = true;
             traitContainer.RemoveTrait(this, "Immune");
             traitContainer.RemoveTrait(this, "Hibernating");
-            StartLeaveWorldTimer();
+            //StartLeaveWorldTimer();
         }
     }
 
     public void SetIsAttackingPlayer(bool state) {
         isAttackingPlayer = state;
+    }
+
+    private void CheckLeaveWorld() {
+        _leaveWorldCounter++;
+        if(_leaveWorldCounter >= _leaveWorldTimer) {
+            LeaveWorld();
+        }
     }
     public void SetWillLeaveWorld(bool state) {
         if(willLeaveWorld != state) {
@@ -71,11 +78,11 @@ public class Dragon : Summon {
         }
         SetWillLeaveWorld(true);
     }
-    private void StartLeaveWorldTimer() {
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
-        SchedulingManager.Instance.AddEntry(dueDate, LeaveWorld, this);
-    }
+    //private void StartLeaveWorldTimer() {
+    //    GameDate dueDate = GameManager.Instance.Today();
+    //    dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+    //    SchedulingManager.Instance.AddEntry(dueDate, LeaveWorld, this);
+    //}
     public void SetTargetStructure(LocationStructure structure) {
         targetStructure = structure;
     }
@@ -83,7 +90,7 @@ public class Dragon : Summon {
         targetStructure = gridTileLocation.GetNearestVillageStructureFromThisWithResidents();
     }
     public void SetPlayerTargetStructure() {
-        targetStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructureInRegion(gridTileLocation.structure.location);
+        targetStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
     }
     public void ResetTargetStructure() {
         targetStructure = null;
