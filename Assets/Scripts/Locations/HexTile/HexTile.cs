@@ -8,9 +8,7 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Settlements;
 using Locations.Tile_Features;
-using Settings;
 using SpriteGlow;
-using Tutorial;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -1226,111 +1224,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #endregion
 
     #region Demonic Structure Building
+    private AutoDestroyParticle _buildParticles;
     public bool CanBuildDemonicStructure() {
-        //Cannot build on settlements and hextiles with blueprints right now
-        if(/*isCorrupted && isCurrentlyBeingCorrupted == false &&*/ settlementOnTile == null && landmarkOnTile == null 
-               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN 
-               /*&& PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost*/ && _buildParticles == null) {
-
-            //TODO:
-            // //if it has any build spots that have a blueprint on them, do not allow
-            // for (int i = 0; i < ownedBuildSpots.Length; i++) {
-            //     BuildingSpot spot = ownedBuildSpots[i];
-            //     if (spot.hasBlueprint) {
-            //         return false;
-            //     }
-            // }
+        //Cannot build on settlements and hex tiles with blueprints right now
+        if(settlementOnTile == null && landmarkOnTile == null 
+               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN && _buildParticles == null) {
             return true;
         }
         return false;
     }
-    public void OnClickBuild() {
-        // UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills, 
-        //     StartBuildConfirmation, null, CanChooseLandmark, "Choose a structure to build"
-        //     , OnHoverStructureChoice, OnHoverExitStructureChoice, portraitGetter: GetStructurePortrait, 
-        //     showCover: true, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Demonic Structure");
-    }
-    private bool CanChooseLandmark(SPELL_TYPE structureType) {
-        bool canChooseLandmark = true;
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            canChooseLandmark = WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(structureType) 
-                   && PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
-        } else {
-            if (structureType == SPELL_TYPE.EYE && region.HasStructure(STRUCTURE_TYPE.EYE)) {
-                canChooseLandmark = false; //only 1 eye per region.
-            }
-            if (structureType == SPELL_TYPE.MEDDLER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
-                canChooseLandmark = false; //only 1 finger at a time.
-            }    
-        }
-        
-        if (canChooseLandmark) {
-            if (structureType == SPELL_TYPE.TORTURE_CHAMBERS) {
-                return
-                    TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Torture_Chambers) ||
-                    TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Torture_Chambers) ||
-                    SettingsManager.Instance.settings.skipTutorials;
-            } else if (structureType == SPELL_TYPE.KENNEL) {
-                return
-                    TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
-                    TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel) ||
-                    SettingsManager.Instance.settings.skipTutorials;
-            } else if (structureType == SPELL_TYPE.EYE) {
-                return
-                    TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Share_An_Intel) ||
-                    TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel) ||
-                    SettingsManager.Instance.settings.skipTutorials;
-            }
-        }
-        return canChooseLandmark;
-    }
-    private void OnHoverStructureChoice(SPELL_TYPE structureType) {
-        //string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
-        DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
-        //string info = demonicStructureSkill.description + "\n" + demonicStructureSkill.GetManaCostChargesCooldownStr();
-        //UIManager.Instance.ShowSmallInfo(info);
-
-        PlayerUI.Instance.OnHoverSpell(demonicStructureSkill);
-
-        //if (info != string.Empty) {
-        //    info += "\n";
-        //}
-        //info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
-    }
-    private void OnHoverExitStructureChoice(SPELL_TYPE structureType) {
-        //UIManager.Instance.HideSmallInfo();
-        PlayerUI.Instance.OnHoverOutSpell(null);
-    }
-    private Sprite GetStructurePortrait(string name) {
-        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(name);
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
-        return landmarkData.defaultLandmarkPortrait;
-    }
-
-    private void StartBuildConfirmation(object structureObj) {
-        SPELL_TYPE structureType = (SPELL_TYPE) structureObj;
-        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
-
-        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(structureType);
-        
-        string question = string.Empty;
-        if (IsNextToOrPartOfVillage()) {
-            question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
-            question += "\nAre you sure you want to build " + spellData.name + "?";
-        } else {
-            question = "Are you sure you want to build " + spellData.name + "?";
-        }
-        UIManager.Instance.ShowYesNoConfirmation("Build Structure Confirmation", question, () => StartBuild(structureType));
-    }
-    private AutoDestroyParticle _buildParticles;
     public void StartBuild(SPELL_TYPE structureType) {
         _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
             PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
-        // UIManager.Instance.HideObjectPicker();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.OnExecuteSpellActionAffliction();
-        // PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.BUILD_DEMONIC_STRUCTURE).OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));
     }
     private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {

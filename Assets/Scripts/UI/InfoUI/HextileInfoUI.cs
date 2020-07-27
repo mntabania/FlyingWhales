@@ -46,7 +46,9 @@ public class HextileInfoUI : InfoUIBase {
         if (currentlyShowingHexTile.landmarkOnTile != null) {
             _locationPortrait.SetPortrait(currentlyShowingHexTile.landmarkOnTile.landmarkPortrait);    
         } else {
-            _locationPortrait.SetPortrait(LANDMARK_TYPE.NONE);
+            _locationPortrait.SetPortrait(currentlyShowingHexTile.elevationType == ELEVATION.MOUNTAIN
+                ? LANDMARK_TYPE.CAVE
+                : LANDMARK_TYPE.NONE);
         }
         nameLbl.text = currentlyShowingHexTile.GetDisplayName();
         tileTypeLbl.text = currentlyShowingHexTile.GetSubName();

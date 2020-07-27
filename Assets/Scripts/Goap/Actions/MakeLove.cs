@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using System.Linq;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using UnityEngine.Assertions;
@@ -94,8 +95,17 @@ public class MakeLove : GoapAction {
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = node.poiTarget as Character;
             Assert.IsNotNull(targetCharacter, $"Make love of {node.actor.name} is not a character! {node.poiTarget?.ToString() ?? "Null"}");
-            Bed bed = GetValidBedForActor(node.actor, targetCharacter);
-            if (bed == null ||  bed.IsAvailable() == false || bed.GetActiveUserCount() > 0) {
+            Bed targetBed = node.actor.gridTileLocation.objHere as Bed;
+            if (targetBed == null) {
+                //check neighbours
+                for (int i = 0; i < node.actor.gridTileLocation.neighbourList.Count; i++) {
+                    LocationGridTile neighbour = node.actor.gridTileLocation.neighbourList[i];
+                    if (neighbour.objHere is Bed bed) {
+                        targetBed = bed;
+                    }
+                }
+            }
+            if (targetBed == null ||  targetBed.IsAvailable() == false || targetBed.GetActiveUserCount() > 0) {
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Make Love Fail";
             }
@@ -230,9 +240,19 @@ public class MakeLove : GoapAction {
 
     #region Effects
     public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
-        //TODO: This is unsafe, code will not work when structure has more than 1 bed
         Character targetCharacter = goapNode.poiTarget as Character;
-        Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
+        Assert.IsNotNull(targetCharacter, $"Target character of Make Love Action by {goapNode.actor.name} is not a character!");
+        Bed bed = goapNode.actor.gridTileLocation.objHere as Bed;
+        if (bed == null) {
+            //check neighbours
+            for (int i = 0; i < goapNode.actor.gridTileLocation.neighbourList.Count; i++) {
+                LocationGridTile neighbour = goapNode.actor.gridTileLocation.neighbourList[i];
+                if (neighbour.objHere is Bed targetBed) {
+                    bed = targetBed;
+                }
+            }
+        }
+        Assert.IsNotNull(bed, $"Target bed of Make Love Action by {goapNode.actor.name} targeting {goapNode.poiTarget.name} is null!");
 
         goapNode.actor.UncarryPOI(targetCharacter, dropLocation: bed.gridTileLocation);
 
@@ -245,10 +265,7 @@ public class MakeLove : GoapAction {
         targetCharacter.jobComponent.IncreaseNumOfTimesActionDone(this);
 
         targetCharacter.SetCurrentActionNode(goapNode.actor.currentActionNode, goapNode.actor.currentJob, goapNode.actor.currentPlan);
-        GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         goapNode.descriptionLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-        //TODO: currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
     public void PerTickMakeLoveSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;

@@ -130,11 +130,17 @@ public class CharacterMarkerNameplate : PooledObject {
     }
     private void UpdateSizeBasedOnZoom() {
         float fovDiff = InnerMapCameraMove.Instance.currentFOV - InnerMapCameraMove.Instance.minFOV;
-        float spriteSize = (_parentMarker.character.visuals.defaultSprite.rect.width - 20f);
+        float spriteSize = _parentMarker.character.visuals.selectableSize.y * 100f;
         if (_parentMarker.character.grave != null) {
-            spriteSize = DefaultSize;
+            spriteSize = DefaultSize - (fovDiff * 4f);
+        } else {
+            if (_parentMarker.character is Dragon) {
+                spriteSize -= (12f * fovDiff);  
+            } else {
+                spriteSize -= (4f * fovDiff);
+            }
         }
-        float size = spriteSize - (fovDiff * 4f);
+        float size = spriteSize; //- (fovDiff * 4f);
         thisRect.sizeDelta = new Vector2(size, size);
     }
     public void UpdateElementsStateBasedOnActiveCharacter() {
