@@ -41,7 +41,6 @@ public static class Signals {
     public static string AREA_CREATED = "OnAreaCreated"; //Parameters (NPCSettlement newNpcSettlement)
     public static string LOCATION_MAP_OPENED = "OnAreaMapOpened"; //parameters (NPCSettlement npcSettlement)
     public static string LOCATION_MAP_CLOSED = "OnAreaMapClosed"; //parameters (NPCSettlement npcSettlement)
-    public static string REGION_CHANGE_STORAGE = "OnRegionChangeStorage";
     /// <summary>
     /// Parameters (NPCSettlement)
     /// </summary>

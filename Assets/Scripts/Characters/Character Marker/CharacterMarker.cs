@@ -1496,7 +1496,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (chosenTile != null) {
             if (character.currentRegion != chosenTile.structure.location) {
-                if (character.carryComponent.masterCharacter.movementComponent.GoToLocation(destinationTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
+                if (character.carryComponent.masterCharacter.movementComponent.GoToLocation(chosenTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
                     OnStartFlee();
                 }
             } else {
