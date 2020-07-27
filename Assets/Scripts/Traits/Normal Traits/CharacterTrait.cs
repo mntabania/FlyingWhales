@@ -53,13 +53,15 @@ namespace Traits {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.TriggerDestroy(item);
                     }
-                } else if (item is Excalibur excalibur && excalibur.lockedState == Excalibur.Locked_State.Locked && characterThatWillDoJob.isNormalCharacter) {
-                    if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) == false) {
+                } else if (item is Excalibur excalibur && excalibur.lockedState == Excalibur.Locked_State.Locked && 
+                           characterThatWillDoJob.isNormalCharacter && !excalibur.HasInspectedThis(characterThatWillDoJob)) {
+                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) && 
+                        !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))) {
-                    if ((characterThatWillDoJob.jobQueue.jobsInQueue.Count == 0 || characterThatWillDoJob.jobQueue.jobsInQueue[0].priority < JOB_TYPE.TAKE_ITEM.GetJobTypePriority()) 
-                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
+                    if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) 
+                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
                             int chance = 100;

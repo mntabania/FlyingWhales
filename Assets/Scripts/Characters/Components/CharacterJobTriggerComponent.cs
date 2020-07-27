@@ -247,6 +247,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool RemovePriorityJob(JOB_TYPE jobType) {
         return priorityJobs.Remove(jobType);
     }
+    /// <summary>
+    /// Does this character have a job that is higher priority than the
+    /// given job type.
+    /// </summary>
+    /// <param name="jobType">The job type to compare to.</param>
+    /// <returns>True or false</returns>
+    public bool HasHigherPriorityJobThan(JOB_TYPE jobType) {
+	    if (_owner.jobQueue.jobsInQueue.Count == 0) {
+		    return false;
+	    } else {
+		    return _owner.jobQueue.jobsInQueue[0].priority > jobType.GetJobTypePriority();
+	    }
+    }
     #endregion
 
     #region General Jobs
