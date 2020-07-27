@@ -784,7 +784,7 @@ public class ReactionComponent {
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
         if(actor is Troll) {
             if(targetTileObject is BallLightningTileObject || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
-                CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, actor, targetTileObject, REACTION_STATUS.WITNESSED);
+                actor.combatComponent.Flight(targetTileObject, "saw something frightening");
             } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is Gold || targetTileObject is Diamond) {
                 actor.jobComponent.CreateDropItemJob(targetTileObject, actor.homeStructure);
             }

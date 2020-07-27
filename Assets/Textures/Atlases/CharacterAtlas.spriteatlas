@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 5554711
+    totalSpriteSurfaceArea: 5587479
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -524,6 +524,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4e6e48b9940ff9a40a66a35d0f810874, type: 3}
   - {fileID: 21300000, guid: dbde9cb9247132e4bb24bf7708c25707, type: 3}
   - {fileID: 21300000, guid: 664cafb9e3c288f44bb270a8226beefc, type: 3}
+  - {fileID: 21300000, guid: d89e10c9ca76dc743981352cd19fc696, type: 3}
   - {fileID: 21300000, guid: 378199c957979bd4a99755f241f96d3d, type: 3}
   - {fileID: 21300000, guid: a2b7aec9441c636438b962c9b182bceb, type: 3}
   - {fileID: 21300000, guid: dcfaeec91e67fd444a184945818db4d3, type: 3}
@@ -776,6 +777,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 1ba928ae2f427cc40ae55b7f17eea108, type: 3}
   - {fileID: 21300000, guid: b1e7b9ae9f504684ea462f8a412fb57f, type: 3}
   - {fileID: 21300000, guid: b4d922bee6f8ada499936414a428b32a, type: 3}
+  - {fileID: 21300000, guid: 572de4befd6b68b489435dac4073f8bb, type: 3}
   - {fileID: 21300000, guid: fb2ba9bee785a8243ac1340b7ac8349b, type: 3}
   - {fileID: 21300000, guid: 365d6fbe9ffcff1449a3a418d63a558f, type: 3}
   - {fileID: 21300000, guid: ef5a64ce272523f449af63086e9e8922, type: 3}
@@ -1319,6 +1321,7 @@ SpriteAtlas:
   - idle_1
   - idle_1
   - attack_1
+  - sleep_1
   - dead_1
   - walk_2
   - idle_3
@@ -1571,6 +1574,7 @@ SpriteAtlas:
   - interact_2
   - interact_3
   - interact_2
+  - sleep_1
   - idle_2
   - idle_3
   - interact_1

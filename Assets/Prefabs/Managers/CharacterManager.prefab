@@ -1249,6 +1249,7 @@ MonoBehaviour:
           animationSprites:
           - {fileID: 21300000, guid: a688e8e52b1d59644bb3a7bc755d5f63, type: 3}
           - {fileID: 21300000, guid: bc21b881f382910419a8ac910329d678, type: 3}
+          - {fileID: 21300000, guid: 572de4befd6b68b489435dac4073f8bb, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []
@@ -2375,6 +2376,7 @@ MonoBehaviour:
           animationSprites:
           - {fileID: 21300000, guid: d756e68bd7f471545bfc87dcc1460d03, type: 3}
           - {fileID: 21300000, guid: c0f5569582b99334293e60f15c790983, type: 3}
+          - {fileID: 21300000, guid: d89e10c9ca76dc743981352cd19fc696, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

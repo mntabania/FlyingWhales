@@ -676,12 +676,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         } else {
             ResetBlood();
             if (character.numOfActionsBeingPerformedOnThis > 0) {
-                if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating") || !(character is Golem))) {
+                if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || !(character is Golem))) {
                     PlaySleepGround();
                 } else {
                     PlayIdle();
                 }
-            } else if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating") || !(character is Golem))) {
+            } else if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || !(character is Golem))) {
                 PlaySleepGround();
             } else if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false && character.carryComponent.masterCharacter.avatar.isTravelling) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL

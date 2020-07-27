@@ -116,22 +116,24 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
 
-                log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
+                log += "\n-If it is Early Night, 10% chance to Host Social Party at Inn";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT && character.trapStructure.IsTrapped() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = Random.Range(0, 100);
                     log += $"\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 35) {
+                    if (chance < 10) {
                         if (character.traitContainer.HasTrait("Agoraphobic")) {
-                            log += "\n  -Character is agoraphobic, not going to inn";
+                            log += "\n  -Character is agoraphobic, not hosting social party";
                         } else {
                             //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                            LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                            LocationStructure structure = character.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.INN);
                             if (structure != null) {
                                 log +=
-                                    $"\n  -Early Night: {character.name} will go to Inn and set Base Structure for 2.5 hours";
-                                character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob, new object[] { structure });
-                                return true;
+                                    $"\n  -Early Night: {character.name} host a social party at Inn";
+                                if(character.jobComponent.TriggerHostSocialPartyJob(out producedJob)) {
+                                    return true;
+                                }
+                                //character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, out producedJob, new object[] { structure });
                             }
                             log += "\n  -No Inn Structure in the npcSettlement";
                         }

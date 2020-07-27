@@ -2404,6 +2404,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="attackSummary">reference log of what happened.</param>
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState combat, ref string attackSummary) {
         // CombatManager.Instance.CreateHitEffectAt(this, elementalType);
+        if(characterThatAttacked == null) {
+            return;
+        }
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
@@ -2472,7 +2475,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         
-        if ((amount < 0  && CanBeDamaged()) || amount > 0) {
+        if ((amount < 0 && CanBeDamaged()) || amount > 0) {
             //only added checking here because even if objects cannot be damaged,
             //they should still be able to react to the elements
             currentHP += amount;
@@ -2959,6 +2962,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return;
         //}
         //SetHasAlreadyAskedForPlan(true);
+        if(carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
+            return;
+        }
         if (returnedToLife) {
             //characters that have returned to life will just stroll.
             jobComponent.PlanIdleStrollOutside(); //currentStructure
@@ -2966,11 +2972,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         string idleLog = OtherIdlePlans();
         logComponent.PrintLogIfActive(idleLog);
-        
+
         //perform created jobs if any.
         EndTickPerformJobs();
-        
-        
         //if (!PlanJobQueueFirst()) {
         //    if (!PlanFullnessRecoveryActions()) {
         //        if (!PlanTirednessRecoveryActions()) {

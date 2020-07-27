@@ -453,3 +453,14 @@ public class WurmData : SummonPlayerSkill {
         className = "Wurm";
     }
 }
+public class TrollData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.TROLL;
+    public override string name { get { return "Troll"; } }
+    public override string description { get { return "Troll"; } }
+
+    public TrollData() {
+        summonType = SUMMON_TYPE.Troll;
+        race = RACE.TROLL;
+        className = "Troll";
+    }
+}

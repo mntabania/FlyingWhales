@@ -309,6 +309,17 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public LocationStructure GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE type) {
+            if (HasStructure(type)) {
+                List<LocationStructure> structuresOfType = structures[type];
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    if (!structuresOfType[i].hasActiveSocialParty) {
+                        return structuresOfType[i];
+                    }
+                }
+            }
+            return null;
+        }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }

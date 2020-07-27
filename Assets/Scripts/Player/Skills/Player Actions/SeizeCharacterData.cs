@@ -22,7 +22,6 @@ public class SeizeCharacterData : PlayerAction {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && 
-                   !targetCharacter.traitContainer.HasTrait("Blessed") && 
                    targetCharacter.marker != null;
         }
         return canPerform;

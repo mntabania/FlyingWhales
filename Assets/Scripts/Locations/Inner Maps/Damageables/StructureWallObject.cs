@@ -101,6 +101,9 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+        if (characterThatAttacked == null) {
+            return;
+        }
         //GameManager.Instance.CreateHitEffectAt(this, characterThatAttacked.combatComponent.elementalDamage.type);
         AdjustHP(-characterThatAttacked.combatComponent.attack, characterThatAttacked.combatComponent.elementalDamage.type, source: characterThatAttacked, showHPBar: true);
     }

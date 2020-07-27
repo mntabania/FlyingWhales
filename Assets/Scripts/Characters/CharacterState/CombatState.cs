@@ -131,33 +131,39 @@ public class CombatState : CharacterState {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
-            //if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            //    //stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Criminal");
+            if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+                HexTile chosenHex = stateComponent.character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+                if(chosenHex != null) {
+                    LocationGridTile chosenTile = chosenHex.GetRandomTile();
+                    stateComponent.character.jobComponent.CreateFleeCrimeJob(chosenTile);
+                    return;
+                }
+                ////stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Criminal");
 
-            //    //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
-            //    if (!stateComponent.character.isFriendlyFactionless) {
-            //        //Leave current faction and become banned from the current faction
-            //        if(stateComponent.character.faction != null) {
-            //            stateComponent.character.faction.AddBannedCharacter(stateComponent.character);
-            //        }
-            //        stateComponent.character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
-            //    }
-            //    stateComponent.character.MigrateHomeStructureTo(null);
+                ////If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
+                //if (!stateComponent.character.isFriendlyFactionless) {
+                //    //Leave current faction and become banned from the current faction
+                //    if (stateComponent.character.faction != null) {
+                //        stateComponent.character.faction.AddBannedCharacter(stateComponent.character);
+                //    }
+                //    stateComponent.character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
+                //}
+                //stateComponent.character.MigrateHomeStructureTo(null);
 
-            //    string log =
-            //        $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: null";
-            //    stateComponent.character.logComponent.PrintLogIfActive(log);
+                //string log =
+                //    $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: null";
+                //stateComponent.character.logComponent.PrintLogIfActive(log);
 
-            //    //stateComponent.character.CancelAllJobsAndPlans();
-            //    //stateComponent.character.PlanIdleReturnHome(true);
-            //    //stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
+                ////stateComponent.character.CancelAllJobsAndPlans();
+                ////stateComponent.character.PlanIdleReturnHome(true);
+                ////stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
 
-            //    Log successfulEscapeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "successful_escape_crime");
-            //    successfulEscapeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //    successfulEscapeLog.AddLogToInvolvedObjects();
-            //    PlayerManager.Instance.player.ShowNotificationFrom(stateComponent.character, successfulEscapeLog);
-            //    return;
-            //}
+                //Log successfulEscapeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "successful_escape_crime");
+                //successfulEscapeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //successfulEscapeLog.AddLogToInvolvedObjects();
+                //PlayerManager.Instance.player.ShowNotificationFrom(stateComponent.character, successfulEscapeLog);
+                //return;
+            }
 
             //Made it so that dead characters no longer check invision characters after exiting a state.
             for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
@@ -677,15 +683,19 @@ public class CombatState : CharacterState {
                 // Profiler.EndSample();
                 float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 if (distance <= stateComponent.character.characterClass.attackRange) {
-                    Profiler.BeginSample($"{stateComponent.character.name} Line of Sight Check");
-                    bool isInLineOfSight =
-                        stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile, stateComponent.character.characterClass.attackRange);
-                    Profiler.EndSample();
-                    // if (distance < stateComponent.character.characterClass.attackRange) {
-                    if (isInLineOfSight) {
+                    if (stateComponent.character.movementComponent.isStationary) {
                         Attack();
                     } else {
-                        PursueClosestHostile();
+                        Profiler.BeginSample($"{stateComponent.character.name} Line of Sight Check");
+                        bool isInLineOfSight =
+                            stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile, stateComponent.character.characterClass.attackRange);
+                        Profiler.EndSample();
+                        // if (distance < stateComponent.character.characterClass.attackRange) {
+                        if (isInLineOfSight || stateComponent.character.movementComponent.isStationary) {
+                            Attack();
+                        } else {
+                            PursueClosestHostile();
+                        }
                     }
                 } else {
                     PursueClosestHostile();
@@ -733,7 +743,7 @@ public class CombatState : CharacterState {
     public void OnAttackHit(IDamageable damageable) {
         string attackSummary =
             $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} hit {damageable?.name ?? "Nothing"}";
-        
+
         if (damageable != null && currentClosestHostile != null) {
             if (damageable != currentClosestHostile) {
                 attackSummary =

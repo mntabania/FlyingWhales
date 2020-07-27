@@ -38,6 +38,7 @@ namespace Inner_Maps.Location_Structures {
         public HashSet<IDamageable> objectsThatContributeToDamage { get; private set; }
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
+        public bool hasActiveSocialParty { get; protected set; }
 
         //protected Faction _owner;
 
@@ -204,6 +205,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public override string ToString() {
             return $"{structureType.ToString()} {id.ToString()} at {location.name}";
+        }
+        public void SetHasActiveSocialParty(bool state) {
+            hasActiveSocialParty = state;
         }
         #endregion
 
