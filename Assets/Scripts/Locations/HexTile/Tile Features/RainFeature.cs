@@ -119,7 +119,7 @@ namespace Locations.Tile_Features {
 
         #region Effects
         private void PopulateInitialCharactersOutside(HexTile hex) {
-            List<Character> allCharactersInHex = hex.GetAllCharactersInsideHex();
+            List<Character> allCharactersInHex = hex.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
             if (allCharactersInHex != null) {
                 for (int i = 0; i < allCharactersInHex.Count; i++) {
                     Character character = allCharactersInHex[i];

@@ -103,9 +103,11 @@ public abstract class JobNode {
 
 //actual nodes located in a finished plan that is going to be executed by a character
 public class ActualGoapNode : IReactable, IRumorable {
-    public IPointOfInterest poiTarget { get; private set; }
     //public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
     public Character actor { get; private set; }
+    public IPointOfInterest poiTarget { get; private set; }
+    public Character disguisedActor { get; private set; }
+    public Character disguisedTarget { get; private set; }
     //public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
     public bool isStealth { get; private set; }
     public object[] otherData { get; private set; }
@@ -167,13 +169,11 @@ public class ActualGoapNode : IReactable, IRumorable {
         currentStateName = string.Empty;
         awareCharacters = new List<Character>();
 
-        ////Whenever a disguised character is being set as actor/target, set the original as the actor/target, as if they are the ones who did it
-        //if (actor.traitContainer.HasTrait("Disguised")) {
-        //    this.actor = actor.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
-        //}
-        //if (poiTarget.traitContainer.HasTrait("Disguised")) {
-        //    this.poiTarget = poiTarget.traitContainer.GetNormalTrait<Disguised>("Disguised").disguisedCharacter;
-        //}
+        //Whenever a disguised character is being set as actor/target, assign na disguised actor/target
+        disguisedActor = actor.reactionComponent.disguisedCharacter;
+        if(poiTarget is Character targetCharacter) {
+            disguisedTarget = targetCharacter.reactionComponent.disguisedCharacter;
+        }
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 

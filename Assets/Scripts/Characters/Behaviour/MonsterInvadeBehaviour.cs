@@ -40,7 +40,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                 MonsterInvadeParty party = monsterInvadeParty as MonsterInvadeParty;
                 if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == party.targetHex) {
                     log += "\n-Already in the target hex, will try to combat residents";
-                    Character target = party.targetHex.GetRandomAliveResidentInsideHex<Character>();
+                    Character target = party.targetHex.GetRandomCharacterInsideHexThatMeetCriteria<Character>(c => !c.isDead && c.IsTerritory(party.targetHex));
                     if (target != null) {
                         log += $"\n-Chosen target is {target.name}";
                         character.combatComponent.Fight(target, CombatManager.Hostility);

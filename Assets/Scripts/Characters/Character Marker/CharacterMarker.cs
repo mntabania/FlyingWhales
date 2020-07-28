@@ -185,7 +185,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         InnerMapManager.Instance.ShowTileData(this.character.gridTileLocation, this.character);
         if (UIManager.Instance.GetCurrentlySelectedCharacter() != character) {
             //only process hover tooltips if character is not the currently selected character
-            ShowThoughts();    
+            ShowThoughtsAndNameplate();    
         }
     }
     protected override void OnPointerExit(Character poi) {
@@ -196,7 +196,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UIManager.Instance.HideSmallInfo();
         if (UIManager.Instance.GetCurrentlySelectedCharacter() != character) {
             //only process hover tooltips if character is not the currently selected character
-            HideThoughts();
+            HideThoughtsAndNameplate();
         }
     }
     #endregion
@@ -1641,11 +1641,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Nameplate
-    public void ShowThoughts() {
-        _nameplate.ShowThoughts();
+    public void ShowThoughtsAndNameplate() {
+        _nameplate.ShowThoughtsAndNameplate();
     }
-    public void HideThoughts() {
-        _nameplate.HideThoughts();
+    public void HideThoughtsAndNameplate() {
+        _nameplate.HideThoughtsAndNameplate();
     }
     public void UpdateNameplateElementsState() {
         _nameplate.UpdateElementsStateBasedOnActiveCharacter();

@@ -250,7 +250,13 @@ public class FactionManager : MonoBehaviour {
         FactionRelationship newRel = new FactionRelationship(faction1, faction2);
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
-        if(faction1.isPlayerFaction || faction2.isPlayerFaction || 
+        //faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
+        //faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);
+        //Warmonger warmonger1 = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+        //Warmonger warmonger2 = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+        faction1.factionType.AddIdeology(warmonger1);
+        faction2.factionType.AddIdeology(warmonger2);
+        if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
            faction1 == neutralFaction || faction2 == neutralFaction || 
            faction1 == _undeadFaction || faction2 == _undeadFaction) {
             faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);

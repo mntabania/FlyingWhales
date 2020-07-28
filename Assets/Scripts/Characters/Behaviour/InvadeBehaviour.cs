@@ -52,10 +52,13 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
             List<Character> charactersAtHexTile =
-                tile.GetAllCharactersInsideHexThatMeetCriteria(c =>
+                tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c =>
                     c.isNormalCharacter && c.isDead == false && c.isAlliedWithPlayer == false);
             if (charactersAtHexTile != null) {
-                characters = new List<Character>(charactersAtHexTile);
+                if(characters == null) {
+                    characters = new List<Character>();
+                }
+                characters.AddRange(charactersAtHexTile);
             }
         }
         return characters;

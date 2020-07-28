@@ -192,11 +192,13 @@ public class InterruptComponent {
                         LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
                 }    
             }
-            if (interruptHolder.interrupt.isIntel) {
-                PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interruptHolder.interrupt, interruptHolder.actor, interruptHolder.target, interruptHolder.effectLog) as IIntel);
-                // PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
-            } else {
-                PlayerManager.Instance.player.ShowNotificationFrom(owner, interruptHolder.effectLog);
+            if (interruptHolder.interrupt.shouldShowNotif) {
+                if (interruptHolder.interrupt.isIntel) {
+                    PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interruptHolder) as IIntel);
+                    // PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+                } else {
+                    PlayerManager.Instance.player.ShowNotificationFrom(owner, interruptHolder.effectLog);
+                }
             }
         }
         //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {

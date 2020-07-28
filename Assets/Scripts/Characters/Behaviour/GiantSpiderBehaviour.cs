@@ -93,7 +93,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             for (int i = 0; i < character.territorries.Count; i++) {
                 HexTile territory = character.territorries[i];
                 List<Character> validCharacters =
-                    territory.GetAllCharactersInsideHexThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
+                    territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
                 if (validCharacters != null) {
                     if (characters == null) {
                         characters = new List<Character>();

@@ -7,6 +7,8 @@ public interface IReactable {
     string classificationName { get; }
     Character actor { get; }
     IPointOfInterest target { get; }
+    Character disguisedActor { get; }
+    Character disguisedTarget { get; }
     Log informationLog { get; }
     bool isStealth { get; }
     List<Character> awareCharacters { get; }
@@ -21,6 +23,8 @@ public interface IRumorable {
     string name { get; }
     Character actor { get; }
     IPointOfInterest target { get; }
+    Character disguisedActor { get; }
+    Character disguisedTarget { get; }
     Log informationLog { get; }
     bool isStealth { get; }
     List<Character> awareCharacters { get; }

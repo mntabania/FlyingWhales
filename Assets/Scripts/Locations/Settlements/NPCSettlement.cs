@@ -349,6 +349,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         List<Character> hostileCharacters = new List<Character>();
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
+            if(character.reactionComponent.disguisedCharacter != null) {
+                character = character.reactionComponent.disguisedCharacter;
+            }
             if (!character.isDead && character.gridTileLocation != null && character.gridTileLocation.IsPartOfSettlement(this)
             && owner.IsHostileWith(character.faction) 
             && character.traitContainer.HasTrait("Restrained") == false

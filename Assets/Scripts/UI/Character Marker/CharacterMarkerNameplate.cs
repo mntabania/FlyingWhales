@@ -149,19 +149,19 @@ public class CharacterMarkerNameplate : PooledObject {
             //if UI is shown
             if (shownCharacter == _parentMarker.character) {
                 SetNameState(true);
-                ShowThoughts();
+                ShowThoughtsAndNameplate();
             } else {
                 SetNameState(true);
-                HideThoughts();
+                HideThoughtsAndNameplate();
             }
         } else {
             //if UI is not shown
             if (shownCharacter == _parentMarker.character) {
                 SetNameState(true);
-                ShowThoughts();
+                ShowThoughtsAndNameplate();
             } else {
                 SetNameState(false);
-                HideThoughts();
+                HideThoughtsAndNameplate();
             }    
         }
         
@@ -232,11 +232,13 @@ public class CharacterMarkerNameplate : PooledObject {
     #endregion
 
     #region Thoughts
-    public void ShowThoughts() {
+    public void ShowThoughtsAndNameplate() {
+        nameLbl.gameObject.SetActive(true);
         thoughtGO.SetActive(true);
         UpdateThoughtText();
     }
-    public void HideThoughts() {
+    public void HideThoughtsAndNameplate() {
+        nameLbl.gameObject.SetActive(false);
         thoughtGO.SetActive(false);
         thoughtLbl.text = string.Empty;
     }

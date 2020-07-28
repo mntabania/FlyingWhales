@@ -37,7 +37,7 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-character is at territory";
                     //if is at territory, check if there are any villagers in its territory,
                     List<Character> charactersAtTerritory =
-                        character.hexTileLocation.GetAllCharactersInsideHexThatMeetCriteria(c =>
+                        character.hexTileLocation.GetAllCharactersInsideHexThatMeetCriteria<Character>(c =>
                             c.isNormalCharacter && c.isDead == false && c != character && c.canMove && c.isAlliedWithPlayer == false);
                     if (charactersAtTerritory != null) {
                         log += $"\n-There are villagers in territory, will do De-Mood towards them";

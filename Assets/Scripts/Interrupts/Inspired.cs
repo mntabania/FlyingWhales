@@ -7,6 +7,7 @@ namespace Interrupts {
         public Inspired() : base(INTERRUPT.Inspired) {
             duration = 0;
             isSimulateneous = true;
+            shouldShowNotif = false;
             interruptIconString = GoapActionStateDB.Happy_Icon;
         }
 

@@ -721,10 +721,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
             LocationGridTile chosenTile;
             if (_owner.homeStructure != null) {
-                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
-            } else {
+                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+            } 
+            else if (_owner.homeSettlement != null) {
+                chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+            } 
+            else if (_owner.territorries.Count > 0) {
                 HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
                 chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+            } else {
+                if (_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                        chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+                    } else {
+                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+                    }
+                } else {
+                    chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
+                }
             }
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
@@ -741,17 +757,31 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    LocationGridTile chosenTile;
 		    if (_owner.homeStructure != null) {
-			    if (checkIfPathPossible) {
-				    List<LocationGridTile> choices = _owner.homeStructure.unoccupiedTiles
-					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
-				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+                if (checkIfPathPossible) {
+				    List<LocationGridTile> choices = _owner.homeStructure.passableTiles
+                        .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
 			    } else {
-				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);    
+				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);    
 			    }
-		    } else {
+		    } else if (_owner.homeSettlement != null) {
+                chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+            } else if(_owner.territorries.Count > 0) {
 			    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
 			    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-		    }
+		    } else {
+                if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                        chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+                    } else {
+                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+                    }
+                } else {
+                    chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
+                }
+            }
 		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
 		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
@@ -798,7 +828,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
-                if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                if (_owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+                } else if (_owner.IsInHomeSettlement()) {
+                    chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
                     HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
@@ -821,7 +855,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-			    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                if (_owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+                } else if (_owner.IsInHomeSettlement()) {
+                    chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
 				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    } else {

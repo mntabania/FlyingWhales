@@ -31,10 +31,14 @@ public class InterruptIntel : IIntel {
     public IPointOfInterest target => interruptHolder.target;
     #endregion
 
-    public InterruptIntel(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
+    public InterruptIntel(InterruptHolder interrupt) {
         interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-        interruptHolder.Initialize(interrupt, actor, target, string.Empty);
-        interruptHolder.SetEffectLog(effectLog);
+        interruptHolder.Initialize(interrupt.interrupt, interrupt.actor, interrupt.target, interrupt.identifier);
+        interruptHolder.SetEffectLog(interrupt.effectLog);
+
+        //This is set because the interrupt intel must copy the data of the interrupt
+        interruptHolder.SetDisguisedActor(interrupt.disguisedActor);
+        interruptHolder.SetDisguisedTarget(interrupt.disguisedTarget);
     }
 }
 

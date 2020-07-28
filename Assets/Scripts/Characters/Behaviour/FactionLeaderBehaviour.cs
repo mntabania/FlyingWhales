@@ -16,22 +16,26 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} is a faction leader";
         Faction faction = character.faction;
         if(faction != null && faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger) && !faction.HasJob(JOB_TYPE.RAID)) {
-            if (!faction.HasAMemberThatIsAPartyLeader(PARTY_TYPE.Raid)) {
-                log += $"\n-Character faction is warmonger and has no raid job and has no raid party yet";
-                Faction targetFaction = faction.GetRandomAtWarFaction();
-                if(targetFaction != null) {
-                    log += $"\n-Chosen target faction: " + targetFaction.name;
-                    BaseSettlement targetSettlement = targetFaction.GetRandomOwnedSettlement();
-                    if(targetSettlement != null) {
-                        log += $"\n-Chosen target settlement: " + targetSettlement.name;
-                        LocationStructure targetStructure = targetSettlement.GetRandomStructure();
-                        if(targetSettlement is NPCSettlement npcSettlement && npcSettlement.cityCenter != null) {
-                            targetStructure = npcSettlement.cityCenter;
-                        }
-                        character.interruptComponent.SetRaidTargetStructure(targetStructure);
-                        if(character.interruptComponent.TriggerInterrupt(INTERRUPT.Declare_Raid, character)) {
-                            producedJob = null;
-                            return true;
+            log += $"\n-10% chance to declare raid";
+            int roll = UnityEngine.Random.Range(0, 100);
+            if(roll < 10) {
+                if (!faction.HasAMemberThatIsAPartyLeader(PARTY_TYPE.Raid)) {
+                    log += $"\n-Character faction is warmonger and has no raid job and has no raid party yet";
+                    Faction targetFaction = faction.GetRandomAtWarFaction();
+                    if (targetFaction != null) {
+                        log += $"\n-Chosen target faction: " + targetFaction.name;
+                        BaseSettlement targetSettlement = targetFaction.GetRandomOwnedSettlement();
+                        if (targetSettlement != null) {
+                            log += $"\n-Chosen target settlement: " + targetSettlement.name;
+                            LocationStructure targetStructure = targetSettlement.GetRandomStructure();
+                            if (targetSettlement is NPCSettlement npcSettlement && npcSettlement.cityCenter != null) {
+                                targetStructure = npcSettlement.cityCenter;
+                            }
+                            character.interruptComponent.SetRaidTargetStructure(targetStructure);
+                            if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Declare_Raid, character)) {
+                                producedJob = null;
+                                return true;
+                            }
                         }
                     }
                 }

@@ -12,6 +12,8 @@ public class Rumor : IReactable {
     public string classificationName => "Rumor";
     public Character actor => rumorable.actor;
     public IPointOfInterest target => rumorable.target;
+    public Character disguisedActor => rumorable.disguisedActor;
+    public Character disguisedTarget => rumorable.disguisedTarget;
     public Log informationLog => rumorable.informationLog;
     public bool isStealth => rumorable.isStealth;
     public List<Character> awareCharacters => rumorable.awareCharacters;

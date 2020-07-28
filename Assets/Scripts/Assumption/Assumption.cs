@@ -12,6 +12,8 @@ public class Assumption : IReactable {
     public string classificationName => "Assumption";
     public Character actor => assumedAction.actor;
     public IPointOfInterest target => assumedAction.target;
+    public Character disguisedActor => assumedAction.disguisedActor;
+    public Character disguisedTarget => assumedAction.disguisedTarget;
     public Log informationLog => assumedAction.informationLog;
     public bool isStealth => assumedAction.isStealth;
     public List<Character> awareCharacters => assumedAction.awareCharacters;

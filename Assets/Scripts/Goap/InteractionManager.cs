@@ -125,8 +125,8 @@ public partial class InteractionManager : MonoBehaviour {
     public ActionIntel CreateNewIntel(ActualGoapNode node) {
         return new ActionIntel(node);
     }
-    public InterruptIntel CreateNewIntel(Interrupt interrupt, Character actor, IPointOfInterest target, Log effectLog) {
-        return new InterruptIntel(interrupt, actor, target, effectLog);
+    public InterruptIntel CreateNewIntel(InterruptHolder interruptHolder) {
+        return new InterruptIntel(interruptHolder);
     }
     #endregion
 

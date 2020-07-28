@@ -1,4 +1,5 @@
 ﻿using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class SpiderEgg : MonsterEgg {
 
@@ -19,8 +20,12 @@ public class SpiderEgg : MonsterEgg {
             monster.CreateMarker();
             monster.InitialCharacterPlacement(gridTileLocation, true);
 
+            BaseSettlement settlement;
             if (gridTileLocation.structure.structureType.IsSpecialStructure()) {
                 monster.ClearTerritoryAndMigrateHomeStructureTo(gridTileLocation.structure);
+            } else if (gridTileLocation.IsPartOfSettlement(out settlement)) {
+                monster.ClearTerritory();
+                monster.MigrateHomeTo(settlement);
             } else if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 monster.ClearTerritory();
                 monster.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);

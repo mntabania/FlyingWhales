@@ -126,18 +126,23 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
         List<HexTile> surroundingAreas = GetAreasSurroundingHome(character);
         for (int i = 0; i < surroundingAreas.Count; i++) {
             HexTile tile = surroundingAreas[i];
-            List<Character> charactersAtTile = tile.GetAllCharactersInsideHex();
+            List<Character> charactersAtTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
+                        c.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false);
             if (charactersAtTile != null) {
-                for (int j = 0; j < charactersAtTile.Count; j++) {
-                    Character characterAtTile = charactersAtTile[j];
-                    if (characterAtTile.traitContainer.HasTrait("Frozen") && characterAtTile.race != RACE.KOBOLD && 
-                        characterAtTile.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
-                        if (characters == null) {
-                            characters = new List<Character>();
-                        }
-                        characters.Add(characterAtTile);
-                    }
-                }    
+                if (characters == null) {
+                    characters = new List<Character>();
+                }
+                characters.AddRange(charactersAtTile);
+                //for (int j = 0; j < charactersAtTile.Count; j++) {
+                //    Character characterAtTile = charactersAtTile[j];
+                //    if (characterAtTile.traitContainer.HasTrait("Frozen") && characterAtTile.race != RACE.KOBOLD && 
+                //        characterAtTile.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
+                //        if (characters == null) {
+                //            characters = new List<Character>();
+                //        }
+                //        characters.Add(characterAtTile);
+                //    }
+                //}    
             }
             
         }
@@ -150,17 +155,21 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
             List<Character> characters = null;
             for (int i = 0; i < character.territorries.Count; i++) {
                 HexTile territory = character.territorries[i];
-                List<Character> charactersAtTile = territory.GetAllCharactersInsideHex();
+                List<Character> charactersAtTile = territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD);
                 if (charactersAtTile != null) {
-                    for (int j = 0; j < charactersAtTile.Count; j++) {
-                        Character characterAtTile = charactersAtTile[j];
-                        if (characterAtTile.traitContainer.HasTrait("Frozen") && characterAtTile.race != RACE.KOBOLD) {
-                            if (characters == null) {
-                                characters = new List<Character>();
-                            }
-                            characters.Add(characterAtTile);
-                        }
+                    if (characters == null) {
+                        characters = new List<Character>();
                     }
+                    characters.AddRange(charactersAtTile);
+                    //for (int j = 0; j < charactersAtTile.Count; j++) {
+                    //    Character characterAtTile = charactersAtTile[j];
+                    //    if (characterAtTile.traitContainer.HasTrait("Frozen") && characterAtTile.race != RACE.KOBOLD) {
+                    //        if (characters == null) {
+                    //            characters = new List<Character>();
+                    //        }
+                    //        characters.Add(characterAtTile);
+                    //    }
+                    //}
                 }
             }
             return characters;

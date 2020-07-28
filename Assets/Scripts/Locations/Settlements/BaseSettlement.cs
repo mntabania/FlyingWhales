@@ -226,6 +226,16 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public int GetNumOfResidentsThatMeetCriteria(System.Func<Character, bool> criteria) {
+            int count = 0;
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (criteria.Invoke(resident)) {
+                    count++;
+                }
+            }
+            return count;
+        }
         #endregion
 
         #region Faction
@@ -373,6 +383,35 @@ namespace Locations.Settlements {
         }
         public HexTile GetRandomHexTile() {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
+        }
+        public LocationGridTile GetFirstPassableGridTileInSettlementThatMeetCriteria(System.Func<LocationGridTile, bool> validityChecker) {
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                for (int j = 0; j < structure.passableTiles.Count; j++) {
+                    LocationGridTile locationGridTile = structure.passableTiles[j];
+                    if (validityChecker.Invoke(locationGridTile)) {
+                        return locationGridTile;
+                    }
+                }
+            }
+            return null;
+        }
+        public LocationGridTile GetRandomPassableGridTileInSettlementThatMeetCriteria(System.Func<LocationGridTile, bool> validityChecker) {
+            List<LocationGridTile> locationGridTiles = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                for (int j = 0; j < structure.passableTiles.Count; j++) {
+                    LocationGridTile locationGridTile = structure.passableTiles[j];
+                    if (validityChecker.Invoke(locationGridTile)) {
+                        if(locationGridTiles == null) { locationGridTiles = new List<LocationGridTile>(); }
+                        locationGridTiles.Add(locationGridTile);
+                    }
+                }
+            }
+            if(locationGridTiles != null && locationGridTiles.Count > 0) {
+                return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
+            }
+            return null;
         }
         private List<LocationGridTile> GetLocationGridTilesInSettlement(System.Func<LocationGridTile, bool> validityChecker) {
             List<LocationGridTile> locationGridTiles = new List<LocationGridTile>();

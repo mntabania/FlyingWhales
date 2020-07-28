@@ -71,13 +71,15 @@ public class PickUp : GoapAction {
                     cost += UtilityScripts.Utilities.Rng.Next(20, 61);
                     costLog += $" +{cost}(Personal owner is actor)";
                 } else {
-                    if(actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
-                        cost += UtilityScripts.Utilities.Rng.Next(80, 91);
-                        costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
-                    } else {
-                        cost += 2000;
-                        costLog += " +2000(Not Kleptomanic/Has rel with owner)";
-                    }
+                    cost += 2000;
+                    costLog += " +2000(Has owner)";
+                    //if (actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
+                    //    cost += UtilityScripts.Utilities.Rng.Next(80, 91);
+                    //    costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
+                    //} else {
+                    //    cost += 2000;
+                    //    costLog += " +2000(Not Kleptomaniac/Has rel with owner)";
+                    //}
                 }
             }
         }

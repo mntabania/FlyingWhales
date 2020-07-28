@@ -121,7 +121,7 @@ public class HexTileSpellsComponent {
     }
     private void OnStartEarthquake() {
         _hasOnStartEarthquakeCalled = true;
-        List<Character> charactersInsideHex = owner.GetAllCharactersInsideHex();
+        List<Character> charactersInsideHex = owner.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
         if (charactersInsideHex != null) {
             for (int i = 0; i < charactersInsideHex.Count; i++) {
                 Character character = charactersInsideHex[i];

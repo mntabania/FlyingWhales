@@ -66,7 +66,7 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
                         log += $"\n-character is at territory";
                         //if is at territory, check if there are any villagers in its territory,
                         List<Character> charactersAtTerritory =
-                            character.hexTileLocation.GetAllCharactersInsideHexThatMeetCriteria(c =>
+                            character.hexTileLocation.GetAllCharactersInsideHexThatMeetCriteria<Character>(c =>
                                 c.isNormalCharacter && c.isDead == false && c != character && c.isAlliedWithPlayer == false);
                         if (charactersAtTerritory != null) {
                             log += $"\n-There are villagers in territory, will do De-Mood towards them";
@@ -115,18 +115,23 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
         List<Character> characters = null;
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
-            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHex();
+            List<Character> charactersAtHexTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.isNormalCharacter && c.isDead == false
+                        && c.traitContainer.HasTrait("Dolorous") == false);
             if (charactersAtHexTile != null) {
-                for (int j = 0; j < charactersAtHexTile.Count; j++) {
-                    Character character = charactersAtHexTile[j];
-                    if (character.isNormalCharacter && character.isDead == false 
-                        && character.traitContainer.HasTrait("Dolorous") == false) {
-                        if (characters == null) {
-                            characters = new List<Character>();
-                        }
-                        characters.Add(character);
-                    }
-                }    
+                if (characters == null) {
+                    characters = new List<Character>();
+                }
+                characters.AddRange(charactersAtHexTile);
+                //for (int j = 0; j < charactersAtHexTile.Count; j++) {
+                //    Character character = charactersAtHexTile[j];
+                //    if (character.isNormalCharacter && character.isDead == false 
+                //        && character.traitContainer.HasTrait("Dolorous") == false) {
+                //        if (characters == null) {
+                //            characters = new List<Character>();
+                //        }
+                //        characters.Add(character);
+                //    }
+                //}    
             }
         }
         return characters;

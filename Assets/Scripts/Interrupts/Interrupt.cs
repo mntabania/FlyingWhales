@@ -13,12 +13,15 @@ namespace Interrupts {
         public string interruptIconString { get; protected set; }
         public bool isIntel { get; protected set; }
         public bool shouldAddLogs { get; protected set; } //Does this interrupt add logs to the involved characters
+        public bool shouldShowNotif { get; protected set; }
+
         protected Interrupt(INTERRUPT type) {
             this.type = type;
             this.name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(type.ToString());
             isSimulateneous = false;
             interruptIconString = GoapActionStateDB.No_Icon;
             shouldAddLogs = true;
+            shouldShowNotif = true;
         }
 
         #region Virtuals
@@ -57,6 +60,8 @@ namespace Interrupts {
         public Interrupt interrupt { get; private set; }
         public Character actor { get; private set; }
         public IPointOfInterest target { get; private set; }
+        public Character disguisedActor { get; private set; }
+        public Character disguisedTarget { get; private set; }
         public Log effectLog { get; private set; }
         public string identifier { get; private set; }
         public Rumor rumor { get; private set; }
@@ -81,6 +86,12 @@ namespace Interrupts {
         }
         public void SetIdentifier(string identifier) {
             this.identifier = identifier;
+        }
+        public void SetDisguisedActor(Character disguised) {
+            disguisedActor = disguised;
+        }
+        public void SetDisguisedTarget(Character disguised) {
+            disguisedTarget = disguised;
         }
         #endregion
 
@@ -119,12 +130,21 @@ namespace Interrupts {
             this.interrupt = interrupt;
             this.actor = actor;
             this.target = target;
+
+            //Whenever a disguised character is being set as actor/target, assign na disguised actor/target
+            disguisedActor = actor.reactionComponent.disguisedCharacter;
+            if (target is Character targetCharacter) {
+                disguisedTarget = targetCharacter.reactionComponent.disguisedCharacter;
+            }
+
             SetIdentifier(identifier);
         }
         public void Reset() {
             interrupt = null;
             actor = null;
             target = null;
+            disguisedActor = null;
+            disguisedTarget = null;
             effectLog = null;
             rumor = null;
             identifier = string.Empty;

@@ -310,6 +310,9 @@ namespace Traits {
                 chance = 100;
                 if (addTo is Character) {
                     chance = 25;
+                    if (HasTrait("Poisoned")) {
+                        chance = 15;
+                    }
                 }
             }
             return chance;
