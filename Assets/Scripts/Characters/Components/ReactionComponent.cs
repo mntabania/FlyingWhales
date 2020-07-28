@@ -733,7 +733,7 @@ public class ReactionComponent {
                                 actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
                             } else {
                                 debugLog += "\n-Target will Puke";
-                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, "saw dead " + targetCharacter.name);
                             }
                         } else if (opinionLabel == RelationshipManager.Rival) {
                             debugLog += "\n-Target is Rival";
@@ -967,7 +967,7 @@ public class ReactionComponent {
                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
                     } else {
                         debugLog += "\n-Target will Puke";
-                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter);
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, "saw dead " + targetCharacter.name);
                     }
                 } else if (opinionLabel == RelationshipManager.Rival) {
                     debugLog += "\n-Target is Rival";

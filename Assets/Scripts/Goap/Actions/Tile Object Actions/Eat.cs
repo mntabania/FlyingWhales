@@ -173,7 +173,7 @@ public class Eat : GoapAction {
             if (actor.traitContainer.HasTrait("Vampiric")) {
                 return false;
             }
-            if(poiTarget is BerryShrub) {
+            if(poiTarget is BerryShrub && !actor.needsComponent.isStarving) {
                 //If plant or animal, only eat if the actor is homeless
                 if(actor.homeStructure != null) {
                     return false;

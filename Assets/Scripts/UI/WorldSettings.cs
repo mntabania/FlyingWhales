@@ -7,6 +7,7 @@ using TMPro;
 
 public class WorldSettings : MonoBehaviour {
     public static WorldSettings Instance;
+    public enum World { Chutoria, Icalawa, Customize, }
 
     public WorldSettingsData worldSettingsData { get; private set; }
 
@@ -26,7 +27,13 @@ public class WorldSettings : MonoBehaviour {
     public RuinarchToggle noThreatModeToggle;
     public RuinarchToggle chaosVictoryModeToggle;
 
+    public RuinarchToggle defaultWorldToggle;
+
     public GameObject invalidMessage;
+    public GameObject mainWindow;
+    public GameObject customizeWorldWindow;
+
+    public World chosenWorld { get; private set; }
 
     //private List<RaceWorldOptionItem> raceWorldOptionItems;
     //private List<BiomeWorldOptionItem> biomeWorldOptionItems;
@@ -64,6 +71,8 @@ public class WorldSettings : MonoBehaviour {
     #region General
     public void Open() {
         settingsGO.SetActive(true);
+        mainWindow.SetActive(true);
+        customizeWorldWindow.SetActive(false);
         InitializeData();
     }
     public void Close() {
@@ -82,6 +91,8 @@ public class WorldSettings : MonoBehaviour {
         //} else {
         //    ToggleAllBiomes(true);
         //}
+        defaultWorldToggle.isOn = true;
+
         ToggleAllRaces(true);
         ToggleAllBiomes(true);
 
@@ -225,12 +236,53 @@ public class WorldSettings : MonoBehaviour {
         worldSettingsData.SetChaosVictoryMode(state);
     }
     public void OnClickContinue() {
-        if (worldSettingsData.AreSettingsValid()) {
+        if (mainWindow.activeSelf) {
+            //Still in world picker
+            if(chosenWorld == World.Customize) {
+                mainWindow.SetActive(false);
+                customizeWorldWindow.SetActive(true);
+            } else if (chosenWorld == World.Chutoria) {
+                //TODO: Myk - go to Chutoria world
+                Close();
+            } else if (chosenWorld == World.Icalawa) {
+                //TODO: Myk - go to Icalawa world
+                Close();
+            }
+        } else if (customizeWorldWindow.activeSelf) {
+            //Already in customize window
+            if (worldSettingsData.AreSettingsValid()) {
+                Close();
+                MainMenuManager.Instance.StartNewGame();
+            } else {
+                //show invalid message
+                invalidMessage.gameObject.SetActive(true);
+            }
+        }
+    }
+    public void OnClickBack() {
+        if (mainWindow.activeSelf) {
             Close();
-            MainMenuManager.Instance.StartNewGame();    
-        } else {
-            //show invalid message
-            invalidMessage.gameObject.SetActive(true);
+        } else if (customizeWorldWindow.activeSelf) {
+            mainWindow.SetActive(true);
+            customizeWorldWindow.SetActive(false);
+        }
+    }
+    #endregion
+
+    #region World Picker
+    public void OnToggleChutoria(bool state) {
+        if (state) {
+            chosenWorld = World.Chutoria;
+        }
+    }
+    public void OnToggleIcalawa(bool state) {
+        if (state) {
+            chosenWorld = World.Icalawa;
+        }
+    }
+    public void OnToggleCustomize(bool state) {
+        if (state) {
+            chosenWorld = World.Customize;
         }
     }
     #endregion

@@ -486,21 +486,17 @@ public class CombatState : CharacterState {
                     $"\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
-            } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter) {
-                if (targetCharacter.combatComponent.isInCombat &&
+            } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter && targetCharacter.combatComponent.isInCombat &&
                     (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
-                    if (stateComponent.character.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
-                        log +=
-                            $"\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
-                        stateComponent.character.combatComponent.RemoveHostileInRange(targetCharacter, false);
-                        SetClosestHostile();
-                    } else {
-                        log +=
-                            $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
-                        SetClosestHostilePriorityNotFleeing();    
-                    }
-                    
-                        
+                if (stateComponent.character.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
+                    log +=
+                        $"\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
+                    stateComponent.character.combatComponent.RemoveHostileInRange(targetCharacter, false);
+                    SetClosestHostile();
+                } else {
+                    log +=
+                        $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
+                    SetClosestHostilePriorityNotFleeing();
                 }
             } else if (currentClosestHostile == null) {
                 log += "\nNo current closest hostile, setting one...";
