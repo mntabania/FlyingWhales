@@ -23,7 +23,15 @@ public class CraftTileObject : GoapAction {
                 List<Precondition> p = new List<Precondition>();
                 for (int i = 0; i < data.itemRequirementsForCreation.Length; i++) {
                     string req = data.itemRequirementsForCreation[i];
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData, jobType) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req)));
+                    if (req == "Wood Pile") {
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), HasWood));
+                    } else if (req == "Stone Pile") {
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), HasStone));
+                    } else if (req == "Metal Pile") {
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), HasStone));
+                    } else {
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, req, false, GOAP_EFFECT_TARGET.ACTOR), (thisActor, thisTarget, thisOtherData, jobType) => IsCarriedOrInInventory(thisActor, thisTarget, thisOtherData, req)));    
+                    }
                 }
                 return p;
             }
@@ -68,8 +76,21 @@ public class CraftTileObject : GoapAction {
         TileObjectData data = TileObjectDB.GetTileObjectData(obj.tileObjectType);
         if (data != null && data.itemRequirementsForCreation != null) {
             for (int i = 0; i < data.itemRequirementsForCreation.Length; i++) {
-                if (!actor.UnobtainItem(data.itemRequirementsForCreation[i])) {
-                    actor.logComponent.PrintLogErrorIfActive("Trying to craft " + obj.name + " but " + actor + " does not have " + data.itemRequirementsForCreation[i]);
+                string neededItem = data.itemRequirementsForCreation[i];
+                if (neededItem == "Wood Pile") {
+                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as ResourcePile;
+                    resourcePile?.AdjustResourceInPile(-data.constructionCost);
+                } else if (neededItem == "Stone Pile") {
+                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as ResourcePile;
+                    resourcePile?.AdjustResourceInPile(-data.constructionCost);
+                } else if (neededItem == "Metal Pile") {
+                    ResourcePile resourcePile = actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) as ResourcePile;
+                    resourcePile?.AdjustResourceInPile(-data.constructionCost);
+                } else {
+                    if (!actor.UnobtainItem(neededItem)) {
+                        actor.logComponent.PrintLogErrorIfActive(
+                            "Trying to craft " + obj.name + " but " + actor + " does not have " + neededItem);
+                    }
                 }
             }
         }
@@ -82,6 +103,10 @@ public class CraftTileObject : GoapAction {
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         TileObject tileObj = goapNode.poiTarget as TileObject;
         tileObj.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
+        if (goapNode.associatedJobType == JOB_TYPE.CRAFT_MISSING_FURNITURE) {
+            //after character finishes building the target furniture, set it as owned by him/her
+            tileObj.SetCharacterOwner(goapNode.actor);
+        }
         //goapNode.actor.AdjustResource(RESOURCE.WOOD, -TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost);
         //int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
         //goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -cost);
@@ -106,6 +131,18 @@ public class CraftTileObject : GoapAction {
     //}
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, string itemName) {
         return actor.IsPOICarriedOrInInventory(itemName);
+    }
+    private bool HasWood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+        return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) is ResourcePile pile && 
+               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
+    }
+    private bool HasStone(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+        return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && 
+               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
+    }
+    private bool HasMetal(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+        return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) is ResourcePile pile && 
+               pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
     }
     #endregion
 

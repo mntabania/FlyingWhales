@@ -2,6 +2,7 @@
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class DefaultAtHome : CharacterBehaviourComponent {
     public DefaultAtHome() {
@@ -209,13 +210,23 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 
                     && character.trapStructure.IsTrapped() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    int chance = Random.Range(0, 100);
-                    log += $"\n  -RNG roll: {chance.ToString()}";
-                    if (chance < 25) {
-                        log +=
-                            $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
-                        character.jobComponent.PlanIdleStrollOutside(out producedJob); //character.currentStructure
-                        return true;
+                    if (GameUtilities.RollChance(25) && CanCreateCraftMissingBedJob(character)) {
+                        log += $"\n  -No Available bed will create craft missing bed job";
+                        return character.jobComponent.CreateCraftMissingFurniture(TILE_OBJECT_TYPE.BED,
+                            character.currentStructure, out producedJob);
+                    } else if (GameUtilities.RollChance(25) && CanCreateCraftMissingTableJob(character)) {
+                        log += $"\n  -No Available table will create craft missing bed job";
+                        return character.jobComponent.CreateCraftMissingFurniture(TILE_OBJECT_TYPE.TABLE,
+                            character.currentStructure, out producedJob);
+                    } else {
+                        int chance = Random.Range(0, 100);
+                        log += $"\n  -RNG roll: {chance.ToString()}";
+                        if (chance < 25) {
+                            log +=
+                                $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
+                            character.jobComponent.PlanIdleStrollOutside(out producedJob); //character.currentStructure
+                            return true;
+                        }    
                     }
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
@@ -236,39 +247,6 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         } else {
                             log += "\n  -No valid character to visit.";
                         }
-                        
-                        // List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
-                        // if (positiveRelatables.Count > 0) {
-                        //     Character targetCharacter = null;
-                        //     LocationStructure targetStructure = null;
-                        //     while (positiveRelatables.Count > 0 && targetStructure == null) {
-                        //         int index = Random.Range(0, positiveRelatables.Count);
-                        //         Character chosenRelatable = positiveRelatables[index];
-                        //         targetCharacter = chosenRelatable;
-                        //         targetStructure = chosenRelatable.homeStructure;
-                        //         if (targetStructure == null) {
-                        //             positiveRelatables.RemoveAt(index);
-                        //         } else if (targetStructure == character.homeStructure) {
-                        //             targetStructure = null;
-                        //             positiveRelatables.RemoveAt(index);
-                        //         } else if (chosenRelatable.isDead /*|| chosenRelatable.isMissing*/) {
-                        //             targetStructure = null;
-                        //             positiveRelatables.RemoveAt(index);
-                        //         } else if (character.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomTile()) == false) {
-                        //             targetStructure = null;
-                        //             positiveRelatables.RemoveAt(index);
-                        //         }
-                        //     }
-                        //     if (targetStructure != null) {
-                        //         log +=
-                        //             $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
-                        //         character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, new object[] { targetStructure, targetCharacter });
-                        //         return true;
-                        //     }
-                        //     log += "\n  -No positive relationship with home structure";
-                        // } else {
-                        //     log += "\n  -No character with positive relationship";
-                        // }
                     }
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
@@ -304,6 +282,39 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
                 //PlanIdleStroll(currentStructure);
                 return true;
+            }
+        }
+        return false;
+    }
+
+
+    private bool CanCreateCraftMissingBedJob(Character character) {
+        if (character.currentStructure is Wilderness == false) {
+            Character lover = character.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+            //get built un owned beds or beds owned by this characters lover.
+            if (!character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED, bed => 
+                bed.mapObjectState == MAP_OBJECT_STATE.BUILT && (bed.characterOwner == null || bed.characterOwner == character || (lover != null && bed.characterOwner == lover)))) {
+                //if there are none, check if there are any unbuilt beds (Means there is an active job at the structure)
+                //if there are no unbuilt beds then the character can create a craft missing bed job.
+                return !character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED,
+                    bed => bed.mapObjectState == MAP_OBJECT_STATE.UNBUILT);
+            } else {
+                //do not create craft bed since character found an unowned bed or a bed that is owned by his/her lover
+                return false;
+            }
+        }
+        return false;
+    }
+    private bool CanCreateCraftMissingTableJob(Character character) {
+        if (character.currentStructure is Wilderness == false) {
+            //check if there are any built tables at structure
+            if (!character.currentStructure.AnyTileObjectsOfType<Table>(TILE_OBJECT_TYPE.TABLE, table => table.mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                //if none, then check if there are any unbuilt tables at structure, if there are none, then allow job creation
+                return !character.currentStructure.AnyTileObjectsOfType<Table>(TILE_OBJECT_TYPE.TABLE,
+                    table => table.mapObjectState == MAP_OBJECT_STATE.UNBUILT);
+            } else {
+                //do not create craft table since character found a built table
+                return false;
             }
         }
         return false;
