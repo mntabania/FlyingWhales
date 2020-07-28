@@ -15,7 +15,7 @@ public class TortureData : PlayerAction {
 
     #region Overrides
     public override void ActivateAbility(StructureRoom room) {
-        if (room is TortureRoom tortureRoom) {
+        if (room is PrisonCell tortureRoom) {
             tortureRoom.BeginTorture();
         }
         base.ActivateAbility(room);
@@ -23,7 +23,7 @@ public class TortureData : PlayerAction {
     public override bool CanPerformAbilityTowards(StructureRoom room) {
         bool canPerform = base.CanPerformAbilityTowards(room);
         if (canPerform) {
-            if (room is TortureRoom tortureRoom) {
+            if (room is PrisonCell tortureRoom) {
                 return tortureRoom.currentTortureTarget == null && tortureRoom.HasValidTortureTarget();
             }
             return false;

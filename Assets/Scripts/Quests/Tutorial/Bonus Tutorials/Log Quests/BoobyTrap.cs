@@ -27,7 +27,6 @@ namespace Tutorial {
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Booby Trap", 
                 $"Someone just {UtilityScripts.Utilities.ColorizeAction("placed a Booby Trap")} on an object! A Tutorial Quest has been added to walk you through the details.", 
                 onClickOK: () => TutorialManager.Instance.ShowTutorial(this)

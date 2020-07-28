@@ -15,6 +15,11 @@ public class SaveManager : MonoBehaviour {
 
     public SaveDataPlayer currentSaveDataPlayer { get; private set; }
 
+    [Header("For Testing")] 
+    [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
+    [SerializeField] private bool alwaysResetBonusTutorialsOnStartup;
+    
+    
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -68,7 +73,7 @@ public class SaveManager : MonoBehaviour {
         //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
         //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
         //}
-        if (WorldConfigManager.Instance.isDemoWorld) {
+        if (WorldConfigManager.Instance.isTutorialWorld) {
             currentSaveDataPlayer = new SaveDataPlayer();
             currentSaveDataPlayer.InitializeInitialData();
         } else {
@@ -80,7 +85,12 @@ public class SaveManager : MonoBehaviour {
                 currentSaveDataPlayer.InitializeInitialData();
             }    
         }
-        
+        if (alwaysResetBonusTutorialsOnStartup) {
+            currentSaveDataPlayer.ResetBonusTutorialProgress();
+        }
+        if (alwaysResetSpecialPopupsOnStartup) {
+            currentSaveDataPlayer.ResetSpecialPopupsProgress();
+        }
     }
 
     public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {

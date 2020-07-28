@@ -4,9 +4,9 @@ using Quests;
 using Quests.Steps;
 
 namespace Tutorial {
-    public class TortureChambers : ImportantTutorial {
+    public class Prison : ImportantTutorial {
 
-        public TortureChambers() : base("Torture Chambers", TutorialManager.Tutorial.Torture_Chambers) { }
+        public Prison() : base("Prison", TutorialManager.Tutorial.Prison) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
@@ -27,15 +27,15 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ToggleTurnedOnStep("Build Tab", "Click on the Build tab")
+                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
                         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                    new ToggleTurnedOnStep("Torture Chambers", "Choose Torture Chambers")
+                    new ToggleTurnedOnStep("Prison", "Choose Prison")
                         .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture),
-                    new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Build the Torture Chambers")
+                    new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Place on an unoccupied Area.")
                         .SetCompleteAction(OnStructureBuilt)
                 ),
                 new QuestStepCollection(
-                    new ClickOnRoomStep("Click on a Torture Room", room => room is TortureRoom)
+                    new ClickOnRoomStep("Click on a Cell", room => room is PrisonCell)
                         .SetHoverOverAction(OnHoverChamber)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
@@ -44,9 +44,9 @@ namespace Tutorial {
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
-                    new DropCharacterAtStructureRoomStep<TortureRoom>("Drop at a Torture Room"),
-                new ClickOnRoomStep("Click on that Room", IsClickedRoomValid),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Torture button")
+                    new DropCharacterAtStructureRoomStep<PrisonCell>("Drop at a Cell"),
+                new ClickOnRoomStep("Click on that Cell", IsClickedRoomValid),
+                    new ExecutedPlayerActionStep(SPELL_TYPE.TORTURE, "Click on Begin Torture button")
                         .SetHoverOverAction(OnHoverBeginTorture)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostTorture, OnNoLongerTopMostTorture)
@@ -75,7 +75,7 @@ namespace Tutorial {
 
         #region Step Helpers
         private bool IsClickedRoomValid(StructureRoom room) {
-            return room is TortureRoom tortureRoom && tortureRoom.HasValidTortureTarget();
+            return room is PrisonCell tortureRoom && tortureRoom.HasValidTortureTarget();
         }
         private void OnHoverClickEmptyTile(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("Suggestion: choose an empty area far away from the Village", 
@@ -86,12 +86,12 @@ namespace Tutorial {
                 TutorialManager.Instance.buildStructureButton, "Building Structures", stepItem.hoverPosition);
         }
         private void OnHoverSeizeCharacter(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("You can seize a villager and then drop it at any empty tile.", 
+            UIManager.Instance.ShowSmallInfo($"You can {UtilityScripts.Utilities.ColorizeAction("seize")} a villager and then {UtilityScripts.Utilities.ColorizeAction("drop")} it at any empty tile.", 
                 TutorialManager.Instance.seizeImage, "Seize", stepItem.hoverPosition);
         }
         private void OnHoverChamber(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo($"The Torture Chambers have 3 separate rooms. Each one can be occupied by one Villager.", 
-                TutorialManager.Instance.chambersVideo, "Chambers", stepItem.hoverPosition);
+            UIManager.Instance.ShowSmallInfo($"The Prison have {UtilityScripts.Utilities.ColorizeAction("3 separate cells")}. Each cell can be occupied by one Villager.", 
+                TutorialManager.Instance.chambersVideo, "Prison Cells", stepItem.hoverPosition);
         }
         private void OnHoverBeginTorture(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo("The Torture button can be found beside the current Room nameplate.", 
@@ -110,21 +110,12 @@ namespace Tutorial {
         }
         #endregion
 
-        #region Build Structure Button
-        private void OnTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Build Structure");
-        }
-        private void OnNoLongerTopMostBuildStructure() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Build Structure");
-        }
-        #endregion
-
-        #region Choose Torture
+        #region Choose Torture Chamber
         private void OnTopMostChooseTorture() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Torture Chambers");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Prison");
         }
         private void OnNoLongerTopMostChooseTorture() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Torture Chambers");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Prison");
         }
         #endregion
 

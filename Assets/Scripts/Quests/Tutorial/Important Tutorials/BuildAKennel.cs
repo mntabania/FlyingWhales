@@ -13,7 +13,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Faction_Info)
             };
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
@@ -29,18 +29,11 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    // new ClickOnEmptyAreaStep()
-                    //     .SetHoverOverAction(OnHoverClickEmptyTile)
-                    //     .SetHoverOutAction(UIManager.Instance.HideSmallInfo), 
-                    // new ObjectPickerShownStep("Click on Build Structure button", "Demonic Structure")
-                    //     .SetOnTopmostActions(OnTopMostBuildStructure, OnNoLongerTopMostBuildStructure), 
-                    // new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Choose the Kennel")
-                    //     .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel)
-                    new ToggleTurnedOnStep("Build Tab", "Click on the Build tab")
+                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
                         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
                     new ToggleTurnedOnStep("Kennel", "Choose the Kennel")
                         .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel),
-                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Build the Kennel")
+                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Place on an unoccupied Area")
                 ),
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a monster.")

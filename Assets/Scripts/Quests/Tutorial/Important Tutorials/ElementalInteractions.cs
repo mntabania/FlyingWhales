@@ -7,8 +7,6 @@ using UnityEngine;
 namespace Tutorial {
     [UsedImplicitly]
     public class ElementalInteractions : ImportantTutorial {
-
-        public override int priority => 1;
         
         public ElementalInteractions() : base("Elemental Interactions", TutorialManager.Tutorial.Elemental_Interactions) { }
 

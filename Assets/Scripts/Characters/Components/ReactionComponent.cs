@@ -1258,6 +1258,7 @@ public class ReactionComponent {
             disguisedCharacter = character;
             if (disguisedCharacter != null) {
                 owner.visuals.UpdateAllVisuals(owner);
+                Messenger.Broadcast(Signals.CHARACTER_DISGUISED, owner, character);
             } else {
                 owner.visuals.UpdateAllVisuals(owner);
                 if (!owner.isDead && owner.marker) {

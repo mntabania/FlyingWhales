@@ -8,7 +8,6 @@ using UnityEngine.PlayerLoop;
 namespace Tutorial {
     public class RegionalMap : ImportantTutorial {
         
-        public override int priority => 20;
         private float _notCastingTime;
         
         public RegionalMap() : base("Regional Map", TutorialManager.Tutorial.Regional_Map) { }

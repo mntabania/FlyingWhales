@@ -393,6 +393,10 @@ public class BehaviourComponent {
         if (job is CharacterStateJob) {
             return true;
         } else if (job is GoapPlanJob goapPlanJob) {
+            if (character is Dragon) {
+                //if character is dragon then do not check path possibility
+                return true;
+            }
             if (goapPlanJob.jobType == JOB_TYPE.IDLE_RETURN_HOME) {
                 if (character.homeStructure != null) {
                     return character.movementComponent.HasPathToEvenIfDiffRegion(character.homeStructure.GetRandomUnoccupiedTile());

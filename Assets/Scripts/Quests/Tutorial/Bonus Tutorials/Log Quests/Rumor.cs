@@ -43,7 +43,6 @@ namespace Tutorial {
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Rumors", 
                 $"Someone is spreading an interesting {UtilityScripts.Utilities.ColorizeAction("rumor")}! A Tutorial Quest has been added to walk you through our Rumors feature.", 
                 onClickOK: () => TutorialManager.Instance.ShowTutorial(this)

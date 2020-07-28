@@ -72,7 +72,7 @@ public class DemoUI : MonoBehaviour {
         WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
 
-        TutorialManager.Instance.InstantiatePendingTutorials();
+        TutorialManager.Instance.InstantiatePendingBonusTutorials();
     }
     #endregion
     

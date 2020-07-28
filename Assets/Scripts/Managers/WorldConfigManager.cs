@@ -14,10 +14,10 @@ public class WorldConfigManager : MonoBehaviour {
     public ItemGenerationSetting worldWideItemGenerationSetting;
     public List<ARTIFACT_TYPE> initialArtifactChoices;
 
-    [Header("Demo")]
-    [SerializeField] private bool _isDemoWorld;
-    [SerializeField] private List<SPELL_TYPE> _availableSpellsInDemoBuild;
-    [SerializeField] private List<TutorialManager.Tutorial> _demoTutorials;
+    // [Header("Demo")]
+    // [SerializeField] private bool _isDemoWorld;
+    // [SerializeField] private List<SPELL_TYPE> _availableSpellsInDemoBuild;
+    // [SerializeField] private List<TutorialManager.Tutorial> _demoTutorials;
 
     [Header("Testing")] 
     [SerializeField] private bool _disableLogs;
@@ -26,11 +26,10 @@ public class WorldConfigManager : MonoBehaviour {
     private List<SPELL_TYPE> _allSpells;
     
     #region Getters
-    public bool isDemoWorld => _isDemoWorld;
-    public List<SPELL_TYPE> availableSpellsInDemoBuild => _allSpells; //_availableSpellsInDemoBuild;
-    public List<TutorialManager.Tutorial> demoTutorials => _demoTutorials;
+    public bool isTutorialWorld => WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial;
+    public List<SPELL_TYPE> availableSpellsInTutorial => _allSpells; //_availableSpellsInDemoBuild;
 #if UNITY_EDITOR
-    public bool disableLogs => _disableLogs;
+    private bool disableLogs => _disableLogs;
 #else
     public bool disableLogs => true;
 #endif

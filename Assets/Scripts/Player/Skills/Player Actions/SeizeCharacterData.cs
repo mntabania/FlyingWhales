@@ -21,6 +21,13 @@ public class SeizeCharacterData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
+            if (targetCharacter.interruptComponent.isInterrupted) {
+                if (targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Brainwashed ||
+                    targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Being_Tortured) {
+                    //do not allow characters being tortured or brainwashed to be seized
+                    return false;
+                }
+            }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && 
                    targetCharacter.marker != null;
         }

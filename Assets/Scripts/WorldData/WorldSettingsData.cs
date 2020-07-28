@@ -3,16 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldSettingsData {
+
+    public enum World_Type {
+        Tutorial,
+        Second_World,
+        Custom
+    };
+    
     public int numOfRegions { get; private set; }
     public bool omnipotentMode { get; private set; }
     public bool noThreatMode { get; private set; }
     public bool chaosVictoryMode { get; private set; }
     public List<RACE> races { get; private set; }
     public List<BIOMES> biomes { get; private set; }
-
+    public World_Type worldType { get; private set; }
+    
     public WorldSettingsData() {
         races = new List<RACE>();
         biomes = new List<BIOMES>();
+        // SetSecondWorldSettings();
+        worldType = World_Type.Custom;
     }
 
     public void SetNumOfRegions(int amount) {
@@ -64,5 +74,14 @@ public class WorldSettingsData {
             }
         }
         return races.Count >= 1 && biomes.Count >= 1;
+    }
+    public void SetSecondWorldSettings() {
+        worldType = World_Type.Second_World;
+        numOfRegions = 1;
+        omnipotentMode = false;
+        noThreatMode = false;
+        AddRace(RACE.HUMANS);
+        AddRace(RACE.ELVES);
+        AddBiome(BIOMES.DESERT);
     }
 }

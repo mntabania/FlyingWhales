@@ -72,8 +72,8 @@ namespace Quests.Steps {
         protected void Complete() {
             if (isCompleted) { return; }
             isCompleted = true;
-            Messenger.Broadcast(Signals.QUEST_STEP_COMPLETED, this);
             onCompleteAction?.Invoke();
+            Messenger.Broadcast(Signals.QUEST_STEP_COMPLETED, this);
         }
         public QuestStep SetCompleteAction(System.Action onCompleteAction) {
             this.onCompleteAction = onCompleteAction;

@@ -142,12 +142,29 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
 		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			regionCount = 1;
 		}
 		if (worldMapTemplates.ContainsKey(regionCount)) {
 			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
-			WorldMapTemplate chosenTemplate = CollectionUtilities.GetRandomElement(choices);
+			WorldMapTemplate chosenTemplate;
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 1,
+					worldMapWidth = 16,
+					worldMapHeight = 10,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(16, 10),
+							}
+						}
+					}
+				};
+			} else {
+				chosenTemplate = CollectionUtilities.GetRandomElement(choices);
+			}
+
 			data.chosenWorldMapTemplate = chosenTemplate;
 			Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
 			yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data));	

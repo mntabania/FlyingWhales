@@ -42,7 +42,6 @@ namespace Tutorial {
         protected override void MakeAvailable() {
             base.MakeAvailable();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Infection", 
                 $"A character has just {UtilityScripts.Utilities.ColorizeAction("contracted the Zombie Virus")}! " +
                 "A Tutorial Quest has been added to walk you through our Zombies feature.", 

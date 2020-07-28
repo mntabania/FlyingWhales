@@ -15,6 +15,7 @@ public class PlayerSkillManager : MonoBehaviour {
 
     [SerializeField] private bool _unlockAllSkills;
     [SerializeField] private bool _unlimitedCast;
+    [SerializeField] private PlayerSkillLoadout tutorialLoadout;
 
 #if UNITY_EDITOR
     public bool unlimitedCast => _unlimitedCast || WorldSettings.Instance.worldSettingsData.omnipotentMode;
@@ -288,10 +289,15 @@ public class PlayerSkillManager : MonoBehaviour {
         selectedArchetype = archetype;
     }
     public PlayerSkillLoadout GetSelectedLoadout() {
-        if(selectedArchetype == PLAYER_ARCHETYPE.Normal) {
-            selectedArchetype = PLAYER_ARCHETYPE.Ravager;
+        if (WorldConfigManager.Instance.isTutorialWorld) {
+            return tutorialLoadout;
+        } else {
+            if(selectedArchetype == PLAYER_ARCHETYPE.Normal) {
+                selectedArchetype = PLAYER_ARCHETYPE.Ravager;
+            }
+            return allSkillLoadouts[selectedArchetype];    
         }
-        return allSkillLoadouts[selectedArchetype];
+        
     }
     #endregion
 

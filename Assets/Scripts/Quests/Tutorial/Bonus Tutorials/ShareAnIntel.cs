@@ -42,11 +42,11 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection (
-                    new ToggleTurnedOnStep("Build Tab", "Click on the Build tab")
+                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
                         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
                     new ToggleTurnedOnStep("Eye", "Choose the Eye")
                         .SetOnTopmostActions(OnTopMostTheEye, OnNoLongerTopMostTheEye),
-                    new StructureBuiltStep(STRUCTURE_TYPE.EYE, "Build the Eye")
+                    new StructureBuiltStep(STRUCTURE_TYPE.EYE, "Place on an unoccupied Area")
                 ),
                 new QuestStepCollection (new StoreIntelStep()
                     .SetHoverOverAction(OnHoverStoreIntel)

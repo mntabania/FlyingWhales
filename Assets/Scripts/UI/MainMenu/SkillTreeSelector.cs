@@ -22,7 +22,21 @@ public class SkillTreeSelector : MonoBehaviour {
             playerLoadoutUI[i].Initialize();
         }
         this.gameObject.SetActive(true);
-        _horizontalScrollSnap.GoToScreen(0);
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+            //if second world then disable ravager and lich builds, and go to puppet master build
+            for (int i = 0; i < archetypeToggles.Length; i++) {
+                Toggle toggle = archetypeToggles[i];
+                if (toggle.gameObject.name == "Puppet Master") {
+                    toggle.isOn = true;
+                } else {
+                    toggle.interactable = false;
+                }
+            }
+            _horizontalScrollSnap.StartingScreen = 1;
+            _horizontalScrollSnap.GoToScreen(1);
+        } else {
+            _horizontalScrollSnap.GoToScreen(0);    
+        }
     }
 
     public void Hide() {
@@ -30,14 +44,9 @@ public class SkillTreeSelector : MonoBehaviour {
     }
 
     public void OnClickContinue() {
-        // Hide();
         continueBtn.interactable = false;
         PlayerSkillManager.Instance.SetSelectedArchetype(GetSelectedArchetype());
         Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
-        PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
-        // MainMenuManager.Instance.StartNewGame();
-        PlayerUI.Instance.InitializeAfterLoadOutPicked();
-        QuestManager.Instance.InitializeAfterLoadoutPicked();
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
         

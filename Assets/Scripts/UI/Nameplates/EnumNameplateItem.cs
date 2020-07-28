@@ -22,8 +22,8 @@ public class EnumNameplateItem : NameplateItem<Enum> {
 
         //TODO: Make this better
         if (o is SPELL_TYPE spellType) {
-            if (WorldConfigManager.Instance.isDemoWorld) {
-                SetLockedState(WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spellType) == false);
+            if (WorldConfigManager.Instance.isTutorialWorld) {
+                SetLockedState(WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellType) == false);
             }
             SpellData spellData;
             if (PlayerSkillManager.Instance.IsAffliction(spellType)) {

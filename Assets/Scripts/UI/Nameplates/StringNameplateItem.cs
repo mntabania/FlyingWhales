@@ -17,6 +17,10 @@ public class StringNameplateItem : NameplateItem<string> {
     public override void SetObject(string o) {
         base.SetObject(o);
         str = o;
+        this.name = str;
+        button.name = str;
+        toggle.name = str;
+        
         identifier = string.Empty;
         mainLbl.text = str;
         additionalText.text = string.Empty;
@@ -42,5 +46,10 @@ public class StringNameplateItem : NameplateItem<string> {
         } else if (identifier == "Trigger Flaw") {
             additionalText.text = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
         }
+    }
+    public override void Reset() {
+        base.Reset();
+        button.name = "Button";
+        toggle.name = "Toggle";
     }
 }

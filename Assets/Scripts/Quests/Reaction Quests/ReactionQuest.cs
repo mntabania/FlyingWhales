@@ -1,6 +1,6 @@
 ﻿using Quests.Steps;
 namespace Quests {
-    public abstract class ReactionQuest : Quest {
+    public abstract class ReactionQuest : SteppedQuest {
 
         protected ReactionQuest(string _questName) : base(_questName) { }
         

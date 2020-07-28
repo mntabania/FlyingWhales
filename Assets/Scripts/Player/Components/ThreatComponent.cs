@@ -29,7 +29,7 @@ public class ThreatComponent {
     }
 
     public void AdjustThreat(int amount) {
-        if(!Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Invade_A_Village) && !Settings.SettingsManager.Instance.settings.skipTutorials) {
+        if(!Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Spawn_An_Invader) && WorldConfigManager.Instance.isTutorialWorld) {
             //Threat does not increase until Tutorial is over, and since the last tutorial is Invade a village, it should be the checker
             //https://trello.com/c/WOZJmvzQ/1238-threat-does-not-increase-until-tutorial-is-over
             return;

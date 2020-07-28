@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Quests;
 using Tutorial;
 
 [System.Serializable]
@@ -12,7 +13,8 @@ public class SaveDataPlayer {
     public List<SPELL_TYPE> unlockedSkills;
     public List<SaveDataSummon> kennelSummons;
     public List<SaveDataTileObject> cryptTileObjects;
-    public List<TutorialManager.Tutorial> completedTutorials;
+    public List<TutorialManager.Tutorial> completedBonusTutorials;
+    public List<QuestManager.Special_Popup> completedSpecialPopups;
 
     //Loadouts
     public LoadoutSaveData ravagerLoadoutSaveData;
@@ -44,6 +46,7 @@ public class SaveDataPlayer {
         //PlayerSkillTreeNodeData breedMonster = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BREED_MONSTER, charges = -1, cooldown = 48, manaCost = 10 };
         //learnedSkills.Add(breedMonster);
         InitializeTutorialData();
+        completedSpecialPopups = new List<QuestManager.Special_Popup>();
     }
 
     #region Exp
@@ -136,13 +139,13 @@ public class SaveDataPlayer {
 
     #region Tutorials
     public void InitializeTutorialData() {
-        completedTutorials = new List<TutorialManager.Tutorial>();
+        completedBonusTutorials = new List<TutorialManager.Tutorial>();
     }
-    public void AddTutorialAsCompleted(TutorialManager.Tutorial tutorial) {
-        completedTutorials.Add(tutorial);
+    public void AddBonusTutorialAsCompleted(TutorialManager.Tutorial tutorial) {
+        completedBonusTutorials.Add(tutorial);
     }
-    public void ResetTutorialProgress() {
-        completedTutorials.Clear();
+    public void ResetBonusTutorialProgress() {
+        completedBonusTutorials.Clear();
     }
     #endregion
 
@@ -347,6 +350,15 @@ public class SaveDataPlayer {
             lichLoadoutSaveData.ClearExtraStructures();
             lichLoadoutSaveData.ClearExtraMiscs();
         }
+    }
+    #endregion
+
+    #region Special Popups
+    public void AddSpecialPopupAsCompleted(QuestManager.Special_Popup popup) {
+        completedSpecialPopups.Add(popup);
+    }
+    public void ResetSpecialPopupsProgress() {
+        completedSpecialPopups.Clear();
     }
     #endregion
 }

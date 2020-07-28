@@ -83,7 +83,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				continue;
 			}
 
-			if (WorldConfigManager.Instance.isDemoWorld) {
+			if (WorldConfigManager.Instance.isTutorialWorld) {
 				//nymphs
 				int randomNymphs = 2;
 				SUMMON_TYPE[] nymphChoices = new[]
@@ -109,8 +109,15 @@ public class MonsterGeneration : MapGenerationComponent {
 					Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(wispChoices), locationChoices);
 					locationChoices.Remove(summon.gridTileLocation);
 				}
-			}
-			else {
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				//Succubus
+				int randomSuccubus = 5;
+				for (int k = 0; k < randomSuccubus; k++) {
+					if (locationChoices.Count == 0) { break; }
+					Summon summon = CreateMonster(SUMMON_TYPE.Succubus, locationChoices);
+					locationChoices.Remove(summon.gridTileLocation);
+				}
+			} else {
 				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 					//spawn 4-8 ghosts
 					int ghosts = Random.Range(4, 9);
@@ -160,7 +167,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		}
 	}
 	private IEnumerator LandmarkMonsterGeneration() {
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			//wolves at monster lair
 			List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 			for (int i = 0; i < monsterLairs.Count; i++) {
@@ -214,7 +221,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
 				caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
-				if (WorldConfigManager.Instance.isDemoWorld) {
+				if (WorldConfigManager.Instance.isTutorialWorld) {
 					bool hasSpawnedSpiders = false;
 					bool hasSpawnedGolems = false;
 					for (int j = 0; j < caves.Count; j++) {
@@ -247,6 +254,28 @@ public class MonsterGeneration : MapGenerationComponent {
 						}
 						if (hasSpawnedGolems && hasSpawnedSpiders) {
 							break;
+						}
+					}
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					for (int j = 0; j < caves.Count; j++) {
+						LocationStructure cave = caves[j];
+						if (cave.residents.Count > 0) {
+							//if cave already has occupants, then do not generate monsters for that cave
+							continue;
+						}
+						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+						if (GameUtilities.RollChance(50)) {
+							//Trolls	
+							int randomTrolls = Random.Range(2, 4);
+							for (int k = 0; k < randomTrolls; k++) {
+								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+							}
+						} else {
+							//Golem	
+							int randomGolem = Random.Range(1, 3);
+							for (int k = 0; k < randomGolem; k++) {
+								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+							}
 						}
 					}
 				} else {

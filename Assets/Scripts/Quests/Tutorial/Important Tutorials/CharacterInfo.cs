@@ -11,7 +11,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Torture_Chambers),
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Prison),
             };
         }
         #endregion
@@ -47,22 +47,23 @@ namespace Tutorial {
         #region Step Completion Actions
         private void OnClickInfo() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Info Tab",
-                $"The Info tab provides you with basic information about the \nVillager such as its Combat Stats, " +
-                "Affiliations, temporary Statuses, permanent Traits and Items held.",
+                $"The Info tab provides you with basic information about the \nVillager such as its " +
+                $"{UtilityScripts.Utilities.ColorizeAction("Combat Stats, Affiliations, temporary Statuses, permanent Traits and Items held")}.",
                 TutorialManager.Instance.infoTab);
         }
         private void OnClickMood() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Mood Tab",
                 $"The Mood tab provides you with an overview of the Villager's current state of mind. " +
-                $"A Villager's Mood is primarily affected by Statuses. " +
+                $"A Villager's Mood is primarily affected by {UtilityScripts.Utilities.ColorizeAction("Statuses")}. " +
                 $"The lower a Villager's Mood is, the less cooperative it is with others, and may even eventually run amok!" +
-                $"\n\nA Villager also has several Needs that apply various Statuses depending on how high or low they are.",
+                $"\n\nA Villager also has {UtilityScripts.Utilities.ColorizeAction("several Needs")} that apply various " +
+                $"Statuses depending on how high or low they are.",
                 TutorialManager.Instance.moodTab);
         }
         private void OnClickRelations() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Relations Tab",
                 $"The Relations tab shows a Villager's relationship with its neighbors. " +
-                $"A Villager will not cooperate with its enemies, " +
+                $"A Villager will {UtilityScripts.Utilities.ColorizeAction("not cooperate")} with its enemies, " +
                 "so one subtle way of reducing a Village's power is by having its residents dislike each other.",
                 TutorialManager.Instance.relationsTab);
         }

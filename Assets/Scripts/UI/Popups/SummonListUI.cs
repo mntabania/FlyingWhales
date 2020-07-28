@@ -62,7 +62,7 @@ public class SummonListUI : PopupMenuBase {
         item.SetObject(summonPlayerSkill);
         
         CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(summonPlayerSkill.className);
-        if (TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
+        if (!string.IsNullOrEmpty(characterClass.traitNameOnTamedByPlayer) && TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
             Trait trait = TraitManager.Instance.allTraits[characterClass.traitNameOnTamedByPlayer];
             item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.description, _hoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    

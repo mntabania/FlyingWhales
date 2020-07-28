@@ -47,12 +47,12 @@ public class MainMenuUI : MonoBehaviour {
     public void ShowMenuButtons() {
         titleTween.OnValueChangedAnimation(true);
         glowTween.OnValueChangedAnimation(true);
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            (startButton.transform as RectTransform).DOAnchorPosY(136f, 1f).SetEase(Ease.Linear);
-            (settingsButton.transform as RectTransform).DOAnchorPosY(92f, 1f).SetEase(Ease.Linear).SetDelay(0.5f);
-        } else {
-            buttonsTween.OnValueChangedAnimation(true);
-        }
+        // if (WorldConfigManager.Instance.isTutorialWorld) {
+        //     (startButton.transform as RectTransform).DOAnchorPosY(136f, 1f).SetEase(Ease.Linear);
+        //     (settingsButton.transform as RectTransform).DOAnchorPosY(92f, 1f).SetEase(Ease.Linear).SetDelay(0.5f);
+        // } else {
+        buttonsTween.OnValueChangedAnimation(true);
+        // }
         
     }
     private void HideMenuButtons() {
@@ -75,17 +75,9 @@ public class MainMenuUI : MonoBehaviour {
         glowTween.OnValueChangedAnimation(false);
     }
     public void OnClickPlayGame() {
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            newGameButton.interactable = false;
-            loadGameButton.interactable = false;
-            //WorldSettings.Instance.Open();
+        if (WorldConfigManager.Instance.isTutorialWorld) {
             MainMenuManager.Instance.StartNewGame();
         } else {
-            //bg.DOFade(0f, 1f).OnComplete(OnCompleteBGTween);
-            //newGameButton.interactable = false;
-            //loadGameButton.interactable = false;
-            //HideMenuButtons();
-            //titleTween.OnValueChangedAnimation(false);
             WorldSettings.Instance.Open();
         }
     }

@@ -1462,7 +1462,7 @@ public class ConsoleBase : InfoUIBase {
 
     #region Tutorial
     public void ResetTutorial() {
-        TutorialManager.Instance.ResetTutorials();
+        // TutorialManager.Instance.ResetTutorials();
     }
     #endregion
 

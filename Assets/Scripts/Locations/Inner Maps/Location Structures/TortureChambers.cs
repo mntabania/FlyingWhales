@@ -58,7 +58,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Rooms
         protected override StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) {
-            return new TortureRoom(tilesInRoom);
+            return new PrisonCell(tilesInRoom);
         }
         #endregion
     }

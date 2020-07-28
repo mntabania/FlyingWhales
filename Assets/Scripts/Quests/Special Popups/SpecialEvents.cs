@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using Quests;
-namespace Tutorial {
+using Tutorial;
+namespace Quests.Special_Popups {
     [UsedImplicitly]
-    public class SpecialEvents : BonusTutorial {
-        public SpecialEvents() : base("Special Events", TutorialManager.Tutorial.Special_Events) { }
+    public class SpecialEvents : SpecialPopup {
+        public SpecialEvents() : base("Special Events", QuestManager.Special_Popup.Special_Events) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>(
                 new QuestCriteria[] {
@@ -29,10 +29,6 @@ namespace Tutorial {
         
         private void OnNecromancerSpawned(Character necromancer) {
             CompleteQuest();
-        }
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
         }
         public override void Activate() {
             StopCheckingCriteria();

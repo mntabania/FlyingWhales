@@ -20,13 +20,13 @@ public class QuestItem : PooledObject {
     [FormerlySerializedAs("tutorialQuestStepPrefab")] [SerializeField] private GameObject questStepPrefab;
     public ContentSizeFitter contentSizeFitter;
     private Vector2 _defaultSize;
-    private Quest _quest;
+    private SteppedQuest _quest;
     
     private void Awake() {
         _defaultSize = (transform as RectTransform).sizeDelta;
     }
     
-    public void SetQuest(Quest quest) {
+    public void SetQuest(SteppedQuest quest) {
         _quest = quest;
         headerLbl.SetTextAndReplaceWithIcons(quest.questName);
         UpdateSteps();
@@ -42,21 +42,21 @@ public class QuestItem : PooledObject {
     public void TweenOutDelayed() {
         StartCoroutine(HideTutorialQuestCoroutine(_quest));
     }
-    private IEnumerator HideTutorialQuestCoroutine(Quest quest) {
+    private IEnumerator HideTutorialQuestCoroutine(SteppedQuest quest) {
         yield return new WaitForSeconds(1.5f);
         RectTransform rectTransform = quest.questItem.transform as RectTransform;
         Vector2 targetSize = rectTransform.sizeDelta;
         targetSize.x = 0f;
         rectTransform.DOSizeDelta(targetSize, 0.4f).SetEase(Ease.OutCubic).OnComplete(() => OnCompleteEaseOutWidth(quest));
     }
-    private void OnCompleteEaseOutWidth(Quest quest) {
+    private void OnCompleteEaseOutWidth(SteppedQuest quest) {
         RectTransform rectTransform = quest.questItem.transform as RectTransform;
         Vector2 targetSize = rectTransform.sizeDelta;
         targetSize.y = 0f;
         quest.questItem.contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
         rectTransform.DOSizeDelta(targetSize, 0.3f).OnComplete(() => OnCompleteEaseOutHeight(quest));
     }
-    private void OnCompleteEaseOutHeight(Quest quest) {
+    private void OnCompleteEaseOutHeight(SteppedQuest quest) {
         if (quest.questItem != null) {
             ObjectPoolManager.Instance.DestroyObject(quest.questItem);
             quest.SetQuestItem(null);    

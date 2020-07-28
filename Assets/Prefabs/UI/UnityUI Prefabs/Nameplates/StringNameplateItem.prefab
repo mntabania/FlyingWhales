@@ -581,6 +581,7 @@ GameObject:
   - component: {fileID: 114127612083567250}
   - component: {fileID: 114633468825798524}
   - component: {fileID: 114444636513275908}
+  - component: {fileID: 7461053959757342471}
   m_Layer: 5
   m_Name: StringNameplateItem
   m_TagString: Untagged
@@ -716,6 +717,32 @@ MonoBehaviour:
   _locationPortrait: {fileID: 114631312390384352}
   additionalText: {fileID: 7336692050048457707}
   img: {fileID: 114526397564927478}
+--- !u!114 &7461053959757342471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493052627817880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &1598954373650442
 GameObject:
   m_ObjectHideFlags: 0

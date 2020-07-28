@@ -19,6 +19,8 @@ public class SpellItem : NameplateItem<SpellData> {
     public override void SetObject(SpellData spellData) {
         base.SetObject(spellData);
         name = spellData.name;
+        button.name = spellData.name;
+        toggle.name = spellData.name;
         this.spellData = spellData;
         UpdateData();
         Messenger.AddListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
@@ -151,6 +153,8 @@ public class SpellItem : NameplateItem<SpellData> {
 
     public override void Reset() {
         base.Reset();
+        button.name = "Button";
+        toggle.name = "Toggle";
         SetInteractableState(true);
         spellData = null;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);

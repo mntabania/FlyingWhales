@@ -11,7 +11,7 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 	}
 
 	private IEnumerator SetBiomePerRegion() {
-		var choices = WorldConfigManager.Instance.isDemoWorld
+		var choices = WorldConfigManager.Instance.isTutorialWorld
 			? new List<BIOMES>() {BIOMES.GRASSLAND}
 			// : new List<BIOMES>() {BIOMES.SNOW};
 			: WorldSettings.Instance.worldSettingsData.biomes;

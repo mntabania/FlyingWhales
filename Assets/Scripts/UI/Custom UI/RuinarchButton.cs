@@ -11,6 +11,9 @@ namespace Ruinarch.Custom_UI {
         protected override void Awake() {
             base.Awake();
             shineEffect = GetComponent<UIShiny>();
+            if (shineEffect == null) {
+                shineEffect = targetGraphic.gameObject.GetComponent<UIShiny>();
+            }
             if (shineEffect != null) {
                 shineEffect.Stop();
             }

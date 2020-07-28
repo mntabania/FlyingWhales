@@ -32,7 +32,7 @@ namespace Tutorial {
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorial(this);
+            TutorialManager.Instance.ShowTutorial(this);
         }
         #endregion
 

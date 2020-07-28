@@ -4,13 +4,14 @@ using Inner_Maps.Location_Structures;
 using Quests;
 using Quests.Steps;
 using UnityEngine;
+using UtilityScripts;
 namespace Tutorial {
     public class BasicControls : ImportantTutorial {
 
         public BasicControls() : base("Basic Controls", TutorialManager.Tutorial.Basic_Controls) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new GameHasBeenRunningForSeconds(WorldConfigManager.Instance.isDemoWorld ? 1f : 8f)
+                new GameHasBeenRunningForSeconds(8f)
             };
         }
         protected override void ConstructSteps() {
@@ -34,9 +35,8 @@ namespace Tutorial {
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
             QuestStep hexTileClick = new ClickOnAreaStep().SetHoverOverAction(OnHoverClickArea)
                 .SetHoverOutAction(UIManager.Instance.HideSmallInfo);
-            if (WorldConfigManager.Instance.isDemoWorld == false) {
-                hexTileClick.SetCompleteAction(OnCompleteClickArea);
-            }
+            // hexTileClick.SetCompleteAction(OnCompleteClickArea);
+            
 
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(hoveredStep, look, zoom, unpause),
@@ -95,7 +95,7 @@ namespace Tutorial {
         private void OnHoverClickHouse(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
                 "There are varied structures existing in the world such as Houses, Taverns, Monster Lairs and more. " +
-                "To click on one, simply click on an empty tile inside it.",
+                $"To click on one, simply {UtilityScripts.Utilities.ColorizeAction("click on an empty tile")} inside it.",
                 TutorialManager.Instance.homeStructureVideo, "Structures",
                 stepItem.hoverPosition
             );

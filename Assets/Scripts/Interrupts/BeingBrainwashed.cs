@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using Traits;
+using Tutorial;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Interrupts {
@@ -14,42 +16,13 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            WeightedDictionary<bool> brainwashWeightedDictionary = new WeightedDictionary<bool>();
+            Assert.IsTrue(interruptHolder.actor.gridTileLocation.structure.IsTilePartOfARoom(interruptHolder.actor.gridTileLocation,
+                out var room) && room is DefilerRoom);
 
-            int failWeight = 100;
-            int successWeight = 20;
-
-            if (interruptHolder.actor.moodComponent.moodState == MOOD_STATE.LOW || interruptHolder.actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
-                if (interruptHolder.actor.moodComponent.moodState == MOOD_STATE.LOW) {
-                    successWeight += 50;
-                } else if (interruptHolder.actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
-                    successWeight += 200;
-                }
-
-                if (interruptHolder.actor.traitContainer.HasTrait("Evil")) {
-                    successWeight += 100;
-                }
-                if (interruptHolder.actor.traitContainer.HasTrait("Treacherous")) {
-                    successWeight += 100;
-                }
-                if (interruptHolder.actor.traitContainer.HasTrait("Betrayed")) {
-                    successWeight += 100;
-                }
-                if (interruptHolder.actor.isFactionLeader) {
-                    failWeight += 600;
-                }
-                if (interruptHolder.actor.isSettlementRuler) {
-                    failWeight += 600;
-                }
-            }
-
-            brainwashWeightedDictionary.AddElement(true, successWeight);
-            brainwashWeightedDictionary.AddElement(false, failWeight);
-
-            brainwashWeightedDictionary.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{interruptHolder.actor.name} brainwash weights:");
+            DefilerRoom defilerRoom = room as DefilerRoom;
             
             Log log;
-            if (brainwashWeightedDictionary.PickRandomElementGivenWeights()) {
+            if (defilerRoom.WasBrainwashSuccessful(interruptHolder.actor)) {
                 //successfully converted
                 interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Cultist");
                 log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "converted");
