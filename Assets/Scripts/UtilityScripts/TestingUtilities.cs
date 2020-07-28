@@ -19,8 +19,9 @@ namespace UtilityScripts {
             summary += "\nLocations Info:";
             for (int i = 0; i < settlements.Count; i++) {
                 NPCSettlement npcSettlement = settlements[i];
+                summary += $"\n<b>{npcSettlement.name}</b>";
+                // summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
                 if (npcSettlement.owner == null) { continue; }
-                summary += $"\n{npcSettlement.name}";
                 // summary += $"\nDryers: {npcSettlement.settlementJobTriggerComponent.tileDryers.Count.ToString()}";
                 // summary += $"\nCleansers: {npcSettlement.settlementJobTriggerComponent.poisonCleansers.Count.ToString()}";
                 // summary += $"\nDousers: {npcSettlement.settlementJobTriggerComponent.dousers.Count.ToString()}";

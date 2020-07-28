@@ -231,11 +231,6 @@ public class LocationStructureObject : PooledObject {
         _groundTileMap.gameObject.SetActive(false);
         RegisterPreplacedObjects(structure, innerMap);
         RescanPathfindingGridOfStructure();
-        if (structure.settlementLocation is NPCSettlement npcSettlement) {
-            npcSettlement.OnLocationStructureObjectPlaced(structure);
-        } else {
-            innerMap.region.OnLocationStructureObjectPlaced(structure);    
-        }
         UpdateSortingOrders();
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }

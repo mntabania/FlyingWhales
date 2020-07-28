@@ -28,7 +28,6 @@ public class Region {
     public List<Character> charactersAtLocation { get; }
     public RegionTileObject regionTileObject { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
-    public LocationStructure mainStorage { get; private set; }
     public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
     public List<IPointOfInterest> pendingAddAwareness { get; }
@@ -830,25 +829,6 @@ public class Region {
     }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
-    }
-    public void OnLocationStructureObjectPlaced(LocationStructure structure) {
-        if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
-            if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-                SetMainStorage(structure);
-            }
-        } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-            if (mainStorage == null) {
-                SetMainStorage(structure);
-            }
-        }
-    }
-    private void SetMainStorage(LocationStructure structure) {
-        bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
-        mainStorage = structure;
-        if (shouldCheckResourcePiles) {
-            Messenger.Broadcast(Signals.REGION_CHANGE_STORAGE, this);
-        }
     }
     #endregion
 

@@ -14,7 +14,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
-    public Region region { get; private set; }
+    public Region region { get; }
 
     //Data that are only referenced from this npcSettlement's region
     //These are only getter data, meaning it cannot be stored
@@ -76,9 +76,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
-        // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
-        // Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-        settlementJobTriggerComponent.SubscribeToListeners();
+        //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
+        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+            settlementJobTriggerComponent.SubscribeToListeners();    
+        }
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
@@ -92,7 +94,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-        settlementJobTriggerComponent.UnsubscribeListeners();
+        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+            settlementJobTriggerComponent.UnsubscribeListeners();
+        }
     }
     #endregion
 
@@ -535,7 +539,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if(cityCenter == null && structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
             cityCenter = structure as CityCenter;
         }
-        AssignPrison();
+        UpdatePrison();
+        UpdateMainStorage();
         switch (structure.structureType) {
             // case STRUCTURE_TYPE.FARM:
             //     classManager.AddCombatantClass("Druid");
@@ -565,29 +570,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     protected override void OnStructureRemoved(LocationStructure structure) {
         base.OnStructureRemoved(structure);
-        AssignPrison();
+        UpdatePrison();
+        UpdateMainStorage();
         switch (structure.structureType) {
-            case STRUCTURE_TYPE.FARM:
-                classManager.RemoveCombatantClass("Druid");
-                break;
-            case STRUCTURE_TYPE.LUMBERYARD:
-                classManager.RemoveCombatantClass("Archer");
-                break;
-            case STRUCTURE_TYPE.CEMETERY:
-                classManager.RemoveCombatantClass("Stalker");
-                break;
-            case STRUCTURE_TYPE.HUNTER_LODGE:
-                classManager.RemoveCombatantClass("Hunter");
-                break;
-            case STRUCTURE_TYPE.PRISON:
-                classManager.RemoveCombatantClass("Knight");
-                break;
-            case STRUCTURE_TYPE.MAGE_QUARTERS:
-                classManager.RemoveCombatantClass("Mage");
-                break;
-            case STRUCTURE_TYPE.APOTHECARY:
-                classManager.RemoveCombatantClass("Shaman");
-                break;
+            // case STRUCTURE_TYPE.FARM:
+            //     classManager.RemoveCombatantClass("Druid");
+            //     break;
+            // case STRUCTURE_TYPE.LUMBERYARD:
+            //     classManager.RemoveCombatantClass("Archer");
+            //     break;
+            // case STRUCTURE_TYPE.CEMETERY:
+            //     classManager.RemoveCombatantClass("Stalker");
+            //     break;
+            // case STRUCTURE_TYPE.HUNTER_LODGE:
+            //     classManager.RemoveCombatantClass("Hunter");
+            //     break;
+            // case STRUCTURE_TYPE.PRISON:
+            //     classManager.RemoveCombatantClass("Knight");
+            //     break;
+            // case STRUCTURE_TYPE.MAGE_QUARTERS:
+            //     classManager.RemoveCombatantClass("Mage");
+            //     break;
+            // case STRUCTURE_TYPE.APOTHECARY:
+            //     classManager.RemoveCombatantClass("Shaman");
+            //     break;
             case STRUCTURE_TYPE.ABANDONED_MINE:
                 classManager.RemoveCivilianClass("Miner");
                 break;
@@ -595,7 +601,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     protected override void LoadStructures(SaveDataArea data) {
         base.LoadStructures(data);
-        AssignPrison();
+        UpdatePrison();
+        UpdateMainStorage();
     }
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
         if(character.reactionComponent.disguisedCharacter != null) {
@@ -643,46 +650,28 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     #region Inner Map
     public IEnumerator PlaceObjects() {
-        //pre placed objects
-        // foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-        //     for (int i = 0; i < keyValuePair.Value.Count; i++) {
-        //         LocationStructure structure = keyValuePair.Value[i];
-        //         if (structure.structureObj != null) {
-        //             structure.structureObj.RegisterPreplacedObjects(structure, structure.location.innerMap);    
-        //         }
-        //         yield return null;
-        //     }
-        // }
-
         PlaceResourcePiles();
         yield return null;
     }
     private void PlaceResourcePiles() {
-        if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
-            mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        } else {
-            mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-        }
+        // if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
+        //     mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        // } else {
+        //     mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+        // }
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         mainStorage.AddPOI(woodPile);
-        // woodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.WOOD_PILE);
 
         StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
         mainStorage.AddPOI(stonePile);
-        // stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
 
         MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
         mainStorage.AddPOI(metalPile);
-        // metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
 
         FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.ANIMAL_MEAT);
         mainStorage.AddPOI(foodPile);
-        // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
     }
-    private void AssignPrison() {
-        if (locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-            return;
-        }
+    private void UpdatePrison() {
         LocationStructure chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.PRISON);
         if (chosenPrison != null) {
             prison = chosenPrison;
@@ -690,24 +679,50 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if (chosenPrison != null) {
                 prison = chosenPrison;
-            } 
-            // else {
-            //     Debug.LogWarning($"Could not find valid prison for {name}");
-            // }
-        }
-    }
-    public void OnLocationStructureObjectPlaced(LocationStructure structure) {
-        if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure, or is using the city center as their main storage structure, then use the new warehouse instead.
-            if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-                SetMainStorage(structure);
-            }
-        } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-            if (mainStorage == null) {
-                SetMainStorage(structure);
+            } else {
+                foreach (var kvp in structures) {
+                    if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
+                        prison = kvp.Value[0];
+                        break;
+                    }
+                } 
             }
         }
     }
+    private void UpdateMainStorage() {
+        //try to assign warehouse, if no warehouse then assign main storage to city center, if no city center then set main storage to first structure that is not wilderness
+        LocationStructure newStorage = null;
+        if (HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
+            newStorage = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        } else if (HasStructure(STRUCTURE_TYPE.CITY_CENTER)) {
+            newStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+        } else {
+            foreach (var kvp in structures) {
+                if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
+                    newStorage = kvp.Value[0];
+                    break;
+                }
+            }
+        }
+        //only set main storage if: Its value is null, or the new storage is a different structure type than the current one. 
+        if (mainStorage == null || 
+            (newStorage != null && newStorage.structureType != mainStorage.structureType)) {
+            SetMainStorage(newStorage);
+        }
+    }
+    // public void OnLocationStructureObjectPlaced(LocationStructure structure) {
+    //     if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+    //         //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure,
+    //         //or is using the city center as their main storage structure, then use the new warehouse instead.
+    //         if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+    //             SetMainStorage(structure);
+    //         }
+    //     } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+    //         if (mainStorage == null) {
+    //             SetMainStorage(structure);
+    //         }
+    //     }
+    // }
     private void SetMainStorage(LocationStructure structure) {
         bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
         mainStorage = structure;
