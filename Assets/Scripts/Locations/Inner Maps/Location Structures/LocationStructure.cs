@@ -460,6 +460,27 @@ namespace Inner_Maps.Location_Structures {
             }
             return null;
         }
+        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, System.Func<T, bool> validityChecker = null) where T : TileObject {
+            if (groupedTileObjects.ContainsKey(tileObjectType)) {
+                TileObjectsAndCount tileObjectsAndCount = groupedTileObjects[tileObjectType];
+                if (validityChecker != null) {
+                    for (int i = 0; i < tileObjectsAndCount.tileObjects.Count; i++) {
+                        TileObject tileObject = tileObjectsAndCount.tileObjects[i];
+                        if (tileObject is T obj) {
+                            if (validityChecker.Invoke(obj)) {
+                                return true;
+                            }    
+                        }
+                        
+                    }
+                } else {
+                    //if no validity checker was provided then check if count of tile objects is greater than 0.
+                    return tileObjectsAndCount.count > 0;
+                }
+                
+            }
+            return false;
+        }
         public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
             int count = 0;
             if (groupedTileObjects.ContainsKey(type)) {

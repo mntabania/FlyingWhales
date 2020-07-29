@@ -418,7 +418,8 @@ public class PlayerUI : MonoBehaviour {
         return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || 
                newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || 
                _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
-               UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing;
+               UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing || 
+               UIManager.Instance.yesNoGO.activeInHierarchy;
     }
     #endregion
 
@@ -591,21 +592,21 @@ public class PlayerUI : MonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver() {
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
-        } else {
+        // if (WorldConfigManager.Instance.isTutorialWorld) {
+        //     UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
+        // } else {
             UIManager.Instance.Pause();
             winGameOver.Open();    
-        }
+        // }
         
     }
     public void LoseGameOver() {
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
-        } else {
+        // if (WorldConfigManager.Instance.isTutorialWorld) {
+        //     UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
+        // } else {
             UIManager.Instance.Pause();
             loseGameOver.Open();
-        }
+        // }
     }
     #endregion
 
@@ -951,9 +952,9 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         go.SetActive(true);
-        if (WorldConfigManager.Instance.isDemoWorld) {
+        if (WorldConfigManager.Instance.isTutorialWorld) {
             //in demo world, only allow spells that are set to be available.
-            bool isInteractable = WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spell);
+            bool isInteractable = WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spell);
             item.SetInteractableState(isInteractable);
             if (isInteractable) {
                 item.transform.SetAsFirstSibling();

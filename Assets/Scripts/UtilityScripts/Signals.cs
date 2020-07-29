@@ -184,6 +184,10 @@ public static class Signals {
     /// Parameters (Character)
     /// </summary>
     public static string CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED = "OnCharacterChangedAllianceWithPlayer";
+    /// <summary>
+    /// Parameters Character disguiser, Character target
+    /// </summary>
+    public static string CHARACTER_DISGUISED = "OnCharacterDisguised";
     #endregion
 
     #region UI
@@ -276,6 +280,10 @@ public static class Signals {
     public static string RACE_WORLD_OPTION_ITEM_CLICKED = "OnRaceWorldOptionItemClicked";
     public static string BIOME_WORLD_OPTION_ITEM_CLICKED = "OnBiomeWorldOptionItemClicked";
     public static string UI_STATE_SET = "OnUIStateSet";
+    /// <summary>
+    /// Parameters: EventLabel
+    /// </summary>
+    public static string EVENT_LABEL_LINK_CLICKED = "OnEventLabelClicked";
     #endregion
 
     #region Quest Signals
@@ -576,11 +584,12 @@ public static class Signals {
     /// Parameters: Region
     /// </summary>
     public static string CHECK_UNBUILT_OBJECT_VALIDITY = "CheckUnbuiltObjectValidity";
-    #endregion
-
-    #region Tile Object
     public static string ADD_TILE_OBJECT_USER = "OnAddTileObjectUser";
     public static string REMOVE_TILE_OBJECT_USER = "OnAddTileObjectUser";
+    /// <summary>
+    /// Parameters TileObject
+    /// </summary>
+    public static string TILE_OBJECT_ACTIVATED = "OnTileObjectActivated";
     #endregion
 
     #region Quests
@@ -702,6 +711,17 @@ public static class Signals {
     public static string CHARACTER_ASSUMED = "OnCharacterAssumed";
     #endregion
 
+    #region Monsters
+    /// <summary>
+    /// Parameters: Character dragon
+    /// </summary>
+    public static string DRAGON_LEFT_WORLD = "OnDragonLeft";
+    /// <summary>
+    /// Parameters: Character dragon
+    /// </summary>
+    public static string AWAKEN_DRAGON = "OnDragonAwakened";
+    #endregion
+    
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(NPCSettlement) },

@@ -49,7 +49,7 @@ public class PlayerSkillComponent {
         }
     }
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
-        if (PlayerSkillManager.Instance.unlockAllSkills || WorldConfigManager.Instance.isDemoWorld) {
+        if (PlayerSkillManager.Instance.unlockAllSkills) {
             PopulateDevModeSkills();
         } else {
             //PopulateAllSkills(save.learnedSkills);
@@ -60,12 +60,15 @@ public class PlayerSkillComponent {
             PopulateAllSkills(loadout.structures.fixedSkills);
             PopulateAllSkills(loadout.miscs.fixedSkills);
 
-            LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
-            PopulateAllSkills(loadoutSaveData.extraSpells);
-            PopulateAllSkills(loadoutSaveData.extraAfflictions);
-            PopulateAllSkills(loadoutSaveData.extraMinions);
-            PopulateAllSkills(loadoutSaveData.extraStructures);
-            PopulateAllSkills(loadoutSaveData.extraMiscs);
+            if (!WorldConfigManager.Instance.isTutorialWorld) {
+                //only load extra spells from save data if world is not tutorial world.
+                LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
+                PopulateAllSkills(loadoutSaveData.extraSpells);
+                PopulateAllSkills(loadoutSaveData.extraAfflictions);
+                PopulateAllSkills(loadoutSaveData.extraMinions);
+                PopulateAllSkills(loadoutSaveData.extraStructures);
+                PopulateAllSkills(loadoutSaveData.extraMiscs);    
+            }
 
             PopulateAllSkills(PlayerSkillManager.Instance.constantSkills);
         }
@@ -114,17 +117,17 @@ public class PlayerSkillComponent {
     private void PopulateDevModeSkills() {
         foreach (PlayerSkillData data in PlayerSkillManager.Instance.playerSkillDataDictionary.Values) {
             bool shouldAddSpell = true;
-            if (WorldConfigManager.Instance.isDemoWorld) {
-                //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
-                //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
-                //be seen, but instead, should not be clickable.
-                shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(data.skill) == false ||
-                                 WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(data.skill))
-                                 && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
-                                 && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
-            } else {
+            // if (WorldConfigManager.Instance.isTutorialWorld) {
+            //     //if demo world, spell should be added if it is not a minion type. If it is, check if that spell is in
+            //     //the available set of spells for the demo. Other spells are added because in the demo, their buttons should still
+            //     //be seen, but instead, should not be clickable.
+            //     shouldAddSpell = (PlayerSkillManager.Instance.IsMinion(data.skill) == false ||
+            //                      WorldConfigManager.Instance.availableSpellsInTutorial.Contains(data.skill))
+            //                      && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
+            //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
+            // } else {
                 shouldAddSpell = data.skill != SPELL_TYPE.RAIN && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
-            }
+            // }
             if (shouldAddSpell) {
                 SetPlayerSkillData(data);
             }

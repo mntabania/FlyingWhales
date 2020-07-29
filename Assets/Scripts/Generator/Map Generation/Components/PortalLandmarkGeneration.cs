@@ -17,7 +17,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 
 	private void PlacePortal(MapGenerationData data) {
 		List<HexTile> validPortalTiles;
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[1, 7]
 			};
@@ -34,7 +34,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			"No valid portal tiles were found!");
 		
 		HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			portalTile.SetElevation(ELEVATION.PLAIN);
 		}
 		portalTile.featureComponent.RemoveAllFeatures(portalTile);

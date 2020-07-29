@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InitialWorldSetupMenu : MonoBehaviour  {
 
     [SerializeField] public SkillTreeSelector loadOutMenu;
+    [SerializeField] public Button regenerateWorldBtn;
+    [SerializeField] public Button configureLoadoutBtn;
     
     public void Show() {
         UIManager.Instance.SetSpeedTogglesState(false);
+
+        regenerateWorldBtn.interactable =
+            WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom;
+        
         gameObject.SetActive(true);
     }
     public void Hide() {

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Quests.Special_Popups;
 using Settings;
 using Tutorial;
 using UnityEngine;
+using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
 namespace Quests {
     public class QuestManager : MonoBehaviour {
@@ -14,8 +16,13 @@ namespace Quests {
         /// List of active quests. NOTE: this does not include tutorials.
         /// </summary>
         private List<Quest> _activeQuests;
-
-        public bool hasClickedCenterButtonAtLastOnce;
+        
+        public enum Special_Popup { 
+            Threat, Counterattack, Divine_Intervention, Special_Events, Pause_Reminder, 
+            //Finished_Tutorial,
+            //Wolf_Migration, Villager_Migration,
+            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened,
+        }
         
         private void Awake() {
             Instance = this;
@@ -40,6 +47,31 @@ namespace Quests {
         }
         public void InitializeAfterLoadoutPicked(){
             CheckEliminateAllVillagersQuest();
+            InstantiatePendingSpecialPopups();
+        }
+        private void InstantiatePendingSpecialPopups() {
+            List<Special_Popup> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedSpecialPopups;
+            Special_Popup[] allTutorials = CollectionUtilities.GetEnumValues<Special_Popup>();
+            for (int i = 0; i < allTutorials.Length; i++) {
+                Special_Popup popup = allTutorials[i];
+                //only instantiate popup if it has not yet been completed
+                bool instantiateTutorial = completedTutorials.Contains(popup) == false;
+                if (instantiateTutorial) {
+                    SpecialPopup specialPopup = InstantiateSpecialPopup(popup);
+                    specialPopup.Initialize();
+                }
+            }
+        }
+        private SpecialPopup InstantiateSpecialPopup(Special_Popup popup) {
+            string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities.
+                NormalizeStringUpperCaseFirstLettersNoSpace(popup.ToString()));
+            string typeName = $"Quests.Special_Popups.{ noSpacesName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            Type type = Type.GetType(typeName);
+            if (type != null) {
+                SpecialPopup specialPopup = Activator.CreateInstance(type) as SpecialPopup;
+                return specialPopup;
+            }
+            throw new Exception($"Could not instantiate special popup {noSpacesName}");
         }
         #endregion
 
@@ -68,25 +100,29 @@ namespace Quests {
         #endregion
         
         #region Activation
-        private void ActivateQuest(Quest quest) {
+        public void ActivateQuest(Quest quest) {
             _activeQuests.Add(quest);
             quest.Activate();
-            QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
-            quest.SetQuestItem(questItem);
+            if (quest is SteppedQuest steppedQuest) {
+                QuestItem questItem = UIManager.Instance.questUI.ShowQuest(steppedQuest, true);
+                steppedQuest.SetQuestItem(questItem);
+            }
         }
         private void ActivateQuest<T>(params object[] arguments) where T : Quest {
             Quest quest = System.Activator.CreateInstance(typeof(T), arguments) as Quest;
             Debug.Assert(quest != null, nameof(quest) + " != null");
             _activeQuests.Add(quest);
             quest.Activate();
-            QuestItem questItem = UIManager.Instance.questUI.ShowQuest(quest, true);
-            quest.SetQuestItem(questItem);
+            if (quest is SteppedQuest steppedQuest) {
+                QuestItem questItem = UIManager.Instance.questUI.ShowQuest(steppedQuest, true);
+                steppedQuest.SetQuestItem(questItem);    
+            }
             Messenger.Broadcast(Signals.QUEST_ACTIVATED, quest);
         }
         private void DeactivateQuest(Quest quest) {
             _activeQuests.Remove(quest);
-            if (quest.questItem != null) {
-                UIManager.Instance.questUI.HideQuestDelayed(quest);
+            if (quest is SteppedQuest steppedQuest && steppedQuest.questItem != null) {
+                UIManager.Instance.questUI.HideQuestDelayed(steppedQuest);
             }
             quest.Deactivate();
         }
@@ -95,39 +131,30 @@ namespace Quests {
         #region Completion
         public void CompleteQuest(Quest quest) {
             DeactivateQuest(quest);
+            if (quest is SpecialPopup specialPopup) {
+                if (specialPopup.isRepeatable) {
+                    //spawn popup again.
+                    InstantiateSpecialPopup(specialPopup.specialPopupType).Initialize();
+                } else {
+                    SaveManager.Instance.currentSaveDataPlayer.AddSpecialPopupAsCompleted(specialPopup.specialPopupType);    
+                }
+            }
         }
         #endregion
 
         #region Eliminate All Villagers Quest
         private void CheckEliminateAllVillagersQuest() {
-            if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials
-                .Contains(TutorialManager.Tutorial.Invade_A_Village) || SettingsManager.Instance.settings.skipTutorials) {
+            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 CreateEliminateAllVillagersQuest();
             } else {
-                Messenger.AddListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
-                // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-                Messenger.AddListener<bool, bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsToggled);
+                Messenger.AddListener(Signals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             }
         }
-        private void OnTutorialQuestCompleted(TutorialQuest completedQuest) {
-            if (completedQuest.tutorialType == TutorialManager.Tutorial.Invade_A_Village) {
-                CreateEliminateAllVillagersQuest();
-            }
-        }
-        // private void OnCharacterDied(Character character) {
-        //     if (character.isNormalCharacter) {
-        //         CreateEliminateAllVillagersQuest();
-        //     }
-        // }
-        private void OnSkipTutorialsToggled(bool skipTutorials, bool deSpawnExisting) {
-            if (skipTutorials) {
-                CreateEliminateAllVillagersQuest();
-            }
+        private void OnImportantTutorialsFinished() {
+            CreateEliminateAllVillagersQuest();
         }
         private void CreateEliminateAllVillagersQuest() {
-            Messenger.RemoveListener<TutorialQuest>(Signals.TUTORIAL_QUEST_COMPLETED, OnTutorialQuestCompleted);
-            // Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-            Messenger.RemoveListener<bool, bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsToggled);
+            Messenger.RemoveListener(Signals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
             EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
             ActivateQuest(eliminateAllVillagers);
         }
@@ -153,7 +180,6 @@ namespace Quests {
 
         #region Center Button
         public void OnClickCenterButton() {
-            hasClickedCenterButtonAtLastOnce = true;
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CenterButton");
         }
         #endregion

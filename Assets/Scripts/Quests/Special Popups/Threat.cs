@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
-using Quests;
-namespace Tutorial {
-    public class Threat : BonusTutorial {
-        public Threat() : base("Threat", TutorialManager.Tutorial.Threat) { }
+using JetBrains.Annotations;
+using Tutorial;
+namespace Quests.Special_Popups {
+    [UsedImplicitly]
+    public class Threat : SpecialPopup {
+        public Threat() : base("Threat", QuestManager.Special_Popup.Threat) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>(
                 new [] {
                     new ThreatIncreased(), 
                 }    
             );
-        }
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
         }
         public override void Activate() {
             StopCheckingCriteria();

@@ -54,12 +54,12 @@ public class TraitManager : MonoBehaviour {
     public static TraitProcessor tileObjectTraitProcessor;
     public static TraitProcessor defaultTraitProcessor;
     
-    //list of traits that a character can gain on their own
-    private readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
-        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
-        "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-        "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Blessed", "Persuasive", //, "Electric", "Venomous"
-    };
+    // //list of traits that a character can gain on their own
+    // private readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
+    //     "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
+    //     "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
+    //     "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Blessed", "Persuasive", //, "Electric", "Venomous"
+    // };
     public List<string> buffTraitPool { get; private set; }
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }
@@ -106,6 +106,8 @@ public class TraitManager : MonoBehaviour {
         buffTraitPool = new List<string>();
         flawTraitPool = new List<string>();
         neutralTraitPool = new List<string>();
+
+        string[] traitPool = GetTraitPoolForWorld();
         
         //Categorize traits from trait pool
         for (int i = 0; i < traitPool.Length; i++) {
@@ -268,6 +270,21 @@ public class TraitManager : MonoBehaviour {
             return "Earth Master";
         }
         return string.Empty;
+    }
+    private string[] GetTraitPoolForWorld() {
+        if (WorldConfigManager.Instance.isTutorialWorld) {
+            return new[] { "Vigilant", "Diplomatic",
+                "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
+                "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
+                "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Persuasive"
+            };
+        } else {
+            return new[] { "Vigilant", "Diplomatic",
+                "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
+                "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
+                "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Blessed", "Persuasive"
+            };;
+        }
     }
     #endregion
 

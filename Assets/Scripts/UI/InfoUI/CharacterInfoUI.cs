@@ -695,7 +695,7 @@ public class CharacterInfoUI : InfoUIBase {
         string afflictionName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(afflictionType.ToString());
         UIManager.Instance.ShowYesNoConfirmation("Affliction Confirmation",
             "Are you sure you want to afflict " + afflictionName + "?", () => ActivateAffliction(afflictionType),
-            layer: 26);
+            layer: 26, showCover: true, pauseAndResume: true);
     }
     private void ActivateAffliction(SPELL_TYPE afflictionType) {
         UIManager.Instance.HideObjectPicker();
@@ -703,8 +703,8 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateAffliction(SpellData spellData) {
-        if (WorldConfigManager.Instance.isDemoWorld) {
-            return WorldConfigManager.Instance.availableSpellsInDemoBuild.Contains(spellData.type) 
+        if (WorldConfigManager.Instance.isTutorialWorld) {
+            return WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellData.type) 
                    && spellData.CanPerformAbilityTowards(activeCharacter);
         }
         return spellData.CanPerformAbilityTowards(activeCharacter);
@@ -737,12 +737,12 @@ public class CharacterInfoUI : InfoUIBase {
         question += $"\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
         question += $"\n<b>Mana Cost</b>: {PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
-        UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", question, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true);
+        UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", question, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
     }
     private void ActivateTriggerFlaw(Trait trait) {
         UIManager.Instance.HideObjectPicker();
         trait.TriggerFlaw(activeCharacter);
-        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER);
+        Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateTriggerFlaw(string traitName) {

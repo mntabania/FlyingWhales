@@ -1,20 +1,16 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using Quests;
-namespace Tutorial {
+using Tutorial;
+namespace Quests.Special_Popups {
     [UsedImplicitly]
-    public class Counterattack : BonusTutorial {
-        public Counterattack() : base("Counterattack", TutorialManager.Tutorial.Counterattack) { }
+    public class Counterattack : SpecialPopup {
+        public Counterattack() : base("Counterattack", QuestManager.Special_Popup.Counterattack) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>(
                 new [] {
                     new ReactionQuestActivated<Quests.Counterattack>(), 
                 }    
             );
-        }
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
         }
         public override void Activate() {
             StopCheckingCriteria();

@@ -1,20 +1,16 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using Quests;
-namespace Tutorial {
+using Tutorial;
+namespace Quests.Special_Popups {
     [UsedImplicitly]
-    public class DivineIntervention : BonusTutorial {
-        public DivineIntervention() : base("Divine Intervention", TutorialManager.Tutorial.Divine_Intervention) { }
+    public class DivineIntervention : SpecialPopup {
+        public DivineIntervention() : base("Divine Intervention", QuestManager.Special_Popup.Divine_Intervention) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>(
                 new [] {
                     new ReactionQuestActivated<Quests.DivineIntervention>(), 
                 }    
             );
-        }
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
         }
         public override void Activate() {
             StopCheckingCriteria();

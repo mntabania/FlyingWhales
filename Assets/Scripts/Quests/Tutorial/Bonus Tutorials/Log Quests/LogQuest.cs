@@ -18,5 +18,12 @@ namespace Tutorial {
             return false;
         }
         #endregion
+
+        #region Availability
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            TutorialManager.Instance.ActivateTutorial(this);
+        }
+        #endregion
     }
 }

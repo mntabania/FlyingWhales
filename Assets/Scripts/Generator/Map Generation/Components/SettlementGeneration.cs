@@ -26,10 +26,10 @@ public class SettlementGeneration : MapGenerationComponent {
 	
 	private IEnumerator CreateSettlement(Region region, MapGenerationData data) {
 		List<HexTile> settlementTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			Assert.IsTrue(settlementTiles.Count == 4, "Settlement tiles of demo build is not 4!");
 		}
-		List<RACE> validRaces = WorldConfigManager.Instance.isDemoWorld
+		List<RACE> validRaces = WorldConfigManager.Instance.isTutorialWorld
 			? new List<RACE>() {RACE.HUMANS, RACE.ELVES}
 			: WorldSettings.Instance.worldSettingsData.races;
 
@@ -42,7 +42,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				(region, locationType, settlementTiles.ToArray());
 			npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
-			var structureTypes = WorldConfigManager.Instance.isDemoWorld ? 
+			var structureTypes = WorldConfigManager.Instance.isTutorialWorld ? 
 				new List<StructureSetting>() {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 
@@ -134,7 +134,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.PRISON) == false) {
 				//Prison: +3 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 3);
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 100); //3
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
 				//Barracks: +6 (disable if already selected from previous hex tile)
@@ -173,7 +173,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				break; //no more dwellings
 			}
 			Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
-			if (roll < 40 || (WorldConfigManager.Instance.isDemoWorld && citizenCount < 9)) {
+			if (roll < 25 || (WorldConfigManager.Instance.isTutorialWorld && citizenCount < 9)) {
 				//couple
 				List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
 				if (couples.Count > 0) {

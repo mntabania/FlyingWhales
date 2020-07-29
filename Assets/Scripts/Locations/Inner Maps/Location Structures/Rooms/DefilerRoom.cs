@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tutorial;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
@@ -29,6 +30,50 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Brainwash
+        private bool wasBrainwashStartedInTutorial;
+        public bool WasBrainwashSuccessful(Character actor) {
+            WeightedDictionary<bool> brainwashWeightedDictionary = new WeightedDictionary<bool>();
+
+            int failWeight = 100;
+            int successWeight = 20;
+
+            if (wasBrainwashStartedInTutorial) {
+                //if create a cultist tutorial is currently active then make sure that the brainwashing always succeeds
+                failWeight = 0;
+                successWeight = 100;
+            } else {
+                if (actor.moodComponent.moodState == MOOD_STATE.LOW || actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+                        successWeight += 50;
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                        successWeight += 200;
+                    }
+
+                    if (actor.traitContainer.HasTrait("Evil")) {
+                        successWeight += 100;
+                    }
+                    if (actor.traitContainer.HasTrait("Treacherous")) {
+                        successWeight += 100;
+                    }
+                    if (actor.traitContainer.HasTrait("Betrayed")) {
+                        successWeight += 100;
+                    }
+                    if (actor.isFactionLeader) {
+                        failWeight += 600;
+                    }
+                    if (actor.isSettlementRuler) {
+                        failWeight += 600;
+                    }
+                }
+            }
+            
+            brainwashWeightedDictionary.AddElement(true, successWeight);
+            brainwashWeightedDictionary.AddElement(false, failWeight);
+
+            brainwashWeightedDictionary.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{actor.name} brainwash weights:");
+            
+            return brainwashWeightedDictionary.PickRandomElementGivenWeights();
+        }
         public bool HasValidBrainwashTarget() {
             List<Character> characters = charactersInRoom;
             for (int i = 0; i < characters.Count; i++) {
@@ -45,6 +90,8 @@ namespace Inner_Maps.Location_Structures {
                     && character.traitContainer.HasTrait("Cultist") == false;
         } 
         public void StartBrainwash() {
+            wasBrainwashStartedInTutorial =
+                TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
             DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
             door?.Close();
             Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(x => IsValidBrainwashTarget(x)));

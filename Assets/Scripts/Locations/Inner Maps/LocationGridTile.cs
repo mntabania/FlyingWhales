@@ -531,7 +531,7 @@ namespace Inner_Maps {
                    && character.marker != null && character.carryComponent.IsNotBeingCarried()
                    && character.isAlliedWithPlayer == false
                    && !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
-                   && (Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Invade_A_Village) || Settings.SettingsManager.Instance.settings.skipTutorials)) {
+                   && (Tutorial.TutorialManager.Instance.HasTutorialBeenCompleted(Tutorial.TutorialManager.Tutorial.Spawn_An_Invader) || !WorldConfigManager.Instance.isTutorialWorld)) {
                     character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                 } else {
                     //If cannot report flee instead

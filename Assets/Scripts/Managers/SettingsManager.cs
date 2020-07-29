@@ -24,7 +24,6 @@ namespace Settings {
         public Toggle fullscreenToggle;
 
         [Header("Gameplay Settings UI")] 
-        [SerializeField] private Toggle skipTutorialsToggle;
         [SerializeField] private Toggle edgePanningToggle;
         
         [Header("Audio Settings UI")]
@@ -109,7 +108,6 @@ namespace Settings {
             settingsGO.SetActive(false);
         }
         private void UpdateUI() {
-            skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
             edgePanningToggle.isOn = settings.useEdgePanning;
 
             resolutionsDropdown.value =
@@ -123,14 +121,6 @@ namespace Settings {
         public void OnToggleEdgePanning(bool isOn) {
             _settings.useEdgePanning = isOn;
             Messenger.Broadcast(Signals.EDGE_PANNING_TOGGLED, isOn);
-        }
-        public void OnToggleSkipTutorials(bool isOn) {
-            _settings.skipTutorials = isOn;
-            Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, isOn, true);
-        }
-        public void ManualToggleSkipTutorials(bool isOn, bool deSpawnExisting) {
-            _settings.skipTutorials = isOn;
-            Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, isOn, deSpawnExisting);
         }
         #endregion
         
@@ -146,7 +136,6 @@ namespace Settings {
                      fullscreen = true,
                      graphicsQuality = 2,
                      resolution = $"{Screen.currentResolution.width.ToString()}x{Screen.currentResolution.height.ToString()}",
-                     skipTutorials = false,
                      useEdgePanning = false,
                      musicVolume = 0f,
                      masterVolume = 0f,
@@ -163,7 +152,6 @@ namespace Settings {
             SetResolution();
             SetFullscreen();
 
-            _settings.skipTutorials = skipTutorialsToggle.isOn;
             _settings.useEdgePanning = edgePanningToggle.isOn;
             
             //resolution

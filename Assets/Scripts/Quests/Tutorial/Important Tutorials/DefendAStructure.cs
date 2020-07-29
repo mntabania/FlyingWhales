@@ -10,13 +10,13 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new DemonicStructurePlaced()
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Spawn_An_Invader)
             };
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerManager.Instance.player.playerSkillComponent.CanDoPlayerAction(SPELL_TYPE.DEFEND);
+                return PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count > 0;
             }
             return false;
         }
@@ -24,12 +24,37 @@ namespace Tutorial {
         
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(new ClickOnStructureStep("Select a Demonic Structure", "Demonic")),
                 new QuestStepCollection(
-                    new ActivateDefendStep(),
-                    new ExecutedPlayerActionStep(SPELL_TYPE.DEFEND, "Summon at least one defender")
+                    new ToggleTurnedOnStep("Demons Tab", "Open Demon Tab")
+                        .SetOnTopmostActions(OnTopMostDemonTab, OnNoLongerTopMostDemonTab),
+                    new ChooseSpellStep(IsChosenSpellValid, "Select a Defender-type Demon"),
+                    new MinionSummonedStep(IsSummonedMinionValid, "Spawn on a Demonic Structure")
                 )
             };
         }
+        
+        #region Step Helpers
+        private bool IsChosenSpellValid(SpellData spellData) {
+            if (spellData is MinionPlayerSkill minionPlayerSkill) {
+                CharacterClass characterClass =
+                    CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
+                return characterClass.traitNameOnTamedByPlayer == "Defender";
+            }
+            return false;
+        }
+        private bool IsSummonedMinionValid(Minion minion) {
+            return minion.character.traitContainer.HasTrait("Defender") &&
+                   (minion.character.currentStructure is DemonicStructure || minion.character.gridTileLocation.isCorrupted);
+        }
+        #endregion
+        
+        #region Demons Tab
+        private void OnTopMostDemonTab() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Demons Tab");
+        }
+        private void OnNoLongerTopMostDemonTab() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Demons Tab");
+        }
+        #endregion
     }
 }

@@ -49,6 +49,7 @@ public static class TileObjectDB {
             constructionTime = 12,
             maxHP = 400,
             neededCharacterClass =  new string[] { "Craftsman" },
+            itemRequirementsForCreation = new[] { "Wood Pile" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.TIREDNESS_RECOVERY, value = 20 }
             }
@@ -78,6 +79,7 @@ public static class TileObjectDB {
             constructionTime = 12,
             maxHP = 250,
             neededCharacterClass =  new string[] { "Craftsman" },
+            itemRequirementsForCreation = new[] { "Wood Pile" },
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }

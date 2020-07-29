@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using DG.Tweening;
 using Factions;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -162,7 +163,7 @@ public class UIManager : MonoBehaviour {
         
         Messenger.AddListener(Signals.INTERACTION_MENU_OPENED, OnInteractionMenuOpened);
         Messenger.AddListener(Signals.INTERACTION_MENU_CLOSED, OnInteractionMenuClosed);
-
+ 
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
@@ -181,7 +182,7 @@ public class UIManager : MonoBehaviour {
 
         UpdateUI();
         
-        returnToWorldBtn.gameObject.SetActive(WorldConfigManager.Instance.isDemoWorld == false);
+        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom);
     }
     private void OnGameLoaded() {
         UpdateUI();
@@ -1188,7 +1189,8 @@ public class UIManager : MonoBehaviour {
 
     #region Yes/No
     [Header("Yes or No Confirmation")]
-    [SerializeField] private GameObject yesNoGO;
+    public GameObject yesNoGO;
+    [SerializeField] private CanvasGroup yesNoCanvasGroup;
     [SerializeField] private GameObject yesNoCover;
     [SerializeField] private TextMeshProUGUI yesNoHeaderLbl;
     [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
@@ -1219,6 +1221,13 @@ public class UIManager : MonoBehaviour {
     public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
         bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
+        if (PlayerUI.Instance.IsMajorUIShowing()) {
+            PlayerUI.Instance.AddPendingUI(() => ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, 
+                showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable, pauseAndResume,
+                yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction));
+            return;
+        }
+        
         if (pauseAndResume) {
             SetSpeedTogglesState(false);
             Pause();
@@ -1245,12 +1254,12 @@ public class UIManager : MonoBehaviour {
         noBtn.onClick.AddListener(HideYesNoConfirmation);
         closeBtn.onClick.AddListener(HideYesNoConfirmation);
 
-        //resume last prog speed on click any btn
-        if (pauseAndResume) {
-            yesBtn.onClick.AddListener(ResumeLastProgressionSpeed);
-            noBtn.onClick.AddListener(ResumeLastProgressionSpeed);
-            closeBtn.onClick.AddListener(ResumeLastProgressionSpeed);
-        }
+        // //resume last prog speed on click any btn
+        // if (pauseAndResume) {
+        //     yesBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+        //     noBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+        //     closeBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+        // }
 
         //specific actions
         if (onClickYesAction != null) {
@@ -1272,9 +1281,25 @@ public class UIManager : MonoBehaviour {
         yesNoGO.SetActive(true);
         yesNoGO.transform.SetSiblingIndex(layer);
         yesNoCover.SetActive(showCover);
+        TweenIn(yesNoCanvasGroup);
     }
     private void HideYesNoConfirmation() {
         yesNoGO.SetActive(false);
+        if (!PlayerUI.Instance.TryShowPendingUI()) {
+            ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        }
+    }
+    private void TweenIn(CanvasGroup canvasGroup) {
+        canvasGroup.alpha = 0;
+        RectTransform rectTransform = canvasGroup.transform as RectTransform; 
+        rectTransform.anchoredPosition = new Vector2(0f, -30f);
+        
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(rectTransform.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack));
+        sequence.Join(DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 1f, 0.5f)
+            .SetEase(Ease.InSine));
+        sequence.PrependInterval(0.2f);
+        sequence.Play();
     }
     #endregion
 

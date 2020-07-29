@@ -33,7 +33,6 @@ namespace Tutorial {
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Killed by a Monster", 
                 $"A Villager has been {UtilityScripts.Utilities.ColorizeAction("killed by a monster")}! " +
                 "A Tutorial Quest has been added to teach you how to figure out what happened.", 

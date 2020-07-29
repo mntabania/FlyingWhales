@@ -11,7 +11,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating tile features...");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles(data));
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			DetermineSettlementsForDemo();
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
@@ -64,7 +64,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		
 		yield return null;
 		
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			//pigs
 			HexTile pigTile = GridMap.Instance.map[2, 4];
 			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);

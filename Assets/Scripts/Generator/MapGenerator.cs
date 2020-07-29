@@ -104,7 +104,7 @@ public class MapGenerator : MonoBehaviour {
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Show();
-            if (WorldConfigManager.Instance.isDemoWorld) {
+            if (WorldConfigManager.Instance.isTutorialWorld) {
                 Messenger.Broadcast(Signals.GAME_LOADED);
                 UIManager.Instance.initialWorldSetupMenu.loadOutMenu.OnClickContinue();
                 LevelLoaderManager.Instance.SetLoadingState(false);

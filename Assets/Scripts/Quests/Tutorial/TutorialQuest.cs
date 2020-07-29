@@ -5,16 +5,15 @@ using Quests.Steps;
 using UnityEngine.Assertions;
 
 namespace Tutorial {
-    public abstract class TutorialQuest : Quest {
+    public abstract class TutorialQuest : SteppedQuest {
         public TutorialManager.Tutorial tutorialType { get; }
-        public virtual int priority => 0; //priority of this tutorial
         protected TutorialQuest(string _questName, TutorialManager.Tutorial _tutorialType) : base(_questName) {
             tutorialType = _tutorialType;
             Initialize();
         }
 
         #region Initialization
-        protected void Initialize() {
+        private void Initialize() {
             ConstructCriteria();
             StartCheckingCriteria();
         }

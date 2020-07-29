@@ -10,6 +10,7 @@ public class StartupManager : MonoBehaviour {
     }
     void Start(){
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        Messenger.AddListener(Signals.START_GAME_AFTER_LOADOUT_SELECT, OnLoadoutSelected);
         StartCoroutine(PerformStartup());
     }
 
@@ -26,5 +27,9 @@ public class StartupManager : MonoBehaviour {
     private void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         initializer.InitializeDataAfterWorldCreation();
+    }
+    private void OnLoadoutSelected() {
+        Messenger.RemoveListener(Signals.START_GAME_AFTER_LOADOUT_SELECT, OnLoadoutSelected);
+        initializer.InitializeDataAfterLoadoutSelection();
     }
 }

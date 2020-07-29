@@ -18,6 +18,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LoadItems());
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
+		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -56,11 +57,12 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 
-		Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-		TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
-		randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
-		Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
-
+		if (!WorldConfigManager.Instance.isTutorialWorld) {
+			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
+			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
+			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");	
+		}
 	}
 	private IEnumerator RegionalItemGeneration() {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -90,7 +92,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 						}
 					}	
 				}
-				if (WorldConfigManager.Instance.isDemoWorld && locationChoices.Count > 0) {
+				if (WorldConfigManager.Instance.isTutorialWorld && locationChoices.Count > 0) {
 					//spawn 7 chests randomly
 					for (int j = 0; j < 7; j++) {
 						if (locationChoices.Count == 0) { break; } //no more location choices
@@ -167,7 +169,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Character
 	private IEnumerator CharacterFinalization() {
-		if (WorldConfigManager.Instance.isDemoWorld) {
+		if (WorldConfigManager.Instance.isTutorialWorld) {
 			bool hasEvilCharacter = false;
 			List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
 			for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -196,6 +198,45 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return null;
 	}
 	#endregion
-	
+
+	#region Artifacts
+	private IEnumerator LoadArtifacts() {
+		List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
+
+		if (WorldConfigManager.Instance.isTutorialWorld) {
+			//if demo build, always spawn necronomicon at ancient ruins
+			artifactChoices.Remove(ARTIFACT_TYPE.Necronomicon);
+			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			LocationStructure ancientRuin = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.TEMPLE);
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+			ancientRuin.AddPOI(artifact);
+			
+			//place berserk orb at monster lair
+			artifactChoices.Remove(ARTIFACT_TYPE.Berserk_Orb);
+			LocationStructure monsterLair = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
+			artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+			monsterLair.AddPOI(artifact);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+			//if demo build, always spawn Ankh of anubis
+			artifactChoices.Remove(ARTIFACT_TYPE.Ankh_Of_Anubis);
+			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			LocationStructure targetStructure = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
+			targetStructure.AddPOI(artifact);
+		} else {
+			//randomly generate 3 Artifacts
+			for (int i = 0; i < 3; i++) {
+				if (artifactChoices.Count == 0) { break; }
+				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+				ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+				wilderness.AddPOI(artifact);
+				artifactChoices.Remove(randomArtifact);
+			}
+		}
+		yield return null;
+	}
+	#endregion
 	
 }

@@ -25,7 +25,6 @@ namespace Tutorial {
         #region Availability
         protected override void MakeAvailable() {
             base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
             PlayerUI.Instance.ShowGeneralConfirmation("Griefstricken Characters", 
                 $"A Villager is {UtilityScripts.Utilities.ColorizeAction("Griefstricken")}! " +
                 $"Griefstricken Villagers may sometimes {UtilityScripts.Utilities.ColorizeAction("refuse to eat")}. " +

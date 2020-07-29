@@ -10,7 +10,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Torture_Chambers),
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Prison),
             };
         }
         protected override bool HasMetAllCriteria() {
@@ -28,20 +28,21 @@ namespace Tutorial {
                     new ClickOnCharacterStep($"Click on a Villager", IsCharacterValid)
                         .SetHoverOverAction(OnHoverSelectCharacterStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                    new ObjectPickerShownStep("Click on Afflict button", "Intervention Ability")
+                    new ButtonClickedStep("Afflict", "Click on Afflict button")
                         .SetHoverOverAction(OnHoverAfflictButtonStep)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                        .SetOnTopmostActions(OnTopMostAfflict, OnNoLongerTopMostAfflict),
+                        .SetOnTopmostActions(OnTopMostAfflict, OnNoLongerTopMostAfflict)
+                        .SetCompleteAction(OnCompleteExecuteAffliction),
                     new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM)
-                        .SetCompleteAction(OnCompleteExecuteAffliction)
                         .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
-                // new QuestStepCollection(
-                //     new FlawClickedStep("Click on the added Affliction", "Vampiric")
-                //         .SetHoverOverAction(OnHoverAfflictDetails)
-                //         .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
-                //     new FlawTriggeredStep("Trigger it")
-                // )
+                new QuestStepCollection(
+                    new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw button")
+                        .SetOnTopmostActions(OnTopMostTriggerFlawButton, OnNoLongerTopMostTriggerFlawButton)
+                        .SetCompleteAction(OnCompleteTriggerFlaw),
+                    new FlawTriggeredStep("Select Vampirism", "Vampiric")
+                        .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
+                )
                 
             };
         }
@@ -59,7 +60,7 @@ namespace Tutorial {
         }
         private void OnCompleteExecuteAffliction() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions",
-                $"These are negative Traits that you may apply to a world's " +
+                $"Afflictions are {UtilityScripts.Utilities.ColorizeAction("negative Traits")} that you may apply to a world's " +
                 $"\nVillager that will affect their behavior. " +
                 "Afflictions do not have any\n Mana Cost but they have a limited number of Charges.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
@@ -77,8 +78,24 @@ namespace Tutorial {
                 TutorialManager.Instance.afflictionDetailsVideoClip, "Affliction Details", item.hoverPosition
             );
         }
+        private void OnCompleteTriggerFlaw() {
+            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Trigger Flaw",
+                $"Trigger Flaw is a special ability that allows you to force a Villager to perform actions " +
+                $"related to one of their negative Traits (aka Flaws). Not all Flaws have associated Trigger Flaw effects but most do.",
+                TutorialManager.Instance.afflictionsVideoClip
+            );
+        }
         #endregion
 
+        #region Trigger Flaw Button
+        private void OnTopMostTriggerFlawButton() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Trigger Flaw");
+        }
+        private void OnNoLongerTopMostTriggerFlawButton() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Trigger Flaw");
+        }
+        #endregion
+        
         #region Affliction Button
         private void OnTopMostAfflict() {
             Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Afflict");
@@ -94,6 +111,15 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostVampirism() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampirism");
+        }
+        #endregion
+        
+        #region Vampiric Trigger Flaw
+        private void OnTopMostTriggerVampiric() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Vampiric");
+        }
+        private void OnNoLongerTopMostTriggerVampiric() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampiric");
         }
         #endregion
     }

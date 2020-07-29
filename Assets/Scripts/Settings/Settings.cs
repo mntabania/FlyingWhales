@@ -5,9 +5,6 @@
         //Controls
         public bool useEdgePanning;
         
-        //Misc
-        public bool skipTutorials;
-        
         //Graphics
         public string resolution;
         public int graphicsQuality;

@@ -20,7 +20,7 @@ public class QuestUI : MonoBehaviour {
         UtilityScripts.Utilities.DestroyChildren(questsParent);
     }
     
-    public QuestItem ShowQuest(Quest quest, bool insertAtTop = false) {
+    public QuestItem ShowQuest(SteppedQuest quest, bool insertAtTop = false) {
         GameObject questGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(questItemPrefab.name,
             Vector3.zero, Quaternion.identity, questsParent);
         if (insertAtTop) {
@@ -29,10 +29,10 @@ public class QuestUI : MonoBehaviour {
         QuestItem questItem = questGO.GetComponent<QuestItem>();
         questItem.SetQuest(quest);
         questItem.TweenIn();
-        Messenger.Broadcast(Signals.QUEST_SHOWN, quest);
+        Messenger.Broadcast(Signals.QUEST_SHOWN, quest as Quest);
         return questItem;
     }
-    public void HideQuestDelayed(Quest quest) {
+    public void HideQuestDelayed(SteppedQuest quest) {
         quest.questItem.TweenOutDelayed();
     }
     public void ReLayoutTutorials() {

@@ -4751,6 +4751,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loadOutMenu: {fileID: 1976008031}
+  regenerateWorldBtn: {fileID: 2042311043}
+  configureLoadoutBtn: {fileID: 1181329057}
 --- !u!1 &86861862
 GameObject:
   m_ObjectHideFlags: 0
@@ -9448,8 +9450,9 @@ GameObject:
   - component: {fileID: 197814391}
   - component: {fileID: 197814394}
   - component: {fileID: 197814393}
+  - component: {fileID: 197814395}
   m_Layer: 5
-  m_Name: Demons
+  m_Name: Demons Tab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9570,6 +9573,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197814390}
   m_CullTransparentMesh: 0
+--- !u!114 &197814395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197814390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &202533073
 GameObject:
   m_ObjectHideFlags: 0
@@ -37215,10 +37244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f6804fb87404a048bcc08203ca1c27f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alwaysResetTutorialsOnStart: 0
   demonicStructureVideoClip: {fileID: 32900000, guid: 46fae55937600b1449cf86ca67570560,
-    type: 3}
-  fireDamageVideoClip: {fileID: 32900000, guid: 8ad86ac31aab30447a8820ced840cadd,
     type: 3}
   villageVideoClip: {fileID: 32900000, guid: 310629998f6fa5e489a3b3649df3dbd1, type: 3}
   storeIntelVideoClip: {fileID: 32900000, guid: 75ea0730222873b4ba4ce0b2895b2d45,
@@ -37232,7 +37258,6 @@ MonoBehaviour:
   spellsVideoClip: {fileID: 32900000, guid: 504c5b1c395d7c34e95364fb042c935c, type: 3}
   afflictionsVideoClip: {fileID: 32900000, guid: edc67aca1c56f624abdd136bab3cc69a,
     type: 3}
-  deadCharactersImage: {fileID: 2800000, guid: 1358bb0264fccaa47b07f470d372be20, type: 3}
   afflictButtonVideoClip: {fileID: 32900000, guid: faa7a4e2f2b9ece4698d2dd21be74b89,
     type: 3}
   spellsTabVideoClip: {fileID: 32900000, guid: 34bab97629f177041971f4b1c90d74a6, type: 3}
@@ -37264,6 +37289,9 @@ MonoBehaviour:
   boobyTrapLog: {fileID: 2800000, guid: 988be33a00d7c4347a5820d683542259, type: 3}
   infectedLog: {fileID: 2800000, guid: 2375e9f03b5293a47b0d3a143955fe12, type: 3}
   recipientLog: {fileID: 2800000, guid: d76bdbed07fe7e94e9c9cbf9baa3b218, type: 3}
+  brainWashButton: {fileID: 2800000, guid: a5fafa9d29ac82745b929daf2934ed2f, type: 3}
+  defilerChamberVideo: {fileID: 32900000, guid: 3455cbfa84b8c1b4e8c936fd4959c0aa,
+    type: 3}
 --- !u!4 &711025101 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4243562867990628, guid: c51738521ec0ac14abf6fc9fd57b44d9,
@@ -50381,6 +50409,7 @@ GameObject:
   - component: {fileID: 930355351}
   - component: {fileID: 930355347}
   - component: {fileID: 930355348}
+  - component: {fileID: 930355346}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -50388,6 +50417,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!81 &930355346
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 930355345}
+  m_Enabled: 1
 --- !u!114 &930355347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87754,6 +87791,7 @@ MonoBehaviour:
   maxPlayerNotif: 20
   activeNotifications: []
   yesNoGO: {fileID: 240904408300548292}
+  yesNoCanvasGroup: {fileID: 3323795518612042519}
   yesNoCover: {fileID: 239194142312697428}
   yesNoHeaderLbl: {fileID: 200168873985290224}
   yesNoDescriptionLbl: {fileID: 200376178232526940}
@@ -98624,6 +98662,7 @@ GameObject:
   - component: {fileID: 1713567861}
   - component: {fileID: 1713567862}
   - component: {fileID: 1713567863}
+  - component: {fileID: 1713567864}
   m_Layer: 0
   m_Name: Area Maps Camera
   m_TagString: Untagged
@@ -98828,6 +98867,14 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!81 &1713567864
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713567856}
+  m_Enabled: 1
 --- !u!1 &1713587423
 GameObject:
   m_ObjectHideFlags: 0
@@ -104421,7 +104468,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31ea0b868668492390576cd4f7beda13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasClickedCenterButtonAtLastOnce: 0
 --- !u!1 &1788548032
 GameObject:
   m_ObjectHideFlags: 0
@@ -114443,7 +114489,7 @@ PrefabInstance:
     - target: {fileID: 3334926287320437614, guid: 13aebadf56d790d4daf6e22037dffcfb,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: -1536.2688
+      value: -0.26904297
       objectReference: {fileID: 0}
     - target: {fileID: 5286514210341383465, guid: 13aebadf56d790d4daf6e22037dffcfb,
         type: 3}
@@ -128110,6 +128156,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e898f929097e0494a8264891fc37a3c7, type: 3}
+--- !u!225 &3323795518612042519 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 5715006734047202500, guid: e898f929097e0494a8264891fc37a3c7,
+    type: 3}
+  m_PrefabInstance: {fileID: 3323795518612042518}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3799082879027540113 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1916690290342855559, guid: e898f929097e0494a8264891fc37a3c7,

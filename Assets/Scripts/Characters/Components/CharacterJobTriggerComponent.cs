@@ -2428,4 +2428,28 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     #endregion
+
+    #region Craft Missing Furniture
+    public bool CreateCraftMissingFurniture(TILE_OBJECT_TYPE tileObjectType, LocationStructure targetStructure, out JobQueueItem producedJob) {
+	    TileObject unbuiltFurniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
+	    targetStructure.AddPOI(unbuiltFurniture);
+	    unbuiltFurniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsUnbuiltFurnitureStillValid);
+	    GoapPlanJob craftJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE,
+		    INTERACTION_TYPE.CRAFT_TILE_OBJECT, unbuiltFurniture, _owner);
+	    craftJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(tileObjectType).constructionCost });
+	    
+	    craftJob.SetOnUnassignJobAction(OnUnassignCraftMissingFurniture);
+	    producedJob = craftJob;
+	    return true;
+    }
+    private void OnUnassignCraftMissingFurniture(Character character, JobQueueItem job) {
+	    Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
+    }
+    private bool IsUnbuiltFurnitureStillValid(BaseMapObject mapObject) {
+	    if (mapObject is TileObject tileObject) {
+		    return tileObject.allJobsTargetingThis.Count > 0;
+	    }
+	    return false;
+    }
+    #endregion
 }

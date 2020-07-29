@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
-    public class TortureRoom : StructureRoom {
+    public class PrisonCell : StructureRoom {
         
         public Character currentTortureTarget { get; private set; }
         private Summon _skeleton;
         private AutoDestroyParticle _particleEffect;
 
-        public TortureRoom(List<LocationGridTile> tilesInRoom) : base("Torture Chamber", tilesInRoom) { }
+        public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) { }
         
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();

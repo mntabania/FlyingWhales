@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using Quests;
-using Tutorial;
-namespace Tutorial {
-    public class PauseReminder  : BonusTutorial {
+namespace Quests.Special_Popups {
+    public class PauseReminder  : SpecialPopup {
 
         private int _timesPaused;
-        public PauseReminder() : base("Pause Reminder", TutorialManager.Tutorial.Pause_Reminder) {
+        public PauseReminder() : base("Pause Reminder", QuestManager.Special_Popup.Pause_Reminder) {
             _timesPaused = 0;
         }
         protected override void ConstructCriteria() {
@@ -34,10 +32,6 @@ namespace Tutorial {
                 }
             }
             return false;
-        }
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            TutorialManager.Instance.ActivateTutorialButDoNotShow(this);
         }
         public override void Activate() {
             Messenger.RemoveListener(Signals.PAUSED_BY_PLAYER, OnPausedByPlayer);

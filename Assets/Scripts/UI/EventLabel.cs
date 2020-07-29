@@ -92,6 +92,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             if (onClickAction != null) {
                 if (obj != null) {
                     onClickAction.Invoke(obj);
+                    Messenger.Broadcast(Signals.EVENT_LABEL_LINK_CLICKED, this);
                 }
             } else {
                 if(obj != null) {

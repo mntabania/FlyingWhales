@@ -1,9 +1,9 @@
-﻿namespace Quests.Steps {
+﻿using System;
+namespace Quests.Steps {
     public class ChooseSpellStep : QuestStep {
-        private readonly SPELL_TYPE _neededSpellType;
-        public ChooseSpellStep(SPELL_TYPE neededSpellType, string stepDescription) 
-            : base(stepDescription) {
-            _neededSpellType = neededSpellType;
+        private readonly Func<SpellData, bool> _validityChecker;
+        public ChooseSpellStep(System.Func<SpellData, bool> validityChecker, string stepDescription) : base(stepDescription) {
+            _validityChecker = validityChecker;
         }
         protected override void SubscribeListeners() {
             Messenger.AddListener<SpellData>(Signals.PLAYER_SET_ACTIVE_SPELL, CheckForCompletion);
@@ -14,7 +14,7 @@
 
         #region Listeners
         private void CheckForCompletion(SpellData chosenSpell) {
-            if (chosenSpell.type == _neededSpellType) {
+            if (_validityChecker.Invoke(chosenSpell)) {
                 Complete();
             }
         }

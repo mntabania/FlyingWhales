@@ -971,7 +971,7 @@ GameObject:
   - component: {fileID: 7346978857189099381}
   - component: {fileID: 7346978857189099380}
   - component: {fileID: 7346978857189099379}
-  - component: {fileID: 1318691681106648087}
+  - component: {fileID: 2366313500015695928}
   m_Layer: 5
   m_Name: SpellItem
   m_TagString: Untagged
@@ -1064,7 +1064,7 @@ MonoBehaviour:
   lockedImage: {fileID: 2025364091933779006}
   cooldownImage: {fileID: 8027035157385774143}
   currencyLbl: {fileID: 8926289446177269348}
---- !u!114 &1318691681106648087
+--- !u!114 &2366313500015695928
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: -3483723377981431166, guid: d05f9163c7976d4489ead3e20a8e3964,
+  m_Material: {fileID: -3361069329983075161, guid: c1f181a5dea82774190fe0bd546371d8,
     type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
@@ -1155,9 +1155,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_fontAsset: {fileID: 11400000, guid: 199bd5f6bc317894daa134b01e2206a1, type: 2}
-  m_spriteAsset: {fileID: 11400000, guid: d05f9163c7976d4489ead3e20a8e3964, type: 2}
+  m_spriteAsset: {fileID: 11400000, guid: c1f181a5dea82774190fe0bd546371d8, type: 2}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: -3483723377981431166, guid: d05f9163c7976d4489ead3e20a8e3964,
+  m_sharedMaterial: {fileID: -3361069329983075161, guid: c1f181a5dea82774190fe0bd546371d8,
     type: 2}
   m_isDefaultMaterial: 1
   m_padding: 0

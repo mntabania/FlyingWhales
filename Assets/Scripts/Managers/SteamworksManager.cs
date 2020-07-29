@@ -10,7 +10,7 @@ namespace Managers {
 #if UNITY_EDITOR
         public bool allowSteamworks => _allowSteamworks;
 #else
-        public bool allowSteamworks => true;
+        public bool allowSteamworks => _allowSteamworks;
 #endif
         
 

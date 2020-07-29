@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Settings;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -12,41 +13,52 @@ namespace Tutorial {
 
         public static TutorialManager Instance;
         private const int MaxActiveTutorials = 1;
-        public enum Tutorial { 
-            Basic_Controls = 0, 
-            Build_A_Kennel = 1, 
-            Defend_A_Structure = 2, 
-            Elemental_Interactions = 3, 
+
+        public enum Tutorial {
+            Basic_Controls = 0,
+            Build_A_Kennel = 1,
+            Defend_A_Structure = 2,
+            Elemental_Interactions = 3,
             Character_Info = 4,
-            Invade_A_Village = 5,
+            Spawn_An_Invader = 5,
             Regional_Map = 6,
             Share_An_Intel = 9,
             Afflictions = 10,
-            Torture_Chambers = 11,
-            Threat = 12,
-            Counterattack = 13,
-            Divine_Intervention = 14,
+            Prison = 11,
             Chaos_Orbs_Tutorial = 15,
-            Special_Events = 16,
             Griefstricken,
             Killed_By_Monster,
             Booby_Trap,
             Rumor,
             Zombie_Virus,
             Frame_Up,
-            Pause_Reminder
+            Faction_Info,
+            Create_A_Cultist
         }
+
+        private readonly Tutorial[] importantTutorialTypes = new[] {
+            Tutorial.Basic_Controls,
+            Tutorial.Build_A_Kennel,
+            Tutorial.Defend_A_Structure,
+            Tutorial.Elemental_Interactions,
+            Tutorial.Character_Info,
+            Tutorial.Spawn_An_Invader,
+            Tutorial.Share_An_Intel,
+            Tutorial.Afflictions,
+            Tutorial.Prison,
+            Tutorial.Faction_Info,
+            Tutorial.Create_A_Cultist,
+            Tutorial.Regional_Map,
+        };
 
         private List<ImportantTutorial> _activeImportantTutorials;
         private List<ImportantTutorial> _waitingImportantTutorials;
+        private List<Tutorial> _completedImportantTutorials;
         private List<BonusTutorial> _activeBonusTutorials;
         private List<TutorialQuest> _instantiatedTutorials;
 
-        public bool alwaysResetTutorialsOnStart;
-        
         //Video Clips
         public VideoClip demonicStructureVideoClip;
-        public VideoClip fireDamageVideoClip;
         public VideoClip villageVideoClip;
         public VideoClip storeIntelVideoClip;
         public VideoClip shareIntelVideoClip;
@@ -55,7 +67,6 @@ namespace Tutorial {
         public VideoClip areaVideoClip;
         public VideoClip spellsVideoClip;
         public VideoClip afflictionsVideoClip;
-        public Texture deadCharactersImage;
         public VideoClip afflictButtonVideoClip;
         public VideoClip spellsTabVideoClip;
         public Texture buildStructureButton;
@@ -81,13 +92,15 @@ namespace Tutorial {
         public Texture boobyTrapLog;
         public Texture infectedLog;
         public Texture recipientLog;
+        public Texture brainWashButton;
+        public VideoClip defilerChamberVideo;
+        
+        public bool hasCompletedImportantTutorials { get; private set; }
+        
 
         #region Monobehaviours
         private void Awake() {
             Instance = this;
-        }
-        private void OnDestroy() {
-            Messenger.RemoveListener<bool, bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
         }
         private void LateUpdate() {
             if (GameManager.Instance.gameHasStarted) {
@@ -102,30 +115,37 @@ namespace Tutorial {
             _waitingImportantTutorials = new List<ImportantTutorial>();
             _activeBonusTutorials = new List<BonusTutorial>();
             _instantiatedTutorials = new List<TutorialQuest>();
-            
-            if (SaveManager.Instance.currentSaveDataPlayer.completedTutorials == null || alwaysResetTutorialsOnStart) {
-                SaveManager.Instance.currentSaveDataPlayer.InitializeTutorialData();
+            _completedImportantTutorials = new List<Tutorial>();
+
+            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+                InstantiateImportantTutorials();
+                hasCompletedImportantTutorials = false;
+            } else {
+                hasCompletedImportantTutorials = true;
             }
-            if (WorldConfigManager.Instance.isDemoWorld == false) {
-                InstantiatePendingTutorials();
-            }
-            Messenger.AddListener<bool, bool>(Signals.ON_SKIP_TUTORIALS_CHANGED, OnSkipTutorialsChanged);
+            InstantiatePendingBonusTutorials();
         }
-        public void InstantiatePendingTutorials() {
-            if (SettingsManager.Instance.settings.skipTutorials) {
-                return;
+        private void InstantiateImportantTutorials() {
+            for (int i = 0; i < importantTutorialTypes.Length; i++) {
+                Tutorial tutorial = importantTutorialTypes[i];
+                if (tutorial == Tutorial.Regional_Map) {
+                    continue; //skip
+                }
+                InstantiateTutorial(tutorial);
             }
+        }
+        public void InstantiatePendingBonusTutorials() {
             //Create instances for all uncompleted tutorials.
-            List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedTutorials;
+            List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials;
             Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
             for (int i = 0; i < allTutorials.Length; i++) {
                 Tutorial tutorial = allTutorials[i];
+                
+                //Do not instantiate important tutorials here. That should be handled in InstantiateImportantTutorials
+                if (importantTutorialTypes.Contains(tutorial)) { continue; }
+                
                 //only instantiate tutorial if it has not yet been completed and has not yet been instantiated
                 bool instantiateTutorial = completedTutorials.Contains(tutorial) == false && _instantiatedTutorials.Count(quest => quest.tutorialType == tutorial) == 0;
-                if (WorldConfigManager.Instance.isDemoWorld && instantiateTutorial) {
-                    //if is demo world, check if tutorial should be enabled in demo
-                    instantiateTutorial = WorldConfigManager.Instance.demoTutorials.Contains(tutorial);
-                }
                 if (instantiateTutorial) {
                    InstantiateTutorial(tutorial);
                 }
@@ -147,21 +167,13 @@ namespace Tutorial {
 
         #region Inquiry
         public bool HasTutorialBeenCompleted(Tutorial tutorial) {
-            return SaveManager.Instance.currentSaveDataPlayer.completedTutorials.Contains(tutorial);
+            return SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials.Contains(tutorial) || _completedImportantTutorials.Contains(tutorial);
         }
         public bool IsTutorialCurrentlyActive(Tutorial tutorial) {
             return _instantiatedTutorials.Any(t => t.tutorialType == tutorial && t.isActivated);
         }
         private bool IsBonusTutorial(TutorialQuest tutorialQuest) {
             return tutorialQuest is BonusTutorial;
-        }
-        public bool HasActiveLogQuest() {
-            for (int i = 0; i < _activeBonusTutorials.Count; i++) {
-                if (_activeBonusTutorials[i] is LogQuest) {
-                    return true;
-                }
-            }
-            return false;
         }
         public int GetAllActiveTutorialsCount() {
             return _activeBonusTutorials.Count + _activeImportantTutorials.Count + _waitingImportantTutorials.Count;
@@ -170,7 +182,11 @@ namespace Tutorial {
 
         #region Completion
         public void CompleteTutorialQuest(TutorialQuest tutorial) {
-            SaveManager.Instance.currentSaveDataPlayer.AddTutorialAsCompleted(tutorial.tutorialType);
+            if (tutorial is ImportantTutorial) {
+                _completedImportantTutorials.Add(tutorial.tutorialType);
+            } else {
+                SaveManager.Instance.currentSaveDataPlayer.AddBonusTutorialAsCompleted(tutorial.tutorialType);    
+            }
             Messenger.Broadcast(Signals.TUTORIAL_QUEST_COMPLETED, tutorial);
             DeactivateTutorial(tutorial);
             if (IsBonusTutorial(tutorial) == false) {
@@ -180,13 +196,21 @@ namespace Tutorial {
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x) == false) == 0) {
                 //all non-bonus tutorials completed
-                PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
-                    "You're done with the Tutorials! " +
-                    "Feel free to use the remaining time to play around with the various unlocked options... " +
-                    $"or just wipe out all Villagers as soon as possible!");
-                SettingsManager.Instance.ManualToggleSkipTutorials(true, false);
+                UIManager.Instance.ShowYesNoConfirmation("Finished Tutorial",
+                    "You're done with the Tutorials! You can continue playing around with this world. " +
+                    "Another pregenerated world has also been unlocked on the World Options. You can skip ahead to that now!",
+                    yesBtnText: "Go to next world", noBtnText: "Continue with this world", 
+                    onClickYesAction: OnClickGoToNextWorld, pauseAndResume: true, showCover: true, layer: 25);
+                hasCompletedImportantTutorials = true;
                 Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
             }
+        }
+        private void OnClickGoToNextWorld() {
+            DOTween.Clear(true);
+            Messenger.Cleanup();
+            // AudioManager.Instance.SetCameraParent(null);
+            WorldSettings.Instance.worldSettingsData.SetSecondWorldSettings();
+            MainMenuManager.Instance.StartNewGame();
         }
         #endregion
 
@@ -199,7 +223,6 @@ namespace Tutorial {
         #region Availability
         public void AddTutorialToWaitList(ImportantTutorial tutorialQuest) {
             _waitingImportantTutorials.Add(tutorialQuest);
-            _waitingImportantTutorials = _waitingImportantTutorials.OrderBy(q => q.priority).ToList();
             CheckIfNewTutorialCanBeActivated();
         }
         public void RemoveTutorialFromWaitList(ImportantTutorial tutorialQuest) {
@@ -235,9 +258,9 @@ namespace Tutorial {
             bonusTutorial.Activate();
             ShowTutorial(bonusTutorial);
         }
-        public void ActivateTutorialButDoNotShow(BonusTutorial bonusTutorial) {
-            _activeBonusTutorials.Add(bonusTutorial);
-            bonusTutorial.Activate();
+        public void ActivateTutorial(LogQuest logQuest) {
+            _activeBonusTutorials.Add(logQuest);
+            logQuest.Activate();
         }
         public void ShowTutorial(TutorialQuest tutorialQuest) {
             Assert.IsTrue(tutorialQuest.isActivated, $"{tutorialQuest.questName} is being shown, but has not yet been activated.");
@@ -259,38 +282,20 @@ namespace Tutorial {
         }
         #endregion
 
-        #region For Testing
-        public void ResetTutorials() {
-            List<Tutorial> completedTutorials = new List<Tutorial>(SaveManager.Instance.currentSaveDataPlayer.completedTutorials);
-            SaveManager.Instance.currentSaveDataPlayer.ResetTutorialProgress();
-            //respawn previously completed tutorials
-            Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
-            for (int i = 0; i < allTutorials.Length; i++) {
-                Tutorial tutorial = allTutorials[i];
-                if (completedTutorials.Contains(tutorial)) {
-                   InstantiateTutorial(tutorial);
-                }
-            }
-        }
-        #endregion
-
-        #region Listeners
-        private void OnSkipTutorialsChanged(bool skipTutorials, bool deSpawnExisting) {
-            if (skipTutorials) {
-                if (deSpawnExisting) {
-                    //remove all showing tutorials
-                    List<TutorialQuest> tutorialsToDeactivate = new List<TutorialQuest>(_instantiatedTutorials);
-                    for (int i = 0; i < tutorialsToDeactivate.Count; i++) {
-                        TutorialQuest tutorialQuest = tutorialsToDeactivate[i];
-                        DeactivateTutorial(tutorialQuest);    
-                    }    
-                }
-            } else {
-                //instantiate incomplete tutorials
-                InstantiatePendingTutorials();
-            }
-        }
-        #endregion
+        // #region For Testing
+        // public void ResetTutorials() {
+        //     List<Tutorial> completedTutorials = new List<Tutorial>(SaveManager.Instance.currentSaveDataPlayer.completedTutorials);
+        //     SaveManager.Instance.currentSaveDataPlayer.ResetTutorialProgress();
+        //     //respawn previously completed tutorials
+        //     Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
+        //     for (int i = 0; i < allTutorials.Length; i++) {
+        //         Tutorial tutorial = allTutorials[i];
+        //         if (completedTutorials.Contains(tutorial)) {
+        //            InstantiateTutorial(tutorial);
+        //         }
+        //     }
+        // }
+        // #endregion
 
 
     }
