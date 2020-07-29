@@ -31,10 +31,9 @@ namespace Quests.Special_Popups {
         }
         public override void Activate() {
             StopCheckingCriteria();
-            UIManager.Instance.ShowYesNoConfirmation("Dragon Awakened", 
+            PlayerUI.Instance.ShowGeneralConfirmation("Dragon Awakened", 
                 $"{_targetCharacter.name} has been awakened from its long slumber!", 
-                onClickYesAction: () => UIManager.Instance.ShowCharacterInfo(_targetCharacter, true), 
-                yesBtnText: $"Center on {_targetCharacter.name}", noBtnText: "OK", pauseAndResume: true, showCover: true);
+                onClickCenter: () => UIManager.Instance.ShowCharacterInfo(_targetCharacter, true));
             CompleteQuest();
         }
     }

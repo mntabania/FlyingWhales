@@ -856,8 +856,8 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region General Confirmation
-    public void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
-        _generalConfirmation.ShowGeneralConfirmation(header, body, buttonText, onClickOK);
+    public void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null, System.Action onClickCenter = null) {
+        _generalConfirmation.ShowGeneralConfirmation(header, body, buttonText, onClickOK, onClickCenter);
     }
     #endregion
 
