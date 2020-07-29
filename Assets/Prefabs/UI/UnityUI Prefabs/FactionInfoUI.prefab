@@ -539,6 +539,7 @@ GameObject:
   - component: {fileID: 224858300817825186}
   - component: {fileID: 222855126651451094}
   - component: {fileID: 114782860322930488}
+  - component: {fileID: 6703538315136912137}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -603,6 +604,32 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6703538315136912137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1095146071101066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &1109358646233760
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1373,7 @@ GameObject:
   - component: {fileID: 224932785751016148}
   - component: {fileID: 114941544242004722}
   m_Layer: 5
-  m_Name: Faction Owned Locations Toggle
+  m_Name: Faction Owned Locations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1861,6 +1888,7 @@ GameObject:
   - component: {fileID: 224264634736018640}
   - component: {fileID: 222690796586077676}
   - component: {fileID: 114560131745995122}
+  - component: {fileID: 6896262652876650868}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -1925,6 +1953,32 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6896262652876650868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1523799351300632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &1574427906181358
 GameObject:
   m_ObjectHideFlags: 0
@@ -2165,7 +2219,7 @@ GameObject:
   - component: {fileID: 224920331189719860}
   - component: {fileID: 114870114594672364}
   m_Layer: 5
-  m_Name: Faction Logs Toggle
+  m_Name: Faction Logs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2261,6 +2315,7 @@ GameObject:
   - component: {fileID: 224951446702702536}
   - component: {fileID: 222215269882945024}
   - component: {fileID: 114126764014569818}
+  - component: {fileID: 2729482984645212518}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -2325,6 +2380,32 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2729482984645212518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1613724929844828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &1625965236758820
 GameObject:
   m_ObjectHideFlags: 0
@@ -2336,7 +2417,7 @@ GameObject:
   - component: {fileID: 224341837766366100}
   - component: {fileID: 114046484705943938}
   m_Layer: 5
-  m_Name: Faction Characters Toggle
+  m_Name: Faction Characters
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5501,7 +5582,7 @@ GameObject:
   - component: {fileID: 5848451771384684169}
   - component: {fileID: 7072176574625113866}
   m_Layer: 5
-  m_Name: Faction Overview Toggle
+  m_Name: Faction Overview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6451,6 +6532,7 @@ GameObject:
   - component: {fileID: 7269134444157696738}
   - component: {fileID: 3625809029879870017}
   - component: {fileID: 6688496433621726467}
+  - component: {fileID: 9021027502806502502}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -6515,6 +6597,32 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &9021027502806502502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8653458773984529525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19b7e2285c104f6ca47d583f3e5444f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectFactor: 0
+  m_Width: 0.25
+  m_Rotation: 135
+  m_Softness: 1
+  m_Brightness: 1
+  m_Gloss: 1
+  m_EffectArea: 0
+  m_Player:
+    play: 0
+    initialPlayDelay: 0
+    duration: 1
+    loop: 1
+    loopDelay: 0
+    updateMode: 0
 --- !u!1 &8828145588563124980
 GameObject:
   m_ObjectHideFlags: 0
