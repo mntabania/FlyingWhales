@@ -167,20 +167,21 @@ public class Butcher : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
-            if(poiTarget is Animal) {
-                return true;
-            } else if (actor.isNormalCharacter == false) {
-                return true;
-            } else {
-                Character deadCharacter = GetDeadCharacter(poiTarget);
-                if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
-                    && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
-                    if (actor.traitContainer.HasTrait("Cannibal")) {
-                        return true;
-                    }
-                    return false;
-                }
-            }
+            return true;
+            //if(poiTarget is Animal) {
+            //    return true;
+            //} else if (actor.isNormalCharacter == false) {
+            //    return true;
+            //} else {
+            //    Character deadCharacter = GetDeadCharacter(poiTarget);
+            //    if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
+            //        && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
+            //        if (actor.traitContainer.HasTrait("Cannibal")) {
+            //            return true;
+            //        }
+            //        return false;
+            //    }
+            //}
         }
         return false;
     }

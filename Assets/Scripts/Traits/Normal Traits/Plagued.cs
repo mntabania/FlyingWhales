@@ -61,7 +61,7 @@ namespace Traits {
                     if(character.characterClass.className == "Zombie"/* || (owner.currentActionNode != null && owner.currentActionNode.action.goapType == INTERACTION_TYPE.PUKE)*/) {
                         return hasCreatedJob;
                     }
-                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
+                    return character.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Plague");
                 }
             } else if (septicRoll < septicChance) {
                 if (owner is Character character) {

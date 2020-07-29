@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 7756952
+    totalSpriteSurfaceArea: 8176874
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -327,6 +327,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c66bf41aede20094d9e61d7f323df027, type: 3}
   - {fileID: 21300000, guid: 26889f1a9790fd14086fab37318f30b9, type: 3}
   - {fileID: 21300000, guid: 284fbf1a9d9bc284ca3cdb0e4893e184, type: 3}
+  - {fileID: 21300000, guid: b936612ad53a0ce45a8c628ef99de996, type: 3}
   - {fileID: 21300000, guid: 3482d62ac8f3a894384f36e3f3e28dd6, type: 3}
   - {fileID: 21300000, guid: ea02433ad60be404787b7c6f09589835, type: 3}
   - {fileID: 21300000, guid: 2e4df33af4860f64294a4996c64ed080, type: 3}
@@ -756,6 +757,7 @@ SpriteAtlas:
   - minion_tab_items_active
   - faction_ui_resident_clicked
   - agent_action_button_disabled
+  - world_options_empty_container
   - button_crypts_clicked
   - button_arrow2_right_disabled
   - 4-Lightning

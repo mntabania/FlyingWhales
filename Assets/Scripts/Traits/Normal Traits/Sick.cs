@@ -76,7 +76,7 @@ namespace Traits {
                 }
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE, owner, owner);
                 //owner.jobQueue.AddJobInQueue(job);
-                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner);
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, owner, "Sick");
             }
             return false;
         }
