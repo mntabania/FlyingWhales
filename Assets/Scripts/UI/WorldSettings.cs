@@ -7,8 +7,7 @@ using TMPro;
 
 public class WorldSettings : MonoBehaviour {
     public static WorldSettings Instance;
-    public enum World { Chutoria, Icalawa, Customize, }
-
+    
     public WorldSettingsData worldSettingsData { get; private set; }
 
     public GameObject settingsGO;
@@ -32,9 +31,7 @@ public class WorldSettings : MonoBehaviour {
     public GameObject invalidMessage;
     public GameObject mainWindow;
     public GameObject customizeWorldWindow;
-
-    public World chosenWorld { get; private set; }
-
+    
     //private List<RaceWorldOptionItem> raceWorldOptionItems;
     //private List<BiomeWorldOptionItem> biomeWorldOptionItems;
     //private List<string> numOfRegions;
@@ -238,15 +235,15 @@ public class WorldSettings : MonoBehaviour {
     public void OnClickContinue() {
         if (mainWindow.activeSelf) {
             //Still in world picker
-            if(chosenWorld == World.Customize) {
+            if(worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
                 mainWindow.SetActive(false);
                 customizeWorldWindow.SetActive(true);
-            } else if (chosenWorld == World.Chutoria) {
-                //TODO: Myk - go to Chutoria world
+            } else if (worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
                 Close();
-            } else if (chosenWorld == World.Icalawa) {
-                //TODO: Myk - go to Icalawa world
+                MainMenuManager.Instance.StartNewGame();
+            } else if (worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
                 Close();
+                MainMenuManager.Instance.StartNewGame();
             }
         } else if (customizeWorldWindow.activeSelf) {
             //Already in customize window
@@ -272,17 +269,17 @@ public class WorldSettings : MonoBehaviour {
     #region World Picker
     public void OnToggleChutoria(bool state) {
         if (state) {
-            chosenWorld = World.Chutoria;
+            worldSettingsData.SetTutorialWorldSettings();
         }
     }
     public void OnToggleIcalawa(bool state) {
         if (state) {
-            chosenWorld = World.Icalawa;
+            worldSettingsData.SetSecondWorldSettings();
         }
     }
     public void OnToggleCustomize(bool state) {
         if (state) {
-            chosenWorld = World.Customize;
+            worldSettingsData.SetDefaultCustomWorldSettings();
         }
     }
     #endregion
