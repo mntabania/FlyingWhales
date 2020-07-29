@@ -749,6 +749,10 @@ public static class Signals {
             new SignalMethod() { methodName = "ProcessAllUnprocessedVisionPOIs", objectType = typeof(CharacterMarker) },
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
+        { START_GAME_AFTER_LOADOUT_SELECT, new[] {
+            new SignalMethod() { methodName = "OnStartGameAfterLoadoutSelect", objectType = typeof(PlayerSkillLoadoutUI) },
+            new SignalMethod() { methodName = "OnLoadoutSelected", objectType = typeof(StartupManager) },
+        }},
     };
     
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
