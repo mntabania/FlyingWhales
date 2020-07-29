@@ -145,7 +145,12 @@ public class SaveDataPlayer {
         completedBonusTutorials.Add(tutorial);
     }
     public void ResetBonusTutorialProgress() {
-        completedBonusTutorials.Clear();
+        if (completedBonusTutorials == null) {
+            InitializeTutorialData();
+        } else {
+            completedBonusTutorials.Clear();    
+        }
+        
     }
     #endregion
 
@@ -358,7 +363,11 @@ public class SaveDataPlayer {
         completedSpecialPopups.Add(popup);
     }
     public void ResetSpecialPopupsProgress() {
-        completedSpecialPopups.Clear();
+        if (completedSpecialPopups == null) {
+            completedSpecialPopups = new List<QuestManager.Special_Popup>();
+        } else {
+            completedSpecialPopups.Clear();    
+        }
     }
     #endregion
 }

@@ -43,12 +43,13 @@ public class WorldSettings : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
+            worldSettingsData = new WorldSettingsData();
         } else {
             Destroy(this.gameObject);
         }
     }
     private void Start() {
-        worldSettingsData = new WorldSettingsData();
+        // worldSettingsData = new WorldSettingsData();
         //raceWorldOptionItems = new List<RaceWorldOptionItem>();
         //biomeWorldOptionItems = new List<BiomeWorldOptionItem>();
         //numOfRegions = new List<string>() { "1", "2", "3", "4", "6" };
