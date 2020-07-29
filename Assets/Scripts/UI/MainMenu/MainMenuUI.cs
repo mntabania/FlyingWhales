@@ -75,11 +75,7 @@ public class MainMenuUI : MonoBehaviour {
         glowTween.OnValueChangedAnimation(false);
     }
     public void OnClickPlayGame() {
-        if (WorldConfigManager.Instance.isTutorialWorld) {
-            MainMenuManager.Instance.StartNewGame();
-        } else {
-            WorldSettings.Instance.Open();
-        }
+        WorldSettings.Instance.Open();
     }
     private void OnCompleteBGTween() {
         invadeButton.gameObject.SetActive(true);
