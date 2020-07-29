@@ -269,7 +269,8 @@ public class LocationClassManager {
         else {
             currentIndex--;
             if (currentIndex < 0) {
-                throw new System.Exception("Wrong data! Current index cannot be less than zero");
+                currentIndex = 0;
+                Debug.LogWarning("Wrong data! Current index cannot be less than zero");
             }
         }
         AdjustSupposedNumberOfClass(currentClassIdentifier, -1);

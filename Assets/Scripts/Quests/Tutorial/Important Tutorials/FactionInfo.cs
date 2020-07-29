@@ -19,16 +19,16 @@ namespace Tutorial {
                         .SetCompleteAction(OnCompleteExecuteSpell)
                 ),
                 new QuestStepCollection(
-                    new ToggleTurnedOnStep("Faction Overview", "Open Faction Overview tab")
+                    new ToggleTurnedOnStep("Faction Overview", "Open its Overview tab")
                         .SetCompleteAction(OnClickOverview)
                         .SetOnTopmostActions(OnTopMostFactionInfo, OnNoLongerTopMostFactionInfo),
-                    new ToggleTurnedOnStep("Faction Characters", "Open Characters tab")
+                    new ToggleTurnedOnStep("Faction Characters", "Open its Members tab")
                         .SetCompleteAction(OnClickFactionCharacters)
                         .SetOnTopmostActions(OnTopMostCharacters, OnNoLongerTopMostCharacters),
-                    new ToggleTurnedOnStep("Faction Owned Locations", "Open Locations tab")
+                    new ToggleTurnedOnStep("Faction Owned Locations", "Open its Locations tab")
                         .SetCompleteAction(OnClickLocations)
                         .SetOnTopmostActions(OnTopMostLocations, OnNoLongerTopMostLocations),
-                    new ToggleTurnedOnStep("Faction Logs", "Open Logs tab")
+                    new ToggleTurnedOnStep("Faction Logs", "Open its Logs tab")
                         .SetCompleteAction(OnClickLogs)
                         .SetOnTopmostActions(OnTopMostLogs, OnNoLongerTopMostLogs)
                 )
@@ -38,35 +38,26 @@ namespace Tutorial {
         #region Step Helpers
         private void OnCompleteExecuteSpell() {
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Factions",
-                "A Faction is a group of characters that belong together. It typically has a single Faction Leader, several sets of ideologies a", 
+                "A Faction is a group of characters that belong together. " +
+                "It typically has a single Faction Leader, several sets of ideologies, Villager members and claimed territories.", 
                 TutorialManager.Instance.spellsVideoClip);
         }
         private void OnClickOverview() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Overview Tab",
-                $"The Info tab provides you with basic information about the \nVillager such as its " +
-                $"{UtilityScripts.Utilities.ColorizeAction("Combat Stats, Affiliations, temporary Statuses, permanent Traits and Items held")}.",
-                TutorialManager.Instance.infoTab);
+            PlayerUI.Instance.ShowGeneralConfirmation("Overview Tab",
+                $"The Overview tab provides you with basic information about the Faction such as its " +
+                $"{UtilityScripts.Utilities.ColorizeAction("Name, Banner, Faction Leader, Ideologies and Relations")}.");
         }
         private void OnClickFactionCharacters() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Faction Characters Tab",
-                $"The Mood tab provides you with an overview of the Villager's current state of mind. " +
-                $"A Villager's Mood is primarily affected by {UtilityScripts.Utilities.ColorizeAction("Statuses")}. " +
-                $"The lower a Villager's Mood is, the less cooperative it is with others, and may even eventually run amok!" +
-                $"\n\nA Villager also has {UtilityScripts.Utilities.ColorizeAction("several Needs")} that apply various " +
-                $"Statuses depending on how high or low they are.",
-                TutorialManager.Instance.moodTab);
+            PlayerUI.Instance.ShowGeneralConfirmation("Members Tab",
+                "The Members tab shows a list of all characters belonging to the Faction.");
         }
         private void OnClickLocations() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Owned Locations Tab",
-                $"The Relations tab shows a Villager's relationship with its neighbors. " +
-                $"A Villager will {UtilityScripts.Utilities.ColorizeAction("not cooperate")} with its enemies, " +
-                "so one subtle way of reducing a Village's power is by having its residents dislike each other.",
-                TutorialManager.Instance.relationsTab);
+            PlayerUI.Instance.ShowGeneralConfirmation("Locations Tab",
+                "The Locations tab shows a list of all territories belonging to the Faction.");
         }
         private void OnClickLogs() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Logs Tab",
-                $"The Log tab provides you with a timestamped list of what a \nVillager has done.",
-                TutorialManager.Instance.logsTab);
+            PlayerUI.Instance.ShowGeneralConfirmation("Logs Tab",
+                $"The Logs tab provides you with a timestamped list of Faction-related events.");
         }
         #endregion
         
