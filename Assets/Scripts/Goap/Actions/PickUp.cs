@@ -12,7 +12,7 @@ public class PickUp : GoapAction {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
-        isNotificationAnIntel = true;
+        showNotification = false;
     }
 
     #region Overrides

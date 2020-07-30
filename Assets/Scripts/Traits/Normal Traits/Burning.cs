@@ -42,6 +42,7 @@ namespace Traits {
                     if(character.canMove && character.canWitness && character.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
+                    CharacterBurningProcess(character);
                 } else {
                     poi.SetPOIState(POI_STATE.INACTIVE);
                 }
@@ -202,6 +203,16 @@ namespace Traits {
                 }    
             }
 
+        }
+        public void CharacterBurningProcess(Character character) {
+            if (character.traitContainer.HasTrait("Pyrophobic")) {
+                character.traitContainer.AddTrait(character, "Traumatized");
+                character.traitContainer.AddTrait(character, "Unconscious");
+
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn");
+                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddLogToInvolvedObjects();
+            }
         }
 
         #region Douser

@@ -43,6 +43,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                     log += "\n-No resident found in settlement, remove behaviour";
                     character.behaviourComponent.SetAttackVillageTarget(null);
                     character.behaviourComponent.RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
+                    character.behaviourComponent.SetIsAgitated(false); 
                 }
             } else {
                 if(character.behaviourComponent.attackHexTarget != null) {
@@ -54,6 +55,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                         log += "\n-No resident found in settlement, remove behaviour";
                         character.behaviourComponent.SetAttackVillageTarget(null);
                         character.behaviourComponent.RemoveBehaviourComponent(typeof(AttackVillageBehaviour));
+                        character.behaviourComponent.SetIsAgitated(false);
                     }
                 } else {
                     character.jobComponent.TriggerRoamAroundTile(out producedJob);

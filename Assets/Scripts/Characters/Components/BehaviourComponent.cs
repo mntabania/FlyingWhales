@@ -23,6 +23,7 @@ public class BehaviourComponent {
     public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
     public bool hasLayedAnEgg { get; private set; }
+    public bool isAgitated { get; private set; }
     public string defaultBehaviourSetName { get; private set; }
     
     //douse fire
@@ -805,6 +806,15 @@ public class BehaviourComponent {
             GameDate dueDate = GameManager.Instance.Today();
             dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
             SchedulingManager.Instance.AddEntry(dueDate, () => SetAbominationTarget(null), owner);
+        }
+    }
+    #endregion
+
+    #region Agitate
+    public void SetIsAgitated(bool state) {
+        if(isAgitated != state) {
+            isAgitated = state;
+            owner.movementComponent.SetEnableDigging(isAgitated);
         }
     }
     #endregion

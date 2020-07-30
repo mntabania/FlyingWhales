@@ -20,6 +20,10 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
                 owner = character;
+                if (character.traitContainer.HasTrait("Burning")) {
+                    Burning burning = character.traitContainer.GetNormalTrait<Burning>("Burning");
+                    burning.CharacterBurningProcess(character);
+                }
                 Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
             }
         }

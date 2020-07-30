@@ -29,8 +29,16 @@ public class Troll : Summon {
         base.OnTickStarted();
         CheckBecomeStone();
     }
+    public override void SubscribeToSignals() {
+        base.SubscribeToSignals();
+        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+    }
+    public override void UnsubscribeSignals() {
+        base.UnsubscribeSignals();
+        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+    }
     #endregion
-    
+
     private void CheckBecomeStone() {
         if (!currentStructure.isInterior) {
             TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
@@ -40,6 +48,14 @@ public class Troll : Summon {
                 if (!traitContainer.HasTrait("Stoned")) {
                     traitContainer.AddTrait(this, "Stoned");
                 }
+            }
+        }
+    }
+    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+        if (character != this && !structure.isInterior && currentStructure.isInterior) {
+            TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
+            if(timeInWords != TIME_IN_WORDS.EARLY_NIGHT && timeInWords != TIME_IN_WORDS.LATE_NIGHT && timeInWords != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                combatComponent.RemoveHostileInRange(character);
             }
         }
     }

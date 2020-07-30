@@ -9,12 +9,14 @@ public class Desk : TileObject {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(TILE_OBJECT_TYPE.DESK);
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
+        AddAdvertisedAction(INTERACTION_TYPE.PLAY_CARDS);
         //users = new Character[1];
     }
     public Desk(SaveDataTileObject data) {
         //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR, INTERACTION_TYPE.SIT };
         Initialize(data);
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
+        AddAdvertisedAction(INTERACTION_TYPE.PLAY_CARDS);
     }
 
     #region Overrides

@@ -205,6 +205,10 @@ public class FactionInfoUI : InfoUIBase {
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {
             if (keyValuePair.Key.isActive) {
+                if(keyValuePair.Key == FactionManager.Instance.undeadFaction && keyValuePair.Key.leader == null) {
+                    //Only add Undead faction in Relations once it gains a Faction Leader
+                    continue;
+                }
                 GameObject relGO = UIManager.Instance.InstantiateUIObject(relationshipPrefab.name, relationshipsParent);
                 FactionRelationshipItem item = relGO.GetComponent<FactionRelationshipItem>();
                 item.SetData(keyValuePair.Key, keyValuePair.Value);

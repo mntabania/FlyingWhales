@@ -109,7 +109,7 @@ public class ExplorationParty : Party {
     }
     private void DoneExplorationTimer() {
         if (isExploring) {
-            currentChance -= 20;
+            currentChance -= 35;
             ProcessExplorationOrDisbandment();
             isExploring = false;
         }

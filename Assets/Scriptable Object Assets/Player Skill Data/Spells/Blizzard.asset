@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skill: 31
   manaCost: -1
-  charges: 6
-  cooldown: 96
+  charges: 2
+  cooldown: 144
   threat: 5
   threatPerHour: 0
   expCost: 300
