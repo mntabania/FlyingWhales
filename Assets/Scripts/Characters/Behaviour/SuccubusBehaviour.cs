@@ -29,7 +29,13 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.MALE);
                 if (targetCharacter != null) {
                     log += $"\n-Target for make love is: " + targetCharacter.name;
-                    if (character.jobComponent.TriggerMakeLoveJob(targetCharacter, out producedJob)) {
+                    if (character.movementComponent.HasPathToEvenIfDiffRegion(targetCharacter.gridTileLocation)) {
+                        if (character.jobComponent.TriggerMakeLoveJob(targetCharacter, out producedJob)) {
+                            return true;
+                        }
+                    } else {
+                        log += $"\n-No path to target, drop disguise";
+                        character.reactionComponent.SetDisguisedCharacter(null);
                         return true;
                     }
                 }

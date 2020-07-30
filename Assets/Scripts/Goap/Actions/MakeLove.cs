@@ -355,14 +355,20 @@ public class MakeLove : GoapAction {
             //check un owned dwellings for possible beds
             List<Dwelling> dwellings =
                 actor.currentRegion.GetStructuresAtLocation<Dwelling>(STRUCTURE_TYPE.DWELLING);
+            Bed nearestBed = null;
+            float nearestDistance = 0f;
             for (int i = 0; i < dwellings.Count; i++) {
                 Dwelling currDwelling = dwellings[i];
                 Bed dwellingBed = currDwelling.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
                 if (dwellingBed != null && dwellingBed.mapObjectState == MAP_OBJECT_STATE.BUILT && dwellingBed.IsAvailable() && dwellingBed.GetActiveUserCount() == 0) {
-                    return dwellingBed;
+                    float distanceFromActor = actor.gridTileLocation.GetDistanceTo(dwellingBed.gridTileLocation);
+                    if(nearestBed == null || distanceFromActor < nearestDistance) {
+                        nearestBed = dwellingBed;
+                        nearestDistance = distanceFromActor;
+                    }
                 }
             }
-            return null;
+            return nearestBed;
         } else {
             if(actor.homeStructure != null) {
                 Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);

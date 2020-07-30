@@ -16,7 +16,13 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target is Character targetCharacter) {
                 string debugLog = $"{interruptHolder.actor.name} invite to make love interrupt with {targetCharacter.name}";
-
+                Character actor = interruptHolder.actor;
+                if (actor.reactionComponent.disguisedCharacter != null) {
+                    actor = actor.reactionComponent.disguisedCharacter;
+                }
+                if (targetCharacter.reactionComponent.disguisedCharacter != null) {
+                    targetCharacter = targetCharacter.reactionComponent.disguisedCharacter;
+                }
                 //if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null 
                 //    || targetCharacter.combatComponent.isInCombat
                 //    || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
@@ -31,33 +37,51 @@ namespace Interrupts {
                 //    actor.currentJob.CancelJob(false);
                 //    return false;
                 //}
-                
+
                 WeightedDictionary<string> weights = new WeightedDictionary<string>();
                 int acceptWeight = 50;
                 int rejectWeight = 10;
-                debugLog += $"\n-Base accept weight: {acceptWeight}";
-                debugLog += $"\n-Base reject weight: {rejectWeight}";
+                Character targetLover = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+                if (targetLover != null && targetLover != actor) {
+                    //Target has a different lover
+                    debugLog += $"\n-Target has different lover";
+                    acceptWeight = 0;
+                    rejectWeight = 50;
+                    debugLog += $"\n-Base accept weight: {acceptWeight}";
+                    debugLog += $"\n-Base reject weight: {rejectWeight}";
 
-
-                int targetOpinionToActor = 0;
-                if (targetCharacter.relationshipContainer.HasRelationshipWith(interruptHolder.actor)) {
-                    targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(interruptHolder.actor);
-                }
-                acceptWeight += (3 * targetOpinionToActor);
-                debugLog += $"\n-Target opinion towards Actor: +(3 x {targetOpinionToActor}) to Accept Weight";
-
-                Trait trait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
-                if(trait != null) {
-                    if(trait.name == "Lustful") {
-                        acceptWeight += 100;
-                        debugLog += "\n-Target is Lustful: +100 to Accept Weight";
+                    if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
+                        acceptWeight += 200;
+                        debugLog += $"\n-Target is unfaithful: +200 to Accept Weight";
+                    } else if (targetCharacter.traitContainer.HasTrait("Treacherous", "Psychopath")) {
+                        acceptWeight += 50;
+                        debugLog += $"\n-Target is not unfaithful but treacherous/psychopath: +50 to Accept Weight";
                     } else {
                         rejectWeight += 100;
-                        debugLog += "\n-Target is Lustful: +100 to Reject Weight";
+                        debugLog += $"\n-Target is not unfaithful/treacherous/psychopath: +100 to Reject Weight";
                     }
+                } else {
+
+                    debugLog += $"\n-Base accept weight: {acceptWeight}";
+                    debugLog += $"\n-Base reject weight: {rejectWeight}";
+
+                    int targetOpinionToActor = 0;
+                    if (targetCharacter.relationshipContainer.HasRelationshipWith(actor)) {
+                        targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(actor);
+                    }
+                    acceptWeight += (3 * targetOpinionToActor);
+                    debugLog += $"\n-Target opinion towards Actor: +(3 x {targetOpinionToActor}) to Accept Weight";
                 }
 
-                if(targetCharacter.moodComponent.moodState == MOOD_STATE.LOW) {
+                if (targetCharacter.traitContainer.HasTrait("Lustful")) {
+                    acceptWeight += 100;
+                    debugLog += "\n-Target is Lustful: +100 to Accept Weight";
+                } else if (targetCharacter.traitContainer.HasTrait("Chaste")) {
+                    rejectWeight += 300;
+                    debugLog += "\n-Target is Chaste: +300 to Reject Weight";
+                }
+
+                if (targetCharacter.moodComponent.moodState == MOOD_STATE.LOW) {
                     rejectWeight += 50;
                     debugLog += "\n-Target is Low mood: +50 to Reject Weight";
                 } else if (targetCharacter.moodComponent.moodState == MOOD_STATE.CRITICAL) {
@@ -71,6 +95,10 @@ namespace Interrupts {
                 debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
 
                 string chosen = weights.PickRandomElementGivenWeights();
+                if (interruptHolder.target.traitContainer.HasTrait("Unconscious")) {
+                    debugLog += "\n-Target is Unconscious: SURE REJECT";
+                    chosen = "Reject";
+                }
                 debugLog += $"\n\nCHOSEN RESPONSE: {chosen}";
                 interruptHolder.actor.logComponent.PrintLogIfActive(debugLog);
 

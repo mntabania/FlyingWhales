@@ -239,7 +239,7 @@ public class HexTileSpellsComponent {
                 i--;
                 continue;
             }
-            poi.AdjustHP(-40, ELEMENTAL_TYPE.Normal, showHPBar: true);
+            poi.AdjustHP(-50, ELEMENTAL_TYPE.Normal, showHPBar: true);
             if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
@@ -300,7 +300,7 @@ public class HexTileSpellsComponent {
     }
     private void BrimstoneEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-120, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
+            poi.AdjustHP(-400, ELEMENTAL_TYPE.Fire, true, showHPBar: true);
         }
     }
     //private IEnumerator CommenceBrimstoneEffect(LocationGridTile targetTile) {
@@ -384,7 +384,7 @@ public class HexTileSpellsComponent {
     }
     private void ElectricStormEffect(ITraitable traitable) {
         if (traitable is IPointOfInterest poi) {
-            poi.AdjustHP(-350, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
+            poi.AdjustHP(-450, ELEMENTAL_TYPE.Electric, true, showHPBar: true);
         }
     }
     private void PerTickElectricStorm() {
