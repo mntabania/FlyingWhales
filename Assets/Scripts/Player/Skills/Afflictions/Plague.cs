@@ -107,9 +107,9 @@ public class Plagued : PlayerSpell {
 
 public class PlagueData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.PLAGUE;
-    public override string name { get { return "Plague"; } }
-    public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override string name => "Plague";
+    public override string description => "This Affliction will afflict a Villager with a virulent disease. The Plague may start spreading to others before eventually killing the Villager.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public PlagueData() : base() {

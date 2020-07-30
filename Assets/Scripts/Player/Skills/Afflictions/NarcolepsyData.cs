@@ -5,10 +5,9 @@ using UnityEngine;
 
 public class NarcolepsyData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.NARCOLEPSY;
-    public override string name { get { return "Narcolepsy"; } }
-    public override string description { get { return "The target will gain a sleep disorder that causes it to have sudden attacks of sleep."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
-
+    public override string name => "Narcolepsy";
+    public override string description => "This Affliction will make a Villager Narcoleptic. Narcoleptic villagers may involuntarily fall asleep at any time.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     public NarcolepsyData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

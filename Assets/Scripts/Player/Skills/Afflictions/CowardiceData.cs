@@ -5,10 +5,9 @@ using UnityEngine;
 
 public class CowardiceData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.COWARDICE;
-    public override string name { get { return "Cowardice"; } }
-    public override string description { get { return "The target will be a scaredy wimp."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
-
+    public override string name => "Cowardice";
+    public override string description => "This Affliction will turn a Villager into a Coward. Cowards will often run away from combat.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     public CowardiceData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }
