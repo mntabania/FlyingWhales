@@ -152,5 +152,15 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             UpdateLeaderIcon();
         }
     }
+    public void OnHoverLeaderIcon() {
+        if (character.isSettlementRuler) {
+            UIManager.Instance.ShowSmallInfo($"<b>{character.name}</b> is the Settlement Ruler of <b>{character.ruledSettlement.name}</b>");
+        } else if (character.isFactionLeader) {
+            UIManager.Instance.ShowSmallInfo($"<b>{character.name}</b> is the Faction Leader of <b>{character.faction.name}</b>");
+        }
+    }
+    public void OnHoverExitLeaderIcon() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 }

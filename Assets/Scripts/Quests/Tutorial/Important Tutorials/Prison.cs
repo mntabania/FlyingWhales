@@ -11,7 +11,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Basic_Controls)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Spawn_An_Invader)
             };
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }

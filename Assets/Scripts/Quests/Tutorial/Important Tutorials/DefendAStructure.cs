@@ -10,7 +10,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Spawn_An_Invader)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Prison)
             };
         }
         protected override bool HasMetAllCriteria() {
