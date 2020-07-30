@@ -11,8 +11,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating tile features...");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles(data));
-		if (WorldConfigManager.Instance.isTutorialWorld) {
-			DetermineSettlementsForDemo();
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+			DetermineSettlementsForTutorial();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+			DetermineSettlementsForSecondWorld();
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			succeess = TryCreateSettlements(data);
@@ -239,6 +241,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						for (int j = 0; j < villageTiles.Count; j++) {
 							HexTile villageTile = villageTiles[j];
 							villageTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, villageTile);
+							//remove game feature from settlement tiles
+							villageTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, villageTile);
 							LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
 						}
 						createdSettlements++;
@@ -250,7 +254,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return createdSettlements > 0;
 	}
-	private void DetermineSettlementsForDemo() {
+	private void DetermineSettlementsForTutorial() {
 		Region region = GridMap.Instance.allRegions[0];
 		List<HexTile> chosenTiles = new List<HexTile> {
 			GridMap.Instance.map[4, 5],
@@ -273,6 +277,24 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			HexTile randomTile = CollectionUtilities.GetRandomElement(neighbouringTiles);
 			randomTile.SetElevation(ELEVATION.WATER);
 			randomTile.featureComponent.RemoveAllFeatures(randomTile);
+		}
+	}
+	private void DetermineSettlementsForSecondWorld() {
+		Region region = GridMap.Instance.allRegions[0];
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[8, 5],
+			GridMap.Instance.map[7, 5],
+			GridMap.Instance.map[8, 6],
+			GridMap.Instance.map[9, 5],
+			GridMap.Instance.map[8, 4],
+		};
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
 		}
 	}
 	

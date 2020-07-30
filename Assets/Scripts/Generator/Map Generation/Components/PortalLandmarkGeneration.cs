@@ -21,6 +21,10 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[1, 7]
 			};
+		} else if (WorldConfigManager.Instance.isTutorialWorld) {
+			validPortalTiles = new List<HexTile>() {
+				GridMap.Instance.map[3, 3]
+			};
 		} else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
 				(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)

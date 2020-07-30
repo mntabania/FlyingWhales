@@ -42,13 +42,25 @@ public class SettlementGeneration : MapGenerationComponent {
 				(region, locationType, settlementTiles.ToArray());
 			npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
-			var structureTypes = WorldConfigManager.Instance.isTutorialWorld ? 
-				new List<StructureSetting>() {
+			List<StructureSetting> structureTypes;
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+				structureTypes = new List<StructureSetting>() {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.INN, RESOURCE.STONE)
-				} : GenerateStructures(npcSettlement, faction);
+				};
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				structureTypes = new List<StructureSetting>() {
+					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
+					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.INN, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
+				};
+			} else {
+				structureTypes = GenerateStructures(npcSettlement, faction);
+			}
 			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
 			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceObjects());
 
@@ -173,7 +185,9 @@ public class SettlementGeneration : MapGenerationComponent {
 				break; //no more dwellings
 			}
 			Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
-			if (roll < 25 || (WorldConfigManager.Instance.isTutorialWorld && citizenCount < 9)) {
+			if (roll < 25 || 
+			    (WorldConfigManager.Instance.isTutorialWorld && citizenCount < 9) || 
+			    (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World && citizenCount < 9)) {
 				//couple
 				List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
 				if (couples.Count > 0) {
