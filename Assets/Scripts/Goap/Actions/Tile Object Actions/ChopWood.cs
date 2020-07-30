@@ -59,10 +59,12 @@ public class ChopWood : GoapAction {
         int wood = tree.yield;
         tree.AdjustYield(-wood);
 
-        WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
-        woodPile.SetResourceInPile(wood);
-        tile.structure.AddPOI(woodPile, tile);
-        
+        // WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
+        // woodPile.SetResourceInPile(wood);
+        // tile.structure.AddPOI(woodPile, tile);
+
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE, wood,
+            goapNode.actor, tile);
     }
     #endregion
 }

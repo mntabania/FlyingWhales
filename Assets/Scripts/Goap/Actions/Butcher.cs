@@ -231,7 +231,10 @@ public class Butcher : GoapAction {
         }
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation);
-
+        if (goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter) {
+            goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+        }
+        
         //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
         if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) && 
            !goapNode.actor.traitContainer.HasTrait("Cannibal")) {

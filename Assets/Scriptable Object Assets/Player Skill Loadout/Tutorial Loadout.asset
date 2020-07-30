@@ -21,7 +21,7 @@ MonoBehaviour:
     fixedSkills: 030000000100000002000000
   minions:
     extraSlots: 2
-    fixedSkills: 4e0000004f0000005000000051000000520000005300000054000000
+    fixedSkills: 4e0000004f00000052000000
   structures:
     extraSlots: 2
     fixedSkills: 4a00000060000000480000004c000000

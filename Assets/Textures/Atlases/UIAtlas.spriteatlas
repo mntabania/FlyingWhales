@@ -46,10 +46,11 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8215804
+    totalSpriteSurfaceArea: 8228764
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 850021107efc0974eb9300b25ac85964, type: 3}
   - {fileID: 21300000, guid: 87bb45208dd227c4692921a192026acb, type: 3}
   - {fileID: 21300000, guid: 2914eb20255e070448ce2bab92c250a6, type: 3}
   - {fileID: 21300000, guid: 418892401ce8da24c962f5914893fc8d, type: 3}
@@ -365,6 +366,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b4c6899b8cca17a4ca86ef28d9a716bd, type: 3}
   - {fileID: 21300000, guid: 68dded9b2946a9346a8043772426280e, type: 3}
   - {fileID: 21300000, guid: c51390ab720dd894e924e4709ac485c1, type: 3}
+  - {fileID: 21300000, guid: 76856cab6787b564aa7e69a535cc7215, type: 3}
   - {fileID: 21300000, guid: 9e8f03bb79cdc8e40b19e89ce6859a08, type: 3}
   - {fileID: 21300000, guid: 7b1208bbc22685c4eb30c76184ad21cf, type: 3}
   - {fileID: 21300000, guid: 416c4bcb60d82ab45a957a79b2d338d2, type: 3}
@@ -387,8 +389,10 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3496477c79d94054293d38bd61fd821d, type: 3}
   - {fileID: 21300000, guid: dcf4218c429580d4f99b7853facb56cf, type: 3}
   - {fileID: 21300000, guid: 1574028cef72fb24fb29c57adabe0c77, type: 3}
+  - {fileID: 21300000, guid: f8829c8c28b7b404e9e79b8b41d3042f, type: 3}
   - {fileID: 21300000, guid: cc56f59c59cf9fc4da1d95fa813bd8ac, type: 3}
   - {fileID: 21300000, guid: 3e5ed8acc6bf45a4aaa358c67b860a8e, type: 3}
+  - {fileID: 21300000, guid: 891789ac92629c545b9b9e560eb2f4f0, type: 3}
   - {fileID: 21300000, guid: 9c375abc75bc65746956e2eac2648872, type: 3}
   - {fileID: 21300000, guid: 5dcb6ebcef951464c9bc828b2e768f18, type: 3}
   - {fileID: 21300000, guid: befb70cc4947b1f44ac889ae87f7e815, type: 3}
@@ -481,6 +485,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 10af85ffde05ed64987c2f5abf99cc19, type: 3}
   - {fileID: 21300000, guid: f9c56cffd6570ee4aa91ddfe15f4831a, type: 3}
   m_PackedSpriteNamesToIndex:
+  - button_build_default
   - assault_icon
   - footprint_icon
   - button_demons_default
@@ -796,6 +801,7 @@ SpriteAtlas:
   - button_monsters_disabled
   - tile_log_divider
   - intel_row_clicked
+  - button_build_clicked
   - button_unlock_clicked
   - minion_scroll_left_default
   - button_summon_clicked
@@ -818,8 +824,10 @@ SpriteAtlas:
   - Faction UI Reference
   - log_button_default
   - button_monsters_default
+  - button_build_disabled
   - icon_villager
   - button_close_clicked
+  - button_build_hover
   - button_summon_disabled
   - tab_relations_hover
   - minion_tab_skill_default

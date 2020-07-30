@@ -161,12 +161,12 @@ public class POITestingUI : MonoBehaviour {
         HideUI();
     }
     public void EatAtTable() {
-        if (poi is Table) {
+        // if (poi is Table) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.EAT, poi, activeCharacter);
             activeCharacter.jobQueue.AddJobInQueue(job);
-        } else {
-            Debug.LogError($"{poi.name} is not a table!");
-        }
+        // } else {
+        //     Debug.LogError($"{poi.name} is not a table!");
+        // }
         HideUI();
     }
     public void Sleep() {

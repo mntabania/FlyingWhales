@@ -4,6 +4,7 @@ using System.Linq;
 using Cellular_Automata;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
 using Ruinarch;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -588,6 +589,17 @@ namespace Inner_Maps {
             //for (int i = 0; i < 2; i++) {
             //    mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EMBER));
             //}
+        }
+        public T CreateNewResourcePileAndTryCreateHaulJob<T>(TILE_OBJECT_TYPE tileObjectType, int resourcesInPile, 
+            [NotNull]Character creator, [NotNull]LocationGridTile locationGridTile) where T : ResourcePile {
+            T resourcePile = CreateNewTileObject<T>(tileObjectType);
+            resourcePile.SetResourceInPile(resourcesInPile);
+            locationGridTile.structure.AddPOI(resourcePile, locationGridTile);
+
+            if (creator.homeSettlement != null && creator.isNormalCharacter) {
+                creator.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+            }
+            return resourcePile;
         }
         #endregion
 
