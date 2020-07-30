@@ -22,12 +22,24 @@ public class BedMarkerNameplate : PooledObject {
         this.bedGO = bedGO;
         UpdateSizeBasedOnZoom();
         Messenger.AddListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
     }
 
     #region Listeners
     private void OnCameraZoomChanged(Camera camera, float amount) {
         if (camera == InnerMapCameraMove.Instance.innerMapsCamera) {
             UpdateSizeBasedOnZoom();
+        }
+    }
+    private void OnLocationMapClosed(Region location) {
+        if (location == bedGO.bedTileObject.currentRegion) {
+            HideMarkerNameplate();
+        }
+    }
+    private void OnLocationMapOpened(Region location) {
+        if (location == bedGO.bedTileObject.currentRegion) {
+            UpdateMarkerNameplate(bedGO.bedTileObject);
         }
     }
     #endregion
@@ -46,17 +58,39 @@ public class BedMarkerNameplate : PooledObject {
         base.Reset();
         bedGO = null;
         Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnLocationMapClosed);
     }
     #endregion
 
     #region Utilities
+    public void UpdateMarkerNameplate(TileObject bedTileObject) {
+        int userCount = bedTileObject.users.Length;
+        bool showActionIcon = false;
+        if (userCount == 1) {
+            showActionIcon = true;
+        } else if (userCount == 2) {
+            showActionIcon = true;
+        }
+        if (showActionIcon) {
+            ActualGoapNode actionNode = bedTileObject.users[0].currentActionNode;
+            if (actionNode != null) {
+                UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[actionNode.action.actionIconString]);
+            } else {
+                UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);
+            }
+            ShowMarkerNameplate();
+        } else {
+            HideMarkerNameplate();
+        }
+    }
     public void ShowMarkerNameplate() {
         gameObject.SetActive(true);
     }
     public void HideMarkerNameplate() {
         gameObject.SetActive(false);
     }
-    public void UpdateActionIcon(Sprite sprite) {
+    private void UpdateActionIcon(Sprite sprite) {
         actionIcon.sprite = sprite;
     }
     private void UpdateSizeBasedOnZoom() {
