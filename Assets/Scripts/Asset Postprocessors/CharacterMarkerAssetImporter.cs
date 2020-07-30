@@ -7,8 +7,20 @@ using UnityEngine;
 namespace AssetImporters {
     public class CharacterMarkerAssetImporter : AssetPostprocessor {
 
+        private string[] foldersToIgnore = new string[] {
+            "Dragon"
+        };
+        
         void OnPreprocessTexture() {
-            if (assetPath.Contains("Character Marker") && !assetPath.Contains("Action Icons") && !assetPath.Contains("Hair")) {
+            bool shouldBeIgnored = false;
+            for (int i = 0; i < foldersToIgnore.Length; i++) {
+                string folderToIgnore = foldersToIgnore[i];
+                if (assetPath.Contains(folderToIgnore)) {
+                    shouldBeIgnored = true;
+                    break;
+                }
+            }
+            if (!shouldBeIgnored && assetPath.Contains("Character Marker") && !assetPath.Contains("Action Icons") && !assetPath.Contains("Hair")) {
                 TextureImporter textureImporter = (TextureImporter)assetImporter;
                 textureImporter.textureType = TextureImporterType.Sprite;
                 textureImporter.spriteImportMode = SpriteImportMode.Single;
