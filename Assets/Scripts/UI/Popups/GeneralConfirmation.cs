@@ -12,10 +12,11 @@ public class GeneralConfirmation : PopupMenuBase {
     [SerializeField] protected Button generalConfirmationButton;
     [SerializeField] protected RuinarchText generalConfirmationButtonText;
     [SerializeField] protected CanvasGroup _canvasGroup;
+    [SerializeField] protected Button _centerButton;
     
-    public virtual void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
+    public virtual void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null, System.Action onClickCenter = null) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
-            PlayerUI.Instance.AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK));
+            PlayerUI.Instance.AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK, onClickCenter));
             return;
         }
         if (!GameManager.Instance.isPaused) {
@@ -31,6 +32,14 @@ public class GeneralConfirmation : PopupMenuBase {
         generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
         if (onClickOK != null) {
             generalConfirmationButton.onClick.AddListener(onClickOK.Invoke);
+        }
+        _centerButton.onClick.RemoveAllListeners();
+        if (onClickCenter != null) {
+            _centerButton.gameObject.SetActive(true);
+            _centerButton.onClick.AddListener(OnClickOKGeneralConfirmation);
+            _centerButton.onClick.AddListener(onClickCenter.Invoke);
+        } else {
+            _centerButton.gameObject.SetActive(false);
         }
         base.Open();
         TweenIn();

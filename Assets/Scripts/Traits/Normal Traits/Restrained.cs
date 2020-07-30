@@ -17,7 +17,7 @@ namespace Traits {
 
         public Restrained() {
             name = "Restrained";
-            description = "This character is restrained!";
+            description = "Tied up to prevent it from moving.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.REMOVE_RESTRAINED };

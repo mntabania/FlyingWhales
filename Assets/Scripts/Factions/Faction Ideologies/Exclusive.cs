@@ -23,6 +23,9 @@ public class Exclusive : FactionIdeology {
         return $"{category.ToString()}: {GetRequirementAsString()}";
     }
     public override string GetIdeologyDescription() {
+        return $"Only allows {GetRequirementAsString()} to join them.";
+    }
+    public override string GetIdeologyName() {
         return $"{name}: {GetRequirementAsString()}";
     }
     #endregion

@@ -6,7 +6,7 @@ namespace Traits {
         
         public Arsonist() {
             name = "Arsonist";
-            description = "Burns down nearby objects, structures and villagers";
+            description = "Burns down nearest Village or occupied Special Structure.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

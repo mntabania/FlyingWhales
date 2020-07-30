@@ -8,7 +8,7 @@ namespace Traits {
 
         public Ensnared() {
             name = "Ensnared";
-            description = "This is ensnared.";
+            description = "Trapped and unable to move.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3);

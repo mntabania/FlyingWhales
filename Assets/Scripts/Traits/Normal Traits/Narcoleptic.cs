@@ -8,7 +8,7 @@ namespace Traits {
 
         public Narcoleptic() {
             name = "Narcoleptic";
-            description = "Narcoleptics may sometimes suddenly fall asleep.";
+            description = "Randomly plops down to sleep.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };

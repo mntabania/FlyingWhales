@@ -134,7 +134,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.PRISON) == false) {
 				//Prison: +3 (disable if already selected from previous hex tile)
-				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 100); //3
+				structureWeights.AddElement(new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE), 3); //3
 			}
 			if (structureTypes.Contains(STRUCTURE_TYPE.BARRACKS) == false) {
 				//Barracks: +6 (disable if already selected from previous hex tile)

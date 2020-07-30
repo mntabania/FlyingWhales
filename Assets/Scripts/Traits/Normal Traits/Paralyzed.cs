@@ -10,7 +10,7 @@ namespace Traits {
 
         public Paralyzed() {
             name = "Paralyzed";
-            description = "This character is paralyzed.";
+            description = "Permanently unable to move.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };

@@ -10,5 +10,8 @@ public class Warmonger : FactionIdeology {
 
     #region Overrides
     public override bool DoesCharacterFitIdeology(Character character) { return true; }
+    public override string GetIdeologyDescription() {
+        return "Likely to declare war at its Leader's behest.";
+    }
     #endregion
 }

@@ -13,7 +13,7 @@ namespace Traits {
         
         public Catatonic() {
             name = "Catatonic";
-            description = "This character is catatonic.";
+            description = "In an unresponsive stupor.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);

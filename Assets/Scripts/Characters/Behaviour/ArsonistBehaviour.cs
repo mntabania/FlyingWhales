@@ -26,14 +26,14 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
                         //no arson choices, go to random tile at village
                         HexTile targetHextile =
                             CollectionUtilities.GetRandomElement(character.behaviourComponent.arsonVillageTarget);
-                        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+                        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.borderTiles);
                         return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                     }
                 } else {
                     //go to target village
                     HexTile targetHextile =
                         CollectionUtilities.GetRandomElement(character.behaviourComponent.arsonVillageTarget);
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.borderTiles);
                     return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                 }
             } else {
@@ -48,6 +48,9 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
     public override void OnAddBehaviourToCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
         character.behaviourComponent.OnBecomeArsonist();
+        //immediately set arson village target, so that arsonist will immediately do arson.
+        List<HexTile> target = character.behaviourComponent.GetVillageTargetsByPriority();
+        character.behaviourComponent.SetArsonistVillageTarget(target);
     }
     public override void OnRemoveBehaviourFromCharacter(Character character) {
         base.OnRemoveBehaviourFromCharacter(character);

@@ -299,14 +299,14 @@ public class FactionInfoUI : InfoUIBase {
         ideologyLbl.text = string.Empty;
         for (int i = 0; i < activeFaction.factionType.ideologies.Count; i++) {
             FactionIdeology ideology = activeFaction.factionType.ideologies[i];
-            ideologyLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   <link=\"{i}\">{ideology.GetIdeologyDescription()}</link>\n";
+            ideologyLbl.text += $"<sprite=\"Text_Sprites\" name=\"Arrow_Icon\">   <link=\"{i}\">{ideology.GetIdeologyName()}</link>\n";
         }
     }
     public void OnHoverIdeology(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
             FactionIdeology ideology = activeFaction.factionType.ideologies[index];
-            UIManager.Instance.ShowSmallInfo(ideology.name);
+            UIManager.Instance.ShowSmallInfo(ideology.GetIdeologyDescription());
         }
     }
     public void OnHoverOutIdeology() {

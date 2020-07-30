@@ -1202,48 +1202,48 @@ public class CharacterNeedsComponent {
         }
     }
     private void OnHopeful(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
-        if (!wasHopeful) {
-            _owner.traitContainer.AddTrait(_owner, "Hopeful");
-        }
-        if (wasDiscouraged) {
-            _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
-        }
-        if (wasHopeless) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
-        }
+        // if (!wasHopeful) {
+        //     _owner.traitContainer.AddTrait(_owner, "Hopeful");
+        // }
+        // if (wasDiscouraged) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
+        // }
+        // if (wasHopeless) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
+        // }
     }
     private void OnDiscouraged(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
-        if (!wasDiscouraged) {
-            _owner.traitContainer.AddTrait(_owner, "Discouraged");
-        }
-        if (wasHopeful) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
-        }
-        if (wasHopeless) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
-        }
+        // if (!wasDiscouraged) {
+        //     _owner.traitContainer.AddTrait(_owner, "Discouraged");
+        // }
+        // if (wasHopeful) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
+        // }
+        // if (wasHopeless) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
+        // }
     }
     private void OnHopeless(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
-        if (!wasHopeless) {
-            _owner.traitContainer.AddTrait(_owner, "Hopeless");
-        }
-        if (wasHopeful) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
-        }
-        if (wasDiscouraged) {
-            _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
-        }
+        // if (!wasHopeless) {
+        //     _owner.traitContainer.AddTrait(_owner, "Hopeless");
+        // }
+        // if (wasHopeful) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
+        // }
+        // if (wasDiscouraged) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
+        // }
     }
     private void OnNormalHope(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
-        if (wasHopeless) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
-        }
-        if (wasHopeful) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
-        }
-        if (wasDiscouraged) {
-            _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
-        }
+        // if (wasHopeless) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
+        // }
+        // if (wasHopeful) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
+        // }
+        // if (wasDiscouraged) {
+        //     _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
+        // }
     }
     public void AdjustDoNotGetDiscouraged(int amount) {
         doNotGetDiscouraged += amount;

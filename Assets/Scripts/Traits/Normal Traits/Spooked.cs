@@ -9,7 +9,7 @@ namespace Traits {
 
         public Spooked() {
             name = "Spooked";
-            description = "This character is too scared and may refuse to sleep.";
+            description = "Something recently scared it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);

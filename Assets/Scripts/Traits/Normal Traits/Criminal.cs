@@ -12,7 +12,7 @@ namespace Traits {
 
         public Criminal() {
             name = "Criminal";
-            description = "This character has been branded as a criminal by his/her own faction.";
+            description = "Has been witnessed or accused of doing something illegal.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

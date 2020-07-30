@@ -9,7 +9,7 @@ namespace Traits {
 
         public MusicHater() {
             name = "Music Hater";
-            description = "Music Haters dislike playing instruments and hearing any music.";
+            description = "Has an irrational hate for music.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

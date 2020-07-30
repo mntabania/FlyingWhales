@@ -11,5 +11,8 @@ public class Peaceful : FactionIdeology {
     public override bool DoesCharacterFitIdeology(Character character) {
         return true;
     }
+    public override string GetIdeologyDescription() {
+        return "Typically keeps to itself. Does not declare war but will fight back when attacked.";
+    }
     #endregion
 }

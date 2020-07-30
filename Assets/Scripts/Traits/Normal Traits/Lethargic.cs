@@ -8,7 +8,7 @@ namespace Traits {
 
         public Lethargic() {
             name = "Lethargic";
-            description = "This character is feeling sluggish and apathetic.";
+            description = "Moving very sluggishly.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);

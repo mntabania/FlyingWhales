@@ -6,7 +6,7 @@ namespace Traits {
 
         public Mighty() {
             name = "Mighty";
-            description = "This character is mighty.";
+            description = "Obscenely powerful. Twice as much Strength and HP as normal.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;

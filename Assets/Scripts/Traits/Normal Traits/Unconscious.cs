@@ -11,7 +11,7 @@ namespace Traits {
 
         public Unconscious() {
             name = "Unconscious";
-            description = "This character is unconscious.";
+            description = "Knocked out!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3); //144

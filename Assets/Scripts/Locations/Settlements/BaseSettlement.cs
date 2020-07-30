@@ -116,7 +116,7 @@ namespace Locations.Settlements {
                 if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover) && lover.homeStructure.tiles.Count > 0) { //check if the character has a lover that lives in the npcSettlement
                     chosenDwelling = lover.homeStructure;
                 }
-                if (chosenDwelling == null && (character.homeStructure == null || character.homeStructure.location.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
+                if (chosenDwelling == null && structures.ContainsKey(STRUCTURE_TYPE.DWELLING) && (character.homeStructure == null || character.homeStructure.location.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
                     List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
                     for (int i = 0; i < structureList.Count; i++) {
                         LocationStructure currDwelling = structureList[i];

@@ -13,7 +13,7 @@ namespace Traits {
         
         public Wet() {
             name = "Wet";
-            description = "This is soaking wet.";
+            description = "Soaked with water.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6); //if this trait is only temporary, then it should not advertise GET_WATER

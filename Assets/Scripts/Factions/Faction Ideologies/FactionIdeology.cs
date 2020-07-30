@@ -15,5 +15,6 @@ public class FactionIdeology {
     public virtual bool DoesCharacterFitIdeology(Character character) { return false; }
     public virtual string GetRequirementsForJoiningAsString() { return "None"; }
     public virtual string GetIdeologyDescription() { return name; }
+    public virtual string GetIdeologyName() { return name; }
     #endregion
 }

@@ -11,7 +11,7 @@ namespace Traits {
         
         public Burnt() {
             name = "Burnt";
-            description = "This is burnt.";
+            description = "Was ravaged by fire.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

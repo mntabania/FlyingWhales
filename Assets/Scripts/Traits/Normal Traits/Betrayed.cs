@@ -5,7 +5,7 @@ namespace Traits {
 
         public Betrayed() {
             name = "Betrayed";
-            description = "This character is betrayed.";
+            description = "Someone backstabbed it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);

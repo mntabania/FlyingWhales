@@ -7,7 +7,7 @@ namespace Traits {
 		private Character owner;
 		public Bored() {
 			name = "Bored";
-			description = "This character is feeling slightly down.";
+			description = "Is lacking some sort of entertainment.";
 			type = TRAIT_TYPE.STATUS;
 			effect = TRAIT_EFFECT.NEGATIVE;
 			ticksDuration = 0;

@@ -100,8 +100,8 @@ public class Agoraphobia : PlayerSpell {
 
 public class AgoraphobiaData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.AGORAPHOBIA;
-    public override string name { get { return "Agoraphobia"; } }
-    public override string description { get { return "Makes a character fear crowds."; } }
+    public override string name => "Agoraphobia";
+    public override string description => "This Affliction will make a Villager afraid of crowds. They will flee when there are too many other villagers nearby. They won't participate in parties and will be afraid of visiting the Tavern.";
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

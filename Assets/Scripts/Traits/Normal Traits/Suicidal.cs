@@ -9,7 +9,7 @@ namespace Traits {
 		
 		public Suicidal() {
 			name = "Suicidal";
-			description = "This character wants to kill himself/herself.";
+			description = "Might end up killing itself anytime soon.";
 			type = TRAIT_TYPE.STATUS;
 			effect = TRAIT_EFFECT.NEGATIVE;
 			ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);

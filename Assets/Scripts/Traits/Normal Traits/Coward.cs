@@ -9,7 +9,7 @@ namespace Traits {
 
         public Coward() {
             name = "Coward";
-            description = "Cowards always flee from combat.";
+            description = "A scaredy-cat. Will often flee from combat.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

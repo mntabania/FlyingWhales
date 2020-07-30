@@ -8,7 +8,7 @@ namespace Traits {
 
         public Disoriented() {
             name = "Disoriented";
-            description = "This is disoriented.";
+            description = "Feeling dizzy.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);

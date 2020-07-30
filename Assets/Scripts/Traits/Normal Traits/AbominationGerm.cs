@@ -5,7 +5,7 @@
         
         public AbominationGerm() {
             name = "Abomination Germ";
-            description = "This is infected with a virus!";
+            description = "There is a mysterious germ growing inside...";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8);

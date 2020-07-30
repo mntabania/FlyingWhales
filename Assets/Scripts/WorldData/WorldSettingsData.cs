@@ -53,6 +53,7 @@ public class WorldSettingsData {
     public void AddBiome(BIOMES biome) {
         if (!biomes.Contains(biome)) {
             biomes.Add(biome);
+            Debug.Log($"Added biome {biome.ToString()} to world settings.");
         }
     }
     public bool RemoveBiome(BIOMES biome) {
@@ -81,6 +82,8 @@ public class WorldSettingsData {
         numOfRegions = 1;
         omnipotentMode = false;
         noThreatMode = false;
+        ClearBiomes();
+        ClearRaces();
         AddRace(RACE.HUMANS);
         AddBiome(BIOMES.GRASSLAND);
     }
@@ -90,6 +93,8 @@ public class WorldSettingsData {
         numOfRegions = 1;
         omnipotentMode = false;
         noThreatMode = false;
+        ClearBiomes();
+        ClearRaces();
         AddRace(RACE.HUMANS);
         AddRace(RACE.ELVES);
         AddBiome(BIOMES.DESERT);
@@ -100,6 +105,8 @@ public class WorldSettingsData {
         numOfRegions = 3;
         omnipotentMode = false;
         noThreatMode = false;
+        ClearBiomes();
+        ClearRaces();
         AddRace(RACE.HUMANS);
         AddRace(RACE.ELVES);
         AddBiome(BIOMES.DESERT);

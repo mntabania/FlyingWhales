@@ -29,11 +29,10 @@ namespace Quests.Special_Popups {
         }
         public override void Activate() {
             StopCheckingCriteria();
-            UIManager.Instance.ShowYesNoConfirmation("Excalibur", 
+            PlayerUI.Instance.ShowGeneralConfirmation("Excalibur", 
                 $"{_targetCharacter.name} has successfully pulled out the Excalibur from its stone and has " +
                 $"become a powerful {UtilityScripts.Utilities.ColorizeAction("Hero")}! Watch out!", 
-                onClickYesAction: () => UIManager.Instance.ShowCharacterInfo(_targetCharacter, true), 
-                yesBtnText: $"Center on {_targetCharacter.name}", noBtnText: "OK", pauseAndResume: true, showCover: true);
+                onClickCenter: () => UIManager.Instance.ShowCharacterInfo(_targetCharacter, true));
             CompleteQuest();
         }
     }

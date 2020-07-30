@@ -31,10 +31,9 @@ namespace Quests.Special_Popups {
         }
         public override void Activate() {
             StopCheckingCriteria();
-            UIManager.Instance.ShowYesNoConfirmation("Succubus", 
+            PlayerUI.Instance.ShowGeneralConfirmation("Succubus", 
                 $"The succubus {_disguiser.name} has disguised itself as {_targetCharacter.name} and is planning to do something naughty!", 
-                onClickYesAction: () => UIManager.Instance.ShowCharacterInfo(_disguiser, true), 
-                yesBtnText: $"Center on {_disguiser.name}", noBtnText: "OK", pauseAndResume: true, showCover: true);
+                onClickCenter: () => UIManager.Instance.ShowCharacterInfo(_disguiser, true));
             CompleteQuest();
         }
     }

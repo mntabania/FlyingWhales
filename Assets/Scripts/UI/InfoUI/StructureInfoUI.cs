@@ -65,11 +65,11 @@ public class StructureInfoUI : InfoUIBase {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = $"{activeStructure.nameplateName}";
-        if (activeStructure.occupiedHexTile.hexTileOwner != null) {
-            locationPortrait.SetPortrait(activeStructure.occupiedHexTile.hexTileOwner.landmarkOnTile.landmarkPortrait);    
-        } else {
+        // if (activeStructure.occupiedHexTile.hexTileOwner != null) {
+        //     locationPortrait.SetPortrait(activeStructure.occupiedHexTile.hexTileOwner.landmarkOnTile.landmarkPortrait);    
+        // } else {
             locationPortrait.SetPortrait(activeStructure.structureType.GetLandmarkType());
-        }
+        // }
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeStructure.currentHP}/{activeStructure.maxHP}";

@@ -8,7 +8,7 @@ namespace Traits {
 
         public Griefstricken() {
             name = "Griefstricken";
-            description = "This character is grieving and may refuse to eat.";
+            description = "Lost a loved one.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);

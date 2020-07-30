@@ -99,9 +99,9 @@ public class Paralysis : PlayerSpell {
 
 public class ParalysisData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.PARALYSIS;
-    public override string name { get { return "Paralysis"; } }
-    public override string description { get { return "Makes a character unable to move permanently."; } }
-    public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
+    public override string name => "Paralysis";
+    public override string description => "This Affliction will permanently paralyze a Villager. Paralysis prevents the Villager from moving.";
+    public override SPELL_CATEGORY category => SPELL_CATEGORY.AFFLICTION;
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
     public ParalysisData() : base() {

@@ -29,10 +29,9 @@ namespace Quests.Special_Popups {
         }
         public override void Activate() {
             StopCheckingCriteria();
-            UIManager.Instance.ShowYesNoConfirmation("Ankh of Anubis", 
+            PlayerUI.Instance.ShowGeneralConfirmation("Ankh of Anubis", 
                 $"The {UtilityScripts.Utilities.ColorizeAction("Ankh of Anubis")} is acting strangely! Something must have happened to activate its powers. Watch out!", 
-                onClickYesAction: () => UIManager.Instance.ShowTileObjectInfo(_targetObject), 
-                yesBtnText: $"Center on {_targetObject.name}", noBtnText: "OK", pauseAndResume: true, showCover: true);
+                onClickCenter: () => UIManager.Instance.ShowTileObjectInfo(_targetObject));
             CompleteQuest();
         }
     }

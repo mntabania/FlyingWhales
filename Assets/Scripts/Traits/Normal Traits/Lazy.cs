@@ -8,7 +8,7 @@ namespace Traits {
 
         public Lazy() {
             name = "Lazy";
-            description = "Lazy characters often daydream and are less likely to take on npcSettlement tasks.";
+            description = "Would rather loaf around than work.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

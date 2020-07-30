@@ -122,8 +122,8 @@ public class Lycanthropy : PlayerSpell {
 
 public class LycanthropyData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.LYCANTHROPY;
-    public override string name { get { return "Lycanthropy"; } }
-    public override string description { get { return "Makes a character transform into a wild wolf whenever he/she sleeps."; } }
+    public override string name => "Lycanthropy";
+    public override string description => "This Affliction will turn a Villager into a Werewolf. A Werewolf sometimes switches from normal form to wolf form and vice-versa whenever it sleeps.";
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.AFFLICTION; } }
     //public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 

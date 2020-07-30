@@ -72,7 +72,7 @@ public class CarryComponent {
             character.marker.transform.localPosition = new Vector3(0f, 0.5f, 0f);
             character.marker.visualsParent.eulerAngles = Vector3.zero;
             character.marker.transform.eulerAngles = Vector3.zero;
-            character.marker.SetNameState(false);
+            // character.marker.SetNameState(false);
 
             if (!owner.traitContainer.HasTrait("Plagued")) {
                 Traits.Plagued targetPlagued = character.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
@@ -170,7 +170,7 @@ public class CarryComponent {
         }
 
         character.marker.transform.eulerAngles = Vector3.zero;
-        character.marker.SetNameState(true);
+        // character.marker.SetNameState(true);
 
         character.avatar.transform.position = owner.currentRegion.coreTile.transform.position;
         Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);

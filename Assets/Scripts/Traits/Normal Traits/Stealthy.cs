@@ -5,7 +5,7 @@
         
         public Stealthy() {
             name = "Stealthy";
-            description = "This is Stealthy.";
+            description = "Usually invisible outside of combat.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;

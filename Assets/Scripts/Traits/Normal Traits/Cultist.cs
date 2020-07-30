@@ -9,7 +9,7 @@ namespace Traits {
 
         public Cultist() {
             name = "Cultist";
-            description = "This character is a cultist.";
+            description = "Worships us, but only secretly.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

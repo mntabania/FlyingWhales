@@ -12,7 +12,7 @@ namespace Traits {
 
         public Overheating() {
             name = "Overheating";
-            description = "This is overheating.";
+            description = "Its temperature is burning up.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(2);

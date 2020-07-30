@@ -15,7 +15,7 @@ namespace Traits {
 
         public Injured() {
             name = "Injured";
-            description = "This character is badly hurt.";
+            description = "Sustained a physical trauma.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
