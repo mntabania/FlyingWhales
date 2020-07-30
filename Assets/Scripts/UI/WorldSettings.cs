@@ -268,7 +268,7 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region World Picker
-    public void OnToggleChutoria(bool state) {
+    public void OnToggleTutoria(bool state) {
         if (state) {
             worldSettingsData.SetTutorialWorldSettings();
         }

@@ -13,6 +13,8 @@ public class BedObjectGameObject : TileObjectGameObject {
 
     public BedMarkerNameplate nameplate { get; private set; }
 
+    public TileObject bedTileObject => obj;
+
     public override void Initialize(TileObject tileObject) {
         CreateNameplate();
         base.Initialize(tileObject);
@@ -32,7 +34,6 @@ public class BedObjectGameObject : TileObjectGameObject {
             hex = bed.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }
         int userCount = bed.users.Length;
-        bool showActionIcon = false;
         if (userCount == 0) {
             SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
                 bed.state,
@@ -40,22 +41,10 @@ public class BedObjectGameObject : TileObjectGameObject {
                 bed.gridTileLocation?.isCorrupted ?? false));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);
-            showActionIcon = true;
         } else if (userCount == 2) {
             SetVisual(bed2Sleeping);
-            showActionIcon = true;
         }
-        if (showActionIcon) {
-            ActualGoapNode actionNode = bed.users[0].currentActionNode;
-            if (actionNode != null) {
-                nameplate.UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[actionNode.action.actionIconString]);
-            } else {
-                nameplate.UpdateActionIcon(InteractionManager.Instance.actionIconDictionary[GoapActionStateDB.Sleep_Icon]);
-            }
-            nameplate.ShowMarkerNameplate();
-        } else {
-            nameplate.HideMarkerNameplate();
-        }
+        nameplate.UpdateMarkerNameplate(bed);
     }
     
     public override Sprite GetSeizeSprite(IPointOfInterest poi) {

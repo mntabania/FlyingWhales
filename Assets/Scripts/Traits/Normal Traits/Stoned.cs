@@ -7,7 +7,8 @@ using Inner_Maps.Location_Structures;
 namespace Traits {
     public class Stoned : Status {
 
-        public override bool isSingleton => true;
+        //public override bool isSingleton => true;
+        private GameObject _stonedGO;
 
         public Stoned() {
             name = "Stoned";
@@ -19,6 +20,8 @@ namespace Traits {
             hindersPerform = true;
             hindersWitness = true;
             hindersAttackTarget = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
@@ -29,12 +32,34 @@ namespace Traits {
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, "effect");
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToInvolvedObjects();
+                _stonedGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Stoned);
+                _stonedGO.GetComponent<StonedEffect>().PlayEffect(character.marker.usedSprite);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            if (_stonedGO) {
+                ObjectPoolManager.Instance.DestroyObject(_stonedGO);
+                _stonedGO = null;
+            }
             if (removedFrom is Character character && character.marker) {
                 character.marker.UnpauseAnimation();
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                if (_stonedGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_stonedGO);
+                    _stonedGO = null;
+                }
+                _stonedGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Stoned);
+                _stonedGO.GetComponent<StonedEffect>().PlayEffect(character.marker.usedSprite);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_stonedGO) {
+                ObjectPoolManager.Instance.DestroyObject(_stonedGO);
+                _stonedGO = null;
             }
         }
         #endregion
