@@ -282,7 +282,7 @@ namespace Inner_Maps {
             newMap.transform.localPosition = _nextMapPos;
             newMap.UpdateTilesWorldPosition();
             PathfindingManager.Instance.CreatePathfindingGraphForLocation(newMap);
-            _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 10, _nextMapPos.z);
+            _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 50, _nextMapPos.z);
             newMap.OnMapGenerationFinished();
         }
         public void DestroyInnerMap(Region location) {
