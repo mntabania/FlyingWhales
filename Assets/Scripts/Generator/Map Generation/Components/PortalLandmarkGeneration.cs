@@ -38,9 +38,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			"No valid portal tiles were found!");
 		
 		HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
-		if (WorldConfigManager.Instance.isTutorialWorld) {
-			portalTile.SetElevation(ELEVATION.PLAIN);
-		}
+		portalTile.SetElevation(ELEVATION.PLAIN);
 		portalTile.featureComponent.RemoveAllFeatures(portalTile);
 		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL);
 		PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portalTile);
