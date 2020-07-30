@@ -103,8 +103,24 @@ public class Eat : GoapAction {
                 }
             } 
         } else {
-            cost = UtilityScripts.Utilities.Rng.Next(400, 451);
-            costLog += $" +{cost}(Not Table)";
+            if (target is ElfMeat || target is HumanMeat) {
+                if (actor.traitContainer.HasTrait("Cannibal")) {
+                    cost = UtilityScripts.Utilities.Rng.Next(450, 551);
+                    costLog += $" +{cost}(Target is human/elven meat and actor is cannibal)";
+                } else {
+                    if (actor.needsComponent.isStarving) {
+                        cost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                        costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal but is starving)";    
+                    } else {
+                        cost = 2000;
+                        costLog += $" +{cost}(Target is human/elven meat and actor is not cannibal and is not starving)";    
+                    }
+                }
+            } else {
+                cost = UtilityScripts.Utilities.Rng.Next(400, 451);
+                costLog += $" +{cost}(Not Table)";    
+            }
+            
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
@@ -150,6 +166,14 @@ public class Eat : GoapAction {
     public void AfterEatSuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         //goapNode.poiTarget.SetPOIState(POI_STATE.ACTIVE);
+        if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
+            (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat)) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cannibal");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode);
+            log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
+            log.AddLogToInvolvedObjects();
+        }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {
     //    GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
