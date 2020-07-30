@@ -73,8 +73,7 @@ namespace Tutorial {
                 TutorialManager.Instance.defilerChamberVideo, "Defiler Chamber", stepItem.hoverPosition);
         }
         private void OnHoverBrainwash(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("The Brainwash button can be found beside the current Room nameplate.", 
-                TutorialManager.Instance.brainWashButton, "Brainwash", stepItem.hoverPosition);
+            UIManager.Instance.ShowSmallInfo("The Brainwash button can be found beside the current Room nameplate.", "Brainwash", stepItem.hoverPosition);
         }
         #endregion
 

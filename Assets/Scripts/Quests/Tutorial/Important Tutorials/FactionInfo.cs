@@ -37,10 +37,9 @@ namespace Tutorial {
         
         #region Step Helpers
         private void OnCompleteExecuteSpell() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Factions",
+            PlayerUI.Instance.ShowGeneralConfirmation("Factions",
                 "A Faction is a group of characters that belong together. " +
-                "It typically has a single Faction Leader, several sets of ideologies, Villager members and claimed territories.", 
-                TutorialManager.Instance.spellsVideoClip);
+                "It typically has a single Faction Leader, several sets of ideologies, Villager members and claimed territories.");
         }
         private void OnClickOverview() {
             PlayerUI.Instance.ShowGeneralConfirmation("Overview Tab",

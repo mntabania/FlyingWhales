@@ -59,13 +59,12 @@ namespace Tutorial {
             );
         }
         private void OnCompleteExecuteAffliction() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Afflictions",
+            PlayerUI.Instance.ShowGeneralConfirmation("Afflictions",
                 $"Afflictions are {UtilityScripts.Utilities.ColorizeAction("negative Traits")} that you may apply to a world's " +
                 $"\nVillager that will affect their behavior. " +
                 "Afflictions do not have any\n Mana Cost but they have a limited number of Charges.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
-                "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus.",
-                TutorialManager.Instance.afflictionsVideoClip
+                "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus."
             );
         }
         private void OnHoverAfflictButtonStep(QuestStepItem item) {
@@ -79,10 +78,9 @@ namespace Tutorial {
             );
         }
         private void OnCompleteTriggerFlaw() {
-            UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Trigger Flaw",
+            PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw",
                 $"Trigger Flaw is a special ability that allows you to force a Villager to perform actions " +
-                $"related to one of their negative Traits (aka Flaws). Not all Flaws have associated Trigger Flaw effects but most do.",
-                TutorialManager.Instance.afflictionsVideoClip
+                $"related to one of their negative Traits (aka Flaws). Not all Flaws have associated Trigger Flaw effects but most do."
             );
         }
         #endregion

@@ -17,11 +17,12 @@ public class WorldSettingsData {
     public List<RACE> races { get; private set; }
     public List<BIOMES> biomes { get; private set; }
     public World_Type worldType { get; private set; }
+    public List<SPELL_TYPE> disabledSpells { get; }
     
     public WorldSettingsData() {
         races = new List<RACE>();
         biomes = new List<BIOMES>();
-        // SetSecondWorldSettings();
+        disabledSpells = new List<SPELL_TYPE>();
         worldType = World_Type.Custom;
     }
 
@@ -76,6 +77,8 @@ public class WorldSettingsData {
         }
         return races.Count >= 1 && biomes.Count >= 1;
     }
+
+    #region Utilities
     public void SetTutorialWorldSettings() {
         Debug.Log("Set world settings as Tutorial");
         worldType = World_Type.Tutorial;
@@ -114,4 +117,11 @@ public class WorldSettingsData {
         AddBiome(BIOMES.SNOW);
         AddBiome(BIOMES.FOREST);
     }
+    #endregion
+
+    #region Spells
+    public void DisableSpellForWorld(SPELL_TYPE spellType) {
+        disabledSpells.Add(spellType);
+    }
+    #endregion
 }
