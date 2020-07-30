@@ -93,10 +93,18 @@ public class Butcher : GoapAction {
                 cost += currCost;
                 costLog += $" +{currCost}(Demon)";
             }
+            if (!deadCharacter.isDead) {
+                cost *= 2;
+                costLog += $" +{cost}(Still Alive)";
+            }
         }
-        if (target is Animal) {
+        if (target is Animal animal) {
             cost += UtilityScripts.Utilities.Rng.Next(40, 61);
             costLog += $" +{cost}(Animal)";
+            if (!animal.isDead) {
+                cost *= 2;
+                costLog += $" +{cost}(Still Alive)";
+            }
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;

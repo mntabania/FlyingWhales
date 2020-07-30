@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8176874
+    totalSpriteSurfaceArea: 8215804
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -446,6 +446,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f9ddf8ce0ba0595419a58730fbc42b74, type: 3}
   - {fileID: 21300000, guid: 0fd91ade51874484293a63d7f8b0bccd, type: 3}
   - {fileID: 21300000, guid: ccdb6dde802d7a742a27cebd9ea12645, type: 3}
+  - {fileID: 21300000, guid: 7a73c2ee8ecab1b49b0a16715afcee6a, type: 3}
   - {fileID: 21300000, guid: ef8835fef1223f44c9ac87ec272a1503, type: 3}
   - {fileID: 21300000, guid: cf4a07fe10de7fe4f9c10d5431585e6c, type: 3}
   - {fileID: 21300000, guid: d737ab0f33a59f845b5a6ed413bac011, type: 3}
@@ -876,6 +877,7 @@ SpriteAtlas:
   - text_scroll_bg
   - minion_tab_skill_hover
   - button_characters_default
+  - Choose World
   - button_crypts_disabled
   - nameplate_residents
   - minion_tab_action_active
