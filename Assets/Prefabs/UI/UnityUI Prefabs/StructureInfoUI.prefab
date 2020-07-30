@@ -973,7 +973,7 @@ MonoBehaviour:
   actionItemPrefab: {fileID: 1728383093349538, guid: c318eb473a674104ca08bf7e11c3030b,
     type: 3}
   nameLbl: {fileID: 1044844005817390606}
-  locationPortrait: {fileID: 0}
+  locationPortrait: {fileID: 4652286307294853890}
   hpLbl: {fileID: 4400223004547826486}
   characterItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
