@@ -64,7 +64,15 @@ public class NonActionEventsComponent {
         //if (!CanInteract(target)) {
         //    return false;
         //}
-        if (!owner.IsHostileWith(target)) {
+        Character disguisedActor = owner;
+        Character disguisedTarget = target;
+        if (owner.reactionComponent.disguisedCharacter != null) {
+            disguisedActor = owner.reactionComponent.disguisedCharacter;
+        }
+        if (target.reactionComponent.disguisedCharacter != null) {
+            disguisedTarget = target.reactionComponent.disguisedCharacter;
+        }
+        if (!disguisedActor.IsHostileWith(disguisedTarget)) {
             TriggerChatCharacter(target, ref overrideLog);
             return true;
         }
@@ -72,6 +80,16 @@ public class NonActionEventsComponent {
     }
     private void TriggerChatCharacter(Character target, ref Log overrideLog) {
         string strLog = $"{owner.name} chat with {target.name}";
+
+        Character disguisedActor = owner;
+        Character disguisedTarget = target;
+        if (owner.reactionComponent.disguisedCharacter != null) {
+            disguisedActor = owner.reactionComponent.disguisedCharacter;
+        }
+        if (target.reactionComponent.disguisedCharacter != null) {
+            disguisedTarget = target.reactionComponent.disguisedCharacter;
+        }
+
         chatWeights.Clear();
         chatWeights.AddElement(Warm_Chat, 100);
         chatWeights.AddElement(Awkward_Chat, 30);
@@ -81,11 +99,11 @@ public class NonActionEventsComponent {
 
         strLog += $"\n\n{chatWeights.GetWeightsSummary("BASE WEIGHTS")}";
 
-        MOOD_STATE actorMood = owner.moodComponent.moodState;
-        MOOD_STATE targetMood = target.moodComponent.moodState;
-        string actorOpinionLabel = owner.relationshipContainer.GetOpinionLabel(target);
-        string targetOpinionLabel = target.relationshipContainer.GetOpinionLabel(owner);
-        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, target);
+        MOOD_STATE actorMood = disguisedActor.moodComponent.moodState;
+        MOOD_STATE targetMood = disguisedTarget.moodComponent.moodState;
+        string actorOpinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
+        string targetOpinionLabel = disguisedTarget.relationshipContainer.GetOpinionLabel(disguisedActor);
+        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(disguisedActor, disguisedTarget);
 
         if (actorMood == MOOD_STATE.LOW) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
@@ -162,25 +180,25 @@ public class NonActionEventsComponent {
             }
         }
 
-        if (owner.traitContainer.HasTrait("Hothead")) {
+        if (disguisedActor.traitContainer.HasTrait("Hothead")) {
             chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nActor is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
         }
-        if (target.traitContainer.HasTrait("Hothead")) {
+        if (disguisedTarget.traitContainer.HasTrait("Hothead")) {
             chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nTarget is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
         }
 
-        if (owner.traitContainer.HasTrait("Diplomatic")) {
+        if (disguisedActor.traitContainer.HasTrait("Diplomatic")) {
             chatWeights.AddWeightToElement(Insult, -30);
             chatWeights.AddWeightToElement(Praise, 30);
             strLog += "\n\nActor is Diplomatic, modified weights...";
             strLog += "\nInsult: -30, Praise: +30";
         }
         
-        if (owner.traitContainer.HasTrait("Hero") || target.traitContainer.HasTrait("Hero")) {
+        if (disguisedActor.traitContainer.HasTrait("Hero") || disguisedTarget.traitContainer.HasTrait("Hero")) {
             chatWeights.RemoveElement(Argument);
             strLog += "\n\nActor or target is Hero, removing argument weight...";
         }
@@ -190,23 +208,23 @@ public class NonActionEventsComponent {
         string result = chatWeights.PickRandomElementGivenWeights();
         strLog += $"\nResult: {result}";
 
-        if (owner.traitContainer.HasTrait("Plagued") && !target.traitContainer.HasTrait("Plagued")) {
-            strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
-            int roll = UnityEngine.Random.Range(0, 100);
-            strLog += $"\nRoll: {roll}";
-            if (roll < 35) {
-                target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
-                // target.traitContainer.AddTrait(target, "Plagued", owner);
-            }
-        } else if (!owner.traitContainer.HasTrait("Plagued") && target.traitContainer.HasTrait("Plagued")) {
-            strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
-            int roll = UnityEngine.Random.Range(0, 100);
-            strLog += $"\nRoll: {roll}";
-            if (roll < 35) {
-                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
-                // owner.traitContainer.AddTrait(owner, "Plagued", target);
-            }
-        }
+        //if (owner.traitContainer.HasTrait("Plagued") && !target.traitContainer.HasTrait("Plagued")) {
+        //    strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
+        //    int roll = UnityEngine.Random.Range(0, 100);
+        //    strLog += $"\nRoll: {roll}";
+        //    if (roll < 35) {
+        //        target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
+        //        // target.traitContainer.AddTrait(target, "Plagued", owner);
+        //    }
+        //} else if (!owner.traitContainer.HasTrait("Plagued") && target.traitContainer.HasTrait("Plagued")) {
+        //    strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
+        //    int roll = UnityEngine.Random.Range(0, 100);
+        //    strLog += $"\nRoll: {roll}";
+        //    if (roll < 35) {
+        //        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
+        //        // owner.traitContainer.AddTrait(owner, "Plagued", target);
+        //    }
+        //}
         
         owner.logComponent.PrintLogIfActive(strLog);
 
@@ -229,11 +247,11 @@ public class NonActionEventsComponent {
         }
 
         if (adjustOpinionBothSides) {
-            owner.relationshipContainer.AdjustOpinion(owner, target, result, opinionValue, "engaged in disastrous conversation");
-            target.relationshipContainer.AdjustOpinion(target, owner, result, opinionValue, "engaged in disastrous conversation");
+            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, result, opinionValue, "engaged in disastrous conversation");
+            target.relationshipContainer.AdjustOpinion(target, disguisedActor, result, opinionValue, "engaged in disastrous conversation");
         } else {
             //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
-            target.relationshipContainer.AdjustOpinion(target, owner, result, opinionValue);
+            target.relationshipContainer.AdjustOpinion(target, disguisedActor, result, opinionValue);
         }
 
         GameDate dueDate = GameManager.Instance.Today();
@@ -310,7 +328,15 @@ public class NonActionEventsComponent {
         //if (!CanInteract(target)) {
         //    return false;
         //}
-        if (!owner.IsHostileWith(target)) {
+        Character disguisedActor = owner;
+        Character disguisedTarget = target;
+        if (owner.reactionComponent.disguisedCharacter != null) {
+            disguisedActor = owner.reactionComponent.disguisedCharacter;
+        }
+        if (target.reactionComponent.disguisedCharacter != null) {
+            disguisedTarget = target.reactionComponent.disguisedCharacter;
+        }
+        if (!disguisedActor.IsHostileWith(disguisedTarget)) {
             string result = TriggerFlirtCharacter(target);
             GameDate dueDate = GameManager.Instance.Today();
             overrideLog = new Log(dueDate, "Interrupt", "Flirt", result);
@@ -328,57 +354,65 @@ public class NonActionEventsComponent {
         return false;
     }
     private string TriggerFlirtCharacter(Character target) {
+        Character disguisedActor = owner;
+        Character disguisedTarget = target;
+        if(owner.reactionComponent.disguisedCharacter != null) {
+            disguisedActor = owner.reactionComponent.disguisedCharacter;
+        }
+        if (target.reactionComponent.disguisedCharacter != null) {
+            disguisedTarget = target.reactionComponent.disguisedCharacter;
+        }
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
-            if (owner.traitContainer.HasTrait("Unattractive")) {
-                owner.relationshipContainer.AdjustOpinion(owner, target, "Base", -4, "engaged in disastrous flirting");
-                target.relationshipContainer.AdjustOpinion(target, owner, "Base", -2, "engaged in disastrous flirting");
+            if (disguisedActor.traitContainer.HasTrait("Unattractive")) {
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Base", -4, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Base", -2, "engaged in disastrous flirting");
                 return "ugly";
             }
         }
         if(chance < 90) {
-            if(!RelationshipManager.IsSexuallyCompatibleOneSided(target.sexuality, owner.sexuality, target.gender, owner.gender)) {
-                owner.relationshipContainer.AdjustOpinion(owner, target, "Base", -4, "engaged in disastrous flirting");
-                target.relationshipContainer.AdjustOpinion(target, owner, "Base", -2, "engaged in disastrous flirting");
+            if(!RelationshipManager.IsSexuallyCompatibleOneSided(disguisedTarget.sexuality, disguisedActor.sexuality, disguisedTarget.gender, disguisedActor.gender)) {
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Base", -4, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Base", -2, "engaged in disastrous flirting");
                 return "incompatible";
             }
         }
-        owner.relationshipContainer.AdjustOpinion(owner, target, "Base", 2);
-        target.relationshipContainer.AdjustOpinion(target, owner, "Base", 4);
+        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Base", 2);
+        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Base", 4);
         
-        string relationshipName = owner.relationshipContainer.GetRelationshipNameWith(target);
+        string relationshipName = disguisedActor.relationshipContainer.GetRelationshipNameWith(disguisedTarget);
 
         // If Opinion of Target towards Actor is already in Acquaintance range
         if (relationshipName == RelationshipManager.Acquaintance) {
             // 25% chance to develop Lover relationship if both characters have no Lover yet
-            if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
-                && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER)) {
+            if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
+                && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
                 if (UnityEngine.Random.Range(0, 100) < 25) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
                 }
             }
             // 35% chance to develop Affair if at least one of the characters already have a Lover
-            else if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
-                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR)) {
+            else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
+                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) {
                 if (UnityEngine.Random.Range(0, 100) < 35) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
                 }
             }
         }
         // If Opinion of Target towards Actor is already in Friend or Close Friend range
         else if (relationshipName == RelationshipManager.Friend || relationshipName == RelationshipManager.Close_Friend) {
             // 35 % chance to develop Lover relationship if both characters have no Lover yet
-            if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.LOVER)
-                && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.LOVER)) {
+            if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
+                && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
                 if (UnityEngine.Random.Range(0, 100) < 35) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.LOVER);
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
                 }
             }
             // 50% chance to develop Affair if at least one of the characters already have a Lover 
-            else if (owner.relationshipValidator.CanHaveRelationship(owner, target, RELATIONSHIP_TYPE.AFFAIR)
-                     && target.relationshipValidator.CanHaveRelationship(target, owner, RELATIONSHIP_TYPE.AFFAIR)) { 
+            else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
+                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) { 
                 if (UnityEngine.Random.Range(0, 100) < 50) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.AFFAIR);
+                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
                 }
             }
         }

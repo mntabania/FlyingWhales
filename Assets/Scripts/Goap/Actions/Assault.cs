@@ -115,7 +115,7 @@ public class Assault : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget is TileObject tileObject) {
-                return tileObject.gridTileLocation != null;
+                return tileObject.gridTileLocation != null && !actor.IsHealthCriticallyLow();
             }
             return !actor.IsHealthCriticallyLow();
         }

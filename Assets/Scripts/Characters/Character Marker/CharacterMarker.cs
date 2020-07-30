@@ -1143,7 +1143,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Profiler.BeginSample($"{character.name} ProcessAllUnprocessedVisionPOIs");
         string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
         if (unprocessedVisionPOIs.Count > 0) {
-            if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
+            if (!character.isDead && character.reactionComponent.disguisedCharacter == null /* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     if (poi.mapObjectVisual == null) {

@@ -409,6 +409,12 @@ public class ActualGoapNode : IReactable, IRumorable {
         actionStatus = ACTION_STATUS.PERFORMING;
         actor.marker.UpdateAnimation();
 
+        if (associatedJobType == JOB_TYPE.ENERGY_RECOVERY_NORMAL || associatedJobType == JOB_TYPE.ENERGY_RECOVERY_URGENT){
+            if (actor.partyComponent.hasParty && actor.partyComponent.currentParty is SocialParty) {
+                actor.partyComponent.currentParty.RemoveMember(actor);
+            }
+        }
+
         if (poiTarget is Character targetCharacter) {
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
                 if (!targetCharacter.isDead) {

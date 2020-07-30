@@ -82,6 +82,9 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.ShowHPBar(stateComponent.character);
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
         stateComponent.character.marker.visionCollider.VoteToUnFilterVision();
+        if(stateComponent.character.partyComponent.hasParty && stateComponent.character.partyComponent.currentParty is SocialParty) {
+            stateComponent.character.partyComponent.currentParty.RemoveMember(stateComponent.character);
+        }
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.AddListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
