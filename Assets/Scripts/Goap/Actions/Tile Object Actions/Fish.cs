@@ -47,10 +47,13 @@ public class Fish : GoapAction {
     public void AfterFishSuccess(ActualGoapNode goapNode) {
         LocationGridTile tile = goapNode.actor.gridTileLocation.GetNearestUnoccupiedTileFromThis() ?? goapNode.actor.gridTileLocation;
 
-        FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
-        foodPile.SetResourceInPile(50);
-        tile.structure.AddPOI(foodPile, tile);
+        // FoodPile foodPile = InnerMapManager.Instance.CreateNewTileObject<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE);
+        // foodPile.SetResourceInPile(50);
+        // tile.structure.AddPOI(foodPile, tile);
         // foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
+        
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE, 50,
+            goapNode.actor, tile);
     }
     #endregion
 }

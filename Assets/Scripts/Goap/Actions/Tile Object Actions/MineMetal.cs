@@ -52,10 +52,12 @@ public class MineMetal : GoapAction {
         LocationGridTile tile = ore.gridTileLocation;
         ore.AdjustYield(-metal);
 
-        MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
-        metalPile.SetResourceInPile(metal);
-        tile.structure.AddPOI(metalPile, tile);
-        // metalPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.METAL_PILE);
+        // MetalPile metalPile = InnerMapManager.Instance.CreateNewTileObject<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE);
+        // metalPile.SetResourceInPile(metal);
+        // tile.structure.AddPOI(metalPile, tile);
+        
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<MetalPile>(TILE_OBJECT_TYPE.METAL_PILE, metal,
+            goapNode.actor, tile);
     }
     #endregion
 }

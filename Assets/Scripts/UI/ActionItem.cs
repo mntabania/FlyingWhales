@@ -115,6 +115,7 @@ public class ActionItem : PooledObject {
 		if (string.IsNullOrEmpty(expiryKey) == false) {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		}
+		coverImg.fillAmount = 1;
 		expiryKey = string.Empty;
 		SetCooldownState(false);
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);

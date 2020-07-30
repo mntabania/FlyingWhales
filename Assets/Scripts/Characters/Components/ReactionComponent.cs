@@ -1032,6 +1032,22 @@ public class ReactionComponent {
                 }
             } 
         }
+
+        if (targetTileObject is ResourcePile resourcePile && actor.homeSettlement != null) {
+            //if character sees a resource pile that is outside his/her home settlement or
+            //is not at his/her settlement's main storage
+            if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false || 
+                resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
+                bool createJob = true;
+                if (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || 
+                    resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) {
+                    createJob = actor.traitContainer.HasTrait("Cannibal");
+                }
+                if (createJob) {
+                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);    
+                }
+            }
+        }
     }
     private void ReactToCarriedObject(Character actor, TileObject targetTileObject, Character carrier, ref string debugLog) {
         debugLog += $"{actor.name} is reacting to {targetTileObject.nameWithID} carried by {carrier.name}";

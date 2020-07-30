@@ -52,10 +52,12 @@ public class MineStone : GoapAction {
         LocationGridTile tile = rock.gridTileLocation;
         rock.AdjustYield(-stone);
 
-        StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
-        stonePile.SetResourceInPile(stone);
-        tile.structure.AddPOI(stonePile, tile);
-        // stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
+        // StonePile stonePile = InnerMapManager.Instance.CreateNewTileObject<StonePile>(TILE_OBJECT_TYPE.STONE_PILE);
+        // stonePile.SetResourceInPile(stone);
+        // tile.structure.AddPOI(stonePile, tile);
+        
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<StonePile>(TILE_OBJECT_TYPE.STONE_PILE, stone,
+            goapNode.actor, tile);
     }
     #endregion
 }
