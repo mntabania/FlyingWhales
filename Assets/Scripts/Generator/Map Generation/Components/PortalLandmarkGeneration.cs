@@ -17,9 +17,13 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 
 	private void PlacePortal(MapGenerationData data) {
 		List<HexTile> validPortalTiles;
-		if (WorldConfigManager.Instance.isTutorialWorld) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[1, 7]
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+			validPortalTiles = new List<HexTile>() {
+				GridMap.Instance.map[3, 1]
 			};
 		} else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
@@ -34,9 +38,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			"No valid portal tiles were found!");
 		
 		HexTile portalTile = CollectionUtilities.GetRandomElement(validPortalTiles);
-		if (WorldConfigManager.Instance.isTutorialWorld) {
-			portalTile.SetElevation(ELEVATION.PLAIN);
-		}
+		portalTile.SetElevation(ELEVATION.PLAIN);
 		portalTile.featureComponent.RemoveAllFeatures(portalTile);
 		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL);
 		PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portalTile);

@@ -27,10 +27,12 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices;
-				if (WorldConfigManager.Instance.isTutorialWorld) {
-					choices = new List<HexTile>() {
-						GridMap.Instance.map[2, 2]
-					};
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					if (i == 0) {
+						choices = new List<HexTile>() { GridMap.Instance.map[14, 3] };	
+					} else {
+						choices = new List<HexTile>() { GridMap.Instance.map[3, 8] };
+					}
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
@@ -41,9 +43,10 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 							                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
 							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
 							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
-						            )
+						)
 						.ToList();
 				}
+					
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.MONSTER_LAIR;
@@ -106,10 +109,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices;
-				if (WorldConfigManager.Instance.isTutorialWorld) {
-					choices = new List<HexTile>() {
-						GridMap.Instance.map[6, 8]
-					};
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					choices = new List<HexTile>() { GridMap.Instance.map[7, 1] };	
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && 
@@ -121,6 +122,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
 						).ToList();
 				}
+					
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LANDMARK_TYPE landmarkType = LANDMARK_TYPE.TEMPLE;
@@ -182,15 +184,31 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
-				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
-					            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-							n => n.landmarkOnTile != null && 
-							     n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-							     (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-							      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-							      n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
-					).ToList();
+				List<HexTile> choices;
+				if (WorldConfigManager.Instance.isTutorialWorld) {
+					if (i == 0) {
+						choices = new List<HexTile>() {
+							GridMap.Instance.map[2, 2]
+						};	
+					} else {
+						choices = new List<HexTile>() {
+							GridMap.Instance.map[6, 8]
+						};
+					}
+				} else {
+					choices = GridMap.Instance.normalHexTiles
+						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
+						            x.AllNeighbours
+							            .Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+								            n => n.landmarkOnTile != null &&
+								                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+								                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL ||
+								                  n.landmarkOnTile.specificLandmarkType.GetStructureType()
+									                  .IsSpecialStructure() ||
+								                  n.landmarkOnTile.specificLandmarkType.GetStructureType()
+									                  .IsSettlementStructure())) == false
+						).ToList();
+				}
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_GRAVEYARD);
@@ -207,15 +225,18 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private int GetLoopCount(LANDMARK_TYPE landmarkType, MapGenerationData data) {
 		switch (landmarkType) {
 			case LANDMARK_TYPE.MONSTER_LAIR:
-				if (WorldConfigManager.Instance.isTutorialWorld) {
-					return 1;
-				}
-				if (data.regionCount == 1) {
-					return 1;
-				} else if (data.regionCount == 2 || data.regionCount == 3) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 					return 2;
 				} else {
-					return 3;
+					if (data.regionCount == 1) {
+						return 1;
+					} else if (data.regionCount == 2 || data.regionCount == 3) {
+						return 2;
+					} else {
+						return 3;
+					}	
 				}
 			case LANDMARK_TYPE.ABANDONED_MINE:
 				if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -231,15 +252,18 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return monsterLairWasBuilt ? 2 : 3;
 				}
 			case LANDMARK_TYPE.TEMPLE:
-				if (WorldConfigManager.Instance.isTutorialWorld) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 					return 1;
-				}
-				if (data.regionCount == 1) {
-					return 1;
-				} else if (data.regionCount == 2 || data.regionCount == 3) {
-					return 2;
 				} else {
-					return 3;
+					if (data.regionCount == 1) {
+						return 1;
+					} else if (data.regionCount == 2 || data.regionCount == 3) {
+						return 2;
+					} else {
+						return 3;
+					}
 				}
 			case LANDMARK_TYPE.MAGE_TOWER:
 				if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -255,7 +279,9 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 3;
 				}
 			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
-				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 2;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 					//always ensure that an ancient graveyard is spawned in second world
 					return 1;
 				} else {
@@ -268,17 +294,42 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	private int GetChance(LANDMARK_TYPE landmarkType, MapGenerationData data) {
 		switch (landmarkType) {
 			case LANDMARK_TYPE.MONSTER_LAIR:
-				return WorldConfigManager.Instance.isTutorialWorld ? 100 : 75;
-			case LANDMARK_TYPE.ABANDONED_MINE:
-				return WorldConfigManager.Instance.isTutorialWorld ? 0 : 50;
-			case LANDMARK_TYPE.TEMPLE:
-				return WorldConfigManager.Instance.isTutorialWorld ? 100 : 35;
-			case LANDMARK_TYPE.MAGE_TOWER:
-				return WorldConfigManager.Instance.isTutorialWorld ? 0 : 35;
-			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
-				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
-					//always ensure that an ancient graveyard is spawned in second world
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 					return 100;
+				} else {
+					return 75;
+				}
+			case LANDMARK_TYPE.ABANDONED_MINE:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					return 0;
+				} else {
+					return 50;
+				}
+			case LANDMARK_TYPE.TEMPLE:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					return 100;
+				} else {
+					return 35;
+				}
+			case LANDMARK_TYPE.MAGE_TOWER:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					return 0;
+				} else {
+					return 35;
+				}
+			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+					return 100;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+					return 0;
 				} else {
 					return 0;
 				}

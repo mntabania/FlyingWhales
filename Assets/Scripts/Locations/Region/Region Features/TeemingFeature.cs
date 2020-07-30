@@ -13,7 +13,7 @@ namespace Locations.Region_Features {
                 //choose from random flat/tree tile without game feature
                 List<HexTile> choices = region.tiles
                     .Where(x => (x.elevationType == ELEVATION.PLAIN || x.elevationType == ELEVATION.TREES) &&
-                                x.featureComponent.HasFeature(TileFeatureDB.Game_Feature) == false).ToList();
+                                x.featureComponent.HasFeature(TileFeatureDB.Game_Feature) == false && x.landmarkOnTile == null).ToList();
                 
                 for (int i = 0; i < missing; i++) {
                     if (choices.Count == 0) { break; }

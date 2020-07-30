@@ -54,7 +54,7 @@ public class WorldSettingsData {
     public void AddBiome(BIOMES biome) {
         if (!biomes.Contains(biome)) {
             biomes.Add(biome);
-            Debug.Log($"Added biome {biome.ToString()} to world settings.");
+            // Debug.Log($"Added biome {biome.ToString()} to world settings.");
         }
     }
     public bool RemoveBiome(BIOMES biome) {
@@ -99,7 +99,6 @@ public class WorldSettingsData {
         ClearBiomes();
         ClearRaces();
         AddRace(RACE.HUMANS);
-        AddRace(RACE.ELVES);
         AddBiome(BIOMES.DESERT);
     }
     public void SetDefaultCustomWorldSettings() {

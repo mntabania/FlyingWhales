@@ -207,15 +207,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			//if demo build, always spawn necronomicon at ancient ruins
 			artifactChoices.Remove(ARTIFACT_TYPE.Necronomicon);
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-			LocationStructure ancientRuin = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.TEMPLE);
+			//tutorial should always have 2 ancient graveyards.
+			LocationStructure ancientRuin = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			ancientRuin.AddPOI(artifact);
-			
-			//place berserk orb at monster lair
-			artifactChoices.Remove(ARTIFACT_TYPE.Berserk_Orb);
-			LocationStructure monsterLair = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
-			artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
-			monsterLair.AddPOI(artifact);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 			//if demo build, always spawn Ankh of anubis
 			artifactChoices.Remove(ARTIFACT_TYPE.Ankh_Of_Anubis);

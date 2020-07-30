@@ -84,15 +84,6 @@ public class MonsterGeneration : MapGenerationComponent {
 			}
 
 			if (WorldConfigManager.Instance.isTutorialWorld) {
-				//nymphs
-				int randomNymphs = 2;
-				SUMMON_TYPE[] nymphChoices = new[]
-					{SUMMON_TYPE.Ice_Nymph, SUMMON_TYPE.Water_Nymph, SUMMON_TYPE.Wind_Nymph};
-				for (int k = 0; k < randomNymphs; k++) {
-					if (locationChoices.Count == 0) { break; }
-					Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(nymphChoices), locationChoices);
-					locationChoices.Remove(summon.gridTileLocation);
-				}
 				//sludge
 				int randomSludge = 3;
 				for (int k = 0; k < randomSludge; k++) {
@@ -100,18 +91,9 @@ public class MonsterGeneration : MapGenerationComponent {
 					Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
 					locationChoices.Remove(summon.gridTileLocation);
 				}
-				//wisps
-				int randomWisp = 3;
-				SUMMON_TYPE[] wispChoices = new[]
-					{SUMMON_TYPE.Earthen_Wisp, SUMMON_TYPE.Electric_Wisp, SUMMON_TYPE.Fire_Wisp};
-				for (int k = 0; k < randomWisp; k++) {
-					if (locationChoices.Count == 0) { break; }
-					Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(wispChoices), locationChoices);
-					locationChoices.Remove(summon.gridTileLocation);
-				}
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 				//Succubus
-				int randomSuccubus = 5;
+				int randomSuccubus = 3;
 				for (int k = 0; k < randomSuccubus; k++) {
 					if (locationChoices.Count == 0) { break; }
 					Summon summon = CreateMonster(SUMMON_TYPE.Succubus, locationChoices);
@@ -167,7 +149,9 @@ public class MonsterGeneration : MapGenerationComponent {
 		}
 	}
 	private IEnumerator LandmarkMonsterGeneration() {
-		if (WorldConfigManager.Instance.isTutorialWorld) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+			//no landmark monsters in tutorial world
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 			//wolves at monster lair
 			List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 			for (int i = 0; i < monsterLairs.Count; i++) {
@@ -178,10 +162,10 @@ public class MonsterGeneration : MapGenerationComponent {
 					CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}
 			}
-			//kobolds at ancient ruin
-			List<BaseLandmark> ancientRuins = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
-			for (int i = 0; i < ancientRuins.Count; i++) {
-				BaseLandmark landmark = ancientRuins[i];
+			//kobolds at Temple
+			List<BaseLandmark> temples = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
+			for (int i = 0; i < temples.Count; i++) {
+				BaseLandmark landmark = temples[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
 				int randomAmount = 2;
 				for (int k = 0; k < randomAmount; k++) {
@@ -221,37 +205,22 @@ public class MonsterGeneration : MapGenerationComponent {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
 				caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
 				if (WorldConfigManager.Instance.isTutorialWorld) {
-					bool hasSpawnedSpiders = false;
-					bool hasSpawnedGolems = false;
 					for (int j = 0; j < caves.Count; j++) {
 						LocationStructure cave = caves[j];
 						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (hasSpawnedSpiders == false) {
-							hasSpawnedSpiders = true;
+						if (j == 0 || j == 1) {
 							//Giant spiders	
 							int randomGiantSpider = Random.Range(2, 5);
 							for (int k = 0; k < randomGiantSpider; k++) {
 								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-							//Small spiders	
-							int randomSmallSpider = Random.Range(3, 8);
-							for (int k = 0; k < randomSmallSpider; k++) {
-								CreateMonster(SUMMON_TYPE.Small_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						} else if (hasSpawnedGolems == false) {
-							hasSpawnedGolems = true;
+						} else if (j == 2) {
 							//Golem	
-							int randomGolem = Random.Range(1, 3);
+							int randomGolem = Random.Range(3, 6);
 							for (int k = 0; k < randomGolem; k++) {
 								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-							//Troll	
-							int randomAbomination = Random.Range(1, 3);
-							for (int k = 0; k < randomAbomination; k++) {
-								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						}
-						if (hasSpawnedGolems && hasSpawnedSpiders) {
+						} else {
 							break;
 						}
 					}
@@ -263,18 +232,20 @@ public class MonsterGeneration : MapGenerationComponent {
 							continue;
 						}
 						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (GameUtilities.RollChance(50)) {
+						if (j == 0 || j == 1) {
 							//Trolls	
-							int randomTrolls = Random.Range(2, 4);
+							int randomTrolls = Random.Range(3, 6);
 							for (int k = 0; k < randomTrolls; k++) {
 								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-						} else {
-							//Golem	
-							int randomGolem = Random.Range(1, 3);
-							for (int k = 0; k < randomGolem; k++) {
-								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+						} else if (j == 2) {
+							//Fire Elementals	
+							int fireElementals = 2;
+							for (int k = 0; k < fireElementals; k++) {
+								CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
+						} else {
+							break;
 						}
 					}
 				} else {
