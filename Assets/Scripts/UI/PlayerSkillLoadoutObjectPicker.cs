@@ -30,6 +30,10 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
                 //If there is no data yet, the skill must not be part of the choices
                 continue;
             }
+            if (WorldSettings.Instance.worldSettingsData.disabledSpells.Contains(skillType)) {
+                //if picked world settings has this spell disabled then do not show it
+                continue;
+            }
             GameObject go = Instantiate(playerskillLoadoutItemPrefab, objectPickerScrollView.content);
             PlayerSkillLoadoutNameplateItem item = go.GetComponent<PlayerSkillLoadoutNameplateItem>();
             item.SetObject(skillType);
@@ -48,6 +52,10 @@ public class PlayerSkillLoadoutObjectPicker : MonoBehaviour {
             SPELL_TYPE skillType = items[i];
             if (!PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                 //If there is no data yet, the skill must not be part of the choices
+                continue;
+            }
+            if (WorldSettings.Instance.worldSettingsData.disabledSpells.Contains(skillType)) {
+                //if picked world settings has this spell disabled then do not show it
                 continue;
             }
             GameObject go = Instantiate(playerskillLoadoutItemPrefab, objectPickerScrollView.content);

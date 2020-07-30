@@ -476,8 +476,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnLeaveArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnArrivedAtArea);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
         Messenger.AddListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
-        //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
@@ -513,8 +513,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnLeaveArea);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnArrivedAtArea);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, ForceCancelAllJobsTargetingPOI);
+        Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelAllJobsOfTypeTargetingPOI);
         Messenger.RemoveListener<IPointOfInterest, string>(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, ForceCancelAllJobsTargetingPOIExceptSelf);
-        //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         //Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
@@ -836,6 +836,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI == target) {
+                    if (reason == GoapPlanJob.Target_Already_Dead_Reason) {
+                        //if reason for cancellation is because of death, check if job should be cancelled if target dies.
+                        if (goapJob.shouldBeCancelledOnDeath == false) {
+                            continue; //skip
+                        }
+                    }
+                    if (goapJob.ForceCancelJob(false, reason)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
+    private void ForceCancelAllJobsOfTypeTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem job = jobQueue.jobsInQueue[i];
+            if (job is GoapPlanJob goapJob) {
+                if (goapJob.jobType == jobType && goapJob.targetPOI == target) {
                     if (reason == GoapPlanJob.Target_Already_Dead_Reason) {
                         //if reason for cancellation is because of death, check if job should be cancelled if target dies.
                         if (goapJob.shouldBeCancelledOnDeath == false) {

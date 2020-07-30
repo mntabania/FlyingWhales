@@ -59,6 +59,7 @@ namespace Traits {
             _owner = null;
             if (removedFrom is GenericTileObject genericTileObject) {
                 genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DRY_TILE);
+                Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, genericTileObject as IPointOfInterest, removedBy);
             }
             StopListenForBiomeEffect();
             UpdateVisualsOnRemove(removedFrom);
