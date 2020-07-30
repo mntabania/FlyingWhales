@@ -9,7 +9,7 @@ namespace Traits {
 
         public Unfaithful() {
             name = "Unfaithful";
-            description = "Unfaithful characters are prone to having illicit love affairs.";
+            description = "Cannot commit to a monogamous relationship.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

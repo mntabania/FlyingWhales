@@ -15,7 +15,7 @@ namespace Traits {
 
         public AccidentProne() {
             name = "Accident Prone";
-            description = "Accident Prone characters often gets injured.";
+            description = "A walking and talking disaster.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

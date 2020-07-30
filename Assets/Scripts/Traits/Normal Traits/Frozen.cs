@@ -9,7 +9,7 @@ namespace Traits {
 
         public Frozen() {
             name = "Frozen";
-            description = "This is frozen.";
+            description = "Encased in ice.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);

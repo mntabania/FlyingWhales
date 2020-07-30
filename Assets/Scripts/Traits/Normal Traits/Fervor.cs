@@ -8,7 +8,7 @@ namespace Traits {
 
         public Fervor() {
             name = "Fervor";
-            description = "This character does not decrease his/her needs.";
+            description = "Intensely focused on something. All Needs reduction are temporarily paused.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

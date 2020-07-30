@@ -8,7 +8,7 @@ namespace Traits {
 
         public Electric() {
             name = "Electric";
-            description = "Damage dealt becomes electric.";
+            description = "Deals Electric damage and receives significantly reduced damage from Electric attacks.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

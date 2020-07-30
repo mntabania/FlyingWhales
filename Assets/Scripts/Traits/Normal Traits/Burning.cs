@@ -16,7 +16,7 @@ namespace Traits {
 
         public Burning() {
             name = "Burning";
-            description = "This character is on fire!";
+            description = "On fire!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3);

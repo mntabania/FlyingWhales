@@ -11,7 +11,7 @@ namespace Traits {
 
         public Malnourished() {
             name = "Malnourished";
-            description = "This character is malnourished.";
+            description = "Has not eaten for a very long time.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

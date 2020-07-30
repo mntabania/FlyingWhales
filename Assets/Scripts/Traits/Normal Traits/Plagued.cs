@@ -12,7 +12,7 @@ namespace Traits {
 
         public Plagued() {
             name = "Plagued";
-            description = "This character has a terrible disease.";
+            description = "Has a terrible and virulent disease.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

@@ -9,7 +9,7 @@ namespace Traits {
 
         public Venomous() {
             name = "Venomous";
-            description = "Damage dealt becomes poison.";
+            description = "Deals Poison damage. Also sometimes leaks out Poison.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

@@ -8,7 +8,7 @@ namespace Traits {
 
         public Cannibal() {
             name = "Cannibal";
-            description = "This character eats his own kind.";
+            description = "Not a very picky eater.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

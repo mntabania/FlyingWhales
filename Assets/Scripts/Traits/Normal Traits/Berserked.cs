@@ -15,7 +15,7 @@ namespace Traits {
         
         public Berserked() {
             name = "Berserked";
-            description = "This character will attack anyone at random and may destroy objects.";
+            description = "Mentally not there and is just rampaging like crazy.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);

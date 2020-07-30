@@ -8,7 +8,7 @@ namespace Traits {
 
         public Chaste() {
             name = "Chaste";
-            description = "Character is less likely to engage in lovemaking.";
+            description = "Not very interested in fooling around.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

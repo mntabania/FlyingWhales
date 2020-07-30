@@ -9,7 +9,7 @@ namespace Traits {
 
         public Agoraphobic() {
             name = "Agoraphobic";
-            description = "Agoraphobics avoid crowds.";
+            description = "Crowds? Oh no!";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

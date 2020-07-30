@@ -12,7 +12,7 @@ namespace Traits {
         private int _level;
         public Lycanthrope() {
             name = "Lycanthrope";
-            description = "Lycanthropes transform into wolves when they sleep.";
+            description = "Not a werewolf. Just sometimes turns to a plain ole wolf when it sleeps.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

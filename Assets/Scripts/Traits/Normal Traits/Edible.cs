@@ -10,7 +10,7 @@ namespace Traits {
 
         public Edible() {
             name = "Edible";
-            description = "This can be eaten.";
+            description = "Yummy.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

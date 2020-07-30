@@ -8,7 +8,7 @@ namespace Traits {
 
         public Pessimist() {
             name = "Pessimist";
-            description = "Pessimists lose happiness more quickly than normal.";
+            description = "Usually expects the worst. Loses Entertainment more quickly than normal.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

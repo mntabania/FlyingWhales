@@ -9,7 +9,7 @@ namespace Traits {
         private AudioObject _audioObject;
         public Zapped() {
             name = "Zapped";
-            description = "This character cannot move.";
+            description = "Jolted and temporarily paralyzed.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(15);

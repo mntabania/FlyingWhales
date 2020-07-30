@@ -9,7 +9,7 @@ namespace Traits {
 
         public Glutton() {
             name = "Glutton";
-            description = "Gluttons consume more food than normal.";
+            description = "Eats a lot!";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

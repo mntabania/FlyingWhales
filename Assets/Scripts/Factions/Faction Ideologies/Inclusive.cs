@@ -13,5 +13,8 @@ public class Inclusive : FactionIdeology {
         //Inclusive ideology accepts all characters
         return true;
     }
+    public override string GetIdeologyDescription() {
+        return "Open to everyone.";
+    }
     #endregion
 }

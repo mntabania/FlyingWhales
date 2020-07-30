@@ -8,7 +8,7 @@ namespace Traits {
 
         public Inspiring() {
             name = "Inspiring";
-            description = "Inspring characters make people around them feel happier.";
+            description = "Randomly blurts out inspirational quotes. Somehow, others feel inspired by it.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

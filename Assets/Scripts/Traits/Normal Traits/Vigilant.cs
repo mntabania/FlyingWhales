@@ -8,7 +8,7 @@ namespace Traits {
 
         public Vigilant() {
             name = "Vigilant";
-            description = "Vigilant characters cannot be stealthily knocked out or pickpocketed.";
+            description = "Cannot be knocked-out or pickpocketed.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

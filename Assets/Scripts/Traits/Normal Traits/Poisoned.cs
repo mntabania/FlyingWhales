@@ -17,7 +17,7 @@ namespace Traits {
 
         public Poisoned() {
             name = "Poisoned";
-            description = "This object is poisoned.";
+            description = "Is suffering from progressive damage. | Is full of poison.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);

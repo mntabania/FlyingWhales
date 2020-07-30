@@ -8,7 +8,7 @@ namespace Traits {
 
         public FireProne() {
             name = "Fire Prone";
-            description = "Takes double damage from Fire.";
+            description = "Fire is especially painful for this one.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

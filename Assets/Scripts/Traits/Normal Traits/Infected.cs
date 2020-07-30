@@ -14,7 +14,7 @@ namespace Traits {
 
         public Infected() {
             name = "Infected";
-            description = "This character has the zombie virus.";
+            description = "Zombie Virus is circulating inside it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

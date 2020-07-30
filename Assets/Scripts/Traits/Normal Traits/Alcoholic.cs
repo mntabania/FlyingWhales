@@ -11,7 +11,7 @@ namespace Traits {
 
         public Alcoholic() {
             name = "Alcoholic";
-            description = "Drunkards enjoy drinking.";
+            description = "More than just a social drinker.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

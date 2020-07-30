@@ -10,7 +10,7 @@ namespace Traits {
 
         public MusicLover() {
             name = "Music Lover";
-            description = "Music Lovers enjoy playing instruments and listening to music.";
+            description = "Has an obsessive love for music.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;

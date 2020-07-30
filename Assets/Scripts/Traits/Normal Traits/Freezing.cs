@@ -14,7 +14,7 @@ namespace Traits {
 
         public Freezing() {
             name = "Freezing";
-            description = "This is freezing.";
+            description = "May be completely Frozen soon.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);

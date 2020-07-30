@@ -8,7 +8,7 @@ namespace Traits {
 
         public Heartbroken() {
             name = "Heartbroken";
-            description = "This character is heartbroken and may refuse entertainment.";
+            description = "Experiencing a strong amount of emotional stress.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);

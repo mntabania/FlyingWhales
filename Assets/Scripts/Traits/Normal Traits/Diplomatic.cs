@@ -8,7 +8,7 @@ namespace Traits {
 
         public Diplomatic() {
             name = "Diplomatic";
-            description = "Diplomatic characters do not have enemies and may improve relationship of other characters.";
+            description = "A typical peaceloving do-gooder. Can mend relationships.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

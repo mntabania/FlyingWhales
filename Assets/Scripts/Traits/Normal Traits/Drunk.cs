@@ -8,7 +8,7 @@ namespace Traits {
 
         public Drunk() {
             name = "Drunk";
-            description = "This character is intoxicated and may lash out at nearby characters.";
+            description = "Inebriated. Moves slowly. May be volatile towards its enemies.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8);

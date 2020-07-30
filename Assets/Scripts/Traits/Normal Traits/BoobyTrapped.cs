@@ -12,7 +12,7 @@ namespace Traits {
         
         public BoobyTrapped() {
             name = "Booby Trapped";
-            description = "This is booby trapped.";
+            description = "This object will explode with [Element] damage if someone interacts with it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             awareCharacters = new List<Character>();
@@ -80,6 +80,7 @@ namespace Traits {
 
         public void SetElementType(ELEMENTAL_TYPE element) {
             _element = element;
+            description = $"This object will explode with {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(element.ToString())} damage if someone interacts with it.";
         }
     }
 }

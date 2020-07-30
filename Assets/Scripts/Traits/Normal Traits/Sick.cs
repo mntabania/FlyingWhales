@@ -11,7 +11,7 @@ namespace Traits {
         //}
         public Sick() {
             name = "Sick";
-            description = "This character has caught a mild illness.";
+            description = "Has a mild illness.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);

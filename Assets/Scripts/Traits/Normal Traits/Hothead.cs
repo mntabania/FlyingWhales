@@ -8,7 +8,7 @@ namespace Traits {
 
         public Hothead() {
             name = "Hothead";
-            description = "Hotheads are easy to anger and may have bouts of rage fits.";
+            description = "Quick to anger. May flare up when seeing an enemy.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

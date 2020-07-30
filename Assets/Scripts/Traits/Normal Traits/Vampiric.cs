@@ -14,7 +14,7 @@ namespace Traits {
 
         public Vampiric() {
             name = "Vampiric";
-            description = "Vampires drink other character's blood for sustenance.";
+            description = "Sustains itself by drinking other's blood.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

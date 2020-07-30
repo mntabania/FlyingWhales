@@ -8,7 +8,7 @@ namespace Traits {
 
         public Pyrophobic() {
             name = "Pyrophobic";
-            description = "Pyrophobics are afraid of fires.";
+            description = "Will almost always flee when it sees a Fire.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

@@ -13,7 +13,7 @@ namespace Traits {
         //private int _happinessDecreaseRate;
         public Kleptomaniac() {
             name = "Kleptomaniac";
-            description = "Kleptomaniacs enjoy stealing.";
+            description = "Cannot stop itself from stealing things.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;

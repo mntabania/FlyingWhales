@@ -8,7 +8,7 @@ namespace Traits {
 
         public Withdrawal() {
             name = "Withdrawal";
-            description = "This character is in withdrawal.";
+            description = "An alcoholic that has not had a drink for quite some time.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(48);

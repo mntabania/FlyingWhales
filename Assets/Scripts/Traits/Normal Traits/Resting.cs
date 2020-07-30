@@ -11,7 +11,7 @@ namespace Traits {
         private Character _character;
         public Resting() {
             name = "Resting";
-            description = "This character is resting.";
+            description = "Sleeping. May or may not be snoring.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

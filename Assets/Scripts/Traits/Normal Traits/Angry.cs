@@ -9,7 +9,7 @@ namespace Traits {
         private Character owner;
         public Angry() {
             name = "Angry";
-            description = "This character will often argue with others and may destroy objects.";
+            description = "Something or someone has made it mad!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(8);

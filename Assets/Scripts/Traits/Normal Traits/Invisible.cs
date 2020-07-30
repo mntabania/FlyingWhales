@@ -7,7 +7,7 @@ namespace Traits {
         
         public Invisible() {
             name = "Invisible";
-            description = "This is Invisible.";
+            description = "You can't see me.";
             type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.POSITIVE;
             ticksDuration = 0;

@@ -8,7 +8,7 @@ namespace Traits {
 
         public Lustful() {
             name = "Lustful";
-            description = "Lustful characters enjoy frequent lovemaking.";
+            description = "Enjoys frequent lovemaking.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

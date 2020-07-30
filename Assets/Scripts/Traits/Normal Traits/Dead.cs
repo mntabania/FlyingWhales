@@ -10,7 +10,7 @@ namespace Traits {
 
         public Dead() {
             name = "Dead";
-            description = "This character's life has been extinguished.";
+            description = "Simply no longer alive.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

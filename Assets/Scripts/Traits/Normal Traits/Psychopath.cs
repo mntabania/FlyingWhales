@@ -19,7 +19,7 @@ namespace Traits {
 
         public Psychopath() {
             name = "Psychopath";
-            description = "Psychopaths have a specific subset of target victims that they may kidnap and then kill.";
+            description = "Has a specific subset of target victims that it wants to abduct and then kill.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
