@@ -23,7 +23,7 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 			};
 		} else if (WorldConfigManager.Instance.isTutorialWorld) {
 			validPortalTiles = new List<HexTile>() {
-				GridMap.Instance.map[3, 3]
+				GridMap.Instance.map[3, 1]
 			};
 		} else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
