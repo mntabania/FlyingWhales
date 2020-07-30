@@ -78,7 +78,7 @@ namespace UnityEngine.UI.Extensions
             Vector3 localPosition;
             Vector2 min;
             Vector2 max;
-            var canvasSize = m_canvasRectTransform.sizeDelta;
+            var canvasSize = m_canvasRectTransform.rect.size;
 
             if (m_canvas.renderMode == RenderMode.ScreenSpaceOverlay || (m_canvas.renderMode == RenderMode.ScreenSpaceCamera && m_canvas.worldCamera == null))
             {

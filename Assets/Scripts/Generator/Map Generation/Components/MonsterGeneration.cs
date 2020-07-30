@@ -179,7 +179,7 @@ public class MonsterGeneration : MapGenerationComponent {
 				}
 			}
 			//kobolds at ancient ruin
-			List<BaseLandmark> ancientRuins = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.ANCIENT_RUIN);
+			List<BaseLandmark> ancientRuins = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
 			for (int i = 0; i < ancientRuins.Count; i++) {
 				BaseLandmark landmark = ancientRuins[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
@@ -188,8 +188,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}
 			}
-		}
-		else {
+		} else {
 			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
 			for (int i = 0; i < allLandmarks.Count; i++) {
 				BaseLandmark landmark = allLandmarks[i];
@@ -246,10 +245,10 @@ public class MonsterGeneration : MapGenerationComponent {
 							for (int k = 0; k < randomGolem; k++) {
 								CreateMonster(SUMMON_TYPE.Golem, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-							//Abomination	
+							//Troll	
 							int randomAbomination = Random.Range(1, 3);
 							for (int k = 0; k < randomAbomination; k++) {
-								CreateMonster(SUMMON_TYPE.Abomination, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
 						}
 						if (hasSpawnedGolems && hasSpawnedSpiders) {

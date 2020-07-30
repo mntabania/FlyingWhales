@@ -72,7 +72,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.AddListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        // Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
@@ -88,7 +89,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.RemoveListener<IPointOfInterest, string, JOB_TYPE>(Signals.FORCE_CANCEL_ALL_JOB_TYPES_TARGETING_POI, ForceCancelJobTypesTargetingPOI);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        // Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
@@ -604,27 +606,53 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         UpdatePrison();
         UpdateMainStorage();
     }
-    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if(character.reactionComponent.disguisedCharacter != null) {
-            character = character.reactionComponent.disguisedCharacter;
-        }
-        if(owner != null 
-            && character.gridTileLocation != null 
-            && character.gridTileLocation.IsPartOfSettlement(this)
-            && character.traitContainer.HasTrait("Unconscious") == false
-            && character.isDead == false
-            && character.combatComponent.combatMode != COMBAT_MODE.Passive) {
-            if (owner.IsHostileWith(character.faction)) {
-                SetIsUnderSiege(true);
-                if(character.homeStructure != null 
-                    && character.homeStructure.settlementLocation != null 
-                    && character.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
-                    && exterminateTargetStructure == null) {
-                    exterminateTargetStructure = character.homeStructure;
+    private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
+        if (character.homeSettlement == this && character.currentSettlement == this) {
+            if (seenPOI is Character target) {
+                if(target.reactionComponent.disguisedCharacter != null) {
+                    target = target.reactionComponent.disguisedCharacter;
                 }
-            }
+                if(owner != null 
+                   && target.gridTileLocation != null 
+                   && target.gridTileLocation.IsPartOfSettlement(this)
+                   && target.canPerform && target.canMove
+                   //&& target.traitContainer.HasTrait("Unconscious") == false
+                   && target.isDead == false
+                   && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
+                    if (owner.IsHostileWith(target.faction)) {
+                        SetIsUnderSiege(true);
+                        if(target.homeStructure != null 
+                           && target.homeStructure.settlementLocation != null 
+                           && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
+                           && exterminateTargetStructure == null) {
+                            exterminateTargetStructure = target.homeStructure;
+                        }
+                    }
+                }
+            }	
         }
     }
+    // private void OnCharacterArrivedAtStructure(Character target, LocationStructure structure) {
+    //     if(target.reactionComponent.disguisedCharacter != null) {
+    //         target = target.reactionComponent.disguisedCharacter;
+    //     }
+    //     if(owner != null 
+    //         && target.gridTileLocation != null 
+    //         && target.gridTileLocation.IsPartOfSettlement(this)
+    //         && target.traitContainer.HasTrait("Unconscious") == false
+    //         && target.isDead == false
+    //         && target.combatComponent.combatMode != COMBAT_MODE.Passive) {
+    //         if (owner.IsHostileWith(target.faction)) {
+    //             SetIsUnderSiege(true);
+    //             if(target.homeStructure != null 
+    //                 && target.homeStructure.settlementLocation != null 
+    //                 && target.homeStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON
+    //                 && exterminateTargetStructure == null) {
+    //                 exterminateTargetStructure = target.homeStructure;
+    //             }
+    //         }
+    //     }
+    // }
     private void CheckIfStillUnderSiege() {
         bool stillUnderSiege = false;
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
