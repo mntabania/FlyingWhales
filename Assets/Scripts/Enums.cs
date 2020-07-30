@@ -1030,7 +1030,7 @@ public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betray
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage,
     Plague_Hysteria
 }
-public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
+public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Second_World}
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action

@@ -26,15 +26,26 @@ public class SkillTreeSelector : MonoBehaviour {
             //if second world then disable ravager and lich builds, and go to puppet master build
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
+                PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
                 if (toggle.gameObject.name == "Puppet Master") {
+                    toggle.gameObject.SetActive(false);
+                    loadoutUI.gameObject.SetActive(false);
+                    _horizontalScrollSnap.RemoveChild(i, out var removed);
+                } else if (toggle.gameObject.name == "Second World") {
                     toggle.isOn = true;
                 } else {
                     toggle.interactable = false;
                 }
             }
-            _horizontalScrollSnap.StartingScreen = 1;
-            _horizontalScrollSnap.GoToScreen(1);
+            _horizontalScrollSnap.StartingScreen = 2;
+            _horizontalScrollSnap.GoToScreen(2);
         } else {
+            //disable other non main loadouts
+            //Second World
+            playerLoadoutUI[3].gameObject.SetActive(false);
+            archetypeToggles[3].gameObject.SetActive(false);
+            _horizontalScrollSnap.RemoveChild(2, out var removed);
+            
             _horizontalScrollSnap.GoToScreen(0);    
         }
     }
@@ -56,12 +67,18 @@ public class SkillTreeSelector : MonoBehaviour {
     }
 
     private PLAYER_ARCHETYPE GetSelectedArchetype() {
-        for (int i = 0; i < archetypeToggles.Length; i++) {
-            if (archetypeToggles[i].isOn) {
-                return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name));
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+            return PLAYER_ARCHETYPE.Tutorial;
+        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+            return PLAYER_ARCHETYPE.Second_World;
+        } else {
+            for (int i = 0; i < archetypeToggles.Length; i++) {
+                if (archetypeToggles[i].isOn) {
+                    return (PLAYER_ARCHETYPE) System.Enum.Parse(typeof(PLAYER_ARCHETYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(archetypeToggles[i].gameObject.name));
+                }
             }
+            return PLAYER_ARCHETYPE.Normal;
         }
-        return PLAYER_ARCHETYPE.Normal;
     }
 
     private void OnScreenResolutionChanged() {

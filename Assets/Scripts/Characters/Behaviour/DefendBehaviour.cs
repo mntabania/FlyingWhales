@@ -37,7 +37,8 @@ public class DefendBehaviour : CharacterBehaviourComponent {
             List<Character> charactersAtHexTile =
                 tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => defender.IsHostileWith(c) && 
                                                                     c.isDead == false && c.isAlliedWithPlayer == false && 
-                                                                    c.marker.isMainVisualActive);
+                                                                    c.marker.isMainVisualActive && 
+                                                                    defender.movementComponent.HasPathTo(c.gridTileLocation));
             if (charactersAtHexTile != null) {
                 if (characters == null) {
                     characters = new List<Character>();

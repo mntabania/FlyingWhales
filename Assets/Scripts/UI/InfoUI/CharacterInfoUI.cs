@@ -249,6 +249,16 @@ public class CharacterInfoUI : InfoUIBase {
             plansLblLogItem.SetLog(log);
         }
     }
+    public void OnHoverLeaderIcon() {
+        if (activeCharacter.isSettlementRuler) {
+            UIManager.Instance.ShowSmallInfo($"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.ruledSettlement.name}</b>");
+        } else if (activeCharacter.isFactionLeader) {
+            UIManager.Instance.ShowSmallInfo($"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>");
+        }
+    }
+    public void OnHoverExitLeaderIcon() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     #region Stats

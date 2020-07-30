@@ -22,9 +22,19 @@ public class TriggerFlawData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
+            if (targetCharacter.canPerform == false) {
+                return false;
+            }
             return targetCharacter.isDead == false;
         }
         return false;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
+        if (targetCharacter.canPerform == false) {
+            reasons += "Cannot be used while target is incapacitated,";
+        }
+        return reasons;
     }
     #endregion
 }

@@ -161,7 +161,8 @@ namespace Inner_Maps {
                     if (tile.structure != null) {
                         if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                             return room;
-                        } else if (ReferenceEquals(tile.structure.structureObj, null) == false) {
+                        } else if (ReferenceEquals(tile.structure.structureObj, null) == false && 
+                                   tile.structure is CityCenter == false) {
                             return tile.structure;    
                         }
                     }
@@ -212,7 +213,8 @@ namespace Inner_Maps {
                         if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                             selectables.Add(room);
                         }
-                        if (ReferenceEquals(tile.structure.structureObj, null) == false) {
+                        if (ReferenceEquals(tile.structure.structureObj, null) == false && 
+                            tile.structure is CityCenter == false) {
                             selectables.Add(tile.structure);
                         }
                     }

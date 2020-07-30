@@ -59,10 +59,9 @@ public class PlayerSkillComponent {
             PopulateAllSkills(loadout.minions.fixedSkills);
             PopulateAllSkills(loadout.structures.fixedSkills);
             PopulateAllSkills(loadout.miscs.fixedSkills);
-
-            if (!WorldConfigManager.Instance.isTutorialWorld) {
-                //only load extra spells from save data if world is not tutorial world.
-                LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
+            
+            LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
+            if (loadoutSaveData != null) {
                 PopulateAllSkills(loadoutSaveData.extraSpells);
                 PopulateAllSkills(loadoutSaveData.extraAfflictions);
                 PopulateAllSkills(loadoutSaveData.extraMinions);
@@ -126,7 +125,7 @@ public class PlayerSkillComponent {
             //                      && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
-                shouldAddSpell = data.skill != SPELL_TYPE.RAIN && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
+                shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null; // data.skill != SPELL_TYPE.RAIN && 
             // }
             if (shouldAddSpell) {
                 SetPlayerSkillData(data);
