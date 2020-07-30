@@ -7,7 +7,8 @@ using TMPro;
 
 public class WorldSettings : MonoBehaviour {
     public static WorldSettings Instance;
-    
+    public enum World { Tutorial, Oona, Icalawa, Pangat_Loo, Affatt, Leema, Customize, }
+
     public WorldSettingsData worldSettingsData { get; private set; }
 
     public GameObject settingsGO;
@@ -31,6 +32,10 @@ public class WorldSettings : MonoBehaviour {
     public GameObject invalidMessage;
     public GameObject mainWindow;
     public GameObject customizeWorldWindow;
+
+    public GameObject hoverGO;
+    public RuinarchText hoverText;
+    private WorldPickerItem toggledWorldPicker;
     
     //private List<RaceWorldOptionItem> raceWorldOptionItems;
     //private List<BiomeWorldOptionItem> biomeWorldOptionItems;
@@ -268,20 +273,45 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region World Picker
-    public void OnToggleTutoria(bool state) {
-        if (state) {
-            worldSettingsData.SetTutorialWorldSettings();
+    public void OnHoverEnterWorldPicker(WorldPickerItem item) {
+        ShowHover(item.description);
+    }
+    public void OnHoverExitWorldPicker(WorldPickerItem item) {
+        if(toggledWorldPicker != null && toggledWorldPicker.description != string.Empty) {
+            ShowHover(toggledWorldPicker.description);
+        } else {
+            HideHover();
         }
     }
-    public void OnToggleIcalawa(bool state) {
+    public void OnToggleWorldPicker(WorldPickerItem item, bool state) {
         if (state) {
-            worldSettingsData.SetSecondWorldSettings();
+            toggledWorldPicker = item;
+            if(item.worldType == World.Tutorial) {
+                worldSettingsData.SetTutorialWorldSettings();
+            } else if (item.worldType == World.Oona) {
+                worldSettingsData.SetSecondWorldSettings();
+            } else if (item.worldType == World.Icalawa) {
+                //TODO
+            } else if (item.worldType == World.Pangat_Loo) {
+                //TODO
+            } else if (item.worldType == World.Affatt) {
+                //TODO
+            } else if (item.worldType == World.Leema) {
+                //TODO
+            } else if (item.worldType == World.Customize) {
+                worldSettingsData.SetDefaultCustomWorldSettings();
+            }
+            ShowHover(item.description);
         }
     }
-    public void OnToggleCustomize(bool state) {
-        if (state) {
-            worldSettingsData.SetDefaultCustomWorldSettings();
+    public void ShowHover(string text) {
+        if(text != string.Empty) {
+            hoverText.text = text;
+            hoverGO.SetActive(true);
         }
+    }
+    public void HideHover() {
+        hoverGO.SetActive(false);
     }
     #endregion
 }
