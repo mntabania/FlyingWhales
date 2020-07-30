@@ -35,6 +35,7 @@ public class WorldSettings : MonoBehaviour {
 
     public GameObject hoverGO;
     public RuinarchText hoverText;
+    public RuinarchText hoverTitle;
     private WorldPickerItem toggledWorldPicker;
     
     //private List<RaceWorldOptionItem> raceWorldOptionItems;
@@ -274,11 +275,11 @@ public class WorldSettings : MonoBehaviour {
 
     #region World Picker
     public void OnHoverEnterWorldPicker(WorldPickerItem item) {
-        ShowHover(item.description);
+        ShowHover(item.worldType.ToString(), item.description);
     }
     public void OnHoverExitWorldPicker(WorldPickerItem item) {
         if(toggledWorldPicker != null && toggledWorldPicker.description != string.Empty) {
-            ShowHover(toggledWorldPicker.description);
+            ShowHover(toggledWorldPicker.worldType.ToString(), toggledWorldPicker.description);
         } else {
             HideHover();
         }
@@ -301,11 +302,12 @@ public class WorldSettings : MonoBehaviour {
             } else if (item.worldType == World.Customize) {
                 worldSettingsData.SetDefaultCustomWorldSettings();
             }
-            ShowHover(item.description);
+            ShowHover(item.worldType.ToString(), item.description);
         }
     }
-    public void ShowHover(string text) {
-        if(text != string.Empty) {
+    public void ShowHover(string title, string text) {
+        if(title != string.Empty && text != string.Empty) {
+            hoverTitle.text = title;
             hoverText.text = text;
             hoverGO.SetActive(true);
         }

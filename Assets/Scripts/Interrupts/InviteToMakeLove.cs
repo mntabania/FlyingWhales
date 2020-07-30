@@ -42,7 +42,7 @@ namespace Interrupts {
                 int acceptWeight = 50;
                 int rejectWeight = 10;
                 Character targetLover = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
-                if (targetLover != null && targetLover != actor) {
+                if ((targetLover != null && targetLover != actor) || targetCharacter.relationshipContainer.HasRelationship(RELATIONSHIP_TYPE.LOVER)) {
                     //Target has a different lover
                     debugLog += $"\n-Target has different lover";
                     acceptWeight = 0;
@@ -61,7 +61,6 @@ namespace Interrupts {
                         debugLog += $"\n-Target is not unfaithful/treacherous/psychopath: +100 to Reject Weight";
                     }
                 } else {
-
                     debugLog += $"\n-Base accept weight: {acceptWeight}";
                     debugLog += $"\n-Base reject weight: {rejectWeight}";
 
