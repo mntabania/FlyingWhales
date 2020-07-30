@@ -856,7 +856,7 @@ RectTransform:
   - {fileID: 8191724298724617755}
   - {fileID: 2612200426345553330}
   m_Father: {fileID: 867108551317193544}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -882,7 +882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &867108551317193544
 RectTransform:
   m_ObjectHideFlags: 0
@@ -899,8 +899,8 @@ RectTransform:
   - {fileID: 867602182158347526}
   - {fileID: 867156388610820630}
   - {fileID: 867841502101335222}
-  - {fileID: 867490120967657424}
   - {fileID: 866978334941764352}
+  - {fileID: 867490120967657424}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -973,7 +973,7 @@ MonoBehaviour:
   actionItemPrefab: {fileID: 1728383093349538, guid: c318eb473a674104ca08bf7e11c3030b,
     type: 3}
   nameLbl: {fileID: 1044844005817390606}
-  locationPortrait: {fileID: 4652286307294853890}
+  locationPortrait: {fileID: 0}
   hpLbl: {fileID: 4400223004547826486}
   characterItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
@@ -1189,7 +1189,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 867108551317193544}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1581,7 +1581,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2803,6 +2803,7 @@ GameObject:
   - component: {fileID: 2612200426345553330}
   - component: {fileID: 3146243117151062072}
   - component: {fileID: 2961693335791618617}
+  - component: {fileID: 9095167809470106368}
   m_Layer: 5
   m_Name: Residents
   m_TagString: Untagged
@@ -2867,6 +2868,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &9095167809470106368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5368275485176657107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8803d62703eac8a44a3e9884c71009da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeepWindowInCanvas: 10
 --- !u!1 &5428050141340860610
 GameObject:
   m_ObjectHideFlags: 0
@@ -3220,7 +3234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -3796,7 +3810,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4350,7 +4364,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4495,6 +4509,7 @@ GameObject:
   - component: {fileID: 8191724298724617755}
   - component: {fileID: 7764976510848716857}
   - component: {fileID: 9008534876614348144}
+  - component: {fileID: 8468717988232829680}
   m_Layer: 5
   m_Name: Info
   m_TagString: Untagged
@@ -4563,6 +4578,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8468717988232829680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7409196823643890158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8803d62703eac8a44a3e9884c71009da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  KeepWindowInCanvas: 10
 --- !u!1 &7607103782468759348
 GameObject:
   m_ObjectHideFlags: 0
@@ -4696,7 +4724,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
