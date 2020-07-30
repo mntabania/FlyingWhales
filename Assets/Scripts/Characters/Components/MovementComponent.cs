@@ -20,13 +20,15 @@ public class MovementComponent {
     public float walkSpeedModifier { get; private set; }
     public float runSpeedModifier { get; private set; }
     public bool hasMovedOnCorruption { get; private set; }
-    public bool enableDigging { get; private set; }
     public bool isStationary { get; private set; }
     public ABPath currentDigPath { get; private set; }
+
+    private int _enableDiggingCounter;
 
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
     public float runSpeed => owner.raceSetting.runSpeed + (owner.raceSetting.runSpeed * runSpeedModifier);
+    public bool enableDigging => _enableDiggingCounter > 0;
     #endregion
 
     public MovementComponent(Character owner) {
@@ -227,7 +229,11 @@ public class MovementComponent {
 
     #region Dig
     public void SetEnableDigging(bool state) {
-        enableDigging = state;
+        if (state) {
+            _enableDiggingCounter++;
+        } else {
+            _enableDiggingCounter--;
+        }
     }
     public bool DigOnReachEndPath(Path path) {
         Vector3 lastPositionInPath = path.vectorPath.Last();

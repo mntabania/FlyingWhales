@@ -512,7 +512,7 @@ public enum INTERACTION_TYPE {
     BUILD_COOKING_CAULDRON,
     FLEE_CRIME,
     HOST_SOCIAL_PARTY,
-    SOCIALIZE,
+    PLAY_CARDS,
 }
 public enum INTERRUPT {
     None,
@@ -1486,6 +1486,9 @@ public static class Extensions {
             case JOB_TYPE.RECOVER_HP:
                 priority = 1005;
                 break;
+            case JOB_TYPE.FEED:
+                priority = 1003;
+                break;
             case JOB_TYPE.ENERGY_RECOVERY_URGENT:
             case JOB_TYPE.FULLNESS_RECOVERY_URGENT:
             case JOB_TYPE.HUNT_PREY:
@@ -1522,7 +1525,7 @@ public static class Extensions {
             case JOB_TYPE.ROAM_AROUND_STRUCTURE:
                 priority = 910;
                 break;
-            case JOB_TYPE.FEED:
+            //case JOB_TYPE.FEED:
             case JOB_TYPE.MONSTER_INVADE:
                 priority = 900;
                 break;

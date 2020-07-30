@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af6b250ddb9365c4a924f945cd5f95b6, type: 3}
-  m_Name: Pestilence
+  m_Name: Plague
   m_EditorClassIdentifier: 
   skill: 14
   manaCost: -1
-  charges: 2
+  charges: 1
   cooldown: 576
   threat: 0
   threatPerHour: 0

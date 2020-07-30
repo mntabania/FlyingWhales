@@ -18,6 +18,7 @@ public class AgitateData : PlayerAction {
             if(targetStructure != null) {
                 targetCharacter.behaviourComponent.SetAttackVillageTarget(targetStructure.settlementLocation as NPCSettlement);
                 targetCharacter.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
+                targetCharacter.behaviourComponent.SetIsAgitated(true);
 
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "agitated");
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

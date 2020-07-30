@@ -44,6 +44,13 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
                             return true;
                         }
                     }
+                } else if (roll >= 70 && roll < 85) {
+                    TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK);
+                    if (tileObject != null) {
+                        if (character.jobComponent.TriggerPlayCardsJob(tileObject as Desk, out producedJob)) {
+                            return true;
+                        }
+                    }
                 }
                 character.jobComponent.TriggerRoamAroundStructure(out producedJob);
             } else {

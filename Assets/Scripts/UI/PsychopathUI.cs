@@ -28,8 +28,8 @@ public class PsychopathUI : PopupMenuBase {
 
     private string victimDescription1;
     private string victimDescription2;
-
-    private List<string> serialVictimTypeAsStrings = UtilityScripts.Utilities.GetEnumChoices<SERIAL_VICTIM_TYPE>();
+    private List<string> serialVictimType1AsStrings = new List<string>();
+    private List<string> serialVictimType2AsStrings = new List<string>();
     private List<string> criteriaGenders = new List<string>() { "Male", "Female" };
     private List<string> criteriaRaces = new List<string>() { "Humans", "Elves" };
     private List<string> criteriaClasses = new List<string>() { "Peasant", "Miner", "Craftsman", "Archer", "Stalker", "Hunter", "Druid", "Shaman"
@@ -117,14 +117,28 @@ public class PsychopathUI : PopupMenuBase {
     }
 
     public void OnClickVictimType1() {
-        psychopathPicker.ShowPicker(serialVictimTypeAsStrings, OnConfirmVictimType1, null, null);
+        serialVictimType1AsStrings.Clear();
+        SERIAL_VICTIM_TYPE[] serialVictimTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SERIAL_VICTIM_TYPE>();
+        for (int i = 0; i < serialVictimTypes.Length; i++) {
+            if(serialVictimTypes[i] != victimType2 && serialVictimTypes[i] != SERIAL_VICTIM_TYPE.None) {
+                serialVictimType1AsStrings.Add(serialVictimTypes[i].ToString());
+            }
+        }
+        psychopathPicker.ShowPicker(serialVictimType1AsStrings, OnConfirmVictimType1, null, null);
     }
     private void OnConfirmVictimType1(string str) {
         SERIAL_VICTIM_TYPE type = (SERIAL_VICTIM_TYPE) System.Enum.Parse(typeof(SERIAL_VICTIM_TYPE), str);
         SetVictimType1(type);
     }
     public void OnClickVictimType2() {
-        psychopathPicker.ShowPicker(serialVictimTypeAsStrings, OnConfirmVictimType2, null, null);
+        serialVictimType2AsStrings.Clear();
+        SERIAL_VICTIM_TYPE[] serialVictimTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SERIAL_VICTIM_TYPE>();
+        for (int i = 0; i < serialVictimTypes.Length; i++) {
+            if (serialVictimTypes[i] != victimType1 && serialVictimTypes[i] != SERIAL_VICTIM_TYPE.None) {
+                serialVictimType2AsStrings.Add(serialVictimTypes[i].ToString());
+            }
+        }
+        psychopathPicker.ShowPicker(serialVictimType2AsStrings, OnConfirmVictimType2, null, null);
     }
     private void OnConfirmVictimType2(string str) {
         SERIAL_VICTIM_TYPE type = (SERIAL_VICTIM_TYPE) System.Enum.Parse(typeof(SERIAL_VICTIM_TYPE), str);

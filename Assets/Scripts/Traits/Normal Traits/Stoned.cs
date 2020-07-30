@@ -26,6 +26,9 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if(addedTo is Character character && character.marker) {
                 character.marker.PauseAnimation();
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "effect");
+                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddLogToInvolvedObjects();
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

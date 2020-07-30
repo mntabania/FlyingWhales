@@ -3921,11 +3921,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                     if(traitContainer.HasTrait("Lazy")) {
                         log =
-                            $"{log}\n - Character is lazy, has 20% chance to not perform job if it is a needs type job...";
+                            $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a needs type job...";
                         if (currentTopPrioJob.jobType.IsNeedsTypeJob()) {
                             int chance = UnityEngine.Random.Range(0, 100);
                             log = $"{log}\n - Roll: {chance.ToString()}";
-                            if (chance < 20) {
+                            if (chance < 30) {
                                 Lazy lazy = traitContainer.GetNormalTrait<Lazy>("Lazy");
                                 if (lazy.TriggerLazy()) {
                                     log = $"{log}\n - Character triggered lazy, not going to do job";

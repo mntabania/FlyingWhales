@@ -615,6 +615,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.HOST_SOCIAL_PARTY, new[]{
             new StateNameAndDuration(){ name = "Host Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.PLAY_CARDS, new[]{
+            new StateNameAndDuration(){ name = "Play Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 
