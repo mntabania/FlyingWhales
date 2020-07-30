@@ -17,11 +17,11 @@ public class PortalLandmarkGeneration : MapGenerationComponent {
 
 	private void PlacePortal(MapGenerationData data) {
 		List<HexTile> validPortalTiles;
-		if (WorldConfigManager.Instance.isTutorialWorld) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[1, 7]
 			};
-		} else if (WorldConfigManager.Instance.isTutorialWorld) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[3, 1]
 			};
