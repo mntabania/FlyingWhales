@@ -281,6 +281,7 @@ namespace Ruinarch {
             } else {
                 runUpdate = false;
             }
+            buttonsToHighlight.Clear();
         }
         public bool ShouldBeHighlighted(RuinarchButton button) {
             return buttonsToHighlight.Contains(button.name);

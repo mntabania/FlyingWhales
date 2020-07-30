@@ -48,11 +48,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bf56438e4caa69f448508406f75ac271, type: 2}
   - {fileID: 11400000, guid: 30189063000958a4aa46188960846076, type: 2}
   allSkillLoadouts:
-    m_keys: 010000000300000002000000
+    m_keys: 0100000003000000020000000400000005000000
     m_values:
     - {fileID: 11400000, guid: e1f36ee7301daa44d8e797c44c9d05ec, type: 2}
     - {fileID: 11400000, guid: ebd774438b9b3cb4b9f4370c269f2bc4, type: 2}
     - {fileID: 11400000, guid: f8f9965a7c1cfc342ac69c8e61876c1b, type: 2}
+    - {fileID: 11400000, guid: 86214c8f51b09ba4ba0f509b5b04d5e4, type: 2}
+    - {fileID: 11400000, guid: dde5fe4d1c04f9641aed849fcf3b5dcd, type: 2}
   _unlockAllSkills: 0
   _unlimitedCast: 0
   tutorialLoadout: {fileID: 11400000, guid: 86214c8f51b09ba4ba0f509b5b04d5e4, type: 2}

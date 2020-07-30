@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40ee7df74a7f1344b807bb806c238de7, type: 3}
-  m_Name: Tutorial Loadout
+  m_Name: Second World Loadout
   m_EditorClassIdentifier: 
-  archetype: 4
+  archetype: 5
   spells:
     extraSlots: 4
-    fixedSkills: 090000001e00000017000000200000002c000000
+    fixedSkills: 
   afflictions:
     extraSlots: 2
-    fixedSkills: 030000000100000002000000
+    fixedSkills: 0400000011000000020000000f0000005a000000
   minions:
-    extraSlots: 2
-    fixedSkills: 4e0000004f00000052000000
+    extraSlots: 1
+    fixedSkills: 500000004f000000
   structures:
     extraSlots: 2
-    fixedSkills: 4a00000060000000480000004c000000
+    fixedSkills: 48000000470000004b000000
   miscs:
-    extraSlots: 1
-    fixedSkills: 0a00000034000000070000000600000033000000320000008c000000
+    extraSlots: 2
+    fixedSkills: 3300000034000000320000003d0000008c000000

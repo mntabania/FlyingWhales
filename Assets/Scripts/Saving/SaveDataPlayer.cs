@@ -20,6 +20,7 @@ public class SaveDataPlayer {
     public LoadoutSaveData ravagerLoadoutSaveData;
     public LoadoutSaveData puppetmasterLoadoutSaveData;
     public LoadoutSaveData lichLoadoutSaveData;
+    public LoadoutSaveData secondWorldSaveData;
 
     public void InitializeInitialData() {
         exp = 10000;
@@ -39,6 +40,7 @@ public class SaveDataPlayer {
         ravagerLoadoutSaveData = new LoadoutSaveData();
         puppetmasterLoadoutSaveData = new LoadoutSaveData();
         lichLoadoutSaveData = new LoadoutSaveData();
+        secondWorldSaveData = new LoadoutSaveData();
         //PlayerSkillTreeNodeData afflict = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.AFFLICT, charges = -1, cooldown = -1, manaCost = -1 };
         //learnedSkills.Add(afflict);
         //PlayerSkillTreeNodeData buildDemonicStructure = new PlayerSkillTreeNodeData() { skill = SPELL_TYPE.BUILD_DEMONIC_STRUCTURE, charges = -1, cooldown = -1, manaCost = -1 };
@@ -162,6 +164,8 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData;
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            return secondWorldSaveData;
         }
         return null;
     }
@@ -185,6 +189,13 @@ public class SaveDataPlayer {
                 SkillSlotItem slotItem = slotItems[i];
                 if (slotItem.skillData != null) {
                     lichLoadoutSaveData.AddExtraSpell(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    secondWorldSaveData.AddExtraSpell(slotItem.skillData.skill);
                 }
             }
         }
@@ -211,6 +222,13 @@ public class SaveDataPlayer {
                     lichLoadoutSaveData.AddExtraAffliction(slotItem.skillData.skill);
                 }
             }
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    secondWorldSaveData.AddExtraAffliction(slotItem.skillData.skill);
+                }
+            }
         }
     }
     public void SaveLoadoutExtraMinions(PLAYER_ARCHETYPE archetype, List<SkillSlotItem> slotItems) {
@@ -233,6 +251,13 @@ public class SaveDataPlayer {
                 SkillSlotItem slotItem = slotItems[i];
                 if (slotItem.skillData != null) {
                     lichLoadoutSaveData.AddExtraMinion(slotItem.skillData.skill);
+                }
+            }
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    secondWorldSaveData.AddExtraMinion(slotItem.skillData.skill);
                 }
             }
         }
@@ -259,6 +284,13 @@ public class SaveDataPlayer {
                     lichLoadoutSaveData.AddExtraStructure(slotItem.skillData.skill);
                 }
             }
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    secondWorldSaveData.AddExtraStructure(slotItem.skillData.skill);
+                }
+            }
         }
     }
     public void SaveLoadoutExtraMiscs(PLAYER_ARCHETYPE archetype, List<SkillSlotItem> slotItems) {
@@ -283,6 +315,13 @@ public class SaveDataPlayer {
                     lichLoadoutSaveData.AddExtraMisc(slotItem.skillData.skill);
                 }
             }
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            for (int i = 0; i < slotItems.Count; i++) {
+                SkillSlotItem slotItem = slotItems[i];
+                if (slotItem.skillData != null) {
+                    secondWorldSaveData.AddExtraMisc(slotItem.skillData.skill);
+                }
+            }
         }
     }
     public List<SPELL_TYPE> GetLoadoutExtraSpells(PLAYER_ARCHETYPE archetype) {
@@ -292,6 +331,8 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraSpells;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraSpells;
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            return secondWorldSaveData.extraSpells;
         }
         return null;
     }
@@ -302,6 +343,8 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraAfflictions;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraAfflictions;
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            return secondWorldSaveData.extraAfflictions;
         }
         return null;
     }
@@ -312,6 +355,8 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraMinions;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraMinions;
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            return secondWorldSaveData.extraMinions;
         }
         return null;
     }
@@ -322,6 +367,8 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraStructures;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraStructures;
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            return secondWorldSaveData.extraStructures;
         }
         return null;
     }
@@ -332,6 +379,8 @@ public class SaveDataPlayer {
             return puppetmasterLoadoutSaveData.extraMiscs;
         } else if (archetype == PLAYER_ARCHETYPE.Lich) {
             return lichLoadoutSaveData.extraMiscs;
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            return secondWorldSaveData.extraMiscs;
         }
         return null;
     }
@@ -354,6 +403,12 @@ public class SaveDataPlayer {
             lichLoadoutSaveData.ClearExtraMinions();
             lichLoadoutSaveData.ClearExtraStructures();
             lichLoadoutSaveData.ClearExtraMiscs();
+        } else if (archetype == PLAYER_ARCHETYPE.Second_World) {
+            secondWorldSaveData.ClearExtraSpells();
+            secondWorldSaveData.ClearExtraAfflictions();
+            secondWorldSaveData.ClearExtraMinions();
+            secondWorldSaveData.ClearExtraStructures();
+            secondWorldSaveData.ClearExtraMiscs();
         }
     }
     #endregion

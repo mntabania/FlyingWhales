@@ -50,15 +50,12 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
 
     #region General
     private void OnStartGameAfterLoadoutSelect() {
-        if (!WorldConfigManager.Instance.isTutorialWorld) {
-            //do not save loadout changes if world is tutorial world 
-            SaveManager.Instance.currentSaveDataPlayer.ClearLoadoutSaveData(loadout.archetype);
-            SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraSpells(loadout.archetype, spellsSkillSlotItems.extraSkillSlotItems);
-            SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraAfflictions(loadout.archetype, afflictionsSkillSlotItems.extraSkillSlotItems);
-            SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraMinions(loadout.archetype, minionsSkillSlotItems.extraSkillSlotItems);
-            SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraStructures(loadout.archetype, structuresSkillSlotItems.extraSkillSlotItems);
-            SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraMiscs(loadout.archetype, miscsSkillSlotItems.extraSkillSlotItems);    
-        }
+        SaveManager.Instance.currentSaveDataPlayer.ClearLoadoutSaveData(loadout.archetype);
+        SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraSpells(loadout.archetype, spellsSkillSlotItems.extraSkillSlotItems);
+        SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraAfflictions(loadout.archetype, afflictionsSkillSlotItems.extraSkillSlotItems);
+        SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraMinions(loadout.archetype, minionsSkillSlotItems.extraSkillSlotItems);
+        SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraStructures(loadout.archetype, structuresSkillSlotItems.extraSkillSlotItems);
+        SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraMiscs(loadout.archetype, miscsSkillSlotItems.extraSkillSlotItems);    
     }
     #endregion
 
