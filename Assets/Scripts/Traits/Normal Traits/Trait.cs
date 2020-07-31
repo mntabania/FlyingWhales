@@ -206,7 +206,7 @@ namespace Traits {
         //public void OverrideDuration(int newDuration) {
         //    ticksDuration = newDuration;
         //}
-        public void AddCharacterResponsibleForTrait(Character character) {
+        public virtual void AddCharacterResponsibleForTrait(Character character) {
             if (character != null) {
                 if (responsibleCharacters == null) {
                     responsibleCharacters = new List<Character>();

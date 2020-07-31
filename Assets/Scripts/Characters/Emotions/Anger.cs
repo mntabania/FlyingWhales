@@ -13,15 +13,15 @@ public class Anger : Emotion {
         ActualGoapNode goapNode = null) {
         if(target is Character) {
             Character targetCharacter = target as Character;
-            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -50);
-            //temporary opinion debuff
-            //witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -40);
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-            SchedulingManager.Instance.AddEntry(dueDate,
-                () => witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", 40), 
-                this
-            );
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -10);
+            // //temporary opinion debuff
+            // //witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -40);
+            // GameDate dueDate = GameManager.Instance.Today();
+            // dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+            // SchedulingManager.Instance.AddEntry(dueDate,
+            //     () => witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", 40), 
+            //     this
+            // );
             
             witness.traitContainer.AddTrait(witness, "Angry", targetCharacter);
             //if(UnityEngine.Random.Range(0, 100) < 25) {
