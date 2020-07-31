@@ -61,8 +61,8 @@ namespace Inner_Maps {
         [SerializeField] protected LineRenderer pathLineRenderer;
         [SerializeField] protected BoundDrawer _boundDrawer;
         //properties
-        public int width { get; set; }
-        public int height { get; set; }
+        public int width;
+        public int height;
         public LocationGridTile[,] map { get; private set; }
         protected List<LocationGridTile> allTiles { get; private set; }
         public List<LocationGridTile> allEdgeTiles { get; private set; }
@@ -72,6 +72,7 @@ namespace Inner_Maps {
         public GameObject centerGo { get; private set; }
         public List<BurningSource> activeBurningSources { get; private set; }
         public LocationGridTileCollection[,] locationGridTileCollections { get; protected set; }
+        public InnerMapCenter innerMapCenter { get; private set; }
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
 
         #region Generation
@@ -332,6 +333,8 @@ namespace Inner_Maps {
             centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
             Vector3 centerPosition = new Vector3(width/2f, height/2f); //new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
             centerGo.transform.localPosition = centerPosition;
+            innerMapCenter = centerGo.GetComponent<InnerMapCenter>();
+            innerMapCenter.ResizeFogOfWarBasedOnTileMapSize(this);
         }
         private void ShowPath(List<Vector3> points) {
             pathLineRenderer.gameObject.SetActive(true);
