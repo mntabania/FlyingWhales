@@ -2016,9 +2016,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
     
     #region Decrease Mood
-    public bool TriggerDecreaseMood(Character target, out JobQueueItem producedJob) {
+    public bool TriggerDecreaseMood(out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DECREASE_MOOD,
-		    INTERACTION_TYPE.DECREASE_MOOD, target, _owner);
+		    INTERACTION_TYPE.DECREASE_MOOD, _owner, _owner);
 	    producedJob = job;
 	    return true;
     }
@@ -2035,9 +2035,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Disable
-    public bool TriggerDisable(Character target, out JobQueueItem producedJob) {
+    public bool TriggerDisable(out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DISABLE,
-		    INTERACTION_TYPE.DISABLE, target, _owner);
+		    INTERACTION_TYPE.DISABLE, _owner, _owner);
 	    producedJob = job;
 	    return true;
     }
