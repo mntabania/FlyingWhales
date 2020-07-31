@@ -233,12 +233,12 @@ public class CharacterMarkerNameplate : PooledObject {
 
     #region Thoughts
     public void ShowThoughtsAndNameplate() {
-        nameLbl.gameObject.SetActive(true);
+        //nameLbl.gameObject.SetActive(true);
         thoughtGO.SetActive(true);
         UpdateThoughtText();
     }
     public void HideThoughtsAndNameplate() {
-        nameLbl.gameObject.SetActive(false);
+        //nameLbl.gameObject.SetActive(false);
         thoughtGO.SetActive(false);
         thoughtLbl.text = string.Empty;
     }
