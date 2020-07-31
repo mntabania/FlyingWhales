@@ -124,6 +124,22 @@ public class Assault : GoapAction {
     #endregion
 
     #region Effects
+    public void PreCombatStart(ActualGoapNode goapNode) {
+        string reason = string.Empty;
+        JOB_TYPE jobType = goapNode.associatedJobType;
+        if (jobType == JOB_TYPE.APPREHEND) {
+            reason = "Apprehension";
+        } else if (jobType == JOB_TYPE.HUNT_PSYCHOPATH_VICTIM) {
+            reason = "Hunting victim";
+        } else if (jobType == JOB_TYPE.PRODUCE_FOOD) {
+            reason = "Hunting for food";
+        } else if (jobType == JOB_TYPE.PRODUCE_FOOD) {
+            reason = "Hunting for food";
+        } else {
+            reason = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
+        }
+        goapNode.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+    }
     public void AfterCombatStart(ActualGoapNode goapNode) {
         Debug.Log($"{goapNode.actor} will start combat towards {goapNode.poiTarget.name}");
         string combatReason = CombatManager.Action;

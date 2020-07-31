@@ -8,6 +8,7 @@ namespace Interrupts {
             duration = 2;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Shock_Icon;
+            shouldShowNotif = false;
         }
 
         //#region Overrides
