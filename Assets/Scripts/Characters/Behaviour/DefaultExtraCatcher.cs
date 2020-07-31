@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 using UtilityScripts;
 
@@ -31,11 +32,14 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
                 }
                 else {
                     log += $"\nChat roll failed.";
+                    Trait angry = character.traitContainer.GetNormalTrait<Trait>("Angry");
+                    bool isAngryWithTarget = angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(chosenTarget);
                     if (character.moodComponent.moodState == MOOD_STATE.NORMAL && 
                         RelationshipManager.IsSexuallyCompatible(character.sexuality, chosenTarget.sexuality, 
                             character.gender, chosenTarget.gender) && 
-                        character.relationshipContainer.IsFamilyMember(chosenTarget) == false) {
-                        log += "\nCharacter is in normal mood and is sexually compatible with target and target is not from same family tree";
+                        character.relationshipContainer.IsFamilyMember(chosenTarget) == false &&
+                        isAngryWithTarget == false) {
+                        log += "\nCharacter is in normal mood and is sexually compatible with target and target is not from same family tree and character is not Angry at Target";
                         
                         if (character.relationshipContainer.HasRelationshipWith(chosenTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                             || character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
