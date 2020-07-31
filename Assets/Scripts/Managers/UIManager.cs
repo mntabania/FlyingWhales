@@ -1303,6 +1303,59 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
+    #region Trigger Flaw
+    [Header("Trigger Flaw Confirmation")]
+    public GameObject triggerFlawGO;
+    [SerializeField] private CanvasGroup triggerFlawCanvasGroup;
+    [SerializeField] private GameObject triggerFlawCover;
+    [SerializeField] private TextMeshProUGUI triggerFlawDescriptionLbl;
+    [SerializeField] private TextMeshProUGUI triggerFlawEffectLbl;
+    [SerializeField] private TextMeshProUGUI triggerFlawManaCostLbl;
+    [SerializeField] private Button triggerFlawYesBtn;
+    [SerializeField] private Button triggerFlawNoBtn;
+    [SerializeField] private Button triggerFlawCloseBtn;
+    public void ShowTriggerFlawConfirmation(string question, string effect, string manaCost, System.Action onClickYesAction = null,
+    bool showCover = false, int layer = 21, bool pauseAndResume = false) {
+        if (PlayerUI.Instance.IsMajorUIShowing()) {
+            PlayerUI.Instance.AddPendingUI(() => ShowTriggerFlawConfirmation(question, effect, manaCost, onClickYesAction, showCover, layer, pauseAndResume));
+            return;
+        }
+
+        if (pauseAndResume) {
+            SetSpeedTogglesState(false);
+            Pause();
+        }
+        triggerFlawDescriptionLbl.text = question;
+        triggerFlawEffectLbl.text = effect;
+        triggerFlawManaCostLbl.text = manaCost;
+
+        //clear all listeners
+        triggerFlawYesBtn.onClick.RemoveAllListeners();
+        triggerFlawNoBtn.onClick.RemoveAllListeners();
+        triggerFlawCloseBtn.onClick.RemoveAllListeners();
+
+        //hide confirmation menu on click
+        triggerFlawYesBtn.onClick.AddListener(HideTriggerFlawConfirmation);
+        triggerFlawNoBtn.onClick.AddListener(HideTriggerFlawConfirmation);
+        triggerFlawCloseBtn.onClick.AddListener(HideTriggerFlawConfirmation);
+        //specific actions
+        if (onClickYesAction != null) {
+            triggerFlawYesBtn.onClick.AddListener(onClickYesAction.Invoke);
+        }
+
+        triggerFlawGO.SetActive(true);
+        triggerFlawGO.transform.SetSiblingIndex(layer);
+        triggerFlawCover.SetActive(showCover);
+        TweenIn(triggerFlawCanvasGroup);
+    }
+    private void HideTriggerFlawConfirmation() {
+        triggerFlawGO.SetActive(false);
+        if (!PlayerUI.Instance.TryShowPendingUI()) {
+            ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        }
+    }
+    #endregion
+
     #region Important Notifications
     [Header("Important Notification")]
     [SerializeField] private ScrollRect importantNotifScrollView;

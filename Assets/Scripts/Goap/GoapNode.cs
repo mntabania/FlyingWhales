@@ -652,7 +652,10 @@ public class ActualGoapNode : IReactable, IRumorable {
             if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
                 //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
                 if (action.isNotificationAnIntel) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
+                    bool cannotBeStoredAsIntel = !actor.isNormalCharacter && (!(poiTarget is Character) || !(poiTarget as Character).isNormalCharacter);
+                    if (!cannotBeStoredAsIntel) {
+                        PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
+                    }
                 }
                 descriptionLog.AddLogToInvolvedObjects();
             }

@@ -1636,6 +1636,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string GetDefaultRaceClassName() {
         if(race == RACE.DEMON) {
             return $"{characterClass.className} {GameUtilities.GetNormalizedRaceAdjective(race)}";
+        } else if (characterClass.className == "Necromancer") {
+            return $"{characterClass.className}";
         }
         return $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     }

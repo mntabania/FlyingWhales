@@ -747,10 +747,10 @@ public class CharacterInfoUI : InfoUIBase {
         string traitName = (string) o;
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
         string question = "Are you sure you want to trigger " + traitName + "?";
-        question += $"\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
-        question += $"\n<b>Mana Cost</b>: {PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+        string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
+        string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
 
-        UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", question, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
+        UIManager.Instance.ShowTriggerFlawConfirmation(question, effect, manaCost, () => ActivateTriggerFlaw(trait), layer: 26, showCover: true, pauseAndResume: true);
     }
     private void ActivateTriggerFlaw(Trait trait) {
         UIManager.Instance.HideObjectPicker();

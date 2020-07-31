@@ -318,7 +318,7 @@ public class NonActionEventsComponent {
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
             //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
             owner.MigrateHomeStructureTo(null, affectSettlement: false);
-            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
+            //owner.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
         }
     }
     #endregion
