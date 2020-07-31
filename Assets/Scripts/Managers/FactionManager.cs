@@ -259,8 +259,17 @@ public class FactionManager : MonoBehaviour {
         if (faction1.isPlayerFaction || faction2.isPlayerFaction || 
            faction1 == neutralFaction || faction2 == neutralFaction || 
            faction1 == _undeadFaction || faction2 == _undeadFaction) {
-            faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
-            faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);
+
+            if ((faction1.isPlayerFaction || faction2.isPlayerFaction) &&
+                (faction1 == neutralFaction || faction2 == neutralFaction)) {
+                //Player faction should be neutral with Wild Monsters
+                //Reference: https://trello.com/c/hqFZ1MC2/1561-player-faction-should-be-neutral-with-wild-monsters
+                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Neutral);
+                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Neutral);
+            } else {
+                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.Hostile);
+                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.Hostile);    
+            }
         }
         return newRel;
     }

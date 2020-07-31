@@ -25,6 +25,18 @@ public class SeizeMonsterData : PlayerAction {
         }
         return canPerform;
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
+        if (targetCharacter.traitContainer.HasTrait("Hibernating")) {
+            if (targetCharacter is Golem) {
+                reasons += "Hibernating golems cannot be seized.";
+            } else {
+                reasons += "Hibernating characters cannot be seized.";    
+            }
+            
+        }
+        return reasons;
+    }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {
             return !(targetCharacter is Dragon);
