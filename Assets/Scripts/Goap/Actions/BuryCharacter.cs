@@ -51,6 +51,9 @@ public class BuryCharacter : GoapAction {
                 }
             } else if (targetStructure.structureType == STRUCTURE_TYPE.CEMETERY) {
                 List<LocationGridTile> validTiles = targetStructure.unoccupiedTiles.Where(tile => tile.groundType != LocationGridTile.Ground_Type.Ruined_Stone).ToList();
+                if (validTiles.Count <= 0) {
+                    validTiles = new List<LocationGridTile>(targetStructure.unoccupiedTiles);
+                }
                 return CollectionUtilities.GetRandomElement(validTiles);
             }
         }
