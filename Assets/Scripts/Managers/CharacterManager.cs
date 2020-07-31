@@ -353,7 +353,7 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeTo(homeLocation, null, false, false);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraitsByClass();
+        newCharacter.CreateInitialTraits();
         //newCharacter.CreateInitialTraitsByRace();
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
@@ -385,7 +385,7 @@ public class CharacterManager : MonoBehaviour {
             homeRegion.AddResident(newCharacter);
             homeRegion.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraitsByClass();
+        newCharacter.CreateInitialTraits();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
@@ -409,7 +409,7 @@ public class CharacterManager : MonoBehaviour {
             //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraitsByClass();
+        newCharacter.CreateInitialTraits();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
@@ -481,7 +481,7 @@ public class CharacterManager : MonoBehaviour {
             //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraitsByClass();
+        newCharacter.CreateInitialTraits();
         AddNewCharacter(newCharacter);
         data.SetHasBeenSpawned();
         return newCharacter;
@@ -744,7 +744,7 @@ public class CharacterManager : MonoBehaviour {
         //    homeRegion.AddResident(newCharacter);
         //    homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
         //}
-        newCharacter.CreateInitialTraitsByClass();
+        newCharacter.CreateInitialTraits();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }

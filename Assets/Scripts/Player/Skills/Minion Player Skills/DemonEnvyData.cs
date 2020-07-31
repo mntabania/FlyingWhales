@@ -5,7 +5,8 @@ using UnityEngine;
 public class DemonEnvyData : MinionPlayerSkill {
     public override SPELL_TYPE type => SPELL_TYPE.DEMON_ENVY;
     public override string name => "Envy Demon";
-    public override string description => "This Demon is a wily ranged archer that deals Poison damage. Can be summoned to Defend, Harass or Invade a target area or Assault a target character.";
+    public override string description => "This Demon is a non-combatant with a special utility. When spawned, it will immediately cast a spell that will ensnare all nearby Villagers and prevent them from moving for a duration. It will immediately despawn afterwards.";
+
     public DemonEnvyData() {
         className = "Envy";
     }

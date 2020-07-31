@@ -537,12 +537,12 @@ public class Faction : IJobOwner {
     public void AddToOwnedSettlements(BaseSettlement settlement) {
         if (!ownedSettlements.Contains(settlement)) {
             ownedSettlements.Add(settlement);
-            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_ADDED, this, settlement);
+            Messenger.Broadcast(Signals.FACTION_OWNED_SETTLEMENT_ADDED, this, settlement);
         }
     }
     public void RemoveFromOwnedSettlements(BaseSettlement settlement) {
         if (ownedSettlements.Remove(settlement)) {
-            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_REMOVED, this, settlement);
+            Messenger.Broadcast(Signals.FACTION_OWNED_SETTLEMENT_REMOVED, this, settlement);
         }
     }
     public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {

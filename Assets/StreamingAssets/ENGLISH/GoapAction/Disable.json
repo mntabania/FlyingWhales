@@ -1,1 +1,1 @@
-{"items":[{"key":"thought_bubble_m","value":"%00@ is going to disable %10@."},{"key":"disable success_description","value":"%00@ disabled %10@."},{"key":"thought_bubble","value":"%00@ is disabling %10@."}]}
+{"items":[{"key":"thought_bubble_m","value":"%00@ is going to disable enemies around it."},{"key":"disable success_description","value":"%00@ disabled enemies around it."},{"key":"thought_bubble","value":"%00@ is disabling enemies around it."},{"key":"effect","value":"%10@ was ensnared by %00@."}]}

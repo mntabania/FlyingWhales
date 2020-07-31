@@ -6,7 +6,7 @@ namespace Traits {
         
         public Disabler() {
             name = "Disabler";
-            description = "Stealth until it gets damaged or attacks. Has an ability to sometimes temporarily render villagers immobile.";
+            description = "Disables all hostiles within its range. It will immediately perish afterwards.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
