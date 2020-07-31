@@ -12,7 +12,7 @@ namespace Traits {
 
         public Hibernating() {
             name = "Hibernating";
-            description = "This character is hibernating.";
+            description = "Indefinitely inactive. There must be something you can do to awaken it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

@@ -32,8 +32,11 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ToggleTurnedOnStep("Demons Tab", "Open Demon Tab")
                         .SetOnTopmostActions(OnTopMostDemonTab, OnNoLongerTopMostDemonTab),
-                    new ChooseSpellStep(IsChosenSpellValid, "Select an Invader-type Demon"),
+                    new ChooseSpellStep(IsChosenSpellValid, "Select an Invader-type Demon")
+                        .SetHoverOverAction(OnHoverDemon)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ExecuteSpellStep(IsChosenSpellValid, "Spawn anywhere")
+                        .SetCompleteAction(OnSpawnAction)
                 ),
             };
         }
@@ -47,9 +50,21 @@ namespace Tutorial {
                 return characterClass.traitNameOnTamedByPlayer == "Invader";
             }
             return false;
-        } 
+        }
+        private void OnHoverDemon(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo(
+                "You have a handful of lesser demons at your command. " +
+                "You can summon them to perform certain actions for you. " +
+                "Note though that their corporeal form slowly disintegrates in the physical " +
+                "realm and they will have to fully recuperate in the nether realms before you can summon again.",
+                stepItem.hoverPosition, "Lesser Demons");
+        }
+        private void OnSpawnAction() {
+            PlayerUI.Instance.ShowGeneralConfirmation("Minion Behaviors", 
+                "Each demon type has a fixed behavior. For example, an Invader-type such as " +
+                "Pride and Wrath Demons will assault the nearest Villager settlement.");
+        }
         #endregion
-
 
         #region Demons Tab
         private void OnTopMostDemonTab() {

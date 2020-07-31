@@ -89,7 +89,7 @@ public class SkillSlotItem : MonoBehaviour {
     }
     private void UpdateText() {
         if(skillData != null) {
-            spellText.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(skillData.skill.ToString());
+            spellText.text = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).name;
         } else {
             if (!isFixed) {
                 spellText.text = "Click to Assign a Skill";

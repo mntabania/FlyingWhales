@@ -38,7 +38,7 @@ public class AnkhOfAnubis : Artifact {
 
     private void OnCharacterDeath(Character characterThatDied) {
         if (isActivated) {
-            if(characterThatDied.isNormalCharacter && currentRegion == characterThatDied.currentRegion && characterThatDied.visuals.HasBlood()) {
+            if(characterThatDied.isNormalCharacter && currentRegion == characterThatDied.currentRegion && characterThatDied.marker != null && characterThatDied.visuals.HasBlood()) {
                 Summon vengefulGhost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Vengeful_Ghost, FactionManager.Instance.undeadFaction, null, currentRegion);
                 vengefulGhost.SetName(characterThatDied.name);
                 CharacterManager.Instance.PlaceSummon(vengefulGhost, characterThatDied.gridTileLocation);

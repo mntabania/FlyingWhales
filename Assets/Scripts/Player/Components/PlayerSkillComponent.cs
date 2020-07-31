@@ -172,7 +172,8 @@ public class PlayerSkillComponent {
     private void PopulateAllSkills(List<SPELL_TYPE> skillTypes) {
         if (skillTypes != null) {
             for (int i = 0; i < skillTypes.Count; i++) {
-                SetPlayerSkillData(skillTypes[i]);
+                SPELL_TYPE spellType = skillTypes[i];
+                SetPlayerSkillData(spellType);
             }
         }
     }
@@ -182,8 +183,15 @@ public class PlayerSkillComponent {
         if (spellData == null) {
             Debug.LogError(skillType.ToString() + " data is null!");
         }
-        spellData.SetMaxCharges(skillData.charges);
-        spellData.SetCharges(skillData.charges);
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial &&
+            skillType == SPELL_TYPE.EYE) {
+            //if map is tutorial and spell is THE_EYE, Set max charges to only 1
+            spellData.SetMaxCharges(1);  
+            spellData.SetCharges(1);
+        } else {
+            spellData.SetMaxCharges(skillData.charges);    
+            spellData.SetCharges(skillData.charges);
+        }
         spellData.SetCooldown(skillData.cooldown);
         spellData.SetManaCost(skillData.manaCost);
         spellData.SetThreat(skillData.threat);

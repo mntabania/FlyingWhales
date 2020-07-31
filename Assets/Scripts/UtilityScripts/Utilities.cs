@@ -35,7 +35,7 @@ namespace UtilityScripts {
         private static int _lastTileCollectionID;
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
-        public static string gameSavePath => $"{Application.persistentDataPath}/GameSaves/";
+        public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
         
         private static readonly Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
             { "man", "men" },
