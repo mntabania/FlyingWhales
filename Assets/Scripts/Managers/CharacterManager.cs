@@ -931,7 +931,7 @@ public class CharacterManager : MonoBehaviour {
     public PortraitSettings UpdatePortraitSettings(Character character) {
         PortraitSettings portraitSettings = GeneratePortrait(character);
         
-        if (string.IsNullOrEmpty(portraitSettings.wholeImage) == false) {
+        if (string.IsNullOrEmpty(portraitSettings.wholeImage)) {
             //keep the following settings from the original face.
             portraitSettings.head = character.visuals.portraitSettings.head;
             portraitSettings.brows = character.visuals.portraitSettings.brows;

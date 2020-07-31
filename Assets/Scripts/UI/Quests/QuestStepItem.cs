@@ -97,6 +97,7 @@ public class QuestStepItem : PooledObject {
     public override void Reset() {
         base.Reset();
         _container.anchoredPosition = Vector2.zero;
+        _toggleImage.sprite = checkSprite;
         Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_COMPLETED, OnStepCompleted);
         Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_FAILED, OnStepFailed);
         Messenger.RemoveListener<QuestStep>(Signals.UPDATE_QUEST_STEP_ITEM, UpdateInfo);

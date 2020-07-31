@@ -304,11 +304,13 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     private void OnCharacterSetAsFactionLeader(Character character, ILeader previousLeader) {
         if (_character != null && _character == character) {
             // UpdateFrame();
+            GeneratePortrait(character, isPixelPerfect);
         }
     }
     private void OnCharacterSetAsSettlementRuler(Character character, Character previousRuler) {
         if (_character != null && _character == character) {
             // UpdateFrame();
+            GeneratePortrait(character, isPixelPerfect);
         }
     }
 }

@@ -91,6 +91,14 @@ namespace Interrupts {
                 Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
                 changeRelationsLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
                 changeRelationsLog.AddLogToInvolvedObjects();
+                
+                //check if faction characters still meets ideology requirements
+                List<Character> charactersToCheck = new List<Character>(faction.characters);
+                charactersToCheck.Remove(interruptHolder.actor);
+                for (int i = 0; i < charactersToCheck.Count; i++) {
+                    Character factionMember = charactersToCheck[i];
+                    faction.CheckIfCharacterStillFitsIdeology(factionMember);
+                }
             }
 
             overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader");
