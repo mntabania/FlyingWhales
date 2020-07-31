@@ -273,16 +273,14 @@ public class TraitManager : MonoBehaviour {
     }
     private string[] GetTraitPoolForWorld() {
         if (WorldConfigManager.Instance.isTutorialWorld) {
-            return new[] { "Vigilant", "Diplomatic",
-                "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
-                "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-                "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Persuasive"
+            return new[] { "Inspiring", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
+                "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward"
             };
         } else {
-            return new[] { "Vigilant", "Diplomatic",
-                "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
-                "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-                "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Blessed", "Persuasive"
+            return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
+                "Fire Proof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward"
             };;
         }
     }

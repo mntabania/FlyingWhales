@@ -6,7 +6,7 @@ namespace Traits {
         
         public DeMooder() {
             name = "De-Mooder";
-            description = "Applies a temporary debuff on enemies that significantly reduces their Mood.";
+            description = "Applies a temporary debuff on all hostiles in range. It will immediately perish afterwards.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

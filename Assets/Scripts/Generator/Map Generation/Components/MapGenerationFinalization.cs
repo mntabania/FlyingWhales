@@ -171,11 +171,15 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	private IEnumerator CharacterFinalization() {
 		if (WorldConfigManager.Instance.isTutorialWorld) {
 			bool hasEvilCharacter = false;
+			bool hasTreacherousCharacter = false;
 			List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
 			for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
 				Character character = CharacterManager.Instance.allCharacters[i];
 				if (character.traitContainer.HasTrait("Evil")) {
 					hasEvilCharacter = true;
+				}
+				if (character.traitContainer.HasTrait("Treacherous")) {
+					hasTreacherousCharacter = true;
 				}
 			}
 		
@@ -188,7 +192,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		
 			//treacherous
-			if (characterChoices.Count > 0) {
+			if (hasTreacherousCharacter == false && characterChoices.Count > 0) {
 				Character character = CollectionUtilities.GetRandomElement(characterChoices);
 				character.traitContainer.AddTrait(character, "Treacherous");
 				Debug.Log($"Added treacherous trait to {character.name}");

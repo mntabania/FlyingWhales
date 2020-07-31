@@ -13,6 +13,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UtilityScripts;
 using JetBrains.Annotations;
+using Random = UnityEngine.Random;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyTarget {
     private string _name;
@@ -2741,72 +2742,69 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
     }
-    public void CreateInitialTraitsByClass() {
+    public void CreateInitialTraits() {
         if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
  
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
+            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+            
+            //Up to three traits
 
-            //First trait is random buff trait
+            //100% Trait 1: Buff List
             string chosenBuffTraitName;
             if (buffTraits.Count > 0) {
-                int index = UnityEngine.Random.Range(0, buffTraits.Count);
-                chosenBuffTraitName = buffTraits[index];
-                buffTraits.RemoveAt(index);
+                chosenBuffTraitName = CollectionUtilities.GetRandomElement(buffTraits);
+                buffTraits.Remove(chosenBuffTraitName);
             } else {
                 throw new Exception("There are no buff traits!");
             }
-
-
             traitContainer.AddTrait(this, chosenBuffTraitName);
             Trait buffTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffTraitName);
             if (buffTrait.mutuallyExclusive != null) {
                 buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
                 neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
             }
 
-
-            //Second trait is a random buff or neutral trait
-            string chosenBuffOrNeutralTraitName;
-            if (buffTraits.Count > 0 && neutralTraits.Count > 0) {
-                if (UnityEngine.Random.Range(0, 2) == 0) {
-                    //Buff trait
-                    int index = UnityEngine.Random.Range(0, buffTraits.Count);
-                    chosenBuffOrNeutralTraitName = buffTraits[index];
-                    buffTraits.RemoveAt(index);
+            List<string> choices = new List<string>();
+            //80% Trait 2: Buff + Neutral List
+            if (GameUtilities.RollChance(80)) {
+                choices.AddRange(buffTraits);
+                choices.AddRange(neutralTraits);
+                string chosenBuffOrNeutralTraitName;
+                
+                if (choices.Count > 0) {
+                    chosenBuffOrNeutralTraitName = CollectionUtilities.GetRandomElement(choices); 
+                    buffTraits.Remove(chosenBuffOrNeutralTraitName);
+                    neutralTraits.Remove(chosenBuffOrNeutralTraitName);
                 } else {
-                    //Neutral trait
-                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                    chosenBuffOrNeutralTraitName = neutralTraits[index];
-                    neutralTraits.RemoveAt(index);
+                    throw new Exception("No more buff or neutral traits!");
                 }
-            } else {
-                if (buffTraits.Count > 0) {
-                    int index = UnityEngine.Random.Range(0, buffTraits.Count);
-                    chosenBuffOrNeutralTraitName = buffTraits[index];
-                    buffTraits.RemoveAt(index);
-                } else {
-                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                    chosenBuffOrNeutralTraitName = neutralTraits[index];
-                    neutralTraits.RemoveAt(index);
+                
+                traitContainer.AddTrait(this, chosenBuffOrNeutralTraitName);
+                Trait buffOrNeutralTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffOrNeutralTraitName);
+                if (buffOrNeutralTrait.mutuallyExclusive != null) {
+                    buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                    neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                    flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
                 }
             }
-
-            traitContainer.AddTrait(this, chosenBuffOrNeutralTraitName);
-            Trait buffOrNeutralTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffOrNeutralTraitName);
-            if (buffOrNeutralTrait.mutuallyExclusive != null) {
-                buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-            }
-
-
-            //Third trait is a random neutral trait
-            if (neutralTraits.Count > 0) {
-                //Neutral trait
-                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                var chosenNeutralTraitName = neutralTraits[index];
-                neutralTraits.RemoveAt(index);
-                traitContainer.AddTrait(this, chosenNeutralTraitName);
+            
+            
+            //40% Trait 3: Buff + Neutral + Flaw List
+            if (GameUtilities.RollChance(40)) {
+                choices.Clear();
+                choices.AddRange(buffTraits);
+                choices.AddRange(neutralTraits);
+                choices.AddRange(flawTraits);
+                string chosenTrait;
+                if (choices.Count > 0) {
+                    chosenTrait = CollectionUtilities.GetRandomElement(choices);
+                } else {
+                    throw new Exception("No more buff, neutral or flaw traits!");
+                }
+                traitContainer.AddTrait(this, chosenTrait);
             }
         }
 

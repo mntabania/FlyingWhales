@@ -5,7 +5,7 @@ using UnityEngine;
 public class DemonLustData : MinionPlayerSkill {
     public override SPELL_TYPE type => SPELL_TYPE.DEMON_LUST;
     public override string name => "Demon Lust";
-    public override string description => "This Demon is a stealthy non-combatant that can deal Fire damage when discovered. It will occasionally apply a temporary debuff on a random Villager to significantly reduce its Mood.";
+    public override string description => "This Demon is a non-combatant with a special utility. When spawned, it will immediately cast a spell that will apply a temporary debuff on all nearby Villagers to significantly reduce their Mood. It will immediately despawn afterwards.";
     public DemonLustData() {
         className = "Lust";
     }
