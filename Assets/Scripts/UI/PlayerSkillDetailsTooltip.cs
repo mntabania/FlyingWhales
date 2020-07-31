@@ -80,8 +80,9 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         }
     }
     private void UpdateData(PlayerSkillData skillData) {
-        titleText.SetText(skillData.name);
-        descriptionText.SetTextAndReplaceWithIcons(PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill).description);
+        SpellData spellData = PlayerSkillManager.Instance.GetPlayerSpellData(skillData.skill);
+        titleText.SetText(spellData.name);
+        descriptionText.SetTextAndReplaceWithIcons(spellData.description);
         int charges = skillData.charges;
         int manaCost = skillData.manaCost;
         int cooldown = skillData.cooldown;
