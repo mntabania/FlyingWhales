@@ -7,6 +7,9 @@ namespace Traits {
     public class Angry : Status {
 
         private Character owner;
+
+        private List<Character> responsibleCharactersStack; //list of characters that have added this status to the owner, this can contain duplicates of a character
+        
         public Angry() {
             name = "Angry";
             description = "Something or someone has made it mad!";
@@ -17,6 +20,7 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.5f;
+            responsibleCharactersStack = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //effects = new List<TraitEffect>();
         }
@@ -29,6 +33,14 @@ namespace Traits {
                     Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{character.name} is already dead but gained an angry status!");
                 }
                 owner = character;
+
+                //adjust opinion of responsible characters because
+                //AddCharacterToStackList did not do it yet since owner has not been set yet.
+                for (int i = 0; i < responsibleCharactersStack.Count; i++) {
+                    Character otherCharacter = responsibleCharactersStack[i];
+                    owner.relationshipContainer.AdjustOpinion(owner, otherCharacter, "Anger", -30);
+                }
+                
                 character.marker.visionCollider.VoteToUnFilterVision();
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
             }
@@ -36,12 +48,25 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
+                //make sure to remove any lingering opinion adjustments, just in case
+                int remainingCharacterCount = responsibleCharactersStack.Count;
+                for (int i = 0; i < remainingCharacterCount; i++) {
+                    RemoveOldestCharacterFromStackList();
+                }
                 owner = null;
                 if (character.marker != null) { //TODO: Find out why character.marker can be null in this situation. Bug happened when this trait was removed (by schedule) from a character that no longer has a marker 
                     character.marker.visionCollider.VoteToFilterVision();    
                 }
                 Messenger.RemoveListener(Signals.HOUR_STARTED, PerHourEffect);
             }
+        }
+        public override void AddCharacterResponsibleForTrait(Character character) {
+            base.AddCharacterResponsibleForTrait(character);
+            AddCharacterToStackList(character);
+        }
+        public override void OnUnstackStatus(ITraitable addedTo) {
+            base.OnUnstackStatus(addedTo);
+            RemoveOldestCharacterFromStackList();
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             //if (targetPOI is TileObject tileObject) { // || targetPOI is SpecialToken
@@ -110,6 +135,18 @@ namespace Traits {
                     TileObject tileObject = CollectionUtilities.GetRandomElement(choices);
                     owner.jobComponent.TriggerDestroy(tileObject);
                 }
+            }
+        }
+        private void AddCharacterToStackList(Character character){
+            responsibleCharactersStack.Add(character);
+            //add opinion modifier
+            owner?.relationshipContainer.AdjustOpinion(owner, character, "Anger", -30);
+        }
+        private void RemoveOldestCharacterFromStackList() {
+            if (responsibleCharactersStack.Count > 0) {
+                Character character = responsibleCharactersStack[0];
+                responsibleCharactersStack.RemoveAt(0);
+                owner.relationshipContainer.AdjustOpinion(owner, character, "Anger", 30);
             }
         }
     }

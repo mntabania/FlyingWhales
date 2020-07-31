@@ -9,16 +9,16 @@ public class Rage : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status,
         ActualGoapNode goapNode = null) {
         if(target is Character targetCharacter) {
-            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -65);
-            //temporary opinion debuff
-            //witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -40);
-            GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(8));
-            SchedulingManager.Instance.AddEntry(dueDate,
-                () => witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", 40), 
-                this
-            );
-            
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -25);
+            // //temporary opinion debuff
+            // //witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", -40);
+            // GameDate dueDate = GameManager.Instance.Today();
+            // dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+            // SchedulingManager.Instance.AddEntry(dueDate,
+            //     () => witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Anger", 40), 
+            //     this
+            // );
+            //
             witness.traitContainer.AddTrait(witness, "Angry", targetCharacter);
             //int chance = UnityEngine.Random.Range(0, 2);
             //if(chance == 0) {
