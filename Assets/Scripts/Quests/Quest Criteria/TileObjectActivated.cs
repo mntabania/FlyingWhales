@@ -1,13 +1,8 @@
 ﻿namespace Quests {
-    public class TileObjectActivated : QuestCriteria {
-        private readonly TILE_OBJECT_TYPE _tileObjectType;
-        
+    public class TileObjectActivated<T> : QuestCriteria where T : TileObject{
+
         public TileObject activatedObject { get; private set; }
-        
-        public TileObjectActivated(TILE_OBJECT_TYPE tileObjectType) {
-            _tileObjectType = tileObjectType;
-        }
-        
+
         public override void Enable() {
             Messenger.AddListener<TileObject>(Signals.TILE_OBJECT_ACTIVATED, OnTileObjectActivated);
         }
@@ -16,7 +11,7 @@
         }
         
         private void OnTileObjectActivated(TileObject tileObject) {
-            if (tileObject.tileObjectType == _tileObjectType) {
+            if (tileObject is T) {
                 activatedObject = tileObject;
                 SetCriteriaAsMet();
             }

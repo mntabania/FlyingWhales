@@ -11,7 +11,7 @@ namespace Quests.Special_Popups {
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>(
                 new [] {
-                    new TileObjectActivated(TILE_OBJECT_TYPE.ANKH_OF_ANUBIS).SetOnMeetAction(SetTargetObject), 
+                    new TileObjectActivated<AnkhOfAnubis>().SetOnMeetAction(SetTargetObject), 
                 }    
             );
         }
@@ -23,7 +23,7 @@ namespace Quests.Special_Popups {
             return false;
         }
         private void SetTargetObject(QuestCriteria criteria) {
-            if (criteria is TileObjectActivated tileObjectActivated) {
+            if (criteria is TileObjectActivated<AnkhOfAnubis> tileObjectActivated) {
                 _targetObject = tileObjectActivated.activatedObject;
             }
         }
