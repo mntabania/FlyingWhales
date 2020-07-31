@@ -139,8 +139,7 @@ public class HexTileSpellsComponent {
     }
     private void StopEarthquake() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEarthquake);
-        InnerMapCameraMove.Instance.innerMapsCamera.DOKill();
-        InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        StopCameraShake();
         // for (int i = 0; i < earthquakeTileObjects.Count; i++) {
         //     IPointOfInterest poi = earthquakeTileObjects[i];
         //     poi.mapObjectVisual.transform.DOKill();
@@ -159,7 +158,7 @@ public class HexTileSpellsComponent {
         if (!_hasOnStartEarthquakeCalled) {
             OnStartEarthquake();
         } else {
-            CameraShake();
+            //CameraShake();
             Messenger.AddListener(Signals.TICK_STARTED, PerTickEarthquake);
         }
         // for (int i = 0; i < earthquakeTileObjects.Count; i++) {
@@ -184,12 +183,19 @@ public class HexTileSpellsComponent {
         tween.OnComplete(OnCompleteCameraShake);
     }
     private void StopCameraShake() {
-        InnerMapCameraMove.Instance.innerMapsCamera.DOKill();
-        InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+        owner.StartCoroutine(StopCameraShakeCoroutine());
     }
+    private IEnumerator StopCameraShakeCoroutine() {
+        yield return null;
+        InnerMapCameraMove.Instance.innerMapsCamera.DOKill();
+        InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+    }
+
     private void OnCompleteCameraShake() {
         if (hasEarthquake) {
             CameraShake();
+        } else {
+            StopCameraShake();
         }
     }
     private void POIShake(IPointOfInterest poi) {

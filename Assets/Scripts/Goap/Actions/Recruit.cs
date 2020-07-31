@@ -75,6 +75,7 @@ public class Recruit : GoapAction {
         targetCharacter.ChangeFactionTo(actor.faction, bypassIdeologyChecking: true);
         targetCharacter.MigrateHomeTo(targetCharacter.currentSettlement);
         targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Restrained");
+        targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Criminal");
     }
     #endregion
 

@@ -137,7 +137,7 @@ public class PlayGuitar : GoapAction {
         //TODO: currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(4f);
+        goapNode.actor.needsComponent.AdjustHappiness(6f);
     }
     public void AfterPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);

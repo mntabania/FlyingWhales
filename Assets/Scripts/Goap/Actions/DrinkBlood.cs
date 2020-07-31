@@ -154,6 +154,10 @@ public class DrinkBlood : GoapAction {
             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+            } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                 && opinionLabel != RelationshipManager.Rival) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
             } else if (opinionLabel == RelationshipManager.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);

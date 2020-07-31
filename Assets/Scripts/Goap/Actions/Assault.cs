@@ -59,12 +59,41 @@ public class Assault : GoapAction {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                    } else if (node.associatedJobType != JOB_TYPE.APPREHEND) {
-                        if (opinionLabel == RelationshipManager.Acquaintance) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                        } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                    } else {
+                        if (node.associatedJobType == JOB_TYPE.APPREHEND) {
+                            bool targetHasHeinousOrSeriousCrime = false;
+                            if (targetCharacter.traitContainer.HasTrait("Criminal")) {
+                                CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").crimeData;
+                                targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_TYPE.SERIOUS || crimeData.crimeType == CRIME_TYPE.HEINOUS;
+                            }
+                            if (targetHasHeinousOrSeriousCrime) {
+                                if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                                } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                    && opinionLabel != RelationshipManager.Rival) {
+                                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                                }
+                            } else {
+                                if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                                } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                    && opinionLabel != RelationshipManager.Rival) {
+                                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                                }
+                            }
+                        } else {
+                            if (opinionLabel == RelationshipManager.Acquaintance) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                            } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                    && opinionLabel != RelationshipManager.Rival) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                            }
                         }
                     }
                     if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
@@ -79,17 +108,43 @@ public class Assault : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
         if(status == REACTION_STATUS.INFORMED) {
+            Character targetCharacter = target as Character;
             if (node.associatedJobType == JOB_TYPE.APPREHEND) {
-                Character targetCharacter = target as Character;
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == RelationshipManager.Acquaintance) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
-                } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, targetCharacter, status, node);
-                } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, targetCharacter, status, node);
+                bool targetHasHeinousOrSeriousCrime = false;
+                bool targetHasMisdemeanour = false;
+                if (targetCharacter.traitContainer.HasTrait("Criminal")) {
+                    CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").crimeData;
+                    targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_TYPE.SERIOUS || crimeData.crimeType == CRIME_TYPE.HEINOUS;
+                    targetHasMisdemeanour = crimeData.crimeType == CRIME_TYPE.MISDEMEANOR;
                 }
+                if (targetHasHeinousOrSeriousCrime) {
+                    if (opinionLabel == RelationshipManager.Acquaintance) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+                    } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, targetCharacter, status, node);
+                    } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                   && opinionLabel != RelationshipManager.Rival) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter, status, node);
+                    } else {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, targetCharacter, status, node);
+                    }
+                } else if (targetHasMisdemeanour) {
+                    if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                    } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                   && opinionLabel != RelationshipManager.Rival) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                    } else {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, targetCharacter, status, node);
+                    }
+                }
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
             }
         }
         return response;

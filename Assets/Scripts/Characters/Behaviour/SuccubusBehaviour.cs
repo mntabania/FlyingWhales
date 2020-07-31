@@ -41,10 +41,10 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            log += $"\n-Character is not in disguise, 10% chance to disguise";
+            log += $"\n-Character is not in disguise, 1% chance to disguise";
             int roll = UnityEngine.Random.Range(0, 100);
             log += "\nRoll: " + roll;
-            if(roll < 10) {
+            if(roll < 1) {
                 Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
                 if(targetCharacter != null) {
                     log += $"\n-Target for disguise is: " + targetCharacter.name;

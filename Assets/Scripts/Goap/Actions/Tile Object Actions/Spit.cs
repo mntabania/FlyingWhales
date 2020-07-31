@@ -101,7 +101,7 @@ public class Spit : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void AfterSpitSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(20f);
+        goapNode.actor.needsComponent.AdjustHappiness(30f);
         //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 
         //    4, goapNode.actor.currentRegion.innerMap);
     }
