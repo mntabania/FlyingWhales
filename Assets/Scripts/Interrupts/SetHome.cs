@@ -43,7 +43,7 @@ namespace Interrupts {
             if (actor.homeStructure != null) {
                 log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(null, actor.homeStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.STRING_1);    
+                log.AddToFillers(null, actor.homeStructure.name, LOG_IDENTIFIER.STRING_1);    
             } else if (actor.HasTerritory()) {
                 //NO LOG YET IF NEW HOME IS TERRITORY
 

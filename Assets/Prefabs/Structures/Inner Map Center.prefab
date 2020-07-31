@@ -44,7 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64aa39436f5aae041b6b8e6ca11843b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bigFogOfWarParticleEffect: {fileID: 2441087691012406291}
+  bigFogOfWarParticleEffect:
+  - {fileID: 2441087691012406291}
+  - {fileID: 8788759604281030900}
+  - {fileID: 7341422635527171148}
 --- !u!1001 &3014945577398066822
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -123,6 +126,18 @@ Transform:
 --- !u!198 &2441087691012406291 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 592013709579985557, guid: 8c15225b9c8cba640a080dee46648a11,
+    type: 3}
+  m_PrefabInstance: {fileID: 3014945577398066822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &8788759604281030900 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5773842650978018930, guid: 8c15225b9c8cba640a080dee46648a11,
+    type: 3}
+  m_PrefabInstance: {fileID: 3014945577398066822}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &7341422635527171148 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 5491794476603650762, guid: 8c15225b9c8cba640a080dee46648a11,
     type: 3}
   m_PrefabInstance: {fileID: 3014945577398066822}
   m_PrefabAsset: {fileID: 0}

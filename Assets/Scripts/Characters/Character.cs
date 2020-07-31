@@ -150,7 +150,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string firstName => _firstName;
     public string surName => _surName;
     public string nameWithID => name;
-    public virtual string raceClassName => $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
+    public virtual string raceClassName => GetDefaultRaceClassName();
     public override int id => _id;
     /// <summary>
     /// Is this character allied with the player? Whether secretly (not part of player faction)
@@ -1632,6 +1632,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _firstName = firstName;
         _surName = lastName;
         RandomNameGenerator.RemoveNameAsAvailable(gender, race, fullname);
+    }
+    private string GetDefaultRaceClassName() {
+        if(race == RACE.DEMON) {
+            return $"{characterClass.className} {GameUtilities.GetNormalizedRaceAdjective(race)}";
+        }
+        return $"{GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     }
     public void CenterOnCharacter() {
         if (GameManager.Instance.gameHasStarted == false) {
