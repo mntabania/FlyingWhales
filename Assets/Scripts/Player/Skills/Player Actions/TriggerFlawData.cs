@@ -8,7 +8,7 @@ using Inner_Maps.Location_Structures;
 public class TriggerFlawData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.TRIGGER_FLAW;
     public override string name => "Trigger Flaw";
-    public override string description => $"Triggers a Villager's negative trait.";
+    public override string description => "This Action can be used to immediately activate an effect of a Villager's negative Trait. You may choose from the Villager's list of flaws that can be triggered.";
     public TriggerFlawData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
     }

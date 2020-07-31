@@ -611,6 +611,7 @@ namespace Inner_Maps {
                 && !activeCharacter.isDead
                 && activeCharacter.marker
                 && activeCharacter.marker.pathfindingAI.hasPath
+                && activeCharacter.carryComponent.IsNotBeingCarried()
                 && (activeCharacter.stateComponent.currentState == null 
                     || (activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
