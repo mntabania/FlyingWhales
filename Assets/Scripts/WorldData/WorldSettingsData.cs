@@ -100,6 +100,7 @@ public class WorldSettingsData {
         ClearRaces();
         AddRace(RACE.HUMANS);
         AddBiome(BIOMES.DESERT);
+        DisableSpellForWorld(SPELL_TYPE.EARTHQUAKE);
     }
     public void SetDefaultCustomWorldSettings() {
         Debug.Log("Set world settings as Default Custom");
