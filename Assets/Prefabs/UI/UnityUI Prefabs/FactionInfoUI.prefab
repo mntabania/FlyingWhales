@@ -1274,8 +1274,8 @@ MonoBehaviour:
   characterItemPrefab: {fileID: 1716271878575152, guid: 192605b2e90f468409baf06dedf19376,
     type: 3}
   charactersScrollView: {fileID: 114609640133616276}
-  regionsScrollView: {fileID: 114891423987409476}
-  regionNameplatePrefab: {fileID: 1846289913343100, guid: 236c62762f8552d44afd92ba208abd96,
+  locationsScrollView: {fileID: 114891423987409476}
+  settlementNameplatePrefab: {fileID: 1846289913343100, guid: cd09bb0221fb7864bac50d09766161f6,
     type: 3}
   relationshipsParent: {fileID: 8353994512475915157}
   relationshipPrefab: {fileID: 1897089078281118, guid: db15a42321436b0418accd5b6584fe1b,

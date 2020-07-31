@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 using UnityEngine.UI.Extensions;
 using EZObjectPools;
+using Inner_Maps;
 using Locations.Settlements;
 
 public class FactionInfoUI : InfoUIBase {
@@ -32,9 +33,9 @@ public class FactionInfoUI : InfoUIBase {
 
     [Space(10)]
     [Header("Regions")]
-    [SerializeField] private ScrollRect regionsScrollView;
-    [SerializeField] private GameObject regionNameplatePrefab;
-    private List<RegionNameplateItem> locationItems;
+    [SerializeField] private ScrollRect locationsScrollView;
+    [SerializeField] private GameObject settlementNameplatePrefab;
+    private List<SettlementNameplateItem> locationItems;
 
     [Space(10)]
     [Header("Relationships")]
@@ -53,12 +54,12 @@ public class FactionInfoUI : InfoUIBase {
     internal override void Initialize() {
         base.Initialize();
         _characterItems = new List<CharacterNameplateItem>();
-        locationItems = new List<RegionNameplateItem>();
+        locationItems = new List<SettlementNameplateItem>();
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
-        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
+        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_SETTLEMENT_ADDED, OnFactionSettlementAdded);
+        Messenger.AddListener<Faction, BaseSettlement>(Signals.FACTION_OWNED_SETTLEMENT_REMOVED, OnFactionSettlementRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
@@ -76,7 +77,7 @@ public class FactionInfoUI : InfoUIBase {
         UpdateOverview();
         UpdateFactionInfo();
         UpdateAllCharacters();
-        UpdateRegions();
+        UpdateOwnedLocations();
         UpdateAllRelationships();
         UpdateAllHistoryInfo();
         ResetScrollPositions();
@@ -163,38 +164,62 @@ public class FactionInfoUI : InfoUIBase {
     #endregion
 
     #region Regions
-    private void UpdateRegions() {
-        UtilityScripts.Utilities.DestroyChildren(regionsScrollView.content);
+    private void UpdateOwnedLocations() {
+        UtilityScripts.Utilities.DestroyChildren(locationsScrollView.content);
         locationItems.Clear();
+        for (int i = 0; i < activeFaction.ownedSettlements.Count; i++) {
+            BaseSettlement ownedSettlement = activeFaction.ownedSettlements[i];
+            CreateNewSettlementItem(ownedSettlement);
+        }
     }
-    private void CreateNewRegionItem(Region region) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(regionNameplatePrefab.name, regionsScrollView.content);
-        RegionNameplateItem item = characterGO.GetComponent<RegionNameplateItem>();
-        item.SetObject(region);
+    private void CreateNewSettlementItem(BaseSettlement settlement) {
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(settlementNameplatePrefab.name, locationsScrollView.content);
+        SettlementNameplateItem item = characterGO.GetComponent<SettlementNameplateItem>();
+        item.SetObject(settlement);
+        item.SetAsButton();
+        item.AddOnClickAction(OnClickSettlementItem);
         locationItems.Add(item);
     }
-    private RegionNameplateItem GetLocationItem(Region region) {
+    private void OnClickSettlementItem(BaseSettlement settlement) {
+        if (settlement.tiles.Count > 0) {
+            HexTile tile = settlement.tiles[0];
+            if (InnerMapManager.Instance.isAnInnerMapShowing) {
+                //if inner map is showing, open inner map of hextile then center on it
+                if (InnerMapManager.Instance.currentlyShowingLocation != tile.region) {
+                    InnerMapManager.Instance.TryShowLocationMap(tile.region);    
+                }
+                InnerMapCameraMove.Instance.CenterCameraOnTile(tile);
+            } else {
+                //if world map is showing, just center on hextile
+                tile.CenterCameraHere();
+            }
+            UIManager.Instance.ShowHexTileInfo(tile);
+        }
+    }
+    private SettlementNameplateItem GetLocationItem(BaseSettlement settlement) {
         for (int i = 0; i < locationItems.Count; i++) {
-            RegionNameplateItem locationPortrait = locationItems[i];
-            if (locationPortrait.obj.id == region.id) {
+            SettlementNameplateItem locationPortrait = locationItems[i];
+            if (locationPortrait.obj.id == settlement.id) {
                 return locationPortrait;
             }
         }
         return null;
     }
-    private void DestroyLocationItem(Region region) {
-        RegionNameplateItem item = GetLocationItem(region);
+    private void DestroyLocationItem(BaseSettlement settlement) {
+        SettlementNameplateItem item = GetLocationItem(settlement);
         if (item != null) {
             locationItems.Remove(item);
             ObjectPoolManager.Instance.DestroyObject(item);
         }
     }
-    private void OnFactionRegionAdded(Faction faction, BaseSettlement region) {
+    private void OnFactionSettlementAdded(Faction faction, BaseSettlement settlement) {
         if (isShowing && activeFaction.id == faction.id) {
+            CreateNewSettlementItem(settlement);
         }
     }
-    private void OnFactionRegionRemoved(Faction faction, BaseSettlement region) {
+    private void OnFactionSettlementRemoved(Faction faction, BaseSettlement settlement) {
         if (isShowing && activeFaction.id == faction.id) {
+            DestroyLocationItem(settlement);
         }
     }
     #endregion
@@ -233,7 +258,7 @@ public class FactionInfoUI : InfoUIBase {
     }
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
-        regionsScrollView.verticalNormalizedPosition = 1;
+        locationsScrollView.verticalNormalizedPosition = 1;
         historyScrollView.verticalNormalizedPosition = 1;
     }
     private void OnInspectAll() {
