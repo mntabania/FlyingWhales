@@ -153,11 +153,14 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         }
     }
     public void OnHoverLeaderIcon() {
+        string message = string.Empty;
         if (character.isSettlementRuler) {
-            UIManager.Instance.ShowSmallInfo($"<b>{character.name}</b> is the Settlement Ruler of <b>{character.ruledSettlement.name}</b>");
-        } else if (character.isFactionLeader) {
-            UIManager.Instance.ShowSmallInfo($"<b>{character.name}</b> is the Faction Leader of <b>{character.faction.name}</b>");
+            message = $"<b>{character.name}</b> is the Settlement Ruler of <b>{character.ruledSettlement.name}</b>\n";
+        } 
+        if (character.isFactionLeader) {
+            message += $"<b>{character.name}</b> is the Faction Leader of <b>{character.faction.name}</b>";
         }
+        UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitLeaderIcon() {
         UIManager.Instance.HideSmallInfo();

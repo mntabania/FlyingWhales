@@ -250,11 +250,14 @@ public class CharacterInfoUI : InfoUIBase {
         }
     }
     public void OnHoverLeaderIcon() {
+        string message = string.Empty;
         if (activeCharacter.isSettlementRuler) {
-            UIManager.Instance.ShowSmallInfo($"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.ruledSettlement.name}</b>");
-        } else if (activeCharacter.isFactionLeader) {
-            UIManager.Instance.ShowSmallInfo($"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>");
+            message = $"<b>{activeCharacter.name}</b> is the Settlement Ruler of <b>{activeCharacter.ruledSettlement.name}</b>\n";
+        } 
+        if (activeCharacter.isFactionLeader) {
+            message += $"<b>{activeCharacter.name}</b> is the Faction Leader of <b>{activeCharacter.faction.name}</b>";
         }
+        UIManager.Instance.ShowSmallInfo(message);
     }
     public void OnHoverExitLeaderIcon() {
         UIManager.Instance.HideSmallInfo();

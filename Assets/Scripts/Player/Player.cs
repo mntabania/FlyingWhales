@@ -431,6 +431,10 @@ public class Player : ILeader, IObjectManipulator {
                 hoverText = "Catatonic characters cannot be targeted."; //Blessed/
                 return false;
             }
+            if(character.traitContainer.HasTrait("Resting")) { 
+                hoverText = "Sleeping characters cannot be targeted.";
+                return false;
+            }
             if(!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
