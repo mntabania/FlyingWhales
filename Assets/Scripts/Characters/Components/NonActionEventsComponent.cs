@@ -203,6 +203,24 @@ public class NonActionEventsComponent {
             strLog += "\n\nActor or target is Hero, removing argument weight...";
         }
 
+        Trait angryActor = disguisedActor.traitContainer.GetNormalTrait<Trait>("Angry");
+        Trait angryTarget = disguisedTarget.traitContainer.GetNormalTrait<Trait>("Angry");
+        
+        if (angryActor != null && angryActor.responsibleCharacters != null && angryActor.responsibleCharacters.Contains(disguisedTarget)) {
+            //actor is angry with target
+            chatWeights.AddWeightToElement(Warm_Chat, -50);
+            chatWeights.AddWeightToElement(Awkward_Chat, 20);
+            chatWeights.AddWeightToElement(Argument, 50);
+            chatWeights.AddWeightToElement(Insult, 100);
+            chatWeights.AddWeightToElement(Praise, -50);
+        }
+        if (angryTarget != null && angryTarget.responsibleCharacters != null && angryTarget.responsibleCharacters.Contains(disguisedActor)) {
+            //target is angry with actor
+            chatWeights.AddWeightToElement(Warm_Chat, -50);
+            chatWeights.AddWeightToElement(Awkward_Chat, 20);
+            chatWeights.AddWeightToElement(Argument, 50);
+        }
+
         strLog += $"\n\n{chatWeights.GetWeightsSummary("FINAL WEIGHTS")}";
 
         string result = chatWeights.PickRandomElementGivenWeights();
@@ -232,26 +250,26 @@ public class NonActionEventsComponent {
         int opinionValue = 0;
 
         if(result == Warm_Chat) {
-            opinionValue = 2;
+            opinionValue = 6;
             adjustOpinionBothSides = true;
         } else if (result == Awkward_Chat) {
-            opinionValue = -1;
+            opinionValue = -3;
             adjustOpinionBothSides = true;
         } else if (result == Argument) {
-            opinionValue = -2;
+            opinionValue = -5;
             adjustOpinionBothSides = true;
         } else if (result == Insult) {
-            opinionValue = -3;
+            opinionValue = -6;
         } else if (result == Praise) {
-            opinionValue = 3;
+            opinionValue = 6;
         }
 
         if (adjustOpinionBothSides) {
-            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, result, opinionValue, "engaged in disastrous conversation");
-            target.relationshipContainer.AdjustOpinion(target, disguisedActor, result, opinionValue, "engaged in disastrous conversation");
+            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Conversations", opinionValue, "engaged in disastrous conversation");
+            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue, "engaged in disastrous conversation");
         } else {
             //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
-            target.relationshipContainer.AdjustOpinion(target, disguisedActor, result, opinionValue);
+            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", opinionValue);
         }
 
         GameDate dueDate = GameManager.Instance.Today();
@@ -365,20 +383,29 @@ public class NonActionEventsComponent {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
             if (disguisedActor.traitContainer.HasTrait("Unattractive")) {
-                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Base", -4, "engaged in disastrous flirting");
-                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Base", -2, "engaged in disastrous flirting");
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
                 return "ugly";
+            }
+        }
+        if(chance < 70) {
+            Trait angry = disguisedTarget.traitContainer.GetNormalTrait<Trait>("Angry");
+            if (angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(disguisedActor)) {
+                //target is angry at actor
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
+                return "angry";
             }
         }
         if(chance < 90) {
             if(!RelationshipManager.IsSexuallyCompatibleOneSided(disguisedTarget.sexuality, disguisedActor.sexuality, disguisedTarget.gender, disguisedActor.gender)) {
-                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Base", -4, "engaged in disastrous flirting");
-                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Base", -2, "engaged in disastrous flirting");
+                owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
                 return "incompatible";
             }
         }
-        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Base", 2);
-        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Base", 4);
+        owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Reciprocated courtship", 6);
+        target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", 18);
         
         string relationshipName = disguisedActor.relationshipContainer.GetRelationshipNameWith(disguisedTarget);
 
