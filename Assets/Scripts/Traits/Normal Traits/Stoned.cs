@@ -22,6 +22,7 @@ namespace Traits {
             hindersAttackTarget = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
         #region Overrides
@@ -61,6 +62,9 @@ namespace Traits {
                 ObjectPoolManager.Instance.DestroyObject(_stonedGO);
                 _stonedGO = null;
             }
+        }
+        public override bool OnDeath(Character character) {
+            return character.traitContainer.RemoveTrait(character, this);
         }
         #endregion
     }

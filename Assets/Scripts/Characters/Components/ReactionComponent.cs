@@ -520,7 +520,9 @@ public class ReactionComponent {
                 debugLog += "\n-Actor is a Troll and target is a Villager and actor has a home structure";
                 if (targetCharacter.currentStructure != disguisedActor.homeStructure) {
                     debugLog += "\n-Will engage in combat and move it to its home";
-                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, actor.homeStructure);
+                    if (!actor.jobQueue.HasJob(JOB_TYPE.MOVE_CHARACTER)) {
+                        actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, actor.homeStructure, true);
+                    }
                 } else {
                     debugLog += "\n-Will engage in combat and restrain it";
                     actor.jobComponent.TriggerRestrainJob(targetCharacter);
@@ -798,7 +800,9 @@ public class ReactionComponent {
             if(targetTileObject is BallLightningTileObject || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
                 actor.combatComponent.Flight(targetTileObject, "saw something frightening");
             } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is Gold || targetTileObject is Diamond) {
-                actor.jobComponent.CreateDropItemJob(targetTileObject, actor.homeStructure);
+                if (!actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
+                    actor.jobComponent.CreateDropItemJob(targetTileObject, actor.homeStructure, true);
+                }
             }
         }
         if (!actor.isNormalCharacter /*|| owner.race == RACE.SKELETON*/) {

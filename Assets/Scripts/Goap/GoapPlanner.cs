@@ -112,6 +112,7 @@ public class GoapPlanner {
         }
         owner.logComponent.PrintLogIfActive(goapThread.log + additionalLog);
         if (goapThread.createdPlan != null) {
+            goapThread.createdPlan.SetDoNotRecalculate(goapThread.job.doNotRecalculate);
             if (goapThread.recalculationPlan != null) {
                 //This means that the created plan is a recalculated plan
                 goapThread.createdPlan.SetIsBeingRecalculated(false);

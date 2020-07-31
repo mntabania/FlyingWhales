@@ -188,8 +188,6 @@ public class Assault : GoapAction {
             reason = "Hunting victim";
         } else if (jobType == JOB_TYPE.PRODUCE_FOOD) {
             reason = "Hunting for food";
-        } else if (jobType == JOB_TYPE.PRODUCE_FOOD) {
-            reason = "Hunting for food";
         } else {
             reason = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
         }

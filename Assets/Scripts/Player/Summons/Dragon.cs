@@ -19,13 +19,13 @@ public class Dragon : Summon {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(5);
+        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public Dragon(string className) : base(SUMMON_TYPE.Dragon, className, RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(5);
+        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public Dragon(SaveDataCharacter data) : base(data) { }
 

@@ -642,14 +642,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return false;
 	}
-	#endregion
+    #endregion
 
-	#region Move Character
-	public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure) {
+    #region Move Character
+    public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure, bool doNotRecalculate = false) {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP,
 				targetCharacter, _owner);
 			job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {dropLocationStructure});
+            job.SetDoNotRecalculate(doNotRecalculate);
 			return _owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
@@ -1289,10 +1290,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
 
     }
-    public void CreateDropItemJob(TileObject target, LocationStructure dropLocation) {
+    public void CreateDropItemJob(TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
         if(!_owner.jobQueue.HasJob(JOB_TYPE.DROP_ITEM, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP_ITEM, INTERACTION_TYPE.DROP_ITEM, target, _owner);
             job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+            job.SetDoNotRecalculate(doNotRecalculate);
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
