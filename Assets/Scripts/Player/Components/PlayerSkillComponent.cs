@@ -193,7 +193,7 @@ public class PlayerSkillComponent {
             spellData.SetCharges(skillData.charges);
         }
         spellData.SetCooldown(skillData.cooldown);
-        spellData.SetManaCost(skillData.manaCost);A
+        spellData.SetManaCost(skillData.manaCost);
         spellData.SetThreat(skillData.threat);
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
