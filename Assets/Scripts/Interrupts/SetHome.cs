@@ -405,7 +405,7 @@ namespace Interrupts {
                             chosenDwelling = currDwelling;
                             break;
                         } else {
-                            bool isNonRivalEnemyRelative = !actor.relationshipContainer.IsEnemiesWith(resident) && actor.relationshipContainer.HasRelationshipWith(resident, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.SIBLING, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT);
+                            bool isNonRivalEnemyRelative = !actor.relationshipContainer.IsEnemiesWith(resident) && actor.relationshipContainer.IsFamilyMember(resident);
                             if (isNonRivalEnemyRelative) {
                                 chosenDwelling = currDwelling;
                                 break;

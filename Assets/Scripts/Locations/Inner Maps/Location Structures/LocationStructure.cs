@@ -930,7 +930,7 @@ namespace Inner_Maps.Location_Structures {
                     if (character.relationshipContainer.IsEnemiesWith(resident)) {
                         return false;
                     } else {
-                        if(character.relationshipContainer.HasRelationshipWith(resident, RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.SIBLING, RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT)) {
+                        if(character.relationshipContainer.IsFamilyMember(resident)) {
                             return true;
                         }
                         if(character.relationshipContainer.GetOpinionLabel(resident) == RelationshipManager.Close_Friend) {

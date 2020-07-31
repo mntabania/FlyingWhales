@@ -57,7 +57,7 @@ public class Daydream : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickDaydreamSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(3.35f);
+        goapNode.actor.needsComponent.AdjustHappiness(5f);
         goapNode.actor.needsComponent.AdjustStamina(1f);
     }
     public void AfterDaydreamSuccess(ActualGoapNode goapNode) {

@@ -23,6 +23,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     private List<string> obtainPersonalItemRandomList;
     private List<string> obtainPersonalItemUnownedRandomList;
     private bool hasStartedScreamCheck;
+    public bool doNotDoRecoverHPJob { get; private set; }
 
     public CharacterJobTriggerComponent(Character owner) {
 		_owner = owner;
@@ -1519,11 +1520,22 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Heal Self
+    public void SetDoNotDoRecoverHPJob(bool state) {
+        if(doNotDoRecoverHPJob != state) {
+            doNotDoRecoverHPJob = state;
+            if (doNotDoRecoverHPJob) {
+                GameDate dueDate = GameManager.Instance.Today();
+                dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+                SchedulingManager.Instance.AddEntry(dueDate, () => SetDoNotDoRecoverHPJob(false), null);
+            }
+        }
+    }
     public void OnHPReduced() {
-	    if (_owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && _owner.isNormalCharacter
-	        && _owner.currentHP > 0 && _owner.currentHP < Mathf.FloorToInt(_owner.maxHP * 0.5f)) {
-		    CreateHealSelfJob();	
-	    }
+        if (!doNotDoRecoverHPJob) {
+            if (_owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && _owner.isNormalCharacter && _owner.currentHP > 0 && _owner.currentHP < Mathf.FloorToInt(_owner.maxHP * 0.5f)) {
+                CreateHealSelfJob();
+            }
+        }
     }
     private void CreateHealSelfJob() {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECOVER_HP, INTERACTION_TYPE.HEAL_SELF, _owner, _owner);

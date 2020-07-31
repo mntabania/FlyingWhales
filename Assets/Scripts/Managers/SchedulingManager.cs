@@ -154,10 +154,12 @@ public struct ScheduledAction {
     public object scheduler; //the object that scheduled this action
     
     public bool IsScheduleStillValid() {
-        if (scheduler is Character character) {
-            return character.gridTileLocation != null;
-        } else if (scheduler is TileObject tileObject) {
-            return tileObject.gridTileLocation != null;
+        if(scheduler != null) {
+            if (scheduler is Character character) {
+                return character.gridTileLocation != null;
+            } else if (scheduler is TileObject tileObject) {
+                return tileObject.gridTileLocation != null;
+            }
         }
         return true;
     }

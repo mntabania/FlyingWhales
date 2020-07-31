@@ -66,7 +66,7 @@ public class Cry : GoapAction {
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
     }
     public void PerTickCrySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.needsComponent.AdjustHappiness(6f);
+        goapNode.actor.needsComponent.AdjustHappiness(12f);
     }
     public void AfterCrySuccess(ActualGoapNode goapNode) {
         //Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, goapNode.actor.marker.transform.position, 

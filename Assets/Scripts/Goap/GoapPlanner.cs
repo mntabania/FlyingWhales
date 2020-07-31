@@ -180,6 +180,8 @@ public class GoapPlanner {
             if(jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL) {
                 //Special case for when a character cannot do hunger recovery, he/she must produce food instead
                 owner.jobComponent.CreateProduceFoodJob();
+            } else if (jobType == JOB_TYPE.RECOVER_HP) {
+                owner.jobComponent.SetDoNotDoRecoverHPJob(true);
             }
         }
         //if (goapThread.createdPlan != null) {

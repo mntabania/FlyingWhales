@@ -90,7 +90,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeJoinPartyJob(Character character, Character targetCharacter) {
         Party partyToJoin = targetCharacter.partyComponent.currentParty;
-        return !character.partyComponent.hasParty && !partyToJoin.isWaitTimeOver && !partyToJoin.isDisbanded && partyToJoin.IsAllowedToJoin(character);
+        return !character.partyComponent.hasParty && partyToJoin != null && !partyToJoin.isWaitTimeOver && !partyToJoin.isDisbanded && partyToJoin.IsAllowedToJoin(character);
     }
     public bool CanCharacterTakeExterminateJob(Character character) {
         Party partyToJoin = character.partyComponent.currentParty;

@@ -149,10 +149,39 @@ public class Butcher : GoapAction {
                 }
             }
             string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend || witnessOpinionToTarget == RelationshipManager.Acquaintance 
+            if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                }
+            } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER))
+                && witnessOpinionToTarget != RelationshipManager.Rival) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                }
+            } else if (witnessOpinionToTarget == RelationshipManager.Acquaintance 
                 || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                }
+            }
+        }
+        return response;
+    }
+    public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(actor, target, witness, node, status);
+        Character targetCharacter = GetDeadCharacter(target);
+        if (targetCharacter != null) {
+            string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (witnessOpinionToTarget == RelationshipManager.Friend || witnessOpinionToTarget == RelationshipManager.Close_Friend) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, targetCharacter, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
+                }
+            } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                && witnessOpinionToTarget != RelationshipManager.Rival) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, targetCharacter, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
                 }
             }
         }
