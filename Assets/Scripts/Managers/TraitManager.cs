@@ -279,7 +279,7 @@ public class TraitManager : MonoBehaviour {
             };
         } else {
             return new[] { "Inspiring", "Blessed", "Diplomatic", "Fast", "Persuasive", "Optimist", "Robust", "Suspicious", "Vigilant", 
-                "Fire Proof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
+                "Fireproof", "Music Lover", "Authoritative", "Nocturnal", "Lustful", "Chaste", "Music Hater", "Alcoholic",
                 "Accident Prone", "Evil", "Treacherous", "Lazy", "Pessimist", "Unattractive", "Hothead", "Coward"
             };;
         }
