@@ -20,7 +20,7 @@ public class HexTileSpellsComponent {
     public List<IPointOfInterest> pendingEarthquakeTileObjects { get; private set; }
     private int _currentEarthquakeDuration;
     private LocationGridTile _centerEarthquakeTile;
-    private bool _hasOnStartEarthquakeCalled;
+    private bool _hasEarthquakeStarted;
     #endregion
     
     #region Brimstones Variables
@@ -116,11 +116,17 @@ public class HexTileSpellsComponent {
         if (!GameManager.Instance.isPaused) {
             OnStartEarthquake();
         } else {
-            _hasOnStartEarthquakeCalled = false;
+            _hasEarthquakeStarted = false;
         }
     }
     private void OnStartEarthquake() {
-        _hasOnStartEarthquakeCalled = true;
+        _hasEarthquakeStarted = true;
+
+        //Note: I put the PerTickEarthquake listener before awakening the dragon so that the process would be, AddListener => Pause Earthquake(Because of the dragon awaken popup, which would Remove the listener) => Click Ok (Add Listener again)
+        //If we put it after the dragon awakening popup, It would double the add listener, that is why we keep getting infinite camera shake, because the PerTickEarthquake is not properly removed
+        CameraShake();
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickEarthquake);
+
         List<Character> charactersInsideHex = owner.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
         if (charactersInsideHex != null) {
             for (int i = 0; i < charactersInsideHex.Count; i++) {
@@ -134,8 +140,6 @@ public class HexTileSpellsComponent {
                 }
             }
         }
-        CameraShake();
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickEarthquake);
     }
     private void StopEarthquake() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEarthquake);
@@ -147,15 +151,17 @@ public class HexTileSpellsComponent {
         earthquakeTileObjects.Clear();
     }
     private void PauseEarthquake() {
-        StopCameraShake();
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEarthquake);
+        if (_hasEarthquakeStarted) {
+            StopCameraShake();
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEarthquake);
+        }
         // for (int i = 0; i < earthquakeTileObjects.Count; i++) {
         //     IPointOfInterest poi = earthquakeTileObjects[i];
         //     poi.mapObjectVisual.transform.DOPause();
         // }
     }
     private void ResumeEarthquake( ) {
-        if (!_hasOnStartEarthquakeCalled) {
+        if (!_hasEarthquakeStarted) {
             OnStartEarthquake();
         } else {
             //CameraShake();
@@ -179,8 +185,8 @@ public class HexTileSpellsComponent {
         }
     }
     private void CameraShake() {
-        Tweener tween = InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(1f, new Vector3(2f, 2f, 2f), 15, fadeOut: false);
-        tween.OnComplete(OnCompleteCameraShake);
+        InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(1f, new Vector3(2f, 2f, 2f), 15, fadeOut: false);
+        //tween.OnComplete(OnCompleteCameraShake);
     }
     private void StopCameraShake() {
         owner.StartCoroutine(StopCameraShakeCoroutine());
