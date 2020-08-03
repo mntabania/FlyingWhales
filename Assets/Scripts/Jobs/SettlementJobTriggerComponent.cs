@@ -449,15 +449,31 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, 
 					target, _owner);
 				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
-				job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target));
+				job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, job));
+				job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
+				// job.SetOnUnassignJobAction(OnUnassignApprehend);
 				job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.prison });
 				_owner.AddToAvailableJobs(job);	
 			}
 		}
 	}
-	private bool IsApprehendStillApplicable(Character target) {
+	// private void OnUnassignApprehend(Character character, JobQueueItem job) {
+	// 	job.ForceCancelJob(false); //automatically cancel job if assigned character drops the job
+	// }
+	private bool IsApprehendStillApplicable(Character target, GoapPlanJob job) {
         bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != _owner.prison;
-        return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner) && isApplicable;
+        if (target.gridTileLocation != null && isApplicable) {
+	        if (target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner)) {
+		        //if target is within or next to settlement, job is always valid
+		        return true;
+	        } else {
+		        //if target is no longer within settlement then job is only valid if the job has an assigned character
+		        // return false;
+		        return job.assignedCharacter != null;
+	        }
+	        // return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
+        }
+        return false;
 	}
 	#endregion
 
@@ -584,8 +600,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained",
 				false, GOAP_EFFECT_TARGET.TARGET), 
 			target, _owner);
-		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target));
+		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target, job));
 		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
+		job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
 		// job.SetOnUnassignJobAction(OnUnassignRestrain);
 		_owner.AddToAvailableJobs(job, 0);
 	}
@@ -593,9 +610,27 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	// 	//force cancel restrain job when 
 	// 	job.ForceCancelJob(false);
 	// }
-	private bool IsRestrainJobStillApplicable(Character target) {
-		return target.traitContainer.HasTrait("Restrained") == false && target.gridTileLocation != null
-		    && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner);
+	// private bool IsRestrainJobStillApplicable(Character target) {
+	// 	return target.traitContainer.HasTrait("Restrained") == false && target.gridTileLocation != null
+	// 	    && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner);
+	// }
+	// private void OnUnassignRestrain(Character character, JobQueueItem job) {
+	// 	job.ForceCancelJob(false); //automatically cancel job if assigned character drops the job
+	// }
+	private bool IsRestrainJobStillApplicable(Character target, GoapPlanJob job) {
+		bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != _owner.prison;
+		if (target.gridTileLocation != null && isApplicable) {
+			if (target.gridTileLocation.IsPartOfSettlement(_owner)) {
+				//if target is within settlement job is always valid
+				return true;
+			} else {
+				//if target is no longer within settlement then job is only valid if the job has an assigned character
+				return job.assignedCharacter != null;
+				// return false;
+			}
+			// return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
+		}
+		return false;
 	}
 	#endregion
 

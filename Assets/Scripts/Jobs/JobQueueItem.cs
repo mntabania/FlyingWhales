@@ -35,6 +35,7 @@ public class JobQueueItem {
 
     //Additional data
     public bool cannotBePushedBack { get; protected set; }
+    public bool shouldBeRemovedFromSettlementWhenUnassigned { get; protected set; }
     
     //object pool
     /// <summary>
@@ -231,6 +232,14 @@ public class JobQueueItem {
     public void SetCannotBePushedBack (bool state) {
         cannotBePushedBack = state;
     }
+    /// <summary>
+    /// Should this job be removed from the settlement job queue that owns it when
+    /// it has been dropped by its assigned character?
+    /// </summary>
+    /// <param name="state">Set the state of the condition.</param>
+    public void SetShouldBeRemovedFromSettlementWhenUnassigned(bool state) {
+        shouldBeRemovedFromSettlementWhenUnassigned = state;
+    }
     //public void SetCannotCancelJob(bool state) {
     //    cannotCancelJob = state;
     //}
@@ -300,6 +309,7 @@ public class JobQueueItem {
     public virtual void Reset() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}Job {this} was reset with original owner {originalOwner}");
         hasBeenReset = true;
+        shouldBeRemovedFromSettlementWhenUnassigned = false;
         id = -1;
         originalOwner = null;
         name = string.Empty;

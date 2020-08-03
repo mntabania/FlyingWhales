@@ -1096,7 +1096,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //RemoveFromAvailableJobs(job);
     }
     public void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
-        if (!job.IsJobStillApplicable()) {
+        if (!job.IsJobStillApplicable() || job.shouldBeRemovedFromSettlementWhenUnassigned) {
             RemoveFromAvailableJobs(job);
         }
     }

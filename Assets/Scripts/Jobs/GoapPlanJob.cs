@@ -260,7 +260,7 @@ public class GoapPlanJob : JobQueueItem {
         //        }
         //    }
         //}
-        if (originalOwner.ownerType == JOB_OWNER.CHARACTER && assignedPlan == null) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
+        if (originalOwner != null && originalOwner.ownerType == JOB_OWNER.CHARACTER && assignedPlan == null) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If original owner is character just get the assignedCharacter because for personal jobs, the assignedCharacter is always the owner
             //No need to cast the owner anymore
             if (assignedCharacter != null && id == assignedCharacter.needsComponent.sleepScheduleJobID) {
