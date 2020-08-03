@@ -477,10 +477,10 @@ namespace Pathfinding {
 			// since the vectorPath list (which the interpolator uses) will be pooled.
 			if (oldPath != null) oldPath.Release(this);
 
-			if (interpolator.remainingDistance <= endReachDistance && !reachedEndOfPath) {
-				reachedEndOfPath = true;
-				OnTargetReached();
-			}
+			//if (interpolator.remainingDistance <= endReachDistance && !reachedEndOfPath) {
+			//	reachedEndOfPath = true;
+			//	OnTargetReached();
+			//}
 		}
 
 		/// <summary>\copydoc Pathfinding::IAstarAI::SetPath</summary>
