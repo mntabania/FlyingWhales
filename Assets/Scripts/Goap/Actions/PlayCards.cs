@@ -6,7 +6,7 @@ using Traits;
 public class PlayCards : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-    public PlayCards() : base(INTERACTION_TYPE.DANCE) {
+    public PlayCards() : base(INTERACTION_TYPE.PLAY_CARDS) {
         //actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         //validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT, };
         actionIconString = GoapActionStateDB.Happy_Icon;
