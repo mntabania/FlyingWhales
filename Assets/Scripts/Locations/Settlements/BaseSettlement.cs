@@ -532,11 +532,10 @@ namespace Locations.Settlements {
             for (int i = 0; i < allStructures.Count; i++) {
                 List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);
                 if (structureTileObjects != null && structureTileObjects.Count > 0) {
-                    if(objs == null) {
-                        objs = structureTileObjects;
-                    } else {
-                        objs.AddRange(structureTileObjects);
+                    if (objs == null) {
+                        objs = new List<T>();
                     }
+                    objs.AddRange(structureTileObjects);
                 }
             }
             if(objs != null && objs.Count > 0) {
@@ -559,10 +558,9 @@ namespace Locations.Settlements {
                 List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);
                 if (structureTileObjects != null && structureTileObjects.Count > 0) {
                     if (objs == null) {
-                        objs = structureTileObjects;
-                    } else {
-                        objs.AddRange(structureTileObjects);
+                        objs = new List<T>();
                     }
+                    objs.AddRange(structureTileObjects);
                 }
             }
             return objs;
