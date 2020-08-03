@@ -9,6 +9,10 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     [SerializeField] public SkillTreeSelector loadOutMenu;
     [SerializeField] public Button regenerateWorldBtn;
     [SerializeField] public Button configureLoadoutBtn;
+
+    public void Initialize() {
+        loadOutMenu.Initialize();
+    }
     
     public void Show() {
         UIManager.Instance.SetSpeedTogglesState(false);

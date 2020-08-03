@@ -71,14 +71,14 @@ public class ActionItem : PooledObject {
     #region Listeners
     private void OnSpellCooldownStarted(SpellData spellData) {
 	    if (this.playerAction == spellData) {
-		    if (spellData.hasCharges && spellData.charges <= 0) {
-			    //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
-			    SetCooldownState(false);
-		    } else {
+		    // if (spellData.hasCharges && spellData.charges <= 0) {
+			   //  //if spell uses charges, but has no more, do not show cooldown icon even if it is in cooldown
+			   //  SetCooldownState(false);
+		    // } else {
 			    SetCooldownState(true);
 			    StartCooldownFill();
 			    // SetCooldownState(spellData.isInCooldown);
-		    }
+		    // }
 	    }
     }
     private void OnSpellCooldownFinished(SpellData spellData) {

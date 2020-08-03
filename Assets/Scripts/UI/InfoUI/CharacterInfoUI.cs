@@ -373,15 +373,19 @@ public class CharacterInfoUI : InfoUIBase {
     public void OnHoverTrait(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
-            Trait trait = activeCharacter.traitContainer.traits[index];
-            UIManager.Instance.ShowSmallInfo(trait.description);
+            Trait trait = activeCharacter.traitContainer.traits.ElementAtOrDefault(index);
+            if (trait != null) {
+                UIManager.Instance.ShowSmallInfo(trait.description);    
+            }
         }
     }
     public void OnHoverStatus(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
-            Trait trait = activeCharacter.traitContainer.statuses[index];
-            UIManager.Instance.ShowSmallInfo(trait.description);
+            Trait trait = activeCharacter.traitContainer.statuses.ElementAtOrDefault(index);
+            if (trait != null) {
+                UIManager.Instance.ShowSmallInfo(trait.description);    
+            }
         }
     }
     public void OnHoverOutTrait() {
