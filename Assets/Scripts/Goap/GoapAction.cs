@@ -287,8 +287,8 @@ public class GoapAction : ICrimeable {
         // }
         LocationGridTile tile = poiTarget.gridTileLocation;
         if (actor.gridTileLocation != null && tile != null) {
-            int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
-            distance = (int) (distance * 0.25f);
+            int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
+            distance = (int) (distance * 2f);
             if (actor.currentRegion != tile.structure.location) {
                 return distance + 100;
             }

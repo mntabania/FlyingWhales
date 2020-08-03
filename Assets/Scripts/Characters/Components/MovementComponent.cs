@@ -199,9 +199,7 @@ public class MovementComponent {
     #region Pathfinding
     public bool HasPathTo(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        //Must not dig out of Kennel
-        //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
-        if (!enableDigging || owner.currentStructure.structureType == STRUCTURE_TYPE.KENNEL) {
+        if (!CanDig()) {
             return PathfindingManager.Instance.HasPath(fromTile, toTile);
         } else {
             if (fromTile == null || toTile == null) { return false; }
@@ -224,9 +222,7 @@ public class MovementComponent {
     /// <returns></returns>
     public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile, bool allowDiggingWhenChecking = true) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        //Must not dig out of Kennel
-        //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
-        if (allowDiggingWhenChecking && enableDigging && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
+        if (allowDiggingWhenChecking && CanDig()) {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 
@@ -239,6 +235,19 @@ public class MovementComponent {
     #endregion
 
     #region Dig
+    public bool CanDig() {
+        //Must not dig out of Kennel
+        //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
+        if (enableDigging && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
+            if(owner.combatComponent.isInCombat) {
+                if(!(owner.stateComponent.currentState as CombatState).isAttacking || (owner.marker && owner.marker.hasFleePath)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     public void SetEnableDigging(bool state) {
         if (state) {
             _enableDiggingCounter++;
