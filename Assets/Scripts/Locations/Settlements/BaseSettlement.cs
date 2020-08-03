@@ -488,8 +488,24 @@ namespace Locations.Settlements {
                     locationGridTilesInSettlement.Remove(randomTile);
                 }    
             }
-            //default to true even if there are nounoccupied tiles in settlement 
+            //default to true even if there are no unoccupied tiles in settlement 
             return true;
+        }
+        public List<HexTile> GetSurroundingAreas() {
+            List<HexTile> areas = new List<HexTile>();
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile tile = tiles[i];
+                if (this is NPCSettlement npcSettlement && tile.region != npcSettlement.region) {
+                    continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
+                }
+                for (int j = 0; j < tile.AllNeighbours.Count; j++) {
+                    HexTile neighbour = tile.AllNeighbours[j];
+                    if (neighbour.settlementOnTile == null || neighbour.settlementOnTile != this) {
+                        areas.Add(neighbour);
+                    }
+                }
+            }
+            return areas;
         }
         #endregion
 

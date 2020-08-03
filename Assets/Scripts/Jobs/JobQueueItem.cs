@@ -40,7 +40,7 @@ public class JobQueueItem {
     /// <summary>
     /// Has this job been returned to the pool?
     /// </summary>
-    protected bool hasBeenReset;
+    public bool hasBeenReset { get; protected set; }
 
     public JobQueueItem() {
         id = -1;

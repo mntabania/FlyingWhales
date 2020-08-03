@@ -2936,7 +2936,70 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
             && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
     }
+    private bool CanTryToTakeSettlementJobInVision(out string invalidReason) {
+        if (isDead) {
+            invalidReason = "Character is dead.";
+            return false;
+        }
+        if (numOfActionsBeingPerformedOnThis > 0) {
+            invalidReason = $"Actions being performed on this is {numOfActionsBeingPerformedOnThis.ToString()}.";
+            return false;
+        }
+        if (!canPerform) {
+            invalidReason = "Character cannot perform";
+            return false;
+        }
+        if (currentActionNode != null) {
+            invalidReason = "Character has current action";
+            return false;
+        }
+        if (currentJob != null) {
+            invalidReason = "Character is in the middle of a job";
+            return false;
+        }
+        if (planner.status != GOAP_PLANNING_STATUS.NONE) {
+            invalidReason = "Character is planning";
+            return false;
+        }
+        if (marker == null || marker.hasFleePath) {
+            invalidReason = "Character has no marker or is fleeing";
+            return false;
+        }
+        if (stateComponent.currentState != null) {
+            invalidReason = "Character is in a state";
+            return false;
+        }
+        if (carryComponent.IsNotBeingCarried() == false) {
+            invalidReason = "Character is being carried";
+            return false;
+        }
+        if (interruptComponent.isInterrupted) {
+            invalidReason = "Character is interrupted";
+            return false;
+        }
+        invalidReason = "No reason";
+        return true;
+    }
     public void EndTickPerformJobs() {
+        //try to take settlement job that this character can see the target of.
+        // string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
+        if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
+            // debugLog += $"\n{name} Can take settlement job in vision.";
+            JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVision(this);
+            // debugLog += $"\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
+            if (jobToAssign != null && 
+                ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
+                (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
+                jobQueue.AddJobInQueue(jobToAssign);
+                // debugLog += $"\nJob was added to queue!";
+            } else {
+                // debugLog += $"\nCouldn't assign job!";
+            }    
+        } else {
+            // debugLog += $"\n{name} Cannot take settlement job in vision because \n{invalidReason}";
+        }
+        // logComponent.PrintLogIfActive(debugLog);
+        
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
             if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
                 PerformTopPriorityJob();
@@ -4203,6 +4266,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //    log += "Drop plan because this character is no longer the one assigned";
                 //    DropPlan(plan);
                 //}
+                SetCurrentJob(job);
                 logComponent.PrintLogIfActive(log);
                 //PlanGoapActions();
             }
