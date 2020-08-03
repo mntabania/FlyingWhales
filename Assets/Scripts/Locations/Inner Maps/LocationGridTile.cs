@@ -1124,11 +1124,32 @@ namespace Inner_Maps {
             }
             return false;
         }
+        /// <summary>
+        /// Is this tile part of an area that is next to the given settlement.
+        /// </summary>
+        /// <param name="settlement">The settlement to check</param>
+        /// <returns>True or false.</returns>
+        public bool IsNextToSettlementArea(BaseSettlement settlement) {
+            if (collectionOwner.isPartOfParentRegionMap == false) {
+                return false;
+            }
+            HexTile hexTile = collectionOwner.partOfHextile.hexTileOwner;
+            for (int i = 0; i < hexTile.AllNeighbours.Count; i++) {
+                HexTile neighbour = hexTile.AllNeighbours[i];
+                if (neighbour.settlementOnTile == settlement) {
+                    return true;
+                }
+            }
+            return false;
+        }
         public bool IsNextToOrPartOfSettlement(out BaseSettlement settlement) {
             return IsPartOfSettlement(out settlement) || IsNextToSettlement(out settlement);
         }
         public bool IsNextToOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
+        }
+        public bool IsNextToSettlementAreaOrPartOfSettlement(BaseSettlement settlement) {
+            return IsPartOfSettlement(settlement) || IsNextToSettlementArea(settlement);
         }
         public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();

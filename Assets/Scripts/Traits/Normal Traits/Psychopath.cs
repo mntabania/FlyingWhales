@@ -283,10 +283,10 @@ namespace Traits {
             return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead/* || target.isMissing*/;
         }
         public bool CreateHuntVictimJob() {
-            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM)) {
+            if (character.jobQueue.HasJob(JOB_TYPE.RITUAL_KILLING)) {
                 return false;
             }
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RITUAL_KILLING, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
                 LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {
@@ -305,11 +305,11 @@ namespace Traits {
             return true;
         }
         public bool CreateHuntVictimJob(out JobQueueItem producedJob) {
-            if (character.jobQueue.HasJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM)) {
+            if (character.jobQueue.HasJob(JOB_TYPE.RITUAL_KILLING)) {
                 producedJob = null;
                 return false;
             }
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RITUAL_KILLING, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
                 LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 if(outsideSettlementTile != null) {

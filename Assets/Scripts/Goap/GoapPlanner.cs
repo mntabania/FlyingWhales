@@ -34,6 +34,7 @@ public class GoapPlanner {
 
         //_numOfWaitingForGoapThread++;
         //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
         Character actor = owner;
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(actor, target, goal, isPersonalPlan, job));
     }
@@ -76,6 +77,7 @@ public class GoapPlanner {
         }
         //_numOfWaitingForGoapThread++;
         status = GOAP_PLANNING_STATUS.RUNNING;
+        Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} has started planning {job}");
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(owner, goalType, target, isPersonalPlan, job));
     }
     public void RecalculateJob(GoapPlanJob job) {

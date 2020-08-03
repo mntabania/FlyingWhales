@@ -1054,13 +1054,10 @@ public class ReactionComponent {
             //is not at his/her settlement's main storage
             if (resourcePile.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) == false || 
                 resourcePile.gridTileLocation.structure != actor.homeSettlement.mainStorage) {
-                bool createJob = true;
-                if (resourcePile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT || 
-                    resourcePile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT) {
-                    createJob = actor.traitContainer.HasTrait("Cannibal");
-                }
-                if (createJob) {
-                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);    
+                //do not create haul job for human and elven meat
+                if (resourcePile.tileObjectType != TILE_OBJECT_TYPE.ELF_MEAT && 
+                    resourcePile.tileObjectType != TILE_OBJECT_TYPE.HUMAN_MEAT) {
+                    actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
                 }
             }
         }

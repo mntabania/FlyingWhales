@@ -66,7 +66,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		
 		yield return null;
 		
-		if (WorldConfigManager.Instance.isTutorialWorld) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//pigs
 			HexTile pigTile = GridMap.Instance.map[2, 4];
 			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
@@ -78,6 +78,13 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GameFeature sheepGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
 			sheepGameFeature.SetSpawnType(SUMMON_TYPE.Sheep);
 			sheepTile.featureComponent.AddFeature(sheepGameFeature, sheepTile);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+			//Add 2 pigs 2 tiles away from village 
+			HexTile pigTile = GridMap.Instance.map[5, 5];
+			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
+			pigGameFeature.SetSpawnType(SUMMON_TYPE.Pig);
+			pigTile.featureComponent.AddFeature(pigGameFeature, pigTile);
+			pigTile.SetElevation(ELEVATION.PLAIN);
 		} else {
 			List<HexTile> gameChoices = GridMap.Instance.normalHexTiles.Where(h =>
 				h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES).ToList();

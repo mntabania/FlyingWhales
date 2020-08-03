@@ -215,18 +215,25 @@ public class MovementComponent {
         LocationGridTile targetTile = CollectionUtilities.GetRandomElement(toTile.locationGridTiles);
         return HasPathTo(targetTile);
     }
-    public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile) {
+    /// <summary>
+    /// Does this character have a path towards the target tile?
+    /// Even if that tile is part of a different region?
+    /// </summary>
+    /// <param name="toTile">The target tile</param>
+    /// <param name="allowDiggingWhenChecking">Should this function take into account whether or not digging has been enabled for this character</param>
+    /// <returns></returns>
+    public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile, bool allowDiggingWhenChecking = true) {
         LocationGridTile fromTile = owner.gridTileLocation;
         //Must not dig out of Kennel
         //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
-        if (!enableDigging || owner.currentStructure.structureType == STRUCTURE_TYPE.KENNEL) {
-            return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
-        } else {
+        if (allowDiggingWhenChecking && enableDigging && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 
             //If digging is enabled, always return true, because the digging will handle the blocked path
             return true;
+        } else {
+            return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
         }
     }
     #endregion
