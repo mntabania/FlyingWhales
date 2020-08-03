@@ -20,7 +20,10 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (characterThatWillDoJob.canPerform && characterThatWillDoJob.canMove && !characterThatWillDoJob.isDead && targetPOI is TileObject objectToBeInspected) {
                 if (objectToBeInspected.lastManipulatedBy is Player) {
-                    characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
+                    //Must not destroy even if suspicious if the tile object is edible and character is starving
+                    if (!objectToBeInspected.traitContainer.HasTrait("Edible") || !characterThatWillDoJob.needsComponent.isStarving) {
+                        characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
+                    }
                 }
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);

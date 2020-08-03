@@ -1165,7 +1165,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    if (_owner.marker) {
 		    _owner.marker.StopMovement();
 	    }
-	    _owner.CancelAllJobs();
+	    _owner.jobQueue.CancelAllJobs();
     }
     #endregion
 
@@ -1714,10 +1714,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (_owner.gridTileLocation != null) {
             LocationStructure targetStructure = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
                                                 _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, _owner);
-            buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { targetStructure });
-            buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(_owner));
-            _owner.jobQueue.AddJobInQueue(buryJob);
+            if (_owner.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomPassableTile())) {
+                GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, _owner);
+                buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { targetStructure });
+                buryJob.SetStillApplicableChecker(() => IsBuryJobStillApplicable(_owner));
+                _owner.jobQueue.AddJobInQueue(buryJob);
+            }
         }
     }
     #endregion

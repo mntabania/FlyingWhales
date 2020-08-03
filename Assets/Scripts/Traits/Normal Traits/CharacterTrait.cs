@@ -126,9 +126,10 @@ namespace Traits {
                         }
                     }
                 } else {
-                    if (owner.needsComponent.isStarving) {
-                        owner.jobComponent.CreateButcherJob(targetCharacter);
-                    } else if(owner.isNormalCharacter 
+                    //if (owner.needsComponent.isStarving) {
+                    //    owner.jobComponent.CreateButcherJob(targetCharacter);
+                    //} else 
+                    if(owner.isNormalCharacter 
                         && targetCharacter.isNormalCharacter 
                         && targetCharacter.gridTileLocation != null 
                         && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
@@ -230,7 +231,7 @@ namespace Traits {
         private void CheckAsCriminal() {
             if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME)) {
                 if (owner.jobQueue.jobsInQueue.Count > 0) {
-                    owner.CancelAllJobs();
+                    owner.jobQueue.CancelAllJobs();
                 }
                 // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
                 // owner.jobQueue.AddJobInQueue(job);

@@ -26,7 +26,8 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                     }
                 }
             } else {
-                Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.MALE);
+                Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && c.homeSettlement != null
+                    && c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null);
                 if (targetCharacter != null) {
                     log += $"\n-Target for make love is: " + targetCharacter.name;
                     if (character.movementComponent.HasPathToEvenIfDiffRegion(targetCharacter.gridTileLocation)) {
@@ -38,6 +39,10 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                         character.reactionComponent.SetDisguisedCharacter(null);
                         return true;
                     }
+                } else {
+                    log += $"\n-No Character to be targeted for make love, drop disguise";
+                    character.reactionComponent.SetDisguisedCharacter(null);
+                    return true;
                 }
             }
         } else {
@@ -48,8 +53,11 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
                 if(targetCharacter != null) {
                     log += $"\n-Target for disguise is: " + targetCharacter.name;
-                    if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
-                        return true;
+                    if(character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && c.homeSettlement != null
+                    && c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null) != null) {
+                        if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
+                            return true;
+                        }
                     }
                 }
             }

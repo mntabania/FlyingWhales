@@ -480,7 +480,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         StopMovement();
 
-        if (character.movementComponent.enableDigging) {
+        //Must not dig out of Kennel
+        //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
+        if (character.movementComponent.enableDigging && character.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
             LocationGridTile destinationTile = null;
             if (targetPOI != null) {
                 destinationTile = targetPOI.gridTileLocation;

@@ -608,29 +608,40 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction) {
                 //Killed by a character from another villager faction
                 if (IsInHomeSettlement()) {
-                    Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion);
-                    CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
-                    Revenant revenant = summon as Revenant;
-                    if (responsibleCharacter.partyComponent.hasParty) {
-                        for (int i = 0; i < responsibleCharacter.partyComponent.currentParty.members.Count; i++) {
-                            Character member = responsibleCharacter.partyComponent.currentParty.members[i];
-                            revenant.AddBetrayer(member);
-                        }
-                    } else {
-                        revenant.AddBetrayer(responsibleCharacter);
-                    }
-
-                    int numOfGhosts = UnityEngine.Random.Range(1, 4);
-                    //revenant.AdjustNumOfSummonedGhosts(numOfGhosts);
-                    for (int i = 0; i < numOfGhosts; i++) {;
-                        Character betrayer = revenant.GetRandomBetrayer();
-                        Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
-                        (ghost as Ghost).SetBetrayedBy(betrayer);
-                        CharacterManager.Instance.PlaceSummon(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
-                    }
+                    GameDate dueDate = GameManager.Instance.Today();
+                    dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+                    SchedulingManager.Instance.AddEntry(dueDate, () => SpawnRevenant(responsibleCharacter, homeSettlement, homeRegion), null);
                 }
             }
         }
+    }
+    private void SpawnRevenant(Character responsibleCharacter, BaseSettlement homeSettlement, Region homeRegion) {
+        Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion);
+        CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
+        Revenant revenant = summon as Revenant;
+        if (responsibleCharacter.partyComponent.hasParty) {
+            for (int i = 0; i < responsibleCharacter.partyComponent.currentParty.members.Count; i++) {
+                Character member = responsibleCharacter.partyComponent.currentParty.members[i];
+                revenant.AddBetrayer(member);
+            }
+        } else {
+            revenant.AddBetrayer(responsibleCharacter);
+        }
+
+        int numOfGhosts = UnityEngine.Random.Range(1, 4);
+        revenant.AdjustNumOfSummonedGhosts(numOfGhosts);
+        for (int i = 0; i < numOfGhosts; i++) {
+            Character betrayer = revenant.GetRandomBetrayer();
+            Summon ghost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Ghost, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion, homeStructure: currentStructure);
+            (ghost as Ghost).SetBetrayedBy(betrayer);
+            CharacterManager.Instance.PlaceSummon(ghost, homeSettlement.GetRandomHexTile().GetRandomTile());
+        }
+
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "spawn_revenant");
+        log.AddToFillers(revenant, revenant.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     #endregion
 
@@ -939,7 +950,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
         ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
-        CancelAllJobs(JOB_TYPE.APPREHEND);
+        jobQueue.CancelAllJobs(JOB_TYPE.APPREHEND);
         //All apprehend jobs that are being done by this character must be unassigned
         //for (int i = 0; i < allGoapPlans.Count; i++) {
         //    GoapPlan plan = allGoapPlans[i];
@@ -951,7 +962,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void CancelOrUnassignRemoveTraitRelatedJobs() {
         ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
-        CancelAllJobs(JOB_TYPE.REMOVE_STATUS);
+        jobQueue.CancelAllJobs(JOB_TYPE.REMOVE_STATUS);
         //TODO:
         //All remove trait jobs that are being done by this character must be unassigned
         //for (int i = 0; i < allGoapPlans.Count; i++) {
@@ -1058,36 +1069,36 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
     }
-    public void CancelAllJobs(string reason = "") {
-        //AdjustIsWaitingForInteraction(1);
-        //StopCurrentActionNode(reason: reason);
-        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-            if (jobQueue.jobsInQueue[i].CancelJob(reason: reason)) {
-                i--;
-            }
-        }
-        //if (homeNpcSettlement != null) {
-        //    homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(this);
-        //}
+    //public void CancelAllJobs(string reason = "") {
+    //    //AdjustIsWaitingForInteraction(1);
+    //    //StopCurrentActionNode(reason: reason);
+    //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+    //        if (jobQueue.jobsInQueue[i].CancelJob(reason: reason)) {
+    //            i--;
+    //        }
+    //    }
+    //    //if (homeNpcSettlement != null) {
+    //    //    homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(this);
+    //    //}
 
-        //StopCurrentAction(false, reason: reason);
-        //for (int i = 0; i < allGoapPlans.Count; i++) {
-        //    if (DropPlan(allGoapPlans[i])) {
-        //        i--;
-        //    }
-        //}
-        //AdjustIsWaitingForInteraction(-1);
-    }
-    public void CancelAllJobs(JOB_TYPE jobType) {
-        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-            JobQueueItem job = jobQueue.jobsInQueue[i];
-            if (job.jobType == jobType) {
-                if (job.CancelJob()) {
-                    i--;
-                }
-            }
-        }
-    }
+    //    //StopCurrentAction(false, reason: reason);
+    //    //for (int i = 0; i < allGoapPlans.Count; i++) {
+    //    //    if (DropPlan(allGoapPlans[i])) {
+    //    //        i--;
+    //    //    }
+    //    //}
+    //    //AdjustIsWaitingForInteraction(-1);
+    //}
+    //public void CancelAllJobs(JOB_TYPE jobType) {
+    //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+    //        JobQueueItem job = jobQueue.jobsInQueue[i];
+    //        if (job.jobType == jobType) {
+    //            if (job.CancelJob()) {
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //}
     public void CancelAllJobsExceptForCurrent(bool shouldDoAfterEffect = true) {
         if (currentJob != null) {
             for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -1095,6 +1106,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (job != currentJob) {
                     if (job.CancelJob(shouldDoAfterEffect)) {
                         i--;
+                    }
+                }
+            }
+        }
+    }
+    public void CancelAllJobsExceptForCurrent(bool shouldDoAfterEffect = true, params JOB_TYPE[] jobType) {
+        if (currentJob != null) {
+            for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem job = jobQueue.jobsInQueue[i];
+                if (job != currentJob) {
+                    for (int j = 0; j < jobType.Length; j++) {
+                        if (job.jobType == jobType[j]) {
+                            if (job.CancelJob(shouldDoAfterEffect)) {
+                                i--;
+                            }
+                            break;
+                        }
                     }
                 }
             }
@@ -3177,6 +3205,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    _isFlirting = state;
     //}
     public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
+        //if (allowDuplicates || advertisedActions.Contains(type) == false) {
+        //    advertisedActions.Add(type);
+        //}
         advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
@@ -3907,6 +3938,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         planner.RecalculateJob(currentTopPrioJob);
                     }
                 } else {
+                    //If character is Troll and job is Move Character, do not perform if target is not in vision
+                    if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.MOVE_CHARACTER) {
+                        if(!marker || !marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character)) {
+                            log = $"{log}\n-Character is troll and job is Move Character and target is no longer in vision, cancel job";
+                            logComponent.PrintLogIfActive(log);
+                            currentTopPrioJob.CancelJob(false);
+                            return;
+                        }
+                    }
+
                     //Do not perform action if the target character is still in another character's party, this means that he/she is probably being abducted
                     //Wait for the character to be in its own party before doing the action
                     if (currentNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -4611,7 +4652,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //marker.ClearTerrifyingObjects();
         needsComponent.OnCharacterLeftLocation(currentRegion);
 
-        CancelAllJobs();
+        jobQueue.CancelAllJobs();
         UnsubscribeSignals();
         SetIsConversing(false);
         SetPOIState(POI_STATE.INACTIVE);
@@ -5411,7 +5452,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, GoapPlanJob.Target_Already_Dead_Reason);
             
             behaviourComponent.OnDeath();
-            CancelAllJobs();
+            jobQueue.CancelAllJobs();
 
             DropAllItems(deathTile);
 

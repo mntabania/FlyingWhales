@@ -83,7 +83,7 @@ public class Summon : Character {
             //}
             //ForceCancelAllJobsTargettingCharacter(false, "target is already dead");
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target is already dead");
-            CancelAllJobs();
+            jobQueue.CancelAllJobs();
             //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
             //if (currentActionNode != null) {
             //    currentActionNode.StopActionNode(false);
@@ -157,7 +157,7 @@ public class Summon : Character {
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
             behaviourComponent.OnDeath();
-            CancelAllJobs();
+            jobQueue.CancelAllJobs();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;

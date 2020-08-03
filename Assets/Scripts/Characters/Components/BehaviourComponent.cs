@@ -190,7 +190,7 @@ public class BehaviourComponent {
             } else {
                 assignedTargetSettlement = null;
             }
-            owner.CancelAllJobs();
+            owner.jobQueue.CancelAllJobs();
             if (isHarassing) {
                 assignedTargetSettlement.IncreaseIsBeingHarassedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
@@ -218,7 +218,7 @@ public class BehaviourComponent {
             //} else {
             //    assignedTargetSettlement = null;
             //}
-            owner.CancelAllJobs();
+            owner.jobQueue.CancelAllJobs();
             if (isDefending) {
                 assignedTargetHex.IncreaseIsBeingDefendedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
@@ -246,7 +246,7 @@ public class BehaviourComponent {
             } else {
                 assignedTargetSettlement = null;
             }
-            owner.CancelAllJobs();
+            owner.jobQueue.CancelAllJobs();
             if (isInvading) {
                 assignedTargetSettlement.IncreaseIsBeingInvadedCount();
                 combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
@@ -439,7 +439,7 @@ public class BehaviourComponent {
         if (isAttackingDemonicStructure != state) {
             isAttackingDemonicStructure = state;
             SetDemonicStructureTarget(target);
-            owner.CancelAllJobs();
+            owner.jobQueue.CancelAllJobs();
             if (isAttackingDemonicStructure) {
                 combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);

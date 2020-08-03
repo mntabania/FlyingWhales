@@ -23,7 +23,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 Character character = addedTo as Character;
-                character.CancelAllJobs();
+                character.jobQueue.CancelAllJobs();
                 // _behaviourComponentsBeforeDazed = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
                 // character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
                 //     {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(DazedBehaviour))});

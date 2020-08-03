@@ -537,6 +537,20 @@ public class Region {
         }
         return null;
     }
+    public Character GetRandomCharacterThatMeetCriteria(System.Func<Character, bool> validityChecker) {
+        List<Character> validCharacters = null;
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
+            if (validityChecker.Invoke(character)) {
+                if (validCharacters == null) { validCharacters = new List<Character>(); }
+                validCharacters.Add(character);
+            }
+        }
+        if (validCharacters != null) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(validCharacters);
+        }
+        return null;
+    }
     #endregion
 
     #region Faction

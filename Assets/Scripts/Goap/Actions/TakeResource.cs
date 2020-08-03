@@ -49,9 +49,34 @@ public class TakeResource : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = 0;
+        if(job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT) {
+            if(target is ElfMeat || target is HumanMeat) {
+                if (actor.traitContainer.HasTrait("Cannibal")) {
+                    int currCost = UtilityScripts.Utilities.Rng.Next(450, 501);
+                    cost += currCost;
+                    costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Cannibal)";
+                } else if (actor.needsComponent.isStarving) {
+                    int currCost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                    cost += currCost;
+                    costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Starving)";
+                } else {
+                    cost += 2000;
+                    costLog += $" +2000(Obtain Personal Food, Elf/Human Meat, not Starving/Cannibal)";
+                }
+            } else {
+                int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
+                cost = currCost;
+                costLog += $" +{currCost}(Obtain Personal Food, not Elf/Human Meat)";
+            }
+        } else {
+            int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
+            cost = currCost;
+            costLog += $" +{currCost}(not Obtain Personal Food)";
+        }
         actor.logComponent.AppendCostLog(costLog);
-        return 10;
+        return cost;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);

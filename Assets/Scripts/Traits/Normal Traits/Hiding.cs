@@ -19,7 +19,7 @@ namespace Traits {
 			base.OnAddTrait(addedTo);
 			if (addedTo is Character character) {
 				_owner = character;
-				_owner.CancelAllJobs();
+				_owner.jobQueue.CancelAllJobs();
 				character.behaviourComponent.AddBehaviourComponent(typeof(DesiresIsolationBehaviour));
 				StartCheckingForCowering();
 			}

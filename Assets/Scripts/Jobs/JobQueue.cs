@@ -590,9 +590,9 @@ public class JobQueue {
             }
         }
     }
-    public void CancelAllJobs() {
+    public void CancelAllJobs(string reason = "") {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].CancelJob()) {
+            if (jobsInQueue[i].CancelJob(reason: reason)) {
                 i--;
             }
         }

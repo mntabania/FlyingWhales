@@ -343,7 +343,7 @@ namespace Traits {
             //form.marker.ClearTerrifyingObjects();
             form.needsComponent.OnCharacterLeftLocation(form.currentRegion);
 
-            form.CancelAllJobs();
+            form.jobQueue.CancelAllJobs();
             form.UnsubscribeSignals();
             form.SetIsConversing(false);
             form.SetPOIState(POI_STATE.INACTIVE);

@@ -511,6 +511,46 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            List<T> objs = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);
+                if (structureTileObjects != null && structureTileObjects.Count > 0) {
+                    if(objs == null) {
+                        objs = structureTileObjects;
+                    } else {
+                        objs.AddRange(structureTileObjects);
+                    }
+                }
+            }
+            if(objs != null && objs.Count > 0) {
+                return objs[UnityEngine.Random.Range(0, objs.Count)];
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            for (int i = 0; i < allStructures.Count; i++) {
+                T structureTileObject = allStructures[i].GetFirstTileObjectOfTypeThatMeetCriteria(validityChecker);
+                if (structureTileObject != null) {
+                    return structureTileObject;
+                }
+            }
+            return null;
+        }
+        public List<T> GetTileObjectsOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            List<T> objs = null;
+            for (int i = 0; i < allStructures.Count; i++) {
+                List<T> structureTileObjects = allStructures[i].GetTileObjectsOfType(validityChecker);
+                if (structureTileObjects != null && structureTileObjects.Count > 0) {
+                    if (objs == null) {
+                        objs = structureTileObjects;
+                    } else {
+                        objs.AddRange(structureTileObjects);
+                    }
+                }
+            }
+            return objs;
+        }
         #endregion
     }
 }

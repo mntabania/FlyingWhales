@@ -35,7 +35,7 @@ namespace Traits {
                     character.marker.BerserkedMarker();
                     character.marker.visionCollider.VoteToUnFilterVision();
                 }
-                character.CancelAllJobs();
+                character.jobQueue.CancelAllJobs();
                 character.behaviourComponent.AddBehaviourComponent(typeof(BerserkBehaviour));
             }
         }

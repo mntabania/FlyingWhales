@@ -67,7 +67,7 @@ public class Dragon : Summon {
             willLeaveWorld = state;
             if (willLeaveWorld) {
                 combatComponent.SetCombatMode(COMBAT_MODE.Passive);
-                CancelAllJobs();
+                jobQueue.CancelAllJobs();
                 combatComponent.ClearHostilesInRange();
                 combatComponent.ClearAvoidInRange();
             }

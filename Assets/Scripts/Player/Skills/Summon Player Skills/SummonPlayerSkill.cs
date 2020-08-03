@@ -22,7 +22,7 @@ public class SummonPlayerSkill : SpellData {
         } else {
             summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    
         }
-        summon.CancelAllJobs();
+        summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
         base.ActivateAbility(targetTile);
     }

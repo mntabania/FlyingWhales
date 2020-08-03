@@ -199,7 +199,9 @@ public class MovementComponent {
     #region Pathfinding
     public bool HasPathTo(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        if (!enableDigging) {
+        //Must not dig out of Kennel
+        //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
+        if (!enableDigging || owner.currentStructure.structureType == STRUCTURE_TYPE.KENNEL) {
             return PathfindingManager.Instance.HasPath(fromTile, toTile);
         } else {
             if (fromTile == null || toTile == null) { return false; }
@@ -215,7 +217,9 @@ public class MovementComponent {
     }
     public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        if (!enableDigging) {
+        //Must not dig out of Kennel
+        //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
+        if (!enableDigging || owner.currentStructure.structureType == STRUCTURE_TYPE.KENNEL) {
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
         } else {
             if (fromTile == null || toTile == null) { return false; }

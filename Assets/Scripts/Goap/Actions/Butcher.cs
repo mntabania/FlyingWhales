@@ -38,40 +38,58 @@ public class Butcher : GoapAction {
                 if (actor.isNormalCharacter == false) {
                     cost += 10;
                     costLog += " +10(Actor is not a normal character)";
-                } else if (actor.traitContainer.HasTrait("Cannibal")) {
-                    if (actor.traitContainer.HasTrait("Malnourished")) {
-                        if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
-                            int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
-                            cost += currCost;
-                            costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
-                        } else if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-                            cost += 300;
-                            costLog += " +300(Cannibal, Malnourished, Human/Elf)";
-                        }
-                    } else {
-                        if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
-                            cost += 2000;
-                            costLog += " +2000(Cannibal, Friend/Close)";
-                        } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
-                                   !actor.needsComponent.isStarving) {
-                            cost += 2000;
-                            costLog += " +2000(Cannibal, Human/Elf, not Starving)";
-                        }
-                    }
                 } else {
-                    if (actor.traitContainer.HasTrait("Malnourished")) {
-                        if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
-                            int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
-                            cost += currCost;
-                            costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
-                        } else if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-                            cost += 500;
-                            costLog += " +500(not Cannibal, Malnourished, Human/Elf)";
+                    if (actor.needsComponent.isStarving) {
+                        if (deadCharacter.isNormalCharacter) {
+                            if (actor.traitContainer.HasTrait("Malnourished")) {
+                                if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                                    cost += 200;
+                                    costLog += $" +200(Starving, Malnourished, Friend/Close)";
+                                }
+                            } else {
+                                if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                                    cost += 300;
+                                    costLog += $" +300(Starving, Not Malnourished, Friend/Close)";
+                                }
+                            }
                         }
                     } else {
-                        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-                            cost += 2000;
-                            costLog += " +2000(not Cannibal, Human/Elf)";
+                        if (actor.traitContainer.HasTrait("Cannibal")) {
+                            if (actor.traitContainer.HasTrait("Malnourished")) {
+                                if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                                    int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
+                                    cost += currCost;
+                                    costLog += $" +{currCost}(Cannibal, Malnourished, Friend/Close)";
+                                } else if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                                    cost += 300;
+                                    costLog += " +300(Cannibal, Malnourished, Human/Elf)";
+                                }
+                            } else {
+                                if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                                    cost += 2000;
+                                    costLog += " +2000(Cannibal, Friend/Close)";
+                                } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                                           !actor.needsComponent.isStarving) {
+                                    cost += 2000;
+                                    costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                                }
+                            }
+                        } else {
+                            if (actor.traitContainer.HasTrait("Malnourished")) {
+                                if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                                    int currCost = UtilityScripts.Utilities.Rng.Next(100, 151);
+                                    cost += currCost;
+                                    costLog += $" +{currCost}(not Cannibal, Malnourished, Friend/Close)";
+                                } else if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                                    cost += 500;
+                                    costLog += " +500(not Cannibal, Malnourished, Human/Elf)";
+                                }
+                            } else {
+                                if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                                    cost += 2000;
+                                    costLog += " +2000(not Cannibal, Human/Elf)";
+                                }
+                            }
                         }
                     }
                 }

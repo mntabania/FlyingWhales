@@ -52,7 +52,9 @@ public class DepositResourcePile : GoapAction {
         SetState("Deposit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        return 3;
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        actor.logComponent.AppendCostLog(costLog);
+        return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         object[] otherData = node.otherData;

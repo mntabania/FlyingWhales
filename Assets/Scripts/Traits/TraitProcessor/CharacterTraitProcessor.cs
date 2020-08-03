@@ -147,7 +147,9 @@ namespace Traits {
                 character.needsComponent.AdjustHappinessDecreaseRate(Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
             } else if (trait.name == "Fast") {
                 character.movementComponent.AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
-            } 
+            } else if (trait.name == "Full") {
+                character.CancelAllJobsExceptForCurrent(false, JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT); //Reference: https://trello.com/c/0n888PTO/1597-fullness-recovery-on-sight-can-duplicate-with-normal-fullness-recovery
+            }
             //else if (trait.name == "Shellshocked") {
             //    character.AdjustMoodValue(-30, trait, trait.gainedFromDoing);
             //} 

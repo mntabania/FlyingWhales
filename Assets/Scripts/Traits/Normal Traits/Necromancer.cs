@@ -40,7 +40,7 @@ namespace Traits {
             owner.MigrateHomeStructureTo(null);
             owner.ClearTerritory();
             AdjustEnergy(5);
-            owner.CancelAllJobs();
+            owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

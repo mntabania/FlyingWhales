@@ -437,8 +437,35 @@ namespace Inner_Maps.Location_Structures {
             }
             return objs;
         }
+        public T GetRandomTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            List<T> objs = null;
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (validityChecker.Invoke(obj)) {
+                        if (objs == null) { objs = new List<T>(); }
+                        objs.Add(obj);
+                    }
+                }
+            }
+            if(objs != null && objs.Count > 0) {
+                return objs[UnityEngine.Random.Range(0, objs.Count)];
+            }
+            return null;
+        }
+        public T GetFirstTileObjectOfTypeThatMeetCriteria<T>(System.Func<T, bool> validityChecker) where T : TileObject {
+            for (int i = 0; i < pointsOfInterest.Count; i++) {
+                IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+                if (poi is T obj) {
+                    if (validityChecker.Invoke(obj)) {
+                        return obj;
+                    }
+                }
+            }
+            return null;
+        }
         public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
-            List<TileObject> objs = new List<TileObject>();
+            //List<TileObject> objs = new List<TileObject>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
                 if (poi is TileObject) {
@@ -451,7 +478,7 @@ namespace Inner_Maps.Location_Structures {
             return null;
         }
         public T GetTileObjectOfType<T>() where T : TileObject{
-            List<TileObject> objs = new List<TileObject>();
+            //List<TileObject> objs = new List<TileObject>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
                 if (poi is T obj) {
