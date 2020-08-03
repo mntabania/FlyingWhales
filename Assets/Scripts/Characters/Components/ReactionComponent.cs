@@ -514,7 +514,13 @@ public class ReactionComponent {
         if (targetCharacter.reactionComponent.disguisedCharacter != null) {
             disguisedTarget = targetCharacter.reactionComponent.disguisedCharacter;
         }
-        if (disguisedActor.IsHostileWith(disguisedTarget)) {
+        bool isHostile = false;
+        if (disguisedTarget != targetCharacter && targetCharacter is SeducerSummon && !disguisedActor.isNormalCharacter) {
+            isHostile = disguisedActor.IsHostileWith(targetCharacter);
+        } else {
+            isHostile = disguisedActor.IsHostileWith(disguisedTarget);
+        }
+        if (isHostile) {
             debugLog += "\n-Target is hostile";
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null) {
                 debugLog += "\n-Actor is a Troll and target is a Villager and actor has a home structure";
