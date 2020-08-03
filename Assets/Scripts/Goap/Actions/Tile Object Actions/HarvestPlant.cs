@@ -59,7 +59,10 @@ public class HarvestPlant : GoapAction {
             
             List<LocationGridTile> choices = poiTarget.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true, includeImpassable: false);
             if (choices.Count > 0) {
-                CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, CollectionUtilities.GetRandomElement(choices));
+                FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, CollectionUtilities.GetRandomElement(choices));
+                if (goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter) {
+                    goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+                }
             }
         }else {
             LocationGridTile tile = poiTarget.gridTileLocation;

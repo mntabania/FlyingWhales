@@ -1148,6 +1148,9 @@ namespace Inner_Maps {
         public bool IsNextToOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
         }
+        public bool IsNextToSettlementAreaOrPartOfSettlement(BaseSettlement settlement) {
+            return IsPartOfSettlement(settlement) || IsNextToSettlementArea(settlement);
+        }
         public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false, bool includeImpassable = true) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
             int mapSizeX = parentMap.map.GetUpperBound(0);

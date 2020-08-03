@@ -586,11 +586,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			target, _owner);
 		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target));
 		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
+		// job.SetOnUnassignJobAction(OnUnassignRestrain);
 		_owner.AddToAvailableJobs(job, 0);
 	}
+	// private void OnUnassignRestrain(Character character, JobQueueItem job) {
+	// 	//force cancel restrain job when 
+	// 	job.ForceCancelJob(false);
+	// }
 	private bool IsRestrainJobStillApplicable(Character target) {
 		return target.traitContainer.HasTrait("Restrained") == false && target.gridTileLocation != null
-		    && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner);
+		    && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner);
 	}
 	#endregion
 

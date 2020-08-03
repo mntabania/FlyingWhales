@@ -471,7 +471,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (target.gridTileLocation == null || target.isDead) {
 			return false;
 		}
-		if (target.gridTileLocation.IsNextToOrPartOfSettlement(job.originalOwner as NPCSettlement) == false) {
+		if (target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(job.originalOwner as NPCSettlement) == false) {
 			return false;
 		}
 		if (target.traitContainer.HasTrait("Criminal")) {
@@ -768,22 +768,35 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
-    public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossible = false) {
+    public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossibleWithoutDigging = false) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    LocationGridTile chosenTile;
 		    if (_owner.homeStructure != null) {
-                if (checkIfPathPossible) {
+                if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = _owner.homeStructure.passableTiles
-                        .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+                        .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t, false)).ToList();
 				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
 			    } else {
 				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);    
 			    }
 		    } else if (_owner.homeSettlement != null) {
-                chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-            } else if(_owner.territorries.Count > 0) {
+			    chosenTile = checkIfPathPossibleWithoutDigging ? 
+				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t, false)) : 
+				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+		    } else if(_owner.territorries.Count > 0) {
 			    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
-			    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+			    if (checkIfPathPossibleWithoutDigging) {
+				    List<LocationGridTile> choices = chosenTerritory.locationGridTiles
+					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t, false)).ToList();
+				    if (choices.Count > 0) {
+					    chosenTile = CollectionUtilities.GetRandomElement(choices);	    
+				    } else {
+					    //only added this so there is a fallback if ever no valid tiles were found.
+					    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
+				    }
+			    } else {
+				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
+			    }
 		    } else {
                 if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                     if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
@@ -1932,7 +1945,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     private bool IsApprehendStillApplicable(Character target, NPCSettlement settlement) {
         bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != settlement.prison;
-        return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement(settlement) && isApplicable;
+        return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(settlement) && isApplicable;
     }
     #endregion
 
