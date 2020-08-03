@@ -156,6 +156,7 @@ public class SpellItem : NameplateItem<SpellData> {
         button.name = "Button";
         toggle.name = "Toggle";
         SetInteractableState(true);
+        SetCooldownState(false);
         spellData = null;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         Messenger.RemoveListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
