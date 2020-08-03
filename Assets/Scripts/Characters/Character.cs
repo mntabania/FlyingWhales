@@ -1807,8 +1807,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 && UtilityScripts.Utilities.IsInRange(y, 0, currentRegion.innerMap.height)) {
                 return currentRegion.innerMap.map[x, y];
             }
-            int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width);
-            int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height);
+            int xCoordinate = Mathf.Clamp(x, 0, currentRegion.innerMap.width - 1);
+            int yCoordinate = Mathf.Clamp(y, 0, currentRegion.innerMap.height -1);
             return currentRegion.innerMap.map[xCoordinate, yCoordinate];
         }
         return null;
@@ -3013,7 +3013,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
         if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
             // debugLog += $"\n{name} Can take settlement job in vision.";
-            JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVision(this);
+            JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVisionExcept(this, JOB_TYPE.CRAFT_OBJECT);
             // debugLog += $"\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
             if (jobToAssign != null && 
                 ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 

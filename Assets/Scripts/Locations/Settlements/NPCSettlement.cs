@@ -981,6 +981,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return null;
     }
+    public JobQueueItem GetFirstJobBasedOnVisionExcept(Character character, params JOB_TYPE[] jobTypes) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            if (job.assignedCharacter == null && job is GoapPlanJob goapJob && !jobTypes.Contains(goapJob.jobType)) {
+                if (goapJob.targetPOI != null && character.marker.inVisionPOIs.Contains(goapJob.targetPOI) &&
+                    character.jobQueue.CanJobBeAddedToQueue(goapJob)) {
+                    return goapJob;
+                }
+            }
+        }
+        return null;
+    }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
         if (affectedStructure == mainStorage && (objectThatTriggeredChange == null 
              || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION 
