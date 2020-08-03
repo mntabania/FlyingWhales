@@ -353,34 +353,34 @@ public class MakeLove : GoapAction {
     private Bed GetValidBedForActor(Character actor, [NotNull]Character target) {
         if (actor is Summon) {
             //check un owned dwellings for possible beds
-            Bed nearestBed = null;
-            if (target.homeSettlement != null) {
-                List<Bed> beds = target.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0);
-                float nearestDistance = 0f;
-                for (int i = 0; i < beds.Count; i++) {
-                    Bed bed = beds[i];
-                    float distanceFromActor = actor.gridTileLocation.GetDistanceTo(bed.gridTileLocation);
-                    if (nearestBed == null || distanceFromActor < nearestDistance) {
-                        nearestBed = bed;
-                        nearestDistance = distanceFromActor;
-                    }
-                }
-            }
-            //List<Dwelling> dwellings =
-            //    actor.currentRegion.GetStructuresAtLocation<Dwelling>(STRUCTURE_TYPE.DWELLING);
             //Bed nearestBed = null;
-            //float nearestDistance = 0f;
-            //for (int i = 0; i < dwellings.Count; i++) {
-            //    Dwelling currDwelling = dwellings[i];
-            //    Bed dwellingBed = currDwelling.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-            //    if (dwellingBed != null && dwellingBed.mapObjectState == MAP_OBJECT_STATE.BUILT && dwellingBed.IsAvailable() && dwellingBed.GetActiveUserCount() == 0) {
-            //        float distanceFromActor = actor.gridTileLocation.GetDistanceTo(dwellingBed.gridTileLocation);
+            //if (target.homeSettlement != null) {
+            //    List<Bed> beds = target.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0);
+            //    float nearestDistance = 0f;
+            //    for (int i = 0; i < beds.Count; i++) {
+            //        Bed bed = beds[i];
+            //        float distanceFromActor = actor.gridTileLocation.GetDistanceTo(bed.gridTileLocation);
             //        if (nearestBed == null || distanceFromActor < nearestDistance) {
-            //            nearestBed = dwellingBed;
+            //            nearestBed = bed;
             //            nearestDistance = distanceFromActor;
             //        }
             //    }
             //}
+            List<Dwelling> dwellings =
+                actor.currentRegion.GetStructuresAtLocation<Dwelling>(STRUCTURE_TYPE.DWELLING);
+            Bed nearestBed = null;
+            float nearestDistance = 0f;
+            for (int i = 0; i < dwellings.Count; i++) {
+                Dwelling currDwelling = dwellings[i];
+                Bed dwellingBed = currDwelling.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+                if (dwellingBed != null && dwellingBed.mapObjectState == MAP_OBJECT_STATE.BUILT && dwellingBed.IsAvailable() && dwellingBed.GetActiveUserCount() == 0) {
+                    float distanceFromActor = actor.gridTileLocation.GetDistanceTo(dwellingBed.gridTileLocation);
+                    if (nearestBed == null || distanceFromActor < nearestDistance) {
+                        nearestBed = dwellingBed;
+                        nearestDistance = distanceFromActor;
+                    }
+                }
+            }
             return nearestBed;
         } else {
             if(actor.homeStructure != null) {
