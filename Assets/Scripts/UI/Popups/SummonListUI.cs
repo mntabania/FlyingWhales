@@ -49,7 +49,7 @@ public class SummonListUI : PopupMenuBase {
         item.SetAsDefaultBehaviour();
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
 
-        if (TraitManager.Instance.allTraits.ContainsKey(summon.characterClass.traitNameOnTamedByPlayer)) {
+        if (!string.IsNullOrEmpty(summon.characterClass.traitNameOnTamedByPlayer) && TraitManager.Instance.allTraits.ContainsKey(summon.characterClass.traitNameOnTamedByPlayer)) {
             Trait trait = TraitManager.Instance.allTraits[summon.characterClass.traitNameOnTamedByPlayer];
             item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.description, _hoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    

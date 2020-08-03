@@ -639,7 +639,7 @@ public class CombatState : CharacterState {
                     case JOB_TYPE.APPREHEND:
                         combatReason = "Apprehend";
                         break;
-                    case JOB_TYPE.HUNT_PSYCHOPATH_VICTIM:
+                    case JOB_TYPE.RITUAL_KILLING:
                         combatReason = "Ritual Killing";
                         break;
                     case JOB_TYPE.BERSERK_ATTACK:

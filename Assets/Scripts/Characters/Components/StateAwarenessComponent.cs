@@ -124,7 +124,7 @@ public class StateAwarenessComponent {
             } else {
                 Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
                 if(psychopath.targetVictim == target) {
-                    owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM);
+                    owner.jobQueue.CancelAllJobs(JOB_TYPE.RITUAL_KILLING);
                     psychopath.SetTargetVictim(null);
                 }
             }
@@ -137,7 +137,7 @@ public class StateAwarenessComponent {
             } else {
                 Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
                 if (psychopath.targetVictim == target) {
-                    owner.jobQueue.CancelAllJobs(JOB_TYPE.HUNT_PSYCHOPATH_VICTIM);
+                    owner.jobQueue.CancelAllJobs(JOB_TYPE.RITUAL_KILLING);
                     psychopath.SetTargetVictim(null);
                 }
             }

@@ -184,7 +184,7 @@ public class Assault : GoapAction {
         JOB_TYPE jobType = goapNode.associatedJobType;
         if (jobType == JOB_TYPE.APPREHEND) {
             reason = "Apprehension";
-        } else if (jobType == JOB_TYPE.HUNT_PSYCHOPATH_VICTIM) {
+        } else if (jobType == JOB_TYPE.RITUAL_KILLING) {
             reason = "Hunting victim";
         } else if (jobType == JOB_TYPE.PRODUCE_FOOD) {
             reason = "Hunting for food";
