@@ -491,6 +491,12 @@ namespace Inner_Maps {
             summary = $"{summary}\n\tPersonal Job Queue: ";
             summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
+            summary = $"{summary}\n\tHostiles in Range: ";
+            summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
+            summary = $"{summary}\n\tAvoid in Range: ";
+            summary = character.combatComponent.avoidInRange.Count > 0 ? character.combatComponent.avoidInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tPOI's in Vision: ";
             summary = character.marker.inVisionPOIs.Count > 0 ? character.marker.inVisionPOIs.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
@@ -499,13 +505,7 @@ namespace Inner_Maps {
             
             summary = $"{summary}\n\tPOI's in Range but different structures: ";
             summary = character.marker.inVisionPOIsButDiffStructure.Count > 0 ? character.marker.inVisionPOIsButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
-            
-            summary = $"{summary}\n\tHostiles in Range: ";
-            summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
-            
-            summary = $"{summary}\n\tAvoid in Range: ";
-            summary = character.combatComponent.avoidInRange.Count > 0 ? character.combatComponent.avoidInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
-            
+
             return summary;
         }
         #endregion
