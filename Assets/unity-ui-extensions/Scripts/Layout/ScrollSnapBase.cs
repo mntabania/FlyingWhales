@@ -124,7 +124,7 @@ namespace UnityEngine.UI.Extensions
         public SelectionChangeEndEvent OnSelectionChangeEndEvent { get { return m_OnSelectionChangeEndEvent; } set { m_OnSelectionChangeEndEvent = value; } }
 
         // Use this for initialization
-        void Awake()
+        public void Awake()
         {
             if (_scroll_rect == null)
             {
@@ -164,7 +164,7 @@ namespace UnityEngine.UI.Extensions
             {
                 if (_screensContainer.transform.childCount > 0)
                 {
-                    Debug.LogError("ScrollRect Content has children, this is not supported when using managed Child Objects\n Either remove the ScrollRect Content children or clear the ChildObjects array");
+                    // Debug.LogError("ScrollRect Content has children, this is not supported when using managed Child Objects\n Either remove the ScrollRect Content children or clear the ChildObjects array");
                     return;
                 }
 

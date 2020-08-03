@@ -17,37 +17,44 @@ public class SkillTreeSelector : MonoBehaviour {
 
     public PlayerSkillLoadoutUI[] playerLoadoutUI;
 
-    public void Show() {
+    public void Initialize() {
+        this.gameObject.SetActive(true);
+        _horizontalScrollSnap.Awake();
         for (int i = 0; i < playerLoadoutUI.Length; i++) {
             playerLoadoutUI[i].Initialize();
         }
-        this.gameObject.SetActive(true);
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
             //if second world then disable ravager and lich builds, and go to puppet master build
+            _horizontalScrollSnap.RemoveAllChildren(out var childrenRemoved);
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
                 PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
-                if (toggle.gameObject.name == "Puppet Master") {
+                if (toggle.gameObject.name == "Second World") {
+                    toggle.isOn = true;
+                    _horizontalScrollSnap.AddChild(loadoutUI.gameObject);
+                } else {
                     toggle.gameObject.SetActive(false);
                     loadoutUI.gameObject.SetActive(false);
-                    _horizontalScrollSnap.RemoveChild(i, out var removed);
-                } else if (toggle.gameObject.name == "Second World") {
-                    toggle.isOn = true;
-                } else {
-                    toggle.interactable = false;
                 }
             }
-            _horizontalScrollSnap.StartingScreen = 2;
-            _horizontalScrollSnap.GoToScreen(2);
         } else {
             //disable other non main loadouts
             //Second World
-            playerLoadoutUI[3].gameObject.SetActive(false);
-            archetypeToggles[3].gameObject.SetActive(false);
-            _horizontalScrollSnap.RemoveChild(2, out var removed);
-            
-            _horizontalScrollSnap.GoToScreen(0);    
+            for (int i = 0; i < archetypeToggles.Length; i++) {
+                Toggle toggle = archetypeToggles[i];
+                PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
+                if (toggle.gameObject.name == "Second World") {
+                    toggle.gameObject.SetActive(false);
+                    loadoutUI.gameObject.SetActive(false);
+                    _horizontalScrollSnap.RemoveChild(i, out var removed);
+                }
+            }
         }
+        this.gameObject.SetActive(false);
+    }
+    public void Show() {
+        this.gameObject.SetActive(true);
+        _horizontalScrollSnap.GoToScreen(0);
     }
 
     public void Hide() {

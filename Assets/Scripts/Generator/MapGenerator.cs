@@ -103,6 +103,7 @@ public class MapGenerator : MonoBehaviour {
             // InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
             AudioManager.Instance.TransitionToWorld();
             
+            UIManager.Instance.initialWorldSetupMenu.Initialize();
             UIManager.Instance.initialWorldSetupMenu.Show();
             if (WorldConfigManager.Instance.isTutorialWorld) {
                 Messenger.Broadcast(Signals.GAME_LOADED);
