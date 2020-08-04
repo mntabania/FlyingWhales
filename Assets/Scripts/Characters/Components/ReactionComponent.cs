@@ -73,7 +73,7 @@ public class ReactionComponent {
             debugLog += $"{owner.name} is reacting to a copy of himself/herself";
             debugLog += $"Surprise interrupt and Fight response";
             owner.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
-            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, targetCharacter);
+            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, targetCharacter, reason: Surprised.Copycat_Reason);
         } else {
             ReactTo(targetCharacter, ref debugLog);
             return;

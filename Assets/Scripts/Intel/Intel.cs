@@ -33,7 +33,7 @@ public class InterruptIntel : IIntel {
 
     public InterruptIntel(InterruptHolder interrupt) {
         interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-        interruptHolder.Initialize(interrupt.interrupt, interrupt.actor, interrupt.target, interrupt.identifier);
+        interruptHolder.Initialize(interrupt.interrupt, interrupt.actor, interrupt.target, interrupt.identifier, interrupt.reason);
         interruptHolder.SetEffectLog(interrupt.effectLog);
 
         //This is set because the interrupt intel must copy the data of the interrupt
