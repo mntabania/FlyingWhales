@@ -720,10 +720,10 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.AFFLICT).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateAffliction(SpellData spellData) {
-        if (WorldConfigManager.Instance.isTutorialWorld) {
-            return WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellData.type) 
-                   && spellData.CanPerformAbilityTowards(activeCharacter);
-        }
+        // if (WorldConfigManager.Instance.isTutorialWorld) {
+        //     return WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spellData.type) 
+        //            && spellData.CanPerformAbilityTowards(activeCharacter);
+        // }
         return spellData.CanPerformAbilityTowards(activeCharacter);
     }
     private void OnHoverAffliction(SpellData spellData) {

@@ -4,36 +4,28 @@ using Quests;
 using Quests.Steps;
 
 namespace Tutorial {
-    public class Prison : ImportantTutorial {
+    public class Prison : BonusTutorial {
 
         public Prison() : base("Prison", TutorialManager.Tutorial.Prison) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Spawn_An_Invader)
+                new StructureBuiltCriteria(STRUCTURE_TYPE.TORTURE_CHAMBERS)
             };
-            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
-        }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.TORTURE_CHAMBERS).charges > 0;
-            }
-            return false;
         }
         #endregion
       
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(
-                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
-                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                    new ToggleTurnedOnStep("Prison", "Choose Prison")
-                        .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture),
-                    new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Place on an unoccupied Area.")
-                        .SetCompleteAction(OnStructureBuilt)
-                ),
+                // new QuestStepCollection(
+                //     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
+                //         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                //     new ToggleTurnedOnStep("Prison", "Choose Prison")
+                //         .SetOnTopmostActions(OnTopMostChooseTorture, OnNoLongerTopMostChooseTorture),
+                //     new StructureBuiltStep(STRUCTURE_TYPE.TORTURE_CHAMBERS, "Place on an unoccupied Area.")
+                //         .SetCompleteAction(OnStructureBuilt)
+                // ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on a Cell", room => room is PrisonCell)
                         .SetHoverOverAction(OnHoverChamber)
@@ -53,26 +45,18 @@ namespace Tutorial {
                 )
             };
         }
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            PlayerUI.Instance.ShowGeneralConfirmation("Prison", "You've just built a new Demonic Structure: The Prison! " +
+                                                                "This Structure allows you to capture and torture Villagers." +
+                                                                "A Tutorial Quest has been created to teach you how to use it.", 
+                onClickOK: () => TutorialManager.Instance.ActivateTutorial(this));
+        }
         public override void Activate() {
             base.Activate();
             Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
-            //stop listening for structure building, since another listener will be used to listen for step completion
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
-        public override void Deactivate() {
-            base.Deactivate();
-            //remove listener, this is for when the tutorial is completed without it being activated 
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
-        }
-
-        #region Availability Listeners
-        private void OnAlreadyBuiltStructure(LocationStructure structure) {
-            if (structure is Inner_Maps.Location_Structures.TortureChambers) {
-                CompleteQuest(); //player already built a structure
-            }
-        }
-        #endregion
-
+        
         #region Step Helpers
         private bool IsClickedRoomValid(StructureRoom room) {
             return room is PrisonCell tortureRoom && tortureRoom.HasValidTortureTarget();

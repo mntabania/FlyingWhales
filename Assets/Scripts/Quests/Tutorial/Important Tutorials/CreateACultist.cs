@@ -4,34 +4,27 @@ using Quests;
 using Quests.Steps;
 
 namespace Tutorial {
-    public class CreateACultist : ImportantTutorial {
+    public class CreateACultist : BonusTutorial {
 
         public CreateACultist() : base("Create A Cultist", TutorialManager.Tutorial.Create_A_Cultist) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Defend_A_Structure)
+                new StructureBuiltCriteria(STRUCTURE_TYPE.DEFILER)
             };
-        }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.DEFILER).charges > 0;
-            }
-            return false;
         }
         #endregion
       
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(
-                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
-                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                    new ToggleTurnedOnStep("Defiler", "Choose the Defiler")
-                        .SetOnTopmostActions(OnTopMostChooseDefiler, OnNoLongerTopMostChooseDefiler),
-                    new StructureBuiltStep(STRUCTURE_TYPE.DEFILER, "Place on an unoccupied Area.")
-                ),
+                // new QuestStepCollection(
+                //     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
+                //         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                //     new ToggleTurnedOnStep("Defiler", "Choose the Defiler")
+                //         .SetOnTopmostActions(OnTopMostChooseDefiler, OnNoLongerTopMostChooseDefiler),
+                //     new StructureBuiltStep(STRUCTURE_TYPE.DEFILER, "Place on an unoccupied Area.")
+                // ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
                         .SetHoverOverAction(OnHoverChamber)
@@ -51,6 +44,13 @@ namespace Tutorial {
                         .SetCompleteAction(OnCompleteBrainwash)
                 )
             };
+        }
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            PlayerUI.Instance.ShowGeneralConfirmation("Defiler", "You've just built a new Demonic Structure: The Defiler! " +
+                                                                 "This Structure allows the player to brainwash Villagers into Cultists." +
+                                                                 "A Tutorial Quest has been created to teach you how to use it.", 
+                onClickOK: () => TutorialManager.Instance.ActivateTutorial(this));
         }
         public override void Activate() {
             base.Activate();

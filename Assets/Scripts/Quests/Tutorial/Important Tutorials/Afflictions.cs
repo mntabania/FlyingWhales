@@ -60,9 +60,10 @@ namespace Tutorial {
         }
         private void OnCompleteExecuteAffliction() {
             PlayerUI.Instance.ShowGeneralConfirmation("Afflictions",
-                $"Afflictions are {UtilityScripts.Utilities.ColorizeAction("negative Traits")} that you may apply to a world's " +
+                $"Afflictions are {UtilityScripts.Utilities.ColorizeAction("Flaws")} that you may apply to a " +
                 $"\nVillager that will affect their behavior. " +
-                "Afflictions do not have any\n Mana Cost but they have a limited number of Charges.\n\n" +
+                "Afflictions do not have any\n Mana Cost but they have a limited number of Charges." +
+                "Once you've exhausted its Charges, there is a long cooldown before it is replenished.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
                 "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus."
             );
@@ -80,7 +81,7 @@ namespace Tutorial {
         private void OnCompleteTriggerFlaw() {
             PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw",
                 $"Trigger Flaw is a special ability that allows you to force a Villager to perform actions " +
-                $"related to one of their negative Traits (aka Flaws). Not all Flaws have associated Trigger Flaw effects but most do."
+                $"related to one of their Flaws. Not all Flaws have associated Trigger Flaw effects but most do."
             );
         }
         #endregion

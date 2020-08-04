@@ -2,11 +2,16 @@
 using Quests;
 using Quests.Steps;
 namespace Tutorial {
-    public class FactionInfo : ImportantTutorial {
+    public class FactionInfo : BonusTutorial {
         public FactionInfo() : base("Faction Info", TutorialManager.Tutorial.Faction_Info) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
+                new HasFinishedImportantTutorials(), 
+                new IsAtTime(new []{ 
+                    GameManager.Instance.GetTicksBasedOnHour(5), 
+                    GameManager.Instance.GetTicksBasedOnHour(15),
+                    GameManager.Instance.GetTicksBasedOnHour(21)
+                }),
             };
         }
         protected override void ConstructSteps() {
@@ -34,7 +39,11 @@ namespace Tutorial {
                 )
             };
         }
-        
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            TutorialManager.Instance.ActivateTutorial(this);
+        }
+
         #region Step Helpers
         private void OnCompleteExecuteSpell() {
             PlayerUI.Instance.ShowGeneralConfirmation("Factions",

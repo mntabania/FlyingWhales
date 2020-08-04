@@ -8,6 +8,9 @@ namespace Quests.Steps {
         private Coroutine _waitCoroutine;
         public QuestStepHoveredStep(QuestStep requiredStep = null, string stepDescription = "Mouse hover over this") : base(stepDescription) {
             _requiredStep = requiredStep;
+            if (_requiredStep == null) {
+                _requiredStep = this;
+            }
         }
         
         protected override void SubscribeListeners() {
@@ -20,7 +23,7 @@ namespace Quests.Steps {
         }
 
         private void OnQuestStepHovered(QuestStep step) {
-            if (_waitCoroutine == null) {
+            if (_waitCoroutine == null && step == _requiredStep) {
                 _waitCoroutine = TutorialManager.Instance.StartCoroutine(Wait());    
             }
             

@@ -28,6 +28,7 @@ public class Wolf : Summon {
     //}
     public override void Initialize() {
 	    base.Initialize();
+	    movementComponent.SetEnableDigging(true);
 	    behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Ravager_Behaviour);
     }
     #endregion

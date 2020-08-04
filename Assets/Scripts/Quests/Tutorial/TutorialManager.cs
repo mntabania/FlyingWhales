@@ -36,19 +36,34 @@ namespace Tutorial {
             Create_A_Cultist
         }
 
-        private readonly Tutorial[] importantTutorialTypes = new[] {
+        /// <summary>
+        /// Tutorial types that are part of the main tutorial.
+        /// </summary>
+        private readonly Tutorial[] mainTutorialTypes = new[] {
             Tutorial.Basic_Controls,
+            Tutorial.Character_Info,
+            Tutorial.Afflictions,
+            Tutorial.Share_An_Intel,
+            Tutorial.Elemental_Interactions,
+            Tutorial.Spawn_An_Invader,
+        };
+        /// <summary>
+        /// Tutorial types that are NOT part of the main tutorial.
+        /// </summary>
+        private readonly Tutorial[] bonusTutorialTypes = new[] {
             Tutorial.Build_A_Kennel,
             Tutorial.Defend_A_Structure,
-            Tutorial.Elemental_Interactions,
-            Tutorial.Character_Info,
-            Tutorial.Spawn_An_Invader,
-            Tutorial.Share_An_Intel,
             Tutorial.Afflictions,
             Tutorial.Prison,
+            Tutorial.Chaos_Orbs_Tutorial,
+            Tutorial.Griefstricken,
+            Tutorial.Killed_By_Monster,
+            Tutorial.Booby_Trap,
+            Tutorial.Rumor,
+            Tutorial.Zombie_Virus,
+            Tutorial.Frame_Up,
             Tutorial.Faction_Info,
-            Tutorial.Create_A_Cultist,
-            Tutorial.Regional_Map,
+            Tutorial.Create_A_Cultist
         };
 
         private List<ImportantTutorial> _activeImportantTutorials;
@@ -126,23 +141,22 @@ namespace Tutorial {
             InstantiatePendingBonusTutorials();
         }
         private void InstantiateImportantTutorials() {
-            for (int i = 0; i < importantTutorialTypes.Length; i++) {
-                Tutorial tutorial = importantTutorialTypes[i];
-                if (tutorial == Tutorial.Regional_Map) {
-                    continue; //skip
-                }
+            for (int i = 0; i < mainTutorialTypes.Length; i++) {
+                Tutorial tutorial = mainTutorialTypes[i];
+                // if (tutorial == Tutorial.Regional_Map) {
+                //     continue; //skip
+                // }
                 InstantiateTutorial(tutorial);
             }
         }
         public void InstantiatePendingBonusTutorials() {
             //Create instances for all uncompleted tutorials.
             List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials;
-            Tutorial[] allTutorials = CollectionUtilities.GetEnumValues<Tutorial>();
-            for (int i = 0; i < allTutorials.Length; i++) {
-                Tutorial tutorial = allTutorials[i];
+            for (int i = 0; i < bonusTutorialTypes.Length; i++) {
+                Tutorial tutorial = bonusTutorialTypes[i];
                 
-                //Do not instantiate important tutorials here. That should be handled in InstantiateImportantTutorials
-                if (importantTutorialTypes.Contains(tutorial)) { continue; }
+                // //Do not instantiate important tutorials here. That should be handled in InstantiateImportantTutorials
+                // if (importantTutorialTypes.Contains(tutorial)) { continue; }
                 
                 //only instantiate tutorial if it has not yet been completed and has not yet been instantiated
                 bool instantiateTutorial = completedTutorials.Contains(tutorial) == false && _instantiatedTutorials.Count(quest => quest.tutorialType == tutorial) == 0;
