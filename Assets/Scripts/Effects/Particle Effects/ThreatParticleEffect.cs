@@ -68,20 +68,19 @@ public class ThreatParticleEffect : MonoBehaviour {
         CheckEffectState();
     }
     private void OnQuestActivated(Quest quest) {
-        if (quest is Quests.Counterattack || quest is DivineIntervention) {
+        if (quest is DivineIntervention) {
             CheckEffectState();
         }
     }
     private void OnQuestDeactivated(Quest quest) {
-        if (quest is Quests.Counterattack || quest is DivineIntervention) {
+        if (quest is DivineIntervention) {
             CheckEffectState();
         }
     }
     #endregion
     
     private void CheckEffectState() {
-        if (QuestManager.Instance.IsQuestActive<Quests.Counterattack>() 
-            || QuestManager.Instance.IsQuestActive<DivineIntervention>() 
+        if (QuestManager.Instance.IsQuestActive<DivineIntervention>() 
             || PlayerManager.Instance.player.threatComponent.threat >= ThreatComponent.MAX_THREAT) {
             //play effect if threat is at max or counterattack quest is active or divine intervention quest is active
             PlayEffect();

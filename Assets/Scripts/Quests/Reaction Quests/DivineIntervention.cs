@@ -17,8 +17,6 @@ namespace Quests {
         }
         
         protected override void ConstructSteps() {
-            CharacterBehaviourComponent attackDemonicStructureBehaviour =
-                CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
                     new EliminateCharacterStep(GetStopCharactersDescription, angels)

@@ -4,6 +4,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using UtilityScripts;
 
 public class ReportCorruptedStructure : GoapAction {
 
@@ -64,6 +65,7 @@ public class ReportCorruptedStructure : GoapAction {
         if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structureToReport)) {
             InnerMapManager.Instance.AddWorldKnownDemonicStructure(structureToReport);
             PlayerManager.Instance.player.threatComponent.AdjustThreat(20); //15
+            TriggerCounterattack(goapNode.actor);
             // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Reported",
             //     $"Your demonic structure {structureToReport.name} has been reported by {goapNode.actor.name}! They can now attack this structure!", 
             //     onClickNoAction: goapNode.actor.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {goapNode.actor.name}", 
@@ -72,4 +74,88 @@ public class ReportCorruptedStructure : GoapAction {
         }
     }
     #endregion
+    
+     private void TriggerCounterattack(Character character) {
+        string debugLog = GameManager.Instance.TodayLogString() + "Counterattack!";
+
+        LocationStructure targetDemonicStructure = InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure() ? 
+            CollectionUtilities.GetRandomElement(InnerMapManager.Instance.worldKnownDemonicStructures): 
+            PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
+        
+        if (targetDemonicStructure == null) {
+            //it is assumed that this only happens if the player casts a spell that is seen by another character,
+            //but results in the destruction of the portal
+            return;
+        }
+        debugLog += "\n-TARGET: " + targetDemonicStructure.name;
+
+        if (character.faction != null && character.faction.isMajorNonPlayer) {
+            debugLog += "\n-CHOSEN FACTION: " + character.faction.name;
+            character.faction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
+        } else {
+            Faction chosenFaction = FactionManager.Instance.GetRandomMajorNonPlayerFaction();
+            if(chosenFaction != null) {
+                debugLog += "\n-CHOSEN FACTION: " + chosenFaction.name;
+                chosenFaction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
+            } else {
+                Debug.LogError("No faction for counterattack!");
+            }    
+        }
+        
+        
+        Debug.Log(debugLog);
+        //List<Character> characters = new List<Character>();
+        //int count = 0;
+        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+        //    Character character = CharacterManager.Instance.allCharacters[i];
+        //    if (character.canPerform && character.canMove && character.canWitness && character.faction.isMajorNonPlayerFriendlyNeutral
+        //        && (character.race == RACE.HUMANS || character.race == RACE.ELVES) 
+        //        && !character.combatComponent.isInCombat
+        //        && !(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
+        //        && character.traitContainer.HasTrait("Combatant")
+        //        && character.isAlliedWithPlayer == false) {
+        //        count++;
+        //        debugLog += "\n-RETALIATOR: " + character.name;
+        //        characters.Add(character);
+        //        //character.behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+        //        if (count >= 5) {
+        //            break;
+        //        }
+        //    }
+        //}
+        //if (characters.Count < 3) {
+        //    //Create Angels
+        //    CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
+        //    //NPCSettlement spawnSettlement = LandmarkManager.Instance.GetRandomVillageSettlement();
+        //    //region = spawnSettlement.region;
+        //    Region region = targetDemonicStructure.location;
+        //    HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
+        //    //if (spawnSettlement != null) {
+        //    //    spawnHex = spawnSettlement.GetRandomHexTile();
+        //    //} else {
+        //    //    spawnHex = targetDemonicStructure.location.GetRandomPlainHex();
+        //    //}
+        //    characters.Clear();
+        //    int angelCount = UnityEngine.Random.Range(3, 6);
+        //    for (int i = 0; i < angelCount; i++) {
+        //        SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
+        //        if(UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }
+        //        LocationGridTile spawnTile = spawnHex.GetRandomTile();
+        //        Summon angel = CharacterManager.Instance.CreateNewSummon(angelType, FactionManager.Instance.vagrantFaction, homeRegion: region);
+        //        CharacterManager.Instance.PlaceSummon(angel, spawnTile);
+        //        angel.behaviourComponent.SetIsAttackingDemonicStructure(true, CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
+        //        characters.Add(angel);
+        //    }
+        //    attackingCharacters = characters;
+        //    Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
+        //} else {
+        //    for (int i = 0; i < characters.Count; i++) {
+        //        characters[i].behaviourComponent.SetIsAttackingDemonicStructure(true, targetDemonicStructure as DemonicStructure);
+        //    }
+        //    attackingCharacters = characters;
+        //    Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, characters, targetDemonicStructure as DemonicStructure);    
+        //}
+
+        //Debug.Log(debugLog);
+    }
 }
