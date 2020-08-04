@@ -14,18 +14,18 @@ public class DropItem : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.TROLL };
     }
 
     #region Overrides
     //protected override void ConstructBasePreconditionsAndEffects() {
-    //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, target = GOAP_EFFECT_TARGET.ACTOR }, IsItemInInventory);
+    //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsItemInInventory);
     //}
-    //public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
-    //    List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
-    //    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsItemInInventory));
-    //    return p;
-    //}
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
+        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsItemInInventory));
+        return p;
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Drop Success", goapNode);
@@ -42,6 +42,19 @@ public class DropItem : GoapAction {
     public override void OnActionStarted(ActualGoapNode node) {
         node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        Character actor = node.actor;
+        IPointOfInterest poiTarget = node.poiTarget;
+        Character targetCharacter = poiTarget as Character;
+        actor.UncarryPOI(poiTarget);
+    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
@@ -53,7 +66,7 @@ public class DropItem : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(poiTarget as TileObject);
     }
     #endregion

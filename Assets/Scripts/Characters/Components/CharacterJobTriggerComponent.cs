@@ -776,20 +776,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    if (_owner.homeStructure != null) {
                 if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = _owner.homeStructure.passableTiles
-                        .Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
+                        .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
 			    } else {
 				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);    
 			    }
 		    } else if (_owner.homeSettlement != null) {
 			    chosenTile = checkIfPathPossibleWithoutDigging ? 
-				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)) : 
+				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
 				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
 		    } else if(_owner.territorries.Count > 0) {
 			    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
 			    if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = chosenTerritory.locationGridTiles
-					    .Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
+					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    if (choices.Count > 0) {
 					    chosenTile = CollectionUtilities.GetRandomElement(choices);	    
 				    } else {
@@ -1316,6 +1316,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void CreateDropItemJob(TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
         if(!_owner.jobQueue.HasJob(JOB_TYPE.DROP_ITEM, target)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP_ITEM, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+            job.SetDoNotRecalculate(doNotRecalculate);
+            _owner.jobQueue.AddJobInQueue(job);
+        }
+    }
+    public void CreateHoardItemJob(TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.HOARD, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HOARD, INTERACTION_TYPE.DROP_ITEM, target, _owner);
             job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
             job.SetDoNotRecalculate(doNotRecalculate);
             _owner.jobQueue.AddJobInQueue(job);

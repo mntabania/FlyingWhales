@@ -246,7 +246,7 @@ public class MovementComponent {
     public bool CanDig() {
         //Must not dig out of Kennel
         //https://trello.com/c/Yyj9DFry/1582-some-monsters-can-dig-out-of-kennel
-        if (enableDigging && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
+        if (enableDigging && owner.currentStructure != null && owner.currentStructure.structureType != STRUCTURE_TYPE.KENNEL) {
             if(owner.combatComponent.isInCombat) {
                 if(!(owner.stateComponent.currentState as CombatState).isAttacking || (owner.marker && owner.marker.hasFleePath)) {
                     return false;
