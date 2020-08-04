@@ -9,14 +9,14 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
 
     #region Party
     public bool TriggerCounterattackPartyJob(LocationStructure targetStructure) { //bool forceDoAction = false
-        if (!_owner.HasJob(JOB_TYPE.COUNTERATTACK_PARTY)) {
+        // if (!_owner.HasJob(JOB_TYPE.COUNTERATTACK_PARTY)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK_PARTY, INTERACTION_TYPE.COUNTERATTACK_ACTION, null, _owner);
             job.AddOtherData(INTERACTION_TYPE.COUNTERATTACK_ACTION, new object[] { targetStructure });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeCounterattackPartyJob);
             _owner.AddToAvailableJobs(job);
             return true;
-        }
-        return false;
+        // }
+        // return false;
     }
     public bool TriggerRaidJob(LocationStructure targetStructure) { //bool forceDoAction = false
         if (!_owner.HasJob(JOB_TYPE.RAID)) {

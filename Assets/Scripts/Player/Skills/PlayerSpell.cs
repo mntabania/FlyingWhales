@@ -336,7 +336,7 @@ public class SpellData : IPlayerSkill {
                 Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
             }
         }
-        PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
+        // PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
         PlayerManager.Instance.player.threatComponent.AdjustThreat(threat);
         //PlayerManager.Instance.player.threatComponent.AdjustThreat(20);
 

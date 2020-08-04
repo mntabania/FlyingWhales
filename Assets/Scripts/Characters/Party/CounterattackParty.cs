@@ -27,17 +27,18 @@ public class CounterattackParty : Party {
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
-        Messenger.Broadcast(Signals.START_THREAT_EFFECT);
+        // Messenger.Broadcast(Signals.START_THREAT_EFFECT);
         //for (int i = 0; i < members.Count; i++) {
         //    Character member = members[i];
         //    member.traitContainer.AddTrait(member, "Travelling");
         //}
+        Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, members, targetStructure);
     }
-    protected override void OnWaitTimeOverButPartyIsDisbanded() {
-        base.OnWaitTimeOverButPartyIsDisbanded();
-        PlayerManager.Instance.player.threatComponent.DivineIntervention();
-        Messenger.Broadcast(Signals.START_THREAT_EFFECT);
-    }
+    // protected override void OnWaitTimeOverButPartyIsDisbanded() {
+    //     base.OnWaitTimeOverButPartyIsDisbanded();
+        // PlayerManager.Instance.player.threatComponent.DivineIntervention();
+        // Messenger.Broadcast(Signals.START_THREAT_EFFECT);
+    // }
     protected override void OnAddMember(Character member) {
         base.OnAddMember(member);
         member.movementComponent.SetEnableDigging(true);
