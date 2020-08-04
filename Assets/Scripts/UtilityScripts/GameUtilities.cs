@@ -44,6 +44,27 @@ namespace UtilityScripts {
                     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString());
             }
         }
+        public static string GetNormalizedRaceAdjective(string race) {
+            race = race.ToUpper();
+            switch (race) {
+                case "HUMANS":
+                    return "Human";
+                case "ELVES":
+                    return "Elven";
+                case "MINGONS":
+                    return "Mingon";
+                case "CROMADS":
+                    return "Cromad";
+                case "GOBLIN":
+                    return "Goblin";
+                case "TROLL":
+                    return "Troll";
+                case "DRAGON":
+                    return "Dragon";
+                default:
+                    return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race);
+            }
+        }
         public static string GetNormalizedRaceAdjective(RACE race) {
             switch (race) {
                 case RACE.HUMANS:

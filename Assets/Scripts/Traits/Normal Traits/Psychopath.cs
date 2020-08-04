@@ -482,6 +482,7 @@ namespace Traits {
             string firstText = string.Empty;
             string secondText = string.Empty;
             bool isFirstTypeProcessed = true;
+            //bool shouldAddPeopleText = false;
             //if (victimSecondDescription != "Builder" && victimSecondDescription != "Criminal") {
             //    firstText = victimSecondDescription;
             //    secondText = PluralizeText(Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription));
@@ -490,38 +491,63 @@ namespace Traits {
             //    secondText = PluralizeText(victimSecondDescription);
             //}
 
-            //If there is a Gender, it is always the first text
-            if(victimFirstType == SERIAL_VICTIM_TYPE.Gender) {
+            //If there is a Trait, it is always the first text
+            if(victimFirstType == SERIAL_VICTIM_TYPE.Trait) {
                 isFirstTypeProcessed = true;
-                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription);
-            } else if (victimSecondType == SERIAL_VICTIM_TYPE.Gender) {
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
+            } else if (victimSecondType == SERIAL_VICTIM_TYPE.Trait) {
                 isFirstTypeProcessed = false;
-                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription);
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(victimSecondDescription);
             }
             if(firstText == string.Empty) {
-                //If there is no Gender, the first text must be Race
-                if (victimFirstType == SERIAL_VICTIM_TYPE.Race) {
+                //If there is no Trait, the first text must be Gender
+                if (victimFirstType == SERIAL_VICTIM_TYPE.Gender) {
                     isFirstTypeProcessed = true;
-                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription);
-                } else if (victimSecondType == SERIAL_VICTIM_TYPE.Race) {
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
+                } else if (victimSecondType == SERIAL_VICTIM_TYPE.Gender) {
                     isFirstTypeProcessed = false;
-                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription);
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(victimSecondDescription);
                 }
                 if (firstText == string.Empty) {
-                    //If there is no Race or Gender victim type, generate description normally
-                    firstText = GetDescriptionText(false);
-                    secondText = GetDescriptionText(true);
-                    if (firstText != string.Empty && secondText != string.Empty) {
-                        secondText = secondText.Insert(0, "and ");
+                    //If there is no Trait or Gender victim type, first text must be Race
+                    if (victimFirstType == SERIAL_VICTIM_TYPE.Race) {
+                        isFirstTypeProcessed = true;
+                        firstText = UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(victimFirstDescription);
+                    } else if (victimSecondType == SERIAL_VICTIM_TYPE.Race) {
+                        isFirstTypeProcessed = false;
+                        firstText = UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(victimSecondDescription);
                     }
+                    if (firstText == string.Empty) {
+                        //If there is no Race or Gender or Trait victim type, this means only 1 victim type is set
+                        if(victimFirstDescription != string.Empty) {
+                            firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
+                        } else if (victimSecondDescription != string.Empty) {
+                            firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(victimSecondDescription);
+                        }
+                        //shouldAddPeopleText = true;
+                    } else {
+                        secondText = GetDescriptionText(isFirstTypeProcessed);
+                    }
+
                 } else {
                     secondText = GetDescriptionText(isFirstTypeProcessed);
                 }
-
             } else {
                 secondText = GetDescriptionText(isFirstTypeProcessed);
             }
-            text = $"{firstText} {secondText}";
+            if(firstText != string.Empty && secondText != string.Empty) {
+                text = $"{firstText} {secondText}";
+            } else {
+                //if (shouldAddPeopleText) {
+                    if (firstText != string.Empty) {
+                        text = $"{firstText} people";
+                    } else {
+                        text = $"{secondText} people";
+                    }
+                //} else {
+                //    text = $"{firstText} {secondText}";
+                //}
+            }
             text = text.Trim();
         }
         private string GetDescriptionText(bool fromSecondType) {
@@ -531,11 +557,6 @@ namespace Traits {
             }
             string newDesc = string.Empty;
             if(secondDescriptions != string.Empty) {
-                if(secondDescriptions == "Accident Prone" || secondDescriptions == "Ambitious" || secondDescriptions == "Authoritative" || secondDescriptions == "Chaste"
-                    || secondDescriptions == "Diplomatic" || secondDescriptions == "Evil" || secondDescriptions == "Fast" || secondDescriptions == "Fireproof" || secondDescriptions == "Inspiring"
-                    || secondDescriptions == "Evil") {
-
-                }
                 newDesc += UtilityScripts.Utilities.PluralizeString(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions));
             }
             return newDesc;
