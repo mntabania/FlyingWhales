@@ -4,13 +4,13 @@ using Inner_Maps.Location_Structures;
 using Quests;
 using Quests.Steps;
 namespace Tutorial {
-    public class DefendAStructure : ImportantTutorial {
+    public class DefendAStructure : BonusTutorial {
         public DefendAStructure() : base("Defend A Structure", TutorialManager.Tutorial.Defend_A_Structure) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Prison)
+                // new HasCompletedTutorialQuest(TutorialManager.Tutorial.Prison) 
             };
         }
         protected override bool HasMetAllCriteria() {

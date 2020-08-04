@@ -7,7 +7,7 @@ public class DecreaseMood : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Sad_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
-        racesThatCanDoAction = new RACE[] { RACE.DEMON };
+        racesThatCanDoAction = new RACE[] { RACE.DEMON, RACE.LESSER_DEMON };
     }
     
     #region Overrides

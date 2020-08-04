@@ -13,14 +13,13 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Build_A_Kennel)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
             };
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
-                return PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count > 0 
-                       || PlayerManager.Instance.player.playerSkillComponent.summonsSkills.Count > 0;
+                return PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count > 0;
             }
             return false;
         }

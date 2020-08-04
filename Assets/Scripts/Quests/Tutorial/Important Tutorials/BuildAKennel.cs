@@ -6,35 +6,27 @@ using Quests;
 using Quests.Steps;
 using UnityEngine;
 namespace Tutorial {
-    public class BuildAKennel : ImportantTutorial {
+    public class BuildAKennel : BonusTutorial {
 
         public BuildAKennel() : base("Kennel", TutorialManager.Tutorial.Build_A_Kennel) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Faction_Info)
+                new StructureBuiltCriteria(STRUCTURE_TYPE.KENNEL)
             };
-            Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
-        }
-        protected override bool HasMetAllCriteria() {
-            bool hasMetAllCriteria = base.HasMetAllCriteria();
-            if (hasMetAllCriteria) {
-                return PlayerSkillManager.Instance.GetDemonicStructureSkillData(SPELL_TYPE.KENNEL).charges > 0;
-            }
-            return false;
         }
         #endregion
       
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(
-                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
-                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                    new ToggleTurnedOnStep("Kennel", "Choose the Kennel")
-                        .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel),
-                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Place on an unoccupied Area")
-                ),
+                // new QuestStepCollection(
+                //     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
+                //         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                //     new ToggleTurnedOnStep("Kennel", "Choose the Kennel")
+                //         .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel),
+                //     new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Place on an unoccupied Area")
+                // ),
                 new QuestStepCollection(
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a monster.")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
@@ -48,25 +40,17 @@ namespace Tutorial {
                 )
             };
         }
+        protected override void MakeAvailable() {
+            base.MakeAvailable();
+            PlayerUI.Instance.ShowGeneralConfirmation("Kennel", "You've just built a new Demonic Structure: The Kennel! " +
+                                                                "This Structure allows the you to breed wild monsters." +
+                                                                "A Tutorial Quest has been created to teach you how to use it.", 
+                onClickOK: () => TutorialManager.Instance.ActivateTutorial(this));
+        }
         public override void Activate() {
             base.Activate();
             Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
-            //stop listening for structure building, since another listener will be used to listen for step completion
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
         }
-        public override void Deactivate() {
-            base.Deactivate();
-            //remove listener, this is for when the tutorial is completed without it being activated 
-            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_OBJECT_PLACED, OnAlreadyBuiltStructure);
-        }
-
-        #region Availability Listeners
-        private void OnAlreadyBuiltStructure(LocationStructure structure) {
-            if (structure is Inner_Maps.Location_Structures.Kennel) {
-                CompleteQuest(); //player already built a kennel
-            }
-        }
-        #endregion
 
         #region Step Completion Actions
         private bool IsCharacterValid(Character character) {
@@ -77,8 +61,9 @@ namespace Tutorial {
         #region Step Helpers
         private void OnHoverBreed(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                $"Breeding a monster inside the Kennel gives you 1 Summon Charge of that monster type. " +
-                $"You can use this charge for various actions - defend Structures, invade Villages, kill Villagers.",
+                $"Breeding a monster inside the Kennel gives you {UtilityScripts.Utilities.ColorizeAction("1 Summon Charge")} of that monster type. " +
+                $"You can use summoned monsters for different purposes - their behavior will depend on their monster type. " +
+                $"For example, if you breed a {UtilityScripts.Utilities.ColorizeAction("Wolf")}, it would be an {UtilityScripts.Utilities.ColorizeAction("Invader")} and will assault the nearest settlement.",
                 TutorialManager.Instance.breedVideoClip, "Breeding", stepItem.hoverPosition
             );
         }

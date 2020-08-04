@@ -952,17 +952,17 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         go.SetActive(true);
-        if (WorldConfigManager.Instance.isTutorialWorld) {
-            //in demo world, only allow spells that are set to be available.
-            bool isInteractable = WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spell);
-            item.SetInteractableState(isInteractable);
-            if (isInteractable) {
-                item.transform.SetAsFirstSibling();
-            } else {
-                item.SetLockedState(true);
-                item.transform.SetAsLastSibling();
-            }
-        }
+        // if (WorldConfigManager.Instance.isTutorialWorld) {
+        //     //in demo world, only allow spells that are set to be available.
+        //     bool isInteractable = WorldConfigManager.Instance.availableSpellsInTutorial.Contains(spell);
+        //     item.SetInteractableState(isInteractable);
+        //     if (isInteractable) {
+        //         item.transform.SetAsFirstSibling();
+        //     } else {
+        //         item.SetLockedState(true);
+        //         item.transform.SetAsLastSibling();
+        //     }
+        // }
         _spellItems.Add(item);
     }
     private void DeleteSpellItem(SPELL_TYPE spell) {
