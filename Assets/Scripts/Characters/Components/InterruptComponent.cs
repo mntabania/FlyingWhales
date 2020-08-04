@@ -32,7 +32,8 @@ public class InterruptComponent {
     }
 
     #region General
-    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "", ActualGoapNode actionThatTriggered = null) {
+    public bool TriggerInterrupt(INTERRUPT interrupt, IPointOfInterest targetPOI, string identifier = "",
+        ActualGoapNode actionThatTriggered = null, string reason = "") {
         Interrupt triggeredInterrupt = InteractionManager.Instance.GetInterruptData(interrupt);
         if (!triggeredInterrupt.isSimulateneous) {
             if (isInterrupted) {
@@ -44,11 +45,11 @@ public class InterruptComponent {
                 $"{owner.name} triggered a non simultaneous interrupt: {triggeredInterrupt.name}");
 
             InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-            interruptHolder.Initialize(triggeredInterrupt, owner, targetPOI, identifier);
+            interruptHolder.Initialize(triggeredInterrupt, owner, targetPOI, identifier, reason);
             SetNonSimultaneousInterrupt(interruptHolder);
             //this.identifier = identifier;
             
-            CreateThoughtBubbleLog();
+            CreateThoughtBubbleLog(triggeredInterrupt);
 
             if (ReferenceEquals(owner.marker, null) == false && owner.marker.isMoving) {
                 owner.marker.StopMovement();
@@ -70,15 +71,15 @@ public class InterruptComponent {
                 EndInterrupt();
             }
         } else {
-             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier, actionThatTriggered);
+             TriggeredSimultaneousInterrupt(triggeredInterrupt, targetPOI, identifier, actionThatTriggered, reason);
         }
         return true;
     }
-    private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered) {
+    private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered, string reason) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
         bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
         InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-        interruptHolder.Initialize(interrupt, owner, targetPOI, identifier);
+        interruptHolder.Initialize(interrupt, owner, targetPOI, identifier, reason);
         SetSimultaneousInterrupt(interruptHolder);
         //simultaneousIdentifier = identifier;
         ExecuteStartInterrupt(triggeredSimultaneousInterrupt, actionThatTriggered);
@@ -174,11 +175,12 @@ public class InterruptComponent {
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.type, owner);
     }
-    private void CreateThoughtBubbleLog() {
+    private void CreateThoughtBubbleLog(Interrupt interrupt) {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble");
             thoughtBubbleLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(currentInterrupt.target, currentInterrupt.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            interrupt.AddAdditionalFillersToThoughtLog(thoughtBubbleLog, owner);
         }
     }
     private void AddEffectLog(InterruptHolder interruptHolder) {

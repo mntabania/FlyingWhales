@@ -53,6 +53,7 @@ namespace Interrupts {
             }
             return null;
         }
+        public virtual void AddAdditionalFillersToThoughtLog(Log log, Character actor){ }
         #endregion
     }
 
@@ -66,6 +67,7 @@ namespace Interrupts {
         public string identifier { get; private set; }
         public Rumor rumor { get; private set; }
         public List<Character> awareCharacters { get; private set; }
+        public string reason { get; private set; }
 
         #region getters
         public string name => interrupt.name;
@@ -92,6 +94,9 @@ namespace Interrupts {
         }
         public void SetDisguisedTarget(Character disguised) {
             disguisedTarget = disguised;
+        }
+        public void SetReason(string reason) {
+            this.reason = reason;
         }
         #endregion
 
@@ -126,7 +131,7 @@ namespace Interrupts {
         #endregion
 
         #region Object Pool
-        public void Initialize(Interrupt interrupt, Character actor, IPointOfInterest target, string identifier) {
+        public void Initialize(Interrupt interrupt, Character actor, IPointOfInterest target, string identifier, string reason) {
             this.interrupt = interrupt;
             this.actor = actor;
             this.target = target;
@@ -138,6 +143,7 @@ namespace Interrupts {
             }
 
             SetIdentifier(identifier);
+            SetReason(reason);
         }
         public void Reset() {
             interrupt = null;

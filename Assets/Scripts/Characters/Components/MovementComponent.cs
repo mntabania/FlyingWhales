@@ -197,6 +197,13 @@ public class MovementComponent {
     #endregion
 
     #region Pathfinding
+    /// <summary>
+    /// Does this character have a path towards the target tile?
+    /// Note: This factors in digging capabilities. If need to query without
+    /// digging use <see cref="PathfindingManager.HasPath"/>
+    /// </summary>
+    /// <param name="toTile">The target tile</param>
+    /// <returns>True or false.</returns>
     public bool HasPathTo(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
         if (!CanDig()) {
@@ -216,13 +223,14 @@ public class MovementComponent {
     /// <summary>
     /// Does this character have a path towards the target tile?
     /// Even if that tile is part of a different region?
+    /// Note: This factors in digging capabilities. If need to query without
+    /// digging use <see cref="PathfindingManager.HasPathEvenDiffRegion"/>
     /// </summary>
     /// <param name="toTile">The target tile</param>
-    /// <param name="allowDiggingWhenChecking">Should this function take into account whether or not digging has been enabled for this character</param>
-    /// <returns></returns>
-    public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile, bool allowDiggingWhenChecking = true) {
+    /// <returns>True or false.</returns>
+    public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile) {
         LocationGridTile fromTile = owner.gridTileLocation;
-        if (allowDiggingWhenChecking && CanDig()) {
+        if (CanDig()) {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 

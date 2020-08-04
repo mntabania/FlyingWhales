@@ -2935,6 +2935,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Profiler.BeginSample($"{name} ProcessTraitsOnTickEnded() call");
         ProcessTraitsOnTickEnded();
         Profiler.EndSample();
+        // PreProcessLatestJobInQueue();
+        CheckSettlementJobsOnVisionOnTickEnded();
         Profiler.BeginSample($"{name} EndTickPerformJobs() call");
         EndTickPerformJobs();
         Profiler.EndSample();
@@ -3008,7 +3010,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         invalidReason = "No reason";
         return true;
     }
-    public void EndTickPerformJobs() {
+    private void CheckSettlementJobsOnVisionOnTickEnded() {
         //try to take settlement job that this character can see the target of.
         // string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
         if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
@@ -3017,7 +3019,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // debugLog += $"\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
             if (jobToAssign != null && 
                 ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
-                (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
+                 (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
                 jobQueue.AddJobInQueue(jobToAssign);
                 // debugLog += $"\nJob was added to queue!";
             } else {
@@ -3027,7 +3029,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             // debugLog += $"\n{name} Cannot take settlement job in vision because \n{invalidReason}";
         }
         // logComponent.PrintLogIfActive(debugLog);
-        
+    }
+    // private void PreProcessLatestJobInQueue() {
+    //     //only cancel jobs in front of the queue, break loop if current job is not set as cancelled.
+    //     for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+    //         JobQueueItem job = jobQueue.jobsInQueue[i];
+    //         if (job.isCancelled) {
+    //             job.ForceCancelJob(false);
+    //             i--;
+    //         } else {
+    //             break;
+    //         }
+    //     }
+    // }
+    public void EndTickPerformJobs() {
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
             if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
                 PerformTopPriorityJob();
@@ -3087,7 +3102,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         string idleLog = OtherIdlePlans();
         logComponent.PrintLogIfActive(idleLog);
-
+        
+        CheckSettlementJobsOnVisionOnTickEnded();
         //perform created jobs if any.
         EndTickPerformJobs();
         //if (!PlanJobQueueFirst()) {

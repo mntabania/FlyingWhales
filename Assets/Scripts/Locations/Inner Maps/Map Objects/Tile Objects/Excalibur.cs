@@ -105,7 +105,8 @@ public class Excalibur : TileObject {
                     if (character.traitContainer.AddTrait(character, traitName)) {
                         traitsGainedByCurrentOwner.Add(traitName);
                     }
-                }    
+                }  
+                character.combatComponent.UpdateMaxHPAndReset();
             }
         }
     }

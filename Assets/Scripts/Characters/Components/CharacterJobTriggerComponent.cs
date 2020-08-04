@@ -776,20 +776,20 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    if (_owner.homeStructure != null) {
                 if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = _owner.homeStructure.passableTiles
-                        .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t, false)).ToList();
+                        .Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
 				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
 			    } else {
 				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);    
 			    }
 		    } else if (_owner.homeSettlement != null) {
 			    chosenTile = checkIfPathPossibleWithoutDigging ? 
-				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t, false)) : 
+				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)) : 
 				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
 		    } else if(_owner.territorries.Count > 0) {
 			    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
 			    if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = chosenTerritory.locationGridTiles
-					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t, false)).ToList();
+					    .Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
 				    if (choices.Count > 0) {
 					    chosenTile = CollectionUtilities.GetRandomElement(choices);	    
 				    } else {

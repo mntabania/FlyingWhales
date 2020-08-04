@@ -745,7 +745,8 @@ public class CharacterInfoUI : InfoUIBase {
             }
         }
         UIManager.Instance.ShowClickableObjectPicker(triggerFlawPool, ActivateTriggerFlawConfirmation, null, CanActivateTriggerFlaw,
-            "Select Flaw", OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
+            $"Select Flaw ({PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()})", 
+            OnHoverEnterFlaw, OnHoverExitFlaw, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true, identifier: "Trigger Flaw");
     }
     private void ActivateTriggerFlawConfirmation(object o) {
         string traitName = (string) o;
@@ -763,7 +764,11 @@ public class CharacterInfoUI : InfoUIBase {
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateTriggerFlaw(string traitName) {
-        return true;
+        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        if (trait != null) {
+            return trait.CanFlawBeTriggered(activeCharacter);
+        }
+        return false;
     }
     private void OnHoverEnterFlaw(string traitName) {
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Interrupts;
 using UnityEngine;
 
 public class Shock : Emotion {
@@ -16,10 +17,10 @@ public class Shock : Emotion {
             if(UnityEngine.Random.Range(0, 100) < 30) {
                 witness.combatComponent.Flight(target, "shocked");
             } else {
-                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target);
+                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target, reason: Surprised.Witness_Reason);
             }
         } else {
-            witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target);
+            witness.interruptComponent.TriggerInterrupt(INTERRUPT.Surprised, target, reason: Surprised.Witness_Reason);
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
     }

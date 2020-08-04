@@ -182,7 +182,7 @@ public class RumorComponent {
             //Note: This particular interrupt holder, if used, will not be brought back to the object pool because we do not exactly know when this particular rumorable will not be used anymore
             //It is uncertain when this will be not used, so we must not reset its data
             InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-            interruptHolder.Initialize(interrupt, rumoredCharacter, targetOfRumoredCharacter, string.Empty);
+            interruptHolder.Initialize(interrupt, rumoredCharacter, targetOfRumoredCharacter, string.Empty, string.Empty);
             interruptHolder.SetEffectLog(effectLog);
             rumorable = interruptHolder;
         } else {
