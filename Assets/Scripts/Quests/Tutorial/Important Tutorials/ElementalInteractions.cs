@@ -36,6 +36,7 @@ namespace Tutorial {
                     new TriggerElectricChainStep("Electrocute Wet Floor")
                         .SetHoverOverAction(OnHoverElectric)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostLightning, OnNoLongerTopMosLightning)
                 ),
                 new QuestStepCollection(
                     new ExecuteSpellStep(SPELL_TYPE.SPLASH_POISON, "Cast Splash Poison")
@@ -43,6 +44,7 @@ namespace Tutorial {
                      new TriggerPoisonExplosionStep("Burn Poisoned Floor")
                         .SetHoverOverAction(OnHoverFire)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                        .SetOnTopmostActions(OnTopMostMeteor, OnNoLongerTopMostMeteor)
                 ),
             };
         }
@@ -110,6 +112,24 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostWindBlast() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Wind Blast");
+        }
+        #endregion
+        
+        #region Lightning
+        private void OnTopMostLightning() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Lightning");
+        }
+        private void OnNoLongerTopMosLightning() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Lightning");
+        }
+        #endregion
+        
+        #region Meteor
+        private void OnTopMostMeteor() {
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Meteor");
+        }
+        private void OnNoLongerTopMostMeteor() {
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Meteor");
         }
         #endregion
     }

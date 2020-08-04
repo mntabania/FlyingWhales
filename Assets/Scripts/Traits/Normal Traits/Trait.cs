@@ -154,7 +154,7 @@ namespace Traits {
             //return true;
             int manaCost = EditableValuesManager.Instance.triggerFlawManaCost;
 
-            return PlayerManager.Instance.player.mana >= manaCost
+            return canBeTriggered && PlayerManager.Instance.player.mana >= manaCost
                 && character.canPerform
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
                 && !character.traitContainer.HasTrait("Blessed")

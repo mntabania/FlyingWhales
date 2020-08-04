@@ -184,7 +184,7 @@ public class JobQueueItem {
             //If job is cannot be pushed back and it is stopped, cancel it
             CancelJob(false);
         } else {
-            assignedCharacter.StopCurrentActionNode(false);
+            assignedCharacter?.StopCurrentActionNode(false);
         }
     }
     public virtual bool CanBeInterruptedBy(JOB_TYPE jobType) { return true; }

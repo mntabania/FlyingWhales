@@ -451,15 +451,12 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
 				job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, job));
 				job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
-				// job.SetOnUnassignJobAction(OnUnassignApprehend);
+				job.SetDoNotRecalculate(true);
 				job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.prison });
 				_owner.AddToAvailableJobs(job);	
 			}
 		}
 	}
-	// private void OnUnassignApprehend(Character character, JobQueueItem job) {
-	// 	job.ForceCancelJob(false); //automatically cancel job if assigned character drops the job
-	// }
 	private bool IsApprehendStillApplicable(Character target, GoapPlanJob job) {
         bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != _owner.prison;
         if (target.gridTileLocation != null && isApplicable) {
@@ -468,7 +465,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		        return true;
 	        } else {
 		        //if target is no longer within settlement then job is only valid if the job has an assigned character
-		        // return false;
 		        return job.assignedCharacter != null;
 	        }
 	        // return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
@@ -603,6 +599,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target, job));
 		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
 		job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
+		job.SetDoNotRecalculate(true);
 		// job.SetOnUnassignJobAction(OnUnassignRestrain);
 		_owner.AddToAvailableJobs(job, 0);
 	}
@@ -626,7 +623,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			} else {
 				//if target is no longer within settlement then job is only valid if the job has an assigned character
 				return job.assignedCharacter != null;
-				// return false;
 			}
 			// return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
 		}

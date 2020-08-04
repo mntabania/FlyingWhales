@@ -43,9 +43,10 @@ public class StringNameplateItem : NameplateItem<string> {
         } else if (identifier == "player skill") {
             img.gameObject.SetActive(true);
             img.sprite = PlayerSkillManager.Instance.GetPlayerSkillData<PlayerSkillData>((SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(str).ToUpper())).buttonSprite;
-        } else if (identifier == "Trigger Flaw") {
-            additionalText.text = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
-        }
+        } 
+        // else if (identifier == "Trigger Flaw") {
+        //     additionalText.text = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
+        // }
     }
     public override void Reset() {
         base.Reset();
