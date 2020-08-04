@@ -294,8 +294,7 @@ public class RelationshipManager : MonoBehaviour {
         IRelationshipData relationshipData1 = rel1.relationshipContainer.GetOrCreateRelationshipDataWith(rel1, rel2);
         IRelationshipData relationshipData2 = rel2.relationshipContainer.GetOrCreateRelationshipDataWith(rel2, rel1);
 
-        int randomCompatibility = UnityEngine.Random.Range(RelationshipManager.MinCompatibility,
-            RelationshipManager.MaxCompatibility);
+        int randomCompatibility = UnityEngine.Random.Range(MinCompatibility, MaxCompatibility);
                         
         relationshipData1.opinions.SetCompatibilityValue(randomCompatibility);
         relationshipData2.opinions.SetCompatibilityValue(randomCompatibility);

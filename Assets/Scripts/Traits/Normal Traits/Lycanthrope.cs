@@ -290,7 +290,7 @@ namespace Traits {
         }
 
         private void CreateLycanthropeForm() {
-            lycanthropeForm = CharacterManager.Instance.CreateNewLimboCharacter(RACE.WOLF, "Ravager", originalForm.gender, FactionManager.Instance.neutralFaction);
+            lycanthropeForm = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
             lycanthropeForm.ConstructInitialGoapAdvertisementActions();
             lycanthropeForm.SetName(originalForm.name);
         }
@@ -312,6 +312,11 @@ namespace Traits {
             Region homeRegion = originalForm.homeRegion;
             PutToLimbo(originalForm);
             ReleaseFromLimbo(lycanthropeForm, tile, homeRegion);
+            lycanthropeForm.needsComponent.ResetFullnessMeter();
+            lycanthropeForm.needsComponent.ResetTirednessMeter();
+            lycanthropeForm.needsComponent.ResetHappinessMeter();
+            lycanthropeForm.needsComponent.ResetStaminaMeter();
+            lycanthropeForm.needsComponent.ResetHopeMeter();
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 

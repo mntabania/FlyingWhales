@@ -113,7 +113,7 @@ public class Butcher : GoapAction {
             }
             if (!deadCharacter.isDead) {
                 cost *= 2;
-                costLog += $" +{cost}(Still Alive)";
+                costLog += $" {cost}(Still Alive)";
             }
         }
         if (target is Animal animal) {
@@ -121,7 +121,7 @@ public class Butcher : GoapAction {
             costLog += $" +{cost}(Animal)";
             if (!animal.isDead) {
                 cost *= 2;
-                costLog += $" +{cost}(Still Alive)";
+                costLog += $" {cost}(Still Alive)";
             }
         }
         actor.logComponent.AppendCostLog(costLog);

@@ -21,7 +21,7 @@ public class SocialParty : Party {
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return !leader.relationshipContainer.IsEnemiesWith(character) && !character.traitContainer.HasTrait("Agoraphobic");
+        return !character.relationshipContainer.IsEnemiesWith(leader) && !character.traitContainer.HasTrait("Agoraphobic");
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();

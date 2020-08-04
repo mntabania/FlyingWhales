@@ -54,7 +54,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void UnsubscribeListeners() {
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_MOVE_AGAIN, OnCharacterCanMoveAgain);
-		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_PERFORM_AGAIN, OnCharacterCanPerformAgain);
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
 		Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
 		Messenger.RemoveListener<NPCSettlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
@@ -917,8 +919,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                         chosenTile = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion().GetRandomTile();
                     } else {
-                        List<LocationGridTile> choices = _owner.homeStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
-                        chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+                        List<LocationGridTile> choices = _owner.currentStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
+                        chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
                     }
 
                 }

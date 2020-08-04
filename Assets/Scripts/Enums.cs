@@ -1591,6 +1591,10 @@ public static class Extensions {
             case JOB_TYPE.INSPECT:
                 priority = 510;
                 break;
+            case JOB_TYPE.CONFIRM_RUMOR:
+            case JOB_TYPE.SHARE_NEGATIVE_INFO:
+                priority = 505;
+                break;
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
@@ -1628,8 +1632,8 @@ public static class Extensions {
                 priority = 280;
                 break;
             case JOB_TYPE.SPREAD_RUMOR:
-            case JOB_TYPE.CONFIRM_RUMOR:
-            case JOB_TYPE.SHARE_NEGATIVE_INFO:
+            //case JOB_TYPE.CONFIRM_RUMOR:
+            //case JOB_TYPE.SHARE_NEGATIVE_INFO:
                 priority = 270;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:

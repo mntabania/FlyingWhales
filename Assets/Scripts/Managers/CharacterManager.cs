@@ -347,10 +347,10 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.CreateAvatar();
         if(homeStructure != null) {
-            newCharacter.MigrateHomeStructureTo(homeStructure, false, false);
+            newCharacter.MigrateHomeStructureTo(homeStructure, false);
             homeStructure.location.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, null, false, false);
+            newCharacter.MigrateHomeTo(homeLocation, null, false);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
         newCharacter.CreateInitialTraits();
@@ -711,6 +711,34 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Summons
+    public Summon CreateNewLimboSummon(SUMMON_TYPE summonType, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, string className = "") {
+        Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
+        newCharacter.Initialize();
+        newCharacter.CreateAvatar();
+        if (faction != null) {
+            faction.JoinFaction(newCharacter);
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+        }
+        if (homeStructure != null) {
+            newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
+            homeStructure.location.AddCharacterToLocation(newCharacter);
+        } else if (homeLocation != null) {
+            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
+        }
+
+        //if (homeLocation != null) {
+        //    newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+        //}
+        //if (homeRegion != null) {
+        //    homeRegion.AddResident(newCharacter);
+        //    homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
+        //}
+        newCharacter.CreateInitialTraits();
+        AddNewLimboCharacter(newCharacter);
+        return newCharacter;
+    }
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, BaseSettlement homeLocation = null,
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);

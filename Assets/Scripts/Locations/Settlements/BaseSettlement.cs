@@ -431,7 +431,7 @@ namespace Locations.Settlements {
                 HexTile hex = tiles[i];
                 for (int j = 0; j < hex.AllNeighbours.Count; j++) {
                     HexTile neighbour = hex.AllNeighbours[j];
-                    if (this is NPCSettlement npcSettlement && hex.region != npcSettlement.region) {
+                    if (neighbour.region != hex.region) {
                         continue; //skip tiles that are not part of the region if settlement is an NPC Settlement 
                     }
                     if (neighbour.elevationType != ELEVATION.MOUNTAIN && neighbour.elevationType != ELEVATION.WATER && neighbour.settlementOnTile == null) {

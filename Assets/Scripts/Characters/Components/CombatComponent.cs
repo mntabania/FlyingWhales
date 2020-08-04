@@ -759,6 +759,47 @@ public class CombatComponent {
         }
         fightCombatData.Clear();
     }
+    public string GetCombatLogKeyReason(IPointOfInterest target) {
+        string key = string.Empty;
+        CombatData combatData = GetCombatData(target);
+        if (combatData != null) {
+            key = combatData.reasonForCombat;
+            if (key == CombatManager.Action) {
+                switch (combatData.connectedAction.associatedJobType) {
+                    case JOB_TYPE.RESTRAIN:
+                        key = "Restrain";
+                        break;
+                    case JOB_TYPE.PRODUCE_FOOD:
+                        key = "Butcher";
+                        break;
+                    case JOB_TYPE.APPREHEND:
+                        key = "Apprehend";
+                        break;
+                    case JOB_TYPE.RITUAL_KILLING:
+                        key = "Ritual Killing";
+                        break;
+                    case JOB_TYPE.BERSERK_ATTACK:
+                        key = "Berserked";
+                        break;
+                    case JOB_TYPE.MOVE_CHARACTER:
+                        if (owner is Troll) {
+                            key = "Abduct";
+                        }
+                        break;
+                }
+            } else {
+                if(key == CombatManager.Anger) {
+                    if (owner.traitContainer.HasTrait("Angry")) {
+                        Trait trait = owner.traitContainer.GetNormalTrait<Trait>("Angry");
+                        if(trait.responsibleCharacter == target) {
+                            key = "Anger_Target";
+                        }
+                    }
+                }
+            }
+        }
+        return key;
+    }
     #endregion
 
     #region Jobs

@@ -66,9 +66,10 @@ namespace Traits {
                         SetTargetVictim(potentialVictim);
 
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
-                        log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                        character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
                         return true;
                     }
                 }
@@ -92,6 +93,7 @@ namespace Traits {
                         log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
                         break;
                     }
                 }
@@ -113,7 +115,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
             log.AddLogToInvolvedObjects();
-            // PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
         public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
             SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
@@ -519,7 +521,8 @@ namespace Traits {
             } else {
                 secondText = GetDescriptionText(isFirstTypeProcessed);
             }
-            this.text = $"{firstText} {secondText}";
+            text = $"{firstText} {secondText}";
+            text = text.Trim();
         }
         private string GetDescriptionText(bool fromSecondType) {
             string secondDescriptions = victimSecondDescription;
@@ -528,6 +531,11 @@ namespace Traits {
             }
             string newDesc = string.Empty;
             if(secondDescriptions != string.Empty) {
+                if(secondDescriptions == "Accident Prone" || secondDescriptions == "Ambitious" || secondDescriptions == "Authoritative" || secondDescriptions == "Chaste"
+                    || secondDescriptions == "Diplomatic" || secondDescriptions == "Evil" || secondDescriptions == "Fast" || secondDescriptions == "Fireproof" || secondDescriptions == "Inspiring"
+                    || secondDescriptions == "Evil") {
+
+                }
                 newDesc += UtilityScripts.Utilities.PluralizeString(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions));
             }
             return newDesc;
