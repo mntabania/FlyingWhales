@@ -914,8 +914,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 if (_owner.currentStructure != null) {
                     //OPTIMIZE THIS!
                     //chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
-                    List<LocationGridTile> choices = _owner.homeStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
-                    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+                    if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                        chosenTile = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion().GetRandomTile();
+                    } else {
+                        List<LocationGridTile> choices = _owner.homeStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
+                        chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+                    }
+
                 }
             }
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);

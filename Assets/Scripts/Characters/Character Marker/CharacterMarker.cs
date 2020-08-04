@@ -492,7 +492,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 attainedDestinationTile = destinationTile;
             } else {
                 Vector3 lastPositionInPath = pathfindingAI.currentPath.vectorPath.Last();
-                character.currentRegion.innerMap.GetTile(lastPositionInPath);
+                attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
             }
             if (character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
