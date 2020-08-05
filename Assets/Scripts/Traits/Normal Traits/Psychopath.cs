@@ -4,6 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using System.Linq;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 namespace Traits {
     public class Psychopath : Trait {
@@ -290,14 +291,26 @@ namespace Traits {
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RITUAL_KILLING, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
             if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
-                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
-                if(outsideSettlementTile != null) {
+                //LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
+                LocationGridTile outsideSettlementTile = null;
+                BaseSettlement settlement = null;
+                if(character.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                }
+                if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                 } else {
-                    LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
-                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                    HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.region == character.gridTileLocation.collectionOwner.region && h.settlementOnTile == null);
+                    if(hex != null) {
+                        LocationGridTile chosenTile = hex.GetRandomTile();
+                        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
+                    } else {
+                        LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
+                        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                    }
+
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
@@ -312,15 +325,27 @@ namespace Traits {
                 return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RITUAL_KILLING, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
-            if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
-                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
-                if(outsideSettlementTile != null) {
+            if (character.homeStructure?.residents == null || character.homeStructure.residents.Count > 1) {
+                //LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
+                LocationGridTile outsideSettlementTile = null;
+                BaseSettlement settlement = null;
+                if (character.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                    outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
+                }
+                if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                 } else {
-                    LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
-                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                    HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.region == character.gridTileLocation.collectionOwner.region && h.settlementOnTile == null);
+                    if (hex != null) {
+                        LocationGridTile chosenTile = hex.GetRandomTile();
+                        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
+                    } else {
+                        LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
+                        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                    }
+
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });

@@ -127,6 +127,7 @@ public class CharacterAIPath : AILerp {
         p.SetRegion(marker.character.currentRegion);
         p.SetNotAllowedStructures(notAllowedStructures);
         p.SetOnlyAllowedStructures(onlyAllowedStructures);
+        p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
         seeker.StartPath(p);
 
         // This is where we should search to
@@ -224,7 +225,7 @@ public class CharacterAIPath : AILerp {
         return true;
     }
     public uint GetNodePenalty(Vector3 nodePos) {
-        uint penalty = 1000;
+        uint penalty = 0;
         //if (marker.terrifyingObjects.Count > 0) {
         //    for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
         //        IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
@@ -335,6 +336,33 @@ public class CharacterAIPath : AILerp {
                     }
                 }
             }
+        }
+        return 0;
+    }
+    public uint GetNodePenaltyForSettlements(Path path, Vector3 nodePos) {
+        if (path is CustomABPath) {
+            CustomABPath customPath = path as CustomABPath;
+            if (customPath.region == null) {
+                return 0;
+            }
+            if (customPath.avoidSettlements) {
+                Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
+                Vector3 localPos = customPath.region.innerMap.worldPos - newNodePos;
+                Vector3Int localPlace = new Vector3Int(localPos.x < 0f ? Mathf.FloorToInt(localPos.x) * -1 : Mathf.FloorToInt(localPos.x), localPos.y < 0f ? Mathf.FloorToInt(localPos.y) * -1 : Mathf.FloorToInt(localPos.y), 0);
+                //Vector3Int localPlace = customPath.npcSettlement.areaMap.groundTilemap.WorldToCell(newNodePos);
+                LocationGridTile nodeGridTile = null;
+                if (UtilityScripts.Utilities.IsInRange(localPlace.x, 0, customPath.region.innerMap.map.GetUpperBound(0) + 1) &&
+                        UtilityScripts.Utilities.IsInRange(localPlace.y, 0, customPath.region.innerMap.map.GetUpperBound(1) + 1)) {
+                    nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
+                }
+                if (nodeGridTile != null && nodeGridTile.IsPartOfHumanElvenSettlement()) {
+                    return 1000000;
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }      
         }
         return 0;
     }

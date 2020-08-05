@@ -23,8 +23,12 @@ public class GiantSpider : Summon {
         base.Initialize();
         //behaviourComponent.RemoveBehaviourComponent(typeof(DefaultMonster));
         // behaviourComponent.AddBehaviourComponent(typeof(AbductorMonster));
+        movementComponent.SetAvoidSettlements(true);
         movementComponent.SetEnableDigging(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Giant_Spider_Behaviour);
+    }
+    public override void OnSummonAsPlayerMonster() {
+        movementComponent.SetAvoidSettlements(false);
     }
     public override void SubscribeToSignals() {
         base.SubscribeToSignals();

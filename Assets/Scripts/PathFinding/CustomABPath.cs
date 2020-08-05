@@ -8,6 +8,7 @@ public class CustomABPath : ABPath {
     public STRUCTURE_TYPE[] onlyAllowedStructures { get; private set; }
     public STRUCTURE_TYPE[] notAllowedStructures { get; private set; }
     public Region region { get; private set; }
+    public bool avoidSettlements { get; private set; }
 
     public new static CustomABPath Construct(Vector3 start, Vector3 end, OnPathDelegate callback = null) {
         var p = PathPool.GetPath<CustomABPath>();
@@ -18,6 +19,9 @@ public class CustomABPath : ABPath {
 
     public void SetRegion(Region region) {
         this.region = region;
+    }
+    public void SetAvoidSettlements(bool state) {
+        avoidSettlements = state;
     }
     public void SetNotAllowedStructures(STRUCTURE_TYPE[] notAllowedStructures) {
         if(notAllowedStructures != null) {
