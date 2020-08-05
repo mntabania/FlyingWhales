@@ -6,7 +6,7 @@ using Locations.Settlements;
 
 public class AttackVillageBehaviour : CharacterBehaviourComponent {
     public AttackVillageBehaviour() {
-        priority = 1080;
+        priority = 30;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
@@ -75,7 +75,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                 targetHex = character.behaviourComponent.attackVillageTarget.tiles[UnityEngine.Random.Range(0, character.behaviourComponent.attackVillageTarget.tiles.Count)];
             }
             LocationGridTile targetTile = targetHex.locationGridTiles[UnityEngine.Random.Range(0, targetHex.locationGridTiles.Count)];
-            character.jobComponent.TriggerRoamAroundTile(out producedJob, targetTile);
+            character.jobComponent.CreateGoToJob(targetTile, out producedJob);
         }
         return true;
     }

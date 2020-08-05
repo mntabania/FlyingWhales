@@ -17,6 +17,7 @@ public class AgitateData : PlayerAction {
             targetCharacter.movementComponent.SetEnableDigging(true);
             LocationStructure targetStructure = targetCharacter.gridTileLocation.GetNearestVillageStructureFromThisWithResidents(targetCharacter);
             if(targetStructure != null) {
+                targetCharacter.jobQueue.CancelAllJobs();
                 targetCharacter.behaviourComponent.SetAttackVillageTarget(targetStructure.settlementLocation as NPCSettlement);
                 targetCharacter.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
                 targetCharacter.behaviourComponent.SetIsAgitated(true);
