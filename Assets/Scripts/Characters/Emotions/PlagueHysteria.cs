@@ -9,7 +9,14 @@
         ActualGoapNode goapNode = null) {
         if (target is Character targetCharacter) {
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Plague Hysteria", -10);
-            witness.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, targetCharacter, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
+            AWARENESS_STATE awarenessState = witness.relationshipContainer.GetAwarenessState(targetCharacter);
+            if (awarenessState == AWARENESS_STATE.Available) {
+                witness.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, targetCharacter, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
+            } else if (awarenessState == AWARENESS_STATE.None) {
+                if (!targetCharacter.isDead) {
+                    witness.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, targetCharacter, INTERACTION_TYPE.IS_PLAGUED, REACTION_STATUS.WITNESSED);
+                }
+            }
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
     }

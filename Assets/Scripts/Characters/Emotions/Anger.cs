@@ -34,9 +34,15 @@ public class Anger : Emotion {
             //        witness.jobComponent.CreateUndermineJob(targetCharacter, "normal");
             //    }
             //}
+            if(witness.marker && witness.marker.inVisionCharacters.Contains(targetCharacter)) {
+                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Angry, targetCharacter);
+            }
         } else if (target is TileObject tileObject) {
             if (UnityEngine.Random.Range(0, 100) < 25) {
                 witness.combatComponent.Fight(tileObject, CombatManager.Anger);
+            }
+            if (witness.marker && witness.marker.inVisionTileObjects.Contains(tileObject)) {
+                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Angry, tileObject);
             }
         }
         return base.ProcessEmotion(witness, target, status, goapNode);

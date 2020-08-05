@@ -9,6 +9,7 @@ namespace Traits {
         public ITraitable traitable { get; private set; }
         public List<LocationStructure> excludedStructuresInSeekingShelter { get; private set; }
         public LocationStructure currentShelterStructure { get; private set; }
+        private GameObject _overheatingEffectGO;
 
         public Overheating() {
             name = "Overheating";
@@ -21,6 +22,8 @@ namespace Traits {
             stackLimit = 3;
             stackModifier = 1.5f;
             excludedStructuresInSeekingShelter = new List<LocationStructure>();
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
         #region Overrides
@@ -29,6 +32,7 @@ namespace Traits {
             traitable = addedTo;
             if (addedTo is Character character) {
                 Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating, false);
             }
         }
         public override void OnStackStatus(ITraitable addedTo) {
@@ -43,10 +47,29 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
+                if (_overheatingEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_overheatingEffectGO);
+                    _overheatingEffectGO = null;
+                }
                 if (character.trapStructure.forcedStructure == currentShelterStructure) {
                     character.trapStructure.SetForcedStructure(null);
                 }
                 Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                if (_overheatingEffectGO) {
+                    ObjectPoolManager.Instance.DestroyObject(_overheatingEffectGO);
+                    _overheatingEffectGO = null;
+                }
+                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating, false);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (_overheatingEffectGO) {
+                ObjectPoolManager.Instance.DestroyObject(_overheatingEffectGO);
+                _overheatingEffectGO = null;
             }
         }
         #endregion

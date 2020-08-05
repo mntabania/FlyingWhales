@@ -105,7 +105,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (character.traitContainer.HasTrait("Unconscious")) {
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+
             //_owner.behaviourComponent.SetIsHarassing(false, null);
             //_owner.behaviourComponent.SetIsInvading(false, null);
             //_owner.behaviourComponent.SetIsDefending(false, null);
@@ -1289,7 +1289,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     }
     public bool TryCreateObtainPersonalItemJob(out JobQueueItem producedJob) {
-	    if (!_owner.IsInventoryAtFullCapacity()) {
+	    if (!_owner.IsInventoryAtFullCapacity() && !_owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
             string chosenItemName = GetItemNameForObtainPersonalItemJob();
             if (chosenItemName != string.Empty) {
                 GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
@@ -1303,7 +1303,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     }
     public bool TryCreateObtainPersonalItemJob(string chosenItemName, out JobQueueItem producedJob) {
-	    if (!_owner.IsInventoryAtFullCapacity()) {
+	    if (!_owner.IsInventoryAtFullCapacity() && !_owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
 		    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
 		    producedJob = job;

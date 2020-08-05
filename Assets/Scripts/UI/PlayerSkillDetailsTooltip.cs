@@ -151,7 +151,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
         }
         if(HasEnoughCharges(spellData) == false) {
-            additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+            if (spellData.hasCooldown) {
+                additionalText.text += "<color=\"red\">Recharging.</color>\n";
+            } else {
+                additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+            }
         }
     }
     private void UpdateData(string title, string description, int charges, int manaCost, int cooldown, int threat, string additionalTextStr) {
@@ -182,7 +186,11 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         if (charges != -1) {
             if(HasEnoughCharges(charges) == false) {
-                additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+                if (cooldown != -1) {
+                    additionalText.text += "<color=\"red\">Recharging.</color>\n";
+                } else {
+                    additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+                }
             }    
         }
     }

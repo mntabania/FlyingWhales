@@ -781,6 +781,9 @@ public class CombatComponent {
                     case JOB_TYPE.BERSERK_ATTACK:
                         key = "Berserked";
                         break;
+                    case JOB_TYPE.BRAWL:
+                        key = "Brawl";
+                        break;
                     case JOB_TYPE.MOVE_CHARACTER:
                         if (owner is Troll) {
                             key = "Abduct";
