@@ -183,6 +183,9 @@ namespace Tutorial {
         public bool HasTutorialBeenCompleted(Tutorial tutorial) {
             return SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials.Contains(tutorial) || _completedImportantTutorials.Contains(tutorial);
         }
+        public bool HasTutorialBeenCompletedInCurrentPlaythrough(Tutorial tutorial) {
+            return _completedImportantTutorials.Contains(tutorial);
+        }
         public bool IsTutorialCurrentlyActive(Tutorial tutorial) {
             return _instantiatedTutorials.Any(t => t.tutorialType == tutorial && t.isActivated);
         }

@@ -13,7 +13,10 @@ public class BuildListUI : PopupMenuBase {
     [SerializeField] private Toggle buildToggle;
     [SerializeField] private ScrollRect buildingsScrollRect;
     [SerializeField] private GameObject spellItemPrefab;
+    [SerializeField] private UIHoverPosition tooltipPosition;
+    
     private SpellItem[] buildItems;
+    
     private void Awake() {
         buildToggle.interactable = false;
         Close();
@@ -44,8 +47,16 @@ public class BuildListUI : PopupMenuBase {
             SpellItem spellItem = spellNameplate.GetComponent<SpellItem>();
             spellItem.SetObject(demonicStructurePlayerSkill);
             spellItem.SetInteractableState(CanChooseLandmark(demonicStructurePlayerSkill.type));
+            spellItem.AddHoverEnterAction(OnHoverSpellItem);
+            spellItem.AddHoverExitAction(OnHoverExitSpellItem);
             buildItems[i] = spellItem;
         }
+    }
+    private void OnHoverSpellItem(SpellData spellData) {
+        PlayerUI.Instance.OnHoverSpell(spellData, tooltipPosition);
+    }
+    private void OnHoverExitSpellItem(SpellData spellData) {
+        PlayerUI.Instance.OnHoverOutSpell(spellData);
     }
     private void UpdateBuildList() {
         for (int i = 0; i < buildItems.Length; i++) {
@@ -68,7 +79,7 @@ public class BuildListUI : PopupMenuBase {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
                 if (structureType == SPELL_TYPE.EYE) {
                     return
-                        TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Share_An_Intel) ||
+                        TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
                         TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
                 }
             }
