@@ -24,9 +24,11 @@ public class HarvestPlant : GoapAction {
         SetState("Harvest Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}:";
+        int cost = UtilityScripts.Utilities.Rng.Next(40, 51);
+        costLog += $" +{cost.ToString()}(Random Cost Between 40-50)";
         actor.logComponent.AppendCostLog(costLog);
-        return 10;
+        return cost;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);

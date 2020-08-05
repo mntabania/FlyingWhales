@@ -2389,11 +2389,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Troll
-    public bool TriggerBuildCookingCauldronJob(out JobQueueItem producedJob) {
+    public bool TriggerBuildTrollCauldronJob(out JobQueueItem producedJob) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_COOKING_CAULDRON], _owner, _owner, null, 0);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_TROLL_CAULDRON], _owner, _owner, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_COOKING_CAULDRON, _owner, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_TROLL_CAULDRON, _owner, _owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetAssignedPlan(goapPlan);
             producedJob = job;

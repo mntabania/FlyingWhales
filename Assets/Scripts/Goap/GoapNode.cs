@@ -224,7 +224,7 @@ public class ActualGoapNode : IReactable, IRumorable {
             targetTile = actor.gridTileLocation;
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
             if (actor.canMove && !actor.movementComponent.isStationary) {
-                List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3);
+                List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
                 if (choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
                 } else {
@@ -238,7 +238,7 @@ public class ActualGoapNode : IReactable, IRumorable {
                 targetTile = null;
                 return;
             }
-            List<LocationGridTile> choices = targetStructure.tiles; //targetStructure.unoccupiedTiles.ToList();
+            List<LocationGridTile> choices = targetStructure.passableTiles; //targetStructure.unoccupiedTiles.ToList();
             if (choices.Count > 0) {
                 targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
             } else {

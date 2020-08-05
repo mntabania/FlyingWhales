@@ -606,7 +606,7 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.COOK, new[]{
             new StateNameAndDuration(){ name = "Cook Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
-        {INTERACTION_TYPE.BUILD_COOKING_CAULDRON, new[]{
+        {INTERACTION_TYPE.BUILD_TROLL_CAULDRON, new[]{
             new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
         {INTERACTION_TYPE.FLEE_CRIME, new[]{

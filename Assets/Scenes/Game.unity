@@ -87957,9 +87957,9 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: a445911a1c105fa449abf39b4d0fdec8, type: 3}
+          - {fileID: 21300000, guid: 029f3620468d6334694e1ce40ffdc9d9, type: 3}
           inactiveTile:
-          - {fileID: 21300000, guid: a445911a1c105fa449abf39b4d0fdec8, type: 3}
+          - {fileID: 21300000, guid: 029f3620468d6334694e1ce40ffdc9d9, type: 3}
   corruptedTileObjectAssets:
     m_keys: 090000004b000000
     m_values:

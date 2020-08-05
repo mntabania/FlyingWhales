@@ -19,7 +19,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
             }
-            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.MAKE_LOVE && character.previousCurrentActionNode.actionStatus == ACTION_STATUS.SUCCESS) {
+            if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 if (character.currentStructure != character.homeStructure && !character.IsInTerritory()) {
                     if (character.jobComponent.PlanIdleReturnHome(out producedJob)) {
                         return true;
