@@ -6,7 +6,7 @@ using Locations.Settlements;
 
 public class AttackVillageBehaviour : CharacterBehaviourComponent {
     public AttackVillageBehaviour() {
-        priority = 30;
+        priority = 1080;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
