@@ -46,8 +46,25 @@ public class TrollBehaviour : CharacterBehaviourComponent {
 
                 }
             } else {
-                log += $"\n-Already outside home, roam";
-                return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                log += $"\n-Already outside home, 30% chance to roam, 70% chance to go to another hex adjacent to home";
+                int roll = UnityEngine.Random.Range(0, 100);
+                log += $"\n-Roll: " + roll;
+                if(roll < 30) {
+                    return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                } else {
+                    HexTile adjacentHextile = null;
+                    if (character.homeSettlement != null) {
+                        adjacentHextile = character.homeSettlement.GetAPlainAdjacentHextile();
+                    } else {
+                        adjacentHextile = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetRandomAdjacentNoSettlementHextileWithinRegion();
+                    }
+                    if (adjacentHextile != null) {
+                        log += $"\n-Target hex: " + adjacentHextile.name;
+                        return character.jobComponent.CreateGoToJob(adjacentHextile.GetRandomTile(), out producedJob);
+                    } else {
+                        return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    }
+                }
             }
         }
         if (character.isAtHomeStructure || character.IsInHomeSettlement()) {
