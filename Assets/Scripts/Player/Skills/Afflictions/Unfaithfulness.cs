@@ -132,5 +132,12 @@ public class UnfaithfulnessData : SpellData {
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
+            reasons += $"{targetCharacter.name} already has this Flaw,";
+        }
+        return reasons;
+    }
     #endregion
 }

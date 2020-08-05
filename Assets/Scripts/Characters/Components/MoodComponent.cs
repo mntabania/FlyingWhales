@@ -28,13 +28,26 @@ public class MoodComponent {
 	public MOOD_STATE moodState {
 		get {
 			if (_isInNormalMood) {
-				return MOOD_STATE.NORMAL;	
+				return MOOD_STATE.Normal;	
 			} else if (_isInLowMood) {
-				return MOOD_STATE.LOW;
+				return MOOD_STATE.Bad;
 			} else if (_isInCriticalMood) {
-				return MOOD_STATE.CRITICAL;
+				return MOOD_STATE.Critical;
 			} else {
 				throw new Exception($"Problem determining {_owner.name}'s mood. Because all switches are set to false.");
+			}
+		}
+	}
+	public string moodStateName {
+		get {
+			if (_isInNormalMood) {
+				return "Normal";	
+			} else if (_isInLowMood) {
+				return "Bad";
+			} else if (_isInCriticalMood) {
+				return "Critical";
+			} else {
+				return "";
 			}
 		}
 	}
@@ -123,7 +136,7 @@ public class MoodComponent {
 
 	#region Normal Mood
 	private void EnterNormalMood() {
-		SwitchMoodStates(MOOD_STATE.NORMAL);
+		SwitchMoodStates(MOOD_STATE.Normal);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>normal</b> mood state");
 	}
@@ -136,7 +149,7 @@ public class MoodComponent {
 	
 	#region Low Mood
 	private void EnterLowMood() {
-		SwitchMoodStates(MOOD_STATE.LOW);
+		SwitchMoodStates(MOOD_STATE.Bad);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>Low</b> mood state");
 		
@@ -150,7 +163,7 @@ public class MoodComponent {
 
 	#region Critical Mood
 	private void EnterCriticalMood() {
-		SwitchMoodStates(MOOD_STATE.CRITICAL);
+		SwitchMoodStates(MOOD_STATE.Critical);
 		Debug.Log(
 			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>critical</b> mood state");
 		if (executeMoodChangeEffects) {
@@ -443,24 +456,24 @@ public class MoodComponent {
 	private void SwitchMoodStates(MOOD_STATE moodToEnter) {
 		MOOD_STATE lastMoodState = moodState;
 		switch (moodToEnter) {
-			case MOOD_STATE.LOW:
+			case MOOD_STATE.Bad:
 				_isInLowMood = true;
 				break;
-			case MOOD_STATE.NORMAL:
+			case MOOD_STATE.Normal:
 				_isInNormalMood = true;
 				break;
-			case MOOD_STATE.CRITICAL:
+			case MOOD_STATE.Critical:
 				_isInCriticalMood = true;
 				break;
 		}
 		switch (lastMoodState) {
-			case MOOD_STATE.LOW:
+			case MOOD_STATE.Bad:
 				ExitLowMood();
 				break;
-			case MOOD_STATE.NORMAL:
+			case MOOD_STATE.Normal:
 				ExitNormalMood();
 				break;
-			case MOOD_STATE.CRITICAL:
+			case MOOD_STATE.Critical:
 				ExitCriticalMood();
 				break;
 		}

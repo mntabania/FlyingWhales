@@ -38,7 +38,7 @@ public class PlayCards : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            return actor == poiTarget && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
+            return actor == poiTarget && (actor.moodComponent.moodState == MOOD_STATE.Normal);
         }
         return false;
     }

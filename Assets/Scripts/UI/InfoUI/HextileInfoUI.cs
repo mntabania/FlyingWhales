@@ -81,6 +81,7 @@ public class HextileInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowTestingInfo() {
+#if UNITY_EDITOR
         string summary = currentlyShowingHexTile.ToString();
         if (currentlyShowingHexTile.settlementOnTile is NPCSettlement npcSettlement) {
             summary = $"Settlement Ruler: {npcSettlement.ruler?.name ?? "None"}";
@@ -92,9 +93,12 @@ public class HextileInfoUI : InfoUIBase {
             summary += npcSettlement.jobPriorityComponent.GetJobAssignments();
         }
         UIManager.Instance.ShowSmallInfo(summary);
+#endif
     }
     public void HideTestingInfo() {
+#if UNITY_EDITOR
         UIManager.Instance.HideSmallInfo();
+#endif
     }
     #endregion
 }

@@ -41,7 +41,7 @@ public class RememberFallen : GoapAction {
             cost += 2000;
             costLog += " +2000(Psychopath)";
         }
-        if (actor.moodComponent.moodState == MOOD_STATE.LOW || actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+        if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
             cost += -15;
             costLog += " -15(Low or Crit Mood)";
         }

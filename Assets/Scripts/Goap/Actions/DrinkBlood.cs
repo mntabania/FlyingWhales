@@ -29,13 +29,13 @@ public class DrinkBlood : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
-        if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
+        if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
             cost = UtilityScripts.Utilities.Rng.Next(50, 61);
             costLog += $" +{cost}(Normal Mood)";
-        } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+        } else if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
             cost = UtilityScripts.Utilities.Rng.Next(20, 31);
             costLog += $" +{cost}(Low Mood)";
-        } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+        } else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
             cost = UtilityScripts.Utilities.Rng.Next(0, 11);
             costLog += $" +{cost}(Critical Mood)";
         }

@@ -129,7 +129,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
-        if (spellData is PlayerAction) {
+        if (spellData is PlayerAction || spellData.category == SPELL_CATEGORY.AFFLICTION) {
             Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             if (activeCharacter != null && spellData.CanPerformAbilityTowards(activeCharacter) == false) {
                 if (activeCharacter.traitContainer.HasTrait("Blessed")) {

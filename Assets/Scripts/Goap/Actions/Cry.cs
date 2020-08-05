@@ -30,7 +30,7 @@ public class Cry : GoapAction {
         int timesCost = 10 * actor.jobComponent.GetNumOfTimesActionDone(this);
         cost += timesCost;
         costLog += $" +{timesCost.ToString()}(10 x Times Cried)";
-        if (actor.moodComponent.moodState != MOOD_STATE.LOW && actor.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+        if (actor.moodComponent.moodState != MOOD_STATE.Bad && actor.moodComponent.moodState != MOOD_STATE.Critical) {
             cost += 2000;
             costLog += " +2000(not Low and Critical mood)";
         }

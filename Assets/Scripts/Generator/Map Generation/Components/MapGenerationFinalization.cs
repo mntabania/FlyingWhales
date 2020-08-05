@@ -172,9 +172,10 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		if (WorldConfigManager.Instance.isTutorialWorld) {
 			bool hasEvilCharacter = false;
 			bool hasTreacherousCharacter = false;
-			List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter));
-			for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-				Character character = CharacterManager.Instance.allCharacters[i];
+			List<Character> characterChoices = new List<Character>(CharacterManager.Instance.allCharacters
+				.Where(x => x.isNormalCharacter && !x.isDead));
+			for (int i = 0; i < characterChoices.Count; i++) {
+				Character character = characterChoices[i];
 				if (character.traitContainer.HasTrait("Evil")) {
 					hasEvilCharacter = true;
 				}

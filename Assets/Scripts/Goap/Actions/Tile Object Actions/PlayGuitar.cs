@@ -91,9 +91,9 @@ public class PlayGuitar : GoapAction {
         Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
-                if (witness.moodComponent.moodState == MOOD_STATE.LOW) {
+                if (witness.moodComponent.moodState == MOOD_STATE.Bad) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
-                } else if (witness.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                } else if (witness.moodComponent.moodState == MOOD_STATE.Critical) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);    
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);    
@@ -106,7 +106,7 @@ public class PlayGuitar : GoapAction {
                 GENDER gender2 = actor.gender;
                 if(RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4
                    && RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2)
-                   && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+                   && witness.moodComponent.moodState != MOOD_STATE.Critical) {
                     int value = 50;
                     if (actor.traitContainer.HasTrait("Unattractive")) {
                         value = 20;

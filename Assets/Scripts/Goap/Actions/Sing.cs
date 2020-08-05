@@ -68,7 +68,7 @@ public class Sing : GoapAction {
                 GENDER gender2 = actor.gender;
                 if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4
                     && RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2)
-                    && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
+                    && witness.moodComponent.moodState != MOOD_STATE.Critical) {
                     int value = 50;
                     if (actor.traitContainer.HasTrait("Unattractive")) {
                         value = 20;
@@ -112,7 +112,7 @@ public class Sing : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-            return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
+            return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.Normal);
         }
         return false;
     }
@@ -153,6 +153,6 @@ public class SingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
+        return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.Normal);
     }
 }

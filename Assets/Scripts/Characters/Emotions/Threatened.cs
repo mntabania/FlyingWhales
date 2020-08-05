@@ -16,9 +16,9 @@ public class Threatened : Emotion {
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Threatened", -8, "was threatened");
         }
         if(witness.marker && witness.marker.inVisionPOIs.Contains(target)) {
-            if(witness.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+            if(witness.moodComponent.moodState == MOOD_STATE.Critical) {
                 witness.combatComponent.FightOrFlight(target, CombatManager.Threatened);
-            } else if (witness.moodComponent.moodState == MOOD_STATE.LOW) {
+            } else if (witness.moodComponent.moodState == MOOD_STATE.Bad) {
                 if (UnityEngine.Random.Range(0, 2) == 0) {
                     witness.combatComponent.FightOrFlight(target, CombatManager.Threatened);
                 } else {

@@ -15,9 +15,9 @@ namespace Quests.Special_Popups {
         public override void Activate() {
             StopCheckingCriteria();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Threat", 
-                $"Careful, your {UtilityScripts.Utilities.ColorizeAction("Threat Level")} has increased! Many of the things you do generate Threat. " +
-                "Some generate a large fixed amount once you perform it, while some generate small amounts each hour afterwards." +
-                $"Something interesting will happen once your Threat Level has reached {UtilityScripts.Utilities.ColorizeAction(ThreatComponent.MAX_THREAT.ToString())}. Be ready!", 
+                $"Careful, your {UtilityScripts.Utilities.ColorizeAction("Threat Level")} has increased! Many of the things you do generate only a " +
+                $"small amount of Threat but it goes down very slowly every hour. " +
+                $"Something really bad will happen once your Threat Level has reached {UtilityScripts.Utilities.ColorizeAction(ThreatComponent.MAX_THREAT.ToString())}. Be ready!", 
                 TutorialManager.Instance.threatPicture);
             CompleteQuest();
         }

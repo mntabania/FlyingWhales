@@ -80,10 +80,10 @@ namespace Interrupts {
                     debugLog += "\n-Target is Chaste: +300 to Reject Weight";
                 }
 
-                if (targetCharacter.moodComponent.moodState == MOOD_STATE.LOW) {
+                if (targetCharacter.moodComponent.moodState == MOOD_STATE.Bad) {
                     rejectWeight += 50;
                     debugLog += "\n-Target is Low mood: +50 to Reject Weight";
-                } else if (targetCharacter.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                } else if (targetCharacter.moodComponent.moodState == MOOD_STATE.Critical) {
                     rejectWeight += 200;
                     debugLog += "\n-Target is Crit mood: +200 to Reject Weight";
                 }

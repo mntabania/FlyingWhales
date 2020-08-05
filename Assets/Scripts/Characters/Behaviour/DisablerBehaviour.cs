@@ -65,12 +65,12 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
     }
     public override void OnAddBehaviourToCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
-        character.traitContainer.AddTrait(character, "Stealthy");
+        // character.traitContainer.AddTrait(character, "Stealthy");
         character.behaviourComponent.OnBecomeDisabler();
     }
     public override void OnRemoveBehaviourFromCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
-        character.traitContainer.RemoveTrait(character, "Stealthy");
+        // character.traitContainer.RemoveTrait(character, "Stealthy");
         character.behaviourComponent.OnNoLongerDisabler();
     }
     #endregion
