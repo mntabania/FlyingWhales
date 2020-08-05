@@ -32,6 +32,7 @@ public class Dragon : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
+        movementComponent.SetEnableDigging(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
     protected override void OnTickStarted() {
