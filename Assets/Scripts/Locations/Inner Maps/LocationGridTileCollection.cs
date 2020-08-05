@@ -109,6 +109,27 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public HexTile GetNearestHexTileThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
+            if (isPartOfParentRegionMap) {
+                if (validityChecker.Invoke(partOfHextile.hexTileOwner)) {
+                    return partOfHextile.hexTileOwner;
+                }
+            }
+            foreach (LocationGridTileCollection collection in neighbours.Values) {
+                if (collection.isPartOfParentRegionMap) {
+                    if (validityChecker.Invoke(collection.partOfHextile.hexTileOwner)) {
+                        return collection.partOfHextile.hexTileOwner;
+                    }
+                }
+            }
+            foreach (LocationGridTileCollection collection in neighbours.Values) {
+                HexTile nearestHex = collection.GetNearestHexTileThatMeetCriteria(validityChecker);
+                if (nearestHex != null) {
+                    return nearestHex;
+                }
+            }
+            return null;
+        }
         public HexTile GetNearestPlainHexTileWithNoResident() {
             if (isPartOfParentRegionMap) {
                 if(partOfHextile.hexTileOwner.elevationType != ELEVATION.WATER && partOfHextile.hexTileOwner.elevationType != ELEVATION.MOUNTAIN) {

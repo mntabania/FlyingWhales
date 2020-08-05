@@ -17,12 +17,14 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
+                character.movementComponent.SetEnableDigging(true);
                 character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Invader_Behaviour);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
+                character.movementComponent.SetEnableDigging(false);
                 character.behaviourComponent.UpdateDefaultBehaviourSet();
             }
         }

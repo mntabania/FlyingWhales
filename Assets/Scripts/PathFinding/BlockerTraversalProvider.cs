@@ -28,7 +28,7 @@ public class BlockerTraversalProvider : ITraversalProvider {
         //    additionalPenalty = 5000000;
         //}
         if (!_marker.useCanTraverse) {
-            additionalPenalty = _marker.pathfindingAI.GetNodePenalty((Vector3) node.position) + _marker.pathfindingAI.GetNodePenaltyForStructures(path, (Vector3) node.position);
+            additionalPenalty = _marker.pathfindingAI.GetNodePenalty((Vector3) node.position) + _marker.pathfindingAI.GetNodePenaltyForStructures(path, (Vector3) node.position) + +_marker.pathfindingAI.GetNodePenaltyForSettlements(path, (Vector3) node.position);
         }
 
         // The traversal cost is the sum of the penalty of the node's tag and the node's penalty

@@ -22,8 +22,12 @@ public class Troll : Summon {
     #region Overrides
     public override void Initialize() {
         base.Initialize();
+        movementComponent.SetAvoidSettlements(true);
         movementComponent.SetEnableDigging(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Troll_Behaviour);
+    }
+    public override void OnSummonAsPlayerMonster() {
+        movementComponent.SetAvoidSettlements(false);
     }
     protected override void OnTickStarted() {
         base.OnTickStarted();

@@ -21,6 +21,7 @@ public class MovementComponent {
     public float runSpeedModifier { get; private set; }
     public bool hasMovedOnCorruption { get; private set; }
     public bool isStationary { get; private set; }
+    public bool avoidSettlements { get; private set; }
     public ABPath currentDigPath { get; private set; }
 
     private int _enableDiggingCounter;
@@ -46,7 +47,6 @@ public class MovementComponent {
     public void SetIsRunning(bool state) {
         isRunning = state;
     }
-
     public void SetNoRunExceptCombat(bool state) {
         noRunExceptCombat = state;
     }
@@ -131,7 +131,10 @@ public class MovementComponent {
     }
     public void SetIsStationary(bool state) {
         isStationary = state;
-    } 
+    }
+    public void SetAvoidSettlements(bool state) {
+        avoidSettlements = state;
+    }
 
     #region Go To
     public bool GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
