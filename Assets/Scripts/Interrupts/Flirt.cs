@@ -26,12 +26,22 @@ namespace Interrupts {
                 bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
 
                 if (isActorLoverOrAffairOfWitness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
-                } else if (isTargetLoverOrAffairOfWitness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                } else if (isTargetLoverOrAffairOfWitness) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
+                    //response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    if(witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    }
                 } else {
-                    //TODO: Positive/Negative Result
+                    Character loverOfActor = actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+                    if (loverOfActor != null && loverOfActor != targetCharacter) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                    } else if (witness.relationshipContainer.IsFriendsWith(actor)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                    }
                 }
             }
             return response;
