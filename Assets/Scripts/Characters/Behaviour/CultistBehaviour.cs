@@ -11,9 +11,9 @@ public class CultistBehaviour : CharacterBehaviourComponent {
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         int chance = 0;
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            chance = 20;
+            chance = 6;
         } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT || timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            chance = 35;
+            chance = 12;
         }
 
         int roll = UnityEngine.Random.Range(0, 100);

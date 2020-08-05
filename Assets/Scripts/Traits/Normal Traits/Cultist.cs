@@ -28,6 +28,7 @@ namespace Traits {
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
+                character.traitContainer.AddTrait(character, "Nocturnal");
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

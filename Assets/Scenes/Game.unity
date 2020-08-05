@@ -43287,7 +43287,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 84a8b484387d6314e8a900ded3746834, type: 3}
-  m_Type: 1
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -87923,9 +87923,9 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile:
-          - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+          - {fileID: 21300000, guid: 5deeecda15f1e6b4ba835c1dd85f1bbb, type: 3}
           inactiveTile:
-          - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
+          - {fileID: 21300000, guid: 5deeecda15f1e6b4ba835c1dd85f1bbb, type: 3}
     - biomeAssets:
         m_keys: 06000000
         m_values:
