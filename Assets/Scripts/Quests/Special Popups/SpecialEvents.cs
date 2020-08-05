@@ -22,7 +22,8 @@ namespace Quests.Special_Popups {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
             if (hasMetAllCriteria) {
                 //No necromancers have been spawned yet
-                return GameManager.Instance.Today().day >= 3 && CharacterManager.Instance.hasSpawnedNecromancerOnce == false;
+                return GameManager.Instance.Today().day >= 3 && CharacterManager.Instance.hasSpawnedNecromancerOnce == false && 
+                       WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial;
             }
             return false;
         }

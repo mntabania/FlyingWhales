@@ -53,10 +53,15 @@ public class PsychopathUI : PopupMenuBase {
         SetVictimType1(SERIAL_VICTIM_TYPE.None);
         SetVictimType2(SERIAL_VICTIM_TYPE.None);
         base.Open();
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
     }
     public void HidePsychopathUI() {
         character = null;
         base.Close();
+        if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
+        }
     }
     private void UpdateConfirmButtonState() {
         confirmButton.interactable = (victimType1 != SERIAL_VICTIM_TYPE.None && victimDescription1 != string.Empty) || (victimType2 != SERIAL_VICTIM_TYPE.None && victimDescription2 != string.Empty);

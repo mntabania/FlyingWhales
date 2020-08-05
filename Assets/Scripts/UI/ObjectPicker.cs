@@ -88,16 +88,20 @@ public class ObjectPicker : PopupMenuBase {
             ShowRaceClassItems(validItems.Cast<RaceClass>().ToList(), invalidItems.Cast<RaceClass>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, asButton);
         }
         titleLbl.text = title;
-        if (!gameObject.activeSelf) {
-            base.Open();
-            if (GameManager.Instance != null) {
-                _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
-                GameManager.Instance.SetPausedState(true);
-            }
-            if (UIManager.Instance != null) {
-                UIManager.Instance.SetSpeedTogglesState(false);
-            }
-        }
+        base.Open();
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
+        // if (!gameObject.activeSelf) {
+        //     base.Open();
+        //     if (GameManager.Instance != null) {
+        //         _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+        //         GameManager.Instance.SetPausedState(true);
+        //     }
+        //     if (UIManager.Instance != null) {
+        //         UIManager.Instance.SetSpeedTogglesState(false);
+        //     }
+        // }
+        
         cover.SetActive(showCover);
         this.gameObject.transform.SetSiblingIndex(layer);
         // closeBtn.interactable = closable;
@@ -110,12 +114,15 @@ public class ObjectPicker : PopupMenuBase {
     public override void Close() {
         if (gameObject.activeSelf) {
             base.Close();
-            if (GameManager.Instance != null) {
-                GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
+            if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+                UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
             }
-            if (UIManager.Instance != null) {
-                UIManager.Instance.SetSpeedTogglesState(true);
-            }
+            // if (GameManager.Instance != null) {
+            //     GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
+            // }
+            // if (UIManager.Instance != null) {
+            //     UIManager.Instance.SetSpeedTogglesState(true);
+            // }
         }
     }
 

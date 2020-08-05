@@ -90,10 +90,8 @@ public class ResearchAbilityUI : PopupMenuBase {
     }
     public override void Close() {
         base.Close();
-        if (!PlayerUI.Instance.TryShowPendingUI()) {
-            //if (PlayerManager.Instance.player.isNotFirstResearch) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
-            //}
+        if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
         //PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
     }

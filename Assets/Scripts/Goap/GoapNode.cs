@@ -548,6 +548,7 @@ public class ActualGoapNode : IReactable, IRumorable {
                 //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
                 EndPerTickEffect(shouldDoAfterEffect);
             } else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the npcSettlement list if it is a npcSettlement job)
+                OnCancelActionTowardsTarget();
                 ActionInterruptedWhilePerforming(shouldDoAfterEffect);
             }
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values

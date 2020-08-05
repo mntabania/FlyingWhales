@@ -1228,10 +1228,15 @@ public class UIManager : MonoBehaviour {
             return;
         }
         
-        if (pauseAndResume) {
-            SetSpeedTogglesState(false);
+        if (pauseAndResume && !IsObjectPickerOpen()) {
+            //if object picker is already being shown, do not pause, so that this does not mess with the previously set speed. 
             Pause();
+            SetSpeedTogglesState(false);    
         }
+        // if (pauseAndResume) {
+        //     SetSpeedTogglesState(false);
+        //     Pause();
+        // }
         yesNoHeaderLbl.text = header;
         yesNoDescriptionLbl.text = question;
 
@@ -1285,8 +1290,8 @@ public class UIManager : MonoBehaviour {
     }
     private void HideYesNoConfirmation() {
         yesNoGO.SetActive(false);
-        if (!PlayerUI.Instance.TryShowPendingUI()) {
-            ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen()) {
+            ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
     private void TweenIn(CanvasGroup canvasGroup) {
@@ -1320,11 +1325,16 @@ public class UIManager : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowTriggerFlawConfirmation(question, effect, manaCost, onClickYesAction, showCover, layer, pauseAndResume));
             return;
         }
-
-        if (pauseAndResume) {
-            SetSpeedTogglesState(false);
+        if (pauseAndResume && !IsObjectPickerOpen()) {
+            //if object picker is already being shown, do not pause, so that this does not mess with the previously set speed. 
             Pause();
+            SetSpeedTogglesState(false);    
         }
+        
+        // if (pauseAndResume) {
+        //     SetSpeedTogglesState(false);
+        //     Pause();
+        // }
         triggerFlawDescriptionLbl.text = question;
         triggerFlawEffectLbl.text = effect;
         triggerFlawManaCostLbl.text = manaCost;
@@ -1350,8 +1360,8 @@ public class UIManager : MonoBehaviour {
     }
     private void HideTriggerFlawConfirmation() {
         triggerFlawGO.SetActive(false);
-        if (!PlayerUI.Instance.TryShowPendingUI()) {
-            ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen()) {
+            ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
     #endregion
