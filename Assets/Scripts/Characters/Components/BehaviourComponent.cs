@@ -814,7 +814,6 @@ public class BehaviourComponent {
     public void SetIsAgitated(bool state) {
         if(isAgitated != state) {
             isAgitated = state;
-            owner.movementComponent.SetEnableDigging(isAgitated);
         }
     }
     #endregion

@@ -14,6 +14,7 @@ public class AgitateData : PlayerAction {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if(targetPOI is Character targetCharacter) {
+            targetCharacter.movementComponent.SetEnableDigging(true);
             LocationStructure targetStructure = targetCharacter.gridTileLocation.GetNearestVillageStructureFromThisWithResidents(targetCharacter);
             if(targetStructure != null) {
                 targetCharacter.behaviourComponent.SetAttackVillageTarget(targetStructure.settlementLocation as NPCSettlement);
@@ -23,6 +24,8 @@ public class AgitateData : PlayerAction {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "agitated");
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToInvolvedObjects();
+            } else {
+                targetCharacter.movementComponent.SetEnableDigging(false);
             }
         }
         base.ActivateAbility(targetPOI);
