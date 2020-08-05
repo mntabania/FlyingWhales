@@ -62,8 +62,8 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
     }
     public override void Close() {
         base.Close();
-        if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
     public void OnClickConfirm() {

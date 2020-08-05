@@ -19,10 +19,13 @@ public class GeneralConfirmation : PopupMenuBase {
             PlayerUI.Instance.AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK, onClickCenter));
             return;
         }
-        
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
-        
+
+        if (!UIManager.Instance.IsObjectPickerOpen()) {
+            //if object picker is already being shown 
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);    
+        }
+
         UIManager.Instance.HideSmallInfo();
         
         generalConfirmationTitleText.SetTextAndReplaceWithIcons(header.ToUpper());
@@ -64,8 +67,8 @@ public class GeneralConfirmation : PopupMenuBase {
     }
     public override void Close() {
         base.Close();
-        if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
 }

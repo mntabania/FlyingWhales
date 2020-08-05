@@ -33,13 +33,14 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostAfflict, OnNoLongerTopMostAfflict)
                         .SetCompleteAction(OnCompleteExecuteAffliction),
-                    new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM)
+                    new ExecuteAfflictionStep("Apply Vampirism", SPELL_TYPE.VAMPIRISM, OnApplyVampirism)
                         .SetOnTopmostActions(OnTopMostVampirism, OnNoLongerTopMostVampirism)
                 ),
                 new QuestStepCollection(
                     new ButtonClickedStep("Trigger Flaw", "Click on Trigger Flaw button")
                         .SetOnTopmostActions(OnTopMostTriggerFlawButton, OnNoLongerTopMostTriggerFlawButton)
-                        .SetCompleteAction(OnCompleteTriggerFlaw),
+                        .SetCompleteAction(OnCompleteTriggerFlaw)
+                        .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
                     new FlawTriggeredStep("Select Vampirism", "Vampiric")
                         .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
                 )
@@ -111,6 +112,10 @@ namespace Tutorial {
         private void OnNoLongerTopMostVampirism() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampirism");
         }
+        private Character _afflictedCharacter;
+        private void OnApplyVampirism(Character character) {
+            _afflictedCharacter = character;
+        }
         #endregion
         
         #region Vampiric Trigger Flaw
@@ -119,6 +124,9 @@ namespace Tutorial {
         }
         private void OnNoLongerTopMostTriggerVampiric() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampiric");
+        }
+        private List<ISelectable> TriggerFlawTargetCenterGetter() {
+            return new List<ISelectable>() { _afflictedCharacter };
         }
         #endregion
     }

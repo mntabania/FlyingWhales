@@ -877,8 +877,8 @@ public class PlayerUI : MonoBehaviour {
     }
     public void HideNewMinionUI() {
         newMinionUIGO.SetActive(false);
-        if (!TryShowPendingUI()) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+        if (!TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }
     #endregion
