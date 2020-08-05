@@ -592,20 +592,22 @@ public class PlayerUI : MonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver() {
+        UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
         // } else {
-            UIManager.Instance.Pause();
-            winGameOver.Open();    
+            // UIManager.Instance.Pause();
+            // winGameOver.Open();    
         // }
         
     }
     public void LoseGameOver() {
+        UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("The Portal is in ruins! \nYour invasion has ended prematurely.");
         // } else {
-            UIManager.Instance.Pause();
-            loseGameOver.Open();
+            // UIManager.Instance.Pause();
+            // loseGameOver.Open();
         // }
     }
     #endregion
