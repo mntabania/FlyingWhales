@@ -280,7 +280,7 @@ public class CharacterInfoUI : InfoUIBase {
     #region Location
     private void UpdateLocationInfo() {
         factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{UtilityScripts.Utilities.ColorizeAndBoldName(_activeCharacter.faction.name)}</link>" : "Factionless";
-        currentLocationLbl.text = $"{_activeCharacter.currentRegion.name}";
+        currentLocationLbl.text = _activeCharacter.currentRegion != null ? $"{_activeCharacter.currentRegion.name}" : "None";
         homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"{_activeCharacter.homeRegion.name}" : "Homeless";
         //currentLocationLbl.text = $"<link=\"currLocation\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.currentRegion.name)}</link>";
         //homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{UtilityScripts.Utilities.ColorizeName(_activeCharacter.homeRegion.name)}</link>" : "Homeless";

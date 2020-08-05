@@ -26,7 +26,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                     }
                 }
             } else {
-                Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && c.homeSettlement != null
+                Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && (character.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null
                     && c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null);
                 if (targetCharacter != null) {
                     log += $"\n-Target for make love is: " + targetCharacter.name;
@@ -49,11 +49,11 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
             log += $"\n-Character is not in disguise, 1% chance to disguise";
             int roll = UnityEngine.Random.Range(0, 100);
             log += "\nRoll: " + roll;
-            if(roll < 1) {
+            if(roll < 100) {
                 Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
                 if(targetCharacter != null) {
                     log += $"\n-Target for disguise is: " + targetCharacter.name;
-                    if(character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && c.homeSettlement != null
+                    if(character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && (character.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null
                     && c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null) != null) {
                         if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
                             return true;

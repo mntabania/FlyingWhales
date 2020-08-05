@@ -351,51 +351,58 @@ public class MakeLove : GoapAction {
     #endregion
 
     private Bed GetValidBedForActor(Character actor, [NotNull]Character target) {
-        if (actor is Summon) {
-            //check un owned dwellings for possible beds
-            //Bed nearestBed = null;
-            //if (target.homeSettlement != null) {
-            //    List<Bed> beds = target.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0);
-            //    float nearestDistance = 0f;
-            //    for (int i = 0; i < beds.Count; i++) {
-            //        Bed bed = beds[i];
-            //        float distanceFromActor = actor.gridTileLocation.GetDistanceTo(bed.gridTileLocation);
-            //        if (nearestBed == null || distanceFromActor < nearestDistance) {
-            //            nearestBed = bed;
-            //            nearestDistance = distanceFromActor;
-            //        }
-            //    }
-            //}
-            List<Dwelling> dwellings =
-                actor.currentRegion.GetStructuresAtLocation<Dwelling>(STRUCTURE_TYPE.DWELLING);
-            Bed nearestBed = null;
-            float nearestDistance = 0f;
-            for (int i = 0; i < dwellings.Count; i++) {
-                Dwelling currDwelling = dwellings[i];
-                Bed dwellingBed = currDwelling.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-                if (dwellingBed != null && dwellingBed.mapObjectState == MAP_OBJECT_STATE.BUILT && dwellingBed.IsAvailable() && dwellingBed.GetActiveUserCount() == 0) {
-                    float distanceFromActor = actor.gridTileLocation.GetDistanceTo(dwellingBed.gridTileLocation);
-                    if (nearestBed == null || distanceFromActor < nearestDistance) {
-                        nearestBed = dwellingBed;
-                        nearestDistance = distanceFromActor;
-                    }
-                }
-            }
-            return nearestBed;
-        } else {
-            if(actor.homeStructure != null) {
-                Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-                if (actorBed != null && actorBed.GetActiveUserCount() == 0) {
-                    return actorBed;
-                } else if (target.homeStructure != null){
-                    Bed targetBed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
-                    if (targetBed != null && targetBed.GetActiveUserCount() == 0) {
-                        return targetBed;
-                    }
-                }
-            }
-            return null;
-        }   
+        Bed bedToUse = null;
+        if(actor.tileObjectComponent.primaryBed != null) {
+            bedToUse = actor.tileObjectComponent.primaryBed;
+        } else if (target.tileObjectComponent.primaryBed != null) {
+            bedToUse = target.tileObjectComponent.primaryBed;
+        }
+        return bedToUse;
+        //if (actor is Summon) {
+        //    //check un owned dwellings for possible beds
+        //    //Bed nearestBed = null;
+        //    //if (target.homeSettlement != null) {
+        //    //    List<Bed> beds = target.homeSettlement.GetTileObjectsOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0);
+        //    //    float nearestDistance = 0f;
+        //    //    for (int i = 0; i < beds.Count; i++) {
+        //    //        Bed bed = beds[i];
+        //    //        float distanceFromActor = actor.gridTileLocation.GetDistanceTo(bed.gridTileLocation);
+        //    //        if (nearestBed == null || distanceFromActor < nearestDistance) {
+        //    //            nearestBed = bed;
+        //    //            nearestDistance = distanceFromActor;
+        //    //        }
+        //    //    }
+        //    //}
+        //    List<Dwelling> dwellings =
+        //        actor.currentRegion.GetStructuresAtLocation<Dwelling>(STRUCTURE_TYPE.DWELLING);
+        //    Bed nearestBed = null;
+        //    float nearestDistance = 0f;
+        //    for (int i = 0; i < dwellings.Count; i++) {
+        //        Dwelling currDwelling = dwellings[i];
+        //        Bed dwellingBed = currDwelling.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+        //        if (dwellingBed != null && dwellingBed.mapObjectState == MAP_OBJECT_STATE.BUILT && dwellingBed.IsAvailable() && dwellingBed.GetActiveUserCount() == 0) {
+        //            float distanceFromActor = actor.gridTileLocation.GetDistanceTo(dwellingBed.gridTileLocation);
+        //            if (nearestBed == null || distanceFromActor < nearestDistance) {
+        //                nearestBed = dwellingBed;
+        //                nearestDistance = distanceFromActor;
+        //            }
+        //        }
+        //    }
+        //    return nearestBed;
+        //} else {
+        //    if(actor.homeStructure != null) {
+        //        Bed actorBed = actor.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+        //        if (actorBed != null && actorBed.GetActiveUserCount() == 0) {
+        //            return actorBed;
+        //        } else if (target.homeStructure != null){
+        //            Bed targetBed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
+        //            if (targetBed != null && targetBed.GetActiveUserCount() == 0) {
+        //                return targetBed;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}   
     }
     
     //#region Intel Reactions

@@ -54,7 +54,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
-    public Character lastAssaultedCharacter { get; private set; }
+    //public Character lastAssaultedCharacter { get; private set; }
     public List<TileObject> items { get; private set; }
     public List<TileObject> ownedItems { get; private set; }
     public JobQueue jobQueue { get; private set; }
@@ -141,6 +141,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public StateAwarenessComponent stateAwarenessComponent { get; private set; }
     public CarryComponent carryComponent { get; private set; }
     public PartyComponent partyComponent { get; private set; }
+    public TileObjectComponent tileObjectComponent { get; private set; }
 
 
     #region getters / setters
@@ -342,6 +343,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         stateAwarenessComponent = new StateAwarenessComponent(this);
         carryComponent = new CarryComponent(this);
         partyComponent = new PartyComponent(this);
+        tileObjectComponent = new TileObjectComponent(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -2630,6 +2632,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetHomeStructure(LocationStructure homeStructure) {
         this.homeStructure = homeStructure;
+        if(homeStructure != null) {
+            if(tileObjectComponent.primaryBed != null) {
+                if(tileObjectComponent.primaryBed.gridTileLocation == null || tileObjectComponent.primaryBed.gridTileLocation.structure != homeStructure) {
+                    tileObjectComponent.SetPrimaryBed(homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
+                }
+            } else {
+                tileObjectComponent.SetPrimaryBed(homeStructure.GetRandomTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.gridTileLocation != null));
+            }
+        }
         //currentAlterEgo.SetHomeStructure(homeStructure);
     }
     public bool MigrateHomeTo(BaseSettlement newHomeSettlement, LocationStructure homeStructure = null, bool broadcast = true, bool addToRegionResidents = true) {
@@ -3241,19 +3252,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return null;
     }
-    private void SetLastAssaultedCharacter(Character character) {
-        lastAssaultedCharacter = character;
-        if (character != null) {
-            //cooldown
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
-            SchedulingManager.Instance.AddEntry(dueDate, () => RemoveLastAssaultedCharacter(character), this);
-        }
-    }
-    private void RemoveLastAssaultedCharacter(Character characterToRemove) {
-        if (lastAssaultedCharacter == characterToRemove) {
-            SetLastAssaultedCharacter(null);
-        }
-    }
+    //private void SetLastAssaultedCharacter(Character character) {
+    //    lastAssaultedCharacter = character;
+    //    if (character != null) {
+    //        //cooldown
+    //        GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
+    //        SchedulingManager.Instance.AddEntry(dueDate, () => RemoveLastAssaultedCharacter(character), this);
+    //    }
+    //}
+    //private void RemoveLastAssaultedCharacter(Character characterToRemove) {
+    //    if (lastAssaultedCharacter == characterToRemove) {
+    //        SetLastAssaultedCharacter(null);
+    //    }
+    //}
     public void SetIsConversing(bool state) {
         isConversing = state;
         if(marker) {

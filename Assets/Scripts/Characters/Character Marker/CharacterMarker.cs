@@ -1479,7 +1479,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
         fleePath.aimStrength = 1;
-        fleePath.spread = 4000;
+        fleePath.spread = 2000;
         seeker.StartPath(fleePath);
     }
     public void OnStartFleeToHome() {
