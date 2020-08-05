@@ -26,8 +26,14 @@ public class Rage : Emotion {
             //} else {
             //    witness.jobComponent.CreateKillJob(targetCharacter);
             //}
+            if (witness.marker && witness.marker.inVisionCharacters.Contains(targetCharacter)) {
+                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Angry, targetCharacter);
+            }
         } else if (target is TileObject tileObject) {
             witness.combatComponent.Fight(tileObject, CombatManager.Rage);
+            if (witness.marker && witness.marker.inVisionTileObjects.Contains(tileObject)) {
+                witness.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Angry, tileObject);
+            }
         }
         return base.ProcessEmotion(witness, target, status, goapNode);
     }

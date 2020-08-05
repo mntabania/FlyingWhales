@@ -566,6 +566,7 @@ public enum INTERRUPT {
     Being_Brainwashed,
     Cry_Request,
     Declare_Raid,
+    Feeling_Angry,
 }
 
 public enum TRAIT_TYPE {
