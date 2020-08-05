@@ -193,14 +193,11 @@ public class Assault : GoapAction {
 
         string key = goapNode.actor.combatComponent.GetCombatLogKeyReason(goapNode.poiTarget);
         JOB_TYPE jobType = goapNode.associatedJobType;
-        if (key == string.Empty) {
-            key = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
-        }
         if(LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
             string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
             goapNode.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {
-            goapNode.descriptionLog.AddToFillers(null, key + ".", LOG_IDENTIFIER.STRING_1);
+            goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()) + ".", LOG_IDENTIFIER.STRING_1);
         }
         // if(goapNode.poiTarget is Character) {
         //     Character targetCharacter = goapNode.poiTarget as Character;

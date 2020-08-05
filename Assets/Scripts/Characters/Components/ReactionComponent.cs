@@ -1019,10 +1019,23 @@ public class ReactionComponent {
                     debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
                     debugLog += "\n-There is at least 1 resident of the structure";
-                    Character chosenSuspect = targetTileObject.gridTileLocation.structure.residents[UnityEngine.Random.Range(0, targetTileObject.gridTileLocation.structure.residents.Count)];
-
-                    debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
-                    actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                    _assumptionSuspects.Clear();
+                    for (int i = 0; i < targetTileObject.gridTileLocation.structure.residents.Count; i++) {
+                        Character resident = targetTileObject.gridTileLocation.structure.residents[i];
+                        AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
+                        if (awarenessState == AWARENESS_STATE.Available) {
+                            _assumptionSuspects.Add(resident);
+                        } else if (awarenessState == AWARENESS_STATE.None) {
+                            if (!resident.isDead) {
+                                _assumptionSuspects.Add(resident);
+                            }
+                        }
+                    }
+                    if(_assumptionSuspects.Count > 0) {
+                        Character chosenSuspect = _assumptionSuspects[UnityEngine.Random.Range(0, _assumptionSuspects.Count)];
+                        debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
+                        actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
+                    }
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && 
@@ -1048,8 +1061,24 @@ public class ReactionComponent {
                     }
                     debugLog += "\n-Rolling for chance to create assumption";
                     if (GameUtilities.RollChance(chanceToCreateAssumption, ref debugLog)) {
-                        Character chosenTarget = CollectionUtilities.GetRandomElement(validResidents);
-                        actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);    
+                        _assumptionSuspects.Clear();
+                        if(validResidents != null) {
+                            for (int i = 0; i < validResidents.Count; i++) {
+                                Character resident = validResidents[i];
+                                AWARENESS_STATE awarenessState = actor.relationshipContainer.GetAwarenessState(resident);
+                                if (awarenessState == AWARENESS_STATE.Available) {
+                                    _assumptionSuspects.Add(resident);
+                                } else if (awarenessState == AWARENESS_STATE.None) {
+                                    if (!resident.isDead) {
+                                        _assumptionSuspects.Add(resident);
+                                    }
+                                }
+                            }
+                        }
+                        Character chosenTarget = CollectionUtilities.GetRandomElement(_assumptionSuspects);
+                        if(chosenTarget != null) {
+                            actor.assumptionComponent.CreateAndReactToNewAssumption(chosenTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
+                        }
                     }
                 }
             } 
@@ -1076,7 +1105,9 @@ public class ReactionComponent {
             if (carrier.reactionComponent.disguisedCharacter != null) {
                 disguisedTarget = carrier.reactionComponent.disguisedCharacter;
             }
-            actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED); 
+            if (!disguisedTarget.isDead) {
+                actor.assumptionComponent.CreateAndReactToNewAssumption(disguisedTarget, targetTileObject, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
+            }
         }
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
