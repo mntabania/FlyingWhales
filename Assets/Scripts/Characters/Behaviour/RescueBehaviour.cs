@@ -21,10 +21,10 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 } else {
                     log += $"\n-Character home settlement is a village";
                     LocationStructure targetStructure = null;
-                    if (character.currentStructure.structureType == STRUCTURE_TYPE.INN) {
+                    if (character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
                         targetStructure = character.currentStructure;
                     } else {
-                        targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
+                        targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
                     }
                     if (targetStructure == null) {
                         if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {

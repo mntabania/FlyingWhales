@@ -614,7 +614,7 @@ public enum SPELL_TARGET {
     ROOM,
 }
 public enum STRUCTURE_TYPE {
-    INN = 1,
+    TAVERN = 1,
     WAREHOUSE = 2,
     DWELLING = 3,
     WILDERNESS = 5,
@@ -1145,7 +1145,7 @@ public static class Extensions {
                 return 0;
             case STRUCTURE_TYPE.CITY_CENTER:
                 return 1;
-            case STRUCTURE_TYPE.INN:
+            case STRUCTURE_TYPE.TAVERN:
                 return 2;
             case STRUCTURE_TYPE.WAREHOUSE:
                 return 3;
@@ -1158,7 +1158,7 @@ public static class Extensions {
     public static bool IsInterior(this STRUCTURE_TYPE structureType) {
         switch (structureType) {
             case STRUCTURE_TYPE.DWELLING:
-            case STRUCTURE_TYPE.INN:
+            case STRUCTURE_TYPE.TAVERN:
             case STRUCTURE_TYPE.PRISON:
             case STRUCTURE_TYPE.SMITHY:
             case STRUCTURE_TYPE.GRANARY:

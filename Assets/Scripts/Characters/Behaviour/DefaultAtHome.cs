@@ -127,7 +127,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             log += "\n  -Character is agoraphobic, not hosting social party";
                         } else {
                             //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                            LocationStructure structure = character.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.INN);
+                            LocationStructure structure = character.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.TAVERN);
                             if (structure != null) {
                                 log +=
                                     $"\n  -Early Night: {character.name} host a social party at Inn";

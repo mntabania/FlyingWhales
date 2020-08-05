@@ -117,8 +117,8 @@ namespace Inner_Maps.Location_Structures {
         /// <param name="character">The character requesting the name</param>
         public virtual string GetNameRelativeTo(Character character) {
             switch (structureType) {
-                case STRUCTURE_TYPE.INN:
-                    return "the inn";
+                case STRUCTURE_TYPE.TAVERN:
+                    return "the tavern";
                 case STRUCTURE_TYPE.WAREHOUSE:
                     return $"the {location.name} warehouse";
                 case STRUCTURE_TYPE.PRISON:

@@ -19,20 +19,15 @@ public class GeneralConfirmation : PopupMenuBase {
             PlayerUI.Instance.AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK, onClickCenter));
             return;
         }
-        if (!GameManager.Instance.isPaused) {
-            UIManager.Instance.Pause();
-        }
+        
+        UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         
         UIManager.Instance.HideSmallInfo();
+        
         generalConfirmationTitleText.SetTextAndReplaceWithIcons(header.ToUpper());
         generalConfirmationBodyText.SetTextAndReplaceWithIcons(body);
         generalConfirmationButtonText.SetTextAndReplaceWithIcons(buttonText);
-        generalConfirmationButton.onClick.RemoveAllListeners();
-        generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
-        if (onClickOK != null) {
-            generalConfirmationButton.onClick.AddListener(onClickOK.Invoke);
-        }
         _centerButton.onClick.RemoveAllListeners();
         if (onClickCenter != null) {
             _centerButton.gameObject.SetActive(true);
@@ -42,6 +37,12 @@ public class GeneralConfirmation : PopupMenuBase {
             _centerButton.gameObject.SetActive(false);
         }
         base.Open();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_canvasGroup.transform as RectTransform);
+        generalConfirmationButton.onClick.RemoveAllListeners();
+        generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
+        if (onClickOK != null) {
+            generalConfirmationButton.onClick.AddListener(onClickOK.Invoke);
+        }
         TweenIn();
     }
     
