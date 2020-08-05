@@ -215,6 +215,9 @@ public class CharacterVisuals {
     }
     public string GetCharacterStringIcon() {
         if (_owner.isNormalCharacter == false) {
+            if (_owner.characterClass.className == "Necromancer") {
+                return UtilityScripts.Utilities.VillagerIcon();        
+            }
             return UtilityScripts.Utilities.MonsterIcon();
         } else if (_owner.isAlliedWithPlayer) {
             return UtilityScripts.Utilities.CultistIcon();
