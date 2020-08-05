@@ -1823,26 +1823,30 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Necromancer
-    public void TriggerAbsorbLife() {
+    public bool TriggerAbsorbLife() {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, _owner, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+            return _owner.jobQueue.AddJobInQueue(job);
         }
+        return false;
     }
-    public void TriggerAbsorbLife(out JobQueueItem producedJob) {
+    public bool TriggerAbsorbLife(out JobQueueItem producedJob) {
         producedJob = null;
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, _owner, _owner);
             producedJob = job;
+            return true;
         }
+        return false;
     }
-    public void TriggerAbsorbLife(IPointOfInterest target) {
+    public bool TriggerAbsorbLife(IPointOfInterest target) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+            return _owner.jobQueue.AddJobInQueue(job);
         }
+        return false;
     }
     public void TriggerAbsorbLife(IPointOfInterest target, out JobQueueItem producedJob) {
 	    producedJob = null;

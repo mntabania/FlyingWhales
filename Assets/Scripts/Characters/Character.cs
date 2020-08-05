@@ -2729,7 +2729,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         //Added checking, because character can sometimes change home from dwelling to nothing.
         if(dwelling != null && dwelling.AddResident(this) && GameManager.Instance.gameHasStarted) {
-            jobComponent.PlanReturnHomeUrgent();
+            if (isNormalCharacter) {
+                jobComponent.PlanReturnHomeUrgent();
+            }
             return true;
         }
         return false;

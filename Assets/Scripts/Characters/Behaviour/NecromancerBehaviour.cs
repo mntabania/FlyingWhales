@@ -94,12 +94,12 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         //hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
                         if (character.necromancerTrait.lifeAbsorbed <= 0) {
                             log += $"\n-Life absorbed is none, will try to absorb life";
-                            character.jobComponent.TriggerAbsorbLife(out producedJob);
+                            hasCreated = character.jobComponent.TriggerAbsorbLife(out producedJob);
                         } else {
                             log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
                             if (UnityEngine.Random.Range(0, 100) < 10) {
                                 log += $"\n-Absorb life";
-                                character.jobComponent.TriggerAbsorbLife(out producedJob);
+                                hasCreated = character.jobComponent.TriggerAbsorbLife(out producedJob);
                             } else {
                                 log += $"\n-Spawn skeleton";
                                 //Create Skeleton
