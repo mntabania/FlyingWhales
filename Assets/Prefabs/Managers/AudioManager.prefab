@@ -560,7 +560,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1471678630097227127}
   - component: {fileID: 1471678630097227126}
-  - component: {fileID: 1471678630097227124}
   m_Layer: 0
   m_Name: AudioManager
   m_TagString: Untagged
@@ -602,6 +601,7 @@ MonoBehaviour:
   masterMixer: {fileID: 24100000, guid: 066d34d1522f0f0438fb5310d32df9a8, type: 2}
   musicMixer: {fileID: 24100000, guid: 7a818491cfe93db4289122bc35fefeeb, type: 2}
   worldMusic: {fileID: 1471678630175367770}
+  mainMenuMusic: {fileID: 1471678630776458343}
   buttonClick: {fileID: 1471678630059455017}
   toggleClick: {fileID: 1471678629892493922}
   questNotificationSound: {fileID: 1471678630840876878}
@@ -663,14 +663,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 51b11d28764e9d942867b6d136516f8a, type: 3}
   - {fileID: 8300000, guid: 0d0bbe21a4d703242bdbe5bcd8dbabaa, type: 3}
   - {fileID: 8300000, guid: b9968334f2984ac4fa1aba4cf02c6f23, type: 3}
---- !u!81 &1471678630097227124
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1471678630097227145}
-  m_Enabled: 1
 --- !u!1 &1471678630175367772
 GameObject:
   m_ObjectHideFlags: 0

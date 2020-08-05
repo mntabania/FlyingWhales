@@ -36,6 +36,7 @@ public class MainMenuManager : MonoBehaviour {
         Instance = this;
     }
     private void Start() {
+        AudioManager.Instance.ResetAndPlayMainMenuMusic();
         AudioManager.Instance.TransitionToMainMenu();
         MainMenuUI.Instance.ShowMenuButtons();
         LevelLoaderManager.Instance.SetLoadingState(false);

@@ -31,6 +31,7 @@ public class AudioManager : MonoBehaviour {
 
     [Header("Music Audio Sources")] 
     [SerializeField] private AudioSource worldMusic;
+    [SerializeField] private AudioSource mainMenuMusic;
     
     [Header("UI Audio Sources")] 
     [SerializeField] private AudioSource buttonClick;
@@ -126,6 +127,10 @@ public class AudioManager : MonoBehaviour {
     }
     public void TransitionToMainMenu() {
         mainMenuSnapShot.TransitionTo(1f);
+    }
+    public void ResetAndPlayMainMenuMusic() {
+        mainMenuMusic.Stop();
+        mainMenuMusic.Play();
     }
     private void ResetAndPlayWorldMusic() {
         worldMusic.Stop();

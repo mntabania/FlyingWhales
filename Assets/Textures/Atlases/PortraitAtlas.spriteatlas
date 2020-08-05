@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 891be410796e8554eafb2611643cc64f, type: 3}
-    totalSpriteSurfaceArea: 3365842
+    totalSpriteSurfaceArea: 3377766
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -224,6 +224,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ca1a4fc9d1d701f49a129a9fb030a9f0, type: 3}
   - {fileID: 21300000, guid: 5799ddd9bf2cb0f478d1c0d465ab1efe, type: 3}
   - {fileID: 21300000, guid: 235a88e9f694f4748b56e2d697092c1d, type: 3}
+  - {fileID: 21300000, guid: ea7b6de9f3401c04c953dd9171621030, type: 3}
   - {fileID: 21300000, guid: c29f96f9060abe34ab5d3822d82b82b9, type: 3}
   - {fileID: 21300000, guid: 90dd9d0adcfb2434fb5c59d976b3da61, type: 3}
   - {fileID: 21300000, guid: c8e0472ad1dfbec49b485182c69ba18b, type: 3}
@@ -500,6 +501,7 @@ SpriteAtlas:
   - female_elf_eyes3
   - female_elf_hair6
   - mail_human_stache3
+  - location_portraits_master
   - male_elf_ears4
   - female_human_eyes4
   - mail_human_hair3
