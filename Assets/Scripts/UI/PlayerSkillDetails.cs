@@ -70,7 +70,7 @@ public class PlayerSkillDetails : MonoBehaviour {
         if (cooldown == -1) {
             cdText = "N/A";
         } else {
-            cdText = GameManager.GetTimeAsWholeDuration(cooldown) + " " + GameManager.GetTimeIdentifierAsWholeDuration(cooldown);
+            cdText = GameManager.GetTimeAsWholeDuration(cooldown).ToString() + " " + GameManager.GetTimeIdentifierAsWholeDuration(cooldown);
         }
         cooldownText.text = cdText;
 

@@ -28,5 +28,12 @@ public class CowardiceData : SpellData {
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Coward")) {
+            reasons += $"{targetCharacter.name} already has this Flaw,";
+        }
+        return reasons;
+    }
     #endregion
 }

@@ -135,5 +135,15 @@ public class PlagueData : SpellData {
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Robust")) {
+            reasons += $"Robust Villagers are immune to Plague,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Plagued")) {
+            reasons += $"{targetCharacter.name} already has this Flaw,";
+        }
+        return reasons;
+    }
     #endregion
 }

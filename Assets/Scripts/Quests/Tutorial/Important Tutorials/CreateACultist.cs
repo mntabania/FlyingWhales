@@ -31,7 +31,7 @@ namespace Tutorial {
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                 ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a Villager.")
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a Brainwash Target")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetOnTopmostActions(OnTopMostSeizeVillager, OnNoLongerTopMostSeizeVillager),
@@ -48,7 +48,7 @@ namespace Tutorial {
         protected override void MakeAvailable() {
             base.MakeAvailable();
             PlayerUI.Instance.ShowGeneralConfirmation("Defiler", "You've just built a new Demonic Structure: The Defiler! " +
-                                                                 "This Structure allows the player to brainwash Villagers into Cultists." +
+                                                                 "This Structure allows the player to brainwash Villagers into Cultists. " +
                                                                  "A Tutorial Quest has been created to teach you how to use it.", 
                 onClickOK: () => TutorialManager.Instance.ActivateTutorial(this));
         }
@@ -62,8 +62,12 @@ namespace Tutorial {
             return room is DefilerRoom defilerRoom && defilerRoom.HasValidBrainwashTarget();
         }
         private void OnHoverSeizeCharacter(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo($"You can {UtilityScripts.Utilities.ColorizeAction("seize")} a villager and then {UtilityScripts.Utilities.ColorizeAction("drop")} it at any empty tile.", 
-                TutorialManager.Instance.seizeImage, "Seize", stepItem.hoverPosition);
+            UIManager.Instance.ShowSmallInfo(
+                $"Look for a Villager with either Low or Critical Mood. Villagers who are Evil, " +
+                $"Treacherous or have recently been Betrayed are also much easier to Brainwash. " +
+                $"Faction Leaders and Settlement Rulers are especially difficult to successfully brainwash.", 
+                "Seize", stepItem.hoverPosition
+            );
         }
         private void OnHoverChamber(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
@@ -73,7 +77,8 @@ namespace Tutorial {
                 TutorialManager.Instance.defilerChamberVideo, "Defiler Chamber", stepItem.hoverPosition);
         }
         private void OnHoverBrainwash(QuestStepItem stepItem) {
-            UIManager.Instance.ShowSmallInfo("The Brainwash button can be found beside the current Room nameplate.", "Brainwash", stepItem.hoverPosition);
+            UIManager.Instance.ShowSmallInfo("The Brainwash button can be found beside the current Room nameplate.", 
+                stepItem.hoverPosition, "Brainwash");
         }
         #endregion
 

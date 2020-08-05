@@ -28,5 +28,12 @@ public class NarcolepsyData : SpellData {
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Narcoleptic")) {
+            reasons += $"{targetCharacter.name} already has this Flaw,";
+        }
+        return reasons;
+    }
     #endregion
 }

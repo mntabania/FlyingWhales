@@ -2,7 +2,7 @@
 
 public class CultistBoobyTrapData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.CULTIST_BOOBY_TRAP;
-    public override string name => "Cultist - Booby Trap";
+    public override string name => "Booby Trap Neighbor";
     public override string description => "This Action forces the character to Booby Trap an object owned by a specified target.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
     
@@ -28,11 +28,21 @@ public class CultistBoobyTrapData : PlayerAction {
         // base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        bool canPerformAbility = base.CanPerformAbilityTowards(targetCharacter);
-        if (canPerformAbility) {
-            return targetCharacter.homeSettlement != null;    
+        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        if (canPerform) {
+            if (targetCharacter.canPerform == false) {
+                return false;
+            }
+            return targetCharacter.isDead == false && targetCharacter.homeSettlement != null;
         }
         return false;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
+        if (targetCharacter.canPerform == false) {
+            reasons += "Cannot be used while target is incapacitated,";
+        }
+        return reasons;
     }
     #endregion
 

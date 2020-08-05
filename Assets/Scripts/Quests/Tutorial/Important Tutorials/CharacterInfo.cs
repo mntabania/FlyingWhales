@@ -20,7 +20,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnCharacterStep($"Click on a Villager", validityChecker: IsSelectedCharacterValid),
+                    new ClickOnCharacterStep($"Click on a {UtilityScripts.Utilities.VillagerIcon()}Villager", validityChecker: IsSelectedCharacterValid),
                     new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab")
                         .SetCompleteAction(OnClickInfo)
                         .SetOnTopmostActions(OnTopMostInfo, OnNoLongerTopMostInfo),

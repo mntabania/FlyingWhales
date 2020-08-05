@@ -124,5 +124,12 @@ public class ParalysisData : SpellData {
         }
         return base.CanPerformAbilityTowards(targetCharacter);
     }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.traitContainer.HasTrait("Paralyzed")) {
+            reasons += $"{targetCharacter.name} already has this Flaw,";
+        }
+        return reasons;
+    }
     #endregion
 }

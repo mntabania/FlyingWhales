@@ -128,7 +128,10 @@ public class ZombieVirusData : SpellData {
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
         if (targetCharacter.traitContainer.HasTrait("Robust")) {
-            reasons += $"Cannot afflict Zombie Virus on Robust Villagers,";
+            reasons += $"Robust Villagers are immune to Zombie Virus,";
+        }
+        if (targetCharacter.traitContainer.HasTrait("Infected")) {
+            reasons += $"{targetCharacter.name} already has this Flaw,";
         }
         return reasons;
     }
