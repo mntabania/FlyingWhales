@@ -107,13 +107,18 @@ public class ShareIntelMenu : PopupMenuBase {
                 
                 if (hasReactionToActor == false && hasReactionToTarget == false) {
                     //has no reactions to actor and target
-                    CreateDialogItem(reactor, $"{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed Disinterested about this.");
+                    CreateDialogItem(reactor, $"{reactor.visuals.GetCharacterStringIcon()}{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed Disinterested about this.");
                 } else {
                     if (hasReactionToActor) {
-                        CreateDialogItem(reactor, $"{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at {UtilityScripts.Utilities.ColorizeAndBoldName(intel.actor.name)} after receiving the new information.");    
+                        CreateDialogItem(reactor, $"{reactor.visuals.GetCharacterStringIcon()}{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsActor, 2)} at {intel.actor.visuals.GetCharacterStringIcon()}{UtilityScripts.Utilities.ColorizeAndBoldName(intel.actor.name)} after receiving the new information.");    
                     }
                     if (hasReactionToTarget) {
-                        CreateDialogItem(reactor, $"{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at {UtilityScripts.Utilities.ColorizeAndBoldName(intel.target.name)} after receiving the new information.");
+                        if (intel.target is Character intelTarget) {
+                            CreateDialogItem(reactor, $"{reactor.visuals.GetCharacterStringIcon()}{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at {intelTarget.visuals.GetCharacterStringIcon()}{UtilityScripts.Utilities.ColorizeAndBoldName(intel.target.name)} after receiving the new information.");  
+                        } else {
+                            CreateDialogItem(reactor, $"{reactor.visuals.GetCharacterStringIcon()}{UtilityScripts.Utilities.ColorizeAndBoldName(reactor.name)} seemed {UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotionsTowardsTarget, 2)} at {UtilityScripts.Utilities.ColorizeAndBoldName(intel.target.name)} after receiving the new information.");    
+                        }
+                        
                     }
                 }
                 
