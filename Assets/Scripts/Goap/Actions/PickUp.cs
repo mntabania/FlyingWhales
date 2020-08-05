@@ -11,7 +11,7 @@ public class PickUp : GoapAction {
         actionIconString = GoapActionStateDB.Inspect_Icon;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.TROLL };
         showNotification = false;
     }
 
@@ -94,6 +94,10 @@ public class PickUp : GoapAction {
                     //}
                 }
             }
+        }
+        if(actor is Troll && job != null && job.jobType == JOB_TYPE.DROP_ITEM) {
+            cost = 10;
+            costLog = $"{costLog} 10(Troll, Drop Item Job)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
