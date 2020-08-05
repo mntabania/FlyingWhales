@@ -105,13 +105,13 @@ public class NonActionEventsComponent {
         string targetOpinionLabel = disguisedTarget.relationshipContainer.GetOpinionLabel(disguisedActor);
         int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(disguisedActor, disguisedTarget);
 
-        if (actorMood == MOOD_STATE.LOW) {
+        if (actorMood == MOOD_STATE.Bad) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Argument, 15);
             chatWeights.AddWeightToElement(Insult, 20);
             strLog += "\n\nActor Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15, Insult: +20";
-        } else if (actorMood == MOOD_STATE.CRITICAL) {
+        } else if (actorMood == MOOD_STATE.Critical) {
             chatWeights.AddWeightToElement(Warm_Chat, -40);
             chatWeights.AddWeightToElement(Argument, 30);
             chatWeights.AddWeightToElement(Insult, 50);
@@ -119,12 +119,12 @@ public class NonActionEventsComponent {
             strLog += "\nWarm Chat: -40, Argument: +30, Insult: +50";
         }
 
-        if (targetMood == MOOD_STATE.LOW) {
+        if (targetMood == MOOD_STATE.Bad) {
             chatWeights.AddWeightToElement(Warm_Chat, -20);
             chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nTarget Mood is Low, modified weights...";
             strLog += "\nWarm Chat: -20, Argument: +15";
-        } else if (targetMood == MOOD_STATE.CRITICAL) {
+        } else if (targetMood == MOOD_STATE.Critical) {
             chatWeights.AddWeightToElement(Warm_Chat, -40);
             chatWeights.AddWeightToElement(Argument, 30);
             strLog += "\n\nTarget Mood is Critical, modified weights...";

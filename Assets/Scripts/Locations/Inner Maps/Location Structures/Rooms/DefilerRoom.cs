@@ -42,10 +42,10 @@ namespace Inner_Maps.Location_Structures {
                 failWeight = 0;
                 successWeight = 100;
             } else {
-                if (actor.moodComponent.moodState == MOOD_STATE.LOW || actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
-                    if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+                if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
+                    if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
                         successWeight += 50;
-                    } else if (actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
                         successWeight += 200;
                     }
 

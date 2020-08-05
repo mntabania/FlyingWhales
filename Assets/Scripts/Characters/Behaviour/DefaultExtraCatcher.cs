@@ -34,7 +34,7 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
                     log += $"\nChat roll failed.";
                     Trait angry = character.traitContainer.GetNormalTrait<Trait>("Angry");
                     bool isAngryWithTarget = angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(chosenTarget);
-                    if (character.moodComponent.moodState == MOOD_STATE.NORMAL && 
+                    if (character.moodComponent.moodState == MOOD_STATE.Normal && 
                         RelationshipManager.IsSexuallyCompatible(character.sexuality, chosenTarget.sexuality, 
                             character.gender, chosenTarget.gender) && 
                         character.relationshipContainer.IsFamilyMember(chosenTarget) == false &&
@@ -49,7 +49,7 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
                             log += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                             int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, chosenTarget);
                             int baseChance = 1;
-                            if (character.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                            if (character.moodComponent.moodState == MOOD_STATE.Normal) {
                                 log += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
                                 baseChance += 2;
                             }

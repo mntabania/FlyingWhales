@@ -874,7 +874,7 @@ public class CharacterInfoUI : InfoUIBase {
                          $"{_activeCharacter.moodComponent.moodValue.ToString()}/100";
         // summary +=
         //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
-        UIManager.Instance.ShowSmallInfo(summary, "MOOD");
+        UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");
     }
     public void HideSmallInfo() {
         UIManager.Instance.HideSmallInfo();

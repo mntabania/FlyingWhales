@@ -290,9 +290,9 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             int roll = UnityEngine.Random.Range(0, 100);
             MOOD_STATE ownerMood = owner.moodComponent.moodState;
             string opinionLabel = owner.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (ownerMood == MOOD_STATE.LOW) {
+            if (ownerMood == MOOD_STATE.Bad) {
                 chance *= 5;
-            } else if (ownerMood == MOOD_STATE.CRITICAL) {
+            } else if (ownerMood == MOOD_STATE.Critical) {
                 chance *= 10;
             }
             if (opinionLabel == RelationshipManager.Rival) {

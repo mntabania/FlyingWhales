@@ -78,7 +78,7 @@ namespace Traits {
             //} else 
             if (targetPOI is Character targetCharacter) {
                 string log = $"{GameManager.Instance.TodayLogString()}{characterThatWillDoJob.name} saw {targetCharacter.name}";
-                if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.Critical) {
                     log += "\n -In critical mood";
                     int combatChance = 0;
                     if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {
@@ -91,7 +91,7 @@ namespace Traits {
                     if (roll < combatChance) {
                         characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Anger, isLethal: true);    
                     }
-                } else if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.LOW) {
+                } else if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.Bad) {
                     log += "\n -In low mood";
                     int combatChance = 0;
                     if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {

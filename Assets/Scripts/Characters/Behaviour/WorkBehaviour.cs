@@ -11,7 +11,7 @@ public class WorkBehaviour : CharacterBehaviourComponent {
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} will try to do settlement work...";
-        if (character.moodComponent.moodState == MOOD_STATE.NORMAL) {
+        if (character.moodComponent.moodState == MOOD_STATE.Normal) {
             log += $"\n-{character.name} is in normal mood, will do settlement work";
             return PlanWorkActions(character, out producedJob);
         } else {

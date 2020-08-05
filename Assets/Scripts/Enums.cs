@@ -929,7 +929,7 @@ public enum CHARACTER_MOOD {
     DARK, BAD, GOOD, GREAT,
 }
 public enum MOOD_STATE {
-    NORMAL, LOW, CRITICAL
+    Normal, Bad, Critical
 }
 public enum SEXUALITY {
     STRAIGHT, BISEXUAL, GAY

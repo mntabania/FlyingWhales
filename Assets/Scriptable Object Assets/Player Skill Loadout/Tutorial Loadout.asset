@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   archetype: 4
   spells:
-    extraSlots: 4
+    extraSlots: 0
     fixedSkills: 200000002a0000002d000000160000001e0000002c0000001700000009000000
   afflictions:
-    extraSlots: 2
+    extraSlots: 0
     fixedSkills: 10000000040000000300000002000000
   minions:
-    extraSlots: 2
+    extraSlots: 0
     fixedSkills: 4e0000004f00000052000000
   structures:
-    extraSlots: 2
-    fixedSkills: 4a00000060000000480000004c000000
+    extraSlots: 0
+    fixedSkills: 4a00000048000000
   miscs:
-    extraSlots: 1
+    extraSlots: 0
     fixedSkills: 0a00000034000000070000000600000033000000320000008c0000000800000021000000

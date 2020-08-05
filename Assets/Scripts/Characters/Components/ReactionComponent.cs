@@ -611,7 +611,7 @@ public class ReactionComponent {
                                     debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(disguisedActor, disguisedTarget);
                                     int baseChance = 1;
-                                    if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                                    if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
                                         debugLog += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
                                         baseChance += 2;
                                     }
@@ -674,7 +674,7 @@ public class ReactionComponent {
                         debugLog += "\n-Character and Target are with the same faction or npcSettlement";
                         if (disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
-                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && disguisedActor.moodComponent.moodState != MOOD_STATE.NORMAL) {
+                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && disguisedActor.moodComponent.moodState != MOOD_STATE.Normal) {
                                 debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
                                 if (UnityEngine.Random.Range(0, 2) == 0) {
                                     debugLog += "\n-Character triggered Mock interrupt";
@@ -768,8 +768,8 @@ public class ReactionComponent {
 
                         if (actor.marker && disguisedTarget.isNormalCharacter) {
                             if(disguisedActor.traitContainer.HasTrait("Suspicious") 
-                                || actor.moodComponent.moodState == MOOD_STATE.CRITICAL 
-                                || (actor.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+                                || actor.moodComponent.moodState == MOOD_STATE.Critical 
+                                || (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0)
                                 || UnityEngine.Random.Range(0, 100) < 15) {
                                 debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
 
@@ -904,7 +904,7 @@ public class ReactionComponent {
                             CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.SUICIDE_FOLLOW, CHARACTER_STATE.FOLLOW, targetTileObject, actor);
                             actor.jobQueue.AddJobInQueue(job);
                         }
-                    } else if (actor.moodComponent.moodState == MOOD_STATE.NORMAL) {
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
                         string neutralizingTraitName = TraitManager.Instance.GetNeutralizingTraitFor(targetTileObject);
                         if (neutralizingTraitName != string.Empty) {
                             if (actor.traitContainer.HasTrait(neutralizingTraitName)) {
@@ -1012,8 +1012,8 @@ public class ReactionComponent {
 
             if (targetTileObject.gridTileLocation.structure.residents.Count > 0 && !targetTileObject.HasCharacterAlreadyAssumed(actor)) {
                 if (actor.traitContainer.HasTrait("Suspicious")
-                || actor.moodComponent.moodState == MOOD_STATE.CRITICAL
-                || (actor.moodComponent.moodState == MOOD_STATE.LOW && UnityEngine.Random.Range(0, 2) == 0)
+                || actor.moodComponent.moodState == MOOD_STATE.Critical
+                || (actor.moodComponent.moodState == MOOD_STATE.Bad && UnityEngine.Random.Range(0, 2) == 0)
                 || UnityEngine.Random.Range(0, 100) < 15
                 || TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Frame_Up)) {
                     debugLog += "\n-Owner is Suspicious or Critical Mood or Low Mood";
@@ -1039,9 +1039,9 @@ public class ReactionComponent {
                     targetTileObject.structureLocation.GetNumberOfResidentsExcluding(out var validResidents,actor) > 0) {
                     debugLog += "\n-Cultist kit is at structure with residents excluding the witness";
                     int chanceToCreateAssumption = 0;
-                    if (actor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.CRITICAL) {
+                    if (actor.traitContainer.HasTrait("Suspicious") || actor.moodComponent.moodState == MOOD_STATE.Critical) {
                         chanceToCreateAssumption = 100;
-                    } else if (actor.moodComponent.moodState == MOOD_STATE.LOW) {
+                    } else if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
                         chanceToCreateAssumption = 50;
                     } else {
                         chanceToCreateAssumption = 15;

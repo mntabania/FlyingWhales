@@ -79,7 +79,7 @@ public class Drink : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drunk");
         int chance = UnityEngine.Random.Range(0, 100);
-        if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.LOW && chance < 2) || goapNode.actor.moodComponent.moodState == MOOD_STATE.CRITICAL && chance < 4) {
+        if ((goapNode.actor.moodComponent.moodState == MOOD_STATE.Bad && chance < 2) || goapNode.actor.moodComponent.moodState == MOOD_STATE.Critical && chance < 4) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Alcoholic");
         }
         //TODO: Remove all Withdrawal stacks
