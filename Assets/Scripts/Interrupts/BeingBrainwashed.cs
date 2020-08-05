@@ -28,7 +28,8 @@ namespace Interrupts {
                     log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "not_converted");
                 }
                 log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);   
+                interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             }
             return true;
         }

@@ -23,8 +23,8 @@ public class Fish : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
-        int cost = UtilityScripts.Utilities.Rng.Next(40, 61); 
-        costLog += $" +{cost.ToString()}(Random Cost Between 40-60)";
+        int cost = UtilityScripts.Utilities.Rng.Next(80, 101); 
+        costLog += $" +{cost.ToString()}(Random Cost Between 80-100)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }

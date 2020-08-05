@@ -95,15 +95,15 @@ public class Butcher : GoapAction {
                 }
             }
             if(deadCharacter.race == RACE.HUMANS) {
-                int currCost = UtilityScripts.Utilities.Rng.Next(80, 101);
+                int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                 cost += currCost;
                 costLog += $" +{currCost}(Human)";
             } else if (deadCharacter.race == RACE.ELVES) {
-                int currCost = UtilityScripts.Utilities.Rng.Next(80, 101);
+                int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                 cost += currCost;
                 costLog += $" +{currCost}(Elf)";
             } else if (deadCharacter.race == RACE.WOLF) {
-                int currCost = UtilityScripts.Utilities.Rng.Next(50, 81);
+                int currCost = UtilityScripts.Utilities.Rng.Next(50, 61);
                 cost += currCost;
                 costLog += $" +{currCost}(Wolf)";
             } else if (deadCharacter.race == RACE.DEMON) {
@@ -117,7 +117,7 @@ public class Butcher : GoapAction {
             }
         }
         if (target is Animal animal) {
-            cost += UtilityScripts.Utilities.Rng.Next(40, 61);
+            cost += UtilityScripts.Utilities.Rng.Next(40, 51);
             costLog += $" +{cost}(Animal)";
             if (!animal.isDead) {
                 cost *= 2;

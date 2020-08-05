@@ -20,13 +20,13 @@ public class TrollBehaviour : CharacterBehaviourComponent {
             if (roll < 10) {
                 bool hasCookingCauldron = false;
                 if(character.homeSettlement != null) {
-                    hasCookingCauldron = character.homeSettlement.HasTileObjectOfType(TILE_OBJECT_TYPE.COOKING_CAULDRON);
+                    hasCookingCauldron = character.homeSettlement.HasTileObjectOfType(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 } else if (character.homeStructure != null) {
-                    hasCookingCauldron = character.homeStructure.HasTileObjectOfType(TILE_OBJECT_TYPE.COOKING_CAULDRON);
+                    hasCookingCauldron = character.homeStructure.HasTileObjectOfType(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 }
                 if (!hasCookingCauldron) {
                     log += $"\n-No cooking cauldron, will build one";
-                    return character.jobComponent.TriggerBuildCookingCauldronJob(out producedJob);
+                    return character.jobComponent.TriggerBuildTrollCauldronJob(out producedJob);
                 }
             }
         }
@@ -56,13 +56,13 @@ public class TrollBehaviour : CharacterBehaviourComponent {
             log += $"\n-Roll: {roll}";
             if (roll < 20) {
                 Character chosenCharacter = null;
-                CookingCauldron cauldron = null;
+                TrollCauldron cauldron = null;
                 if (character.homeSettlement != null) {
                     chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
-                    cauldron = character.homeStructure.GetTileObjectOfType<CookingCauldron>(TILE_OBJECT_TYPE.COOKING_CAULDRON);
+                    cauldron = character.homeStructure.GetTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 } else if (character.homeStructure != null) {
                     chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD));
-                    cauldron = character.homeStructure.GetTileObjectOfType<CookingCauldron>(TILE_OBJECT_TYPE.COOKING_CAULDRON);
+                    cauldron = character.homeStructure.GetTileObjectOfType<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
                 }
                 if (chosenCharacter != null && cauldron != null) {
                     log += $"\n-Chosen character: " + chosenCharacter.name;

@@ -5,11 +5,11 @@ using Inner_Maps;
 using UnityEngine;  
 using Traits;
 
-public class BuildCookingCauldron : GoapAction {
+public class BuildTrollCauldron : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
-    public BuildCookingCauldron() : base(INTERACTION_TYPE.BUILD_COOKING_CAULDRON) {
+    public BuildTrollCauldron() : base(INTERACTION_TYPE.BUILD_TROLL_CAULDRON) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Build_Icon;
         showNotification = false;
@@ -50,7 +50,7 @@ public class BuildCookingCauldron : GoapAction {
 
     #region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
-        CookingCauldron cauldron = InnerMapManager.Instance.CreateNewTileObject<CookingCauldron>(TILE_OBJECT_TYPE.COOKING_CAULDRON);
+        TrollCauldron cauldron = InnerMapManager.Instance.CreateNewTileObject<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
         goapNode.actor.gridTileLocation.structure.AddPOI(cauldron, goapNode.actor.gridTileLocation);
     }
     #endregion
