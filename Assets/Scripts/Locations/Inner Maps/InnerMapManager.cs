@@ -446,7 +446,7 @@ namespace Inner_Maps {
                 summary = $"{summary}\nStructure: None";
             }
             Profiler.EndSample();
-            UIManager.Instance.ShowSmallInfo(summary);
+            UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);
 #else
          //For build only
         if (character == null && tile.objHere != null) {
@@ -460,7 +460,7 @@ namespace Inner_Maps {
                     }
                 }
             }
-            UIManager.Instance.ShowSmallInfo(tooltip);
+            UIManager.Instance.ShowSmallInfo(tooltip, autoReplaceText: false);
         }
 #endif
         }

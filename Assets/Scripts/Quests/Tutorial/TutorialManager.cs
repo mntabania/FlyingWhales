@@ -45,13 +45,13 @@ namespace Tutorial {
             Tutorial.Afflictions,
             Tutorial.Share_An_Intel,
             Tutorial.Elemental_Interactions,
+            Tutorial.Build_A_Kennel,
             Tutorial.Spawn_An_Invader,
         };
         /// <summary>
         /// Tutorial types that are NOT part of the main tutorial.
         /// </summary>
         private readonly Tutorial[] bonusTutorialTypes = new[] {
-            Tutorial.Build_A_Kennel,
             Tutorial.Defend_A_Structure,
             Tutorial.Afflictions,
             Tutorial.Prison,

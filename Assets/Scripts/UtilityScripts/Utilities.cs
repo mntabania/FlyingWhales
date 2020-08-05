@@ -451,12 +451,8 @@ namespace UtilityScripts {
                             wordToReplace = $"{wordToReplace}, ";
                         }
                         if(logFiller.obj != null) {
-                            if (logFiller.obj is Character) {
-                                if (logFiller.obj is Summon) {
-                                    wordToReplace = $"{wordToReplace}{MonsterIcon()}{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";
-                                } else {
-                                    wordToReplace = $"{wordToReplace}{VillagerIcon()}{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";
-                                }
+                            if (logFiller.obj is Character character) {
+                                wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";
                             } else {
                                 wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";    
                             }
@@ -488,12 +484,8 @@ namespace UtilityScripts {
                             if (logFiller.obj is Character || logFiller.obj is TileObject) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
-                            if (logFiller.obj is Character) {
-                                if (logFiller.obj is Summon) {
-                                    wordToReplace = $"{MonsterIcon()}{wordToReplace}";
-                                } else {
-                                    wordToReplace = $"{VillagerIcon()}{wordToReplace}";
-                                }
+                            if (logFiller.obj is Character character) {
+                                wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
                             }
                         } else {
                             wordToReplace = $"<b>{logFiller.value}</b>";

@@ -169,7 +169,7 @@ public class CharacterVisuals {
                 log = _owner.deathLog;
                 return UtilityScripts.Utilities.LogReplacer(_owner.deathLog);
             } else {
-                return $"{UtilityScripts.Utilities.VillagerIcon()}<b>{_owner.name}</b> has died.";    
+                return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> has died.";    
             }
         }
         //Interrupt
@@ -192,27 +192,34 @@ public class CharacterVisuals {
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {
-            return $"{UtilityScripts.Utilities.VillagerIcon()}<b>{_owner.name}</b> is fleeing.";
+            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is fleeing.";
         }
 
         //Travelling
         if (_owner.carryComponent.masterCharacter.avatar.isTravelling) {
             if (_owner.carryComponent.masterCharacter.marker.destinationTile != null) {
-                return $"{UtilityScripts.Utilities.VillagerIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
+                return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
             }
         }
 
         //Default - Do nothing/Idle
         if (_owner.currentStructure != null) {
-            return $"{UtilityScripts.Utilities.VillagerIcon()}<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
+            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is in {_owner.currentStructure.GetNameRelativeTo(_owner)}.";
         }
 
         if(_owner.minion != null && !_owner.minion.isSummoned) {
-            return $"{UtilityScripts.Utilities.MonsterIcon()}<b>{_owner.name}</b> is unsummoned.";
+            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is unsummoned.";
         }
-        return !_owner.isNormalCharacter ? $"{UtilityScripts.Utilities.MonsterIcon()}<b>{_owner.name}</b> is in {_owner.currentRegion?.name}." : 
-            $"{UtilityScripts.Utilities.VillagerIcon()}<b>{_owner.name}</b> is in {_owner.currentRegion?.name}.";
+        return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is in {_owner.currentRegion?.name}.";
         
+    }
+    public string GetCharacterStringIcon() {
+        if (_owner.isNormalCharacter == false) {
+            return UtilityScripts.Utilities.MonsterIcon();
+        } else if (_owner.isAlliedWithPlayer) {
+            return UtilityScripts.Utilities.CultistIcon();
+        }
+        return UtilityScripts.Utilities.VillagerIcon();
     }
     #endregion
 }

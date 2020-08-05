@@ -81,6 +81,10 @@ public class BuildListUI : PopupMenuBase {
                     return
                         TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
                         TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
+                } else if (structureType == SPELL_TYPE.KENNEL) {
+                    return
+                        TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
+                        TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
                 }
             }
             if (structureType == SPELL_TYPE.EYE && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {

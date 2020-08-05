@@ -6,29 +6,29 @@ using Quests;
 using Quests.Steps;
 using UnityEngine;
 namespace Tutorial {
-    public class BuildAKennel : BonusTutorial {
+    public class BuildAKennel : ImportantTutorial {
 
         public BuildAKennel() : base("Kennel", TutorialManager.Tutorial.Build_A_Kennel) { }
 
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new StructureBuiltCriteria(STRUCTURE_TYPE.KENNEL)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
             };
         }
         #endregion
       
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
-                // new QuestStepCollection(
-                //     new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
-                //         .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
-                //     new ToggleTurnedOnStep("Kennel", "Choose the Kennel")
-                //         .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel),
-                //     new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Place on an unoccupied Area")
-                // ),
                 new QuestStepCollection(
-                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a monster.")
+                    new ToggleTurnedOnStep("Build Tab", "Open Build Menu")
+                        .SetOnTopmostActions(OnTopMostBuildTab, OnNoLongerTopMostBuildTab),
+                    new ToggleTurnedOnStep("Kennel", "Choose the Kennel")
+                        .SetOnTopmostActions(OnTopMostKennel, OnNoLongerTopMostKennel),
+                    new StructureBuiltStep(STRUCTURE_TYPE.KENNEL, "Place on an unoccupied Area")
+                ),
+                new QuestStepCollection(
+                    new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_MONSTER, $"Seize a {UtilityScripts.Utilities.MonsterIcon()}monster.")
                         .SetOnTopmostActions(OnTopMostSeizeMonster, OnNoLongerTopMostSeizeMonster),
                     new DropPOIAtStructureStep((structure, pointOfInterest) => structure.structureType == STRUCTURE_TYPE.KENNEL,
                         poi => poi is Summon, "Drop at the Kennel."),
@@ -39,13 +39,6 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostBreedMonster, OnNoLongerTopMostBreedMonster)
                 )
             };
-        }
-        protected override void MakeAvailable() {
-            base.MakeAvailable();
-            PlayerUI.Instance.ShowGeneralConfirmation("Kennel", "You've just built a new Demonic Structure: The Kennel! " +
-                                                                "This Structure allows the you to breed wild monsters." +
-                                                                "A Tutorial Quest has been created to teach you how to use it.", 
-                onClickOK: () => TutorialManager.Instance.ActivateTutorial(this));
         }
         public override void Activate() {
             base.Activate();
