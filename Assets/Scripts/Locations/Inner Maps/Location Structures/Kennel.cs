@@ -6,7 +6,7 @@ using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
     public class Kennel : DemonicStructure {
         public override Vector2 selectableSize { get; }
-        public override string nameplateName => $"{name} ({MaxCapacity - _remainingCapacity}/{MaxCapacity})";
+        public override string nameplateName => $"{name}";
         private const int BreedingDuration = GameManager.ticksPerHour;
         
         private const int MaxCapacity = 10;
