@@ -20,7 +20,7 @@
             AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.MAGE_QUARTERS, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE);
-            AddNeededStructure(STRUCTURE_TYPE.INN, RESOURCE.STONE);
+            AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.STONE);

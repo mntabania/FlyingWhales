@@ -13,7 +13,7 @@ namespace Tutorial {
         #region Criteria
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Elemental_Interactions)
+                new HasCompletedTutorialQuest(TutorialManager.Tutorial.Build_A_Kennel)
             };
         }
         protected override bool HasMetAllCriteria() {

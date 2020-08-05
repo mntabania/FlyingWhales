@@ -451,15 +451,21 @@ public class ActualGoapNode : IReactable, IRumorable {
         //    CrimeManager.Instance.MakeCharacterACriminal(actor, crimeType, action);
         //}
     }
-    public void ActionInterruptedWhilePerforming() {
+    public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
         string log =
             $"{GameManager.Instance.TodayLogString()}{actor.name} is interrupted while doing goap action: {action.goapName}";
-        string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
-        if (result == InteractionManager.Goap_State_Success) {
-            actionStatus = ACTION_STATUS.SUCCESS;
+        if (shouldDoAfterEffect) {
+            string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
+            if (result == InteractionManager.Goap_State_Success) {
+                actionStatus = ACTION_STATUS.SUCCESS;
+            } else {
+                actionStatus = ACTION_STATUS.FAIL;
+            }    
         } else {
+            //consider action as failed since after effect was not executed.
             actionStatus = ACTION_STATUS.FAIL;
         }
+        
         StopPerTickEffect();
         if (poiTarget is Character targetCharacter) {
             if (!action.doesNotStopTargetCharacter && actor != poiTarget) {
@@ -542,7 +548,7 @@ public class ActualGoapNode : IReactable, IRumorable {
                 //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
                 EndPerTickEffect(shouldDoAfterEffect);
             } else { //If action has duration and interrupted in the middle of the duration then do ActionInterruptedWhilePerforming (this will not call the action result, instead it will call the cancel job so it can be brought back to the npcSettlement list if it is a npcSettlement job)
-                ActionInterruptedWhilePerforming();
+                ActionInterruptedWhilePerforming(shouldDoAfterEffect);
             }
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values
             //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {

@@ -79,6 +79,21 @@ public class BoobyTrap : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
+    public override void OnStopWhileStarted(ActualGoapNode node) {
+        base.OnStopWhileStarted(node);
+        //Remove added booby trapped action
+        node.poiTarget.traitContainer.RemoveTrait(node.poiTarget, "Booby Trapped");
+    }
+    public override void OnStopWhilePerforming(ActualGoapNode node) {
+        base.OnStopWhilePerforming(node);
+        //Remove added booby trapped action
+        node.poiTarget.traitContainer.RemoveTrait(node.poiTarget, "Booby Trapped");
+    }
+    public override void OnStoppedInterrupt(ActualGoapNode node) {
+        base.OnStoppedInterrupt(node);
+        //Remove added booby trapped action
+        node.poiTarget.traitContainer.RemoveTrait(node.poiTarget, "Booby Trapped");
+    }
     #endregion
 
     #region State Effects

@@ -42,7 +42,7 @@ public class Eat : GoapAction {
                 cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                 costLog += $" +{cost}(Actor is currently visiting)";
             } else if (actor.traitContainer.HasTrait("Travelling")) {
-                if(table.structureLocation.structureType == STRUCTURE_TYPE.INN || table.structureLocation == actor.homeStructure) {
+                if(table.structureLocation.structureType == STRUCTURE_TYPE.TAVERN || table.structureLocation == actor.homeStructure) {
                     cost = UtilityScripts.Utilities.Rng.Next(400, 451);
                     costLog += $" +{cost}(Travelling, Inside Tavern or in actor home structure)\n";
                 } else if (actor.needsComponent.isStarving) {

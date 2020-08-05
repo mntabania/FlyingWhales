@@ -48,13 +48,13 @@ public class SettlementGeneration : MapGenerationComponent {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 
-					new StructureSetting(STRUCTURE_TYPE.INN, RESOURCE.STONE)
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE)
 				};
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
 				structureTypes = new List<StructureSetting>() {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
 					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
-					new StructureSetting(STRUCTURE_TYPE.INN, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
 				};

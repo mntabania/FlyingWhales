@@ -144,7 +144,9 @@ public class SaveDataPlayer {
         completedBonusTutorials = new List<TutorialManager.Tutorial>();
     }
     public void AddBonusTutorialAsCompleted(TutorialManager.Tutorial tutorial) {
-        completedBonusTutorials.Add(tutorial);
+        if (!completedBonusTutorials.Contains(tutorial)) {
+            completedBonusTutorials.Add(tutorial);    
+        }
     }
     public void ResetBonusTutorialProgress() {
         if (completedBonusTutorials == null) {

@@ -21,7 +21,7 @@
             AddNeededStructure(STRUCTURE_TYPE.FARM, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.APOTHECARY, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.CEMETERY, RESOURCE.WOOD);
-            AddNeededStructure(STRUCTURE_TYPE.INN, RESOURCE.WOOD);
+            AddNeededStructure(STRUCTURE_TYPE.TAVERN, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.BARRACKS, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.WAREHOUSE, RESOURCE.WOOD);
             AddNeededStructure(STRUCTURE_TYPE.PRISON, RESOURCE.WOOD);

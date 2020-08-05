@@ -83,15 +83,8 @@ public class CharacterMarkerNameplate : PooledObject {
 
     #region Name
     public void UpdateName() {
-        string icon = UtilityScripts.Utilities.VillagerIcon();
+        string icon = _parentMarker.character.visuals.GetCharacterStringIcon();
         string characterName = UtilityScripts.Utilities.ColorizeName(_parentMarker.character.name);
-        if (_parentMarker.character.isNormalCharacter == false) {
-            icon = UtilityScripts.Utilities.MonsterIcon();
-            characterName = _parentMarker.character.name;
-            //name = $"<color=#820000>{_parentMarker.character.name}</color>";
-        } else if (_parentMarker.character.isAlliedWithPlayer) {
-            icon = UtilityScripts.Utilities.CultistIcon();
-        }
         nameLbl.text = $"{icon}{characterName}";
     }
     #endregion

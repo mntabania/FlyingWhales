@@ -42,7 +42,7 @@ public class HostSocialParty : GoapAction {
     #region State Effects
     public void AfterHostSuccess(ActualGoapNode goapNode) {
         Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Social, goapNode.actor);
-        (party as SocialParty).SetTargetStructure(goapNode.actor.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.INN)); 
+        (party as SocialParty).SetTargetStructure(goapNode.actor.homeSettlement.GetFirstStructureOfTypeWithNoActiveSocialParty(STRUCTURE_TYPE.TAVERN)); 
     }
     #endregion
 

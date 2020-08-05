@@ -34,7 +34,7 @@ namespace Quests.Special_Popups {
             StopCheckingCriteria();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Special Events", 
                 "As a procedural game, Ruinarch will eventually be full of special events that have various triggers. " +
-                $"In this demo, you can turn an {UtilityScripts.Utilities.ColorizeAction("Evil")} or " +
+                $"In this world, you can turn an {UtilityScripts.Utilities.ColorizeAction("Evil")} or " +
                 $"{UtilityScripts.Utilities.ColorizeAction("Treacherous")} Villager " +
                 $"into a Necromancer if you manage to get him to pick up the {UtilityScripts.Utilities.ColorizeAction("Necronomicon")}. Try it!", 
                 TutorialManager.Instance.necronomiconPicture);

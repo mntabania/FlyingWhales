@@ -13,7 +13,6 @@ namespace Tutorial {
             _activationCriteria = new List<QuestCriteria>() {
                 new HasCompletedTutorialQuest(TutorialManager.Tutorial.Afflictions)
             };
-            Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
         }
         protected override bool HasMetAllCriteria() {
             bool hasMetAllCriteria = base.HasMetAllCriteria();
@@ -30,14 +29,9 @@ namespace Tutorial {
             TutorialManager.Instance.ActivateTutorial(this);
         }
         public override void Activate() {
-            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
             base.Activate();
             Messenger.Broadcast(Signals.UPDATE_BUILD_LIST);
 
-        }
-        public override void Deactivate() {
-            base.Deactivate();
-            Messenger.RemoveListener(Signals.ON_OPEN_SHARE_INTEL, CompleteQuest);
         }
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {

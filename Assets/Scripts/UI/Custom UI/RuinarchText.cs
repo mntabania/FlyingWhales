@@ -9,7 +9,7 @@ public class RuinarchText : TextMeshProUGUI {
         if (text.Length <= 300) {
             //only replace text if text length is less than X amount. This is for performance reasons
             //villager
-            if (text.Contains("Villager")) {
+            if (text.Contains("Villager") && !text.Contains("Villager_")) {
                 text = text.Replace("Villager", $"{UtilityScripts.Utilities.VillagerIcon()}Villager");
             }
             if (text.Contains("villager")) {
