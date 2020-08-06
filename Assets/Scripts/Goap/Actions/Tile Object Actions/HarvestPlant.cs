@@ -64,6 +64,7 @@ public class HarvestPlant : GoapAction {
                 FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, CollectionUtilities.GetRandomElement(choices));
                 if (goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter) {
                     goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+                    goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
                 }
             }
         }else {

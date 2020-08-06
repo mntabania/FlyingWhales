@@ -193,8 +193,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //region.AddResident(character);
             character.SetHomeSettlement(this);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
-            classManager.OnAddResident(character);
-            jobPriorityComponent.OnAddResident(character);
+            if (character.isNormalCharacter && locationType == LOCATION_TYPE.SETTLEMENT) {
+                classManager.OnAddResident(character);
+                jobPriorityComponent.OnAddResident(character);    
+            }
             return true;
         }
         return false;
@@ -203,8 +205,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.RemoveResident(character)) {
             //region.RemoveResident(character);
             character.SetHomeSettlement(null);
-            classManager.OnRemoveResident(character);
-            jobPriorityComponent.OnRemoveResident(character);
+            if (character.isNormalCharacter && locationType == LOCATION_TYPE.SETTLEMENT) {
+                classManager.OnRemoveResident(character);
+                jobPriorityComponent.OnRemoveResident(character);
+            }
             return true;
         }
         return false;

@@ -14,12 +14,8 @@ public class IntelItem : MonoBehaviour {
     private List<System.Action> otherClickActions;
 
     [SerializeField] private TextMeshProUGUI infoLbl;
-    [SerializeField] private Button mainBtn;
-    [SerializeField] private Image iconImg;
-    [SerializeField] private Image clickedImg;
-
-    [SerializeField] private Sprite eventIntelIcon;
-    [SerializeField] private Sprite objectIntelIcon;
+    [SerializeField] private Toggle shareToggle;
+    [SerializeField] private LogItem logItem;
 
     public void SetIntel(IIntel intel) {
         this.intel = intel;
@@ -27,28 +23,16 @@ public class IntelItem : MonoBehaviour {
         ClearClickActions();
         SetClickedState(false);
         if (intel != null) {
-            iconImg.sprite = objectIntelIcon;
-            //if (intel is EventIntel) {
-            //    iconImg.sprite = eventIntelIcon;
-            //} 
-            //infoLbl.text = Utilities.LogReplacer(intel.intelLog);
             infoLbl.text = UtilityScripts.Utilities.LogReplacer(intel.log);
-            mainBtn.interactable = true;
-            iconImg.gameObject.SetActive(true);
+            shareToggle.interactable = true;
+            shareToggle.gameObject.SetActive(true);
+            logItem.SetLog(intel.log);
         } else {
             infoLbl.text = "";
-            mainBtn.interactable = false;
-            iconImg.gameObject.SetActive(false);
+            shareToggle.interactable = false;
+            shareToggle.gameObject.SetActive(false);
+            logItem.SetLog(null);
         }
-    }
-    public void ShowLogDebugInfo() {
-        if (intel != null) {
-            //string text = intel.GetDebugInfo();
-            //UIManager.Instance.ShowSmallInfo(text);
-        }
-    }
-    public void HideLogDebugInfo() {
-        UIManager.Instance.HideSmallInfo();
     }
     public void SetClickAction(OnClickAction clickAction) {
         onClickAction = clickAction;
@@ -72,6 +56,6 @@ public class IntelItem : MonoBehaviour {
     }
 
     public void SetClickedState(bool isClicked) {
-        clickedImg.gameObject.SetActive(isClicked);
+        shareToggle.SetIsOnWithoutNotify(isClicked);
     }
 }

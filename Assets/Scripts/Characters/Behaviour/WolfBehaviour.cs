@@ -20,18 +20,18 @@ public class WolfBehaviour : CharacterBehaviourComponent {
         if ((character.homeStructure == null || character.homeStructure.hasBeenDestroyed) && !character.HasTerritory()) {
             log += $"\n-{character.name} has no home";
             //wolf has no home structure
-            //find Settlement where wolves are living at
             List<BaseSettlement> settlementChoices = null;
+            //find Settlement where wolves are living at
             for (int i = 0; i < character.currentRegion.settlementsInRegion.Count; i++) {
                 BaseSettlement settlement = character.currentRegion.settlementsInRegion[i];
-                if (settlement is NPCSettlement && 
-                    (settlement.residents.Count == 0 || settlement.HasResidentThatMeetsCriteria(resident => resident.race == RACE.WOLF))) {
+                if (settlement is NPCSettlement && settlement.HasResidentThatMeetsCriteria(resident => resident.race == RACE.WOLF)) {
                     if (settlementChoices == null) {
                         settlementChoices = new List<BaseSettlement>();
                     }
                     settlementChoices.Add(settlement);
                 }
             }
+
             if (settlementChoices != null) {
                 //if there is a settlement found, set the wolf's home to that
                 BaseSettlement randomSettlement = CollectionUtilities.GetRandomElement(settlementChoices);
@@ -43,8 +43,28 @@ public class WolfBehaviour : CharacterBehaviourComponent {
                     character.MigrateHomeStructureTo(randomStructure);
                     return true; //will return here, because character will gain return home urgent after this
                 }
-            } 
-            
+            } else {
+                log += $"\n-Could not find valid settlement checking unoccupied monster lairs";
+                List<LocationStructure> monsterLairs = character.currentRegion.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.MONSTER_LAIR);
+                List<LocationStructure> choices = null;
+                //if there were no settlements found, then check if there are any unoccupied monster lairs
+                for (int i = 0; i < monsterLairs.Count; i++) {
+                    LocationStructure monsterLair = monsterLairs[i];
+                    if (monsterLair.CanBeResidentHere(character)) {
+                        if (choices == null) {
+                            choices = new List<LocationStructure>();
+                        }
+                        choices.Add(monsterLair);
+                    }
+                }
+                if (choices != null) {
+                    LocationStructure randomStructure = CollectionUtilities.GetRandomElement(choices);
+                    log += $"\n-Found unoccupied monster lair {randomStructure.name}. Setting home to that.";
+                    character.MigrateHomeStructureTo(randomStructure);
+                    return true; //will return here, because character will gain return home urgent after this
+                }
+            }
+
             HexTile chosenHex = null;
             if(character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 HexTile targetHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
