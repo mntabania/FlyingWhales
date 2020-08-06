@@ -1049,7 +1049,7 @@ public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, El
     Rain, Landmine, Burnt, Terrifying_Howl, Freezing_Trap, Snare_Trap, Wind_Blast, Iceteroids, Heat_Wave, Gorgon_Eye, Landmine_Explosion, Freezing_Trap_Explosion,
     Snare_Trap_Explosion, Fervor, Desert_Rose, Winter_Rose, Build_Demonic_Structure, Zombie_Transformation, Torture_Cloud, Freezing_Object,
     Necronomicon_Activate, Berserk_Orb_Activate, Artifact, Infected, Ankh_Of_Anubis_Activate, Fog_Of_War, Stoned, Demooder,
-    Disabler, Overheating,
+    Disabler, Overheating, Transform_Revert
 }
 public enum PLAYER_SKILL_STATE { Locked, Unlocked, Learned, }
 public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
@@ -1425,6 +1425,7 @@ public static class Extensions {
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
+            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
                 return true;
             default:
                 return false;

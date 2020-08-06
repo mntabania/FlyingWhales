@@ -30,7 +30,25 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                         if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
                             && character.gridTileLocation != null && character.movementComponent.HasPathToEvenIfDiffRegion(undeadFactionLeader.gridTileLocation)) {
                             if (character.marker.inVisionCharacters.Contains(undeadFactionLeader)) {
-                                log += $"\n-Character can see faction leader, do nothing";
+                                log += $"\n-Character can see faction leader";
+                                if (undeadFactionLeader.combatComponent.isInCombat) {
+                                    log += $"\n-Faction leader in combat, will try to combat also";
+                                    CombatState combatState = undeadFactionLeader.stateComponent.currentState as CombatState;
+                                    if (combatState.currentClosestHostile != null) {
+                                        CombatData combatData = undeadFactionLeader.combatComponent.GetCombatData(combatState.currentClosestHostile);
+                                        character.combatComponent.Fight(combatState.currentClosestHostile, combatData.reasonForCombat, combatData.connectedAction, combatData.isLethal);
+                                    } else {
+                                        if(undeadFactionLeader.combatComponent.avoidInRange.Count > 0) {
+                                            for (int i = 0; i < undeadFactionLeader.combatComponent.avoidInRange.Count; i++) {
+                                                if(undeadFactionLeader.combatComponent.avoidInRange[i] is Character targetCharacter) {
+                                                    character.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    log += $"\n-Do nothing";
+                                }
                                 producedJob = null;
                                 return true;
                             } else {

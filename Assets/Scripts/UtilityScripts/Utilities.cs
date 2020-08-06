@@ -300,143 +300,24 @@ namespace UtilityScripts {
         }
         private static string CustomPronounReplacer(string wordToBeReplaced, List<LogFiller> objectLog) {
             LOG_IDENTIFIER identifier = logIdentifiers[wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2)];
+            string identifierAsString = identifier.ToString();
             string wordToReplace = string.Empty;
-            char lastCharacter = 'O'; 
+            char lastCharacter = identifier.ToString().Last(); 
             
-            LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.ACTIVE_CHARACTER;
-            switch (identifier) {
-                //faction leader 1
-                case LOG_IDENTIFIER.FACTION_LEADER_1:
-                case LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_O:
-                    lastCharacter = 'O';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_1;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_P:
-                    lastCharacter = 'P';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_1;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_R:
-                    lastCharacter = 'R';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_1;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_1_PRONOUN_S:
-                    lastCharacter = 'S';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_1;
-                    break;
-                //faction leader 2
-                case LOG_IDENTIFIER.FACTION_LEADER_2:
-                case LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_O:
-                    lastCharacter = 'O';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_2;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_P:
-                    lastCharacter = 'P';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_2;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_R:
-                    lastCharacter = 'R';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_2;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_2_PRONOUN_S:
-                    lastCharacter = 'S';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_2;
-                    break;
-                //target character
-                case LOG_IDENTIFIER.TARGET_CHARACTER:
-                case LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_O:
-                    lastCharacter = 'O';
-                    logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
-                    break;
-                case LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_P:
-                    lastCharacter = 'P';
-                    logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
-                    break;
-                case LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_R:
-                    lastCharacter = 'R';
-                    logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
-                    break;
-                case LOG_IDENTIFIER.TARGET_CHARACTER_PRONOUN_S:
-                    lastCharacter = 'S';
-                    logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
-                    break;
-                //faction leader 3
-                case LOG_IDENTIFIER.FACTION_LEADER_3:
-                case LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_O:
-                    lastCharacter = 'O';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_P:
-                    lastCharacter = 'P';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_R:
-                    lastCharacter = 'R';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-                    break;
-                case LOG_IDENTIFIER.FACTION_LEADER_3_PRONOUN_S:
-                    lastCharacter = 'S';
-                    logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-                    break;
-                //Minion 1
-                case LOG_IDENTIFIER.MINION_1:
-                case LOG_IDENTIFIER.MINION_1_PRONOUN_O:
-                    lastCharacter = 'O';
-                    logIdentifier = LOG_IDENTIFIER.MINION_1;
-                    break;
-                case LOG_IDENTIFIER.MINION_1_PRONOUN_P:
-                    lastCharacter = 'P';
-                    logIdentifier = LOG_IDENTIFIER.MINION_1;
-                    break;
-                case LOG_IDENTIFIER.MINION_1_PRONOUN_R:
-                    lastCharacter = 'R';
-                    logIdentifier = LOG_IDENTIFIER.MINION_1;
-                    break;
-                case LOG_IDENTIFIER.MINION_1_PRONOUN_S:
-                    lastCharacter = 'S';
-                    logIdentifier = LOG_IDENTIFIER.MINION_1;
-                    break;
-                //Minion 2
-                case LOG_IDENTIFIER.MINION_2:
-                case LOG_IDENTIFIER.MINION_2_PRONOUN_O:
-                    lastCharacter = 'O';
-                    logIdentifier = LOG_IDENTIFIER.MINION_2;
-                    break;
-                case LOG_IDENTIFIER.MINION_2_PRONOUN_P:
-                    lastCharacter = 'P';
-                    logIdentifier = LOG_IDENTIFIER.MINION_2;
-                    break;
-                case LOG_IDENTIFIER.MINION_2_PRONOUN_R:
-                    lastCharacter = 'R';
-                    logIdentifier = LOG_IDENTIFIER.MINION_2;
-                    break;
-                case LOG_IDENTIFIER.MINION_2_PRONOUN_S:
-                    lastCharacter = 'S';
-                    logIdentifier = LOG_IDENTIFIER.MINION_2;
-                    break;
-            }
-            // if (strIdentifier.Contains("FACTION_LEADER_1")) {
-            //     logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_1;
-            // } else if (strIdentifier.Contains("FACTION_LEADER_2")) {
-            //     logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_2;
-            // } else if (strIdentifier.Contains("TARGET_CHARACTER")) {
-            //     logIdentifier = LOG_IDENTIFIER.TARGET_CHARACTER;
-            // } else if (strIdentifier.Contains("FACTION_LEADER_3")) {
-            //     logIdentifier = LOG_IDENTIFIER.FACTION_LEADER_3;
-            // } else if (strIdentifier.Contains("MINION_1")) {
-            //     logIdentifier = LOG_IDENTIFIER.MINION_1;
-            // } else if (strIdentifier.Contains("MINION_2")) {
-            //     logIdentifier = LOG_IDENTIFIER.MINION_2;
-            // }
-            string pronouns = GetPronoun(lastCharacter, wordToBeReplaced.Last());
-            for (int i = 0; i < objectLog.Count; i++) {
-                if (objectLog[i].identifier == logIdentifier) {
-                    wordToReplace = Utilities.PronounReplacer(pronouns, objectLog[i].obj);
-                    break;
+            LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.NONE;
+            if(System.Enum.TryParse(identifierAsString.Substring(0, identifierAsString.Length - 11), out logIdentifier)) {
+                string pronouns = GetPronoun(lastCharacter, wordToBeReplaced.Last());
+                for (int i = 0; i < objectLog.Count; i++) {
+                    if (objectLog[i].identifier == logIdentifier) {
+                        wordToReplace = PronounReplacer(pronouns, objectLog[i].obj);
+                        break;
+                    }
                 }
             }
-
-            return wordToReplace;
-
+            if(wordToReplace != string.Empty) {
+                return wordToReplace;
+            }
+            return wordToBeReplaced;
         }
         private static string CustomStringReplacer(string wordToBeReplaced, List<LogFiller> objectLog) {
             string wordToReplace = string.Empty;

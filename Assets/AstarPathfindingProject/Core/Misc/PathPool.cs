@@ -15,19 +15,18 @@ namespace Pathfinding {
 		public static void Pool (Path path) {
 			#if !ASTAR_NO_POOLING
 			lock (pool) {
-				if (((IPathInternals)path).Pooled) {
-					throw new System.ArgumentException("The path is already pooled.");
-				}
+				if (!((IPathInternals)path).Pooled) {
+                    Stack<Path> poolStack;
+                    if (!pool.TryGetValue(path.GetType(), out poolStack)) {
+                        poolStack = new Stack<Path>();
+                        pool[path.GetType()] = poolStack;
+                    }
 
-				Stack<Path> poolStack;
-				if (!pool.TryGetValue(path.GetType(), out poolStack)) {
-					poolStack = new Stack<Path>();
-					pool[path.GetType()] = poolStack;
+                    ((IPathInternals) path).Pooled = true;
+                    ((IPathInternals) path).OnEnterPool();
+                    poolStack.Push(path);
+                    //throw new System.ArgumentException("The path is already pooled.");
 				}
-
-				((IPathInternals)path).Pooled = true;
-				((IPathInternals)path).OnEnterPool();
-				poolStack.Push(path);
 			}
 			#endif
 		}

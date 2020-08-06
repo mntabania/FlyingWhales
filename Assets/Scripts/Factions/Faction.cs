@@ -231,7 +231,7 @@ public class Faction : IJobOwner {
 
         if (newLeader != null) {
             if (newLeader is Character newRuler) {
-                newRuler.currentRegion.AddFactionHere(this);
+                newRuler.currentRegion?.AddFactionHere(this);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
             }
         } else {

@@ -4008,6 +4008,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         log =
                             $"{log}\n - {plan.currentActualNode} Action's plan has doNotRecalculate state set to true, dropping plan...";
                         logComponent.PrintLogIfActive(log);
+                        currentNode.action.OnStopWhileStarted(currentNode);
                         currentTopPrioJob.CancelJob(false);
                     } else {
                         logComponent.PrintLogIfActive(log);
@@ -4019,6 +4020,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI))) {
                             log = $"{log}\n-Character is troll and job is Move Character and target is no longer in vision, cancel job";
                             logComponent.PrintLogIfActive(log);
+                            currentNode.action.OnStopWhileStarted(currentNode);
                             currentTopPrioJob.CancelJob(false);
                             return;
                         }
@@ -4043,16 +4045,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         }
                     }
                     if(traitContainer.HasTrait("Lazy")) {
-                        log =
-                            $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a needs type job...";
-                        if (currentTopPrioJob.jobType.IsNeedsTypeJob()) {
+                        log = $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a settlement job...";
+                        if (currentTopPrioJob.originalOwner != null && currentTopPrioJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT) {
                             int chance = UnityEngine.Random.Range(0, 100);
                             log = $"{log}\n - Roll: {chance.ToString()}";
                             if (chance < 30) {
                                 Lazy lazy = traitContainer.GetNormalTrait<Lazy>("Lazy");
                                 if (lazy.TriggerLazy()) {
-                                    log = $"{log}\n - Character triggered lazy, not going to do job";
+                                    log = $"{log}\n - Character triggered lazy, not going to do job, and cancel it";
                                     logComponent.PrintLogIfActive(log);
+                                    currentNode.action.OnStopWhileStarted(currentNode);
+                                    currentTopPrioJob.CancelJob(false);
                                     return;
                                 } else {
                                     log = $"{log}\n - Character did not trigger lazy, continue to do action";
@@ -4071,6 +4074,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log =
                     $"{log}\n - {plan.currentActualNode} Action did not meet current requirements and allowed actions, dropping plan...";
                 logComponent.PrintLogIfActive(log);
+                currentNode.action.OnStopWhileStarted(currentNode);
                 currentTopPrioJob.CancelJob(false);
             }
         }

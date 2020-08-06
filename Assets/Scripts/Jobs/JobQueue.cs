@@ -582,7 +582,7 @@ public class JobQueue {
             for (int j = 0; j < jobTypes.Length; j++) {
                 JobQueueItem job = jobsInQueue[i];
                 if (job.jobType == jobTypes[j]) {
-                    if (job.CancelJob()) {
+                    if (job.CancelJob(false)) {
                         i--;
                     }
                     break;

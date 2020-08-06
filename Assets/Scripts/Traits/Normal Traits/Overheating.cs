@@ -32,7 +32,7 @@ namespace Traits {
             traitable = addedTo;
             if (addedTo is Character character) {
                 Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating, false);
+                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
         public override void OnStackStatus(ITraitable addedTo) {
@@ -63,7 +63,7 @@ namespace Traits {
                     ObjectPoolManager.Instance.DestroyObject(_overheatingEffectGO);
                     _overheatingEffectGO = null;
                 }
-                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating, false);
+                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {
