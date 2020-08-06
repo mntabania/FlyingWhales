@@ -681,6 +681,25 @@ public class Region {
         }
         return null;
     }
+    public LocationStructure GetRandomStructureOfTypeThatMeetCriteria(System.Func<LocationStructure, bool> checker, params STRUCTURE_TYPE[] type) {
+        List<LocationStructure> structureChoices = null;
+        for (int i = 0; i < type.Length; i++) {
+            if (structures.ContainsKey(type[i])) {
+                List<LocationStructure> structuresOfType = structures[type[i]];
+                for (int j = 0; j < structuresOfType.Count; j++) {
+                    LocationStructure possibleStructure = structuresOfType[j];
+                    if (checker.Invoke(possibleStructure)) {
+                        if(structureChoices == null) { structureChoices = new List<LocationStructure>(); }
+                        structureChoices.Add(possibleStructure);
+                    }
+                }
+            }
+        }
+        if(structureChoices != null && structureChoices.Count > 0) {
+            return structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)];
+        }
+        return null;
+    }
     public LocationStructure GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
             List<LocationStructure> structuresOfType = structures[type];

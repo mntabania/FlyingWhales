@@ -437,8 +437,9 @@ public class ActualGoapNode : IReactable, IRumorable {
             if (poiTarget is TileObject targetTileObject) {
                 targetTileObject.AdjustRepairCounter(1);
             }
+            InnerMapManager.Instance.FaceTarget(actor, poiTarget);
         }
-        if(associatedJobType != JOB_TYPE.REMOVE_STATUS && associatedJobType != JOB_TYPE.REPAIR && associatedJobType != JOB_TYPE.FEED) {
+        if (associatedJobType != JOB_TYPE.REMOVE_STATUS && associatedJobType != JOB_TYPE.REPAIR && associatedJobType != JOB_TYPE.FEED) {
             poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
@@ -720,6 +721,11 @@ public class ActualGoapNode : IReactable, IRumorable {
                 target = item.isBeingCarriedBy;
             }
         }
+
+        if (!actor.interruptComponent.hasTriggeredSimultaneousInterrupt) {
+            InnerMapManager.Instance.FaceTarget(actor, target);
+        }
+
         if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.perTickEffect?.Invoke(this);
 

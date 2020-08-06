@@ -88,6 +88,52 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Order_Attack, character);
                     }
                 } else {
+                    if(character.currentStructure != null) {
+                        if(character.currentStructure.structureType == STRUCTURE_TYPE.ANCIENT_GRAVEYARD || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY) {
+                            log += $"\n-90% chance to Roam";
+                            int roll = UnityEngine.Random.Range(0, 100);
+                            log += $"\n-Roll: " + roll;
+                            if (roll < 90) {
+                                character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                                return true;
+                            }
+                        } else {
+                            log += $"\n-50% chance to visit Ancient Graveyard/Cemetery if there's any, Otherwise, Create skeletons";
+                            int roll = UnityEngine.Random.Range(0, 100);
+                            log += $"\n-Roll: " + roll;
+                            if (roll < 50) {
+                                log += $"\n-65% chance to visit an Ancient Graveyard, Otherwise visit Cemetery";
+                                roll = UnityEngine.Random.Range(0, 100);
+                                log += $"\n-Roll: " + roll;
+                                STRUCTURE_TYPE structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
+                                if (roll < 65) {
+                                    structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
+                                }
+                                LocationStructure chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
+                                if (chosenStructure != null) {
+                                    log += $"\n-Will visit " + chosenStructure.name;
+                                    LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
+                                    character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                                    return true;
+                                } else {
+                                    log += $"\n-No structure " + structureTypeToVisit.ToString() + ", will try to visit the other one";
+                                    if (structureTypeToVisit == STRUCTURE_TYPE.CEMETERY) {
+                                        structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
+                                    } else {
+                                        structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
+                                    }
+                                    chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
+                                    if (chosenStructure != null) {
+                                        log += $"\n-Will visit " + chosenStructure.name;
+                                        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
+                                        character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                   
                     log += $"\n-Not enough skeleton followers, will try to create more";
                     bool hasCreated = false;
                     if (character.necromancerTrait.energy > 0) {
