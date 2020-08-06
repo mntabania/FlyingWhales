@@ -14,6 +14,10 @@ namespace Interrupts {
         }
 
         #region Overrides
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+            interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Transforming");
+            return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
+        }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             interruptHolder.actor.lycanData.TurnToWolf();
             return base.ExecuteInterruptEndEffect(interruptHolder);
