@@ -259,8 +259,8 @@ public class Faction : IJobOwner {
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
             log += $"\n\n-{member.name}";
-            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized) {
-                log += "\nEither dead or missing or seized, will not be part of candidates for faction leader";
+            if (member.isDead /*|| member.isMissing*/ || member.isBeingSeized || member.isInLimbo) {
+                log += "\nEither dead, missing, in limbo or seized, will not be part of candidates for faction leader";
                 continue;
             }
             int weight = 50;
