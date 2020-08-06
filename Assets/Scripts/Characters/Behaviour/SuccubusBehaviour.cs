@@ -26,8 +26,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                     }
                 }
             } else {
-                Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && (character.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null
-                    && c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null);
+                Character targetCharacter = character.currentRegion.GetRandomCharacterThatMeetCriteria((c) => CanTargetCharacterForMakeLove(character, c));
                 if (targetCharacter != null) {
                     log += $"\n-Target for make love is: " + targetCharacter.name;
                     if (character.movementComponent.HasPathToEvenIfDiffRegion(targetCharacter.gridTileLocation)) {
@@ -53,8 +52,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
                 if(targetCharacter != null) {
                     log += $"\n-Target for disguise is: " + targetCharacter.name;
-                    if(character.currentRegion.GetRandomCharacterThatMeetCriteria(c => c.gender == GENDER.MALE && !c.isDead && (character.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null
-                    && c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null) != null) {
+                    if(character.currentRegion.GetRandomCharacterThatMeetCriteria((c) => CanTargetCharacterForMakeLove(character, c)) != null) {
                         if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
                             return true;
                         }
@@ -66,4 +64,13 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
         character.jobComponent.TriggerRoamAroundTile(out producedJob);
         return true;
 	}
+
+    private bool CanTargetCharacterForMakeLove(Character source, Character c) {
+        if(c.gender == GENDER.MALE && !c.isDead && (source.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null) {
+            if(c.canPerform && !c.combatComponent.isInCombat && !c.returnedToLife && !c.carryComponent.masterCharacter.avatar.isTravellingOutside && c.currentRegion == source.currentRegion) {
+                return c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null;
+            }
+        }
+        return false;
+    }
 }

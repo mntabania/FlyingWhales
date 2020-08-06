@@ -302,10 +302,11 @@ namespace UtilityScripts {
             LOG_IDENTIFIER identifier = logIdentifiers[wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2)];
             string identifierAsString = identifier.ToString();
             string wordToReplace = string.Empty;
-            char lastCharacter = identifier.ToString().Last(); 
+            char lastCharacter = identifierAsString.Last(); 
             
             LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.NONE;
-            if(System.Enum.TryParse(identifierAsString.Substring(0, identifierAsString.Length - 11), out logIdentifier)) {
+            string logIdentifierAsString = identifierAsString.Substring(0, identifierAsString.Length - 10);
+            if (System.Enum.TryParse(logIdentifierAsString, out logIdentifier)) {
                 string pronouns = GetPronoun(lastCharacter, wordToBeReplaced.Last());
                 for (int i = 0; i < objectLog.Count; i++) {
                     if (objectLog[i].identifier == logIdentifier) {
