@@ -278,6 +278,8 @@ namespace Traits {
         public Character lycanthropeForm { get; private set; }
         public Character originalForm { get; private set; }
 
+        public GameObject transformRevertEffectGO { get; private set; }
+
         public LycanthropeData(Character originalForm) {
             this.originalForm = originalForm;
             CreateLycanthropeForm();
@@ -306,6 +308,7 @@ namespace Traits {
         }
 
         public void TurnToWolf() {
+            activeForm.traitContainer.RemoveTrait(activeForm, "Transforming");
             activeForm = lycanthropeForm;
             limboForm = originalForm;
             LocationGridTile tile = originalForm.gridTileLocation;
@@ -320,7 +323,9 @@ namespace Traits {
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
+
         public void RevertToNormal() {
+            activeForm.traitContainer.RemoveTrait(activeForm, "Transforming");
             activeForm = originalForm;
             limboForm = lycanthropeForm;
             LocationGridTile tile = lycanthropeForm.gridTileLocation;
