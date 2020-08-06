@@ -979,6 +979,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void SetSettlementOnTile(BaseSettlement settlement) {
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
+        region.UpdateSettlementsInRegion();
     }
     #endregion
 

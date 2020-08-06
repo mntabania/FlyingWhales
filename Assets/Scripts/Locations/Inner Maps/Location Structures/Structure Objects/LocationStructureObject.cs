@@ -44,6 +44,8 @@ public class LocationStructureObject : PooledObject {
 
     [FormerlySerializedAs("rooms")] [Header("Rooms")] 
     public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
+
+    public bool wallsContributeToDamage = true;
     
     private StructureTemplate _parentTemplate;
 
@@ -394,7 +396,7 @@ public class LocationStructureObject : PooledObject {
                             InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                         blockWall.SetWallType(_blockWallType);
                         structure.AddPOI(blockWall, tile);
-                        if (structure.structureType != STRUCTURE_TYPE.THE_PORTAL) {
+                        if (wallsContributeToDamage) {
                             structure.AddObjectAsDamageContributor(blockWall);    
                         }
                     }
@@ -416,7 +418,9 @@ public class LocationStructureObject : PooledObject {
                 tile.SetTileType(LocationGridTile.Tile_Type.Wall);
                 structureWallObject.SetGridTileLocation(tile);
                 tile.AddWallObject(structureWallObject);
-                structure.AddObjectAsDamageContributor(structureWallObject);
+                if (wallsContributeToDamage) {
+                    structure.AddObjectAsDamageContributor(structureWallObject);    
+                }
                 walls[i] = structureWallObject;
             }    
         }

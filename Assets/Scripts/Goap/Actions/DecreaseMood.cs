@@ -39,7 +39,7 @@ public class DecreaseMood : GoapAction {
         goapNode.actor.AdjustHP(-goapNode.actor.maxHP, ELEMENTAL_TYPE.Normal, true);
     }
     private void DecreaseEffect(ITraitable traitable, Character actor) {
-        if (traitable is Character targetCharacter) {
+        if (traitable is Character targetCharacter && actor.IsHostileWith(targetCharacter)) {
             targetCharacter.traitContainer.AddTrait(traitable, "Dolorous", actor);  
             Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Decrease Mood", "effect");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

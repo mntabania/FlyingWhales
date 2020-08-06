@@ -50,7 +50,6 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
             grayedOutGO.SetActive(false);
         } else if (_character.minion != null) {
             //chartacter is a minion
-            _character.minion.SetPlayerCharacterItem(this);
             portrait.GeneratePortrait(_character);
             portrait.gameObject.SetActive(true);
             bgImage.sprite = unlockedSprite;

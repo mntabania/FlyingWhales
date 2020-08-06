@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
@@ -12,7 +11,6 @@ public class Minion {
 
     public Character character { get; private set; }
     public int exp { get; private set; }
-    public int indexDefaultSort { get; private set; }
     public CombatAbility combatAbility { get; private set; }
     public List<string> traitsToAdd { get; private set; }
     public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
@@ -41,17 +39,12 @@ public class Minion {
             //only change default behaviour set of minion if it is currently using the default resident behaviour.
             character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
         }
-        // if (character.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-        //     //only change combat mode of minions that haven't already changed their combat mode
-        //     character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-        // }
         character.visuals.UpdateAllVisuals(character);
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
         this.exp = data.exp;
         traitsToAdd = data.traitsToAdd;
-        SetIndexDefaultSort(data.indexDefaultSort);
         character.SetMinion(this);
         character.avatar.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
@@ -61,12 +54,6 @@ public class Minion {
     }
     public void SetAssignedDeadlySinName(string name) {
         _assignedDeadlySinName = name;
-    }
-    public void SetPlayerCharacterItem(PlayerCharacterItem item) {
-        //character.SetPlayerCharacterItem(item);
-    }
-    public void SetIndexDefaultSort(int index) {
-        indexDefaultSort = index;
     }
     public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, 
         Log _deathLog = null, LogFiller[] deathLogFillers = null) {
@@ -159,78 +146,6 @@ public class Minion {
         }
     }
 
-    #region Intervention Abilities
-    //public void SetUnlockedInterventionSlots(int amount) {
-    //    unlockedInterventionSlots = amount;
-    //    unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
-    //}
-    //public void AdjustUnlockedInterventionSlots(int amount) {
-    //    unlockedInterventionSlots += amount;
-    //    unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
-    //}
-    //public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
-    //    int currentInterventionAbilityCount = GetCurrentInterventionAbilityCount();
-    //    if(currentInterventionAbilityCount < unlockedInterventionSlots) {
-    //        for (int i = 0; i < interventionAbilities.Length; i++) {
-    //            if (interventionAbilities[i] == null) {
-    //                interventionAbilities[i] = ability;
-    //                ability.SetMinion(this);
-    //                Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, ability);
-    //                if (showNewAbilityUI) {
-    //                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, ability);
-    //                }
-    //                break;
-    //            }
-    //        }
-    //    } else {
-    //        //Broadcast intervention ability is full, must open UI whether player wants to replace ability or discard it
-    //        PlayerUI.Instance.replaceUI.ShowReplaceUI(GeAllInterventionAbilities(), ability, ReplaceAbility, RejectAbility);
-    //    }
-    //}
-    //private void ReplaceAbility(object objToReplace, object objToAdd) {
-    //    PlayerJobAction replace = objToReplace as PlayerJobAction;
-    //    PlayerJobAction add = objToAdd as PlayerJobAction;
-    //    for (int i = 0; i < interventionAbilities.Length; i++) {
-    //        if (interventionAbilities[i] == replace) {
-    //            interventionAbilities[i] = add;
-    //            add.SetMinion(this);
-    //            replace.SetMinion(null);
-    //            Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, add);
-    //            break;
-    //        }
-    //    }
-    //}
-    //private void RejectAbility(object rejectedObj) { }
-    //public void AddInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
-    //    GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability), showNewAbilityUI);
-    //}
-    //public int GetCurrentInterventionAbilityCount() {
-    //    int count = 0;
-    //    for (int i = 0; i < interventionAbilities.Length; i++) {
-    //        if (interventionAbilities[i] != null) {
-    //            count++;
-    //        }
-    //    }
-    //    return count;
-    //}
-    //public List<PlayerJobAction> GeAllInterventionAbilities() {
-    //    List<PlayerJobAction> all = new List<PlayerJobAction>();
-    //    for (int i = 0; i < interventionAbilities.Length; i++) {
-    //        if (interventionAbilities[i] != null) {
-    //            all.Add(interventionAbilities[i]);
-    //        }
-    //    }
-    //    return all;
-    //}
-    //public void ResetInterventionAbilitiesCD() {
-    //    for (int i = 0; i < interventionAbilities.Length; i++) {
-    //        if(interventionAbilities[i] != null) {
-    //            interventionAbilities[i].InstantCooldown();
-    //        }
-    //    }
-    //}
-    #endregion
-
     #region Combat Ability
     public void SetCombatAbility(CombatAbility combatAbility, bool showNewAbilityUI = false) {
         if (this.combatAbility == null) {
@@ -259,27 +174,6 @@ public class Minion {
     #endregion
 
     #region Invasion
-    public void StartInvasionProtocol(NPCSettlement npcSettlement) {
-        //TODO:
-        // AddPendingTraits();
-        // Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
-        // Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-        // Messenger.AddListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
-        // Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
-        // Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        // SetAssignedRegion(npcSettlement.region);
-    }
-    public void StopInvasionProtocol(NPCSettlement npcSettlement) {
-        //TODO:
-        // if(npcSettlement != null && assignedRegion != null && assignedRegion.npcSettlement == npcSettlement) {
-        //     Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
-        //     Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        //     Messenger.RemoveListener<NPCSettlement>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
-        //     Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
-        //     Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        //     SetAssignedRegion(null);
-        // }
-    }
     private void OnTickEnded() {
         if (character.isDead) { return; }
         character.interruptComponent.OnTickEnded();
@@ -293,59 +187,17 @@ public class Minion {
         if (character.CanPlanGoap()) {
             character.PerStartTickActionPlanning();
         }
-        character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
-    }
-    #endregion
-
-    #region Traits
-    /// <summary>
-    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an npcSettlement map. All traits are stored and will be added once the minion is placed at an npcSettlement map.
-    /// </summary>
-    public bool AddTrait(string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
-        if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            return character.traitContainer.AddTrait(character, traitName, characterResponsible, gainedFromDoing);
-        } else {
-            traitsToAdd.Add(traitName);
-            return true;
-        }
-    }
-    private void AddPendingTraits() {
-        for (int i = 0; i < traitsToAdd.Count; i++) {
-            character.traitContainer.AddTrait(character, traitsToAdd[i]);
-        }
-        traitsToAdd.Clear();
+        // character.AdjustHP(-5, ELEMENTAL_TYPE.Normal, triggerDeath: true, showHPBar: true, source: character);
     }
     #endregion
 
     #region Utilities
-    public void AdjustSpellExtractionCount(int amount) {
-        spellExtractionCount += amount;
-    }
     public void SetMinionPlayerSkillType(SPELL_TYPE skillType) {
         minionPlayerSkillType = skillType;
     }
     #endregion
 
     #region Summoning
-    public void Summon(Inner_Maps.Location_Structures.ThePortal portalStructure) {
-        character.CreateMarker();
-        character.marker.visionCollider.VoteToUnFilterVision();
-        int minX = portalStructure.tiles.Min(t => t.localPlace.x);
-        int maxX = portalStructure.tiles.Max(t => t.localPlace.x);
-        int minY = portalStructure.tiles.Min(t => t.localPlace.y);
-        int maxY = portalStructure.tiles.Max(t => t.localPlace.y);
-
-        int differenceX = (maxX - minX) + 1;
-        int differenceY = (maxY - minY) + 1;
-
-        int centerX = minX + (differenceX / 2);
-        int centerY = minY + (differenceY / 2);
-
-        LocationGridTile centerTile = portalStructure.location.innerMap.map[centerX, centerY];
-        // Vector3 pos = centerTile.worldLocation;
-
-        Summon(centerTile);
-    }
     public void Summon(LocationGridTile tile) {
         character.CreateMarker();
         character.marker.visionCollider.VoteToUnFilterVision();

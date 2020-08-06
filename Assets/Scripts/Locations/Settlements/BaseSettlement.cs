@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
@@ -236,6 +238,15 @@ namespace Locations.Settlements {
             }
             return count;
         }
+        public bool HasResidentThatMeetsCriteria(System.Func<Character, bool> criteria) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (criteria.Invoke(resident)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Faction
@@ -332,6 +343,19 @@ namespace Locations.Settlements {
         }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
+        }
+        public LocationStructure GetRandomStructure(System.Func<LocationStructure, bool> criteria) {
+            List<LocationStructure> choices = new List<LocationStructure>();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (criteria.Invoke(structure)) {
+                    choices.Add(structure);
+                }
+            }
+            if (choices.Count > 0) {
+                return CollectionUtilities.GetRandomElement(choices);
+            }
+            return null;
         }
         #endregion
 

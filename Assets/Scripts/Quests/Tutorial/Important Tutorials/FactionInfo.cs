@@ -21,6 +21,8 @@ namespace Tutorial {
                     new ToggleTurnedOnStep("CharacterInfo_Info", "Open its Info tab")
                         .SetOnTopmostActions(OnTopMostInfo, OnNoLongerTopMostInfo),
                     new EventLabelLinkClicked("FactionLbl", "Click on its Faction")
+                        .SetHoverOverAction(OnHoverOverClickFaction)
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
                         .SetCompleteAction(OnCompleteExecuteSpell)
                 ),
                 new QuestStepCollection(
@@ -66,6 +68,10 @@ namespace Tutorial {
         private void OnClickLogs() {
             PlayerUI.Instance.ShowGeneralConfirmation("Logs Tab",
                 $"The Logs tab provides you with a timestamped list of Faction-related events.");
+        }
+        private void OnHoverOverClickFaction(QuestStepItem stepItem) {
+            UIManager.Instance.ShowSmallInfo("You can see which faction a character belongs to in its info tab.", 
+                TutorialManager.Instance.factionInfo, "Character Faction", stepItem.hoverPosition);
         }
         #endregion
         

@@ -52,10 +52,8 @@ namespace Tutorial {
         }
         private void OnHoverDemon(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                "You have a handful of lesser demons at your command. " +
-                "You can summon them to perform certain actions for you. " +
-                "Note though that their corporeal form slowly disintegrates in the physical " +
-                "realm and they will have to fully recuperate in the nether realms before you can summon again.",
+                "You have a handful of lesser demons at your command. You can summon them to perform certain actions for you. " +
+                "They will de-spawn if they lose all HP and will have to fully recuperate in the nether realms before you can summon again.",
                 stepItem.hoverPosition, "Lesser Demons");
         }
         private void OnSpawnAction() {
