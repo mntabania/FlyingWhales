@@ -103,12 +103,12 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
     }
     public override void OnAddBehaviourToCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
-        // character.traitContainer.AddTrait(character, "Stealthy");
+        character.traitContainer.AddTrait(character, "Stealthy");
         character.behaviourComponent.OnBecomeDeMooder();
     }
     public override void OnRemoveBehaviourFromCharacter(Character character) {
         base.OnAddBehaviourToCharacter(character);
-        // character.traitContainer.RemoveTrait(character, "Stealthy");
+        character.traitContainer.RemoveTrait(character, "Stealthy");
         character.behaviourComponent.OnNoLongerDeMooder();
     }
 

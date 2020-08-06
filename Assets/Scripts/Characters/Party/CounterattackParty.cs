@@ -32,7 +32,9 @@ public class CounterattackParty : Party {
         //    Character member = members[i];
         //    member.traitContainer.AddTrait(member, "Travelling");
         //}
-        Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, members, targetStructure);
+        if (targetStructure is DemonicStructure demonicStructure) {
+            Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, members, demonicStructure);    
+        }
     }
     // protected override void OnWaitTimeOverButPartyIsDisbanded() {
     //     base.OnWaitTimeOverButPartyIsDisbanded();
