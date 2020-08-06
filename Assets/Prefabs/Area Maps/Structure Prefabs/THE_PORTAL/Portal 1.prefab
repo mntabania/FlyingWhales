@@ -3673,11 +3673,11 @@ MonoBehaviour:
   _size: {x: 14, y: 14}
   _center: {x: 7, y: 7, z: 0}
   objectsParent: {fileID: 4213304009371114}
-  _furnitureSpotsParent: {fileID: 0}
-  _wallType: 2
-  _wallResource: 0
+  _blockWallType: 2
+  _thinWallResource: 0
   predeterminedOccupiedCoordinates: []
   roomTemplates: []
+  wallsContributeToDamage: 0
   wallTileMap: {fileID: 8195094280245978910}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
