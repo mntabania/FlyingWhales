@@ -600,6 +600,7 @@ namespace Inner_Maps {
 
             if (creator.homeSettlement != null && creator.isNormalCharacter) {
                 creator.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(resourcePile);
+                creator.marker.AddPOIAsInVisionRange(resourcePile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
             return resourcePile;
         }

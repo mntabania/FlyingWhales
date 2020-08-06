@@ -2964,6 +2964,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.PlanScheduledFullnessRecovery(this);
             needsComponent.PlanScheduledTirednessRecovery(this);
         }
+        //try to take settlement job that this character can see the target of.
+        string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
+        if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
+            debugLog += $"\n{name} Can take settlement job in vision.";
+            JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVisionExcept(this, JOB_TYPE.CRAFT_OBJECT);
+            debugLog += $"\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
+            if (jobToAssign != null && 
+                ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
+                 (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
+                jobQueue.AddJobInQueue(jobToAssign);
+                debugLog += $"\nJob was added to queue!";
+            } else {
+                debugLog += $"\nCouldn't assign job!";
+            }    
+        } else {
+            debugLog += $"\n{name} Cannot take settlement job in vision because \n{invalidReason}";
+        }
+        logComponent.PrintLogIfActive(debugLog);
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
         }
@@ -2998,10 +3016,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             invalidReason = "Character is in the middle of a job";
             return false;
         }
-        if (planner.status != GOAP_PLANNING_STATUS.NONE) {
-            invalidReason = "Character is planning";
-            return false;
-        }
+        // if (planner.status != GOAP_PLANNING_STATUS.NONE) {
+        //     invalidReason = "Character is planning";
+        //     return false;
+        // }
         if (marker == null || marker.hasFleePath) {
             invalidReason = "Character has no marker or is fleeing";
             return false;
@@ -3022,25 +3040,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public void EndTickPerformJobs() {
-        //try to take settlement job that this character can see the target of.
-        // string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
-        if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
-            // debugLog += $"\n{name} Can take settlement job in vision.";
-            JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVisionExcept(this, JOB_TYPE.CRAFT_OBJECT);
-            // debugLog += $"\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
-            if (jobToAssign != null && 
-                ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
-                (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
-                jobQueue.AddJobInQueue(jobToAssign);
-                // debugLog += $"\nJob was added to queue!";
-            } else {
-                // debugLog += $"\nCouldn't assign job!";
-            }    
-        } else {
-            // debugLog += $"\n{name} Cannot take settlement job in vision because \n{invalidReason}";
-        }
-        // logComponent.PrintLogIfActive(debugLog);
-        
         if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
             if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
                 PerformTopPriorityJob();
