@@ -2517,4 +2517,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     #endregion
+
+    #region Wolf Lair
+    public void TriggerSpawnWolfLair(LocationGridTile targetTile, out JobQueueItem producedJob) {
+	    producedJob = null;
+	    if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_WOLF_LAIR, _owner, _owner);
+		    job.AddOtherData(INTERACTION_TYPE.BUILD_WOLF_LAIR, new object[] { targetTile });
+		    producedJob = job;
+	    }
+    }
+    #endregion
 }

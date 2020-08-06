@@ -35,6 +35,7 @@ public class Region {
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
+    public List<BaseSettlement> settlementsInRegion { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -53,6 +54,7 @@ public class Region {
         pendingAddAwareness = new List<IPointOfInterest>();
         pendingRemoveAwareness = new List<IPointOfInterest>();
         regionFeatureComponent = new RegionFeatureComponent();
+        settlementsInRegion = new List<BaseSettlement>();
     }
     public Region(HexTile coreTile) : this() {
         id = UtilityScripts.Utilities.SetID(this);
@@ -267,31 +269,6 @@ public class Region {
             }
         }
         return tilesWithFeature;
-    }
-    public bool HasActiveSettlement() {
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            if (tile.settlementOnTile != null && tile.settlementOnTile is NPCSettlement npcSettlement && 
-                npcSettlement.owner != null && (npcSettlement.owner.race == RACE.ELVES || npcSettlement.owner.race == RACE.HUMANS)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
-        List<BaseSettlement> settlements = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile tile = tiles[i];
-            if (tile.settlementOnTile != null && validityChecker.Invoke(tile.settlementOnTile)) {
-                if (settlements == null) {
-                    settlements = new List<BaseSettlement>();
-                }
-                if (settlements.Contains(tile.settlementOnTile) == false) {
-                    settlements.Add(tile.settlementOnTile);    
-                }
-            }
-        }
-        return settlements;
     }
     public List<HexTile> GetAreasOccupiedByVillagers() {
         List<HexTile> areas = null;
@@ -1148,6 +1125,45 @@ public class Region {
             }
         //}
         return chosenTile;
+    }
+    #endregion
+
+    #region Settlements
+    public void UpdateSettlementsInRegion() {
+        settlementsInRegion.Clear();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            if (tile.settlementOnTile != null) {
+                if (!settlementsInRegion.Contains(tile.settlementOnTile)) {
+                    settlementsInRegion.Add(tile.settlementOnTile);    
+                }
+            }
+        }
+    }
+    public bool HasActiveSettlement() {
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (settlement is NPCSettlement npcSettlement && 
+                npcSettlement.owner != null && (npcSettlement.owner.race == RACE.ELVES || npcSettlement.owner.race == RACE.HUMANS)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public List<BaseSettlement> GetSettlementsInRegion(System.Func<BaseSettlement, bool> validityChecker) {
+        List<BaseSettlement> settlements = null;
+        for (int i = 0; i < settlementsInRegion.Count; i++) {
+            BaseSettlement settlement = settlementsInRegion[i];
+            if (validityChecker.Invoke(settlement)) {
+                if (settlements == null) {
+                    settlements = new List<BaseSettlement>();
+                }
+                if (settlements.Contains(settlement) == false) {
+                    settlements.Add(settlement);    
+                }
+            }
+        }
+        return settlements;
     }
     #endregion
 }

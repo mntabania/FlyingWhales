@@ -513,6 +513,7 @@ public enum INTERACTION_TYPE {
     FLEE_CRIME,
     HOST_SOCIAL_PARTY,
     PLAY_CARDS,
+    BUILD_WOLF_LAIR
 }
 public enum INTERRUPT {
     None,
