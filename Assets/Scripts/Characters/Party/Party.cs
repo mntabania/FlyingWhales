@@ -155,9 +155,9 @@ public class Party {
     }
     private void CancelAllJoinPartyJobs() {
         if (jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
-            leader.homeSettlement.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
+            leader.homeSettlement?.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
         } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
-            leader.faction.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
+            leader.faction?.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
         }
     }
     #endregion

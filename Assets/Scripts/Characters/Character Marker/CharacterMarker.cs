@@ -103,6 +103,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
         ForceUpdateMarkerVisualsBasedOnAnimation();
         CreateCollisionTrigger();
+        SetVisualState(true);
 
         unprocessedVisionPOIs = new List<IPointOfInterest>();
         unprocessedVisionPOIInterruptsOnly = new List<IPointOfInterest>();
