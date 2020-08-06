@@ -109,6 +109,7 @@ namespace Tutorial {
         public Texture recipientLog;
         public Texture brainWashButton;
         public VideoClip defilerChamberVideo;
+        public Texture factionInfo;
         
         public bool hasCompletedImportantTutorials { get; private set; }
         

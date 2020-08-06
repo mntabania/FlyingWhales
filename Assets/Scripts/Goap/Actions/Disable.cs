@@ -43,7 +43,7 @@ public class Disable : GoapAction {
         goapNode.actor.AdjustHP(-goapNode.actor.maxHP, ELEMENTAL_TYPE.Normal, true);
     }
     private void DisableEffect(ITraitable traitable, Character actor) {
-        if (traitable is Character targetCharacter) {
+        if (traitable is Character targetCharacter && actor.IsHostileWith(targetCharacter)) {
             targetCharacter.traitContainer.AddTrait(traitable, "Ensnared", actor);  
             Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Disable", "effect");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

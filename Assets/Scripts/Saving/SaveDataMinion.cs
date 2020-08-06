@@ -6,9 +6,6 @@ using UnityEngine;
 public class SaveDataMinion {
     public int characterID;
     public int exp;
-    public int indexDefaultSort;
-    //public int unlockedInterventionSlots;
-    //public List<SaveDataInterventionAbility> interventionAbilities;
     public SaveDataCombatAbility combatAbility;
     public int assignedRegionID;
 
@@ -19,7 +16,6 @@ public class SaveDataMinion {
     public void Save(Minion minion) {
         characterID = minion.character.id;
         exp = minion.exp;
-        indexDefaultSort = minion.indexDefaultSort;
         spellExtractionCount = minion.spellExtractionCount;
         //unlockedInterventionSlots = minion.unlockedInterventionSlots;
 
