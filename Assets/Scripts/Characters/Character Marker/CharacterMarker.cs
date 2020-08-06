@@ -821,7 +821,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     }
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         _previousHexTileLocation = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                        Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+                        Messenger.Broadcast(Signals.CHARACTER_ENTERED_HEXTILE, character, _previousHexTileLocation); //character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner
                     } else {
                         _previousHexTileLocation = null;
                     }

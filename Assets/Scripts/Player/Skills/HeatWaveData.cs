@@ -22,7 +22,6 @@ public class HeatWaveData : SpellData {
         if (canPerform) {
             return targetHex != null
                    && targetHex.biomeType != BIOMES.SNOW
-                   && targetHex.biomeType != BIOMES.FOREST
                    && targetHex.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature) == false;
         }
         return canPerform;

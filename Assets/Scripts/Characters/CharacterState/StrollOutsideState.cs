@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -38,32 +39,32 @@ public class StrollOutsideState : CharacterState {
     private LocationGridTile PickRandomTileToGoTo() {
         if (stateComponent.character.homeSettlement != null) {
             //only stroll around surrounding areas
-            List<HexTile> surroundingAreas = stateComponent.character.homeSettlement.GetSurroundingAreas();
-            List<LocationGridTile> choices = new List<LocationGridTile>();
-            for (int i = 0; i < surroundingAreas.Count; i++) {
-                HexTile surroundingArea = surroundingAreas[i];
-                choices.AddRange(surroundingArea.locationGridTiles);
-            }
-            return CollectionUtilities.GetRandomElement(choices);
-        } else if (stateComponent.character.hexTileLocation != null){
+            HexTile chosenHex = stateComponent.character.homeSettlement.GetAPlainAdjacentHextileThatMeetCriteria(h => stateComponent.character.movementComponent.HasPathTo(h));
+            return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+        }
+        if (stateComponent.character.hexTileLocation != null) {
             //stroll around surrounding area of current hextile
-            List<LocationGridTile> choices = new List<LocationGridTile>();
-            for (int i = 0; i < stateComponent.character.hexTileLocation.AllNeighbours.Count; i++) {
-                HexTile hexTile = stateComponent.character.hexTileLocation.AllNeighbours[i];
-                if (hexTile.region == stateComponent.character.currentRegion) {
-                    choices.AddRange(hexTile.locationGridTiles);
+
+            List<HexTile> choices = new List<HexTile>();
+            for (int i = 0; i < stateComponent.character.hexTileLocation.ValidTilesWithinRegion.Count; i++) {
+                HexTile hexTile = stateComponent.character.hexTileLocation.ValidTilesWithinRegion[i];
+                if (stateComponent.character.movementComponent.HasPathTo(hexTile)) {
+                    choices.Add(hexTile);
                 }
             }
-            return CollectionUtilities.GetRandomElement(choices);
+            if(choices != null && choices.Count > 0) {
+                HexTile chosenHex = CollectionUtilities.GetRandomElement(choices);
+                return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+            }
+        }
+
+        HexTile hex = stateComponent.character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => stateComponent.character.currentRegion == h.region && stateComponent.character.movementComponent.HasPathTo(h));
+        LocationGridTile tile = CollectionUtilities.GetRandomElement(hex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+        if (tile != null) {
+            return tile;
         } else {
-            LocationStructure structure = stateComponent.character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            LocationGridTile tile = structure.GetRandomTile();
-            if(tile != null) {
-                return tile;
-            } else {
-                throw new System.Exception(
-                    $"No unoccupied tile in wilderness for {stateComponent.character.name} to go to in {stateName}");
-            }    
+            throw new System.Exception(
+                $"No unoccupied tile in wilderness for {stateComponent.character.name} to go to in {stateName}");
         }
     }
 }

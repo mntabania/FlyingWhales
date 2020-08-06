@@ -29,10 +29,15 @@ public class SummonListUI : PopupMenuBase {
     }
     private void OnChargesAdjusted(SpellData spellData) {
         if (spellData is SummonPlayerSkill summonPlayerSkill) {
-            for (int i = 0; i < _summonPlayerSkillItems.Count; i++) {
-                SummonMinionPlayerSkillNameplateItem item = _summonPlayerSkillItems[i];
-                if (item.spellData == spellData && spellData.charges <= 0) {
-                    DeleteSummonItem(item);
+            SummonMinionPlayerSkillNameplateItem nameplateItem = GetSummonMinionPlayerSkillNameplateItem(spellData);
+            if (spellData.charges > 0) {
+                if(nameplateItem == null) {
+                    nameplateItem = CreateNewReserveSummonItem(spellData.type);
+                }
+                nameplateItem.UpdateData();
+            } else {
+                if(nameplateItem != null) {
+                    DeleteSummonItem(nameplateItem);
                 }
             }
         }
@@ -55,7 +60,7 @@ public class SummonListUI : PopupMenuBase {
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
     }
-    private void CreateNewReserveSummonItem(SPELL_TYPE summonPlayerSkillType) {
+    private SummonMinionPlayerSkillNameplateItem CreateNewReserveSummonItem(SPELL_TYPE summonPlayerSkillType) {
         SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(summonPlayerSkillType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(reserveSummonItemPrefab.name, Vector3.zero, Quaternion.identity, summonListScrollView.content);
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
@@ -69,6 +74,7 @@ public class SummonListUI : PopupMenuBase {
         }
         
         _summonPlayerSkillItems.Add(item);
+        return item;
     }
     private void DeleteSummonItem(Summon summon) {
         CharacterNameplateItem item = GetSummonItem(summon);
@@ -85,6 +91,15 @@ public class SummonListUI : PopupMenuBase {
         for (int i = 0; i < items.Length; i++) {
             CharacterNameplateItem item = items[i];
             if (item.character == summon) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private SummonMinionPlayerSkillNameplateItem GetSummonMinionPlayerSkillNameplateItem(SpellData spellData) {
+        for (int i = 0; i < _summonPlayerSkillItems.Count; i++) {
+            SummonMinionPlayerSkillNameplateItem item = _summonPlayerSkillItems[i];
+            if (item.spellData == spellData) {
                 return item;
             }
         }

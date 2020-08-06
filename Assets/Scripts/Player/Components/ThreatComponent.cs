@@ -66,7 +66,7 @@ public class ThreatComponent {
     //     threatPerHour = amount;
     // }
     private void OnMaxThreat() {
-        // Counterattack();
+        //Counterattack();
         DivineIntervention();
     }
     private void OnThreatIncreased() {

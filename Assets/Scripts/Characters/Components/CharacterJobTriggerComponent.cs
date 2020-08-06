@@ -863,7 +863,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 } else if (_owner.IsInHomeSettlement()) {
                     chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
                 } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => _owner.currentRegion == h.region && _owner.movementComponent.HasPathTo(h));
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;

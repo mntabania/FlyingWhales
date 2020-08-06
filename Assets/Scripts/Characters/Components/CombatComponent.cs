@@ -784,6 +784,13 @@ public class CombatComponent {
                     case JOB_TYPE.BRAWL:
                         key = "Brawl";
                         break;
+                    case JOB_TYPE.DESTROY:
+                        if (owner.traitContainer.HasTrait("Angry")) {
+                            key = "Destroy_Angry";
+                        } else if (owner.traitContainer.HasTrait("Suspicious")) {
+                            key = "Destroy_Suspicious";
+                        }
+                        break;
                     case JOB_TYPE.MOVE_CHARACTER:
                         if (owner is Troll) {
                             key = "Abduct";

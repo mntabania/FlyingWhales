@@ -62,7 +62,7 @@ public class MonsterInvadeParty : Party {
         }
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
-        if (tile.settlementOnTile == target.targetSettlement) {
+        if (tile.settlementOnTile != null && tile.settlementOnTile == target.targetSettlement) {
             if (IsMember(character)) {
                 StartInvadeTimer();
             }
