@@ -259,11 +259,11 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
             IDamageable damageable = _damagablesInTornado[i];
             if (damageable.mapObjectVisual != null) {
-                if(damageable is Dragon dragon) {
-                    if (!dragon.isAwakened) {
-                        dragon.Awaken();
-                    }
-                } else {
+                //if(damageable is Dragon dragon) {
+                //    if (!dragon.isAwakened) {
+                //        dragon.Awaken();
+                //    }
+                //} else {
                     Vector3 distance = transform.position - damageable.mapObjectVisual.gameObjectVisual.transform.position;
                     if (distance.magnitude < 3f) {
                         DealDamage(damageable);
@@ -271,7 +271,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
                         //check for suck in
                         TrySuckIn(damageable);
                     }
-                }
+                //}
             }
         }
     }
