@@ -21,15 +21,16 @@ public class MovementComponent {
     public float runSpeedModifier { get; private set; }
     public bool hasMovedOnCorruption { get; private set; }
     public bool isStationary { get; private set; }
-    public bool avoidSettlements { get; private set; }
     public ABPath currentDigPath { get; private set; }
 
     private int _enableDiggingCounter;
+    private int _avoidSettlementsCounter;
 
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
     public float runSpeed => owner.raceSetting.runSpeed + (owner.raceSetting.runSpeed * runSpeedModifier);
     public bool enableDigging => _enableDiggingCounter > 0;
+    public bool avoidSettlements => _avoidSettlementsCounter > 0;
     #endregion
 
     public MovementComponent(Character owner) {
@@ -133,7 +134,11 @@ public class MovementComponent {
         isStationary = state;
     }
     public void SetAvoidSettlements(bool state) {
-        avoidSettlements = state;
+        if (state) {
+            _avoidSettlementsCounter++;
+        } else {
+            _avoidSettlementsCounter--;
+        }
     }
 
     #region Go To

@@ -32,6 +32,19 @@ public class RaiseCorpse : GoapAction {
         //raise corpse cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        IPointOfInterest targetPOI = node.poiTarget;
+        Character target = null;
+        if (targetPOI is Character) {
+            target = targetPOI as Character;
+        } else if (targetPOI is Tombstone) {
+            target = (targetPOI as Tombstone).character;
+        }
+        if(target != null) {
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        }
+    }
     #endregion
 
     #region Requirements
@@ -48,17 +61,7 @@ public class RaiseCorpse : GoapAction {
     }
     #endregion
 
-    #region State Effects]
-    public void PreRaiseSuccess(ActualGoapNode goapNode) {
-        IPointOfInterest targetPOI = goapNode.poiTarget;
-        Character target = null;
-        if (targetPOI is Character) {
-            target = targetPOI as Character;
-        } else if (targetPOI is Tombstone) {
-            target = (targetPOI as Tombstone).character;
-        }
-        goapNode.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    }
+    #region State Effects
     public void AfterRaiseSuccess(ActualGoapNode goapNode) {
         IPointOfInterest targetPOI = goapNode.poiTarget;
         Character target = null;
