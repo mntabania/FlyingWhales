@@ -76,8 +76,8 @@ namespace Traits {
             }
         }
         public override bool PerTickOwnerMovement() {
-            int roll = UnityEngine.Random.Range(0, 100);
-            int chance = 2 * traitable.traitContainer.GetStacks(name);
+            int roll = UnityEngine.Random.Range(0, 1000);
+            int chance = 15 * traitable.traitContainer.GetStacks(name);
             if (roll < chance) {
                 return OverheatingEffects();
             }

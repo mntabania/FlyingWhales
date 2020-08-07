@@ -7,8 +7,8 @@ namespace Traits {
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
-        private float pukeChance = 4f;
-        private float septicChance = 1.5f;
+        private int pukeChance = 40;
+        private int septicChance = 15;
 
         public Plagued() {
             name = "Plagued";
@@ -52,8 +52,8 @@ namespace Traits {
             //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
             //float pukeRoll = Random.Range(0f, 100f);
             //float septicRoll = Random.Range(0f, 100f);
-            int pukeRoll = Random.Range(0, 100);
-            float septicRoll = Random.Range(0f, 100f);
+            int pukeRoll = Random.Range(0, 1000);
+            int septicRoll = Random.Range(0, 1000);
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
