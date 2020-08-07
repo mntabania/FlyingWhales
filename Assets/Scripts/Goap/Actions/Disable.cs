@@ -5,7 +5,7 @@ using Traits;
 public class Disable : GoapAction {
     public Disable() : base(INTERACTION_TYPE.DISABLE) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        actionIconString = GoapActionStateDB.Stealth_Icon;
+        actionIconString = GoapActionStateDB.Magic_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON };
     }

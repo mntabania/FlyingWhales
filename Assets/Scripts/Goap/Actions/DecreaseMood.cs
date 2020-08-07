@@ -5,7 +5,7 @@ using Traits;
 public class DecreaseMood : GoapAction {
     public DecreaseMood() : base(INTERACTION_TYPE.DECREASE_MOOD) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        actionIconString = GoapActionStateDB.Sad_Icon;
+        actionIconString = GoapActionStateDB.Magic_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON, RACE.LESSER_DEMON };
     }
