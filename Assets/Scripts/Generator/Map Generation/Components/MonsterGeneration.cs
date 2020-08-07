@@ -244,6 +244,12 @@ public class MonsterGeneration : MapGenerationComponent {
 							for (int k = 0; k < fireElementals; k++) {
 								CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
+						} else if (j == 3) {
+							//Giant spiders	
+							int randomGiantSpider = Random.Range(2, 5);
+							for (int k = 0; k < randomGiantSpider; k++) {
+								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+							}
 						} else {
 							break;
 						}
