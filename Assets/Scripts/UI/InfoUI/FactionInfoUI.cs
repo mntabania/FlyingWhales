@@ -65,6 +65,7 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
         Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
         Messenger.AddListener<Faction>(Signals.FACTION_LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
         InitializeLogsMenu();
     }
     public override void OpenMenu() {
@@ -302,6 +303,11 @@ public class FactionInfoUI : InfoUIBase {
     #region Overview
     private void OnFactionLeaderChanged(Character character, ILeader previousLeader) {
         if (isShowing) {
+            UpdateOverview();
+        }
+    }
+    private void OnFactionIdeologiesChanged(Faction faction) {
+        if (isShowing && faction == activeFaction) {
             UpdateOverview();
         }
     }
