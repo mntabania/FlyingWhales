@@ -53,7 +53,6 @@ namespace Tutorial {
         /// </summary>
         private readonly Tutorial[] bonusTutorialTypes = new[] {
             Tutorial.Defend_A_Structure,
-            Tutorial.Afflictions,
             Tutorial.Prison,
             Tutorial.Chaos_Orbs_Tutorial,
             Tutorial.Griefstricken,
