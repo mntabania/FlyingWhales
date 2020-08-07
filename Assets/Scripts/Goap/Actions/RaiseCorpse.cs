@@ -48,7 +48,17 @@ public class RaiseCorpse : GoapAction {
     }
     #endregion
 
-    #region State Effects
+    #region State Effects]
+    public void PreRaiseSuccess(ActualGoapNode goapNode) {
+        IPointOfInterest targetPOI = goapNode.poiTarget;
+        Character target = null;
+        if (targetPOI is Character) {
+            target = targetPOI as Character;
+        } else if (targetPOI is Tombstone) {
+            target = (targetPOI as Tombstone).character;
+        }
+        goapNode.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
     public void AfterRaiseSuccess(ActualGoapNode goapNode) {
         IPointOfInterest targetPOI = goapNode.poiTarget;
         Character target = null;
