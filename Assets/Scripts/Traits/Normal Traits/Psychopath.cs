@@ -79,6 +79,7 @@ namespace Traits {
         }
         public override string TriggerFlaw(Character character) {
             if (targetVictim == null) {
+                List<Character> victims = null;
                 for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                     Character potentialVictim = character.currentRegion.charactersAtLocation[i];
                     if (potentialVictim == character) {
@@ -88,15 +89,19 @@ namespace Traits {
                         continue;
                     }
                     if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
-                        SetTargetVictim(potentialVictim);
-
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
-                        log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                        PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
-                        break;
+                        if(victims == null) { victims = new List<Character>(); }
+                        victims.Add(potentialVictim);
                     }
+                }
+                if (victims != null && victims.Count > 0) {
+                    Character chosenVictim = victims[UnityEngine.Random.Range(0, victims.Count)]; 
+                    SetTargetVictim(chosenVictim);
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                    PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
                 }
             }
             if (targetVictim == null || !CreateHuntVictimJob()) {
@@ -299,21 +304,26 @@ namespace Traits {
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
                     HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.region == character.gridTileLocation.collectionOwner.region && h.settlementOnTile == null);
                     if(hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
+                        job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
                     } else {
                         LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                        job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }
 
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
             }
             //job.SetIsStealth(true);
             character.jobQueue.AddJobInQueue(job);
@@ -334,21 +344,26 @@ namespace Traits {
                 }
                 if (outsideSettlementTile != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { outsideSettlementTile.collectionOwner.partOfHextile.hexTileOwner });
                 } else if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                    job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
                     HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.region == character.gridTileLocation.collectionOwner.region && h.settlementOnTile == null);
                     if (hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
+                        job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
                     } else {
                         LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
+                        job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }
 
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+                job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
             }
             //job.SetIsStealth(true);
             producedJob = job;

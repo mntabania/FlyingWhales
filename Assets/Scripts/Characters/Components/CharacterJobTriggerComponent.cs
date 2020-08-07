@@ -357,13 +357,23 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		
 		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM,
 			INTERACTION_TYPE.BURY_CHARACTER, target, _owner);
-		LocationStructure wilderness = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-		List<LocationGridTile> choices = wilderness.unoccupiedTiles
-			.Where(x => x.IsPartOfSettlement(_owner.homeSettlement) == false).ToList();
-		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
-		job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] {
-			wilderness, targetTile
-		});
+
+        bool hasChosenTile = false;
+        HexTile chosenHex = _owner.currentRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.IsNextToVillage() && h.settlementOnTile == null && _owner.movementComponent.HasPathTo(h));
+        if(chosenHex != null) {
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => _owner.movementComponent.HasPathTo(t)));
+            if(chosenTile != null) {
+                hasChosenTile = true;
+                job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { chosenTile.structure, chosenTile });
+            }
+        }
+        if (!hasChosenTile) {
+            LocationStructure wilderness = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            List<LocationGridTile> choices = wilderness.unoccupiedTiles
+                .Where(x => x.IsPartOfSettlement(_owner.homeSettlement) == false).ToList();
+            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
+            job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { wilderness, targetTile });
+        }
 		_owner.jobQueue.AddJobInQueue(job);
 	}
 	public bool TriggerFleeHome(JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME) {

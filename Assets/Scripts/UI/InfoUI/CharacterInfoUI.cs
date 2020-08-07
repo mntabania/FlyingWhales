@@ -577,6 +577,11 @@ public class CharacterInfoUI : InfoUIBase {
         List<int> keys = _activeCharacter.relationshipContainer.relationships.Keys.ToList();
         for (int i = 0; i < orderedRels.Keys.Count; i++) {
             int targetID = orderedRels.Keys.ElementAt(i);
+            //if(targetID == _activeCharacter.id) {
+            //    //Quick fix only for having an entry of self in the relations tab, needs actual fix
+            //    //https://trello.com/c/vTMvQAL6/1698-various-arthur-bugs
+            //    continue;
+            //}
             int actualIndex = keys.IndexOf(targetID);
             IRelationshipData relationshipData =
                 _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
@@ -776,7 +781,7 @@ public class CharacterInfoUI : InfoUIBase {
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
             traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
-            manaCost: trait.canBeTriggered ? PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost : -1
+            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost
         );
     }
     private void OnHoverExitFlaw(string traitName) {
