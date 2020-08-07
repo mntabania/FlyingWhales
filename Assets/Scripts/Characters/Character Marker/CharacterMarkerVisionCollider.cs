@@ -154,7 +154,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 return;
             }
             //remove from vision and hostile range
-            parentMarker.RemovePOIFromInVisionRange(character);
+            //parentMarker.RemovePOIFromInVisionRange(character);
             parentMarker.AddPOIAsInRangeButDifferentStructure(character);
         }
         //if the character that changed structures is this character
