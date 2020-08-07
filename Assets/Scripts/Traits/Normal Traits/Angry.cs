@@ -38,7 +38,9 @@ namespace Traits {
                 //AddCharacterToStackList did not do it yet since owner has not been set yet.
                 for (int i = 0; i < responsibleCharactersStack.Count; i++) {
                     Character otherCharacter = responsibleCharactersStack[i];
-                    owner.relationshipContainer.AdjustOpinion(owner, otherCharacter, "Anger", -30);
+                    if (otherCharacter != null) {
+                        owner.relationshipContainer.AdjustOpinion(owner, otherCharacter, "Anger", -30);    
+                    }
                 }
                 
                 character.marker.visionCollider.VoteToUnFilterVision();
@@ -62,7 +64,9 @@ namespace Traits {
         }
         public override void AddCharacterResponsibleForTrait(Character character) {
             base.AddCharacterResponsibleForTrait(character);
-            AddCharacterToStackList(character);
+            if (character != null) {
+                AddCharacterToStackList(character);    
+            }
         }
         public override void OnUnstackStatus(ITraitable addedTo) {
             base.OnUnstackStatus(addedTo);

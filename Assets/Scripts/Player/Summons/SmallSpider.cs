@@ -43,7 +43,7 @@ public class SmallSpider : Summon {
     }
     private void DetermineGrowUpDate() {
         GameDate date = GameManager.Instance.Today();
-        date.AddDays(2);
+        date.AddDays(1);
         _growUpDate = date;
     }
     public override void OnSeizePOI() {

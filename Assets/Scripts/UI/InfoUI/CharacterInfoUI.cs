@@ -776,7 +776,7 @@ public class CharacterInfoUI : InfoUIBase {
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
             traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
-            manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost
+            manaCost: trait.canBeTriggered ? PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost : -1
         );
     }
     private void OnHoverExitFlaw(string traitName) {
