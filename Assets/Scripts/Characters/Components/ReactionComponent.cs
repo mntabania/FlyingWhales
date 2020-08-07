@@ -639,16 +639,19 @@ public class ReactionComponent {
                     }
 
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedTarget.traitContainer.HasTrait("Criminal")
-                        && !targetCharacter.traitContainer.HasTrait("Restrained")) {
-                        debugLog += "\n-Target Character is a criminal and is not restrained";
+                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentSettlement != null && disguisedTarget.currentSettlement is NPCSettlement npcSettlement && disguisedTarget.currentStructure == npcSettlement.prison)) {
+                        debugLog += "\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
                         if (actor.currentJob != null && actor.currentJob is GoapPlanJob planJob) {
                             cannotReactToCriminal = planJob.jobType == JOB_TYPE.APPREHEND && planJob.targetPOI == targetCharacter;
                             debugLog += "\n-Character is current job is already apprehend targeting target";
                         }
                         if (!cannotReactToCriminal) {
-                            if (disguisedActor.relationshipContainer.IsFriendsWith(disguisedTarget)) {
-                                debugLog += "\n-Character is friends with target";
+                            string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
+                            if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend)
+                                || ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) || disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                && opinionLabel != RelationshipManager.Rival)) {
+                                debugLog += "\n-Character is friends/close friend/family member/lover/affair/not rival with target";
                                 Criminal criminalTrait = disguisedTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
                                 if (!criminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor)) {
                                     debugLog += "\n-Character will worry";
@@ -661,7 +664,9 @@ public class ReactionComponent {
                                 debugLog += "\n-Character is not friends with target";
                                 debugLog += "\n-Character will try to apprehend";
                                 bool canDoJob = false;
-                                actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.APPREHEND)) {
+                                    actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                }
                                 if (!canDoJob) {
                                     debugLog += "\n-Character cannot do apprehend, will flee instead";
                                     actor.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);

@@ -44,16 +44,19 @@ namespace Traits {
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
                     _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
-                } else {
-                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
-                    addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                } 
+                //else {
+                    //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
+                    //addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    //addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+
+
                     //if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
                     //    gainedFromDoing.states["Target Knocked Out"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
                     //} else if (gainedFromDoing.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
                     //    gainedFromDoing.states["Knockout Success"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
                     //}
-                }
+                //}
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

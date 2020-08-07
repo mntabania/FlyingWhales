@@ -58,6 +58,7 @@ namespace Traits {
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         List<Trait> GetTraitOverrideFunctions(string identifier);
+        int GetStacks(string traitName);
         #endregion
 
         #region Processes

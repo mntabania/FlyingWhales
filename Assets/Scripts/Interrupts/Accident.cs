@@ -32,9 +32,7 @@ namespace Interrupts {
             } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             } else if (opinionLabel == RelationshipManager.Enemy) {
-                if (UnityEngine.Random.Range(0, 2) == 0) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
-                }
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             } else if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }

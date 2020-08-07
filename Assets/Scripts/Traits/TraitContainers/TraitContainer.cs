@@ -605,6 +605,12 @@ namespace Traits {
             }
             return traits;
         }
+        public int GetStacks(string traitName) {
+            if (stacks.ContainsKey(traitName)) {
+                return stacks[traitName];
+            }
+            return 0;
+        }
         #endregion
 
         #region Processes
