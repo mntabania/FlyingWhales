@@ -62,7 +62,13 @@ public class MonsterInvadeParty : Party {
         }
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
-        if (tile.settlementOnTile != null && tile.settlementOnTile == target.targetSettlement) {
+        bool isInTargetLocation = false;
+        if(targetStructure != null) {
+            isInTargetLocation = tile.settlementOnTile != null && targetStructure.settlementLocation == tile.settlementOnTile;
+        } else if (targetHex != null) {
+            isInTargetLocation = tile == targetHex;
+        }
+        if (isInTargetLocation) {
             if (IsMember(character)) {
                 StartInvadeTimer();
             }
@@ -70,7 +76,7 @@ public class MonsterInvadeParty : Party {
     }
     #endregion
 
-    #region Extermination Timer
+    #region Invade Timer
     private void StartInvadeTimer() {
         if (!isInvading) {
             isInvading = true;
