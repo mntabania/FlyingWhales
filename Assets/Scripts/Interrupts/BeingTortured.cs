@@ -41,6 +41,7 @@ namespace Interrupts {
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeStatus);
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeTrait);
             
+            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, UnityEngine.Random.Range(2, 4), interruptHolder.actor.currentRegion.innerMap);
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }
         #endregion
