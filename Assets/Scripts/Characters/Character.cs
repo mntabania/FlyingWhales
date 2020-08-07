@@ -4018,7 +4018,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 } else {
                     //If character is Troll and job is Move Character, do not perform if target is not in vision
                     if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.MOVE_CHARACTER) {
-                        if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI))) {
+                        if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
                             log = $"{log}\n-Character is troll and job is Move Character and target is no longer in vision, cancel job";
                             logComponent.PrintLogIfActive(log);
                             currentNode.action.OnStopWhileStarted(currentNode);
