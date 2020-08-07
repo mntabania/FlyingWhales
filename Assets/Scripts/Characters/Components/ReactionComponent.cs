@@ -681,19 +681,19 @@ public class ReactionComponent {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
                             if ((!targetCharacter.canMove || !targetCharacter.canPerform)) {
                                 debugLog += "\n-Target can neither move or perform";
-                                if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
-                                    debugLog += "\n-Actor is in Bad or Critical mood";
-                                    if (UnityEngine.Random.Range(0, 2) == 0) {
-                                        debugLog += "\n-Character triggered Mock interrupt";
-                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
-                                    } else {
-                                        debugLog += "\n-Character triggered Laugh At interrupt";
-                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
-                                    }
+                                // if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
+                                // debugLog += "\n-Actor is in Bad or Critical mood";
+                                if (UnityEngine.Random.Range(0, 2) == 0) {
+                                    debugLog += "\n-Character triggered Mock interrupt";
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
                                 } else {
-                                    debugLog += "\n-Actor is in Normal mood, will trigger shocked interrupt";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+                                    debugLog += "\n-Character triggered Laugh At interrupt";
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
+                                // } else {
+                                //     debugLog += "\n-Actor is in Normal mood, will trigger shocked interrupt";
+                                //     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
+                                // }
                             }
                         } else if (!disguisedActor.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";

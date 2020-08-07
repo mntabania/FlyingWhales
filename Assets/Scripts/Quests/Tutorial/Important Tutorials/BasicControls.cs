@@ -11,7 +11,7 @@ namespace Tutorial {
         public BasicControls() : base("Basic Controls", TutorialManager.Tutorial.Basic_Controls) { }
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
-                new GameHasBeenRunningForSeconds(8f)
+                new GameHasBeenRunningForSeconds(5f)
             };
         }
         protected override void ConstructSteps() {
