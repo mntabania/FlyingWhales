@@ -13,15 +13,15 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
-            //canBeTriggered = true;
+            canBeTriggered = true;
             //effects = new List<TraitEffect>();
         }
 
         #region Overrides
-        //public override string TriggerFlaw(Character character) {
-        //    character.traitContainer.AddTrait(character, "Angry");
-        //    return base.TriggerFlaw(character);
-        //}
+        public override string TriggerFlaw(Character character) {
+            character.traitContainer.AddTrait(character, "Angry");
+            return base.TriggerFlaw(character);
+        }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 string debugLog = $"{characterThatWillDoJob.name} saw {targetPOI.name} and has {name}";
