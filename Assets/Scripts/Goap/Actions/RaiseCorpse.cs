@@ -42,7 +42,7 @@ public class RaiseCorpse : GoapAction {
             target = (targetPOI as Tombstone).character;
         }
         if(target != null) {
-            log.AddToFillers(target.gridTileLocation.structure.location, target.gridTileLocation.structure.location.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
     }
     #endregion
