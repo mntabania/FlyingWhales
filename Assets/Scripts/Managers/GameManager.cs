@@ -120,12 +120,12 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.MONTH_START); //for the first month
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
-        // if (WorldConfigManager.Instance.isTutorialWorld) {
-        //     UIManager.Instance.ShowStartDemoScreen();
-        //     //schedule game over at end of day 6
-        //     GameDate dueDate = new GameDate(startMonth, 5, startYear, ticksPerDay); //5, ticksPerDay
-        //     SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen("You've reached the end of Day 5!"), this);
-        // }
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+            UIManager.Instance.ShowStartDemoScreen();
+            // //schedule game over at end of day 6
+            // GameDate dueDate = new GameDate(startMonth, 5, startYear, ticksPerDay); //5, ticksPerDay
+            // SchedulingManager.Instance.AddEntry(dueDate, () => UIManager.Instance.ShowEndDemoScreen("You've reached the end of Day 5!"), this);
+        }
     }
     public GameDate Today() {
         return new GameDate(today.month, today.day, today.year, today.tick);
