@@ -35,8 +35,8 @@ public class SmallSpider : Summon {
         ScheduleGrowUp();    
     }
     private void ScheduleGrowUp() {
-        if (faction.isPlayerFaction == false) {
-            //only grow up if spider is not part of player faction
+        if (traitContainer.HasTrait("Baby Infestor") == false) {
+            //only grow up if spider is not a baby infestor
             //because growing up is handled by Baby Infestor trait
             SchedulingManager.Instance.AddEntry(_growUpDate, GrowUp, this);
         }
@@ -60,8 +60,8 @@ public class SmallSpider : Summon {
         }
     }
     /// <summary>
-    /// Make this spider grow up into a small spider. NOTE: This is only used
-    /// by normal small spiders. Small spiders owned by the player use the baby infestor trait. <see cref="BabyInfestor"/>
+    /// Make this spider grow up into a small spider. NOTE: This is only used by normal small spiders.
+    /// Small spiders hatched from infestors use the baby infestor trait. <see cref="BabyInfestor"/> <seealso cref="SpiderEgg.Hatch"/>
     /// </summary>
     private void GrowUp() {
         if (isDead) { return; }
