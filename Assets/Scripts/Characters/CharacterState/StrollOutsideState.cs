@@ -33,18 +33,21 @@ public class StrollOutsideState : CharacterState {
 
     private void StartStrollMovement() {
         LocationGridTile target = PickRandomTileToGoTo();
-        stateComponent.character.marker.GoTo(target, StartStrollMovement, null); //_notAllowedStructures
+        if(target != null) {
+            stateComponent.character.marker.GoTo(target, StartStrollMovement, null); //_notAllowedStructures
+        }
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
         if (stateComponent.character.homeSettlement != null) {
             //only stroll around surrounding areas
             HexTile chosenHex = stateComponent.character.homeSettlement.GetAPlainAdjacentHextileThatMeetCriteria(h => stateComponent.character.movementComponent.HasPathTo(h));
-            return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+            if(chosenHex != null) {
+                return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+            }
         }
         if (stateComponent.character.hexTileLocation != null) {
             //stroll around surrounding area of current hextile
-
             List<HexTile> choices = new List<HexTile>();
             for (int i = 0; i < stateComponent.character.hexTileLocation.ValidTilesWithinRegion.Count; i++) {
                 HexTile hexTile = stateComponent.character.hexTileLocation.ValidTilesWithinRegion[i];
@@ -60,11 +63,6 @@ public class StrollOutsideState : CharacterState {
 
         HexTile hex = stateComponent.character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => stateComponent.character.currentRegion == h.region && stateComponent.character.movementComponent.HasPathTo(h));
         LocationGridTile tile = CollectionUtilities.GetRandomElement(hex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
-        if (tile != null) {
-            return tile;
-        } else {
-            throw new System.Exception(
-                $"No unoccupied tile in wilderness for {stateComponent.character.name} to go to in {stateName}");
-        }
+        return tile;
     }
 }
