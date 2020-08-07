@@ -894,19 +894,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    private void ForceCancelJobTypesTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
-        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-            JobQueueItem job = jobQueue.jobsInQueue[i];
-            if (job.jobType == jobType && job is GoapPlanJob) {
-                GoapPlanJob goapJob = job as GoapPlanJob;
-                if (goapJob.targetPOI == target) {
-                    if (goapJob.ForceCancelJob(false, reason)) {
-                        i--;
-                    }
-                }
-            }
-        }
-    }
+    //private void ForceCancelJobTypesTargetingPOI(IPointOfInterest target, string reason, JOB_TYPE jobType) {
+    //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+    //        JobQueueItem job = jobQueue.jobsInQueue[i];
+    //        if (job.jobType == jobType && job is GoapPlanJob) {
+    //            GoapPlanJob goapJob = job as GoapPlanJob;
+    //            if (goapJob.targetPOI == target) {
+    //                if (goapJob.ForceCancelJob(false, reason)) {
+    //                    i--;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];

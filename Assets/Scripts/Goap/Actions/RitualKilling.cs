@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using Inner_Maps.Location_Structures;
 
 public class RitualKilling : GoapAction {
 
@@ -132,9 +133,17 @@ public class RitualKilling : GoapAction {
         return false;
     }
     private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
-        if(target is Character) {
+        if(target is Character && otherData != null) {
             Character targetCharacter = target as Character;
-            return targetCharacter.carryComponent.IsNotBeingCarried() && (targetCharacter.currentStructure == actor.homeStructure || targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null); //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
+            bool isSatisfied = false;
+            if(otherData.Length == 1) {
+                if(otherData[0] is HexTile hex) {
+                    isSatisfied = targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex;
+                } else if (otherData[0] is LocationStructure structure) {
+                    isSatisfied = targetCharacter.currentStructure == structure;
+                }
+            }
+            return targetCharacter.carryComponent.IsNotBeingCarried() && targetCharacter.traitContainer.HasTrait("Restrained") && isSatisfied; //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
         }
         return false;
     }
