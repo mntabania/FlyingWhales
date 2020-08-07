@@ -204,7 +204,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
 				caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
-				if (WorldConfigManager.Instance.isTutorialWorld) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					for (int j = 0; j < caves.Count; j++) {
 						LocationStructure cave = caves[j];
 						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);

@@ -152,7 +152,7 @@ public struct ScheduledAction {
     public string scheduleID;
     public Action action;
     public object scheduler; //the object that scheduled this action
-    
+
     public bool IsScheduleStillValid() {
         if(scheduler != null) {
             if (scheduler is Character character) {

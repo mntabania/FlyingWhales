@@ -132,21 +132,16 @@ namespace Tutorial {
             _activeBonusTutorials = new List<BonusTutorial>();
             _instantiatedTutorials = new List<TutorialQuest>();
             _completedImportantTutorials = new List<Tutorial>();
-
-            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-                InstantiateImportantTutorials();
-                hasCompletedImportantTutorials = false;
-            } else {
-                hasCompletedImportantTutorials = true;
-            }
+            hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
             InstantiatePendingBonusTutorials();
         }
-        private void InstantiateImportantTutorials() {
+        /// <summary>
+        /// Instantiate all Important tutorials. NOTE: This is called after Start Popup is hidden
+        /// <see cref="DemoUI.HideStartDemoScreen"/>
+        /// </summary>
+        public void InstantiateImportantTutorials() {
             for (int i = 0; i < mainTutorialTypes.Length; i++) {
                 Tutorial tutorial = mainTutorialTypes[i];
-                // if (tutorial == Tutorial.Regional_Map) {
-                //     continue; //skip
-                // }
                 InstantiateTutorial(tutorial);
             }
         }
