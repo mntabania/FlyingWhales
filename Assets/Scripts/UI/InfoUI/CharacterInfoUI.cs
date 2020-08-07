@@ -640,15 +640,15 @@ public class CharacterInfoUI : InfoUIBase {
         summary += "\n---------------------";
         Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(targetID).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
-            summary += $"\n{kvp.Key}: <color={BaseRelationshipContainer.OpinionColor(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
+            summary += $"\n{kvp.Key}: <color={BaseRelationshipContainer.OpinionColorNoGray(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
         }
         summary += "\n---------------------";
         summary +=
-            $"\nTotal: <color={BaseRelationshipContainer.OpinionColor(targetData.opinions.totalOpinion)}>{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color>";
+            $"\nTotal: <color={BaseRelationshipContainer.OpinionColorNoGray(targetData.opinions.totalOpinion)}>{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color>";
         if (target != null) {
             int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
             summary +=
-                $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>{GetOpinionText(opinionOfOther)}</color>";
+                $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: <color={BaseRelationshipContainer.OpinionColorNoGray(opinionOfOther)}>{GetOpinionText(opinionOfOther)}</color>";
         } else {
             summary += $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: ???</color>";
         }

@@ -13,7 +13,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} is a succubus";
         if (character.reactionComponent.disguisedCharacter != null) {
-            if (character.currentStructure == character.homeStructure || character.IsInTerritory()) {
+            if (character.isAtHomeStructure || character.IsInTerritory() || character.IsInHomeSettlement()) {
                 if (character.previousCurrentActionNode != null && (character.previousCurrentActionNode.associatedJobType == JOB_TYPE.IDLE_RETURN_HOME || character.previousCurrentActionNode.associatedJobType == JOB_TYPE.RETURN_TERRITORY)) {
                     character.reactionComponent.SetDisguisedCharacter(null);
                     return true;
@@ -45,18 +45,25 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            log += $"\n-Character is not in disguise, 1% chance to disguise";
-            int roll = UnityEngine.Random.Range(0, 100);
-            log += "\nRoll: " + roll;
-            if(roll < 1) {
-                Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
-                if(targetCharacter != null) {
-                    log += $"\n-Target for disguise is: " + targetCharacter.name;
-                    if(character.currentRegion.GetRandomCharacterThatMeetCriteria((c) => CanTargetCharacterForMakeLove(character, c)) != null) {
-                        if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
-                            return true;
+            if (character.isAtHomeStructure || character.IsInTerritory() || character.IsInHomeSettlement()) {
+                log += $"\n-Character is in home and not in disguise, 1% chance to disguise";
+                int roll = UnityEngine.Random.Range(0, 100);
+                log += "\nRoll: " + roll;
+                if (roll < 1) {
+                    Character targetCharacter = character.currentRegion.GetRandomAliveVillagerCharacterWithGender(GENDER.FEMALE);
+                    if (targetCharacter != null) {
+                        log += $"\n-Target for disguise is: " + targetCharacter.name;
+                        if (character.currentRegion.GetRandomCharacterThatMeetCriteria((c) => CanTargetCharacterForMakeLove(character, c)) != null) {
+                            if (character.jobComponent.TriggerDisguiseJob(targetCharacter, out producedJob)) {
+                                return true;
+                            }
                         }
                     }
+                }
+            } else {
+                log += $"\n-Character is not in home and not in disguise, will return home";
+                if (character.jobComponent.PlanIdleReturnHome(out producedJob)) {
+                    return true;
                 }
             }
         }

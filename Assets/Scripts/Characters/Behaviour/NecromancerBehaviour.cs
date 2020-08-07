@@ -200,23 +200,20 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character will return home";
                 character.jobComponent.PlanIdleReturnHome(out producedJob);
             } else {
-                log += $"\n-Lair is not set, will spawn lair";
-
-                HexTile chosenHex = null;
-                if(character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    HexTile targetHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-                    if(targetHex != null && targetHex.elevationType != ELEVATION.WATER && targetHex.elevationType != ELEVATION.MOUNTAIN && targetHex.landmarkOnTile == null && !targetHex.IsNextToOrPartOfVillage()) {
-                        chosenHex = targetHex;
+                if(character.necromancerTrait.lairStructure == null) {
+                    log += $"\n-Lair is not set, will spawn lair";
+                    HexTile chosenHex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.region == character.currentRegion 
+                    && h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN
+                    && h.landmarkOnTile == null && !h.IsNextToOrPartOfVillage() && character.movementComponent.HasPathTo(h));
+                    if (chosenHex == null) {
+                        chosenHex = GetNoStructurePlainHexInAllRegions();
                     }
+                    LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();
+                    character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
+                } else {
+                    log += $"\n-Character will return home";
+                    character.jobComponent.PlanIdleReturnHome(out producedJob);
                 }
-                if (chosenHex == null) {
-                    chosenHex = GetNoStructurePlainHexInRegion(character.currentRegion);
-                }
-                if (chosenHex == null) {
-                    chosenHex = GetNoStructurePlainHexInAllRegions();
-                }
-                LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();
-                character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
             }
         }
         return true;

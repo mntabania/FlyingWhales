@@ -77,7 +77,7 @@ namespace Traits {
         }
         public override bool PerTickOwnerMovement() {
             int roll = UnityEngine.Random.Range(0, 100);
-            int chance = 1 * traitable.traitContainer.GetStacks(name);
+            int chance = 2 * traitable.traitContainer.GetStacks(name);
             if (roll < chance) {
                 return OverheatingEffects();
             }
@@ -116,10 +116,11 @@ namespace Traits {
 
                     string result = weights.PickRandomElementGivenWeights();
                     if(result == "unconscious") {
-                        character.traitContainer.AddTrait(character, "Unconscious");
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "overheat_unconscious");
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddLogToInvolvedObjects();
+
+                        character.traitContainer.AddTrait(character, "Unconscious");
                         return true;
                     } else if (result == "heatstroke") {
                         return character.interruptComponent.TriggerInterrupt(INTERRUPT.Heatstroke_Death, character);
