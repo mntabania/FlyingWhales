@@ -568,6 +568,8 @@ public enum INTERRUPT {
     Cry_Request,
     Declare_Raid,
     Feeling_Angry,
+    Heatstroke_Death,
+    Seizure,
 }
 
 public enum TRAIT_TYPE {
@@ -1538,7 +1540,8 @@ public static class Extensions {
             case JOB_TYPE.RESTRAIN:
                 priority = 970;
                 break;
-            case JOB_TYPE.BURY:
+            case JOB_TYPE.APPREHEND:
+            //case JOB_TYPE.BURY:
                 priority = 870;
                 break;
             case JOB_TYPE.BUILD_BLUEPRINT:
@@ -1555,6 +1558,9 @@ public static class Extensions {
             case JOB_TYPE.CULTIST_POISON:
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
                 priority = 830;
+                break;
+            case JOB_TYPE.BURY:
+                priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
             case JOB_TYPE.PRODUCE_METAL:
@@ -1582,9 +1588,9 @@ public static class Extensions {
             case JOB_TYPE.JUDGE_PRISONER:
                 priority = 570;
                 break;
-            case JOB_TYPE.APPREHEND:
-                priority = 550;
-                break;
+            //case JOB_TYPE.APPREHEND:
+            //    priority = 550;
+            //    break;
             case JOB_TYPE.KIDNAP:
                 priority = 530;
                 break;

@@ -32,7 +32,7 @@ public class JoinParty : GoapAction {
         base.AddFillersToLog(log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget is Character partyLeader) {
-            log.AddToFillers(partyLeader.partyComponent.currentParty, partyLeader.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, partyLeader.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1); //partyLeader.partyComponent.currentParty
         }
     }
     #endregion

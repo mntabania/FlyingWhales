@@ -4233,8 +4233,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Assert.IsNotNull(currentJob);
                 Assert.IsTrue(currentJob is GoapPlanJob);
                 planner.RecalculateJob(currentJob as GoapPlanJob);
+
+                //Moved this here, because this must not be called if plan cannot be recalculated since, the CancelJob already calls this function, it will double the call
+                SetCurrentActionNode(null, null, null);
             }
-            SetCurrentActionNode(null, null, null);
         }
         //if (currentActionNode.isStopped) {
         //    log += "\n Action is stopped! Dropping plan...";
