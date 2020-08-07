@@ -11,7 +11,7 @@ namespace Traits {
             description = "Grows and transforms to older Infestor types";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = GameManager.ticksPerHour;
+            ticksDuration = GameManager.ticksPerDay;
         }
 
         #region Overrides

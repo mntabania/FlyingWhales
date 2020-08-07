@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class KnockoutCharacter : GoapAction {
 
@@ -51,15 +52,15 @@ public class KnockoutCharacter : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        if (target is Character) {
-            Character targetCharacter = target as Character;
+        if (target is Character targetCharacter) {
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
             } else {
                 if(node.associatedJobType != JOB_TYPE.APPREHEND) {
-                    if (witness.homeSettlement == targetCharacter.homeSettlement || witness.faction == targetCharacter.faction
-                        || witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+                    if (witness.homeSettlement == targetCharacter.homeSettlement || 
+                        witness.faction == targetCharacter.faction || 
+                        witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
                     }
                 }
@@ -70,6 +71,9 @@ public class KnockoutCharacter : GoapAction {
             } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+            } else if (targetCharacter == witness) {
+                CharacterManager.Instance.TriggerEmotion(
+                    GameUtilities.RollChance(50) ? EMOTION.Anger : EMOTION.Resentment, witness, actor, status, node);
             }
         }
         return response;

@@ -32,14 +32,18 @@ public class SmallSpider : Summon {
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         DetermineGrowUpDate();
-        ScheduleGrowUp();
+        ScheduleGrowUp();    
     }
     private void ScheduleGrowUp() {
-        SchedulingManager.Instance.AddEntry(_growUpDate, GrowUp, this);
+        if (faction.isPlayerFaction == false) {
+            //only grow up if spider is not part of player faction
+            //because growing up is handled by Baby Infestor trait
+            SchedulingManager.Instance.AddEntry(_growUpDate, GrowUp, this);
+        }
     }
     private void DetermineGrowUpDate() {
         GameDate date = GameManager.Instance.Today();
-        date.AddTicks(5);
+        date.AddDays(2);
         _growUpDate = date;
     }
     public override void OnSeizePOI() {
@@ -55,6 +59,10 @@ public class SmallSpider : Summon {
             GrowUp();
         }
     }
+    /// <summary>
+    /// Make this spider grow up into a small spider. NOTE: This is only used
+    /// by normal small spiders. Small spiders owned by the player use the baby infestor trait. <see cref="BabyInfestor"/>
+    /// </summary>
     private void GrowUp() {
         if (isDead) { return; }
         if (isBeingSeized && PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {

@@ -5,6 +5,7 @@ using Ruinarch;
 using Traits;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class PlayerSpell {
 
@@ -286,7 +287,7 @@ public class SpellData : IPlayerSkill {
         return CanPerformAbility();
     }
     public bool CanPerformAbility() {
-        return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost) && (!hasCooldown || currentCooldownTick == cooldown);
+        return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost) && (!hasCooldown || currentCooldownTick >= cooldown);
     }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
@@ -350,6 +351,7 @@ public class SpellData : IPlayerSkill {
     }
     private void PerTickCooldown() {
         currentCooldownTick++;
+        Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick == cooldown) {
             SetCharges(maxCharges);
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
