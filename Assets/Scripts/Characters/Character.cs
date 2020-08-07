@@ -4016,10 +4016,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         planner.RecalculateJob(currentTopPrioJob);
                     }
                 } else {
-                    //If character is Troll and job is Move Character, do not perform if target is not in vision
+                    //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is Night time
                     if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.MOVE_CHARACTER) {
+                        bool shouldCancelJob = false;
                         if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
-                            log = $"{log}\n-Character is troll and job is Move Character and target is no longer in vision, cancel job";
+                            shouldCancelJob = true;
+                        }
+                        if (!shouldCancelJob) {
+                            if(currentTopPrioJob.targetPOI.gridTileLocation == null) {
+                                shouldCancelJob = true;
+                            } else {
+                                TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
+                                if (timeInWords != TIME_IN_WORDS.EARLY_NIGHT && timeInWords != TIME_IN_WORDS.LATE_NIGHT && timeInWords != TIME_IN_WORDS.AFTER_MIDNIGHT && !currentTopPrioJob.targetPOI.gridTileLocation.structure.isInterior) {
+                                    shouldCancelJob = true;
+                                }
+                            }
+                        }
+                        if (shouldCancelJob) {
+                            log = $"{log}\n-Character is troll and job is Move Character, cancel job";
                             logComponent.PrintLogIfActive(log);
                             currentNode.action.OnStopWhileStarted(currentNode);
                             currentTopPrioJob.CancelJob(false);
