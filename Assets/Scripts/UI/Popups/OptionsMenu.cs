@@ -31,6 +31,10 @@ public class OptionsMenu : PopupMenuBase {
         UIManager.Instance.ShowYesNoConfirmation("Open Browser", "To report a bug, the game needs to open a Web browser, do you want to proceed?",
             () => Application.OpenURL("https://forms.gle/gcoa8oHxywFLegNx7"), layer: 50, showCover: true);
     }
+    public void SubmitFeedback() {
+        UIManager.Instance.ShowYesNoConfirmation("Open Browser", "To submit feedback, the game needs to open a Web browser, do you want to proceed?",
+            () => Application.OpenURL("https://forms.gle/vxD913oe3jBhkCE66"), layer: 50, showCover: true);
+    }
     private void Abandon() {
         DOTween.Clear(true);
         SaveManager.Instance.Save();

@@ -13,8 +13,12 @@ public class Embarassment : Emotion {
         ActualGoapNode goapNode = null) {
         witness.needsComponent.AdjustHope(-5);
         witness.traitContainer.AddTrait(witness, "Ashamed");
-        //Fight or Flight, Flight
-        witness.combatComponent.Flight(target, "saw something embarassing");
+        
+        if (witness.marker.inVisionPOIs.Contains(target)) {
+            //If source of of Embarrassment is within vision, will trigger Flight
+            witness.combatComponent.Flight(target, "felt embarrassed");    
+        }
+        
         return base.ProcessEmotion(witness, target, status, goapNode);
     }
     #endregion

@@ -674,14 +674,20 @@ public class ReactionComponent {
                         debugLog += "\n-Character and Target are with the same faction or npcSettlement";
                         if (disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
-                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && disguisedActor.moodComponent.moodState != MOOD_STATE.Normal) {
-                                debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
-                                if (UnityEngine.Random.Range(0, 2) == 0) {
-                                    debugLog += "\n-Character triggered Mock interrupt";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                            if ((!targetCharacter.canMove || !targetCharacter.canPerform)) {
+                                debugLog += "\n-Target can neither move or perform";
+                                if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
+                                    debugLog += "\n-Actor is in Bad or Critical mood";
+                                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                                        debugLog += "\n-Character triggered Mock interrupt";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
+                                    } else {
+                                        debugLog += "\n-Character triggered Laugh At interrupt";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                    }
                                 } else {
-                                    debugLog += "\n-Character triggered Laugh At interrupt";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
+                                    debugLog += "\n-Actor is in Normal mood, will trigger shocked interrupt";
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                                 }
                             }
                         } else if (!disguisedActor.traitContainer.HasTrait("Psychopath")) {
@@ -755,8 +761,20 @@ public class ReactionComponent {
                                 debugLog += "\n-Target will Puke";
                                 actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, "saw dead " + disguisedTarget.name);
                             }
-                        } else if (opinionLabel == RelationshipManager.Rival) {
-                            debugLog += "\n-Target is Rival";
+                        } else if ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) || 
+                                    disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)) && 
+                                  !disguisedActor.relationshipContainer.HasOpinionLabelWithCharacter(disguisedTarget, BaseRelationshipContainer.Rival)) {
+                            debugLog += "\n-Target is Relative, Lover or Affair and not Rival";
+                            // if Actor is Relative, Lover, Affair and not a Rival
+                            if (UnityEngine.Random.Range(0, 2) == 0) {
+                                debugLog += "\n-Target will Cry";
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + disguisedTarget.name);
+                            } else {
+                                debugLog += "\n-Target will Puke";
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, "saw dead " + disguisedTarget.name);
+                            }
+                        } else if (opinionLabel == RelationshipManager.Rival || opinionLabel == RelationshipManager.Enemy) {
+                            debugLog += "\n-Target is Rival/Enemy";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 debugLog += "\n-Target will Mock";
                                 actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
