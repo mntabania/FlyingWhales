@@ -36,9 +36,9 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             }
             return success;
         } else {
-            if (GameUtilities.RollChance(30) && character.jobComponent.TryGetValidSabotageNeighbourTarget(out character)) {
+            if (GameUtilities.RollChance(30) && character.jobComponent.TryGetValidSabotageNeighbourTarget(out var targetCharacter)) {
                 log += $"\n{character.name} has cultist kit available. Will create sabotage neighbour job.";
-                return character.jobComponent.TryCreateSabotageNeighbourJob(character, out producedJob);    
+                return character.jobComponent.TryCreateSabotageNeighbourJob(targetCharacter, out producedJob);    
             } else {
                 return character.jobComponent.TryCreateDarkRitualJob(out producedJob);
             }
