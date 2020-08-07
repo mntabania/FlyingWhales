@@ -66,7 +66,7 @@ namespace Tutorial {
                 $"Look for a Villager with either Low or Critical Mood. Villagers who are Evil, " +
                 $"Treacherous or have recently been Betrayed are also much easier to Brainwash. " +
                 $"Faction Leaders and Settlement Rulers are especially difficult to successfully brainwash.", 
-                "Seize", stepItem.hoverPosition
+                stepItem.hoverPosition, "Seize"
             );
         }
         private void OnHoverChamber(QuestStepItem stepItem) {
