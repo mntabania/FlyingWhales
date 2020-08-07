@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityScripts;
 
 public class FactionIdeologyComponent {
     public Faction owner { get; private set; }
@@ -51,4 +52,61 @@ public class FactionIdeologyComponent {
     //         }
     //     }
     // }
+
+    public void OnLeaderBecameCultist(Character leader) {
+        FactionIdeology currentInclusivityIdeology = null;
+        for (int i = 0; i < owner.factionType.ideologies.Count; i++) {
+            FactionIdeology ideology = owner.factionType.ideologies[i];
+            if (ideology.ideologyType == FACTION_IDEOLOGY.Exclusive ||
+                ideology.ideologyType == FACTION_IDEOLOGY.Inclusive) {
+                currentInclusivityIdeology = ideology;
+                break;
+            }
+        }
+        owner.factionType.ClearIdeologies();
+
+        //Set Peace-Type Ideology:
+        if (leader.traitContainer.HasTrait("Hothead", "Treacherous", "Evil")) {
+            Warmonger warmonger = FactionManager.Instance.CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+            owner.factionType.AddIdeology(warmonger);
+        } else {
+            Peaceful peaceful = FactionManager.Instance.CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
+            owner.factionType.AddIdeology(peaceful);
+        }
+
+        //Set Inclusivity-Type Ideology:
+        if (currentInclusivityIdeology != null) {
+            owner.factionType.AddIdeology(currentInclusivityIdeology);
+        } else {
+            if (GameUtilities.RollChance(60)) {
+                Inclusive inclusive = FactionManager.Instance.CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
+                owner.factionType.AddIdeology(inclusive);
+            } else {
+                Exclusive exclusive = FactionManager.Instance.CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
+                if (GameUtilities.RollChance(60)) {
+                    exclusive.SetRequirement(leader.race);
+                } else {
+                    exclusive.SetRequirement(leader.gender);
+                }
+                owner.factionType.AddIdeology(exclusive);
+            }    
+        }
+
+        //Set Religion-Type Ideology:
+        FactionRelationship relationshipToPlayerFaction = owner.GetRelationshipWith(PlayerManager.Instance.player.playerFaction);
+        DemonWorship demonWorship = FactionManager.Instance.CreateIdeology<DemonWorship>(FACTION_IDEOLOGY.Demon_Worship);
+        //If Demon Worshipper, friendly with player faction
+        relationshipToPlayerFaction.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
+        owner.factionType.AddIdeology(demonWorship);
+
+        Log changeIdeologyLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change");
+        changeIdeologyLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
+        changeIdeologyLog.AddLogToInvolvedObjects();
+
+        Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
+        changeRelationsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
+        changeRelationsLog.AddLogToInvolvedObjects();
+        
+        Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, owner);
+    }
 }

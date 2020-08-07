@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Factions.Faction_Types;
 using Locations.Settlements;
+using Traits;
 
 public class Faction : IJobOwner {
     
@@ -164,6 +165,12 @@ public class Faction : IJobOwner {
     }
     private void OnCharacterRemoved(Character character) {
         LeaveFaction(character);
+    }
+    private void OnCharacterGainedTrait(Character character, Trait trait) {
+        if (character == leader && trait is Cultist) {
+            //leader became cultist
+            ideologyComponent.OnLeaderBecameCultist(character);
+        }
     }
     //Returns true if character left the faction, otherwise return false
     public bool CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
@@ -380,6 +387,7 @@ public class Faction : IJobOwner {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
@@ -388,6 +396,7 @@ public class Faction : IJobOwner {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
+        Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
     }
     private void SetFactionColor(Color color) {
         factionColor = color;
