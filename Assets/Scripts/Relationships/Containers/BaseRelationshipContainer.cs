@@ -399,6 +399,13 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             return "red";
         }
     }
+    public static string OpinionColorNoGray(int number) {
+        if (number >= 0) {
+            return "green";
+        } else {
+            return "red";
+        }
+    }
     public bool IsFriendsWith(Character character) {
         string opinionLabel = GetOpinionLabel(character);
         return opinionLabel == Friend || opinionLabel == Close_Friend;
