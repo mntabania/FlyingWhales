@@ -93,10 +93,10 @@ namespace Traits {
             character.traitContainer.AddTrait(character, "Anxious");
             if(character.homeStructure != null && character.currentStructure != character.homeStructure) {
                 if (!character.jobComponent.TriggerFleeHome(jobType)) {
-                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
                 }
             } else {
-                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
             }
             //character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
             //character.needsComponent.AdjustHappiness(-50);

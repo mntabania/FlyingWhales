@@ -64,7 +64,7 @@ namespace Traits {
                 owner.combatComponent.Flight(burningPOI, "pyrophobic");
             } else {
                 debugLog += "\n-Character decided to trigger Cowering interrupt";
-                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner, reason: "saw fire");
             }
             owner.logComponent.PrintLogIfActive(debugLog);
         }

@@ -198,6 +198,7 @@ public class CombatState : CharacterState {
             } else {
                 summary += "\n-Has no flee path";
                 if (HasStillAvoidPOIThatIsInRange()) {
+                    string avoidReason = GetAvoidReason(stateComponent.character.combatComponent.avoidInRange[0]);
                     summary += "\n-Has avoid that is still in range";
                     if (character.homeStructure != null) {
                         summary += "\n-Has home dwelling";
@@ -205,7 +206,7 @@ public class CombatState : CharacterState {
                             summary += "\n-Is in Home Dwelling";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 summary += "\n-Triggered Cowering";
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             } else {
                                 summary += "\n-Triggered Flee";
                                 SetIsFleeToHome(false);
@@ -225,7 +226,7 @@ public class CombatState : CharacterState {
                                 SetIsAttacking(false);
                             } else {
                                 summary += "\n-Triggered Cowering";
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             }
                         }
                     } else if (character is Summon && (character as Summon).HasTerritory()) {
@@ -235,7 +236,7 @@ public class CombatState : CharacterState {
                             summary += "\n-Is in territory";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
                                 summary += "\n-Triggered Cowering";
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             } else {
                                 summary += "\n-Triggered Flee";
                                 SetIsFleeToHome(false);
@@ -255,14 +256,14 @@ public class CombatState : CharacterState {
                                 SetIsAttacking(false);
                             } else {
                                 summary += "\n-Triggered Cowering";
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             }
                         }
                     } else {
                         summary += "\n-Has no home dwelling nor territory";
                         if (UnityEngine.Random.Range(0, 2) == 0) {
                             summary += "\n-Triggered Cowering";
-                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character);
+                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                         } else {
                             summary += "\n-Triggered Flee";
                             SetIsFleeToHome(false);
@@ -561,16 +562,7 @@ public class CombatState : CharacterState {
             }
             Messenger.Broadcast(Signals.START_FLEE, stateComponent.character);
 
-            string avoidReason = "got scared";
-            CombatData combatData = stateComponent.character.combatComponent.GetCombatData(objToAvoid);
-            if(combatData != null && combatData.avoidReason != string.Empty) {
-                avoidReason = combatData.avoidReason;
-            }
-            if(avoidReason == "critically low health") {
-                if(stateComponent.character.partyComponent.hasParty && stateComponent.character.partyComponent.currentParty.partyType == PARTY_TYPE.Raid) {
-                    stateComponent.character.partyComponent.currentParty.RemoveMember(stateComponent.character);
-                }
-            }
+            string avoidReason = GetAvoidReason(objToAvoid);
             Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
@@ -579,6 +571,19 @@ public class CombatState : CharacterState {
             stateComponent.character.logComponent.RegisterLog(fleeLog, null, false);
             thoughtBubbleLog = fleeLog;
         }
+    }
+    private string GetAvoidReason(IPointOfInterest objToAvoid) {
+        string avoidReason = "got scared";
+        CombatData combatData = stateComponent.character.combatComponent.GetCombatData(objToAvoid);
+        if(combatData != null && combatData.avoidReason != string.Empty) {
+            avoidReason = combatData.avoidReason;
+        }
+        if(avoidReason == "critically low health") {
+            if(stateComponent.character.partyComponent.hasParty && stateComponent.character.partyComponent.currentParty.partyType == PARTY_TYPE.Raid) {
+                stateComponent.character.partyComponent.currentParty.RemoveMember(stateComponent.character);
+            }
+        }
+        return avoidReason;
     }
 
     #region Attacking
