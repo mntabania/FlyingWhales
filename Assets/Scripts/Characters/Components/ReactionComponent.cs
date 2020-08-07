@@ -639,7 +639,7 @@ public class ReactionComponent {
                     }
 
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedTarget.traitContainer.HasTrait("Criminal")
-                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentSettlement != null && disguisedTarget.currentSettlement is NPCSettlement npcSettlement && disguisedTarget.currentStructure == npcSettlement.prison)) {
+                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentSettlement != null && disguisedTarget.currentSettlement is NPCSettlement npcSettlement && disguisedTarget.currentStructure == npcSettlement.prison))) {
                         debugLog += "\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
                         if (actor.currentJob != null && actor.currentJob is GoapPlanJob planJob) {
