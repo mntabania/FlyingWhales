@@ -28,20 +28,19 @@ public class ActionItem : PooledObject {
         UnToggleHighlight();
         actionImg.sprite = PlayerUI.Instance.playerActionsIconDictionary[playerAction.type];
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
-        SetInteractable(true);
         if (playerAction.isInCooldown) {
 	        OnSpellCooldownStarted(playerAction);
         } else {
 	        SetCooldownState(false);    
         }
-		
-		gameObject.SetActive(true);
+        gameObject.SetActive(true);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
 	}
 	public void SetInteractable(bool state) {
         button.interactable = state;
         coverImg.gameObject.SetActive(!state);
+        Debug.Log($"Set Interactable state of {name} to {state.ToString()}");
     }
     public void ToggleHighlight() {
         if (button.interactable) {
@@ -57,7 +56,7 @@ public class ActionItem : PooledObject {
     }
     public void OnClickThis() {
         if (playerAction != null) {
-            ToggleHighlight();
+	        ToggleHighlight();
             playerAction.Activate(playerActionTarget);
         }
     }
@@ -103,7 +102,8 @@ public class ActionItem : PooledObject {
 	    coverImg.DOFillAmount(fillAmount, 0.2f);
     }
     private void StopCooldownFill() {
-	    coverImg.DOFillAmount(0f, 0.2f).OnComplete(() => SetCooldownState(false));
+	    SetCooldownState(false);
+	    // coverImg.DOFillAmount(0f, 0.2f).OnComplete(() => SetCooldownState(false));
 	    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     #endregion
@@ -115,9 +115,11 @@ public class ActionItem : PooledObject {
 		if (string.IsNullOrEmpty(expiryKey) == false) {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		}
+		DOTween.Kill(this);
 		coverImg.fillAmount = 1;
 		expiryKey = string.Empty;
 		SetCooldownState(false);
+		SetInteractable(true);
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
 		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
 		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);

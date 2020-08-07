@@ -351,7 +351,7 @@ public class SpellData : IPlayerSkill {
     }
     private void PerTickCooldown() {
         currentCooldownTick++;
-        Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
+        // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick == cooldown) {
             SetCharges(maxCharges);
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
