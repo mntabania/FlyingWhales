@@ -185,9 +185,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				break; //no more dwellings
 			}
 			Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
-			if (roll < 25 || 
-			    (WorldConfigManager.Instance.isTutorialWorld && citizenCount < 9) || 
-			    (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World && citizenCount < 9)) {
+			if (roll < 25) {
 				//couple
 				List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
 				if (couples.Count > 0) {

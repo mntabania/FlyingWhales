@@ -464,8 +464,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		        //if target is within or next to settlement, job is always valid
 		        return true;
 	        } else {
-		        //if target is no longer within settlement then job is only valid if the job has an assigned character
-		        return job.assignedCharacter != null;
+		        //if target is no longer within settlement then check if job is already taken
+		        if (job.assignedCharacter != null) {
+			        //if job is taken, check if assigned character is in actual combat with the target (aka. is already fighting target and not just pursuing)
+			        return job.assignedCharacter.combatComponent.IsInActualCombatWith(target);
+		        } else {
+			        //if job is not yet taken, then it is invalid.
+			        return false;
+		        }
+		        // return job.assignedCharacter != null;
 	        }
 	        // return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
         }
@@ -621,8 +628,15 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				//if target is within settlement job is always valid
 				return true;
 			} else {
-				//if target is no longer within settlement then job is only valid if the job has an assigned character
-				return job.assignedCharacter != null;
+				//if target is no longer within settlement then check if job is already taken
+				if (job.assignedCharacter != null) {
+					//if job is taken, check if assigned character is in actual combat with the target (aka. is already fighting target and not just pursuing)
+					return job.assignedCharacter.combatComponent.IsInActualCombatWith(target);
+				} else {
+					//if job is not yet taken, then it is invalid.
+					return false;
+				}
+				// return job.assignedCharacter != null;
 			}
 			// return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
 		}

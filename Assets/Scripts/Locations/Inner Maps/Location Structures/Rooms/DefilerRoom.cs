@@ -25,7 +25,7 @@ namespace Inner_Maps.Location_Structures {
             if (charactersInRoom.Count > 0) {
                 return false;
             }
-            return character.isNormalCharacter && character.isDead == false;
+            return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false;
         }
         #endregion
 

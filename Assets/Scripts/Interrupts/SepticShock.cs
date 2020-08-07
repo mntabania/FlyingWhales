@@ -19,13 +19,18 @@ namespace Interrupts {
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness,
-            Interrupt interrupt, REACTION_STATUS status) {
+            Character witness, Interrupt interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
+            
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+            
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == RelationshipManager.Acquaintance || opinionLabel == RelationshipManager.Friend ||
                 opinionLabel == RelationshipManager.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+            } else if ((witness.relationshipContainer.IsFamilyMember(actor) || 
+                        witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) && 
+                       !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, BaseRelationshipContainer.Rival)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             } else if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);

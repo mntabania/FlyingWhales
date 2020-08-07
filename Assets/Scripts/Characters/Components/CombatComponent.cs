@@ -155,7 +155,7 @@ public class CombatComponent {
         }
         return false;
     }
-    private bool IsInActualCombatWith(IPointOfInterest target) {
+    public bool IsInActualCombatWith(IPointOfInterest target) {
         if (owner.marker && owner.stateComponent.currentState != null && owner.stateComponent.currentState is CombatState combatState) {
             if (combatState.isAttacking) {
                 //Only become in "actual" combat in attacking mode if character is already in vision of the target or if the target is fleeing

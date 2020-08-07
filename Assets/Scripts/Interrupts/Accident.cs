@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
-
+using UtilityScripts;
 namespace Interrupts {
     public class Accident : Interrupt {
         public Accident() : base(INTERRUPT.Accident) {
@@ -25,15 +25,18 @@ namespace Interrupts {
             Interrupt interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
-            if (opinionLabel == RelationshipManager.Acquaintance) {
-                if(UnityEngine.Random.Range(0, 2) == 0) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-                }
+            
+            if ((witness.relationshipContainer.IsFamilyMember(actor) ||
+                 witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) &&
+                !witness.relationshipContainer.IsEnemiesWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
-            } else if (opinionLabel == RelationshipManager.Enemy) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
-            } else if (opinionLabel == RelationshipManager.Rival) {
+            } else if (opinionLabel == RelationshipManager.Acquaintance) {
+                if(GameUtilities.RollChance(50)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
+                }
+            } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }
             return response;

@@ -46,7 +46,7 @@ namespace Traits {
 			summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
 			if (roll < chance) {
 				summary += $"\nChance met, triggering cowering interrupt";
-				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, _owner);
+				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, _owner, reason: "got scared");
 			}
 			Debug.Log(summary);
 		}

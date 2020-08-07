@@ -34,9 +34,19 @@ public class AgitateData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
+            if (targetCharacter.currentStructure is Kennel) {
+                return false;
+            }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating");
         }
         return canPerform;
+    }
+    public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
+        string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter);
+        if (targetCharacter.currentStructure is Kennel) {
+            reasons += "Monsters inside the Kennel cannot be Agitated.";
+        }
+        return reasons;
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is Character targetCharacter) {

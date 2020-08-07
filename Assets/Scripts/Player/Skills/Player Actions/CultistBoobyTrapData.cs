@@ -49,10 +49,16 @@ public class CultistBoobyTrapData : PlayerAction {
     private void OnChooseCharacter(object obj, Character actor) {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();
+            
+            Log instructedLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_trap");
+            instructedLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            instructedLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            actor.logComponent.RegisterLog(instructedLog);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog);
+            
             if (actor.jobComponent.CreatePlaceTrapJob(targetCharacter, JOB_TYPE.CULTIST_BOOBY_TRAP) == false) {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cultist_no_trap_target");
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(null, "Booby Trap", LOG_IDENTIFIER.STRING_1);
                 actor.logComponent.RegisterLog(log);
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             }

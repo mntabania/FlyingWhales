@@ -35,8 +35,15 @@ namespace Interrupts {
                     if (GameUtilities.RollChance(15)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
                     }
+                } else if ((witness.relationshipContainer.IsFamilyMember(actor) || 
+                           witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) && 
+                           !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, BaseRelationshipContainer.Rival)) {
+                    // if Actor is Relative, Lover, Affair and not a Rival
+                    if (GameUtilities.RollChance(15)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
+                    }
                 } else if (witness.relationshipContainer.HasRelationshipWith(actor) == false || 
-                           witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, BaseRelationshipContainer.Acquaintance)) {
+                          witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, BaseRelationshipContainer.Acquaintance)) {
                     if (GameUtilities.RollChance(40)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Plague_Hysteria, witness, actor, status);
                     }

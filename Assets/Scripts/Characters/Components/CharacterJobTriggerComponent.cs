@@ -1613,16 +1613,29 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
         if (chosenObject == null) {
-		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
-		    return false;
-	    }
+	        //if no owned items was found, check the items in character's home structure if he/she has one
+	        if (targetCharacter.homeStructure != null) {
+		        List<TileObject> tileObjects = targetCharacter.homeStructure.GetTileObjectsOfType<TileObject>(
+			        item => item.gridTileLocation != null && item.mapVisual &&
+			                item.advertisedActions.Contains(INTERACTION_TYPE.EAT));
+		        if (tileObjects.Count > 0) {
+			        chosenObject = CollectionUtilities.GetRandomElement(tileObjects);
+		        }
+	        }
+	        if (chosenObject == null) {
+		        targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " +
+		                                                      targetCharacter.name +
+		                                                      " because he/she does not have an owned item on the floor in his/her home region");
+		        return false;
+	        }
+        }
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
 	    _owner.jobQueue.AddJobInQueue(job);
 
-	    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
-	    log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-	    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-	    _owner.logComponent.AddHistory(log);
+	    // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
+	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+	    // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+	    // _owner.logComponent.AddHistory(log);
 	    return true;
     }
     public bool CreatePoisonFoodJob(Character targetCharacter, out JobQueueItem producedJob) {
@@ -1648,17 +1661,30 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    }
 	    }
 	    if (chosenObject == null) {
-		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
-		    producedJob = null;
-		    return false;
+		    //if no owned items was found, check the items in character's home structure if he/she has one
+		    if (targetCharacter.homeStructure != null) {
+			    List<TileObject> tileObjects = targetCharacter.homeStructure.GetTileObjectsOfType<TileObject>(
+				    item => item.gridTileLocation != null && item.mapVisual &&
+				            item.advertisedActions.Contains(INTERACTION_TYPE.EAT));
+			    if (tileObjects.Count > 0) {
+				    chosenObject = CollectionUtilities.GetRandomElement(tileObjects);
+			    }
+		    }
+		    if (chosenObject == null) {
+			    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " +
+			                                                  targetCharacter.name +
+			                                                  " because he/she does not have an owned item on the floor in his/her home region");
+			    producedJob = null;
+			    return false;
+		    }
 	    }
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
 	    producedJob = job;
 
-	    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
-	    log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-	    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-	    _owner.logComponent.AddHistory(log);
+	    // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
+	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+	    // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+	    // _owner.logComponent.AddHistory(log);
 	    return true;
     }
     #endregion
