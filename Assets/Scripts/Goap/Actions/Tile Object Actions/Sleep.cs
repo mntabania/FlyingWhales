@@ -39,8 +39,14 @@ public class Sleep : GoapAction {
                 costLog += " +100(Travelling)";
             } else {
                 if (targetBed.IsOwnedBy(actor) || targetBed.structureLocation == actor.homeStructure) {
-                    cost += UtilityScripts.Utilities.Rng.Next(30, 51);
-                    costLog += $" +{cost}(Owned/Location is in home structure)";
+                    if(actor.needsComponent.isExhausted || actor.traitContainer.HasTrait("Drunk")) {
+                        cost += UtilityScripts.Utilities.Rng.Next(30, 51);
+                        costLog += $" +{cost}(Owned/Location is in home structure, Exhausted/Drunk)";
+                    } else {
+                        cost += UtilityScripts.Utilities.Rng.Next(5, 16);
+                        costLog += $" +{cost}(Owned/Location is in home structure)";
+                    }
+
                 } else {
                     if (actor.needsComponent.isExhausted) {
                         if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {

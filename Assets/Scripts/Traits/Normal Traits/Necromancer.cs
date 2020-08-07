@@ -42,6 +42,7 @@ namespace Traits {
             AdjustEnergy(5);
             owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
+            owner.movementComponent.SetAvoidSettlements(true);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
@@ -52,6 +53,7 @@ namespace Traits {
             FactionManager.Instance.undeadFaction.OnlySetLeader(null);
             CharacterManager.Instance.SetNecromancerInTheWorld(null);
             owner.movementComponent.SetEnableDigging(false);
+            owner.movementComponent.SetAvoidSettlements(false);
         }
         #endregion
 
