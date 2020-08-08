@@ -25,7 +25,7 @@ public class WurmBehaviour : CharacterBehaviourComponent {
                             chosenHex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                         }
                     } else {
-                        chosenHex = character.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                        chosenHex = character.gridTileLocation.GetNearestHexTileWithinRegion();
                     }
                     if(chosenHex != null) {
                         log += $"\n-Character will teleport to hex: " + chosenHex.name;

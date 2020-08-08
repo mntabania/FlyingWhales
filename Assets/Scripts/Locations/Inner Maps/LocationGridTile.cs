@@ -1344,7 +1344,41 @@ namespace Inner_Maps {
             SetHasSnareTrap(false);
             triggeredBy.traitContainer.AddTrait(triggeredBy, "Ensnared");
         }
-        #endregion  
+        #endregion
+
+
+        #region Hextile
+        public HexTile GetNearestHexTileWithinRegion() {
+            HexTile nearestHex = null;
+            float nearestDist = 0f;
+            for (int i = 0; i < collectionOwner.region.tiles.Count; i++) {
+                HexTile hex = collectionOwner.region.tiles[i];
+                if (hex.elevationType != ELEVATION.WATER && hex.elevationType != ELEVATION.MOUNTAIN) {
+                    float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
+                    if (nearestHex == null || dist < nearestDist) {
+                        nearestHex = hex;
+                        nearestDist = dist;
+                    }
+                }
+            }
+            return nearestHex;
+        }
+        public HexTile GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
+            HexTile nearestHex = null;
+            float nearestDist = 0f;
+            for (int i = 0; i < collectionOwner.region.tiles.Count; i++) {
+                HexTile hex = collectionOwner.region.tiles[i];
+                if (validityChecker.Invoke(hex)) {
+                    float dist = GetDistanceTo(hex.GetCenterLocationGridTile());
+                    if (nearestHex == null || dist < nearestDist) {
+                        nearestHex = hex;
+                        nearestDist = dist;
+                    }
+                }
+            }
+            return nearestHex;
+        }
+        #endregion
     }
 
     [Serializable]

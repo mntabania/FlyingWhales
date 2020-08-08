@@ -202,8 +202,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
             } else {
                 if(character.necromancerTrait.lairStructure == null) {
                     log += $"\n-Lair is not set, will spawn lair";
-                    HexTile chosenHex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.region == character.currentRegion 
-                    && h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN
+                    HexTile chosenHex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.WATER && h.elevationType != ELEVATION.MOUNTAIN
                     && h.landmarkOnTile == null && !h.IsNextToOrPartOfVillage() && character.movementComponent.HasPathTo(h));
                     if (chosenHex == null) {
                         chosenHex = GetNoStructurePlainHexInAllRegions();
