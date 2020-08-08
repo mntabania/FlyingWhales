@@ -567,14 +567,6 @@ public class ReactionComponent {
                         debugLog += "\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
                         return;
                     }
-                    if (disguisedActor.race == RACE.KOBOLD && !targetCharacter.canPerform) {
-                        debugLog += "\nActor is a kobold and target cannot perform, did not trigger Fight or Flight response.";
-                        return;
-                    }
-                    if (disguisedActor.behaviourComponent.HasBehaviour(typeof(AbductorBehaviour)) && !targetCharacter.canPerform) {
-                        debugLog += "\nActor is an abductor and target cannot perform, did not trigger Fight or Flight response.";
-                        return;
-                    }
                     
                     //If the target is already unconscious (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
@@ -776,7 +768,9 @@ public class ReactionComponent {
                             //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
                             //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
                             if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Restrained") && !disguisedTarget.traitContainer.HasTrait("Criminal")) {
-                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
+                                    actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                }
                             }
 
                         }
