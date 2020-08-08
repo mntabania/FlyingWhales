@@ -2150,6 +2150,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {_owner.homeStructure});
 	    COMBAT_MODE originalCombatMode = _owner.combatComponent.combatMode;
 	    if (originalCombatMode != COMBAT_MODE.Defend) {
+		    //while character is abducting it should be set as defend, so it will not enter combat with its target when he/she sees it.
 		    job.SetOnTakeJobAction((character, item) => character.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
 		    job.SetOnUnassignJobAction((character, item) => character.combatComponent.SetCombatMode(originalCombatMode));    
 	    }

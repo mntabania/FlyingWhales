@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Traits;
+using UnityEngine.Assertions;
 
 public class NonActionEventsComponent {
     private Character owner { get; }
@@ -89,6 +90,10 @@ public class NonActionEventsComponent {
         if (target.reactionComponent.disguisedCharacter != null) {
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
+
+#if UNITY_EDITOR
+        Assert.IsTrue(disguisedActor != disguisedTarget, $"{disguisedActor} is chatting with itself.");
+#endif
 
         chatWeights.Clear();
         chatWeights.AddElement(Warm_Chat, 100);
