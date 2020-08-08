@@ -320,7 +320,7 @@ public class CharacterAIPath : AILerp {
                 if (customPath.notAllowedStructures != null) {
                     for (int i = 0; i < customPath.notAllowedStructures.Length; i++) {
                         if (customPath.notAllowedStructures[i] == nodeGridTile.structure.structureType) {
-                            return 1000;
+                            return 10000;
                         }
                     }
                 } else if (customPath.onlyAllowedStructures != null) {
@@ -332,7 +332,7 @@ public class CharacterAIPath : AILerp {
                         }
                     }
                     if (!isAllowed) {
-                        return 1000;
+                        return 10000;
                     }
                 }
             }
@@ -356,7 +356,7 @@ public class CharacterAIPath : AILerp {
                     nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
                 }
                 if (nodeGridTile != null && nodeGridTile.IsPartOfHumanElvenSettlement()) {
-                    return 1000;
+                    return 10000;
                 } else {
                     return 0;
                 }
