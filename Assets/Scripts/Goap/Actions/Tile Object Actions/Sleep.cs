@@ -46,7 +46,6 @@ public class Sleep : GoapAction {
                         cost += UtilityScripts.Utilities.Rng.Next(5, 16);
                         costLog += $" +{cost}(Owned/Location is in home structure)";
                     }
-
                 } else {
                     if (actor.needsComponent.isExhausted) {
                         if (targetBed.IsInHomeStructureOfCharacterWithOpinion(actor, RelationshipManager.Close_Friend, RelationshipManager.Friend)) {

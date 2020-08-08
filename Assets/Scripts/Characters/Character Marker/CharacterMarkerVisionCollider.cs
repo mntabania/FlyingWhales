@@ -139,9 +139,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
 
     #region Different Structure Handling
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        //if (parentMarker.character.combatComponent.isInCombat) { return; } //if character is in combat, ignore this
-         //if the character that arrived at the new structure is in this character different structure list
-         //check if that character now has the same structure as this character,
+        if (parentMarker.character.combatComponent.isInCombat) { return; } //if character is in combat, ignore this
+        //if the character that arrived at the new structure is in this character different structure list
+        //check if that character now has the same structure as this character,
         if (parentMarker.inVisionPOIsButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
             //if it does, add as normal
             NormalEnterHandling(character);
@@ -154,7 +154,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                 return;
             }
             //remove from vision and hostile range
-            //parentMarker.RemovePOIFromInVisionRange(character);
+            parentMarker.RemovePOIFromInVisionRange(character);
             parentMarker.AddPOIAsInRangeButDifferentStructure(character);
         }
         //if the character that changed structures is this character

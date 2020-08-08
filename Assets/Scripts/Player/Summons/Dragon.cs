@@ -51,7 +51,6 @@ public class Dragon : Summon {
             traitContainer.RemoveTrait(this, "Immune");
             traitContainer.RemoveTrait(this, "Hibernating");
             traitContainer.RemoveTrait(this, "Indestructible");
-
             //StartLeaveWorldTimer();
             Messenger.Broadcast(Signals.AWAKEN_DRAGON, this as Character);
         }

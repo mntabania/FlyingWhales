@@ -1059,6 +1059,12 @@ public class ReactionComponent {
                         debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
                         actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
                     }
+                } else {
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption");
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+                    log.AddLogToInvolvedObjects();
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && 
