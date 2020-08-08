@@ -1675,35 +1675,42 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (GameManager.Instance.gameHasStarted == false) {
             return;
         }
-        if (marker) {
-            if (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
-                if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                    InnerMapManager.Instance.HideAreaMap();
-                }
-                //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                WorldMapCameraMove.Instance.CenterCameraOn(avatar.targetLocation.coreTile.gameObject);
-            } else if (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravelling) {
-                if (marker.gameObject.activeInHierarchy) {
+        if (isInLimbo) {
+            if (lycanData != null && lycanData.activeForm != this) {
+                lycanData.activeForm.CenterOnCharacter();
+            }  
+        } else {
+            if (marker) {
+                if (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
+                    if (InnerMapManager.Instance.isAnInnerMapShowing) {
+                        InnerMapManager.Instance.HideAreaMap();
+                    }
+                    //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
+                    WorldMapCameraMove.Instance.CenterCameraOn(avatar.targetLocation.coreTile.gameObject);
+                } else if (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravelling) {
+                    if (marker.gameObject.activeInHierarchy) {
+                        bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
+                        if (currentRegion != null && instantCenter) {
+                            InnerMapManager.Instance.ShowInnerMap(currentRegion, false);
+                        }
+                        InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                    }
+                } else if (currentRegion != null) {
                     bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
-                    if (currentRegion != null && instantCenter) {
+                    if (instantCenter) {
                         InnerMapManager.Instance.ShowInnerMap(currentRegion, false);
                     }
                     InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                }
-            } else if (currentRegion != null) {
-                bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
-                if (instantCenter) {
-                    InnerMapManager.Instance.ShowInnerMap(currentRegion, false);
-                }
-                InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
 
-            } else {
-                if (InnerMapManager.Instance.isAnInnerMapShowing) {
-                    InnerMapManager.Instance.HideAreaMap();
+                } else {
+                    if (InnerMapManager.Instance.isAnInnerMapShowing) {
+                        InnerMapManager.Instance.HideAreaMap();
+                    }
+                    WorldMapCameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
                 }
-                WorldMapCameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
-            }
-        } 
+            } 
+        }
+        
         // else {
         //     if (InnerMapManager.Instance.isAnInnerMapShowing) {
         //         InnerMapManager.Instance.HideAreaMap();
@@ -5314,7 +5321,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (mapObjectVisual != null) {
             mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);    
         } else {
-            UIManager.Instance.ShowCharacterInfo(this); 
+            UIManager.Instance.ShowCharacterInfo(this, true); 
         }
     }
     public void RightSelectAction() {

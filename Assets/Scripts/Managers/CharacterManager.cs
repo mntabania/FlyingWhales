@@ -308,6 +308,7 @@ public class CharacterManager : MonoBehaviour {
 
     #region getters/setters
     public List<Character> allCharacters => characterDatabase.allCharactersList;
+    public List<Character> limboCharacters => characterDatabase.limboCharactersList;
     public GameObject characterPortraitPrefab => _characterPortraitPrefab;
     private CharacterDatabase characterDatabase { get; set; }
     #endregion
