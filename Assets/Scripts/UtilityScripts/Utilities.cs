@@ -202,11 +202,11 @@ namespace UtilityScripts {
         #endregion
 
         #region Log Utilities
-        public static string LogReplacer(Log log) {
+        public static string LogReplacer(Log log, bool ignoreLogText = false) {
             if (log == null) {
                 return string.Empty;
             }
-            if(log.logText != string.Empty) {
+            if(log.logText != string.Empty && ignoreLogText == false) {
                 return log.logText;
             }
             string newText;
