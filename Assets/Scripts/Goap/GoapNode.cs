@@ -403,6 +403,15 @@ public class ActualGoapNode : IReactable, IRumorable {
             action.OnInvalidAction(this);
             if (isInvalidOnVision) {
                 associatedJob?.CancelJob(false);
+            } else {
+                JobQueueItem job = associatedJob;
+                if(job != null) {
+                    if (job.invalidCounter > 0) {
+                        job.CancelJob(false);
+                    } else {
+                        job.IncreaseInvalidCounter();
+                    }
+                }
             }
             return;
         }
