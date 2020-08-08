@@ -759,7 +759,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             } else {
                 if (_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                     if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                        HexTile chosenHex = _owner.gridTileLocation.GetNearestHexTileWithinRegion();
                         chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                     } else {
                         HexTile chosenHex = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
@@ -812,7 +812,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    } else {
                 if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
                     if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                        HexTile chosenHex = _owner.gridTileLocation.GetNearestHexTileWithinRegion();
                         chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                     } else {
                         HexTile chosenHex = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
@@ -873,7 +873,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 } else if (_owner.IsInHomeSettlement()) {
                     chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
                 } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => _owner.currentRegion == h.region && _owner.movementComponent.HasPathTo(h));
+                    HexTile chosenTerritory = _owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => _owner.movementComponent.HasPathTo(h));
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
@@ -900,7 +900,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 } else if (_owner.IsInHomeSettlement()) {
                     chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
                 } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+				    HexTile chosenTerritory = _owner.gridTileLocation.GetNearestHexTileWithinRegion();
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    } else {
 				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
@@ -927,7 +927,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                     //OPTIMIZE THIS!
                     //chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
                     if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                        chosenTile = _owner.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion().GetRandomTile();
+                        chosenTile = _owner.gridTileLocation.GetNearestHexTileWithinRegion().GetRandomTile();
                     } else {
                         List<LocationGridTile> choices = _owner.currentStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
                         chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);

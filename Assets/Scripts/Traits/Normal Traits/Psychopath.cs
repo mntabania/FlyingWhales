@@ -309,7 +309,7 @@ namespace Traits {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.region == character.gridTileLocation.collectionOwner.region && h.settlementOnTile == null);
+                    HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
                     if(hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
@@ -349,7 +349,7 @@ namespace Traits {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.region == character.gridTileLocation.collectionOwner.region && h.settlementOnTile == null);
+                    HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
                     if (hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });

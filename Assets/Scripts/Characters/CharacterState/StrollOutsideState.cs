@@ -39,30 +39,37 @@ public class StrollOutsideState : CharacterState {
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        if (stateComponent.character.homeSettlement != null) {
-            //only stroll around surrounding areas
-            HexTile chosenHex = stateComponent.character.homeSettlement.GetAPlainAdjacentHextileThatMeetCriteria(h => stateComponent.character.movementComponent.HasPathTo(h));
-            if(chosenHex != null) {
-                return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
-            }
+        LocationGridTile targetTile = null;
+        List<LocationGridTile> choices = stateComponent.character.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
+        if (choices.Count > 0) {
+            targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
+        } else {
+            targetTile = stateComponent.character.gridTileLocation;
         }
-        if (stateComponent.character.hexTileLocation != null) {
-            //stroll around surrounding area of current hextile
-            List<HexTile> choices = new List<HexTile>();
-            for (int i = 0; i < stateComponent.character.hexTileLocation.ValidTilesWithinRegion.Count; i++) {
-                HexTile hexTile = stateComponent.character.hexTileLocation.ValidTilesWithinRegion[i];
-                if (stateComponent.character.movementComponent.HasPathTo(hexTile)) {
-                    choices.Add(hexTile);
-                }
-            }
-            if(choices != null && choices.Count > 0) {
-                HexTile chosenHex = CollectionUtilities.GetRandomElement(choices);
-                return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
-            }
-        }
+        //if (stateComponent.character.homeSettlement != null) {
+        //    //only stroll around surrounding areas
+        //    HexTile chosenHex = stateComponent.character.homeSettlement.GetAPlainAdjacentHextileThatMeetCriteria(h => stateComponent.character.movementComponent.HasPathTo(h));
+        //    if(chosenHex != null) {
+        //        return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+        //    }
+        //}
+        //if (stateComponent.character.hexTileLocation != null) {
+        //    //stroll around surrounding area of current hextile
+        //    List<HexTile> choices = new List<HexTile>();
+        //    for (int i = 0; i < stateComponent.character.hexTileLocation.ValidTilesWithinRegion.Count; i++) {
+        //        HexTile hexTile = stateComponent.character.hexTileLocation.ValidTilesWithinRegion[i];
+        //        if (stateComponent.character.movementComponent.HasPathTo(hexTile)) {
+        //            choices.Add(hexTile);
+        //        }
+        //    }
+        //    if(choices != null && choices.Count > 0) {
+        //        HexTile chosenHex = CollectionUtilities.GetRandomElement(choices);
+        //        return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+        //    }
+        //}
 
-        HexTile hex = stateComponent.character.gridTileLocation.collectionOwner.GetNearestHexTileThatMeetCriteria(h => stateComponent.character.currentRegion == h.region && stateComponent.character.movementComponent.HasPathTo(h));
-        LocationGridTile tile = CollectionUtilities.GetRandomElement(hex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
-        return tile;
+        //HexTile hex = stateComponent.character.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegionThatMeetCriteria(h => stateComponent.character.currentRegion == h.region && stateComponent.character.movementComponent.HasPathTo(h));
+        //LocationGridTile tile = CollectionUtilities.GetRandomElement(hex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+        return targetTile;
     }
 }

@@ -14,7 +14,7 @@ public class VengefulGhostBehaviour : CharacterBehaviourComponent {
         if (character.gridTileLocation != null) {
             if (!character.HasTerritory()) {
                 log += "\n-No territory, will set nearest hex tile as territory";
-                HexTile hex = character.gridTileLocation.collectionOwner.GetNearestHexTileWithinRegion();
+                HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegion();
                 character.AddTerritory(hex);
             }
             if (!character.behaviourComponent.isAttackingDemonicStructure) {
