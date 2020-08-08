@@ -563,6 +563,14 @@ public class ReactionComponent {
                         debugLog += "\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
                         return;
                     }
+                    if (disguisedActor.race == RACE.KOBOLD && !targetCharacter.canPerform) {
+                        debugLog += "\nActor is a kobold and target cannot perform, did not trigger Fight or Flight response.";
+                        return;
+                    }
+                    if (disguisedActor.behaviourComponent.HasBehaviour(typeof(AbductorBehaviour)) && !targetCharacter.canPerform) {
+                        debugLog += "\nActor is an abductor and target cannot perform, did not trigger Fight or Flight response.";
+                        return;
+                    }
                     
                     //If the target is already unconscious (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {

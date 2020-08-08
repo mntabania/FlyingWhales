@@ -162,14 +162,19 @@ public class MonsterGeneration : MapGenerationComponent {
 					CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);	
 				}
 			}
-			//kobolds at Temple
+			//Spiders at Temple
 			List<BaseLandmark> temples = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
 			for (int i = 0; i < temples.Count; i++) {
 				BaseLandmark landmark = temples[i];
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = 2;
-				for (int k = 0; k < randomAmount; k++) {
-					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
+				// int randomAmount = 2;
+				// for (int k = 0; k < randomAmount; k++) {
+				// 	CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
+				// }
+				//Giant spiders	
+				int randomGiantSpider = Random.Range(2, 5);
+				for (int k = 0; k < randomGiantSpider; k++) {
+					CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure);
 				}
 			}
 		} else {
@@ -244,13 +249,15 @@ public class MonsterGeneration : MapGenerationComponent {
 							for (int k = 0; k < fireElementals; k++) {
 								CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-						} else if (j == 3) {
-							//Giant spiders	
-							int randomGiantSpider = Random.Range(2, 5);
-							for (int k = 0; k < randomGiantSpider; k++) {
-								CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
-						} else {
+						} 
+						// else if (j == 3) {
+						// 	//Giant spiders	
+						// 	int randomGiantSpider = Random.Range(2, 5);
+						// 	for (int k = 0; k < randomGiantSpider; k++) {
+						// 		CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+						// 	}
+						// } 
+						else {
 							break;
 						}
 					}
