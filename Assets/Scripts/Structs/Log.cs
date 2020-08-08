@@ -144,10 +144,14 @@ public class Log {
             if (obj != null) {
                 if (obj is IPointOfInterest pointOfInterest) {
                     if (pointOfInterest.CollectsLogs()) {
-                        Messenger.Broadcast(Signals.UPDATE_POI_LOGS_UI, pointOfInterest);    
+                        SetLogText(fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(this, true) 
+                            : LocalizationManager.Instance.GetLocalizedValue(category, file, key));
+                        // Messenger.Broadcast(Signals.UPDATE_POI_LOGS_UI, pointOfInterest);    
                     }
                 } else if (obj is Faction faction) {
-                    Messenger.Broadcast(Signals.UPDATE_FACTION_LOGS_UI, faction);
+                    // Messenger.Broadcast(Signals.UPDATE_FACTION_LOGS_UI, faction);
+                    SetLogText(fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(this, true) 
+                        : LocalizationManager.Instance.GetLocalizedValue(category, file, key));
                 }
             }
         }
