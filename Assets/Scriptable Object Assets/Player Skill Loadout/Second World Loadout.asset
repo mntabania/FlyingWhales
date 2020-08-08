@@ -15,7 +15,7 @@ MonoBehaviour:
   archetype: 5
   spells:
     extraSlots: 2
-    fixedSkills: 1200000023000000
+    fixedSkills: 120000002300000009000000
   afflictions:
     extraSlots: 0
     fixedSkills: 0400000011000000020000000f0000005a0000000e00000001000000

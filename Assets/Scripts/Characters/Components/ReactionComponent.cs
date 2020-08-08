@@ -530,8 +530,12 @@ public class ReactionComponent {
                         actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, actor.homeStructure, true);
                     }
                 } else {
-                    debugLog += "\n-Will engage in combat and restrain it";
-                    actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                    if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
+                        debugLog += "\n-Will engage in combat and restrain it";
+                        actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                    } else {
+                        debugLog += "\n-Target is already restrained, will do nothing";
+                    }
                 }
             } else if (disguisedActor.traitContainer.HasTrait("Cultist") && (disguisedTarget.faction.isPlayerFaction || disguisedTarget.traitContainer.HasTrait("Cultist"))) {
                 debugLog += $"\n-{disguisedActor.name} is a cultist and {disguisedTarget.name} is part of the demon faction or is also a cultist.";
@@ -1067,6 +1071,12 @@ public class ReactionComponent {
                         debugLog += "\n-Will create Steal assumption on " + chosenSuspect.name;
                         actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, targetTileObject, INTERACTION_TYPE.STEAL, REACTION_STATUS.WITNESSED);
                     }
+                } else {
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_steal_assumption");
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetTileObject, targetTileObject.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(targetTileObject.gridTileLocation.structure,  targetTileObject.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+                    log.AddLogToInvolvedObjects();
                 }
             }
             if(targetTileObject.tileObjectType.IsTileObjectAnItem() && 
