@@ -14,8 +14,8 @@ public class WorldConfigManager : MonoBehaviour {
     public ItemGenerationSetting worldWideItemGenerationSetting;
     public List<ARTIFACT_TYPE> initialArtifactChoices;
 
-    // [Header("Demo")]
-    // [SerializeField] private bool _isDemoWorld;
+    [Header("Demo")]
+    [SerializeField] private bool _isDemoBuild = false;
     // [SerializeField] private List<SPELL_TYPE> _availableSpellsInDemoBuild;
     // [SerializeField] private List<TutorialManager.Tutorial> _demoTutorials;
 
@@ -33,6 +33,7 @@ public class WorldConfigManager : MonoBehaviour {
 #else
     public bool disableLogs => true;
 #endif
+    public bool isDemoBuild => _isDemoBuild;
     #endregion
     
     private void Awake() {

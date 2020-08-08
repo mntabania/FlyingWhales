@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
 public class SummonPlayerSkill : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SUMMON; } }
@@ -40,6 +41,16 @@ public class SummonPlayerSkill : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
+            if (targetTile.structure is Kennel) {
+                return false;
+            }
+            if (targetTile.structure.IsTilePartOfARoom(targetTile, out var structureRoom)) {
+                if (structureRoom is DefilerRoom) {
+                    return false;
+                } else if (structureRoom is PrisonCell) {
+                    return false;
+                }
+            }
             //only allow summoning on linked tiles
             return targetTile.collectionOwner.isPartOfParentRegionMap;
         }

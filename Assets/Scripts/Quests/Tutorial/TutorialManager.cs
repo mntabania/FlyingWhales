@@ -208,11 +208,19 @@ namespace Tutorial {
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x) == false) == 0) {
                 //all non-bonus tutorials completed
-                UIManager.Instance.ShowYesNoConfirmation("Finished Tutorial",
-                    "You're done with the Tutorials! You can continue playing around with this world. " +
-                    "Another pregenerated world has also been unlocked on the World Options. You can skip ahead to that now!",
-                    yesBtnText: "Go to next world", noBtnText: "Continue with this world", 
-                    onClickYesAction: OnClickGoToNextWorld, pauseAndResume: true, showCover: true, layer: 25);
+                if (WorldConfigManager.Instance.isDemoBuild) {
+                    PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
+                        "You're done with the Tutorials! Now it's up to you how you'd like to corrupt this world. Enjoy!");    
+                } else {
+                    UIManager.Instance.ShowYesNoConfirmation("Finished Tutorial",
+                        "You're done with the Main Tutorial. Killing Villagers may be quite easy if you simply use spells. " +
+                        "The real fun is when you get creative with it! Try to start a Zombie Apocalypse, or let the " +
+                        "Villagers fight amongst each other by making them do various crimes, " +
+                        "or figure out how to turn someone into a Necromancer. Good luck!" +
+                        "\n\nYou may continue playing around with this world.....",
+                        yesBtnText: "Go to next world", noBtnText: "Continue with this world", 
+                        onClickYesAction: OnClickGoToNextWorld, pauseAndResume: true, showCover: true, layer: 25);    
+                }
                 hasCompletedImportantTutorials = true;
                 Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
             }

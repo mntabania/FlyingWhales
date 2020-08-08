@@ -367,7 +367,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
         HideHPBar();
-        
+        HideAdditionalEffect();
+
         Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
         
         visionCollider.Reset();
@@ -1610,7 +1611,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Seize
     public void OnSeize() {
         Character _character = character;
+        //TODO: Change logic of this, only quick fix for webbbed characters that are seized
+        bool isAdditionalEffectActive = additionalEffectsImg.gameObject.activeSelf;
         Reset();
+        if (isAdditionalEffectActive) {
+            ShowAdditionalEffect(additionalEffectsImg.sprite);
+        }
         character = _character;
         buttonCollider.enabled = false;
     }
