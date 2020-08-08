@@ -41,7 +41,10 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
                             }
                         }
                     } else if (roll >= 50 && roll < 70) {
-                        Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(x => !x.combatComponent.isInCombat && x.canPerform && x.canWitness && !x.isDead);
+                        Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(
+                            x => !x.combatComponent.isInCombat && x.canPerform && x.canWitness && !x.isDead &&
+                                 x != character
+                        );
                         if (chosenCharacter != null) {
                             if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter)) {
                                 return true;
