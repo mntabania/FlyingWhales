@@ -48,6 +48,11 @@ public class Party {
         }
     }
     protected virtual void OnDisbandParty() {
+        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband");
+        log.AddToFillers(leader, leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
+
         leader.logComponent.PrintLogIfActive("Disbanded " + partyName + " Party of " + leader.name);
         isDisbanded = true;
         CancelAllJoinPartyJobs();
