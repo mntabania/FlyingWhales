@@ -208,7 +208,7 @@ public class TileObjectInfoUI : InfoUIBase {
             }
         }
     }
-    private void UpdateLogs() {
+    public void UpdateLogs() {
         int historyCount = activeTileObject.logComponent.history.Count;
         int historyLastIndex = historyCount - 1;
         for (int i = 0; i < logHistoryItems.Length; i++) {

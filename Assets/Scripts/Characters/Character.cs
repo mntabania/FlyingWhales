@@ -2586,7 +2586,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 Death();
             }
-        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Berserked") == false) { //do not make berserked characters trigger flight
+        } else if (amount < 0 && IsHealthCriticallyLow() && traitContainer.HasTrait("Berserked") == false && characterClass.className != "Zombie") { //do not make berserked characters trigger flight
             combatComponent.FlightAll("critically low health");
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }

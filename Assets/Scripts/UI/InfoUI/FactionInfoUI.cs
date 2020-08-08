@@ -363,7 +363,7 @@ public class FactionInfoUI : InfoUIBase {
             UpdateAllHistoryInfo();
         }
     }
-    private void UpdateAllHistoryInfo() {
+    public void UpdateAllHistoryInfo() {
         int historyCount = activeFaction.history.Count;
         int historyLastIndex = historyCount - 1;
         for (int i = 0; i < logHistoryItems.Length; i++) {

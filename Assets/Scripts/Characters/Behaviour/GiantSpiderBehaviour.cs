@@ -55,7 +55,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         }
 
         //try to lay an egg
-        if (GameUtilities.RollChance(10)) {
+        if (GameUtilities.RollChance(10)) {//10
             int residentCount = 0;
             int eggCount = 0;
             if (character.homeStructure != null) {

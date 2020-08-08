@@ -42,6 +42,7 @@ namespace Traits {
                     }
                 }
                 summon.SetDestroyMarkerOnDeath(true);
+                summon.SetShowNotificationOnDeath(false);
                 summon.Death();
                 if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == summon) {
                     UIManager.Instance.monsterInfoUI.CloseMenu();

@@ -9,6 +9,8 @@ namespace Interrupts {
             interruptIconString = GoapActionStateDB.Shock_Icon;
             duration = 2;
             doesStopCurrentAction = true;
+            shouldAddLogs = false;
+            shouldShowNotif = true;
         }
     }
 }

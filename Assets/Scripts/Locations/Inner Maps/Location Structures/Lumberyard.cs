@@ -5,6 +5,7 @@ namespace Inner_Maps.Location_Structures {
         public override Vector3 worldPosition => structureObj.transform.position;
         public Lumberyard(Region location) : base(STRUCTURE_TYPE.LUMBERYARD, location){
             selectableSize = new Vector2(10f, 7f);
+            SetMaxHPAndReset(8000);
         }
     }
 }
