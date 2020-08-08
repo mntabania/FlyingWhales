@@ -21,7 +21,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             return false;
         }
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {//AFTER_MIDNIGHT
             List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
             if (webbedCharacters == null || webbedCharacters.Count <= 2) { //check if there are only 2 or less abducted "Food" at home structure
                 if (character.behaviourComponent.currentAbductTarget != null 
@@ -34,12 +34,12 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(8)) {
                     //check if there are any available animals first
                     List<Character> characterChoices = character.currentRegion.charactersAtLocation
-                        .Where(c => c is Animal).ToList();
-                    if (characterChoices.Count == 0) {
-                        //no available animals, check sleeping characters instead
-                        characterChoices = character.currentRegion.charactersAtLocation
-                            .Where(c => c.isNormalCharacter && c.traitContainer.HasTrait("Resting")).ToList();
-                    }
+                        .Where(c => c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))).ToList();
+                    // if (characterChoices.Count == 0) {
+                    //     //no available animals, check sleeping characters instead
+                    //     characterChoices = character.currentRegion.charactersAtLocation
+                    //         .Where(c => c.isNormalCharacter && c.traitContainer.HasTrait("Resting")).ToList();
+                    // }
                     if (characterChoices.Count > 0) {
                         Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
                         character.behaviourComponent.SetAbductionTarget(chosenCharacter);

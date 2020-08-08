@@ -18,8 +18,7 @@ public class SaveManager : MonoBehaviour {
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
     [SerializeField] private bool alwaysResetBonusTutorialsOnStartup;
-    
-    
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
