@@ -549,8 +549,8 @@ public class ReactionComponent {
                     debugLog += $"\n-{actor.name} triggered pray.";
                     actor.jobComponent.TriggerPray();
                 }
-            } else if (!disguisedTarget.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive) {
-                debugLog += "\n-If Target is alive and not in Passive State:";
+            } else if (!disguisedTarget.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+                debugLog += "\n-If Target is alive and not in Passive State and not Hibernating:";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
                 if (disguisedActor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
@@ -584,7 +584,7 @@ public class ReactionComponent {
                     }
                 }
             } else {
-                debugLog += "\n-Target is dead or is passive";
+                debugLog += "\n-Target is dead or is passive or is hibernating";
                 debugLog += "\n-Do nothing";
             }
         } else if (!actor.combatComponent.isInActualCombat) {

@@ -19,14 +19,14 @@ public class Dragon : Summon {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        traitContainer.AddTrait(this, "Indestructible");
+        //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public Dragon(string className) : base(SUMMON_TYPE.Dragon, className, RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
         traitContainer.AddTrait(this, "Immune");
         traitContainer.AddTrait(this, "Hibernating");
-        traitContainer.AddTrait(this, "Indestructible");
+        //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public Dragon(SaveDataCharacter data) : base(data) { }
@@ -50,7 +50,7 @@ public class Dragon : Summon {
             isAwakened = true;
             traitContainer.RemoveTrait(this, "Immune");
             traitContainer.RemoveTrait(this, "Hibernating");
-            traitContainer.RemoveTrait(this, "Indestructible");
+            //traitContainer.RemoveTrait(this, "Indestructible");
             //StartLeaveWorldTimer();
             Messenger.Broadcast(Signals.AWAKEN_DRAGON, this as Character);
         }

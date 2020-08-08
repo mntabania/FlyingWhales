@@ -1540,7 +1540,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public bool CanAttackByAttackSpeed() {
         return attackSpeedMeter >= character.combatComponent.attackSpeed;
     }
-    private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
+    //private readonly RaycastHit2D[] linOfSightHitObjects = new RaycastHit2D[5];
+    private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
         Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
         if (inVisionPOIs.Contains(target) == false) { return false; }
@@ -1561,19 +1562,22 @@ public class CharacterMarker : MapObjectVisual<Character> {
             distance += 1.5f;
         }
         //do the ray test
-        var size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, distance, 
-            GameUtilities.Line_Of_Sight_Layer_Mask);
+        //int size = Physics2D.RaycastNonAlloc(start, direction, linOfSightHitObjects, distance, 
+        //    GameUtilities.Line_Of_Sight_Layer_Mask);
+        lineOfSightHitObjects = Physics2D.RaycastAll(start, direction, distance,
+                GameUtilities.Line_Of_Sight_Layer_Mask);
         Profiler.EndSample();
         
         Profiler.BeginSample($"{character.name} Raycast result loop");
-        for (int i = 0; i < size; i++) {
-            RaycastHit2D hit = linOfSightHitObjects[i];
-            if((target is BlockWall) == false && hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
-                return false;
-            } else if (hit.transform.IsChildOf(target.mapObjectVisual.transform)) {
-                return true;
+        if(lineOfSightHitObjects != null) {
+            for (int i = 0; i < lineOfSightHitObjects.Length; i++) {
+                RaycastHit2D hit = lineOfSightHitObjects[i];
+                if ((target is BlockWall) == false && hit.collider.gameObject.layer == LayerMask.NameToLayer("Unpassable")) {
+                    return false;
+                } else if (hit.transform.IsChildOf(target.mapObjectVisual.transform)) {
+                    return true;
+                }
             }
-            
         }
         Profiler.EndSample();
         return false;

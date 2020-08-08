@@ -25,6 +25,7 @@ public class AgitateData : PlayerAction {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "agitated");
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToInvolvedObjects();
+                PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             } else {
                 targetCharacter.movementComponent.SetEnableDigging(false);
             }
