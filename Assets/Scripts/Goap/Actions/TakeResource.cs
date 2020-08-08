@@ -54,11 +54,11 @@ public class TakeResource : GoapAction {
         if(job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
             if(target is ElfMeat || target is HumanMeat) {
                 if (actor.traitContainer.HasTrait("Cannibal")) {
-                    int currCost = UtilityScripts.Utilities.Rng.Next(450, 501);
+                    int currCost = 450; //UtilityScripts.Utilities.Rng.Next(450, 501);
                     cost += currCost;
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Cannibal)";
                 } else if (actor.needsComponent.isStarving) {
-                    int currCost = UtilityScripts.Utilities.Rng.Next(700, 751);
+                    int currCost = 700; //UtilityScripts.Utilities.Rng.Next(700, 751);
                     cost += currCost;
                     costLog += $" +{currCost}(Obtain Personal Food, Elf/Human Meat, Starving)";
                 } else {
@@ -66,14 +66,14 @@ public class TakeResource : GoapAction {
                     costLog += $" +2000(Obtain Personal Food, Elf/Human Meat, not Starving/Cannibal)";
                 }
             } else {
-                int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
-                cost = currCost;
-                costLog += $" +{currCost}(Obtain Personal Food, not Elf/Human Meat)";
+                // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
+                cost = 400;
+                costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat)";
             }
         } else {
-            int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
-            cost = currCost;
-            costLog += $" +{currCost}(not Obtain Personal Food)";
+            // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
+            cost = 400;
+            costLog += $" +{cost}(not Obtain Personal Food)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
