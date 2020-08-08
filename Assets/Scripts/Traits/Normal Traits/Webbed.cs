@@ -9,6 +9,8 @@
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             isHidden = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -21,6 +23,16 @@
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 //removed webbed visual from character
+                character.marker.HideAdditionalEffect();
+            }
+        }
+        public override void OnInitiateMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
+                character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);
+            }
+        }
+        public override void OnDestroyMapObjectVisual(ITraitable traitable) {
+            if (traitable is Character character) {
                 character.marker.HideAdditionalEffect();
             }
         }
