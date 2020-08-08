@@ -530,8 +530,12 @@ public class ReactionComponent {
                         actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, actor.homeStructure, true);
                     }
                 } else {
-                    debugLog += "\n-Will engage in combat and restrain it";
-                    actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                    if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
+                        debugLog += "\n-Will engage in combat and restrain it";
+                        actor.jobComponent.TriggerRestrainJob(targetCharacter);
+                    } else {
+                        debugLog += "\n-Target is already restrained, will do nothing";
+                    }
                 }
             } else if (disguisedActor.traitContainer.HasTrait("Cultist") && (disguisedTarget.faction.isPlayerFaction || disguisedTarget.traitContainer.HasTrait("Cultist"))) {
                 debugLog += $"\n-{disguisedActor.name} is a cultist and {disguisedTarget.name} is part of the demon faction or is also a cultist.";
