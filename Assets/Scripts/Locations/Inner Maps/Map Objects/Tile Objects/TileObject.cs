@@ -845,8 +845,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// </summary>
     /// <param name="character"></param>
     public virtual void SetInventoryOwner(Character character) {
-        Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
         this.isBeingCarriedBy = character;
+        Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
         // if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {

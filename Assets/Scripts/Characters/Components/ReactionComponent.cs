@@ -553,8 +553,8 @@ public class ReactionComponent {
                     debugLog += $"\n-{actor.name} triggered pray.";
                     actor.jobComponent.TriggerPray();
                 }
-            } else if (!disguisedTarget.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive) {
-                debugLog += "\n-If Target is alive and not in Passive State:";
+            } else if (!disguisedTarget.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+                debugLog += "\n-If Target is alive and not in Passive State and not Hibernating:";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
                 if (disguisedActor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
@@ -569,14 +569,6 @@ public class ReactionComponent {
                     //NOTE: Added checking for webbed so that spiders won't attack characters that they've webbed up
                     if (disguisedActor.race == RACE.SPIDER && targetCharacter.traitContainer.HasTrait("Webbed")) {
                         debugLog += "\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
-                        return;
-                    }
-                    if (disguisedActor.race == RACE.KOBOLD && !targetCharacter.canPerform) {
-                        debugLog += "\nActor is a kobold and target cannot perform, did not trigger Fight or Flight response.";
-                        return;
-                    }
-                    if (disguisedActor.behaviourComponent.HasBehaviour(typeof(AbductorBehaviour)) && !targetCharacter.canPerform) {
-                        debugLog += "\nActor is an abductor and target cannot perform, did not trigger Fight or Flight response.";
                         return;
                     }
                     
@@ -596,7 +588,7 @@ public class ReactionComponent {
                     }
                 }
             } else {
-                debugLog += "\n-Target is dead or is passive";
+                debugLog += "\n-Target is dead or is passive or is hibernating";
                 debugLog += "\n-Do nothing";
             }
         } else if (!actor.combatComponent.isInActualCombat) {
@@ -780,7 +772,9 @@ public class ReactionComponent {
                             //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
                             //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
                             if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Restrained") && !disguisedTarget.traitContainer.HasTrait("Criminal")) {
-                                actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
+                                    actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                }
                             }
 
                         }

@@ -206,7 +206,7 @@ public class DepositResourcePile : GoapAction {
             if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 //remove unbuilt pile, since it is no longer needed, then place carried pile in its place
                 pileToBeDepositedTo.gridTileLocation.structure.RemovePOI(pileToBeDepositedTo);
-                actor.UncarryPOI(poiTarget, addToLocation: false, dropLocation: goapNode.targetTile);
+                actor.UncarryPOI(poiTarget, dropLocation: goapNode.targetTile);
             } else {
                 //Deposit resource pile
                 if(pileToBeDepositedTo.IsAtMaxResource(poiTarget.providedResource) == false) {
