@@ -379,10 +379,16 @@ public class NonActionEventsComponent {
     private string TriggerFlirtCharacter(Character target) {
         Character disguisedActor = owner;
         Character disguisedTarget = target;
+
+        bool actorIsDisguised = false;
+        bool targetIsDisguised = false;
+        
         if(owner.reactionComponent.disguisedCharacter != null) {
+            actorIsDisguised = true;
             disguisedActor = owner.reactionComponent.disguisedCharacter;
         }
         if (target.reactionComponent.disguisedCharacter != null) {
+            targetIsDisguised = true;
             disguisedTarget = target.reactionComponent.disguisedCharacter;
         }
         int chance = UnityEngine.Random.Range(0, 100);
@@ -414,40 +420,44 @@ public class NonActionEventsComponent {
         
         string relationshipName = disguisedActor.relationshipContainer.GetRelationshipNameWith(disguisedTarget);
 
-        // If Opinion of Target towards Actor is already in Acquaintance range
-        if (relationshipName == RelationshipManager.Acquaintance) {
-            // 25% chance to develop Lover relationship if both characters have no Lover yet
-            if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
-                && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
-                if (UnityEngine.Random.Range(0, 100) < 25) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
+        //do not develop relationships if either actor or target is disguised
+        if (!actorIsDisguised && !targetIsDisguised) {
+            // If Opinion of Target towards Actor is already in Acquaintance range
+            if (relationshipName == RelationshipManager.Acquaintance) {
+                // 25% chance to develop Lover relationship if both characters have no Lover yet
+                if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
+                    && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
+                    if (UnityEngine.Random.Range(0, 100) < 25) {
+                        RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
+                    }
+                }
+                // 35% chance to develop Affair if at least one of the characters already have a Lover
+                else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
+                         && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) {
+                    if (UnityEngine.Random.Range(0, 100) < 35) {
+                        RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
+                    }
                 }
             }
-            // 35% chance to develop Affair if at least one of the characters already have a Lover
-            else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
-                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) {
-                if (UnityEngine.Random.Range(0, 100) < 35) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
+            // If Opinion of Target towards Actor is already in Friend or Close Friend range
+            else if (relationshipName == RelationshipManager.Friend || relationshipName == RelationshipManager.Close_Friend) {
+                // 35 % chance to develop Lover relationship if both characters have no Lover yet
+                if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
+                    && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
+                    if (UnityEngine.Random.Range(0, 100) < 35) {
+                        RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
+                    }
+                }
+                // 50% chance to develop Affair if at least one of the characters already have a Lover 
+                else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
+                         && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) { 
+                    if (UnityEngine.Random.Range(0, 100) < 50) {
+                        RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
+                    }
                 }
             }
         }
-        // If Opinion of Target towards Actor is already in Friend or Close Friend range
-        else if (relationshipName == RelationshipManager.Friend || relationshipName == RelationshipManager.Close_Friend) {
-            // 35 % chance to develop Lover relationship if both characters have no Lover yet
-            if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER)
-                && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.LOVER)) {
-                if (UnityEngine.Random.Range(0, 100) < 35) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.LOVER);
-                }
-            }
-            // 50% chance to develop Affair if at least one of the characters already have a Lover 
-            else if (disguisedActor.relationshipValidator.CanHaveRelationship(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)
-                     && disguisedTarget.relationshipValidator.CanHaveRelationship(disguisedTarget, disguisedActor, RELATIONSHIP_TYPE.AFFAIR)) { 
-                if (UnityEngine.Random.Range(0, 100) < 50) {
-                    RelationshipManager.Instance.CreateNewRelationshipBetween(disguisedActor, disguisedTarget, RELATIONSHIP_TYPE.AFFAIR);
-                }
-            }
-        }
+        
         return "flirted_back";
     }
     #endregion

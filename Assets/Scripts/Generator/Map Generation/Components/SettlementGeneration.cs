@@ -185,7 +185,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				break; //no more dwellings
 			}
 			Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
-			if (roll < 25) {
+			if (roll < 35) {
 				//couple
 				List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
 				if (couples.Count > 0) {

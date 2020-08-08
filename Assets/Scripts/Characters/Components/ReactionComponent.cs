@@ -20,6 +20,10 @@ public class ReactionComponent {
     public bool isHidden { get; private set; }
     public Character disguisedCharacter { get; private set; }
 
+    #region getters
+    public bool isDisguised => disguisedCharacter != null;
+    #endregion
+    
     public ReactionComponent(Character owner) {
         this.owner = owner;
         _assumptionSuspects = new List<Character>();

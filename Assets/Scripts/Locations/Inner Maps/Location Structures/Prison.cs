@@ -5,6 +5,7 @@ namespace Inner_Maps.Location_Structures {
         public override Vector3 worldPosition => structureObj.transform.position;
         public Prison(Region location) : base(STRUCTURE_TYPE.PRISON, location){
             selectableSize = new Vector2(13f, 10f);
+            SetMaxHPAndReset(8000);
         }
     }
 }

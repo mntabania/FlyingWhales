@@ -137,6 +137,21 @@ public class Log {
             }
         }
     }
+    public void UpdateLogInInvolvedObjects() {
+        for (int i = 0; i < fillers.Count; i++) {
+            LogFiller currFiller = fillers[i];
+            object obj = currFiller.obj;
+            if (obj != null) {
+                if (obj is IPointOfInterest pointOfInterest) {
+                    if (pointOfInterest.CollectsLogs()) {
+                        Messenger.Broadcast(Signals.UPDATE_POI_LOGS_UI, pointOfInterest);    
+                    }
+                } else if (obj is Faction faction) {
+                    Messenger.Broadcast(Signals.UPDATE_FACTION_LOGS_UI, faction);
+                }
+            }
+        }
+    }
     public void AddLogToSpecificObjects(params LOG_IDENTIFIER[] identifiers) {
         //List<LOG_IDENTIFIER> identifiersList = identifiers.ToList();
         for (int i = 0; i < fillers.Count; i++) {

@@ -425,7 +425,7 @@ public class CharacterInfoUI : InfoUIBase {
             //}    
         }
     }
-    private void UpdateAllHistoryInfo() {
+    public void UpdateAllHistoryInfo() {
         //if (_activeCharacter.minion != null) {
         //    return;
         //}

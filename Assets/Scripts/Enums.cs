@@ -1200,6 +1200,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.ANCIENT_RUIN:
             case STRUCTURE_TYPE.MONSTER_LAIR:
             case STRUCTURE_TYPE.CAVE:
+            case STRUCTURE_TYPE.TEMPLE:
                 return true;
             default:
                 return false;

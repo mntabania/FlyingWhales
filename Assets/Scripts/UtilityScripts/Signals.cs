@@ -285,6 +285,8 @@ public static class Signals {
     /// Parameters: EventLabel
     /// </summary>
     public static string EVENT_LABEL_LINK_CLICKED = "OnEventLabelClicked";
+    public static string UPDATE_FACTION_LOGS_UI = "UpdateFactionLogsUI";
+    public static string UPDATE_POI_LOGS_UI = "UpdatePOILogsUI";
     #endregion
 
     #region Quest Signals

@@ -179,10 +179,29 @@ public class UIManager : MonoBehaviour {
         
         Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_OPENED, OnPopupMenuOpened);
         Messenger.AddListener<PopupMenuBase>(Signals.POPUP_MENU_CLOSED, OnPopupMenuClosed);
+        
+        Messenger.AddListener<IPointOfInterest>(Signals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
+        Messenger.AddListener<Faction>(Signals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
         UpdateUI();
         
         returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom);
+    }
+    private void TryUpdateFactionLog(Faction faction) {
+        if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {
+            factionInfoUI.UpdateAllHistoryInfo();
+        }
+    }
+    private void TryUpdatePOILog(IPointOfInterest poi) {
+        if (poi is Character) {
+            if (characterInfoUI.isShowing) {
+                characterInfoUI.UpdateAllHistoryInfo();
+            }
+        } else if (poi is TileObject) {
+            if (tileObjectInfoUI.isShowing) {
+                tileObjectInfoUI.UpdateLogs();
+            }
+        }
     }
     private void OnGameLoaded() {
         UpdateUI();

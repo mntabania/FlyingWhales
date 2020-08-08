@@ -213,7 +213,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //OnOpinionReduced(owner, target, lastStrawReason);
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
-            CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);
+            if (!owner.reactionComponent.isDisguised && !target.reactionComponent.isDisguised) {
+                //only create jobs if both the owner of this and the target is not disguised.
+                CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);    
+            }
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
