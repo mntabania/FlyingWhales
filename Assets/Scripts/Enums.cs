@@ -1187,6 +1187,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MEDDLER:
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.CAVE:
+            case STRUCTURE_TYPE.DEFILER:
                 return true;
             default:
                 return false;

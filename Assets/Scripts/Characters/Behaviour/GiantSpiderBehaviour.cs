@@ -31,7 +31,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 }
             
                 //set abduction target if none, and chance met
-                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(8)) {
+                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(3)) {
                     //check if there are any available animals first
                     List<Character> characterChoices = character.currentRegion.charactersAtLocation
                         .Where(c => c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))).ToList();
