@@ -48,13 +48,13 @@ public class LocalizationManager : MonoBehaviour {
 		for (int i = 0; i < directories.Length; i++) {
 			string categoryName = Path.GetFileName(directories [i]);
 			if (!this._localizedText.ContainsKey(categoryName)) {
-				this._localizedText.Add (categoryName, new Dictionary<string, Dictionary<string, string>> ());
+				this._localizedText.Add(categoryName, new Dictionary<string, Dictionary<string, string>> ());
 			}
 			string[] files = Directory.GetFiles(directories[i], "*.json");
 			for (int j = 0; j < files.Length; j++) {
 				string fileName = Path.GetFileNameWithoutExtension(files[j]);
-				if (!this._localizedText.ContainsKey(fileName)) {
-					this._localizedText [categoryName].Add (fileName, new Dictionary<string, string> ());
+				if (!this._localizedText[categoryName].ContainsKey(fileName)) {
+					this._localizedText[categoryName].Add(fileName, new Dictionary<string, string> ());
 				}
 				if (File.Exists(files[j])) {
 					string dataAsJson = File.ReadAllText(files[j]);
