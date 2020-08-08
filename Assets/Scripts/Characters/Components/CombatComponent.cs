@@ -268,7 +268,7 @@ public class CombatComponent {
                             owner.logComponent.PrintLogIfActive(debugLog);
                             return new CombatReaction(COMBAT_REACTION.Fight, fightReason);
                         } else {
-                            if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.3f)) {
+                            if (owner.currentHP >= Mathf.CeilToInt(owner.maxHP * 0.15f)) {
                                 debugLog += "\n-Character's hp is greater than or equal to 30% of its max hp";
                                 debugLog += "\n-FIGHT";
                                 owner.logComponent.PrintLogIfActive(debugLog);

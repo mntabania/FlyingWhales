@@ -2601,7 +2601,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsHealthCriticallyLow() {
         //chance based dependent on the character
-        return currentHP < (maxHP * 0.35f);
+        return currentHP < (maxHP * 0.15f);
     }
     #endregion
 
