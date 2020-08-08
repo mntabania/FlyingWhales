@@ -304,8 +304,8 @@ public class Player : ILeader, IObjectManipulator {
         if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
             return; //clicked on UI;
         }
+        bool activatedAction = false;
         for (int i = 0; i < currentActivePlayerSpell.targetTypes.Length; i++) {
-            bool activatedAction = false;
             LocationGridTile hoveredTile = null;
             switch (currentActivePlayerSpell.targetTypes[i]) {
                 case SPELL_TARGET.NONE:
@@ -358,7 +358,8 @@ public class Player : ILeader, IObjectManipulator {
         }
         
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-        if (currentActivePlayerSpell.CanPerformAbility() == false || currentActivePlayerSpell is DemonicStructurePlayerSkill) {
+        if (currentActivePlayerSpell.CanPerformAbility() == false || 
+            (currentActivePlayerSpell is DemonicStructurePlayerSkill && activatedAction)) {
             //if player can no longer cast spell after casting it, set active spell to null.
             SetCurrentlyActivePlayerSpell(null);
         }

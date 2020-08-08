@@ -389,6 +389,15 @@ public class PlayerManager : MonoBehaviour {
                 }
             }
         }
+        //check limbo characters
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
+            if(character.faction.isMajorNonPlayerFriendlyNeutral && character.isNormalCharacter) {
+                if(!character.isDead) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
     private void CreateWinCheckTimer() {
