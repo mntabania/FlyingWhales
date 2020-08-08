@@ -555,11 +555,13 @@ public class CombatState : CharacterState {
 
             IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];
 
-            if (isFleeToHome) {
-                stateComponent.character.marker.OnStartFleeToHome();
-            } else {
-                stateComponent.character.marker.OnStartFlee();
-            }
+            //if (isFleeToHome) {
+            //    stateComponent.character.marker.OnStartFleeToHome();
+            //} else {
+            //    stateComponent.character.marker.OnStartFlee();
+            //}
+            stateComponent.character.marker.OnStartFlee();
+
             Messenger.Broadcast(Signals.START_FLEE, stateComponent.character);
 
             string avoidReason = GetAvoidReason(objToAvoid);

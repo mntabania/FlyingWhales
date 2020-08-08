@@ -589,8 +589,8 @@ public class ReactionComponent {
             }
         } else if (!actor.combatComponent.isInActualCombat) {
             debugLog += "\n-Target is not hostile and Character is not in combat";
-            if (disguisedActor.isNormalCharacter && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
-                debugLog += "\n-Character is a villager and Target is not being targeted by an action, continue reaction";
+            if (disguisedActor.isNormalCharacter) { // && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)
+                debugLog += "\n-Character is a villager, continue reaction"; //and Target is not being targeted by an action
                 if (!targetCharacter.isDead) {
                     debugLog += "\n-Target is not dead";
                     if (!actor.isConversing && !targetCharacter.isConversing && actor.nonActionEventsComponent.CanInteract(targetCharacter) 
@@ -672,8 +672,11 @@ public class ReactionComponent {
                                     actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
                                 }
                                 if (!canDoJob) {
-                                    debugLog += "\n-Character cannot do apprehend, will flee instead";
-                                    actor.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+                                    //debugLog += "\n-Character cannot do apprehend, will flee instead";
+                                    //actor.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
+
+                                    debugLog += "\n-Character cannot do apprehend, will become wary instead";
+                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
                                 }
                             }
                         }
@@ -710,14 +713,22 @@ public class ReactionComponent {
                                 debugLog += $"\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()})";
                                 if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
-                                    actor.jobComponent.TryTriggerFeed(targetCharacter);
+                                    if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
+                                        actor.jobComponent.TryTriggerFeed(targetCharacter);
+                                    } else {
+                                        debugLog += "\n-Already has a feed job targeting character";
+                                    }
                                 } else if ((targetCharacter.needsComponent.isTired || targetCharacter.needsComponent.isExhausted) && targetIsParalyzedOrEnsnared) {
                                     debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (disguisedTarget.homeStructure != null) {
                                         Bed bed = disguisedTarget.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
-                                            actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
+                                            if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
+                                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
+                                            } else {
+                                                debugLog += "\n-Already has a move character job targeting character";
+                                            }
                                         } else {
                                             debugLog += "\n-Target has a home but does not have an available bed or already in bed, will not trigger Move Character job";
                                         }
@@ -730,7 +741,11 @@ public class ReactionComponent {
                                         //Pray
                                         if (targetCharacter.currentStructure != disguisedTarget.homeStructure) {
                                             debugLog += "\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
-                                            actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
+                                            if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
+                                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
+                                            } else {
+                                                debugLog += "\n-Already has a move character job targeting character";
+                                            }
                                         } else {
                                             debugLog += "\n-Target chose Pray but is already inside his/her house, will not trigger Move Character job";
                                         }
@@ -738,7 +753,11 @@ public class ReactionComponent {
                                         //Daydream
                                         if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                             debugLog += "\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
-                                            actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                            if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
+                                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                            } else {
+                                                debugLog += "\n-Already has a move character job targeting character";
+                                            }
                                         } else {
                                             debugLog += "\n-Target chose Daydream but is already in an open space structure, will not trigger Move Character job";
                                         }
@@ -1331,6 +1350,17 @@ public class ReactionComponent {
             if(poi.allJobsTargetingThis[i] is GoapPlanJob) {
                 GoapPlanJob planJob = poi.allJobsTargetingThis[i] as GoapPlanJob;
                 if(planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private bool IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE jobType, IPointOfInterest poi) {
+        for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
+            JobQueueItem job = poi.allJobsTargetingThis[i];
+            if (job is GoapPlanJob planJob) {
+                if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
                     return true;
                 }
             }

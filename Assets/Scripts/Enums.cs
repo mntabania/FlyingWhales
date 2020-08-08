@@ -570,6 +570,7 @@ public enum INTERRUPT {
     Feeling_Angry,
     Heatstroke_Death,
     Seizure,
+    Wary
 }
 
 public enum TRAIT_TYPE {
