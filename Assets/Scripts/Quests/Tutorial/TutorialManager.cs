@@ -208,16 +208,16 @@ namespace Tutorial {
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x) == false) == 0) {
                 //all non-bonus tutorials completed
-                if (WorldConfigManager.Instance.isDemoBuild) {
-                    PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
-                        "You're done with the Tutorials! Now it's up to you how you'd like to corrupt this world. Enjoy!");    
-                } else {
+                // if (WorldConfigManager.Instance.isDemoBuild) {
+                //     PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
+                //         "You're done with the Tutorials! Now it's up to you how you'd like to corrupt this world. Enjoy!");    
+                // } else {
                     PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
                         "You're done with the Main Tutorial. Killing Villagers may be quite easy if you simply use spells. " +
                         "The real fun is when you get creative with it! Try to start a Zombie Apocalypse, or let the " +
                         "Villagers fight amongst each other by making them do various crimes, " +
                         "or figure out how to turn someone into a Necromancer. Good luck!");    
-                }
+                // }
                 hasCompletedImportantTutorials = true;
                 Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
             }
