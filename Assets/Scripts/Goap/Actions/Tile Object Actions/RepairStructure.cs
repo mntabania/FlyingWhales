@@ -113,10 +113,26 @@ public class RepairStructure : GoapAction {
                 structureWall.AdjustHP(structureWall.maxHP, ELEMENTAL_TYPE.Normal);
             }
         }
-        //clear out resources stored at structure tile object
-        RESOURCE neededResourceType =
-            (goapNode.poiTarget as StructureTileObject).structureParent.structureObj.WallsMadeOf();
-        goapNode.poiTarget.SetResource(neededResourceType, 0);
+        if (goapNode.poiTarget is StructureTileObject structureTileObject && structureTileObject.structureParent?.structureObj != null) {
+            //clear out resources stored at structure tile object
+            RESOURCE neededResourceType = structureTileObject.structureParent.structureObj.WallsMadeOf();
+            goapNode.poiTarget.SetResource(neededResourceType, 0);
+        }
+    }
+    #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+        bool requirementsSatisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+        if (requirementsSatisfied) {
+            if (target is StructureTileObject structureTileObject) {
+                if (structureTileObject.gridTileLocation == null || structureTileObject.structureParent.hasBeenDestroyed) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
     #endregion
 }

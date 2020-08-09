@@ -461,15 +461,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
             StartMovement();
         }
     }
-    //public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
-    //    pathfindingAI.ClearAllCurrentPathData();
-    //    pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
-    //    this.destinationTile = destinationTile;
-    //    this.arrivalAction = arrivalAction;
-    //    SetTargetTransform(null);
-    //    SetDestination(destination);
-    //    StartMovement();
-    //}
+    public void GoTo(Vector3 destination, Action arrivalAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        pathfindingAI.ClearAllCurrentPathData();
+        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
+        this.destinationTile = destinationTile;
+        this.arrivalAction = arrivalAction;
+        SetTargetTransform(null);
+        SetDestination(destination);
+        StartMovement();
+    }
     public void ArrivedAtTarget() {
         if (character.combatComponent.isInCombat) {
             CombatState combatState = character.stateComponent.currentState as CombatState;
@@ -578,6 +578,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void SetDestination(Vector3 destination, LocationGridTile destinationTile) {
         this.destinationTile = destinationTile;
+        pathfindingAI.destination = destination;
+        pathfindingAI.canSearch = true;
+    }
+    public void SetDestination(Vector3 destination) {
+        this.destinationTile = null;
         pathfindingAI.destination = destination;
         pathfindingAI.canSearch = true;
     }
@@ -1664,5 +1669,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     #endregion
 
-    
+    #region Stroll
+    public void DoStrollMovement(Action onReachPathAction, STRUCTURE_TYPE[] notAllowedStructures = null) {
+        pathfindingAI.ClearAllCurrentPathData();
+        arrivalAction = onReachPathAction;
+        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
+        ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, null);
+        AstarPath.StartPath(constantPath);
+        constantPath.BlockUntilCalculated();
+        GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);
+    }
+    public void OnConstantPathComputed(ConstantPath constantPath) { }
+    #endregion
 }

@@ -56,12 +56,14 @@ public class CharacterAIPath : AILerp {
         }
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning(
-                $"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}" ??
-                $"NoneDestination is {destination}");
+                $"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}. Destination is {destination.ToString()}");
         }
         currentPath = newPath;
         if (newPath is FleeMultiplePath) {
             marker.OnFleePathComputed(newPath);
+            base.OnPathComplete(newPath);
+        } else if (newPath is ConstantPath constantPath) {
+            marker.OnConstantPathComputed(constantPath);
         } else {
             // currentPath = newPath as CustomABPath;
             //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
@@ -75,8 +77,8 @@ public class CharacterAIPath : AILerp {
             //        Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
             //    }
             //}
+            base.OnPathComplete(newPath);
         }
-        base.OnPathComplete(newPath);
         _hasReachedTarget = false;
     }
     public override void SearchPath() {

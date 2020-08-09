@@ -612,11 +612,13 @@ namespace Inner_Maps {
                 && activeCharacter.marker
                 && activeCharacter.marker.pathfindingAI.hasPath
                 && activeCharacter.carryComponent.IsNotBeingCarried()
-                && (activeCharacter.stateComponent.currentState == null 
+                /* && (activeCharacter.stateComponent.currentState == null 
                     || (activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.STROLL_OUTSIDE
-                        && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))) {
+                        && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))*/
+                
+                ) {
                 if (activeCharacter.marker.pathfindingAI.currentPath != null && activeCharacter.carryComponent.masterCharacter.avatar.isTravelling) {
                     ShowPath(activeCharacter);
                 } else {

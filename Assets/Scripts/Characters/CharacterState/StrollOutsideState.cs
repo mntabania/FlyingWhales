@@ -32,10 +32,11 @@ public class StrollOutsideState : CharacterState {
     }
 
     private void StartStrollMovement() {
-        LocationGridTile target = PickRandomTileToGoTo();
-        if(target != null) {
-            stateComponent.character.marker.GoTo(target, StartStrollMovement, null); //_notAllowedStructures
-        }
+        stateComponent.character.marker.DoStrollMovement(StartStrollMovement, _notAllowedStructures);
+        // LocationGridTile target = PickRandomTileToGoTo();
+        // if(target != null) {
+        //     stateComponent.character.marker.GoTo(target, StartStrollMovement, null); //_notAllowedStructures
+        // }
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
