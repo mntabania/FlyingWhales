@@ -33,6 +33,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			yield return MapGenerator.Instance.StartCoroutine(map.CreateSeamlessEdges());
 			PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
 			yield return null;
+			map.PredetermineGraphNodes();
 		}
 	}
 

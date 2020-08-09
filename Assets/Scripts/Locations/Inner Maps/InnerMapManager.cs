@@ -5,6 +5,7 @@ using Cellular_Automata;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Pathfinding;
 using Ruinarch;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -382,8 +383,16 @@ namespace Inner_Maps {
 
             Profiler.BeginSample("Show Tile Data Sample");
 #if UNITY_EDITOR
+            Character showingCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
+            bool isPathPossible = false;
+            if (showingCharacter?.gridTileLocation != null) {
+                isPathPossible = PathUtilities.IsPathPossible(showingCharacter.gridTileLocation.graphNode, tile.graphNode);
+            }
+            
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
+            summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode.Area.ToString()}";
+            summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
             summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
             summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
