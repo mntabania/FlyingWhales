@@ -42,6 +42,14 @@ public class AnkhOfAnubis : Artifact {
                 Summon vengefulGhost = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Vengeful_Ghost, FactionManager.Instance.undeadFaction, null, currentRegion);
                 vengefulGhost.SetName(characterThatDied.name);
                 CharacterManager.Instance.PlaceSummon(vengefulGhost, characterThatDied.gridTileLocation);
+
+                Log log = new Log(GameManager.Instance.Today(), "Artifact", "Ankh Of Anubis", "spawn_vengeful_ghost");
+                log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, characterThatDied.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToInvolvedObjects();
+                if(gridTileLocation != null) {
+                    PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation.structure.location, log);
+                }
             }
         }
     }
