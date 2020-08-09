@@ -657,16 +657,18 @@ public class ReactionComponent {
                         if (!cannotReactToCriminal) {
                             string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
                             if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend)
-                                || ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) || disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
-                                && opinionLabel != RelationshipManager.Rival)) {
+                                || ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) || 
+                                     disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) && 
+                                    opinionLabel != RelationshipManager.Rival)) {
                                 debugLog += "\n-Character is friends/close friend/family member/lover/affair/not rival with target";
                                 Criminal criminalTrait = disguisedTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                                if (!criminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor)) {
+                                if (!criminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
+                                    !disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
                                     debugLog += "\n-Character will worry";
                                     criminalTrait.AddCharacterThatIsAlreadyWorried(disguisedActor);
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
                                 } else {
-                                    debugLog += "\n-Character already worried about this target";
+                                    debugLog += "\n-Character already worried about this target or has reacted to it.";
                                 }
                             } else {
                                 debugLog += "\n-Character is not friends with target";
@@ -678,9 +680,10 @@ public class ReactionComponent {
                                 if (!canDoJob) {
                                     //debugLog += "\n-Character cannot do apprehend, will flee instead";
                                     //actor.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
-
-                                    debugLog += "\n-Character cannot do apprehend, will become wary instead";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
+                                    if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                        debugLog += "\n-Character cannot do apprehend and has not yet reacted to the target, will become wary instead";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);    
+                                    }
                                 }
                             }
                         }
@@ -690,8 +693,9 @@ public class ReactionComponent {
                         debugLog += "\n-Character and Target are with the same faction or npcSettlement";
                         if (disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
-                            if ((!targetCharacter.canMove || !targetCharacter.canPerform)) {
-                                debugLog += "\n-Target can neither move or perform";
+                            if ((!targetCharacter.canMove || !targetCharacter.canPerform) && 
+                                !targetCharacter.defaultCharacterTrait.HasReactedToThis(owner)) {
+                                debugLog += "\n-Target can neither move or perform and actor has not yet reacted to target.";
                                 // if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
                                 // debugLog += "\n-Actor is in Bad or Critical mood";
                                 if (UnityEngine.Random.Range(0, 2) == 0) {
@@ -852,6 +856,9 @@ public class ReactionComponent {
                 debugLog += "\n-Character is minion or summon or Target is currently being targeted by an action, not going to react";
             }
         }
+        
+        //set owner of this component to has reacted to the target character
+        targetCharacter.defaultCharacterTrait.AddCharacterThatHasReactedToThis(owner);
     }
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
         if(actor is Troll) {

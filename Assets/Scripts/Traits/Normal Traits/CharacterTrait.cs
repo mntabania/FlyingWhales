@@ -13,6 +13,7 @@ namespace Traits {
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
         public List<Character> charactersAlreadySawForHope { get; private set; }
         //public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
+        public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
         public Character owner { get; private set; }
 
         public CharacterTrait() {
@@ -23,6 +24,7 @@ namespace Traits {
             isHidden = true;
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
+            charactersThatHaveReactedToThis = new HashSet<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
             //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
@@ -37,6 +39,20 @@ namespace Traits {
             owner = addedTo as Character;
         }
 
+        #region Reactions
+        public void AddCharacterThatHasReactedToThis(Character character) {
+            if (!charactersThatHaveReactedToThis.Contains(character)) {
+                charactersThatHaveReactedToThis.Add(character);
+            }
+        }
+        public void RemoveCharacterThatHasReactedToThis(Character character) {
+            charactersThatHaveReactedToThis.Remove(character);
+        }
+        public bool HasReactedToThis(Character character) {
+            return charactersThatHaveReactedToThis.Contains(character);
+        }
+        #endregion
+        
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject item) {

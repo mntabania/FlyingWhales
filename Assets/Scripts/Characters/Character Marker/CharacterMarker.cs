@@ -1059,10 +1059,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character target = poi as Character;
                 inVisionCharacters.Remove(target);
+                target.defaultCharacterTrait.RemoveCharacterThatHasReactedToThis(character);
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, target);
             } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 inVisionTileObjects.Remove(poi as TileObject);
             }
+            
+            
             return true;
         }
         return false;

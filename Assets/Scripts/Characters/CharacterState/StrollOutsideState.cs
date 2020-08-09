@@ -32,7 +32,7 @@ public class StrollOutsideState : CharacterState {
     }
 
     private void StartStrollMovement() {
-        stateComponent.character.marker.DoStrollMovement(StartStrollMovement, _notAllowedStructures);
+        stateComponent.character.marker.DoStrollMovement(StartStrollMovement);
         // LocationGridTile target = PickRandomTileToGoTo();
         // if(target != null) {
         //     stateComponent.character.marker.GoTo(target, StartStrollMovement, null); //_notAllowedStructures

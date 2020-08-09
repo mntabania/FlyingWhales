@@ -500,6 +500,9 @@ namespace Inner_Maps {
             summary = $"{summary}\n\tDestination Tile: ";
             summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.region.name}";
             
+            summary = $"{summary}\n\tCharacters that have reacted to me: ";
+            summary = character.defaultCharacterTrait.charactersThatHaveReactedToThis.Count > 0 ? character.defaultCharacterTrait.charactersThatHaveReactedToThis.Aggregate(summary, (current, c) => $"{current}{c.name}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tPersonal Job Queue: ";
             summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             
