@@ -10,7 +10,6 @@ namespace Interrupts {
             duration = 2;
             doesStopCurrentAction = true;
             shouldAddLogs = false;
-            shouldShowNotif = true;
         }
     }
 }
