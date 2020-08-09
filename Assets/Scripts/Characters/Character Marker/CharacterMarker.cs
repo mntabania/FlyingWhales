@@ -1553,7 +1553,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private RaycastHit2D[] lineOfSightHitObjects;
     public bool IsCharacterInLineOfSightWith(IPointOfInterest target, float rayDistance = 5f) {
         Profiler.BeginSample($"{character.name} IsCharacterInLineOfSightWith Pre Check");
-        if (inVisionPOIs.Contains(target) == false) { return false; }
+        if (target is BlockWall == false) {
+            //only Check in vision list if target is NOT Block Wall. 
+            //TODO: Rework this after build. This issue arises when angels try to attack demonic structures.
+            if (inVisionPOIs.Contains(target) == false) { return false; }    
+        }
         Profiler.EndSample();
         
         Profiler.BeginSample($"{character.name} start set");

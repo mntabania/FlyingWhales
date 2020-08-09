@@ -350,7 +350,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
-        return gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation));
+        return gridTileLocation != null && source.gridTileLocation != null && (this is BlockWall || (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)));
     }
     public virtual bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
         if(mapVisual == null) {
