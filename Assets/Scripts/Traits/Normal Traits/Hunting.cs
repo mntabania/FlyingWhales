@@ -9,7 +9,7 @@
             description = "This is Dousing fires.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(5);
             isHidden = true;
         }
 

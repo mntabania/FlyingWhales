@@ -22,6 +22,7 @@ public class HuntPreyBehaviour : CharacterBehaviourComponent {
                         Animal deadAnimal = CollectionUtilities.GetRandomElement(deadAnimals);
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_PREY,
                             INTERACTION_TYPE.EAT_CORPSE, deadAnimal, character);
+                        job.SetCancelOnDeath(false);
                         producedJob = job;
                     } else {
                         //only make wolf assault because job to hunt prey will be cancelled after the target animal dies.

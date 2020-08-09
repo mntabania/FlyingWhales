@@ -524,6 +524,14 @@ public class ReactionComponent {
         } else {
             isHostile = disguisedActor.IsHostileWith(disguisedTarget);
         }
+
+        //TODO: Check if demooder and disabler can be set as cannot witness to achieve the same effect
+        if (actor.behaviourComponent.HasBehaviour(typeof(DeMooderBehaviour)) ||
+            actor.behaviourComponent.HasBehaviour(typeof(DisablerBehaviour))) {
+            debugLog += "\n-actor is demooder or disabler, do not react!";
+            return;    
+        }
+        
         if (isHostile) {
             debugLog += "\n-Target is hostile";
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null) {

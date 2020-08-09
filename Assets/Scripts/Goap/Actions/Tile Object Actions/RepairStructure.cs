@@ -23,21 +23,22 @@ public class RepairStructure : GoapAction {
         Assert.IsTrue(target is StructureTileObject, $"Repair structure is being advertised by something that is not a StructureTileObject! {target}");
         StructureTileObject structureTileObject = target as StructureTileObject;
         List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
-        switch (structureTileObject.structureParent.structureObj.WallsMadeOf()) {
-            case RESOURCE.WOOD:
-                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
-                break;
-            case RESOURCE.STONE:
-                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
-                break;
-            case RESOURCE.METAL:
-                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
-                break;
-            default:
-                p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
-                break;
+        if (structureTileObject.structureParent?.structureObj != null) {
+            switch (structureTileObject.structureParent.structureObj.WallsMadeOf()) {
+                case RESOURCE.WOOD:
+                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    break;
+                case RESOURCE.STONE:
+                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    break;
+                case RESOURCE.METAL:
+                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    break;
+                default:
+                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                    break;
+            }
         }
-        
         return p;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -126,7 +127,8 @@ public class RepairStructure : GoapAction {
         bool requirementsSatisfied = base.AreRequirementsSatisfied(actor, target, otherData);
         if (requirementsSatisfied) {
             if (target is StructureTileObject structureTileObject) {
-                if (structureTileObject.gridTileLocation == null || structureTileObject.structureParent.hasBeenDestroyed) {
+                if (structureTileObject.gridTileLocation == null || structureTileObject.structureParent.hasBeenDestroyed
+                    || structureTileObject.structureParent.structureObj == null) {
                     return false;
                 }
             }
