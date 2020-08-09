@@ -94,9 +94,18 @@ public class DragonBehaviour : CharacterBehaviourComponent {
                                 return true;
                             }
                         } else {
-                            log += $"\n-Character is not in target structure, go to it";
-                            LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(dragon.targetStructure.passableTiles);
-                            character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                            log += $"\n-Character is not in target settlement, go to it";
+                            if(dragon.targetStructure.settlementLocation != null) {
+                                LocationStructure targetStructure = dragon.targetStructure.settlementLocation.GetRandomStructure();
+                                if(targetStructure != null) {
+                                    LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                                    if(character.jobComponent.CreateGoToJob(targetTile, out producedJob)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                            log += $"\n-Cannot go to target settlement, roam";
+                            character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                             return true;
                         }
                     } else {
