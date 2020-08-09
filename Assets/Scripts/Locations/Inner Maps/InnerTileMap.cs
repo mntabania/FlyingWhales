@@ -329,6 +329,15 @@ namespace Inner_Maps {
             cameraBounds.w = height - orthographicSize;
             SpawnCenterGo();
         }
+        public void PredetermineGraphNodes() {
+            //predetermine graph nodes
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    LocationGridTile tile = map[x, y];
+                    tile.PredetermineGraphNode();
+                }    
+            }
+        }
         private void SpawnCenterGo() {
             centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
             Vector3 centerPosition = new Vector3(width/2f, height/2f); //new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);

@@ -7,6 +7,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using PathFind;
+using Pathfinding;
 using Scriptable_Object_Scripts;
 using Traits;
 using UnityEngine;
@@ -1346,7 +1347,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-
         #region Hextile
         public HexTile GetNearestHexTileWithinRegion() {
             if (collectionOwner.isPartOfParentRegionMap) {
@@ -1391,6 +1391,13 @@ namespace Inner_Maps {
                 }
             }
             return nearestHex;
+        }
+        #endregion
+
+        #region Pathfinding
+        public GraphNode graphNode { get; private set; }
+        public void PredetermineGraphNode() {
+            graphNode = AstarPath.active.GetNearest(centeredWorldLocation).node;
         }
         #endregion
     }
