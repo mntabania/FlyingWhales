@@ -79,6 +79,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 IPointOfInterest inVision = _owner.marker.inVisionPOIs[i];
                 _owner.marker.AddUnprocessedPOI(inVision);
             }
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, _owner as IPlayerActionTarget);
             //for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
             //    Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
             //    _owner.marker.AddUnprocessedPOI(inVisionCharacter);
