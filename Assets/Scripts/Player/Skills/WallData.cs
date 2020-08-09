@@ -13,6 +13,9 @@ public class WallData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
+        if(targetTile.objHere != null) {
+            targetTile.structure.RemovePOI(targetTile.objHere);
+        }
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         targetTile.structure.AddPOI(wall, targetTile);
@@ -22,7 +25,7 @@ public class WallData : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
-            return targetTile.structure != null && targetTile.objHere == null;
+            return targetTile.structure != null/*&& targetTile.objHere == null*/;
         }
         return canPerform;
     }

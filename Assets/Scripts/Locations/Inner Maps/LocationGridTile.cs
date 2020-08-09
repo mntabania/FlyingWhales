@@ -568,10 +568,10 @@ namespace Inner_Maps {
             poi.SetGridTileLocation(this);
             poi.OnPlacePOI();
             SetTileState(Tile_State.Occupied);
-            if (IsPassable() && !isPassablePreviously) {
-                structure.AddPassableTile(this);
-            } else if (!IsPassable() && isPassablePreviously) {
+            if (!IsPassable()) {
                 structure.RemovePassableTile(this);
+            } else if (IsPassable() && !isPassablePreviously) {
+                structure.AddPassableTile(this);
             }
             Messenger.Broadcast(Signals.OBJECT_PLACED_ON_TILE, this, poi);
         }
@@ -1349,6 +1349,13 @@ namespace Inner_Maps {
 
         #region Hextile
         public HexTile GetNearestHexTileWithinRegion() {
+            if (collectionOwner.isPartOfParentRegionMap) {
+                HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
+                if (hex.elevationType != ELEVATION.WATER && hex.elevationType != ELEVATION.MOUNTAIN) {
+                    return hex;
+                }
+            }
+
             HexTile nearestHex = null;
             float nearestDist = 0f;
             for (int i = 0; i < collectionOwner.region.tiles.Count; i++) {
@@ -1364,6 +1371,13 @@ namespace Inner_Maps {
             return nearestHex;
         }
         public HexTile GetNearestHexTileWithinRegionThatMeetCriteria(System.Func<HexTile, bool> validityChecker) {
+            if (collectionOwner.isPartOfParentRegionMap) {
+                HexTile hex = collectionOwner.partOfHextile.hexTileOwner;
+                if (validityChecker.Invoke(hex)) {
+                    return hex;
+                }
+            }
+
             HexTile nearestHex = null;
             float nearestDist = 0f;
             for (int i = 0; i < collectionOwner.region.tiles.Count; i++) {

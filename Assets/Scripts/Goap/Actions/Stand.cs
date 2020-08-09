@@ -30,7 +30,7 @@ public class Stand : GoapAction {
         if (goapNode.actor is Summon && goapNode.actor.homeStructure != null && goapNode.actor.homeStructure == goapNode.actor.currentStructure) {
             //This might be performance heavy because it returns a new list every time, that is why I switched it to all tiles instead of unoccupied tiles
             //return goapNode.actor.homeStructure.unoccupiedTiles.ToList();
-            return goapNode.actor.homeStructure.tiles;
+            return goapNode.actor.homeStructure.passableTiles;
         }
         return base.NearbyLocationGetter(goapNode);
     }

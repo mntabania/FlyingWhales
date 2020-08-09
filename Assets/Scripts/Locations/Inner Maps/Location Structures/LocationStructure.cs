@@ -638,13 +638,16 @@ namespace Inner_Maps.Location_Structures {
             if (tiles.Remove(tile)) {
                 OnTileRemovedFromStructure(tile);
             }
+            RemovePassableTile(tile);
             RemoveUnoccupiedTile(tile);
         }
         public void AddPassableTile(LocationGridTile tile) {
             passableTiles.Add(tile);
+            //Debug.Log(name + " added passable tile: " + tile.ToString());
         }
         public void RemovePassableTile(LocationGridTile tile) {
             passableTiles.Remove(tile);
+            //Debug.Log(name + " removed passable tile: " + tile.ToString());
         }
         public void AddUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.AddLast(tile);

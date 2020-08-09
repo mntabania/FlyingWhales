@@ -27,7 +27,7 @@ public class BuildTrollCauldron : GoapAction {
         return 10;
     }
     public override List<LocationGridTile> NearbyLocationGetter(ActualGoapNode goapNode) {
-        List<LocationGridTile> tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3);
+        List<LocationGridTile> tiles = goapNode.actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
         for (int i = 0; i < tiles.Count; i++) {
             if(tiles[i].objHere != null) {
                 tiles.RemoveAt(i);

@@ -271,17 +271,18 @@ public class MovementComponent {
             _enableDiggingCounter--;
         }
     }
-    public bool DigOnReachEndPath(Path path) {
-        Vector3 lastPositionInPath = path.vectorPath.Last();
+    public bool DigOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
+        //Vector3 lastPositionInPath = path.vectorPath.Last();
+
         //no path to target tile
         //create job to dig wall
         LocationGridTile targetTile;
 
-        LocationGridTile tile = owner.currentRegion.innerMap.GetTile(lastPositionInPath);
+        LocationGridTile tile = lastGridTileInPath;// owner.currentRegion.innerMap.GetTile(lastPositionInPath);
         if (tile.objHere is BlockWall) {
             targetTile = tile;
         } else {
-            Vector2 direction = lastPositionInPath - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
+            Vector2 direction = lastGridTileInPath.centeredWorldLocation - tile.centeredWorldLocation; //character.behaviourComponent.currentAbductTarget.worldPosition - tile.centeredWorldLocation;
             if (direction.y > 0) {
                 //north
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.North);
@@ -295,15 +296,17 @@ public class MovementComponent {
                 //west
                 targetTile = tile.GetNeighbourAtDirection(GridNeighbourDirection.West);
             }
-            if (targetTile != null && targetTile.objHere == null) {
-                for (int i = 0; i < targetTile.neighbourList.Count; i++) {
-                    LocationGridTile neighbour = targetTile.neighbourList[i];
-                    if (neighbour.objHere is BlockWall) {
-                        targetTile = neighbour;
-                        break;
-                    }
-                }
-            }
+
+            //We must not check the neighbours of neighbours
+            //if (targetTile != null && targetTile.objHere == null) {
+            //    for (int i = 0; i < targetTile.neighbourList.Count; i++) {
+            //        LocationGridTile neighbour = targetTile.neighbourList[i];
+            //        if (neighbour.objHere is BlockWall) {
+            //            targetTile = neighbour;
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
 

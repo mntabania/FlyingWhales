@@ -127,6 +127,9 @@ namespace Inner_Maps {
             }
         }
         private ISelectable GetFirstSelectableOnTile(LocationGridTile tile) {
+            if(tile == null) {
+                return null;
+            }
             PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
 
             raycastResults.Clear();
@@ -778,7 +781,7 @@ namespace Inner_Maps {
 			    LocationGridTile tile = locationGridTiles[i];
 			    if (tile.tileType == LocationGridTile.Tile_Type.Wall) {
 				    //create wall tile object for all walls
-				    BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+				    BlockWall blockWall = CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
 				    blockWall.SetWallType(WALL_TYPE.Flesh);
 				    structure.AddPOI(blockWall, tile);
 			    }
@@ -791,7 +794,7 @@ namespace Inner_Maps {
                 }
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             }
-		    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);	
+		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);	
 		    tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
 		    tile.SetStructure(structure);
@@ -804,7 +807,7 @@ namespace Inner_Maps {
                 tile.CreateSeamlessEdgesForSelfAndNeighbours();
             }
 		    tile.SetStructure(structure);
-		    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);
+		    tile.SetGroundTilemapVisual(assetManager.monsterLairGroundTile);
 		    // tile.SetStructure(structure);
 	    }
 	    private void MonsterLairPerlin(List<LocationGridTile> tiles, LocationStructure structure) {

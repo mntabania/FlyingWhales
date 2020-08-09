@@ -64,17 +64,17 @@ public class CharacterAIPath : AILerp {
             marker.OnFleePathComputed(newPath);
         } else {
             // currentPath = newPath as CustomABPath;
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
-                for (int i = 0; i < currentPath.path.Count; i++) {
-                    Vector3 nodePos = (Vector3)currentPath.path[i].position;
-                    uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
-                    //float dx = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
-                    //float dz = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
-                    //float distSqr = dx * dx + dz * dz;
-                    //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
-                    Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                }
-            }
+            //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
+            //    for (int i = 0; i < currentPath.path.Count; i++) {
+            //        Vector3 nodePos = (Vector3)currentPath.path[i].position;
+            //        uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
+            //        //float dx = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
+            //        //float dz = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
+            //        //float distSqr = dx * dx + dz * dz;
+            //        //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
+            //        Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
+            //    }
+            //}
         }
         base.OnPathComplete(newPath);
         _hasReachedTarget = false;
@@ -225,7 +225,7 @@ public class CharacterAIPath : AILerp {
         return true;
     }
     public uint GetNodePenalty(Vector3 nodePos) {
-        uint penalty = 0;
+        uint penalty = 100000;
         //if (marker.terrifyingObjects.Count > 0) {
         //    for (int i = 0; i < marker.terrifyingObjects.Count; i++) {
         //        IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
@@ -357,12 +357,8 @@ public class CharacterAIPath : AILerp {
                 }
                 if (nodeGridTile != null && nodeGridTile.IsPartOfHumanElvenSettlement()) {
                     return 10000;
-                } else {
-                    return 0;
                 }
-            } else {
-                return 0;
-            }      
+            }     
         }
         return 0;
     }

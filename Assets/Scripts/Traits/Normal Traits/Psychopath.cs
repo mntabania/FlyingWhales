@@ -339,7 +339,7 @@ namespace Traits {
                 //LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character);
                 LocationGridTile outsideSettlementTile = null;
                 BaseSettlement settlement = null;
-                if (character.gridTileLocation.IsPartOfSettlement(out settlement)) {
+                if (targetVictim.gridTileLocation.IsPartOfSettlement(out settlement)) {
                     outsideSettlementTile = settlement.GetAPlainAdjacentHextile()?.GetRandomTile();
                 }
                 if (outsideSettlementTile != null) {
@@ -349,13 +349,13 @@ namespace Traits {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
                     job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { character.homeStructure });
                 } else {
-                    HexTile hex = character.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
+                    HexTile hex = targetVictim.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.settlementOnTile == null);
                     if (hex != null) {
                         LocationGridTile chosenTile = hex.GetRandomTile();
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { chosenTile.structure, chosenTile });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { chosenTile });
                     } else {
-                        LocationStructure structure = character.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
+                        LocationStructure structure = targetVictim.currentRegion.GetStructureOfTypeWithoutSettlement(STRUCTURE_TYPE.WILDERNESS);
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }

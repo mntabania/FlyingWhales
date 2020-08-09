@@ -490,15 +490,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 destinationTile = this.destinationTile;
             }
             LocationGridTile attainedDestinationTile = null;
-            if (character.gridTileLocation == destinationTile) {
+            if (character.gridTileLocation == destinationTile || character.gridTileLocation.IsNeighbour(destinationTile)) {
                 attainedDestinationTile = destinationTile;
             } else {
                 Vector3 lastPositionInPath = pathfindingAI.currentPath.vectorPath.Last();
+                //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
                 attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
             }
             if (character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath)) {
+                if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
                     targetPOI = null;
                     return;
                 }

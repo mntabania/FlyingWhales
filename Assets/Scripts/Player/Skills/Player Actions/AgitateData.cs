@@ -38,7 +38,7 @@ public class AgitateData : PlayerAction {
             if (targetCharacter.currentStructure is Kennel) {
                 return false;
             }
-            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating");
+            return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !targetCharacter.traitContainer.HasTrait("Hibernating") && !targetCharacter.behaviourComponent.isAgitated;
         }
         return canPerform;
     }

@@ -789,7 +789,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                         .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
 			    } else {
-				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);    
+				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+                    //string log = _owner.name + "-> " + _owner.homeStructure.name + " PASSABLE TILES: " + _owner.homeStructure.passableTiles.Count;
+                    //for (int i = 0; i < _owner.homeStructure.passableTiles.Count; i++) {
+                    //    log += "\n" + _owner.homeStructure.passableTiles[i];
+                    //}
+                    //Debug.LogWarning(log);
 			    }
 		    } else if (_owner.homeSettlement != null) {
 			    chosenTile = checkIfPathPossibleWithoutDigging ? 
