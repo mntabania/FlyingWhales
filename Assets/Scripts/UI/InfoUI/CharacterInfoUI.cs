@@ -520,6 +520,8 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs())}";
         summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName + ": " + (activeCharacter.partyComponent.currentParty.IsLeader(activeCharacter) ? "Leader" : "Member (Leader: " + activeCharacter.partyComponent.currentParty.leader.name + ")") : "None"))}";
         summary = $"{summary}{("\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None"))}";
+        summary = $"{summary}{("\nEnable Digging: " + (activeCharacter.movementComponent.enableDigging))}";
+        summary = $"{summary}{("\nAvoid Settlements: " + (activeCharacter.movementComponent.avoidSettlements))}";
 
         if (activeCharacter.stateComponent.currentState != null) {
             summary = $"{summary}\nCurrent State: {activeCharacter.stateComponent.currentState}";

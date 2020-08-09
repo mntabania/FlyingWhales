@@ -298,15 +298,15 @@ public class MovementComponent {
             }
 
             //We must not check the neighbours of neighbours
-            //if (targetTile != null && targetTile.objHere == null) {
-            //    for (int i = 0; i < targetTile.neighbourList.Count; i++) {
-            //        LocationGridTile neighbour = targetTile.neighbourList[i];
-            //        if (neighbour.objHere is BlockWall) {
-            //            targetTile = neighbour;
-            //            break;
-            //        }
-            //    }
-            //}
+            if (targetTile != null && targetTile.objHere == null) {
+                for (int i = 0; i < tile.neighbourList.Count; i++) {
+                    LocationGridTile neighbour = tile.neighbourList[i];
+                    if (neighbour.objHere is BlockWall) {
+                        targetTile = neighbour;
+                        break;
+                    }
+                }
+            }
         }
 
 

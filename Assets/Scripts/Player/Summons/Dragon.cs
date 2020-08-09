@@ -92,7 +92,7 @@ public class Dragon : Summon {
         targetStructure = structure;
     }
     public void SetVillageTargetStructure() {
-        targetStructure = gridTileLocation.GetNearestVillageStructureFromThisWithResidents();
+        targetStructure = gridTileLocation.GetNearestVillageStructureFromThisWithResidents(this);
     }
     public void SetPlayerTargetStructure() {
         targetStructure = PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
