@@ -110,8 +110,7 @@ public class Assault : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
         if(status == REACTION_STATUS.INFORMED) {
-            Character targetCharacter = target as Character;
-            if (targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
+            if (target is Character targetCharacter && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
                 if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     bool targetHasHeinousOrSeriousCrime = false;

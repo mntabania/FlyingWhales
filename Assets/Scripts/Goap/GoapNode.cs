@@ -6,6 +6,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using UtilityScripts;
 
 public class GoapNode {
     //public GoapNode parent;
@@ -257,9 +258,15 @@ public class ActualGoapNode : IReactable, IRumorable {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
                 } else if(targetStructure.unoccupiedTiles.Count > 0) {
                     targetTile = targetStructure.unoccupiedTiles.ElementAt(UtilityScripts.Utilities.Rng.Next(0, targetStructure.unoccupiedTiles.Count));
+                } else if (targetStructure.tiles.Count > 0) {
+                    //if all else fails return a random tile inside the target structure
+                    targetTile = CollectionUtilities.GetRandomElement(targetStructure.tiles);
+                } else  if (actor.gridTileLocation != null){
+                    //if even the structure has no tiles, then just return the actors current location
+                    targetTile = actor.gridTileLocation;
                 } else {
-                    throw new System.Exception(
-                   $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
+                     throw new System.Exception(
+                    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");  
                 }
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
