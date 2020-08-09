@@ -21,15 +21,16 @@ public class ActivateData : PlayerAction {
     public override bool CanPerformAbilityTowards(TileObject targetTileObject) {
         bool canPerform = base.CanPerformAbilityTowards(targetTileObject);
         if (canPerform) {
+            if (targetTileObject is AnkhOfAnubis ankh) {
+                return ankh.gridTileLocation != null && !ankh.isActivated;
+            }
             return targetTileObject.gridTileLocation != null;
         }
         return canPerform;
     }
-    public override bool IsValid(IPlayerActionTarget target) {
-        if(target is AnkhOfAnubis) {
-            return false;
-        }
-        return base.IsValid(target);
-    }
+    //public override bool IsValid(IPlayerActionTarget target) {
+        
+    //    return base.IsValid(target);
+    //}
     #endregion
 }

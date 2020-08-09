@@ -130,21 +130,28 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         additionalText.text = string.Empty;
         if (spellData is PlayerAction || spellData.category == SPELL_CATEGORY.AFFLICTION) {
-            Character activeCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
-            if (activeCharacter != null && spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                if (activeCharacter.traitContainer.HasTrait("Blessed")) {
-                    additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";    
-                }
-                string wholeReason = spellData
-                    .GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
-                if (string.IsNullOrEmpty(wholeReason) == false) {
-                    string[] reasons = wholeReason.Split(',');
-                    for (int i = 0; i < reasons.Length; i++) {
-                        string reason = reasons[i];
-                        additionalText.text += $"<color=\"red\">{reason}</color>\n";   
+            IPointOfInterest activePOI = UIManager.Instance.GetCurrentlySelectedPOI();
+            if (activePOI != null) {
+                if (activePOI is Character activeCharacter) {
+                    if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
+                        if (activeCharacter.traitContainer.HasTrait("Blessed")) {
+                            additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";
+                        }
+                        string wholeReason = spellData
+                            .GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
+                        if (string.IsNullOrEmpty(wholeReason) == false) {
+                            string[] reasons = wholeReason.Split(',');
+                            for (int i = 0; i < reasons.Length; i++) {
+                                string reason = reasons[i];
+                                additionalText.text += $"<color=\"red\">{reason}</color>\n";
+                            }
+                        }
+                    }
+                } else if (activePOI is TileObject activeTileObject) {
+                    if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == SPELL_TYPE.SEIZE_OBJECT) {
+                        additionalText.text += "<color=\"red\">Activated Ankh can no longer be seized.</color>\n";
                     }
                 }
-                
             }
         }
         if(HasEnoughMana(spellData) == false) {
