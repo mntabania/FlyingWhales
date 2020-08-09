@@ -5,41 +5,40 @@ using UnityEngine.Profiling;
 #endif
 
 namespace Pathfinding.Util {
-	/// <summary>
-	/// Helper for drawing Gizmos in a performant way.
-	/// This is a replacement for the Unity Gizmos class as that is not very performant
-	/// when drawing very large amounts of geometry (for example a large grid graph).
-	/// These gizmos can be persistent, so if the data does not change, the gizmos
-	/// do not need to be updated.
-	///
-	/// How to use
-	/// - Create a Hasher object and hash whatever data you will be using to draw the gizmos
-	///      Could be for example the positions of the vertices or something. Just as long as
-	///      if the gizmos should change, then the hash changes as well.
-	/// - Check if a cached mesh exists for that hash
-	/// - If not, then create a Builder object and call the drawing methods until you are done
-	///      and then call Finalize with a reference to a gizmos class and the hash you calculated before.
-	/// - Call gizmos.Draw with the hash.
-	/// - When you are done with drawing gizmos for this frame, call gizmos.FinalizeDraw
-	///
-	/// <code>
-	/// var a = Vector3.zero;
-	/// var b = Vector3.one;
-	/// var color = Color.red;
-	/// var hasher = new RetainedGizmos.Hasher();
-	/// hasher.AddHash(a.GetHashCode());
-	/// hasher.AddHash(b.GetHashCode());
-	/// hasher.AddHash(color.GetHashCode());
-	/// if (!gizmos.Draw(hasher)) {
-	///     using (var helper = gizmos.GetGizmoHelper(active, hasher)) {
-	///         builder.DrawLine(a, b, color);
-	///         builder.Finalize(gizmos, hasher);
-	///     }
-	/// }
-	/// </code>
-	/// </summary>
+	/** Helper for drawing Gizmos in a performant way.
+	 * This is a replacement for the Unity Gizmos class as that is not very performant
+	 * when drawing very large amounts of geometry (for example a large grid graph).
+	 * These gizmos can be persistent, so if the data does not change, the gizmos
+	 * do not need to be updated.
+	 *
+	 * How to use
+	 * - Create a Hasher object and hash whatever data you will be using to draw the gizmos
+	 *      Could be for example the positions of the vertices or something. Just as long as
+	 *      if the gizmos should change, then the hash changes as well.
+	 * - Check if a cached mesh exists for that hash
+	 * - If not, then create a Builder object and call the drawing methods until you are done
+	 *      and then call Finalize with a reference to a gizmos class and the hash you calculated before.
+	 * - Call gizmos.Draw with the hash.
+	 * - When you are done with drawing gizmos for this frame, call gizmos.FinalizeDraw
+	 *
+	 * \code
+	 * var a = Vector3.zero;
+	 * var b = Vector3.one;
+	 * var color = Color.red;
+	 * var hasher = new RetainedGizmos.Hasher();
+	 * hasher.AddHash(a.GetHashCode());
+	 * hasher.AddHash(b.GetHashCode());
+	 * hasher.AddHash(color.GetHashCode());
+	 * if (!gizmos.Draw(hasher)) {
+	 *     using (var helper = gizmos.GetGizmoHelper(active, hasher)) {
+	 *         builder.DrawLine(a, b, color);
+	 *         builder.Finalize(gizmos, hasher);
+	 *     }
+	 * }
+	 * \endcode
+	 */
 	public class RetainedGizmos {
-		/// <summary>Combines hashes into a single hash value</summary>
+		/** Combines hashes into a single hash value */
 		public struct Hasher {
 			ulong hash;
 			bool includePathSearchInfo;
@@ -69,7 +68,7 @@ namespace Pathfinding.Util {
 					var pathNode = debugData.GetPathNode(node.NodeIndex);
 					AddHash((int)pathNode.pathID);
 					AddHash(pathNode.pathID == debugData.PathID ? 1 : 0);
-					AddHash((int) pathNode.F);
+					AddHash((int)pathNode.F);
 				}
 			}
 
@@ -80,7 +79,7 @@ namespace Pathfinding.Util {
 			}
 		}
 
-		/// <summary>Helper for drawing gizmos</summary>
+		/** Helper for drawing gizmos */
 		public class Builder : IAstarPooledObject {
 			List<Vector3> lines = new List<Vector3>();
 			List<Color32> lineColors = new List<Color32>();
@@ -94,12 +93,12 @@ namespace Pathfinding.Util {
 				mesh.SetTriangles(triangles, 0);
 				mesh.colors = colors;
 
-				// Upload all data and mark the mesh as unreadable
-				mesh.UploadMeshData(true);
+				// Upload all data
+				mesh.UploadMeshData(false);
 				meshes.Add(mesh);
 			}
 
-			/// <summary>Draws a wire cube after being transformed the specified transformation</summary>
+			/** Draws a wire cube after being transformed the specified transformation */
 			public void DrawWireCube (GraphTransform tr, Bounds bounds, Color color) {
 				var min = bounds.min;
 				var max = bounds.max;
@@ -152,11 +151,11 @@ namespace Pathfinding.Util {
 					UnityEngine.Assertions.Assert.IsTrue(lineEndPointCount % 2 == 0);
 
 					// Use pooled lists to avoid excessive allocations
-					var vertices = ListPool<Vector3>.Claim(lineEndPointCount*2);
-					var colors = ListPool<Color32>.Claim(lineEndPointCount*2);
-					var normals = ListPool<Vector3>.Claim(lineEndPointCount*2);
-					var uv = ListPool<Vector2>.Claim(lineEndPointCount*2);
-					var tris = ListPool<int>.Claim(lineEndPointCount*3);
+					var vertices = ListPool<Vector3>.Claim (lineEndPointCount*2);
+					var colors = ListPool<Color32>.Claim (lineEndPointCount*2);
+					var normals = ListPool<Vector3>.Claim (lineEndPointCount*2);
+					var uv = ListPool<Vector2>.Claim (lineEndPointCount*2);
+					var tris = ListPool<int>.Claim (lineEndPointCount*3);
 					// Loop through each endpoint of the lines
 					// and add 2 vertices for each
 					for (int j = startIndex; j < endIndex; j++) {
@@ -208,15 +207,15 @@ namespace Pathfinding.Util {
 					mesh.SetNormals(normals);
 					mesh.SetUVs(0, uv);
 
-					// Upload all data and mark the mesh as unreadable
-					mesh.UploadMeshData(true);
+					// Upload all data
+					mesh.UploadMeshData(false);
 
 					// Release the lists back to the pool
-					ListPool<Vector3>.Release(ref vertices);
-					ListPool<Color32>.Release(ref colors);
-					ListPool<Vector3>.Release(ref normals);
-					ListPool<Vector2>.Release(ref uv);
-					ListPool<int>.Release(ref tris);
+					ListPool<Vector3>.Release (ref vertices);
+					ListPool<Color32>.Release (ref colors);
+					ListPool<Vector3>.Release (ref normals);
+					ListPool<Vector2>.Release (ref uv);
+					ListPool<int>.Release (ref tris);
 
 					gizmos.meshes.Add(new MeshWithHash { hash = hash, mesh = mesh, lines = true });
 					gizmos.existingHashes.Add(hash);
@@ -250,7 +249,7 @@ namespace Pathfinding.Util {
 		}
 
 		public GraphGizmoHelper GetGizmoHelper (AstarPath active, Hasher hasher) {
-			var helper = ObjectPool<GraphGizmoHelper>.Claim();
+			var helper = ObjectPool<GraphGizmoHelper>.Claim ();
 
 			helper.Init(active, hasher, this);
 			return helper;
@@ -271,38 +270,36 @@ namespace Pathfinding.Util {
 			}
 		}
 
-		/// <summary>Material to use for the navmesh in the editor</summary>
+		/** Material to use for the navmesh in the editor */
 		public Material surfaceMaterial;
 
-		/// <summary>Material to use for the navmesh outline in the editor</summary>
+		/** Material to use for the navmesh outline in the editor */
 		public Material lineMaterial;
 
-		/// <summary>True if there already is a mesh with the specified hash</summary>
+		/** True if there already is a mesh with the specified hash */
 		public bool HasCachedMesh (Hasher hasher) {
 			return existingHashes.Contains(hasher.Hash);
 		}
 
-		/// <summary>
-		/// Schedules the meshes for the specified hash to be drawn.
-		/// Returns: False if there is no cached mesh for this hash, you may want to
-		///  submit one in that case. The draw command will be issued regardless of the return value.
-		/// </summary>
+		/** Schedules the meshes for the specified hash to be drawn.
+		 * \returns False if there is no cached mesh for this hash, you may want to
+		 *  submit one in that case. The draw command will be issued regardless of the return value.
+		 */
 		public bool Draw (Hasher hasher) {
 			usedHashes.Add(hasher.Hash);
 			return HasCachedMesh(hasher);
 		}
 
-		/// <summary>
-		/// Schedules all meshes that were drawn the last frame (last time FinalizeDraw was called) to be drawn again.
-		/// Also draws any new meshes that have been added since FinalizeDraw was last called.
-		/// </summary>
+		/** Schedules all meshes that were drawn the last frame (last time FinalizeDraw was called) to be drawn again.
+		 * Also draws any new meshes that have been added since FinalizeDraw was last called.
+		 */
 		public void DrawExisting () {
 			for (int i = 0; i < meshes.Count; i++) {
 				usedHashes.Add(meshes[i].hash);
 			}
 		}
 
-		/// <summary>Call after all <see cref="Draw"/> commands for the frame have been done to draw everything</summary>
+		/** Call after all #Draw commands for the frame have been done to draw everything */
 		public void FinalizeDraw () {
 			RemoveUnusedMeshes(meshes);
 
@@ -336,10 +333,9 @@ namespace Pathfinding.Util {
 			Profiler.EndSample();
 		}
 
-		/// <summary>
-		/// Destroys all cached meshes.
-		/// Used to make sure that no memory leaks happen in the Unity Editor.
-		/// </summary>
+		/** Destroys all cached meshes.
+		 * Used to make sure that no memory leaks happen in the Unity Editor.
+		 */
 		public void ClearCache () {
 			usedHashes.Clear();
 			RemoveUnusedMeshes(meshes);
@@ -357,7 +353,7 @@ namespace Pathfinding.Util {
 			// and j pointing to the entry that is a potential candidate for
 			// filling the entry at i.
 			// When j reaches the end of the list it will be reduced in size
-			for (int i = 0, j = 0; i < meshList.Count; ) {
+			for (int i = 0, j = 0; i < meshList.Count;) {
 				if (j == meshList.Count) {
 					j--;
 					meshList.RemoveAt(j);

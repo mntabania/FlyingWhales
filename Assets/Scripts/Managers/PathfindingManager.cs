@@ -7,7 +7,7 @@ using UnityEngine;
 public class PathfindingManager : MonoBehaviour {
 
     public static PathfindingManager Instance = null;
-    private const float nodeSize = 0.3f;
+    private const float nodeSize = 0.3f; //0.3
 
     [SerializeField] private AstarPath aStarPath;
 
@@ -26,27 +26,6 @@ public class PathfindingManager : MonoBehaviour {
     }
     void Start() {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-    }
-
-    internal void CreateGrid(HexTile[,] map, int width, int height) {
-        //GameObject planeGO = GameObject.Instantiate(planePrefab, mapGenerator.transform) as GameObject;
-        HexTile topCornerHexTile = map[width - 1, height - 1];
-        float xSize = (topCornerHexTile.transform.localPosition.x + 4f);
-        float zSize = (topCornerHexTile.transform.localPosition.y + 4f);
-
-        mainGraph = aStarPath.data.AddGraph(typeof(GridGraph)) as GridGraph;
-        mainGraph.cutCorners = false;
-        mainGraph.rotation = new Vector3(-90f, 0f, 0f);
-        mainGraph.SetDimensions(Mathf.FloorToInt(xSize), Mathf.FloorToInt(zSize), 1f);
-        mainGraph.nodeSize = 0.5f;
-        mainGraph.collision.use2D = true;
-        mainGraph.collision.type = ColliderType.Sphere;
-        mainGraph.collision.diameter = 0.8f;
-        mainGraph.collision.mask = LayerMask.GetMask("Unpassable");
-        RescanGrid();
-    }
-    public void RescanGrid() {
-        AstarPath.active.Scan(mainGraph);
     }
     public void RescanGrid(GridGraph graph) {
         AstarPath.active.Scan(graph);
