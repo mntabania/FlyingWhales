@@ -33,12 +33,10 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Party has no waiting area";
                 }
             } else {
-                log += $"\n-Party is not waiting";
-                if (character.currentStructure == counterattackParty.target) {
-                    log += $"\n-Character is already in target structure";
-                    LocationStructure targetStructure = character.currentStructure;
-                    if (targetStructure.objectsThatContributeToDamage.Count > 0) {
-                        log += "\n-Has tile object in vision";
+                if (counterattackParty.target is LocationStructure targetStructure) {
+                    //LocationStructure targetStructure = character.currentStructure;
+                    if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
+                        log += "\n-Has tile object that contribute damage";
                         log += "\n-Adding tile object as hostile";
                         TileObject chosenTileObject = null;
                         IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
@@ -48,28 +46,32 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         if (chosenTileObject != null) {
                             character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
                         } else {
-                            log += "\n-No preplaced tile object in vision";
-                            log += "\n-Roam";
-                            character.jobComponent.TriggerAttackDemonicStructure(out producedJob);
+                            log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                            counterattackParty.DisbandParty();
                         }
                     } else {
-                        log += "\n-No tile object in vision";
-                        log += "\n-Roam";
-                        character.jobComponent.TriggerAttackDemonicStructure(out producedJob);
+                        log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                        counterattackParty.DisbandParty();
                     }
-                } else {
-                    log += $"\n-Character is not in target structure, go to it";
-                    if (counterattackParty.target is LocationStructure targetStructure) {
-                        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                        character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
-                    }
-                    //List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)).ToList();
-                    //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-                    //character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
                 }
+
+                //log += $"\n-Party is not waiting";
+                //if (character.currentStructure == counterattackParty.target) {
+                //    log += $"\n-Character is already in target structure";
+                    
+                //} else {
+                //    log += $"\n-Character is not in target structure, go to it";
+                //    if (counterattackParty.target is LocationStructure targetStructure) {
+                //        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                //        character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                //    }
+                //    //List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)).ToList();
+                //    //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
+                //    //character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                //}
             }
         } else {
-            if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed) {
+            if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed || character.behaviourComponent.attackDemonicStructureTarget == null) {
                 log += $"\n-Demonic structure target is already destroyed";
                 if (character is Summon summon) {
                     if (summon.summonType == SUMMON_TYPE.Magical_Angel || summon.summonType == SUMMON_TYPE.Warrior_Angel) {
@@ -93,39 +95,37 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 character.marker.visionCollider.VoteToFilterVision();
                 character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
             } else {
-                if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                    && character.gridTileLocation.collectionOwner.partOfHextile == character.behaviourComponent.attackDemonicStructureTarget.occupiedHexTile) {
-                    character.marker.visionCollider.VoteToUnFilterVision();
-                    log += "\n-Already in the target demonic structure";
-                    LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
-                    if (targetStructure.objectsThatContributeToDamage.Count > 0) {
-                        log += "\n-Has tile object in vision";
-                        log += "\n-Adding tile object as hostile";
-                        TileObject chosenTileObject = null;
-                        IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
-                        if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
-                            chosenTileObject = tileObject;
-                        }
-                        if (chosenTileObject != null) {
-                            character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
-                        } else {
-                            log += "\n-No preplaced tile object in vision";
-                            log += "\n-Roam";
-                            character.jobComponent.TriggerAttackDemonicStructure(out producedJob);
-                        }
+                LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
+                if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
+                    log += "\n-Has tile object that contribute damage";
+                    log += "\n-Adding tile object as hostile";
+                    TileObject chosenTileObject = null;
+                    IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
+                    if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
+                        chosenTileObject = tileObject;
+                    }
+                    if (chosenTileObject != null) {
+                        character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
                     } else {
-                        log += "\n-No tile object in vision";
-                        log += "\n-Roam";
-                        character.jobComponent.TriggerAttackDemonicStructure(out producedJob);
+                        log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                        character.behaviourComponent.SetDemonicStructureTarget(null);
                     }
                 } else {
-                    log += "\n-Is not in the target demonic structure";
-                    log += "\n-Roam there";
-                    List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles
-                        .Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)).ToList();
-                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-                    character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                    log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                    character.behaviourComponent.SetDemonicStructureTarget(null);
                 }
+
+                //if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                //    && character.gridTileLocation.collectionOwner.partOfHextile == character.behaviourComponent.attackDemonicStructureTarget.occupiedHexTile) {
+                //    character.marker.visionCollider.VoteToUnFilterVision();
+                //    log += "\n-Already in the target demonic structure";
+
+                //} else {
+                //    log += "\n-Is not in the target demonic structure";
+                //    log += "\n-Roam there";
+                //    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(character.behaviourComponent.attackDemonicStructureTarget.passableTiles);
+                //    character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                //}
             }
         }
         return true;
