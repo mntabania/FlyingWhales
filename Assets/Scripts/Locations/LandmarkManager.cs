@@ -426,16 +426,18 @@ public partial class LandmarkManager : MonoBehaviour {
         elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD };
     }
     public STRUCTURE_TYPE[] GetRaceStructureRequirements(RACE race, string category) {
-        if(race == RACE.HUMANS) {
-            if (category == "Survival") { return humanSurvivalStructures; }
-            else if (category == "Utility") { return humanUtilityStructures; }
-            else if (category == "Combat") { return humanCombatStructures; }
-        } else if (race == RACE.ELVES) {
+        if (race == RACE.ELVES) {
             if (category == "Survival") { return elfSurvivalStructures; }
             else if (category == "Utility") { return elfUtilityStructures; }
             else if (category == "Combat") { return elfCombatStructures; }
         }
-        return null;
+        if (category == "Survival") {
+            return humanSurvivalStructures;
+        } else if (category == "Utility") {
+            return humanUtilityStructures;
+        } else {
+            return humanCombatStructures;
+        }
     }
     /// <summary>
     /// Place structures for settlement. This requires that the settlement has enough unoccupied hex tiles.

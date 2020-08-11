@@ -29,6 +29,14 @@ public class TriggerFlawData : PlayerAction {
         }
         return false;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if (target is Character character) {
+            if (!character.isNormalCharacter) {
+                return false;
+            }
+        }
+        return base.IsValid(target);
+    }
     public override string GetReasonsWhyCannotPerformAbilityTowards(Character targetCharacter) {
         string reasons = base.GetReasonsWhyCannotPerformAbilityTowards(targetCharacter); 
         if (targetCharacter.canPerform == false) {

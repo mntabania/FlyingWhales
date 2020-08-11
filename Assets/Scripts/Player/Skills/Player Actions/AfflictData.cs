@@ -26,5 +26,13 @@ public class AfflictData : PlayerAction {
         }
         return false;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(target is Character character) {
+            if (!character.isNormalCharacter) {
+                return false;
+            }
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }
