@@ -65,7 +65,12 @@ public class CounterattackParty : Party {
         }
     }
     private void SetWaitingArea() {
-        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+        List<HexTile> hexes = targetStructure.occupiedHexTile.hexTileOwner.ValidTilesNoSettlementWithinRegion;
+        if(hexes != null && hexes.Count > 0) {
+            waitingArea = UtilityScripts.CollectionUtilities.GetRandomElement(hexes);
+        } else {
+            waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+        }
     }
     #endregion
 }

@@ -37,7 +37,8 @@ public static class RandomNameGenerator {
 		"Hyde", "Irving", "Ian", "Jamie", "Jeremy", "Jesus", "John", "Keaton", "Kirby", "Kipling", "Lander", "Landon", "Leland", "Macon", "Moses", "Matthew", "Maxwell",
 		"Maven", "Niles", "Nigel", "Nestor", "Oakley", "Oliver", "Oswald", "Payton", "Parker", "Preston", "Quentin", "Ramsey", "Randall", "Rhett", "River", "Robert",
 		"Sawyer", "Shelton", "Silas", "Spencer", "Stewart", "Tanner", "Tim", "Terrence", "Ulmer", "Ulric", "Uther", "Wallace", "Wesley", "William", "Wolfe", "Yates",
-		"Donald", "Barrack", "Dante", "Illidan", "Legolas", "Ash", "Rasputin", "Dean", "Leoric", "Deckard", "Jubei", "Alucard", "Taki"
+		"Donald", "Barrack", "Dante", "Illidan", "Legolas", "Ash", "Rasputin", "Dean", "Leoric", "Deckard", "Jubei", "Alucard", "Taki", "Marvin", "Mykel", "Ryan", "Neil",
+        "Tristan", "Michael",
 	};
 
 	private static string[] humanFemaleFirstNames = new[]{
@@ -46,7 +47,7 @@ public static class RandomNameGenerator {
 		"Hazel", "Hannah", "Holly", "Ingrid", "Ivy", "Kenley", "Kelby", "Karen", "Kate", "Laila", "Letha", "Lily", "Lindsey", "Madison", "Maggie", "Mildred", "Misty",
 		"Norma", "Nyx", "Nana", "Nerissa", "Olga", "Oletha", "Posy", "Patsy", "Piper", "Precious", "Raissa", "Rhiannon", "Rose", "Roxanne", "Sable", "Shea", "Shelby",
 		"Susan", "Suzette", "Tanya", "Tatiana", "Taylor", "Velma", "Vanessa", "Violet", "Whitney", "Willow", "Windy", "Hillary", "Arya", "Leia", "Buffy", "Light",
-		"Prue"
+		"Prue", "Marica",
 	};
 
 	private static string[] baseElvenKingdomNames = new[]{

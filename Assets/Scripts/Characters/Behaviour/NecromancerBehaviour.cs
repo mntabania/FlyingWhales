@@ -63,8 +63,9 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
 
                 if(deadSummon != null) {
                     log += $"\n-Character saw a dead summon will try to absorb power";
-                    if (deadSummon.characterClass.elementalType != ELEMENTAL_TYPE.Normal) {
-                        if (!character.traitContainer.HasTrait(deadSummon.characterClass.elementalType.ToString() + " Attacker")) {
+                    ELEMENTAL_TYPE elementalType = deadSummon.characterClass.elementalType;
+                    if (elementalType != ELEMENTAL_TYPE.Normal) {
+                        if (!character.traitContainer.HasTrait(elementalType.ToString() + " Attacker")) {
                             character.jobComponent.TriggerAbsorbPower(deadSummon, out producedJob);
                             return true;
                         }
