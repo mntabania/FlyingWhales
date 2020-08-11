@@ -106,7 +106,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (character.traitContainer.HasTrait("Unconscious")) {
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
-
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, _owner as IPlayerActionTarget);
             //_owner.behaviourComponent.SetIsHarassing(false, null);
             //_owner.behaviourComponent.SetIsInvading(false, null);
             //_owner.behaviourComponent.SetIsDefending(false, null);
