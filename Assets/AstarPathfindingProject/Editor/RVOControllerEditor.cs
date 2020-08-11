@@ -37,9 +37,8 @@ namespace Pathfinding.RVO {
 			EditorGUI.EndDisabledGroup();
 			EditorGUILayout.Separator();
 			PropertyField("debug");
-            PropertyField("useAvoidedAgents");
 
-            bool maxNeighboursLimit = false;
+			bool maxNeighboursLimit = false;
 			bool debugAndMultithreading = false;
 
 			for (int i = 0; i < targets.Length; i++) {

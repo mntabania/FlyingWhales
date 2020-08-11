@@ -20,25 +20,20 @@ namespace Pathfinding.RVO {
 	/// See: RVOSimulator
 	/// </summary>
 	public interface IAgent {
-        string agentName { get; set; }
-        bool useAvoidedAgents { get; set; }
-        List<IAgent> AvoidedAgents { get; set; }
-        bool useNoCollisionOnDifferentStructures { get; set; }
-
-        /// <summary>
-        /// Position of the agent.
-        /// The agent does not move by itself, a movement script has to be responsible for
-        /// reading the CalculatedTargetPoint and CalculatedSpeed properties and move towards that point with that speed.
-        /// This property should ideally be set every frame.
-        ///
-        /// Note that this is a Vector2, not a Vector3 since the RVO simulates everything internally in 2D. So if your agents move in the
-        /// XZ plane you may have to convert it to a Vector3 like this.
-        ///
-        /// <code>
-        /// Vector3 position3D = new Vector3(agent.Position.x, agent.ElevationCoordinate, agent.Position.y);
-        /// </code>
-        /// </summary>
-        Vector2 Position { get; set; }
+		/// <summary>
+		/// Position of the agent.
+		/// The agent does not move by itself, a movement script has to be responsible for
+		/// reading the CalculatedTargetPoint and CalculatedSpeed properties and move towards that point with that speed.
+		/// This property should ideally be set every frame.
+		///
+		/// Note that this is a Vector2, not a Vector3 since the RVO simulates everything internally in 2D. So if your agents move in the
+		/// XZ plane you may have to convert it to a Vector3 like this.
+		///
+		/// <code>
+		/// Vector3 position3D = new Vector3(agent.Position.x, agent.ElevationCoordinate, agent.Position.y);
+		/// </code>
+		/// </summary>
+		Vector2 Position { get; set; }
 
 		/// <summary>
 		/// Coordinate which separates characters in the height direction.
@@ -806,8 +801,13 @@ namespace Pathfinding.RVO {
 		/// <summary>Worker thread for RVO simulation</summary>
 		class Worker {
 			public int start, end;
+#if NET_4_6 || NET_STANDARD_2_0
+			readonly ManualResetEventSlim runFlag = new ManualResetEventSlim(false);
+			readonly ManualResetEventSlim waitFlag = new ManualResetEventSlim(true);
+#else
 			readonly AutoResetEvent runFlag = new AutoResetEvent(false);
 			readonly ManualResetEvent waitFlag = new ManualResetEvent(true);
+#endif
 			readonly Simulator simulator;
 			int task = 0;
 			bool terminate = false;
@@ -817,7 +817,10 @@ namespace Pathfinding.RVO {
 				this.simulator = sim;
 				var thread = new Thread(new ThreadStart(Run));
 				thread.IsBackground = true;
+#if !UNITY_SWITCH || UNITY_EDITOR
+				// Note: Setting the thread name seems to crash when deploying for Switch: https://forum.arongranberg.com/t/path-processor-crashing-nintendo-switch-build/6584
 				thread.Name = "RVO Simulator Thread";
+#endif
 				thread.Start();
 			}
 
@@ -828,7 +831,11 @@ namespace Pathfinding.RVO {
 			}
 
 			public void WaitOne () {
+#if NET_4_6 || NET_STANDARD_2_0
+				if (!terminate) waitFlag.Wait();
+#else
 				if (!terminate) waitFlag.WaitOne();
+#endif
 			}
 
 			public void Terminate () {
@@ -838,7 +845,12 @@ namespace Pathfinding.RVO {
 			}
 
 			public void Run () {
+#if NET_4_6 || NET_STANDARD_2_0
+				runFlag.Wait();
+				runFlag.Reset();
+#else
 				runFlag.WaitOne();
+#endif
 
 				while (!terminate) {
 					try {
@@ -862,7 +874,12 @@ namespace Pathfinding.RVO {
 						Debug.LogError(e);
 					}
 					waitFlag.Set();
+#if NET_4_6 || NET_STANDARD_2_0
+					runFlag.Wait();
+					runFlag.Reset();
+#else
 					runFlag.WaitOne();
+#endif
 				}
 			}
 		}

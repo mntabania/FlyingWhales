@@ -20,22 +20,22 @@ namespace Pathfinding.RVO {
 		protected override float Height { get { return height; } }
 
 		//If UNITY_EDITOR to save a few bytes, these are only needed in the editor
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 		private Vector2 _size;
 		private Vector2 _center;
 		private float _height;
-	#endif
+#endif
 
 		protected override bool AreGizmosDirty () {
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 			bool ret = _size != size || _height != height || _center != center;
 			_size = size;
 			_center = center;
 			_height = height;
 			return ret;
-	#else
+#else
 			return false;
-	#endif
+#endif
 		}
 
 		protected override void CreateObstacles () {

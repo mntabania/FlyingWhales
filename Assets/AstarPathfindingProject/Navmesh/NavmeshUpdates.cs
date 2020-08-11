@@ -44,7 +44,6 @@ namespace Pathfinding {
 		/// </summary>
 		public float updateInterval;
 
-#if (!ASTAR_NO_RECAST_GRAPH || !ASTAR_NO_NAVMESH_GRAPH) && !AstarFree
 		/// <summary>Last time navmesh cuts were applied</summary>
 		float lastUpdateTime = float.NegativeInfinity;
 
@@ -245,7 +244,7 @@ namespace Pathfinding {
 				}
 				forcedReloadRects.ClearFast();
 
-				if (hasBeenUpdated == null) hasBeenUpdated = ListPool<NavmeshClipper>.Claim();
+				if (hasBeenUpdated == null) hasBeenUpdated = ListPool<NavmeshClipper>.Claim ();
 
 				// Reload all bounds touching the previous bounds and current bounds
 				// of navmesh cuts that have moved or changed in some other way
@@ -276,17 +275,8 @@ namespace Pathfinding {
 					hasBeenUpdated[i].NotifyUpdated();
 				}
 
-				ListPool<NavmeshClipper>.Release(ref hasBeenUpdated);
+				ListPool<NavmeshClipper>.Release (ref hasBeenUpdated);
 			}
 		}
-#else
-		internal class NavmeshUpdateSettings {
-			public NavmeshUpdateSettings(NavmeshBase graph) {}
-			public void OnRecalculatedTiles (NavmeshTile[] tiles) {}
-		}
-		internal void Update () {}
-		internal void OnEnable () {}
-		internal void OnDisable () {}
-#endif
 	}
 }

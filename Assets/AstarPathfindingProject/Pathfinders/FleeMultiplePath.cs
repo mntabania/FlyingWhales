@@ -61,14 +61,5 @@ namespace Pathfinding {
                 aim += start - (avoid[i]-start) * 10;
             }
         }
-
-        internal override uint GetTraversalCost(GraphNode node) {
-            uint cost = base.GetTraversalCost(node);
-            //for (int i = 0; i < avoidPoints.Length; i++) {
-            //    uint distance = (uint)Vector3.Distance(avoidPoints[i], (Vector3)node.position);
-            //    cost -= (distance + 10000);
-            //}
-            return cost;
-        }
-    }
+	}
 }

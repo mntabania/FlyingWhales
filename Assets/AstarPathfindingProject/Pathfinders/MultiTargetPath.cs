@@ -144,14 +144,14 @@ namespace Pathfinding {
 		protected override void OnEnterPool () {
 			if (vectorPaths != null)
 				for (int i = 0; i < vectorPaths.Length; i++)
-					if (vectorPaths[i] != null) Util.ListPool<Vector3>.Release(vectorPaths[i]);
+					if (vectorPaths[i] != null) Util.ListPool<Vector3>.Release (vectorPaths[i]);
 
 			vectorPaths = null;
 			vectorPath = null;
 
 			if (nodePaths != null)
 				for (int i = 0; i < nodePaths.Length; i++)
-					if (nodePaths[i] != null) Util.ListPool<GraphNode>.Release(nodePaths[i]);
+					if (nodePaths[i] != null) Util.ListPool<GraphNode>.Release (nodePaths[i]);
 
 			nodePaths = null;
 			path = null;
@@ -263,8 +263,8 @@ namespace Pathfinding {
 			Trace(nodeR);
 			vectorPaths[i] = vectorPath;
 			nodePaths[i] = path;
-			vectorPath = Util.ListPool<Vector3>.Claim();
-			path = Util.ListPool<GraphNode>.Claim();
+			vectorPath = Util.ListPool<Vector3>.Claim ();
+			path = Util.ListPool<GraphNode>.Claim ();
 
 			targetsFound[i] = true;
 
@@ -369,7 +369,7 @@ namespace Pathfinding {
 			startIntPoint = (Int3)startPoint;
 
 			if (!anyNotNull) {
-				FailWithError("Couldn't find nodes close to the all of the end points");
+				FailWithError("Couldn't find a valid node close to the any of the end points");
 				return;
 			}
 

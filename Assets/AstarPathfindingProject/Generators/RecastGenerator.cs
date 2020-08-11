@@ -56,6 +56,7 @@ namespace Pathfinding {
 	/// \ingroup graphs
 	/// </summary>
 	[JsonOptIn]
+	[Pathfinding.Util.Preserve]
 	public class RecastGraph : NavmeshBase, IUpdatableGraph {
 		[JsonMember]
 		/// <summary>
@@ -526,7 +527,7 @@ namespace Pathfinding {
 			}
 
 			for (int i = 0; i < vox.inputMeshes.Count; i++) vox.inputMeshes[i].Pool();
-			ListPool<RasterizationMesh>.Release(ref vox.inputMeshes);
+			ListPool<RasterizationMesh>.Release (ref vox.inputMeshes);
 			AstarProfiler.EndProfile("Build Tiles");
 		}
 
@@ -619,7 +620,7 @@ namespace Pathfinding {
 			var borderExpansion = new Vector3(1, 0, 1)*TileBorderSizeInWorldUnits*2;
 
 			for (int i = 0; i < result.Length; i++) {
-				result[i] = ListPool<RasterizationMesh>.Claim();
+				result[i] = ListPool<RasterizationMesh>.Claim ();
 			}
 
 			for (int i = 0; i < meshes.Count; i++) {
@@ -728,7 +729,7 @@ namespace Pathfinding {
 			}
 
 			for (int i = 0; i < meshes.Count; i++) meshes[i].Pool();
-			ListPool<RasterizationMesh>.Release(ref meshes);
+			ListPool<RasterizationMesh>.Release (ref meshes);
 
 			// Signal that tiles have been recalculated to the navmesh cutting system.
 			navmeshUpdateData.OnRecalculatedTiles(tiles);
@@ -737,7 +738,7 @@ namespace Pathfinding {
 
 		List<RasterizationMesh> CollectMeshes (Bounds bounds) {
 			Profiler.BeginSample("Find Meshes for rasterization");
-			var result = ListPool<RasterizationMesh>.Claim();
+			var result = ListPool<RasterizationMesh>.Claim ();
 
 			var meshGatherer = new RecastMeshGatherer(bounds, terrainSampleSize, mask, tagMask, colliderRasterizeDetail);
 

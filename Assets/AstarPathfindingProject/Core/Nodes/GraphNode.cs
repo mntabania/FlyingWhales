@@ -113,7 +113,7 @@ namespace Pathfinding {
 		///
 		/// Warning: Should only be called by graph classes on their own nodes
 		/// </summary>
-		internal void Destroy () {
+		public void Destroy () {
 			if (Destroyed) return;
 
 			ClearConnections(true);
@@ -344,6 +344,14 @@ namespace Pathfinding {
 			AstarPath.active.hierarchicalGraph.AddDirtyNode(this);
 		}
 
+		/// <summary>
+		/// Recalculates a node's connection costs.
+		/// Deprecated: This method is deprecated because it never did anything, you can safely remove any calls to this method.
+		/// </summary>
+		[System.Obsolete("This method is deprecated because it never did anything, you can safely remove any calls to this method")]
+		public void RecalculateConnectionCosts () {
+		}
+
 		public virtual void UpdateRecursiveG (Path path, PathNode pathNode, PathHandler handler) {
 			//Simple but slow default implementation
 			pathNode.UpdateG(path);
@@ -372,14 +380,81 @@ namespace Pathfinding {
 		/// </summary>
 		public abstract void GetConnections (System.Action<GraphNode> action);
 
+		/// <summary>
+		/// Add a connection from this node to the specified node.
+		/// If the connection already exists, the cost will simply be updated and
+		/// no extra connection added.
+		///
+		/// Note: Only adds a one-way connection. Consider calling the same function on the other node
+		/// to get a two-way connection.
+		///
+		/// <code>
+		/// AstarPath.active.AddWorkItem(new AstarWorkItem(ctx => {
+		///     // Connect two nodes
+		///     var node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.None).node;
+		///     var node2 = AstarPath.active.GetNearest(transform.position + Vector3.right, NNConstraint.None).node;
+		///     var cost = (uint)(node2.position - node1.position).costMagnitude;
+		///     node1.AddConnection(node2, cost);
+		///     node2.AddConnection(node1, cost);
+		///
+		///     node1.ContainsConnection(node2); // True
+		///
+		///     node1.RemoveConnection(node2);
+		///     node2.RemoveConnection(node1);
+		/// }));
+		/// </code>
+		/// </summary>
 		public abstract void AddConnection (GraphNode node, uint cost);
+
+		/// <summary>
+		/// Removes any connection from this node to the specified node.
+		/// If no such connection exists, nothing will be done.
+		///
+		/// Note: This only removes the connection from this node to the other node.
+		/// You may want to call the same function on the other node to remove its possible connection
+		/// to this node.
+		///
+		/// <code>
+		/// AstarPath.active.AddWorkItem(new AstarWorkItem(ctx => {
+		///     // Connect two nodes
+		///     var node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.None).node;
+		///     var node2 = AstarPath.active.GetNearest(transform.position + Vector3.right, NNConstraint.None).node;
+		///     var cost = (uint)(node2.position - node1.position).costMagnitude;
+		///     node1.AddConnection(node2, cost);
+		///     node2.AddConnection(node1, cost);
+		///
+		///     node1.ContainsConnection(node2); // True
+		///
+		///     node1.RemoveConnection(node2);
+		///     node2.RemoveConnection(node1);
+		/// }));
+		/// </code>
+		/// </summary>
 		public abstract void RemoveConnection (GraphNode node);
 
 		/// <summary>Remove all connections from this node.</summary>
 		/// <param name="alsoReverse">if true, neighbours will be requested to remove connections to this node.</param>
 		public abstract void ClearConnections (bool alsoReverse);
 
-		/// <summary>Checks if this node has a connection to the specified node</summary>
+		/// <summary>
+		/// Checks if this node has a connection to the specified node.
+		///
+		/// <code>
+		/// AstarPath.active.AddWorkItem(new AstarWorkItem(ctx => {
+		///     // Connect two nodes
+		///     var node1 = AstarPath.active.GetNearest(transform.position, NNConstraint.None).node;
+		///     var node2 = AstarPath.active.GetNearest(transform.position + Vector3.right, NNConstraint.None).node;
+		///     var cost = (uint)(node2.position - node1.position).costMagnitude;
+		///     node1.AddConnection(node2, cost);
+		///     node2.AddConnection(node1, cost);
+		///
+		///     node1.ContainsConnection(node2); // True
+		///
+		///     node1.RemoveConnection(node2);
+		///     node2.RemoveConnection(node1);
+		/// }));
+		/// </code>
+		/// </summary>
 		public virtual bool ContainsConnection (GraphNode node) {
 			// Simple but slow default implementation
 			bool contains = false;
@@ -535,7 +610,7 @@ namespace Pathfinding {
 				}
 			}
 
-			ArrayPool<Connection>.Release(ref connections, true);
+			ArrayPool<Connection>.Release (ref connections, true);
 			AstarPath.active.hierarchicalGraph.AddDirtyNode(this);
 		}
 
@@ -612,7 +687,7 @@ namespace Pathfinding {
 			// Create new arrays which include the new connection
 			int connLength = connections != null ? connections.Length : 0;
 
-			var newconns = ArrayPool<Connection>.ClaimWithExactLength(connLength+1);
+			var newconns = ArrayPool<Connection>.ClaimWithExactLength (connLength+1);
 			for (int i = 0; i < connLength; i++) {
 				newconns[i] = connections[i];
 			}
@@ -620,7 +695,7 @@ namespace Pathfinding {
 			newconns[connLength] = new Connection(node, cost, (byte)shapeEdge);
 
 			if (connections != null) {
-				ArrayPool<Connection>.Release(ref connections, true);
+				ArrayPool<Connection>.Release (ref connections, true);
 			}
 
 			connections = newconns;
@@ -644,7 +719,7 @@ namespace Pathfinding {
 					// Create new arrays which have the specified node removed
 					int connLength = connections.Length;
 
-					var newconns = ArrayPool<Connection>.ClaimWithExactLength(connLength-1);
+					var newconns = ArrayPool<Connection>.ClaimWithExactLength (connLength-1);
 					for (int j = 0; j < i; j++) {
 						newconns[j] = connections[j];
 					}
@@ -653,7 +728,7 @@ namespace Pathfinding {
 					}
 
 					if (connections != null) {
-						ArrayPool<Connection>.Release(ref connections, true);
+						ArrayPool<Connection>.Release (ref connections, true);
 					}
 
 					connections = newconns;
@@ -721,7 +796,7 @@ namespace Pathfinding {
 			if (count == -1) {
 				connections = null;
 			} else {
-				connections = ArrayPool<Connection>.ClaimWithExactLength(count);
+				connections = ArrayPool<Connection>.ClaimWithExactLength (count);
 
 				for (int i = 0; i < count; i++) {
 					connections[i] = new Connection(

@@ -5,12 +5,12 @@ namespace Pathfinding {
 	/// <summary>
 	/// Explicit mesh object for recast graphs.
 	/// Adding this component to an object will make sure it is included in any recast graphs.
-	/// It will be included even though the Rasterize Meshes toggle is set to false.
+	/// It will be included even if the Rasterize Meshes toggle is set to false.
 	///
 	/// Using RecastMeshObjs instead of relying on the Rasterize Meshes option is good for several reasons.
-	/// - Rasterize Meshes is slow. If you are using a tiled graph and you are updaing it, every time something is recalculated
+	/// - Rasterize Meshes is slow. If you are using a tiled graph and you are updating it, every time something is recalculated
 	/// the graph will have to search all meshes in your scene for ones to rasterize, in contrast, RecastMeshObjs are stored
-	/// in a tree for extreamly fast lookup (O(log n + k) compared to O(n) where n is the number of meshes in your scene and k is the number of meshes
+	/// in a tree for extremely fast lookup (O(log n + k) compared to O(n) where n is the number of meshes in your scene and k is the number of meshes
 	/// which should be rasterized, if you know Big-O notation).
 	/// - The RecastMeshObj exposes some options which can not be accessed using the Rasterize Meshes toggle. See member documentation for more info.
 	///      This can for example be used to include meshes in the recast graph rasterization, but make sure that the character cannot walk on them.

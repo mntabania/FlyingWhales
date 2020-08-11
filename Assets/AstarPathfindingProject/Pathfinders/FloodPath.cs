@@ -63,7 +63,7 @@ namespace Pathfinding {
 		}
 
 		public bool HasPathTo (GraphNode node) {
-			return parents != null && parents.ContainsKey (node);
+			return parents != null && parents.ContainsKey(node);
 		}
 
 		public GraphNode GetParent (GraphNode node) {

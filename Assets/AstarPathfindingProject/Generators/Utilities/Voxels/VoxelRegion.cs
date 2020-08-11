@@ -182,14 +182,6 @@ namespace Pathfinding.Voxels {
 								//This line is the one where the differ most
 
 								nc++;
-#if FALSE
-								if (area == voxelArea.areaTypes[ni]) {
-									nc++;
-								} else {
-									//No way we can reach 4
-									break;
-								}
-#endif
 							} else {
 								break;
 							}
@@ -336,19 +328,6 @@ namespace Pathfinding.Voxels {
 				maxDist = System.Math.Max(src[i], maxDist);
 			}
 
-#if ASTAR_DEBUGREPLAY && FALSE
-			DebugReplay.BeginGroup("Distance Field");
-			for (int z = wd-voxelArea.width; z >= 0; z -= voxelArea.width) {
-				for (int x = voxelArea.width-1; x >= 0; x--) {
-					CompactVoxelCell c = voxelArea.compactCells[x+z];
-
-					for (int i = (int)c.index, ci = (int)(c.index+c.count); i < ci; i++) {
-						DebugReplay.DrawCube(CompactSpanToVector(x, z/voxelArea.width, i), Vector3.one*cellSize, new Color((float)src[i]/maxDist, (float)src[i]/maxDist, (float)src[i]/maxDist));
-					}
-				}
-			}
-			DebugReplay.EndGroup();
-#endif
 
 			return maxDist;
 		}
@@ -423,11 +402,11 @@ namespace Pathfinding.Voxels {
 
 			int expandIterations = 8;
 
-			ushort[] srcReg = Util.ArrayPool<ushort>.Claim(spanCount);
-			ushort[] srcDist = Util.ArrayPool<ushort>.Claim(spanCount);
-			bool[] closed = Util.ArrayPool<bool>.Claim(spanCount);
-			int[] spanFlags = Util.ArrayPool<int>.Claim(spanCount);
-			Int3[] stack = Util.ArrayPool<Int3>.Claim(spanCount);
+			ushort[] srcReg = Util.ArrayPool<ushort>.Claim (spanCount);
+			ushort[] srcDist = Util.ArrayPool<ushort>.Claim (spanCount);
+			bool[] closed = Util.ArrayPool<bool>.Claim (spanCount);
+			int[] spanFlags = Util.ArrayPool<int>.Claim (spanCount);
+			Int3[] stack = Util.ArrayPool<Int3>.Claim (spanCount);
 
 			// The array pool arrays may contain arbitrary data. We need to zero it out.
 			Util.Memory.MemSet(srcReg, (ushort)0, sizeof(ushort));
@@ -566,11 +545,11 @@ namespace Pathfinding.Voxels {
 
 
 			// Pool arrays
-			Util.ArrayPool<ushort>.Release(ref srcReg);
-			Util.ArrayPool<ushort>.Release(ref srcDist);
-			Util.ArrayPool<bool>.Release(ref closed);
-			Util.ArrayPool<int>.Release(ref spanFlags);
-			Util.ArrayPool<Int3>.Release(ref stack);
+			Util.ArrayPool<ushort>.Release (ref srcReg);
+			Util.ArrayPool<ushort>.Release (ref srcDist);
+			Util.ArrayPool<bool>.Release (ref closed);
+			Util.ArrayPool<int>.Release (ref spanFlags);
+			Util.ArrayPool<Int3>.Release (ref stack);
 			//Debug.Log(w0.Elapsed.TotalMilliseconds.ToString("0.0") + " " + w1.Elapsed.TotalMilliseconds.ToString("0.0") + " " + w2.Elapsed.TotalMilliseconds.ToString("0.0") + " " + w3.Elapsed.TotalMilliseconds.ToString("0.0") + " " + w4.Elapsed.TotalMilliseconds.ToString("0.0") + " " + w5.Elapsed.TotalMilliseconds.ToString("0.0"));
 		}
 

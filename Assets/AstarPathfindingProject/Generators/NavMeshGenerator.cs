@@ -23,6 +23,7 @@ namespace Pathfinding {
 	/// [Open online documentation to see images]
 	/// </summary>
 	[JsonOptIn]
+	[Pathfinding.Util.Preserve]
 	public class NavMeshGraph : NavmeshBase, IUpdatableGraph {
 		/// <summary>Mesh to construct navmesh from</summary>
 		[JsonMember]
@@ -64,6 +65,14 @@ namespace Pathfinding {
 		[JsonMember]
 		public bool recalculateNormals = true;
 
+		/// <summary>
+		/// Cached bounding box minimum of <see cref="sourceMesh"/>.
+		/// This is important when the graph has been saved to a file and is later loaded again, but the original mesh does not exist anymore (or has been moved).
+		/// In that case we still need to be able to find the bounding box since the <see cref="CalculateTransform"/> method uses it.
+		/// </summary>
+		[JsonMember]
+		Vector3 cachedSourceMeshBoundsMin;
+
 		protected override bool RecalculateNormals { get { return recalculateNormals; } }
 
 		public override float TileWorldSizeX {
@@ -86,7 +95,7 @@ namespace Pathfinding {
 		}
 
 		public override GraphTransform CalculateTransform () {
-			return new GraphTransform(Matrix4x4.TRS(offset, Quaternion.Euler(rotation), Vector3.one) * Matrix4x4.TRS(sourceMesh != null ? sourceMesh.bounds.min * scale : Vector3.zero, Quaternion.identity, Vector3.one));
+			return new GraphTransform(Matrix4x4.TRS(offset, Quaternion.Euler(rotation), Vector3.one) * Matrix4x4.TRS(sourceMesh != null ? sourceMesh.bounds.min * scale : cachedSourceMeshBoundsMin * scale, Quaternion.identity, Vector3.one));
 		}
 
 		GraphUpdateThreading IUpdatableGraph.CanUpdateAsync (GraphUpdateObject o) {
@@ -209,6 +218,7 @@ namespace Pathfinding {
 		}
 
 		protected override IEnumerable<Progress> ScanInternal () {
+			cachedSourceMeshBoundsMin = sourceMesh != null ? sourceMesh.bounds.min : Vector3.zero;
 			transform = CalculateTransform();
 			tileZCount = tileXCount = 1;
 			tiles = new NavmeshTile[tileZCount*tileXCount];
@@ -223,7 +233,7 @@ namespace Pathfinding {
 
 			forcedBoundsSize = sourceMesh.bounds.size * scale;
 			Vector3[] vectorVertices = sourceMesh.vertices;
-			var intVertices = ListPool<Int3>.Claim(vectorVertices.Length);
+			var intVertices = ListPool<Int3>.Claim (vectorVertices.Length);
 			var matrix = Matrix4x4.TRS(-sourceMesh.bounds.min * scale, Quaternion.identity, Vector3.one * scale);
 			// Convert the vertices to integer coordinates and also position them in graph space
 			// so that the minimum of the bounding box of the mesh is at the origin
@@ -238,7 +248,7 @@ namespace Pathfinding {
 			Int3[] compressedVertices = null;
 			int[] compressedTriangles = null;
 			Polygon.CompressMesh(intVertices, new List<int>(sourceMesh.triangles), out compressedVertices, out compressedTriangles);
-			ListPool<Int3>.Release(ref intVertices);
+			ListPool<Int3>.Release (ref intVertices);
 
 			yield return new Progress(0.2f, "Building Nodes");
 

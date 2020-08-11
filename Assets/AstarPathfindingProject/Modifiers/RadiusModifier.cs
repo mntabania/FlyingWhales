@@ -31,12 +31,12 @@ namespace Pathfinding {
 	[AddComponentMenu("Pathfinding/Modifiers/Radius Offset")]
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_radius_modifier.php")]
 	public class RadiusModifier : MonoModifier {
-		#if UNITY_EDITOR
+#if UNITY_EDITOR
 		[UnityEditor.MenuItem("CONTEXT/Seeker/Add Radius Modifier")]
 		public static void AddComp (UnityEditor.MenuCommand command) {
 			(command.context as Component).gameObject.AddComponent(typeof(RadiusModifier));
 		}
-		#endif
+#endif
 
 		public override int Order { get { return 41; } }
 
@@ -139,7 +139,7 @@ namespace Pathfinding {
 			List<Vector3> res = Apply(vs);
 
 			if (res != vs) {
-				Pathfinding.Util.ListPool<Vector3>.Release(ref p.vectorPath);
+				Pathfinding.Util.ListPool<Vector3>.Release (ref p.vectorPath);
 				p.vectorPath = res;
 			}
 		}
@@ -254,7 +254,7 @@ namespace Pathfinding {
 				}
 			}
 
-			List<Vector3> res = Pathfinding.Util.ListPool<Vector3>.Claim();
+			List<Vector3> res = Pathfinding.Util.ListPool<Vector3>.Claim ();
 			res.Add(vs[0]);
 			if (detail < 1) detail = 1;
 			float step = (float)(2*Math.PI)/detail;

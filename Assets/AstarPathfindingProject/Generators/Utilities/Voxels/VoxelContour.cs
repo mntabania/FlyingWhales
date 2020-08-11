@@ -71,8 +71,8 @@ namespace Pathfinding.Voxels {
 			AstarProfiler.EndProfile("- Mark Boundaries");
 
 			AstarProfiler.StartProfile("- Simplify Contours");
-			List<int> verts = Pathfinding.Util.ListPool<int>.Claim(256);//new List<int> (256);
-			List<int> simplified = Pathfinding.Util.ListPool<int>.Claim(64);//new List<int> (64);
+			List<int> verts = Pathfinding.Util.ListPool<int>.Claim (256);//new List<int> (256);
+			List<int> simplified = Pathfinding.Util.ListPool<int>.Claim (64);//new List<int> (64);
 
 			for (int z = 0; z < wd; z += voxelArea.width) {
 				for (int x = 0; x < voxelArea.width; x++) {
@@ -103,7 +103,7 @@ namespace Pathfinding.Voxels {
 						RemoveDegenerateSegments(simplified);
 
 						VoxelContour contour = new VoxelContour();
-						contour.verts = Pathfinding.Util.ArrayPool<int>.Claim(simplified.Count);//simplified.ToArray ();
+						contour.verts = Pathfinding.Util.ArrayPool<int>.Claim (simplified.Count);//simplified.ToArray ();
 						for (int j = 0; j < simplified.Count; j++) contour.verts[j] = simplified[j];
 #if ASTAR_RECAST_INCLUDE_RAW_VERTEX_CONTOUR
 						//Not used at the moment, just debug stuff
@@ -116,7 +116,7 @@ namespace Pathfinding.Voxels {
 
 						contours.Add(contour);
 
-						#if ASTARDEBUG
+#if ASTARDEBUG
 						for (int q = 0, j = (simplified.Count/4)-1; q < (simplified.Count/4); j = q, q++) {
 							int i4 = q*4;
 							int j4 = j*4;
@@ -146,13 +146,13 @@ namespace Pathfinding.Voxels {
 								Debug.DrawLine(p1, p2, Color.red);
 							}
 						}
-						#endif
+#endif
 					}
 				}
 			}
 
-			Pathfinding.Util.ListPool<int>.Release(ref verts);
-			Pathfinding.Util.ListPool<int>.Release(ref simplified);
+			Pathfinding.Util.ListPool<int>.Release (ref verts);
+			Pathfinding.Util.ListPool<int>.Release (ref simplified);
 
 			AstarProfiler.EndProfile("- Simplify Contours");
 
@@ -226,7 +226,7 @@ namespace Pathfinding.Voxels {
 						contours[mergeIdx] = mcont;
 						contours[i] = cont;
 
-						#if ASTARDEBUG
+#if ASTARDEBUG
 						Debug.Log(mcont.nverts);
 
 						for (int q = 0, j = (mcont.nverts)-1; q < (mcont.nverts); j = q, q++) {
@@ -254,7 +254,7 @@ namespace Pathfinding.Voxels {
 							Debug.DrawLine(p1, p2, Color.red);
 							//}
 						}
-						#endif
+#endif
 					}
 				}
 			}
@@ -302,8 +302,8 @@ namespace Pathfinding.Voxels {
 		static void ReleaseContours (VoxelContourSet cset) {
 			for (int i = 0; i < cset.conts.Count; i++) {
 				VoxelContour cont = cset.conts[i];
-				Pathfinding.Util.ArrayPool<int>.Release(ref cont.verts);
-				Pathfinding.Util.ArrayPool<int>.Release(ref cont.rverts);
+				Pathfinding.Util.ArrayPool<int>.Release (ref cont.verts);
+				Pathfinding.Util.ArrayPool<int>.Release (ref cont.rverts);
 			}
 			cset.conts = null;
 		}
@@ -311,7 +311,7 @@ namespace Pathfinding.Voxels {
 		public static bool MergeContours (ref VoxelContour ca, ref VoxelContour cb, int ia, int ib) {
 			int maxVerts = ca.nverts + cb.nverts + 2;
 
-			int[] verts = Pathfinding.Util.ArrayPool<int>.Claim(maxVerts*4);
+			int[] verts = Pathfinding.Util.ArrayPool<int>.Claim (maxVerts*4);
 
 			//if (!verts)
 			//	return false;
@@ -340,13 +340,13 @@ namespace Pathfinding.Voxels {
 				nv++;
 			}
 
-			Pathfinding.Util.ArrayPool<int>.Release(ref ca.verts);
-			Pathfinding.Util.ArrayPool<int>.Release(ref cb.verts);
+			Pathfinding.Util.ArrayPool<int>.Release (ref ca.verts);
+			Pathfinding.Util.ArrayPool<int>.Release (ref cb.verts);
 
 			ca.verts = verts;
 			ca.nverts = nv;
 
-			cb.verts = Pathfinding.Util.ArrayPool<int>.Claim(0);
+			cb.verts = Pathfinding.Util.ArrayPool<int>.Claim (0);
 			cb.nverts = 0;
 
 			return true;
@@ -431,7 +431,7 @@ namespace Pathfinding.Voxels {
 			//Use the max squared error instead
 			maxError *= maxError;
 
-			for (int i = 0; i < simplified.Count/4; ) {
+			for (int i = 0; i < simplified.Count/4;) {
 				int ii = (i+1) % (simplified.Count/4);
 
 				int ax = simplified[i*4+0];
@@ -511,7 +511,7 @@ namespace Pathfinding.Voxels {
 			float maxEdgeLen = maxEdgeLength / cellSize;
 
 			if (maxEdgeLen > 0 && (buildFlags & (RC_CONTOUR_TESS_WALL_EDGES|RC_CONTOUR_TESS_AREA_EDGES|RC_CONTOUR_TESS_TILE_EDGES)) != 0) {
-				for (int i = 0; i < simplified.Count/4; ) {
+				for (int i = 0; i < simplified.Count/4;) {
 					if (simplified.Count/4 > 200) {
 						break;
 					}
@@ -612,7 +612,7 @@ namespace Pathfinding.Voxels {
 
 			int iter = 0;
 
-			#if ASTARDEBUG
+#if ASTARDEBUG
 			Vector3 previousPos;
 			Vector3 currentPos;
 
@@ -627,12 +627,12 @@ namespace Pathfinding.Voxels {
 				0,
 				z
 				);
-			#endif
+#endif
 
 			while (iter++ < 40000) {
 				//Are we facing a region edge
 				if ((flags[i] & (ushort)(1 << dir)) != 0) {
-					#if ASTARDEBUG
+#if ASTARDEBUG
 					Vector3 pos = ConvertPos(x, 0, z)+new Vector3((voxelArea.DirectionX[dir] != 0) ? Mathf.Sign(voxelArea.DirectionX[dir]) : 0, 0, (voxelArea.DirectionZ[dir]) != 0 ? Mathf.Sign(voxelArea.DirectionZ[dir]) : 0)*0.6F;
 					//int dir2 = (dir+1) & 0x3;
 					//pos += new Vector3 ((voxelArea.DirectionX[dir2] != 0) ? Mathf.Sign(voxelArea.DirectionX[dir2]) : 0,0,(voxelArea.DirectionZ[dir2]) != 0 ? Mathf.Sign(voxelArea.DirectionZ[dir2]) : 0)*1.2F;
@@ -640,7 +640,7 @@ namespace Pathfinding.Voxels {
 					//Debug.DrawLine (ConvertPos (x,0,z),pos,Color.cyan);
 					Debug.DrawLine(previousPos2, pos, Color.blue);
 					previousPos2 = pos;
-					#endif
+#endif
 
 					//Choose the edge corner
 					bool isBorderVertex = false;
@@ -716,7 +716,7 @@ namespace Pathfinding.Voxels {
 					// & 0x3 is the same as % 4 (modulo 4)
 					dir = (dir+3) & 0x3;    // Rotate CCW
 
-					#if ASTARDEBUG
+#if ASTARDEBUG
 					currentPos = ConvertPos(
 						x,
 						0,
@@ -725,7 +725,7 @@ namespace Pathfinding.Voxels {
 
 					Debug.DrawLine(previousPos+Vector3.up*0, currentPos, Color.blue);
 					previousPos = currentPos;
-					#endif
+#endif
 				}
 
 				if (startI == i && startDir == dir) {
@@ -733,7 +733,7 @@ namespace Pathfinding.Voxels {
 				}
 			}
 
-			#if ASTARDEBUG
+#if ASTARDEBUG
 			Color col = new Color(Random.value, Random.value, Random.value);
 
 			for (int q = 0, j = (verts.Count/4)-1; q < (verts.Count/4); j = q, q++) {
@@ -754,7 +754,7 @@ namespace Pathfinding.Voxels {
 
 				Debug.DrawLine(p1, p2, col);
 			}
-			#endif
+#endif
 		}
 
 		public int GetCornerHeight (int x, int z, int i, int dir, ref bool isBorderVertex) {
