@@ -22,6 +22,7 @@ namespace Traits {
                 Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
                 Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
                 Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
+                Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -36,6 +37,12 @@ namespace Traits {
                 Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
                 Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
                 Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_COMBAT, OnCharacterCanNoLongerCombat);
+                Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+            }
+        }
+        private void OnSeizePOI(IPointOfInterest poi) {
+            if (poi == _owner) {
+                _owner.traitContainer.RemoveTrait(_owner, this);
             }
         }
         #endregion
