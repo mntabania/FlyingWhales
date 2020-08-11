@@ -161,6 +161,7 @@ namespace Settings {
             SetFullscreen();
 
             _settings.useEdgePanning = edgePanningToggle.isOn;
+            _settings.skipTutorials = skipTutorialsToggle.isOn;
             
             //resolution
             Screen.fullScreen = settings.fullscreen;
@@ -206,7 +207,6 @@ namespace Settings {
 
         #region Tutorials
         public void OnToggleSkipTutorials(bool state) {
-            skipTutorialsToggle.isOn = state;
             _settings.skipTutorials = state;
             Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, state);
         }

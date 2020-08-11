@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Quests;
+using Settings;
 using TMPro;
 using Tutorial;
 using UnityEngine;
@@ -16,8 +18,10 @@ public class DemoUI : MonoBehaviour {
     [Header("Start Screen")] 
     [SerializeField] private GameObject startScreen;
     [SerializeField] private Image startMessageWindow;
+    [SerializeField] private CanvasGroup startMessageWindowCG;
     [SerializeField] private Button startGameButton;
     [SerializeField] private TextMeshProUGUI startGameButtonLbl;
+    [SerializeField] private Toggle skipTutorialsToggle;
     
     [Header("End Screen")]
     [SerializeField] private GameObject endScreen;
@@ -38,9 +42,12 @@ public class DemoUI : MonoBehaviour {
         //set image starting size
         RectTransform startWindowRT = startMessageWindow.rectTransform;
         startWindowRT.anchoredPosition = new Vector2(0f, -100f);
-        Color color = startMessageWindow.color;
-        color.a = 0f;
-        startMessageWindow.color = color;
+
+        startMessageWindowCG.alpha = 0;
+        
+        // Color color = startMessageWindow.color;
+        // color.a = 0f;
+        // startMessageWindow.color = color;
         
         // //set button starting alpha
         // Graphic graphic = startGameButton.targetGraphic; 
@@ -49,20 +56,18 @@ public class DemoUI : MonoBehaviour {
         // graphic.color = new Color(color.r, color.g, color.b, color.a);
         // startGameButtonLbl.alpha = 0f;
         
+        skipTutorialsToggle.SetIsOnWithoutNotify(SettingsManager.Instance.settings.skipTutorials);
+        
         Sequence sequence = DOTween.Sequence();
         sequence.Append(startWindowRT.DOAnchorPos(Vector2.zero, 0.5f).SetEase(Ease.OutBack));
-        sequence.Join(DOTween.ToAlpha(() => startMessageWindow.color, x => startMessageWindow.color = x, 1f, 0.5f)
-            .SetEase(Ease.InSine));
-        
+        sequence.Join(startMessageWindowCG.DOFade(1f, 0.5f).SetEase(Ease.InSine));
         // sequence.Append(startGameButton.targetGraphic.DOFade(1f, 2f).SetEase(Ease.InCirc).SetDelay(3f).OnComplete(() => startGameButton.interactable = true));
         // sequence.Join(DOTween.ToAlpha(() => startGameButtonLbl.color, x => startGameButtonLbl.color = x, 1f, 2f).SetEase(Ease.InCirc));
         sequence.Play();
     }
     public void OnClickStartGameButton() {
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(startMessageWindow.DOFade(0f, 0.5f).SetEase(Ease.OutSine));
-        sequence.Join(startGameButton.targetGraphic.DOFade(0f, 0.5f).SetEase(Ease.OutSine));
-        sequence.Join(DOTween.ToAlpha(() => startGameButtonLbl.color, x => startGameButtonLbl.color = x, 0f, 0.5f).SetEase(Ease.OutSine));
+        sequence.Append(startMessageWindowCG.DOFade(0f, 0.5f).SetEase(Ease.OutSine));
         sequence.OnComplete(HideStartDemoScreen);
         sequence.Play();
     }
@@ -73,7 +78,12 @@ public class DemoUI : MonoBehaviour {
         InnerMapCameraMove.Instance.EnableMovement();
 
         TutorialManager.Instance.InstantiateImportantTutorials();
-        
+        TutorialManager.Instance.InstantiatePendingBonusTutorials();
+        QuestManager.Instance.InitializeAfterStartTutorial();
+
+    }
+    public void OnToggleSkipTutorials(bool state) {
+        SettingsManager.Instance.OnToggleSkipTutorials(state);
     }
     #endregion
     

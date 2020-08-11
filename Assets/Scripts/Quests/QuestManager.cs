@@ -42,8 +42,14 @@ namespace Quests {
             Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CenterButton");
         }
         public void InitializeAfterLoadoutPicked(){
+            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
+                CheckEliminateAllVillagersQuest();
+                InstantiatePendingSpecialPopups();    
+            }
+        }
+        public void InitializeAfterStartTutorial(){
             CheckEliminateAllVillagersQuest();
-            InstantiatePendingSpecialPopups();
+            InstantiatePendingSpecialPopups();    
         }
         private void InstantiatePendingSpecialPopups() {
             List<Special_Popup> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedSpecialPopups;

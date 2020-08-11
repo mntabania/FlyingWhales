@@ -132,7 +132,10 @@ namespace Tutorial {
             _instantiatedTutorials = new List<TutorialQuest>();
             _completedImportantTutorials = new List<Tutorial>();
             hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
-            InstantiatePendingBonusTutorials();
+            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
+                // Instantiate all pending bonus tutorials. NOTE: In tutorial world this is called after Start Popup is hidden
+                InstantiatePendingBonusTutorials();    
+            }
         }
         /// <summary>
         /// Instantiate all Important tutorials. NOTE: This is called after Start Popup is hidden
