@@ -417,13 +417,13 @@ namespace Pathfinding {
 					break;
 				}
 
-				#if !ASTAR_GRID_NO_CUSTOM_CONNECTIONS
+#if !ASTAR_GRID_NO_CUSTOM_CONNECTIONS
 				// Special node which has custom connections, take care of
 				if (node.connections != null && node.connections.Length > 0) {
 					result = node;
 					break;
 				}
-				#endif
+#endif
 
 
 				// These are the nodes this node is connected to, one bit for each of the 8 directions

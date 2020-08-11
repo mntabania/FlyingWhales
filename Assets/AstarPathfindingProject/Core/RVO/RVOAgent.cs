@@ -37,16 +37,9 @@ namespace Pathfinding.RVO.Sampled {
 		bool debugDraw;
 
 		#region IAgent Properties
-        public string agentName { get; set; }
 
-        public bool useAvoidedAgents { get; set; }
-
-        public List<IAgent> AvoidedAgents { get; set; }
-
-        public bool useNoCollisionOnDifferentStructures { get; set; }
-
-        /// <summary>\copydoc Pathfinding::RVO::IAgent::Position</summary>
-        public Vector2 Position { get; set; }
+		/// <summary>\copydoc Pathfinding::RVO::IAgent::Position</summary>
+		public Vector2 Position { get; set; }
 
 		/// <summary>\copydoc Pathfinding::RVO::IAgent::ElevationCoordinate</summary>
 		public float ElevationCoordinate { get; set; }
@@ -275,10 +268,9 @@ namespace Pathfinding.RVO.Sampled {
 		internal float InsertAgentNeighbour (Agent agent, float rangeSq) {
 			// Check if this agent collides with the other agent
 			if (this == agent || (agent.layer & collidesWith) == 0) return rangeSq;
-            if (this.useAvoidedAgents && agent.layer != RVOLayer.DefaultAgent && (this.AvoidedAgents == null || this.AvoidedAgents.Count <= 0 || !this.AvoidedAgents.Contains(agent))) return rangeSq;
 
-            // 2D distance
-            float dist = (agent.position - position).sqrMagnitude;
+			// 2D distance
+			float dist = (agent.position - position).sqrMagnitude;
 
 			if (dist < rangeSq) {
 				if (neighbours.Count < maxNeighbours) {

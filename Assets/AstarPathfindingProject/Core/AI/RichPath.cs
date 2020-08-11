@@ -52,8 +52,8 @@ namespace Pathfinding {
 			for (int i = 0; i < parts.Count; i++) {
 				var funnelPart = parts[i] as RichFunnel;
 				var specialPart = parts[i] as RichSpecial;
-				if (funnelPart != null) ObjectPool<RichFunnel>.Release(ref funnelPart);
-				else if (specialPart != null) ObjectPool<RichSpecial>.Release(ref specialPart);
+				if (funnelPart != null) ObjectPool<RichFunnel>.Release (ref funnelPart);
+				else if (specialPart != null) ObjectPool<RichSpecial>.Release (ref specialPart);
 			}
 
 			Clear();
@@ -67,7 +67,7 @@ namespace Pathfinding {
 					var graph = AstarData.GetGraph(nodes[i]) as NavmeshBase;
 					if (graph == null) throw new System.Exception("Found a TriangleMeshNode that was not in a NavmeshBase graph");
 
-					RichFunnel f = ObjectPool<RichFunnel>.Claim().Initialize(this, graph);
+					RichFunnel f = ObjectPool<RichFunnel>.Claim ().Initialize(this, graph);
 
 					f.funnelSimplification = simplificationMode;
 
@@ -117,7 +117,7 @@ namespace Pathfinding {
 						continue;
 					}
 
-					RichSpecial rps = ObjectPool<RichSpecial>.Claim().Initialize(nl, nodes[sIndex]);
+					RichSpecial rps = ObjectPool<RichSpecial>.Claim ().Initialize(nl, nodes[sIndex]);
 					parts.Add(rps);
 				}
 			}
@@ -147,6 +147,29 @@ namespace Pathfinding {
 			if (parts.Count == 0) return null;
 			return currentPart < parts.Count ? parts[currentPart] : parts[parts.Count - 1];
 		}
+
+		/// <summary>
+		/// Replaces the buffer with the remaining path.
+		/// See: <see cref="Pathfinding.IAstarAI.GetRemainingPath"/>
+		/// </summary>
+		public void GetRemainingPath (List<Vector3> buffer, Vector3 currentPosition, out bool requiresRepath) {
+			buffer.Clear();
+			buffer.Add(currentPosition);
+			requiresRepath = false;
+			for (int i = currentPart; i < parts.Count; i++) {
+				var part = parts[i];
+				if (part is RichFunnel funnel) {
+					bool lastCorner;
+					if (i != 0) buffer.Add(funnel.exactStart);
+					funnel.Update(i == 0 ? currentPosition : funnel.exactStart, buffer, int.MaxValue, out lastCorner, out requiresRepath);
+					if (requiresRepath) {
+						return;
+					}
+				} else if (part is RichSpecial link) {
+					// By adding all points above the link will look like just a stright line, which is reasonable
+				}
+			}
+		}
 	}
 
 	public abstract class RichPathPart : Pathfinding.Util.IAstarPooledObject {
@@ -170,8 +193,8 @@ namespace Pathfinding {
 		public bool funnelSimplification = true;
 
 		public RichFunnel () {
-			left = Pathfinding.Util.ListPool<Vector3>.Claim();
-			right = Pathfinding.Util.ListPool<Vector3>.Claim();
+			left = Pathfinding.Util.ListPool<Vector3>.Claim ();
+			right = Pathfinding.Util.ListPool<Vector3>.Claim ();
 			nodes = new List<TriangleMeshNode>();
 			this.graph = null;
 		}
@@ -225,7 +248,7 @@ namespace Pathfinding {
 			this.nodes.Clear();
 
 			if (funnelSimplification) {
-				List<GraphNode> tmp = Pathfinding.Util.ListPool<GraphNode>.Claim(end-start);
+				List<GraphNode> tmp = Pathfinding.Util.ListPool<GraphNode>.Claim (end-start);
 
 				SimplifyPath(graph, nodes, start, end, tmp, exactStart, exactEnd);
 
@@ -237,7 +260,7 @@ namespace Pathfinding {
 					if (node != null) this.nodes.Add(node);
 				}
 
-				Pathfinding.Util.ListPool<GraphNode>.Release(ref tmp);
+				Pathfinding.Util.ListPool<GraphNode>.Release (ref tmp);
 			} else {
 				if (this.nodes.Capacity < end-start) this.nodes.Capacity = (end-start);
 				for (int i = start; i <= end; i++) {
@@ -271,6 +294,35 @@ namespace Pathfinding {
 				throw new System.ArgumentException("start >= end");
 			}
 
+			// Do a straight line of sight check to see if the path can be simplified to a single line
+			{
+				GraphHitInfo hit;
+				if (!graph.Linecast(startPoint, endPoint, nodes[start], out hit) && hit.node == nodes[end]) {
+					graph.Linecast(startPoint, endPoint, nodes[start], out hit, result);
+
+					long penaltySum = 0;
+					long penaltySum2 = 0;
+					for (int i = start; i <= end; i++) {
+						penaltySum += nodes[i].Penalty + (path.seeker != null ? path.seeker.tagPenalties[nodes[i].Tag] : 0);
+					}
+
+					for (int i = 0; i < result.Count; i++) {
+						penaltySum2 += result[i].Penalty + (path.seeker != null ? path.seeker.tagPenalties[result[i].Tag] : 0);
+					}
+
+					// Allow 40% more penalty on average per node
+					if ((penaltySum*1.4*result.Count) < (penaltySum2*(end-start+1))) {
+						// The straight line penalties are much higher than the original path.
+						// Revert the simplification
+						result.Clear();
+					} else {
+						// The straight line simplification looks good.
+						// We are done here.
+						return;
+					}
+				}
+			}
+
 			int ostart = start;
 
 			int count = 0;
@@ -287,6 +339,7 @@ namespace Pathfinding {
 
 				int resCount = result.Count;
 
+				// Run a binary search to find the furthest node that we have a clear line of sight to
 				int mx = end+1;
 				int mn = start+1;
 				bool anySucceded = false;
@@ -297,7 +350,9 @@ namespace Pathfinding {
 					Vector3 sp = start == ostart ? startPoint : (Vector3)nodes[start].position;
 					Vector3 ep = mid == end ? endPoint : (Vector3)nodes[mid].position;
 
-					if (graph.Linecast(sp, ep, nodes[start], out hit)) {
+					// Check if there is an obstacle between these points, or if there is no obstacle, but we didn't end up at the right node.
+					// The second case can happen for example in buildings with multiple floors.
+					if (graph.Linecast(sp, ep, nodes[start], out hit) || hit.node != nodes[mid]) {
 						mx = mid;
 					} else {
 						anySucceded = true;
@@ -308,10 +363,11 @@ namespace Pathfinding {
 				if (!anySucceded) {
 					result.Add(nodes[start]);
 
-					//It is guaranteed that mn = start+1
+					// It is guaranteed that mn = start+1
 					start = mn;
 				} else {
-					//Need to redo the linecast to get the trace
+					// Replace a part of the path with the straight path to the furthest node we had line of sight to.
+					// Need to redo the linecast to get the trace (i.e. list of nodes along the line of sight).
 					GraphHitInfo hit;
 					Vector3 sp = start == ostart ? startPoint : (Vector3)nodes[start].position;
 					Vector3 ep = mn == end ? endPoint : (Vector3)nodes[mn].position;
@@ -328,19 +384,16 @@ namespace Pathfinding {
 					}
 
 					// Allow 40% more penalty on average per node
-					if ((penaltySum*1.4*(mn-start+1)) < (penaltySum2*(result.Count-resCount)) || result[result.Count-1] != nodes[mn]) {
-						//Debug.Log ((penaltySum*1.4*(mn-start+1)) + " < "+ (penaltySum2*(result.Count-resCount)));
+					if ((penaltySum*1.4*(result.Count-resCount)) < (penaltySum2*(mn-start+1)) || result[result.Count-1] != nodes[mn]) {
 						//Debug.DrawLine ((Vector3)nodes[start].Position, (Vector3)nodes[mn].Position, Color.red);
-						//Linecast hit the wrong node
+						// Linecast hit the wrong node
 						result.RemoveRange(resCount, result.Count-resCount);
 
 						result.Add(nodes[start]);
 						//Debug.Break();
 						start = start+1;
 					} else {
-						//Debug.Log ("!! " + (penaltySum*1.4*(mn-start+1)) + " < "+ (penaltySum2*(result.Count-resCount)));
 						//Debug.DrawLine ((Vector3)nodes[start].Position, (Vector3)nodes[mn].Position, Color.green);
-						//Debug.Break ();
 						//Remove nodes[end]
 						result.RemoveAt(result.Count-1);
 						start = mn;
@@ -392,7 +445,7 @@ namespace Pathfinding {
 		public float DistanceToEndOfPath {
 			get {
 				var currentNode = CurrentNode;
-				Vector3 closestOnNode = currentNode != null ? currentNode.ClosestPointOnNode(currentPosition) : currentPosition;
+				Vector3 closestOnNode = currentNode != null? currentNode.ClosestPointOnNode (currentPosition) : currentPosition;
 				return (exactEnd - closestOnNode).magnitude;
 			}
 		}
@@ -680,7 +733,7 @@ namespace Pathfinding {
 				return true;
 			}
 
-			#if ASTARDEBUG
+#if ASTARDEBUG
 			for (int i = startIndex; i < left.Count-1; i++) {
 				Debug.DrawLine(left[i], left[i+1], Color.red);
 				Debug.DrawLine(right[i], right[i+1], Color.magenta);
@@ -689,7 +742,7 @@ namespace Pathfinding {
 			for (int i = 0; i < left.Count; i++) {
 				Debug.DrawLine(right[i], left[i], Color.cyan);
 			}
-			#endif
+#endif
 
 			//Remove identical vertices
 			while (left[startIndex+1] == left[startIndex+2] && right[startIndex+1] == right[startIndex+2]) {
@@ -711,10 +764,10 @@ namespace Pathfinding {
 
 			//Test
 			while (VectorMath.IsColinearXZ(origin, left[startIndex+1], right[startIndex+1]) || VectorMath.RightOrColinearXZ(left[startIndex+1], right[startIndex+1], swPoint) == VectorMath.RightOrColinearXZ(left[startIndex+1], right[startIndex+1], origin)) {
-	#if ASTARDEBUG
+#if ASTARDEBUG
 				Debug.DrawLine(left[startIndex+1], right[startIndex+1], new Color(0, 0, 0, 0.5F));
 				Debug.DrawLine(origin, swPoint, new Color(0, 0, 0, 0.5F));
-	#endif
+#endif
 				//left.RemoveAt (1);
 				//right.RemoveAt (1);
 				startIndex++;

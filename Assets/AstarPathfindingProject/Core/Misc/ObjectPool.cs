@@ -29,15 +29,12 @@ namespace Pathfinding.Util {
 	/// </summary>
 	public static class ObjectPool<T> where T : class, IAstarPooledObject, new(){
 		public static T Claim () {
-			return ObjectPoolSimple<T>.Claim();
+			return ObjectPoolSimple<T>.Claim ();
 		}
 
 		public static void Release (ref T obj) {
-			// obj will be set to null so we need to copy the reference
-			var tmp = obj;
-
-			ObjectPoolSimple<T>.Release(ref obj);
-			tmp.OnEnterPool();
+			obj.OnEnterPool();
+			ObjectPoolSimple<T>.Release (ref obj);
 		}
 	}
 

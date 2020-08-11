@@ -35,7 +35,6 @@ namespace Pathfinding {
 		[System.NonSerialized]
 		public bool dirty;
 
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 		/// <summary>
 		/// Costs laid out as n*[int],n*[int],n*[int] where n is the number of pivot points.
 		/// Each node has n integers which is the cost from that node to the pivot node.
@@ -67,7 +66,7 @@ namespace Pathfinding {
 		 */
 		uint rval;
 
-		System.Object lockObj = new object ();
+		System.Object lockObj = new object();
 
 		/// <summary>
 		/// Simple linear congruential generator.
@@ -77,10 +76,8 @@ namespace Pathfinding {
 			rval = (ra*rval + rc);
 			return rval;
 		}
-#endif
 
 		void EnsureCapacity (int index) {
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 			if (index > maxNodeIndex) {
 				lock (lockObj) {
 					if (index > maxNodeIndex) {
@@ -93,11 +90,9 @@ namespace Pathfinding {
 					}
 				}
 			}
-#endif
 		}
 
 		public uint GetHeuristic (int nodeIndex1, int nodeIndex2) {
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 			nodeIndex1 *= pivotCount;
 			nodeIndex2 *= pivotCount;
 
@@ -112,12 +107,8 @@ namespace Pathfinding {
 			}
 
 			return mx;
-#else
-			return 0;
-#endif
 		}
 
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 		void GetClosestWalkableNodesToChildrenRecursively (Transform tr, List<GraphNode> nodes) {
 			foreach (Transform ch in tr) {
 				var info = AstarPath.active.GetNearest(ch.position, NNConstraint.Default);
@@ -178,10 +169,8 @@ namespace Pathfinding {
 
 			return first;
 		}
-#endif
 
 		public void RecalculatePivots () {
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 			if (mode == HeuristicOptimizationMode.None) {
 				pivotCount = 0;
 				pivots = null;
@@ -192,12 +181,12 @@ namespace Pathfinding {
 			rval = (uint)seed;
 
 			// Get a List<GraphNode> from a pool
-			var pivotList = Pathfinding.Util.ListPool<GraphNode>.Claim();
+			var pivotList = Pathfinding.Util.ListPool<GraphNode>.Claim ();
 
 			switch (mode) {
 			case HeuristicOptimizationMode.Custom:
 				if (pivotPointRoot == null) throw new System.Exception("heuristicOptimizationMode is HeuristicOptimizationMode.Custom, " +
-						"but no 'customHeuristicOptimizationPivotsRoot' is set");
+					"but no 'customHeuristicOptimizationPivotsRoot' is set");
 
 				GetClosestWalkableNodesToChildrenRecursively(pivotPointRoot, pivotList);
 				break;
@@ -217,7 +206,7 @@ namespace Pathfinding {
 						pivotList.Add(first);
 					} else {
 						Debug.LogError("Could not find any walkable node in any of the graphs.");
-						Pathfinding.Util.ListPool<GraphNode>.Release(ref pivotList);
+						Pathfinding.Util.ListPool<GraphNode>.Release (ref pivotList);
 						return;
 					}
 				}
@@ -232,12 +221,10 @@ namespace Pathfinding {
 
 			pivots = pivotList.ToArray();
 
-			Pathfinding.Util.ListPool<GraphNode>.Release(ref pivotList);
-#endif
+			Pathfinding.Util.ListPool<GraphNode>.Release (ref pivotList);
 		}
 
 		public void RecalculateCosts () {
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 			if (pivots == null) RecalculatePivots();
 			if (mode == HeuristicOptimizationMode.None) return;
 
@@ -361,11 +348,10 @@ namespace Pathfinding {
 				// Recursive and serial
 				startCostCalculation(0);
 			}
-#endif
+
 			dirty = false;
 		}
 
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 		/// <summary>
 		/// Special case necessary for paths to unwalkable nodes right next to walkable nodes to be able to use good heuristics.
 		///
@@ -438,10 +424,8 @@ namespace Pathfinding {
 			}
 #endif
 		}
-#endif
 
 		public void OnDrawGizmos () {
-#if !AstarFree && !ASTAR_NO_EUCLIDEAN_EMBEDDING
 			if (pivots != null) {
 				for (int i = 0; i < pivots.Length; i++) {
 					Gizmos.color = new Color(159/255.0f, 94/255.0f, 194/255.0f, 0.8f);
@@ -451,7 +435,6 @@ namespace Pathfinding {
 					}
 				}
 			}
-#endif
 		}
 	}
 }

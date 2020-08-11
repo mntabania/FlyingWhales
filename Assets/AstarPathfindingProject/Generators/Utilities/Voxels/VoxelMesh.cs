@@ -160,14 +160,14 @@ namespace Pathfinding.Voxels {
 				maxVertsPerCont = System.Math.Max(maxVertsPerCont, cset.conts[i].nverts);
 			}
 
-			Int3[] verts = ArrayPool<Int3>.Claim(maxVertices);
-			int[] polys = ArrayPool<int>.Claim(maxTris*nvp);
-			int[] areas = ArrayPool<int>.Claim(maxTris);
+			Int3[] verts = ArrayPool<Int3>.Claim (maxVertices);
+			int[] polys = ArrayPool<int>.Claim (maxTris*nvp);
+			int[] areas = ArrayPool<int>.Claim (maxTris);
 
 			Pathfinding.Util.Memory.MemSet<int>(polys, 0xff, sizeof(int));
 
-			int[] indices = ArrayPool<int>.Claim(maxVertsPerCont);
-			int[] tris = ArrayPool<int>.Claim(maxVertsPerCont*3);
+			int[] indices = ArrayPool<int>.Claim (maxVertsPerCont);
+			int[] tris = ArrayPool<int>.Claim (maxVertsPerCont*3);
 
 			int vertexIndex = 0;
 			int polyIndex = 0;
@@ -215,11 +215,11 @@ namespace Pathfinding.Voxels {
 				areas = Memory.ShrinkArray(areas, areaIndex)
 			};
 
-			ArrayPool<Int3>.Release(ref verts);
-			ArrayPool<int>.Release(ref polys);
-			ArrayPool<int>.Release(ref areas);
-			ArrayPool<int>.Release(ref indices);
-			ArrayPool<int>.Release(ref tris);
+			ArrayPool<Int3>.Release (ref verts);
+			ArrayPool<int>.Release (ref polys);
+			ArrayPool<int>.Release (ref areas);
+			ArrayPool<int>.Release (ref indices);
+			ArrayPool<int>.Release (ref tris);
 			AstarProfiler.EndProfile("Build Poly Mesh");
 		}
 
@@ -243,11 +243,11 @@ namespace Pathfinding.Voxels {
 			}
 
 			while (n > 3) {
-				#if ASTARDEBUG
+#if ASTARDEBUG
 				for (int j = 0; j < n; j++) {
 					DrawLine(Prev(j, n), j, indices, verts, Color.red);
 				}
-				#endif
+#endif
 
 				int minLen = -1;
 				int mini = -1;
@@ -261,9 +261,9 @@ namespace Pathfinding.Voxels {
 						int dx = verts[p2+0] - verts[p0+0];
 						int dz = verts[p2+2] - verts[p0+2];
 
-						#if ASTARDEBUG
+#if ASTARDEBUG
 						DrawLine(q, Next(q1, n), indices, verts, Color.blue);
-						#endif
+#endif
 
 						//Squared distance
 						int len = dx*dx + dz*dz;
@@ -299,7 +299,7 @@ namespace Pathfinding.Voxels {
 				int i1 = Next(i, n);
 				int i2 = Next(i1, n);
 
-				#if ASTARDEBUG
+#if ASTARDEBUG
 				for (int j = 0; j < n; j++) {
 					DrawLine(Prev(j, n), j, indices, verts, Color.red);
 				}
@@ -308,7 +308,7 @@ namespace Pathfinding.Voxels {
 				for (int j = 0; j < n; j++) {
 					DrawLine(Prev(j, n), j, indices, verts, Color.red);
 				}
-				#endif
+#endif
 
 				dst[dstIndex] = indices[i] & 0x0fffffff;
 				dstIndex++;

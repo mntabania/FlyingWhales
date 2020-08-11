@@ -53,8 +53,8 @@ namespace Pathfinding {
 
 		/// <summary>Speed in world units</summary>
 		public float speed = 3;
-
-        public float endReachDistance;
+		
+		public float endReachDistance;
 
 		/// <summary>
 		/// Determines which direction the agent moves in.
@@ -93,10 +93,14 @@ namespace Pathfinding {
 		/// <summary>
 		/// If true, some interpolation will be done when a new path has been calculated.
 		/// This is used to avoid short distance teleportation.
+		/// See: <see cref="switchPathInterpolationSpeed"/>
 		/// </summary>
 		public bool interpolatePathSwitches = true;
 
-		/// <summary>How quickly to interpolate to the new path</summary>
+		/// <summary>
+		/// How quickly to interpolate to the new path.
+		/// See: <see cref="interpolatePathSwitches"/>
+		/// </summary>
 		public float switchPathInterpolationSpeed = 5;
 
 		/// <summary>True if the end of the current path has been reached</summary>
@@ -105,7 +109,7 @@ namespace Pathfinding {
 		/// <summary>\copydoc Pathfinding::IAstarAI::reachedDestination</summary>
 		public bool reachedDestination {
 			get {
-				if (!reachedEndOfPath) return false;
+				if (!reachedEndOfPath || !interpolator.valid) return false;
 				// Note: distanceToSteeringTarget is the distance to the end of the path when approachingPathEndpoint is true
 				var dir = destination - interpolator.endPoint;
 				// Ignore either the y or z coordinate depending on if we are using 2D mode or not
@@ -349,21 +353,30 @@ namespace Pathfinding {
 		}
 
 		public void OnDisable () {
-			// Abort any calculations in progress
-			if (seeker != null) seeker.CancelCurrentPathRequest();
-			canSearchAgain = true;
-
-			// Release current path so that it can be pooled
-			if (path != null) path.Release(this);
-			path = null;
-			interpolator.SetPath(null);
-
+			ClearPath();
 			// Make sure we no longer receive callbacks when paths complete
 			seeker.pathCallback -= OnPathComplete;
 		}
 
+		/// <summary>\copydoc Pathfinding::IAstarAI::GetRemainingPath</summary>
+		public void GetRemainingPath (List<Vector3> buffer, out bool stale) {
+			buffer.Clear();
+			if (!interpolator.valid) {
+				buffer.Add(position);
+				stale = true;
+				return;
+			}
+
+			stale = false;
+			interpolator.GetRemainingPath(buffer);
+			// The agent is almost always at interpolation.position (which is buffer[0])
+			// but sometimes - in particular when interpolating between two paths - the agent might at a slightly different position.
+			// So we replace the first point with the actual position of the agent.
+			buffer[0] = position;
+		}
+
 		public void Teleport (Vector3 position, bool clearPath = true) {
-			if (clearPath) interpolator.SetPath(null);
+			if (clearPath) ClearPath();
 			simulatedPosition = previousPosition1 = previousPosition2 = position;
 			if (updatePosition) tr.position = position;
 			reachedEndOfPath = false;
@@ -477,15 +490,37 @@ namespace Pathfinding {
 			// since the vectorPath list (which the interpolator uses) will be pooled.
 			if (oldPath != null) oldPath.Release(this);
 
-			//if (interpolator.remainingDistance <= endReachDistance && !reachedEndOfPath) {
-			//	reachedEndOfPath = true;
-			//	OnTargetReached();
-			//}
+			// if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath) {
+			// 	reachedEndOfPath = true;
+			// 	OnTargetReached();
+			// }
+		}
+
+		/// <summary>
+		/// Clears the current path of the agent.
+		///
+		/// Usually invoked using <see cref="SetPath(null)"/>
+		///
+		/// See: <see cref="SetPath"/>
+		/// See: <see cref="isStopped"/>
+		/// </summary>
+		protected virtual void ClearPath () {
+			// Abort any calculations in progress
+			if (seeker != null) seeker.CancelCurrentPathRequest();
+			canSearchAgain = true;
+			reachedEndOfPath = false;
+
+			// Release current path so that it can be pooled
+			if (path != null) path.Release(this);
+			path = null;
+			interpolator.SetPath(null);
 		}
 
 		/// <summary>\copydoc Pathfinding::IAstarAI::SetPath</summary>
 		public void SetPath (Path path) {
-			if (path.PipelineState == PathState.Created) {
+			if (path == null) {
+				ClearPath();
+			} else if (path.PipelineState == PathState.Created) {
 				// Path has not started calculation yet
 				lastRepath = Time.time;
 				canSearchAgain = false;
@@ -505,6 +540,19 @@ namespace Pathfinding {
 			}
 		}
 
+		// protected virtual void ConfigurePathSwitchInterpolation () {
+		// 	bool reachedEndOfPreviousPath = interpolator.valid && interpolator.remainingDistance < 0.0001f;
+		//
+		// 	if (interpolator.valid && !reachedEndOfPreviousPath) {
+		// 		previousMovementOrigin = interpolator.position;
+		// 		previousMovementDirection = interpolator.tangent.normalized * interpolator.remainingDistance;
+		// 		pathSwitchInterpolationTime = 0;
+		// 	} else {
+		// 		previousMovementOrigin = Vector3.zero;
+		// 		previousMovementDirection = Vector3.zero;
+		// 		pathSwitchInterpolationTime = float.PositiveInfinity;
+		// 	}
+		// }
 		protected virtual void ConfigurePathSwitchInterpolation () {
 			bool reachedEndOfPreviousPath = interpolator.valid && interpolator.remainingDistance < endReachDistance;
 
@@ -537,28 +585,28 @@ namespace Pathfinding {
 			}
 		}
 
-        public virtual void UpdateMe() {
-            if (shouldRecalculatePath) SearchPath();
-            if (canMove) {
-                Vector3 nextPosition;
-                Quaternion nextRotation;
-                MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-                FinalizeMovement(nextPosition, nextRotation);
-            }
-        }
+		public virtual void UpdateMe() {
+			if (shouldRecalculatePath) SearchPath();
+			if (canMove) {
+				Vector3 nextPosition;
+				Quaternion nextRotation;
+				MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+				FinalizeMovement(nextPosition, nextRotation);
+			}
+		}
+		
+		// protected virtual void Update () {
+		// 	if (shouldRecalculatePath) SearchPath();
+		// 	if (canMove) {
+		// 		Vector3 nextPosition;
+		// 		Quaternion nextRotation;
+		// 		MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
+		// 		FinalizeMovement(nextPosition, nextRotation);
+		// 	}
+		// }
 
-        //protected virtual void Update() {
-        //    if (shouldRecalculatePath) SearchPath();
-        //    if (canMove) {
-        //        Vector3 nextPosition;
-        //        Quaternion nextRotation;
-        //        MovementUpdate(Time.deltaTime, out nextPosition, out nextRotation);
-        //        FinalizeMovement(nextPosition, nextRotation);
-        //    }
-        //}
-
-        /// <summary>\copydoc Pathfinding::IAstarAI::MovementUpdate</summary>
-        public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
+		/// <summary>\copydoc Pathfinding::IAstarAI::MovementUpdate</summary>
+		public void MovementUpdate (float deltaTime, out Vector3 nextPosition, out Quaternion nextRotation) {
 			if (updatePosition) simulatedPosition = tr.position;
 			if (updateRotation) simulatedRotation = tr.rotation;
 
@@ -597,26 +645,26 @@ namespace Pathfinding {
 				direction = Vector3.zero;
 				return simulatedPosition;
 			}
-
+		
 			interpolator.distance += deltaTime * speed;
-
+		
 			if (interpolator.remainingDistance <= endReachDistance && !reachedEndOfPath) {
 				reachedEndOfPath = true;
 				OnTargetReached();
 			}
-
-            if (!interpolator.valid) {
-                direction = Vector3.zero;
-                return simulatedPosition;
-            }
-            direction = interpolator.tangent;
+		
+			if (!interpolator.valid) {
+				direction = Vector3.zero;
+				return simulatedPosition;
+			}
+			direction = interpolator.tangent;
 			pathSwitchInterpolationTime += deltaTime;
 			var alpha = switchPathInterpolationSpeed * pathSwitchInterpolationTime;
 			if (interpolatePathSwitches && alpha < 1f) {
 				// Find the approximate position we would be at if we
 				// would have continued to follow the previous path
 				Vector3 positionAlongPreviousPath = previousMovementOrigin + Vector3.ClampMagnitude(previousMovementDirection, speed * pathSwitchInterpolationTime);
-
+		
 				// Interpolate between the position on the current path and the position
 				// we would have had if we would have continued along the previous path.
 				return Vector3.Lerp(positionAlongPreviousPath, interpolator.position, alpha);
@@ -624,6 +672,37 @@ namespace Pathfinding {
 				return interpolator.position;
 			}
 		}
+		
+		// /// <summary>Calculate the AI's next position (one frame in the future).</summary>
+		// /// <param name="direction">The tangent of the segment the AI is currently traversing. Not normalized.</param>
+		// protected virtual Vector3 CalculateNextPosition (out Vector3 direction, float deltaTime) {
+		// 	if (!interpolator.valid) {
+		// 		direction = Vector3.zero;
+		// 		return simulatedPosition;
+		// 	}
+		//
+		// 	interpolator.distance += deltaTime * speed;
+		//
+		// 	if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath) {
+		// 		reachedEndOfPath = true;
+		// 		OnTargetReached();
+		// 	}
+		//
+		// 	direction = interpolator.tangent;
+		// 	pathSwitchInterpolationTime += deltaTime;
+		// 	var alpha = switchPathInterpolationSpeed * pathSwitchInterpolationTime;
+		// 	if (interpolatePathSwitches && alpha < 1f) {
+		// 		// Find the approximate position we would be at if we
+		// 		// would have continued to follow the previous path
+		// 		Vector3 positionAlongPreviousPath = previousMovementOrigin + Vector3.ClampMagnitude(previousMovementDirection, speed * pathSwitchInterpolationTime);
+		//
+		// 		// Interpolate between the position on the current path and the position
+		// 		// we would have had if we would have continued along the previous path.
+		// 		return Vector3.Lerp(positionAlongPreviousPath, interpolator.position, alpha);
+		// 	} else {
+		// 		return interpolator.position;
+		// 	}
+		// }
 
 		protected override int OnUpgradeSerializedData (int version, bool unityThread) {
 			#pragma warning disable 618

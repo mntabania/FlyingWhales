@@ -1,4 +1,3 @@
-#if !ASTAR_NO_RECAST_GRAPH || !ASTAR_NO_NAVMESH_GRAPH
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -411,8 +410,8 @@ namespace Pathfinding.Util {
 			// Nothing to do here
 			if (verts.Length == 0 || tris.Length == 0) {
 				return new CuttingResult {
-						   verts = ArrayPool<Int3>.Claim(0),
-						   tris = ArrayPool<int>.Claim(0)
+						   verts = ArrayPool<Int3>.Claim (0),
+						   tris = ArrayPool<int>.Claim (0)
 				};
 			}
 
@@ -445,7 +444,7 @@ namespace Pathfinding.Util {
 			var cutRegionSize = new Vector2(graphSpaceBounds.size.x, graphSpaceBounds.size.z);
 
 			if ((mode & CutMode.CutExtra) != 0) {
-				extraClipShape = ListPool<IntPoint>.Claim(extraShape.Length);
+				extraClipShape = ListPool<IntPoint>.Claim (extraShape.Length);
 				for (int i = 0; i < extraShape.Length; i++) {
 					var p = transform.InverseTransform(extraShape[i]);
 					extraClipShape.Add(new IntPoint(p.x, p.z));
@@ -463,31 +462,31 @@ namespace Pathfinding.Util {
 			List<NavmeshCut> navmeshCuts;
 			if (mode == CutMode.CutExtra) {
 				// Not needed when only cutting extra
-				navmeshCuts = ListPool<NavmeshCut>.Claim();
+				navmeshCuts = ListPool<NavmeshCut>.Claim ();
 			} else {
 				navmeshCuts = cuts.QueryRect<NavmeshCut>(tiles);
 			}
 
 			// Find all NavmeshAdd components that could be inside the bounds
 			List<NavmeshAdd> navmeshAdds = cuts.QueryRect<NavmeshAdd>(tiles);
-			var intersectingCuts = ListPool<int>.Claim();
+			var intersectingCuts = ListPool<int>.Claim ();
 
 			var cutInfos = PrepareNavmeshCutsForCutting(navmeshCuts, transform, bounds, perturbate, navmeshAdds.Count > 0);
 
-			var outverts = ListPool<Int3>.Claim(verts.Length*2);
-			var outtris = ListPool<int>.Claim(tris.Length);
+			var outverts = ListPool<Int3>.Claim (verts.Length*2);
+			var outtris = ListPool<int>.Claim (tris.Length);
 
 			if (navmeshCuts.Count == 0 && navmeshAdds.Count == 0 && (mode & ~(CutMode.CutAll | CutMode.CutDual)) == 0 && (mode & CutMode.CutAll) != 0) {
 				// Fast path for the common case, no cuts or adds to the navmesh, so we just copy the vertices
 				CopyMesh(verts, tris, outverts, outtris);
 			} else {
-				var poly = ListPool<IntPoint>.Claim();
+				var poly = ListPool<IntPoint>.Claim ();
 				var point2Index = new Dictionary<TriangulationPoint, int>();
-				var polypoints = ListPool<Poly2Tri.PolygonPoint>.Claim();
+				var polypoints = ListPool<Poly2Tri.PolygonPoint>.Claim ();
 
 				var clipResult = new Pathfinding.ClipperLib.PolyTree();
-				var intermediateClipResult = ListPool<List<IntPoint> >.Claim();
-				var polyCache = StackPool<Poly2Tri.Polygon>.Claim();
+				var intermediateClipResult = ListPool<List<IntPoint> >.Claim ();
+				var polyCache = StackPool<Poly2Tri.Polygon>.Claim ();
 
 				// If we failed the previous iteration
 				// use a higher quality cutting
@@ -703,11 +702,11 @@ namespace Pathfinding.Util {
 					}
 				}
 
-				if (vertexBuffer != null) ArrayPool<Int3>.Release(ref vertexBuffer);
-				StackPool<Poly2Tri.Polygon>.Release(polyCache);
-				ListPool<List<IntPoint> >.Release(ref intermediateClipResult);
-				ListPool<IntPoint>.Release(ref poly);
-				ListPool<Poly2Tri.PolygonPoint>.Release(ref polypoints);
+				if (vertexBuffer != null) ArrayPool<Int3>.Release (ref vertexBuffer);
+				StackPool<Poly2Tri.Polygon>.Release (polyCache);
+				ListPool<List<IntPoint> >.Release (ref intermediateClipResult);
+				ListPool<IntPoint>.Release (ref poly);
+				ListPool<Poly2Tri.PolygonPoint>.Release (ref polypoints);
 			}
 
 			// This next step will remove all duplicate vertices in the data (of which there are quite a few)
@@ -721,16 +720,16 @@ namespace Pathfinding.Util {
 			}
 
 			// Release back to pools
-			ListPool<Int3>.Release(ref outverts);
-			ListPool<int>.Release(ref outtris);
-			ListPool<int>.Release(ref intersectingCuts);
+			ListPool<Int3>.Release (ref outverts);
+			ListPool<int>.Release (ref outtris);
+			ListPool<int>.Release (ref intersectingCuts);
 
 			for (int i = 0; i < cutInfos.Count; i++) {
-				ListPool<IntPoint>.Release(cutInfos[i].contour);
+				ListPool<IntPoint>.Release (cutInfos[i].contour);
 			}
 
-			ListPool<Cut>.Release(ref cutInfos);
-			ListPool<NavmeshCut>.Release(ref navmeshCuts);
+			ListPool<Cut>.Release (ref cutInfos);
+			ListPool<NavmeshCut>.Release (ref navmeshCuts);
 			return result;
 		}
 
@@ -746,8 +745,8 @@ namespace Pathfinding.Util {
 				rnd = new System.Random();
 			}
 
-			var contourBuffer = ListPool<List<Vector3> >.Claim();
-			var result = ListPool<Cut>.Claim();
+			var contourBuffer = ListPool<List<Vector3> >.Claim ();
+			var result = ListPool<Cut>.Claim ();
 			for (int i = 0; i < navmeshCuts.Count; i++) {
 				// Generate random perturbation for this obstacle if required
 				Int2 perturbation = new Int2(0, 0);
@@ -775,7 +774,7 @@ namespace Pathfinding.Util {
 					}
 
 					// TODO: transform should include cutting offset
-					List<IntPoint> contour = ListPool<IntPoint>.Claim(worldContour.Count);
+					List<IntPoint> contour = ListPool<IntPoint>.Claim (worldContour.Count);
 					for (int q = 0; q < worldContour.Count; q++) {
 						var p = (Int3)transform.InverseTransform(worldContour[q]);
 						if (perturbate > 0) {
@@ -806,7 +805,7 @@ namespace Pathfinding.Util {
 				}
 			}
 
-			ListPool<List<Vector3> >.Release(ref contourBuffer);
+			ListPool<List<Vector3> >.Release (ref contourBuffer);
 			return result;
 		}
 
@@ -1109,39 +1108,6 @@ namespace Pathfinding.Util {
 			if (activeTileTypes[index] != null) LoadTile(activeTileTypes[index], x, z, activeTileRotations[index], activeTileOffsets[index]);
 		}
 
-#if FALSE
-		public void CutShapeWithTile (int x, int z, Int3[] shape, ref Int3[] verts, ref int[] tris, out int vCount, out int tCount) {
-			if (isBatching) {
-				throw new Exception("Cannot cut with shape when batching. Please stop batching first.");
-			}
-
-			int index = x + z*tileXCount;
-
-			if (x < 0 || z < 0 || x >= tileXCount || z >= tileZCount || activeTileTypes[index] == null) {
-				verts = new Int3[0];
-				tris = new int[0];
-				vCount = 0;
-				tCount = 0;
-				return;
-			}
-
-			Int3[] tverts;
-			int[] ttris;
-
-			activeTileTypes[index].Load(out tverts, out ttris, activeTileRotations[index], activeTileOffsets[index]);
-
-			//Calculate tile bounds so that the correct cutting offset can be used
-			//The tile will be cut in local space (i.e it is at the world origin) so cuts need to be translated
-			//to that point from their world space coordinates
-			Bounds r = graph.GetTileBounds(x, z);
-			var cutOffset = (Int3)r.min;
-			cutOffset = -cutOffset;
-
-			CutPoly(tverts, ttris, ref verts, ref tris, out vCount, out tCount, shape, cutOffset, r, CutMode.CutExtra);
-
-			for (int i = 0; i < verts.Length; i++) verts[i] -= cutOffset;
-		}
-#endif
 
 		/// <summary>Load a tile at tile coordinate x, z.</summary>
 		/// <param name="tile">Tile type to load</param>
@@ -1222,4 +1188,3 @@ namespace Pathfinding.Util {
 		}
 	}
 }
-#endif

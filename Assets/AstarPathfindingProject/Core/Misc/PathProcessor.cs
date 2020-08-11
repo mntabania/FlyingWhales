@@ -108,7 +108,10 @@ namespace Pathfinding {
 				for (int i = 0; i < processors; i++) {
 					var pathHandler = pathHandlers[i];
 					threads[i] = new Thread(() => CalculatePathsThreaded(pathHandler));
+#if !UNITY_SWITCH || UNITY_EDITOR
+					// Note: Setting the thread name seems to crash when deploying for Switch: https://forum.arongranberg.com/t/path-processor-crashing-nintendo-switch-build/6584
 					threads[i].Name = "Pathfinding Thread " + i;
+#endif
 					threads[i].IsBackground = true;
 					threads[i].Start();
 				}
@@ -134,7 +137,7 @@ namespace Pathfinding {
 			/// </summary>
 			public bool Held {
 				get {
-					return pathProcessor != null && pathProcessor.locks.Contains (id);
+					return pathProcessor != null && pathProcessor.locks.Contains(id);
 				}
 			}
 
@@ -216,30 +219,20 @@ namespace Pathfinding {
 		public void JoinThreads () {
 			if (threads != null) {
 				for (int i = 0; i < threads.Length; i++) {
-#if UNITY_WEBPLAYER
 					if (!threads[i].Join(200)) {
-						Debug.LogError("Could not terminate pathfinding thread["+i+"] in 200ms." +
-							"Not good.\nUnity webplayer does not support Thread.Abort\nHoping that it will be terminated by Unity WebPlayer");
-					}
-#else
-					if (!threads[i].Join(50)) {
-						Debug.LogError("Could not terminate pathfinding thread["+i+"] in 50ms, trying Thread.Abort");
+						Debug.LogError("Could not terminate pathfinding thread["+i+"] in 200ms, trying Thread.Abort");
 						threads[i].Abort();
 					}
-#endif
 				}
 			}
 		}
 
 		/// <summary>Calls 'Abort' on each of the threads</summary>
 		public void AbortThreads () {
-#if !UNITY_WEBPLAYER
 			if (threads == null) return;
-			// Unity webplayer does not support Abort (even though it supports starting threads). Hope that UnityPlayer aborts the threads
 			for (int i = 0; i < threads.Length; i++) {
 				if (threads[i] != null && threads[i].IsAlive) threads[i].Abort();
 			}
-#endif
 		}
 
 		/// <summary>
@@ -548,9 +541,9 @@ namespace Pathfinding {
 					totalTicks += System.DateTime.UtcNow.Ticks-startTicks;
 					p.duration = totalTicks*0.0001F;
 
-					#if ProfileAstar
+#if ProfileAstar
 					System.Threading.Interlocked.Increment(ref AstarPath.PathsCompleted);
-					#endif
+#endif
 				}
 
 				// Cleans up node tagging and other things

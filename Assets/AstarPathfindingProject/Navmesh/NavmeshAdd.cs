@@ -158,7 +158,7 @@ namespace Pathfinding {
 		/// </summary>
 		internal override Rect GetBounds (Pathfinding.Util.GraphTransform inverseTransform) {
 			if (this.verts == null) RebuildMesh();
-			var verts = Pathfinding.Util.ArrayPool<Int3>.Claim(this.verts != null ? this.verts.Length : 0);
+			var verts = Pathfinding.Util.ArrayPool<Int3>.Claim (this.verts != null? this.verts.Length : 0);
 			int[] tris;
 			GetMesh(ref verts, out tris, inverseTransform);
 
@@ -175,7 +175,7 @@ namespace Pathfinding {
 				}
 			}
 
-			Pathfinding.Util.ArrayPool<Int3>.Release(ref verts);
+			Pathfinding.Util.ArrayPool<Int3>.Release (ref verts);
 			return r;
 		}
 
@@ -190,13 +190,13 @@ namespace Pathfinding {
 			if (verts == null) RebuildMesh();
 
 			if (verts == null) {
-				tbuffer = Util.ArrayPool<int>.Claim(0);
+				tbuffer = Util.ArrayPool<int>.Claim (0);
 				return;
 			}
 
 			if (vbuffer == null || vbuffer.Length < verts.Length) {
-				if (vbuffer != null) Util.ArrayPool<Int3>.Release(ref vbuffer);
-				vbuffer = Util.ArrayPool<Int3>.Claim(verts.Length);
+				if (vbuffer != null) Util.ArrayPool<Int3>.Release (ref vbuffer);
+				vbuffer = Util.ArrayPool<Int3>.Claim (verts.Length);
 			}
 			tbuffer = tris;
 
@@ -220,7 +220,7 @@ namespace Pathfinding {
 
 		public static readonly Color GizmoColor = new Color(94.0f/255, 239.0f/255, 37.0f/255);
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 		public static Int3[] gizmoBuffer;
 
 		public void OnDrawGizmos () {
@@ -242,6 +242,6 @@ namespace Pathfinding {
 				Gizmos.DrawLine(v3, v1);
 			}
 		}
-	#endif
+#endif
 	}
 }

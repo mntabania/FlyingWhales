@@ -63,8 +63,8 @@ namespace Pathfinding {
 		public OnPathDelegate immediateCallback;
 
 		/// <summary>Returns the state of the path in the pathfinding pipeline</summary>
-		internal PathState PipelineState { get; private set; }
-		System.Object stateLock = new object ();
+		public PathState PipelineState { get; private set; }
+		System.Object stateLock = new object();
 
 		/// <summary>
 		/// Provides additional traversal information to a path request.
@@ -120,7 +120,7 @@ namespace Pathfinding {
 		protected PathNode currentR;
 
 		/// <summary>How long it took to calculate this path in milliseconds</summary>
-		internal float duration;
+		public float duration;
 
 		/// <summary>Number of nodes this path has searched</summary>
 		internal int searchedNodes;
@@ -168,7 +168,7 @@ namespace Pathfinding {
 		public float heuristicScale = 1F;
 
 		/// <summary>ID of this path. Used to distinguish between different paths</summary>
-		internal ushort pathID { get; private set; }
+		public ushort pathID { get; private set; }
 
 		/// <summary>Target to use for H score calculation. Used alongside <see cref="hTarget"/>.</summary>
 		protected GraphNode hTargetNode;
@@ -212,10 +212,13 @@ namespace Pathfinding {
 		/// Penalties for each tag.
 		/// Tag 0 which is the default tag, will have added a penalty of tagPenalties[0].
 		/// These should only be positive values since the A* algorithm cannot handle negative penalties.
-		/// Note: This array will never be null. If you try to set it to null or with a length which is not 32. It will be set to "new int[0]".
 		///
-		/// Note: If you are using a Seeker. The Seeker will set this value to what is set in the inspector field on StartPath.
-		/// So you need to change the Seeker value via script, not set this value if you want to change it via script.
+		/// When assigning an array to this property it must have a length of 32.
+		///
+		/// Note: Setting this to null, or trying to assign an array which does not have a length of 32, will make all tag penalties be treated as if they are zero.
+		///
+		/// Note: If you are using a Seeker. The Seeker will set this value to what is set in the inspector field when you call seeker.StartPath.
+		/// So you need to change the Seeker's value via script, not set this value.
 		///
 		/// See: Seeker.tagPenalties
 		/// </summary>
@@ -351,7 +354,7 @@ namespace Pathfinding {
 
 		/// <summary>Returns penalty for the given tag.</summary>
 		/// <param name="tag">A value between 0 (inclusive) and 32 (exclusive).</param>
-		internal uint GetTagPenalty (int tag) {
+		public uint GetTagPenalty (int tag) {
 			return (uint)internalTagPenalties[tag];
 		}
 
@@ -374,7 +377,7 @@ namespace Pathfinding {
 			unchecked { return node.Walkable && (enabledTags >> (int)node.Tag & 0x1) != 0; }
 		}
 
-		internal virtual uint GetTraversalCost (GraphNode node) {
+		internal uint GetTraversalCost (GraphNode node) {
 #if ASTAR_NO_TRAVERSAL_COST
 			return 0;
 #else
@@ -496,8 +499,8 @@ namespace Pathfinding {
 		/// Warning: Do not call this function manually.
 		/// </summary>
 		protected virtual void OnEnterPool () {
-			if (vectorPath != null) Pathfinding.Util.ListPool<Vector3>.Release(ref vectorPath);
-			if (path != null) Pathfinding.Util.ListPool<GraphNode>.Release(ref path);
+			if (vectorPath != null) Pathfinding.Util.ListPool<Vector3>.Release (ref vectorPath);
+			if (path != null) Pathfinding.Util.ListPool<GraphNode>.Release (ref path);
 			// Clear the callback to remove a potential memory leak
 			// while the path is in the pool (which it could be for a long time).
 			callback = null;
@@ -534,8 +537,8 @@ namespace Pathfinding {
 			errorLog = "";
 			completeState = PathCompleteState.NotCalculated;
 
-			path = Pathfinding.Util.ListPool<GraphNode>.Claim();
-			vectorPath = Pathfinding.Util.ListPool<Vector3>.Claim();
+			path = Pathfinding.Util.ListPool<GraphNode>.Claim ();
+			vectorPath = Pathfinding.Util.ListPool<Vector3>.Claim ();
 
 			currentR = null;
 
