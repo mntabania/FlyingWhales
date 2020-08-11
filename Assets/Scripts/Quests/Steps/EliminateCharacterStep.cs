@@ -14,7 +14,7 @@ namespace Quests.Steps {
             _initialCharactersToEliminate = _targets.Count;
             for (int i = 0; i < targets.Count; i++) {
                 Character target = targets[i];
-                if (target.isDead) {
+                if (EliminateAllVillagers.ShouldConsiderCharacterAsEliminated(target)) {
                     CheckForCompletion(target);
                 }
             }
@@ -36,7 +36,7 @@ namespace Quests.Steps {
         #region Listeners
         private void CheckForCompletion(Character character) {
             //remove character if character is dead or if he/she is no longer part of a major non player faction
-            if (character.isDead || (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral == false) || character.isAlliedWithPlayer) {
+            if (EliminateAllVillagers.ShouldConsiderCharacterAsEliminated(character)) {
                 if (_targets.Remove(character)) {
                     objectsToCenter?.Remove(character);
                     Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);

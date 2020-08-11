@@ -355,6 +355,15 @@ public class UIManager : MonoBehaviour {
             _optionsMenu.Open();
         }
     }
+    public bool IsOptionsMenuShowing() {
+        return _optionsMenu.isShowing;
+    }
+    public void OpenOptionsMenu() {
+        _optionsMenu.Open();
+    }
+    public void CloseOptionsMenu() {
+        _optionsMenu.Close();
+    }
     #endregion
 
     #region Minimap

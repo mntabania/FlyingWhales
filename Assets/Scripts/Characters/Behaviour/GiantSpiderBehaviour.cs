@@ -20,8 +20,9 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         if (character.currentStructure is Kennel) {
             return false;
         }
-        TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {//AFTER_MIDNIGHT
+        //between 12am to 3am
+        if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) >= 0 && 
+            GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) <= 3) {
             List<Character> webbedCharacters = GetWebbedCharactersAtHome(character);
             if (webbedCharacters == null || webbedCharacters.Count <= 2) { //check if there are only 2 or less abducted "Food" at home structure
                 if (character.behaviourComponent.currentAbductTarget != null 
@@ -31,15 +32,10 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                 }
             
                 //set abduction target if none, and chance met
-                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(3)) {
-                    //check if there are any available animals first
+                if (character.homeStructure != null && character.behaviourComponent.currentAbductTarget == null  && GameUtilities.RollChance(2)) {
                     List<Character> characterChoices = character.currentRegion.charactersAtLocation
-                        .Where(c => c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))).ToList();
-                    // if (characterChoices.Count == 0) {
-                    //     //no available animals, check sleeping characters instead
-                    //     characterChoices = character.currentRegion.charactersAtLocation
-                    //         .Where(c => c.isNormalCharacter && c.traitContainer.HasTrait("Resting")).ToList();
-                    // }
+                        .Where(c => (c is Animal || (c.isNormalCharacter && c.traitContainer.HasTrait("Resting"))) && 
+                                    c.currentStructure is Kennel == false).ToList();
                     if (characterChoices.Count > 0) {
                         Character chosenCharacter = CollectionUtilities.GetRandomElement(characterChoices);
                         character.behaviourComponent.SetAbductionTarget(chosenCharacter);

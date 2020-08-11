@@ -2083,13 +2083,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (currentActionNode.poiTarget == poiTarget) {
                 //Upon seeing the target while performing a stealth job action, check if it can do the action
                 if (!marker.CanDoStealthActionToTarget(poiTarget)) {
-                    currentJob.CancelJob(reason: "There is a witness around");
+                    bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
+                    currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
                 }
             } else {
                 //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
                 if (poiTarget is Character seenCharacter && seenCharacter.isNormalCharacter) {
                     if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
-                        currentJob.CancelJob(reason: "There is a witness around");
+                        bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
+                        currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
                     }
                 }
             }
@@ -3430,8 +3432,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (targetTile != null) {
                 targetTile.structure.AddPOI(item, targetTile);
             } else {
-                logComponent.PrintLogErrorIfActive(
-                    $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
+                return true; //if character cannot drop the item, then just discard it
+                // logComponent.PrintLogErrorIfActive(
+                //     $"Cannot drop {item.nameWithID} of {name} because there is no target tile.");
             }
             item.OnTileObjectDroppedBy(this, targetTile);
             return true;

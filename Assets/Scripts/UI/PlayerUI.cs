@@ -235,8 +235,9 @@ public class PlayerUI : MonoBehaviour {
             //     InputManager.Instance.ClearLeftClickActions();
             // } else {
                 //only toggle options menu if doing nothing else
-                UIManager.Instance.ToggleOptionsMenu();
+                // UIManager.Instance.ToggleOptionsMenu();
             // }
+            // UIManager.Instance.TryOpenOptionsMenu();
         }
     }
     private void OnCharacterDied(Character character) {

@@ -2,6 +2,7 @@
 using System.Linq;
 using Inner_Maps;
 using Ruinarch.Custom_UI;
+using Settings;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -54,6 +55,12 @@ namespace Ruinarch {
             }
         }
         private void Update() {
+            if (Input.GetKeyDown(KeyCode.Escape) && GameManager.Instance == null) {
+                if (SettingsManager.Instance.IsShowing()) {
+                    SettingsManager.Instance.CloseSettings();
+                    return;
+                }
+            }
             if (runUpdate == false) { return; }
             if (ReferenceEquals(PlayerManager.Instance, null) == false && PlayerManager.Instance.player != null) {
                 if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
@@ -172,6 +179,15 @@ namespace Ruinarch {
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Alpha3);
             } else if (Input.GetKeyDown(KeyCode.Escape)) {
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
+                if (GameManager.Instance.gameHasStarted) {
+                    //if game has started then, check if options menu is not showing, if it is not, then
+                    //show options menu, then do not cancel any actions.
+                    if (!UIManager.Instance.IsOptionsMenuShowing()) {
+                        UIManager.Instance.OpenOptionsMenu();
+                        return;
+                    }
+                }
+                CancelActionsByPriority();
             }
         }
         #endregion
@@ -230,10 +246,19 @@ namespace Ruinarch {
         /// Cancel actions based on a hardcoded process
         /// </summary>
         private void CancelActionsByPriority() {
+            if (SettingsManager.Instance.IsShowing()) {
+                SettingsManager.Instance.CloseSettings();
+                return;
+            }
             if (GameManager.Instance.gameHasStarted == false) {
                 return;
             }
             UIManager.Instance.SetTempDisableShowInfoUI(false);
+            if (UIManager.Instance.IsOptionsMenuShowing()) {
+                //if options menu is showing, then close it, and nothing else
+                UIManager.Instance.CloseOptionsMenu();
+                return;
+            }
             if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 //cancel current spell
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
