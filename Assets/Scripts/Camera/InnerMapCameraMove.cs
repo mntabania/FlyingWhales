@@ -99,28 +99,44 @@ public class InnerMapCameraMove : BaseCameraMove {
         MoveCamera(tile.worldPosition);
     }
     private void Zooming() {
-        Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
-        if (allowZoom && screenRect.Contains(Input.mousePosition)) {
-            //camera scrolling code
-            float fov = innerMapsCamera.orthographicSize;
-            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (zoomSensitivity);
-            if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
-                //Debug.Log(adjustment);
-                fov -= adjustment;
-                //fov = Mathf.Round(fov * 100f) / 100f;
-                fov = Mathf.Clamp(fov, _minFov, _maxFov);
-
-                innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera, adjustment));
-
-                //if (!Mathf.Approximately(previousCameraFOV, fov)) {
-                //    previousCameraFOV = fov;
-                //    innerMapsCamera.orthographicSize = Mathf.Lerp(innerMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-                //} else {
-                //    innerMapsCamera.orthographicSize = fov;
-                //}
-                // CalculateCameraBounds();
-                
+        if (!allowZoom) { return; }
+        if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X)) {
+            float axis = -0.1f;
+            if (Input.GetKeyDown(KeyCode.Z)) {
+                axis = 0.1f;
             }
+            float fov = innerMapsCamera.orthographicSize;
+            float adjustment = axis * (zoomSensitivity);
+            if (adjustment != 0f) {
+                fov -= adjustment;
+                fov = Mathf.Clamp(fov, _minFov, _maxFov);
+                innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera, adjustment));
+            }
+        } else {
+            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+            if (screenRect.Contains(Input.mousePosition)) {
+                //camera scrolling code
+                float fov = innerMapsCamera.orthographicSize;
+                float axis = Input.GetAxis("Mouse ScrollWheel");
+                float adjustment = axis * (zoomSensitivity);
+                if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
+                    //Debug.Log(adjustment);
+                    fov -= adjustment;
+                    //fov = Mathf.Round(fov * 100f) / 100f;
+                    fov = Mathf.Clamp(fov, _minFov, _maxFov);
+
+                    innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera, adjustment));
+
+                    //if (!Mathf.Approximately(previousCameraFOV, fov)) {
+                    //    previousCameraFOV = fov;
+                    //    innerMapsCamera.orthographicSize = Mathf.Lerp(innerMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                    //} else {
+                    //    innerMapsCamera.orthographicSize = fov;
+                    //}
+                    // CalculateCameraBounds();
+                
+                }
+            }   
         }
     }
     private void SetCameraBordersForMap(InnerTileMap map) {
