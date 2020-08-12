@@ -22,7 +22,7 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
         if (character.isNormalCharacter && character.marker != null && character.marker.inVisionCharacters.Count > 0 && HasCharacterNotConversedInMinutes(character, 10)) {
             log += $"\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
             List<Character> validChoices =
-                character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 10) && c.isNormalCharacter);
+                character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 10) && c.isNormalCharacter && !c.isDead);
             if (validChoices != null) {
                 Character chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
                 log += $"\n{character.name} has characters in vision that have not conversed in at least 10 minutes. Chosen target is {chosenTarget.name}. Rolling chat chance";

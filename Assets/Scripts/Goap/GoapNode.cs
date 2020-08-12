@@ -456,7 +456,10 @@ public class ActualGoapNode : IReactable, IRumorable {
             InnerMapManager.Instance.FaceTarget(actor, poiTarget);
         }
         if (associatedJobType != JOB_TYPE.REMOVE_STATUS && associatedJobType != JOB_TYPE.REPAIR && associatedJobType != JOB_TYPE.FEED) {
-            poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+            //If self job, do not cancel
+            if(actor != target) {
+                poiTarget.CancelRemoveStatusFeedAndRepairJobsTargetingThis();
+            }
         }
         if (action.actionCategory != ACTION_CATEGORY.INDIRECT && poiTarget is BaseMapObject baseMapObject) {
             baseMapObject.OnManipulatedBy(actor);
