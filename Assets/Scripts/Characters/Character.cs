@@ -1409,6 +1409,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             carryComponent.UncarryPOI(poi, addToLocation, dropLocation);
         } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             TileObject item = poi as TileObject;
+            //Add to location in uncarry is false because we are going to add to it to location after
             carryComponent.UncarryPOI(poi, false);
             if (!bringBackToInventory) {
                 if (addToLocation) {

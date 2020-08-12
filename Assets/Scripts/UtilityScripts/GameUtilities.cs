@@ -194,6 +194,10 @@ namespace UtilityScripts {
             //RACE.BEAST,
             RACE.SPIDER,
             RACE.GOLEM,
+            RACE.SHEEP,
+            RACE.PIG,
+            RACE.CHICKEN,
+            RACE.BEAST,
         };
         public static bool IsRaceBeast(RACE race) {
             return _beastRaces.Contains(race);

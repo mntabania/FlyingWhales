@@ -28,11 +28,21 @@ public class NonActionEventsComponent {
 
     #region Utilities
     public bool CanInteract(Character target) {
+        Character disguisedActor = owner;
+        Character disguisedTarget = target;
+        if (owner.reactionComponent.disguisedCharacter != null) {
+            disguisedActor = owner.reactionComponent.disguisedCharacter;
+        }
+        if (target.reactionComponent.disguisedCharacter != null) {
+            disguisedTarget = target.reactionComponent.disguisedCharacter;
+        }
         if (target.isDead
-            || !target.canWitness
-            || !owner.canWitness
-            || UtilityScripts.GameUtilities.IsRaceBeast(target.race)
-            || UtilityScripts.GameUtilities.IsRaceBeast(owner.race)
+            || !disguisedActor.canWitness
+            || !disguisedTarget.canWitness
+            || disguisedActor is Summon
+            || disguisedTarget is Summon
+            //|| UtilityScripts.GameUtilities.IsRaceBeast(target.race)
+            //|| UtilityScripts.GameUtilities.IsRaceBeast(owner.race)
             //|| target.faction.isPlayerFaction
             //|| owner.faction.isPlayerFaction
             //|| target.characterClass.className == "Zombie"
@@ -421,7 +431,7 @@ public class NonActionEventsComponent {
         string relationshipName = disguisedActor.relationshipContainer.GetRelationshipNameWith(disguisedTarget);
 
         //do not develop relationships if either actor or target is disguised
-        if (!actorIsDisguised && !targetIsDisguised) {
+        if (!actorIsDisguised && !targetIsDisguised && disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter) {
             // If Opinion of Target towards Actor is already in Acquaintance range
             if (relationshipName == RelationshipManager.Acquaintance) {
                 // 25% chance to develop Lover relationship if both characters have no Lover yet

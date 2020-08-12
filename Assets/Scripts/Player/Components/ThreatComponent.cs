@@ -138,7 +138,7 @@ public class ThreatComponent {
         Region region = targetDemonicStructure.location;
         HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
         List<Character> characters = new List<Character>();
-        int angelCount = UnityEngine.Random.Range(3, 6);
+        int angelCount = 4; //UnityEngine.Random.Range(3, 6);
         for (int i = 0; i < angelCount; i++) {
             SUMMON_TYPE angelType = SUMMON_TYPE.Warrior_Angel;
             if (UnityEngine.Random.Range(0, 2) == 0) { angelType = SUMMON_TYPE.Magical_Angel; }

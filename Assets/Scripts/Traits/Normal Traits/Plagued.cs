@@ -7,8 +7,8 @@ namespace Traits {
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
-        private int pukeChance = 40;
-        private int septicChance = 15;
+        private int pukeChance = 4;
+        private int septicChance = 1;
 
         public Plagued() {
             name = "Plagued";
@@ -52,8 +52,8 @@ namespace Traits {
             //NOTE: This is a wrong probability computation for floats - FIND A SOLUTION
             //float pukeRoll = Random.Range(0f, 100f);
             //float septicRoll = Random.Range(0f, 100f);
-            int pukeRoll = Random.Range(0, 1000);
-            int septicRoll = Random.Range(0, 1000);
+            int pukeRoll = Random.Range(0, 100);
+            int septicRoll = Random.Range(0, 100);
             bool hasCreatedJob = false;
             if (pukeRoll < pukeChance) {
                 //do puke action
@@ -121,12 +121,12 @@ namespace Traits {
                         return true;
                     }
                     if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                        chance = 35;
+                        chance = 20;
                         return true;
                     }
                 } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
-                        chance = 35;
+                        chance = 15;
                     } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                         chance = 100;
                     }
@@ -136,12 +136,12 @@ namespace Traits {
         }
 
         public void ChatInfection(Character target) {
-            if(UnityEngine.Random.Range(0, 100) < 35) {
+            if(UnityEngine.Random.Range(0, 100) < 12) {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
             }
         }
         public int GetCarryInfectChance() {
-            return 50;
+            return 20;
         }
 
         //private int GetInfectChanceForAction(INTERACTION_TYPE type) {

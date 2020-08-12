@@ -36,7 +36,7 @@ public class Cook : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter, addToLocation: false);
-        targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
+        //targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
