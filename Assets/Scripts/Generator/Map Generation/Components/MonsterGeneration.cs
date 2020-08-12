@@ -237,19 +237,20 @@ public class MonsterGeneration : MapGenerationComponent {
 							continue;
 						}
 						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-						if (j == 0 || j == 1) {
+						if (j == 0) { //|| j == 1
 							//Trolls	
-							int randomTrolls = Random.Range(3, 6);
+							int randomTrolls = 1; //Random.Range(3, 6);
 							for (int k = 0; k < randomTrolls; k++) {
 								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-						} else if (j == 2) {
-							//Fire Elementals	
-							int fireElementals = 2;
-							for (int k = 0; k < fireElementals; k++) {
-								CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-							}
 						} 
+						// else if (j == 2) {
+						// 	//Fire Elementals	
+						// 	int fireElementals = 2;
+						// 	for (int k = 0; k < fireElementals; k++) {
+						// 		CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+						// 	}
+						// } 
 						// else if (j == 3) {
 						// 	//Giant spiders	
 						// 	int randomGiantSpider = Random.Range(2, 5);

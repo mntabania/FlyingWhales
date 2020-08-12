@@ -304,15 +304,15 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
 		}
 		
-		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
-		// for (int i = 0; i < neighbouringTiles.Count; i++) {
-		// 	HexTile neighbour = neighbouringTiles[i];
-		// 	if (i == 0) {
-		// 		neighbour.SetElevation(ELEVATION.PLAIN);
-		// 	} else {
-		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
-		// 	}
-		// }
+		List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		for (int i = 0; i < neighbouringTiles.Count; i++) {
+			HexTile neighbour = neighbouringTiles[i];
+			if (i == 0) {
+				neighbour.SetElevation(ELEVATION.PLAIN);
+			} else {
+				neighbour.SetElevation(ELEVATION.MOUNTAIN);
+			}
+		}
 	}
 	
 	#region Tile Feature Utilities
