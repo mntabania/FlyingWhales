@@ -131,7 +131,7 @@ namespace Tutorial {
             _activeBonusTutorials = new List<BonusTutorial>();
             _instantiatedTutorials = new List<TutorialQuest>();
             _completedImportantTutorials = new List<Tutorial>();
-            hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial || SettingsManager.Instance.settings.skipTutorials;
+            hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 // Instantiate all pending bonus tutorials. NOTE: In tutorial world this is called after Start Popup is hidden
                 InstantiatePendingBonusTutorials();    
@@ -145,6 +145,8 @@ namespace Tutorial {
             if (SettingsManager.Instance.settings.skipTutorials) {
                 hasCompletedImportantTutorials = true;
                 return; //do not create tutorials if skip tutorials switch is on.
+            } else {
+                hasCompletedImportantTutorials = false;
             }
             for (int i = 0; i < mainTutorialTypes.Length; i++) {
                 Tutorial tutorial = mainTutorialTypes[i];
