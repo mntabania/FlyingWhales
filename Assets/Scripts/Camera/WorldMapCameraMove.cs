@@ -77,26 +77,66 @@ public class WorldMapCameraMove : BaseCameraMove {
         CalculateCameraBounds(mainCamera);
     }
     private void Zooming() {
-        Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
-        if (allowZoom && screenRect.Contains(Input.mousePosition)) {
-            //camera scrolling code
+        if (!allowZoom) { return; }
+        if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X)) {
+            float axis = -0.1f;
+            if (Input.GetKeyDown(KeyCode.Z)) {
+                axis = 0.1f;
+            }
             float fov = mainCamera.orthographicSize;
-            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
-            if (Math.Abs(adjustment) > 0.1f && !UIManager.Instance.IsMouseOnUI()) {
+            float adjustment = axis * (sensitivity);
+            if (adjustment != 0f) {
                 fov -= adjustment;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
-
                 mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera, adjustment));
-                //if (!Mathf.Approximately(previousCameraFOV, fov)) {
-                //    previousCameraFOV = fov;
-                //    mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-                //} else {
-                //    mainCamera.orthographicSize = fov;
-                //}
-                // CalculateCameraBounds(mainCamera);
                 Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
             }
+        } else {
+            Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+            if (screenRect.Contains(Input.mousePosition)) {
+                //camera scrolling code
+                float fov = mainCamera.orthographicSize;
+                float axis = Input.GetAxis("Mouse ScrollWheel");
+                float adjustment = axis * (sensitivity);
+                if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
+                    //Debug.Log(adjustment);
+                    fov -= adjustment;
+                    //fov = Mathf.Round(fov * 100f) / 100f;
+                    fov = Mathf.Clamp(fov, _minFov, _maxFov);
+
+                    mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera, adjustment));
+
+                    //if (!Mathf.Approximately(previousCameraFOV, fov)) {
+                    //    previousCameraFOV = fov;
+                    //    innerMapsCamera.orthographicSize = Mathf.Lerp(innerMapsCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+                    //} else {
+                    //    innerMapsCamera.orthographicSize = fov;
+                    //}
+                    // CalculateCameraBounds();
+                    Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
+                }
+            }   
         }
+        // Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
+        // if (allowZoom && screenRect.Contains(Input.mousePosition)) {
+        //     //camera scrolling code
+        //     float fov = mainCamera.orthographicSize;
+        //     float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+        //     if (Math.Abs(adjustment) > 0.1f && !UIManager.Instance.IsMouseOnUI()) {
+        //         fov -= adjustment;
+        //         fov = Mathf.Clamp(fov, _minFov, _maxFov);
+        //
+        //         mainCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(mainCamera, adjustment));
+        //         //if (!Mathf.Approximately(previousCameraFOV, fov)) {
+        //         //    previousCameraFOV = fov;
+        //         //    mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
+        //         //} else {
+        //         //    mainCamera.orthographicSize = fov;
+        //         //}
+        //         // CalculateCameraBounds(mainCamera);
+        //         Messenger.Broadcast(Signals.ZOOM_WORLD_MAP_CAMERA, mainCamera);
+        //     }
+        // }
     }
     #endregion
 

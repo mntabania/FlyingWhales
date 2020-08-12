@@ -56,7 +56,7 @@ namespace Tutorial {
         }
         private void OnHoverHoverZoom(QuestStepItem stepItem) {
             UIManager.Instance.ShowSmallInfo(
-                "You can zoom in and out using the Scroll Wheel",
+                "You can zoom in and out using the <b>Scroll Wheel</b> or by using the <b>Z Key</b> to Zoom in and the <b>X Key</b> to Zoom out.",
                 stepItem.hoverPosition, "Zooming"
             );
         }
