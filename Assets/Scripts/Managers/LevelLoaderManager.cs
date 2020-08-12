@@ -14,7 +14,8 @@ public class LevelLoaderManager : MonoBehaviour {
     [SerializeField] private GameObject loaderGO;
     [SerializeField] private Image loadingBG;
     [SerializeField] private TextMeshProUGUI loaderInfoText;
-    [SerializeField] private Slider _progressBar; 
+    [SerializeField] private Slider _progressBar;
+    [SerializeField] private TextMeshProUGUI _additionalLoadingText;
     
     private void Awake() {
         if (Instance == null) {
@@ -31,7 +32,7 @@ public class LevelLoaderManager : MonoBehaviour {
         StartCoroutine(LoadLevelAsynchronously(sceneName, updateSceneProgress));
     }
 
-    IEnumerator LoadLevelAsynchronously(string sceneName, bool updateSceneProgress) {
+    private IEnumerator LoadLevelAsynchronously(string sceneName, bool updateSceneProgress) {
         SetLoadingState(true);
         // UpdateLoadingInfo($"Loading {sceneName}...");
         yield return null;
@@ -45,18 +46,6 @@ public class LevelLoaderManager : MonoBehaviour {
             }
             
         }
-
-        //asyncOperation.allowSceneActivation = true;
-        //float newProg = _progress;
-        
-        // while (_progress < 1f) {
-        //     yield return null;
-        //     _progress += 0.05f;
-        //     if(_progress > 1f) {
-        //         _progress = 1f;
-        //     }
-        //     UpdateLoadingBar(_progress);
-        // }
         asyncOperation.allowSceneActivation = true;
     }
 
@@ -70,31 +59,10 @@ public class LevelLoaderManager : MonoBehaviour {
     }
     public void SetLoadingState(bool state) {
         loaderGO.SetActive(state);
-        // if (state) {
-        //     StartSlideShow();
-        // } else {
-        //     StopSlideShow();
-        // }
+        if (WorldConfigManager.Instance.isDemoBuild) {
+            _additionalLoadingText.text = "This is a preview build. Only includes Tutorial.";
+        } else {
+            _additionalLoadingText.text = "This is a preview build. Includes Tutorial and first world Oona.";
+        }
     }
-
-    #region Slideshow
-    [SerializeField] private Sprite[] _loadingBackgrounds;
-    private Sequence _slideShowSequence;
-    private void StartSlideShow() {
-        _slideShowSequence = DOTween.Sequence();
-        _slideShowSequence.Append(loadingBG.DOFade(0f, 1f).OnComplete(SetNextBackground));
-        _slideShowSequence.Append(loadingBG.DOFade(1f, 1f));
-        _slideShowSequence.AppendInterval(5f);
-        _slideShowSequence.SetLoops(-1);
-        _slideShowSequence.Play();
-    }
-    private void SetNextBackground() {
-        Sprite nextBG = CollectionUtilities.GetNextElementCyclic(_loadingBackgrounds,
-            Array.IndexOf(_loadingBackgrounds, loadingBG.sprite));
-        loadingBG.sprite = nextBG;
-    }
-    private void StopSlideShow() {
-        _slideShowSequence?.Kill();
-    }
-    #endregion
 }
