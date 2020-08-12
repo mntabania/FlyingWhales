@@ -17,6 +17,19 @@ public class JobQueue {
     }
 
     public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
+        if (!owner.canPerform) {
+            //We are only checking the jobs that has an assigned plan because we already have a handle for jobs that goes through multithread in ReceivePlanFromGoapThread
+            //Adding job in queue with assigned plan means that the job has fixes steps and will not go to the multithread anymore to get a plan
+            if(job is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null) {
+                int canPerformValue = owner.GetCanPerformValue();
+                if (canPerformValue == -1 && owner.traitContainer.HasTrait("Paralyzed")) {
+                    //If the owner is paralyzed and the only reason he cannot perform is because of that paralyzed, the plan must not be scrapped
+                } else {
+                    owner.logComponent.PrintLogIfActive($"{owner.name} is scrapping plan since {owner.name} cannot perform. {job.name} is the job.");
+                    return false;
+                }
+            }
+        }
         if (!CanJobBeAddedToQueue(job)) {
             return false;
         }

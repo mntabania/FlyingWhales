@@ -305,8 +305,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
-            return true;
+            return _owner.jobQueue.AddJobInQueue(job);
         } else if (_owner.HasTerritory()) {
             return TriggerReturnTerritory();
         }

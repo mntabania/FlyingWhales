@@ -128,7 +128,6 @@ public class GoapPlanner {
                     goapThread.job.CancelJob(false);
                     return;
                 }
-
             }
             int jobIndex = owner.jobQueue.GetJobQueueIndex(goapThread.job);
             if(jobIndex != -1) {
