@@ -25,12 +25,15 @@ namespace Tutorial {
                 //         .SetOnTopmostActions(OnTopMostChooseDefiler, OnNoLongerTopMostChooseDefiler),
                 //     new StructureBuiltStep(STRUCTURE_TYPE.DEFILER, "Place on an unoccupied Area.")
                 // ),
+                // new QuestStepCollection(
+                //     new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
+                //         .SetHoverOverAction(OnHoverChamber)
+                //         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
+                // ),
                 new QuestStepCollection(
                     new ClickOnRoomStep("Click on the Chamber", room => room is DefilerRoom)
                         .SetHoverOverAction(OnHoverChamber)
-                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
-                ),
-                new QuestStepCollection(
+                        .SetHoverOutAction(UIManager.Instance.HideSmallInfo),
                     new ExecutedPlayerActionStep(SPELL_TYPE.SEIZE_CHARACTER, $"Seize a Brainwash Target")
                         .SetHoverOverAction(OnHoverSeizeCharacter)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
