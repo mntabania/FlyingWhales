@@ -135,12 +135,15 @@ public class CombatState : CharacterState {
         if (!stateComponent.character.isDead) {
             //TEMPORARILY REMOVED THIS UNTIL FURTHER NOTICE
             if (isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && stateComponent.character.canPerform && stateComponent.character.canMove) { //!stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-                HexTile chosenHex = stateComponent.character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
-                if(chosenHex != null) {
-                    LocationGridTile chosenTile = chosenHex.GetRandomTile();
-                    stateComponent.character.jobComponent.CreateFleeCrimeJob(chosenTile);
-                    return;
+                if (!stateComponent.character.traitContainer.HasTrait("Berserked")) {
+                    HexTile chosenHex = stateComponent.character.currentRegion.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
+                    if (chosenHex != null) {
+                        LocationGridTile chosenTile = chosenHex.GetRandomTile();
+                        stateComponent.character.jobComponent.CreateFleeCrimeJob(chosenTile);
+                        return;
+                    }
                 }
+
                 ////stateComponent.character.traitContainer.RemoveTrait(stateComponent.character, "Criminal");
 
                 ////If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)

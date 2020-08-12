@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
 public class CarryComponent {
     public Character owner { get; private set; }
@@ -168,11 +169,9 @@ public class CarryComponent {
         } else {
             character.marker.PlaceMarkerAt(dropLocation, addToLocation);
         }
-
         character.marker.transform.eulerAngles = Vector3.zero;
-        // character.marker.SetNameState(true);
-
         character.avatar.transform.position = owner.currentRegion.coreTile.transform.position;
+        // character.marker.SetNameState(true);
         Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     public bool IsPOICarried(IPointOfInterest poi) {
