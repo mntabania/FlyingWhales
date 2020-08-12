@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -86,7 +87,8 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 		for (int i = 0; i < abductor.currentRegion.charactersAtLocation.Count; i++) {
 			Character character = abductor.currentRegion.charactersAtLocation[i];
 			bool isValidTarget = character is Animal ||
-			                     (character.isNormalCharacter && character.isDead == false);
+			                     (character.isNormalCharacter && character.isDead == false && 
+			                      character.traitContainer.HasTrait("Resting")) && character.currentStructure is Kennel == false;
 			if (isValidTarget) {
 				if (validTargets == null) {
 					validTargets = new List<Character>();
