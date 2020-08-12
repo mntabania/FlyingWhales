@@ -8,6 +8,7 @@ namespace Quests.Steps {
         }
         protected override void SubscribeListeners() {
             Messenger.AddListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Messenger.AddListener<InfoUIBase>(Signals.MENU_OPENED, CheckForCompletion);
             Character selectedCharacter = UIManager.Instance.GetCurrentlySelectedCharacter();
             if (selectedCharacter != null) {
                 CheckForCompletion(selectedCharacter);
@@ -15,6 +16,7 @@ namespace Quests.Steps {
         }
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<ISelectable>(Signals.SELECTABLE_LEFT_CLICKED, CheckForCompletion);
+            Messenger.RemoveListener<InfoUIBase>(Signals.MENU_OPENED, CheckForCompletion);
         }
 
         #region Listeners
@@ -22,6 +24,17 @@ namespace Quests.Steps {
             if (selectable is Character character) {
                 if (_validityChecker != null) {
                     if (_validityChecker.Invoke(character)) {
+                        Complete();
+                    }
+                } else {
+                    Complete();    
+                }
+            }
+        }
+        private void CheckForCompletion(InfoUIBase openedUI) {
+            if (openedUI is CharacterInfoUI characterInfoUI) {
+                if (_validityChecker != null) {
+                    if (_validityChecker.Invoke(characterInfoUI.activeCharacter)) {
                         Complete();
                     }
                 } else {

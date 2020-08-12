@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Quests;
 using Quests.Steps;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace Tutorial {
         private void OnCharacterFinishedAction(QuestCriteria criteria) {
             if (criteria is CharacterFinishedAction metCriteria) {
                 _targetAction = metCriteria.finishedAction;
+                Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
             }
         }
         #endregion
@@ -42,12 +44,7 @@ namespace Tutorial {
         public override void Deactivate() {
             base.Deactivate();
             Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
-        }
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetAction.poiTarget && log == _targetAction.descriptionLog) {
-                //consider this quest as failed if log associated with action was removed from the target object
-                TutorialManager.Instance.FailTutorialQuest(this);
-            }
+            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         #endregion
         
@@ -102,6 +99,26 @@ namespace Tutorial {
                 $"{UtilityScripts.Utilities.ColorizeAction("Click on the name")} of the Villager that placed it.",
                 TutorialManager.Instance.boobyTrapLog, "The culprit", item.hoverPosition
             );
+        }
+        #endregion
+
+        #region Failure
+        private void OnLogRemoved(Log log, IPointOfInterest poi) {
+            if (poi == _targetAction.poiTarget && log == _targetAction.descriptionLog) {
+                //consider this quest as failed if log associated with action was removed from the target object
+                TutorialManager.Instance.FailTutorialQuest(this);
+            }
+        }
+        private void OnTileObjectRemoved(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
+            if (tileObject == _targetAction.poiTarget) {
+                //consider this quest as failed if target tile object was removed
+                TutorialManager.Instance.FailTutorialQuest(this);
+            }
+        }
+        protected override void FailQuest() {
+            base.FailQuest();
+            //respawn this Quest.
+            TutorialManager.Instance.InstantiateTutorial(TutorialManager.Tutorial.Booby_Trap);
         }
         #endregion
     }
