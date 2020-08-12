@@ -357,7 +357,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Object Pool
     public override void Reset() {
         base.Reset(); 
-        TryCancelExpiry();
+        // TryCancelExpiry();
         destinationTile = null;
         //onProcessCombat = null;
         character.combatComponent.SetOnProcessCombatAction(null);
@@ -888,7 +888,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
-            ScheduleExpiry();
+            // ScheduleExpiry();
             SetCollidersState(false);
             //onProcessCombat = null;
             character.combatComponent.SetOnProcessCombatAction(null);
@@ -1639,9 +1639,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnUnseize() {
         buttonCollider.enabled = true;
-        if (character.isDead) {
-            ScheduleExpiry();
-        }
+        // if (character.isDead) {
+        //     ScheduleExpiry();
+        // }
     }
     #endregion
 
