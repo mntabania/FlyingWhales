@@ -436,7 +436,11 @@ public class Player : ILeader, IObjectManipulator {
                 hoverText = "Sleeping characters cannot be targeted.";
                 return false;
             }
-            if(!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
+            if (character.traitContainer.HasTrait("Unconscious")) {
+                hoverText = "Unconscious characters cannot be targeted.";
+                return false;
+            }
+            if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }

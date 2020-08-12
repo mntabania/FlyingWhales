@@ -465,6 +465,7 @@ public static class Signals {
     /// Parameters: Log log
     /// </summary>
     public static string UPDATE_ALL_NOTIFICATION_LOGS = "UpdateAllNotificationLogs";
+    public static string CHECK_IF_PLAYER_WINS = "CheckIfPlayerWins";
     #endregion
 
     #region Interaction
