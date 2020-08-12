@@ -53,8 +53,8 @@ public class RemoveBuff : GoapAction {
         goapNode.target.traitContainer.RemoveTrait(goapNode.target, randomBuff, goapNode.actor);
         goapNode.descriptionLog.AddToFillers(null, randomBuff.name, LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.UpdateLogInInvolvedObjects();
-        
         goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
+        Messenger.Broadcast(Signals.UPDATE_ALL_NOTIFICATION_LOGS, goapNode.descriptionLog);
     }
     #endregion
 

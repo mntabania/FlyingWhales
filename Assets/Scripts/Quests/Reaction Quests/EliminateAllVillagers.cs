@@ -20,5 +20,13 @@ namespace Quests {
             return $"Villagers Remaining: {remainingTargets.Count.ToString()}"; // /{totalCharactersToEliminate.ToString()}
         }
         #endregion
+
+        #region Utilities
+        public static bool ShouldConsiderCharacterAsEliminated(Character character) {
+            return character.isDead ||
+                   (character.faction != null && character.faction.isMajorNonPlayerFriendlyNeutral == false) ||
+                   character.isAlliedWithPlayer;
+        }
+        #endregion
     }
 }

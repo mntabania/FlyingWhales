@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -25,6 +26,8 @@ namespace Settings {
 
         [Header("Gameplay Settings UI")] 
         [SerializeField] private Toggle edgePanningToggle;
+        [SerializeField] private Toggle skipTutorialsToggle;
+        [SerializeField] private GameObject miscParentGO;
         
         [Header("Audio Settings UI")]
         [SerializeField] private Slider masterVolumeSlider;
@@ -107,8 +110,13 @@ namespace Settings {
         public void CloseSettings() {
             settingsGO.SetActive(false);
         }
+        public bool IsShowing() {
+            return settingsGO.activeSelf;
+        }
         private void UpdateUI() {
             edgePanningToggle.isOn = settings.useEdgePanning;
+            skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
+            miscParentGO.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
 
             resolutionsDropdown.value =
                 UtilityScripts.GameUtilities.GetOptionIndex(resolutionsDropdown, settings.resolution);
@@ -153,6 +161,7 @@ namespace Settings {
             SetFullscreen();
 
             _settings.useEdgePanning = edgePanningToggle.isOn;
+            _settings.skipTutorials = skipTutorialsToggle.isOn;
             
             //resolution
             Screen.fullScreen = settings.fullscreen;
@@ -193,6 +202,13 @@ namespace Settings {
         public void OnMasterVolumeChanged(float volume) {
             _settings.masterVolume = volume;
             Messenger.Broadcast(Signals.MASTER_VOLUME_CHANGED, volume);
+        }
+        #endregion
+
+        #region Tutorials
+        public void OnToggleSkipTutorials(bool state) {
+            _settings.skipTutorials = state;
+            Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, state);
         }
         #endregion
     }

@@ -702,7 +702,7 @@ public class ReactionComponent {
                         if (disguisedActor.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
                             if ((!targetCharacter.canMove || !targetCharacter.canPerform) && 
-                                !targetCharacter.defaultCharacterTrait.HasReactedToThis(owner)) {
+                                !targetCharacter.defaultCharacterTrait.HasReactedToThis(owner) && !targetCharacter.traitContainer.HasTrait("Resting")) {
                                 debugLog += "\n-Target can neither move or perform and actor has not yet reacted to target.";
                                 // if (disguisedActor.moodComponent.moodState == MOOD_STATE.Bad || disguisedActor.moodComponent.moodState == MOOD_STATE.Critical) {
                                 // debugLog += "\n-Actor is in Bad or Critical mood";

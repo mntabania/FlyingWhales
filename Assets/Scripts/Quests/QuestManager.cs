@@ -28,26 +28,28 @@ namespace Quests {
             Instance = this;
         }
         private void OnDestroy() {
-            Messenger.RemoveListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, 
-                OnCharactersAttackingDemonicStructure);
+            Messenger.RemoveListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.RemoveListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, 
-                OnAngelsAttackingDemonicStructure);
+            Messenger.RemoveListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
         }
 
         #region Initialization
         public void InitializeAfterGameLoaded() {
             _activeQuests = new List<Quest>();
-            Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, 
-                OnCharactersAttackingDemonicStructure);
+            Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
-            Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, 
-                OnAngelsAttackingDemonicStructure);
+            Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
             Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CenterButton");
         }
         public void InitializeAfterLoadoutPicked(){
+            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
+                CheckEliminateAllVillagersQuest();
+                InstantiatePendingSpecialPopups();    
+            }
+        }
+        public void InitializeAfterStartTutorial(){
             CheckEliminateAllVillagersQuest();
-            InstantiatePendingSpecialPopups();
+            InstantiatePendingSpecialPopups();    
         }
         private void InstantiatePendingSpecialPopups() {
             List<Special_Popup> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedSpecialPopups;
@@ -144,7 +146,8 @@ namespace Quests {
 
         #region Eliminate All Villagers Quest
         private void CheckEliminateAllVillagersQuest() {
-            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
+            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial || 
+                SettingsManager.Instance.settings.skipTutorials) {
                 CreateEliminateAllVillagersQuest();
             } else {
                 Messenger.AddListener(Signals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);

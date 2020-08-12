@@ -132,19 +132,31 @@ namespace Tutorial {
             _instantiatedTutorials = new List<TutorialQuest>();
             _completedImportantTutorials = new List<Tutorial>();
             hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
-            InstantiatePendingBonusTutorials();
+            if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
+                // Instantiate all pending bonus tutorials. NOTE: In tutorial world this is called after Start Popup is hidden
+                InstantiatePendingBonusTutorials();    
+            }
         }
         /// <summary>
         /// Instantiate all Important tutorials. NOTE: This is called after Start Popup is hidden
         /// <see cref="DemoUI.HideStartDemoScreen"/>
         /// </summary>
         public void InstantiateImportantTutorials() {
+            if (SettingsManager.Instance.settings.skipTutorials) {
+                hasCompletedImportantTutorials = true;
+                return; //do not create tutorials if skip tutorials switch is on.
+            } else {
+                hasCompletedImportantTutorials = false;
+            }
             for (int i = 0; i < mainTutorialTypes.Length; i++) {
                 Tutorial tutorial = mainTutorialTypes[i];
                 InstantiateTutorial(tutorial);
             }
         }
         public void InstantiatePendingBonusTutorials() {
+            if (SettingsManager.Instance.settings.skipTutorials) {
+                return; //do not create tutorials if skip tutorials switch is on.
+            }
             //Create instances for all uncompleted tutorials.
             List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials;
             for (int i = 0; i < bonusTutorialTypes.Length; i++) {
@@ -176,9 +188,17 @@ namespace Tutorial {
 
         #region Inquiry
         public bool HasTutorialBeenCompleted(Tutorial tutorial) {
+            if (SettingsManager.Instance.settings.skipTutorials) {
+                //if tutorials are skipped then when this is used always return true
+                return true;
+            }
             return SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials.Contains(tutorial) || _completedImportantTutorials.Contains(tutorial);
         }
         public bool HasTutorialBeenCompletedInCurrentPlaythrough(Tutorial tutorial) {
+            if (SettingsManager.Instance.settings.skipTutorials) {
+                //if tutorials are skipped then when this is used always return true
+                return true;
+            }
             return _completedImportantTutorials.Contains(tutorial);
         }
         public bool IsTutorialCurrentlyActive(Tutorial tutorial) {
@@ -207,27 +227,14 @@ namespace Tutorial {
         }
         private void CheckIfAllTutorialsCompleted() {
             if (_instantiatedTutorials.Count == 0 || _instantiatedTutorials.Count(x => IsBonusTutorial(x) == false) == 0) {
-                //all non-bonus tutorials completed
-                // if (WorldConfigManager.Instance.isDemoBuild) {
-                //     PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
-                //         "You're done with the Tutorials! Now it's up to you how you'd like to corrupt this world. Enjoy!");    
-                // } else {
-                    PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
-                        "You're done with the Main Tutorial. Killing Villagers may be quite easy if you simply use spells. " +
-                        "The real fun is when you get creative with it! Try to start a Zombie Apocalypse, or let the " +
-                        "Villagers fight amongst each other by making them do various crimes, " +
-                        "or figure out how to turn someone into a Necromancer. Good luck!");    
-                // }
+                PlayerUI.Instance.ShowGeneralConfirmation("Finished Tutorial",
+                    "You're done with the Main Tutorial. Killing Villagers may be quite easy if you simply use spells. " +
+                    "The real fun is when you get creative with it! Try to start a Zombie Apocalypse, or let the " +
+                    "Villagers fight amongst each other by making them do various crimes, " +
+                    "or figure out how to turn someone into a Necromancer. Good luck!");    
                 hasCompletedImportantTutorials = true;
                 Messenger.Broadcast(Signals.FINISHED_IMPORTANT_TUTORIALS);
             }
-        }
-        private void OnClickGoToNextWorld() {
-            DOTween.Clear(true);
-            Messenger.Cleanup();
-            // AudioManager.Instance.SetCameraParent(null);
-            WorldSettings.Instance.worldSettingsData.SetSecondWorldSettings();
-            MainMenuManager.Instance.StartNewGame();
         }
         #endregion
 

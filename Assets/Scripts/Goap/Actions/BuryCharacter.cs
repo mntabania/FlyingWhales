@@ -74,9 +74,10 @@ public class BuryCharacter : GoapAction {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        Character targetCharacter = poiTarget as Character;
-        actor.UncarryPOI(targetCharacter, addToLocation: false);
-        targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
+        if (poiTarget is Character targetCharacter) {
+            actor.UncarryPOI(targetCharacter, addToLocation: false);
+            // targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);    
+        }
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         string stateName = "Target Missing";
@@ -128,26 +129,27 @@ public class BuryCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            Character targetCharacter = poiTarget as Character;
-            //target character must be dead
-            if (!targetCharacter.isDead) {
-                return false;
-            }
-            //check that the charcater has been buried (has a grave)
-            if (targetCharacter.grave != null) {
-                return false;
-            }
-            if (targetCharacter.numOfActionsBeingPerformedOnThis > 0) {
-                return false;
-            }
-            if (targetCharacter.marker == null) {
-                return false;
-            }
-            if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
-                //if structure is provided, do not check for cemetery
-                return true;
-            } else {
-                return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) != null;
+            if (poiTarget is Character targetCharacter) {
+                //target character must be dead
+                if (!targetCharacter.isDead) {
+                    return false;
+                }
+                //check that the charcater has been buried (has a grave)
+                if (targetCharacter.grave != null) {
+                    return false;
+                }
+                if (targetCharacter.numOfActionsBeingPerformedOnThis > 0) {
+                    return false;
+                }
+                if (targetCharacter.marker == null) {
+                    return false;
+                }
+                if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
+                    //if structure is provided, do not check for cemetery
+                    return true;
+                } else {
+                    return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) != null;
+                }   
             }
         }
         return false;

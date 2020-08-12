@@ -31,6 +31,7 @@ public class PlayerNotificationItem : PooledObject {
         tickShown = GameManager.Instance.Today().tick;
         logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
         logItem.SetLog(log);
+        Messenger.AddListener<Log>(Signals.UPDATE_ALL_NOTIFICATION_LOGS, TryUpdateLog);
         //logEnvelopContent.Execute();
         //mainEnvelopContent.Execute();
 
@@ -42,6 +43,11 @@ public class PlayerNotificationItem : PooledObject {
 
         this.onDestroyAction = onDestroyAction;
         StartCoroutine(TweenHeight());
+    }
+    private void TryUpdateLog(Log log) {
+        if (shownLog == log) {
+            logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
+        }
     }
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
         _hoverPosition = hoverPosition;
@@ -72,6 +78,7 @@ public class PlayerNotificationItem : PooledObject {
         _container.anchoredPosition = Vector2.zero;
         ticksAlive = 0;
         this.transform.localScale = Vector3.one;
+        Messenger.RemoveListener<Log>(Signals.UPDATE_ALL_NOTIFICATION_LOGS, TryUpdateLog);
     }
     public void DeleteNotification() {
         //if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {

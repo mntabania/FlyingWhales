@@ -1684,7 +1684,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         ConstantPath constantPath = ConstantPath.Construct(transform.position, 10000, null);
         AstarPath.StartPath(constantPath);
         constantPath.BlockUntilCalculated();
-        GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);
+        if (constantPath.allNodes != null && constantPath.allNodes.Count > 0) {
+            GoTo(PathUtilities.GetPointsOnNodes(constantPath.allNodes, 1).Last(), arrivalAction);    
+        } else {
+            //could not find nodes to stroll to. Just do arrival action, then try again.
+            arrivalAction.Invoke();
+        }
+        
     }
     public void OnConstantPathComputed(ConstantPath constantPath) { }
     #endregion

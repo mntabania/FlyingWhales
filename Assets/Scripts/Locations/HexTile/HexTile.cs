@@ -1419,6 +1419,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation == null) {
+                continue; //skip this character
+            }
             if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
                 if (validityChecker.Invoke(character)) {
@@ -1444,6 +1447,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
             Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation == null) {
+                continue; //skip this character
+            }
             if (character.gridTileLocation != null && character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
                 && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
                 if (criteria.Invoke(character)) {
