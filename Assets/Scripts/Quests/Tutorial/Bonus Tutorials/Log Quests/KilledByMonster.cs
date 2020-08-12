@@ -26,6 +26,12 @@ namespace Tutorial {
         private void SetTargetCharacter(QuestCriteria criteria) {
             if (criteria is CharacterDied metCriteria) {
                 _targetCharacter = metCriteria.character;
+                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
+            }
+        }
+        private void OnCharacterMarkerDestroyed(Character character) {
+            if (character == _targetCharacter) {
+                FailQuest();
             }
         }
         #endregion
@@ -49,16 +55,10 @@ namespace Tutorial {
         public override void Deactivate() {
             base.Deactivate();
             Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
+            _targetCharacter = null;
         }
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetCharacter && log.key.Equals("death_attacked")) {
-                //check if target character still has any logs about being killed by a monster
-                if (poi.logComponent.GetLogsInCategory("Generic").Count(x => x.HasFillerThatMeetsRequirement(o => o is Summon)) == 0) {
-                    //consider this quest as failed if all logs of this character regarding being killed by a monster  has been deleted.
-                    TutorialManager.Instance.FailTutorialQuest(this); 
-                }
-            }
-        }
+        
         #endregion
         
         #region Steps
@@ -92,6 +92,23 @@ namespace Tutorial {
                 $"Monster killed it and then {UtilityScripts.Utilities.ColorizeAction("click on its name")} to find it.",
                 TutorialManager.Instance.killedByMonsterLog, "Browsing Logs", item.hoverPosition
             );
+        }
+        #endregion
+
+        #region Failure
+        private void OnLogRemoved(Log log, IPointOfInterest poi) {
+            if (poi == _targetCharacter && log.key.Equals("death_attacked")) {
+                //check if target character still has any logs about being killed by a monster
+                if (poi.logComponent.GetLogsInCategory("Generic").Count(x => x.HasFillerThatMeetsRequirement(o => o is Summon)) == 0) {
+                    //consider this quest as failed if all logs of this character regarding being killed by a monster  has been deleted.
+                    TutorialManager.Instance.FailTutorialQuest(this); 
+                }
+            }
+        }
+        protected override void FailQuest() {
+            base.FailQuest();
+            //respawn this Quest.
+            TutorialManager.Instance.InstantiateTutorial(TutorialManager.Tutorial.Killed_By_Monster);
         }
         #endregion
     }

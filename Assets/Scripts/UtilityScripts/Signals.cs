@@ -189,6 +189,10 @@ public static class Signals {
     /// Parameters Character disguiser, Character target
     /// </summary>
     public static string CHARACTER_DISGUISED = "OnCharacterDisguised";
+    /// <summary>
+    /// Parameters Character 
+    /// </summary>
+    public static string CHARACTER_MARKER_DESTROYED = "OnCharacterMarkerDestroyed";
     #endregion
 
     #region UI

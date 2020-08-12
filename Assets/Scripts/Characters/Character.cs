@@ -709,6 +709,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
+        if (marker == null) {
+            Messenger.Broadcast(Signals.CHARACTER_MARKER_DESTROYED, this);
+        }
     }
     public virtual void PerTickDuringMovement() {
         for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
