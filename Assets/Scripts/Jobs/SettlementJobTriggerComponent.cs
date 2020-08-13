@@ -506,13 +506,20 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool CanTakeObtainPersonalFoodJob(Character character, JobQueueItem job) {
 		GoapPlanJob goapPlanJob = job as GoapPlanJob;
-        return goapPlanJob.targetPOI.gridTileLocation.structure.IsResident(character);
-  //      if (goapPlanJob.targetPOI.gridTileLocation.structure is IDwelling) {
-		//	IDwelling dwelling = goapPlanJob.targetPOI.gridTileLocation.structure as IDwelling;
-		//	return dwelling.IsResident(character);
-		//}
-		//return false;
-	}
+        if(goapPlanJob.targetPOI != null && goapPlanJob.targetPOI.gridTileLocation != null) {
+            return goapPlanJob.targetPOI.gridTileLocation.structure.IsResident(character);
+        } else if (goapPlanJob.targetPOI is TileObject targetTileObject) {
+            if (targetTileObject.IsOwnedBy(character)) {
+                return true;
+            }
+        }
+        return false;
+        //      if (goapPlanJob.targetPOI.gridTileLocation.structure is IDwelling) {
+        //	IDwelling dwelling = goapPlanJob.targetPOI.gridTileLocation.structure as IDwelling;
+        //	return dwelling.IsResident(character);
+        //}
+        //return false;
+    }
 	#endregion
 
 	#region Combine Stockpile
