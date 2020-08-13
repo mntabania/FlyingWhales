@@ -196,6 +196,9 @@ public class DrinkBlood : GoapAction {
             //if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
+            if(poiTarget is Character targetCharacter) {
+                return actor != targetCharacter && actor.traitContainer.HasTrait("Vampiric") && !targetCharacter.isDead;
+            }
             return actor != poiTarget && actor.traitContainer.HasTrait("Vampiric");
         }
         return false;
