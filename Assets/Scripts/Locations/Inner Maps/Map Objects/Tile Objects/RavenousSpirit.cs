@@ -100,6 +100,7 @@ public class RavenousSpirit : TileObject {
     }
     private IEnumerator CommencePossession() {
         InnerMapManager.Instance.FaceTarget(this, possessionTarget);
+        yield return new WaitForSeconds(0.5f);
         while (possessionTarget.marker.transform.position != mapVisual.gameObject.transform.position && !possessionTarget.marker.IsNear(mapVisual.gameObject.transform.position)) {
             yield return new WaitForFixedUpdate();
             if (!GameManager.Instance.isPaused) {
