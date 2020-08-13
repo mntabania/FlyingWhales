@@ -124,92 +124,94 @@ public class MapGenerator : MonoBehaviour {
         }
     }
     private IEnumerator InitializeWorldCoroutine(SaveDataCurrentProgress data) {
-        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
-        //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
-        loadingWatch.Start();
-
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
-        GridMap.Instance.SetupInitialData(data.width, data.height);
-        yield return null;
-        WorldMapCameraMove.Instance.Initialize();
-        InnerMapManager.Instance.Initialize();
-        InteractionManager.Instance.Initialize();
-        ObjectPoolManager.Instance.InitializeObjectPools();
-        yield return null;
-        GridMap.Instance.GenerateGrid(data);
-        yield return null;
-        GridMap.Instance.GenerateOuterGrid(data);
-        yield return null;
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        yield return null;
-        data.LoadRegions();
-        data.LoadPlayerArea();
-        data.LoadNonPlayerAreas();
-        data.LoadFactions();
-        data.LoadCharacters();
-        // data.LoadSpecialObjects();
-        //data.LoadTileObjects();
-        yield return null;
-        data.LoadCharacterRelationships();
-        data.LoadCharacterTraits();
-        yield return null;
-        data.LoadLandmarks();
-        data.LoadRegionCharacters();
-        data.LoadRegionAdditionalData();
         yield return null;
 
-        // CameraMove.Instance.CalculateCameraBounds();
-        UIManager.Instance.InitializeUI();
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Starting Game...");
-        yield return null;
+        //System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
+        ////System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        //loadingWatch.Start();
 
-        // TokenManager.Instance.Initialize();
-        //CharacterManager.Instance.GenerateRelationships();
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
+        //GridMap.Instance.SetupInitialData(data.width, data.height);
+        //yield return null;
+        //WorldMapCameraMove.Instance.Initialize();
+        //InnerMapManager.Instance.Initialize();
+        //InteractionManager.Instance.Initialize();
+        //ObjectPoolManager.Instance.InitializeObjectPools();
+        //yield return null;
+        //GridMap.Instance.GenerateGrid(data);
+        //yield return null;
+        //GridMap.Instance.GenerateOuterGrid(data);
+        //yield return null;
+        //Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        //yield return null;
+        //data.LoadRegions();
+        //data.LoadPlayerArea();
+        //data.LoadNonPlayerAreas();
+        //data.LoadFactions();
+        //data.LoadCharacters();
+        //// data.LoadSpecialObjects();
+        ////data.LoadTileObjects();
+        //yield return null;
+        //data.LoadCharacterRelationships();
+        //data.LoadCharacterTraits();
+        //yield return null;
+        //data.LoadLandmarks();
+        //data.LoadRegionCharacters();
+        //data.LoadRegionAdditionalData();
+        //yield return null;
 
-        yield return null;
-        //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
-        data.LoadAreaMaps();
-        data.LoadAreaStructureEntranceTiles();
-        //data.LoadTileObjectsPreviousTileAndCurrentTile();
-        data.LoadAreaMapsObjectHereOfTiles();
-        data.LoadAreaMapsTileTraits();
-        //data.LoadTileObjectTraits();
-        data.LoadCharacterHomeStructures();
-        data.LoadDate(); //Moved this because some jobs use current date
-        data.LoadCharacterInitialPlacements();
-        //data.LoadPlayer();
+        //// CameraMove.Instance.CalculateCameraBounds();
+        //UIManager.Instance.InitializeUI();
+        //LevelLoaderManager.Instance.UpdateLoadingInfo("Starting Game...");
+        //yield return null;
 
-        data.LoadAllJobs();
-        //data.LoadTileObjectsDataAfterLoadingAreaMap();
+        //// TokenManager.Instance.Initialize();
+        ////CharacterManager.Instance.GenerateRelationships();
 
-        //Note: Loading npcSettlement items is after loading the inner map because LocationStructure and LocationGridTile is required
-        data.LoadPlayerAreaItems();
-        data.LoadNonPlayerAreaItems();
-        yield return null;
-        data.LoadCharacterHistories();
+        //yield return null;
+        ////LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
+        //data.LoadAreaMaps();
+        //data.LoadAreaStructureEntranceTiles();
+        ////data.LoadTileObjectsPreviousTileAndCurrentTile();
+        //data.LoadAreaMapsObjectHereOfTiles();
+        //data.LoadAreaMapsTileTraits();
+        ////data.LoadTileObjectTraits();
+        //data.LoadCharacterHomeStructures();
+        //data.LoadDate(); //Moved this because some jobs use current date
+        //data.LoadCharacterInitialPlacements();
+        ////data.LoadPlayer();
 
-        data.LoadCharacterCurrentStates();
+        //data.LoadAllJobs();
+        ////data.LoadTileObjectsDataAfterLoadingAreaMap();
+
+        ////Note: Loading npcSettlement items is after loading the inner map because LocationStructure and LocationGridTile is required
+        //data.LoadPlayerAreaItems();
+        //data.LoadNonPlayerAreaItems();
+        //yield return null;
+        //data.LoadCharacterHistories();
+
+        //data.LoadCharacterCurrentStates();
 
         
-        data.LoadNotifications();
+        //data.LoadNotifications();
 
-        loadingWatch.Stop();
-        Debug.Log($"Total loading time is {loadingWatch.ElapsedMilliseconds.ToString()} ms");
-        LevelLoaderManager.Instance.SetLoadingState(false);
-        //TODO:
-        // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerNpcSettlement.coreTile.gameObject);
-        AudioManager.Instance.TransitionToWorld();
-        yield return new WaitForSeconds(1f);
-        GameManager.Instance.StartProgression();
-        UIManager.Instance.SetSpeedTogglesState(true);
-        Messenger.Broadcast(Signals.UPDATE_UI);
-        yield return null;
-        UIManager.Instance.Unpause();
-        yield return null;
-        UIManager.Instance.Pause();
-        Messenger.Broadcast(Signals.GAME_LOADED);
-        //data.LoadInvasion();
-        //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
+        //loadingWatch.Stop();
+        //Debug.Log($"Total loading time is {loadingWatch.ElapsedMilliseconds.ToString()} ms");
+        //LevelLoaderManager.Instance.SetLoadingState(false);
+        ////TODO:
+        //// CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerNpcSettlement.coreTile.gameObject);
+        //AudioManager.Instance.TransitionToWorld();
+        //yield return new WaitForSeconds(1f);
+        //GameManager.Instance.StartProgression();
+        //UIManager.Instance.SetSpeedTogglesState(true);
+        //Messenger.Broadcast(Signals.UPDATE_UI);
+        //yield return null;
+        //UIManager.Instance.Unpause();
+        //yield return null;
+        //UIManager.Instance.Pause();
+        //Messenger.Broadcast(Signals.GAME_LOADED);
+        ////data.LoadInvasion();
+        ////PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 
     }
     public void SetIsCoroutineRunning(bool state) { }
