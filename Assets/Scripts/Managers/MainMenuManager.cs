@@ -45,7 +45,7 @@ public class MainMenuManager : MonoBehaviour {
     #endregion
 
     private void Initialize() {
-        SaveManager.Instance.LoadSaveDataPlayer();
+        SaveManager.Instance.LoadPlayerData();
         //for (int i = 0; i < parentPlayerSkillTrees.Length; i++) {
         //    parentPlayerSkillTrees[i].LoadSkillTree();
         //}

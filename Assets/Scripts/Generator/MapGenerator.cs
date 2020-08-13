@@ -27,7 +27,7 @@ public class MapGenerator : MonoBehaviour {
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }
-    public void InitializeWorld(Save data) {
+    public void InitializeWorld(SaveDataCurrentProgress data) {
         StartCoroutine(InitializeWorldCoroutine(data));
     }
     private IEnumerator InitializeWorldCoroutine(MapGenerationComponent[] components) {
@@ -123,7 +123,7 @@ public class MapGenerator : MonoBehaviour {
             
         }
     }
-    private IEnumerator InitializeWorldCoroutine(Save data) {
+    private IEnumerator InitializeWorldCoroutine(SaveDataCurrentProgress data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
@@ -175,7 +175,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAreaMapsTileTraits();
         //data.LoadTileObjectTraits();
         data.LoadCharacterHomeStructures();
-        data.LoadCurrentDate(); //Moved this because some jobs use current date
+        data.LoadDate(); //Moved this because some jobs use current date
         data.LoadCharacterInitialPlacements();
         //data.LoadPlayer();
 

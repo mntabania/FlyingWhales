@@ -21,7 +21,7 @@ public class LoseGameOverItem : MonoBehaviour {
         int experienceGained = 100;
         PlayerManager.Instance.player.AdjustExperience(experienceGained);
         experienceText.text = "+" + experienceGained;
-        SaveManager.Instance.Save();
+        SaveManager.Instance.SavePlayerData();
     }
 
     public void BackToMainMenu() {

@@ -45,7 +45,7 @@ public class GridMap : MonoBehaviour {
         this.normalHexTiles = normalHexTiles;
         this.allTiles = allTiles;
     }
-    internal void GenerateGrid(Save data) {
+    internal void GenerateGrid(SaveDataCurrentProgress data) {
         this.width = data.width;
         this.height = data.height;
         float newX = xOffset * (width / 2);
@@ -83,7 +83,7 @@ public class GridMap : MonoBehaviour {
         outerGridList = outerTiles;
         allTiles.AddRange(outerTiles);
     }
-    internal void GenerateOuterGrid(Save data) {
+    internal void GenerateOuterGrid(SaveDataCurrentProgress data) {
         _borderThickness = data.borderThickness;
         int newWidth = (int) width + (_borderThickness * 2);
         int newHeight = (int) height + (_borderThickness * 2);

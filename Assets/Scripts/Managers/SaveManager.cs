@@ -11,7 +11,8 @@ using UnityEditor;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
-    private const string saveDataPlayerFileName = "SAVED_PLAYER_DATA";
+    private const string savedPlayerDataFileName = "SAVED_PLAYER_DATA";
+    private const string savedCurrentProgressFileName = "SAVED_CURRENT_PROGRESS";
 
     public SaveDataPlayer currentSaveDataPlayer { get; private set; }
 
@@ -32,19 +33,17 @@ public class SaveManager : MonoBehaviour {
         }
     }
     private void OnApplicationQuit() {
-        Save();
+        SavePlayerData();
     }
     private void OnEditorQuit() {
-        Save();
+        SavePlayerData();
     }
-
-    //public void SetCurrentSave(Save save) {
-    //    currentSave = save;
-    //}
     public void SetCurrentSaveDataPlayer(SaveDataPlayer save) {
         currentSaveDataPlayer = save;
     }
-    public void SaveCurrentStateOfWorld() {
+    public void SaveCurrentProgress() {
+        SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
+        saveData.SaveDate();
 //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
 //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
 //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
@@ -62,13 +61,13 @@ public class SaveManager : MonoBehaviour {
 
 //        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
     }
-    public void Save() {
+    public void SavePlayerData() {
         //PlayerManager.Instance.player.SaveSummons();
         //PlayerManager.Instance.player.SaveTileObjects();
         SaveDataPlayer save = currentSaveDataPlayer;
-        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName, save);
+        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName, save);
     }
-    public void LoadSaveDataPlayer() {
+    public void LoadPlayerData() {
         //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
         //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
         //}
@@ -76,8 +75,8 @@ public class SaveManager : MonoBehaviour {
             currentSaveDataPlayer = new SaveDataPlayer();
             currentSaveDataPlayer.InitializeInitialData();
         } else {
-            if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName)) {
-                SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + saveDataPlayerFileName));
+            if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
+                SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName));
             }
             if(currentSaveDataPlayer == null) {
                 currentSaveDataPlayer = new SaveDataPlayer();

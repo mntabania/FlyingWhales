@@ -19,7 +19,8 @@ public class OptionsMenu : PopupMenuBase {
         SettingsManager.Instance.OpenSettings();
     }
     public void SaveGame() {
-        SaveManager.Instance.Save();
+        SaveManager.Instance.SavePlayerData();
+        SaveManager.Instance.SaveCurrentProgress();
     }
     public void ExitGame() {
         Application.Quit();
@@ -37,7 +38,7 @@ public class OptionsMenu : PopupMenuBase {
     }
     private void Abandon() {
         DOTween.Clear(true);
-        SaveManager.Instance.Save();
+        SaveManager.Instance.SavePlayerData();
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);
         Messenger.Cleanup();
