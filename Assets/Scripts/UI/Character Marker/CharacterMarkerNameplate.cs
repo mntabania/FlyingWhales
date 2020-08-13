@@ -17,6 +17,7 @@ public class CharacterMarkerNameplate : PooledObject {
     [Header("Thoughts")] 
     [SerializeField] private GameObject thoughtGO;
     [SerializeField] private TextMeshProUGUI thoughtLbl;
+    [SerializeField] private RectTransform thoughtsRectTransform;
     [SerializeField] private ContentSizeFitter contentSizeFitter;
     
     private CharacterMarker _parentMarker;
@@ -240,8 +241,9 @@ public class CharacterMarkerNameplate : PooledObject {
         if (thoughtLbl.text.Equals(thoughts) == false) {
             //thoughts changed
             thoughtLbl.text = thoughts;
-            contentSizeFitter.SetLayoutVertical();
-            contentSizeFitter.SetLayoutHorizontal();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(thoughtsRectTransform);
+            // contentSizeFitter.SetLayoutVertical();
+            // contentSizeFitter.SetLayoutHorizontal();
         }
         
     }
