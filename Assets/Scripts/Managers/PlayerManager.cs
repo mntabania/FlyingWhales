@@ -43,6 +43,7 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
+        Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
     }
     public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure, PLAYER_ARCHETYPE archeType) {
         player = new Player();
