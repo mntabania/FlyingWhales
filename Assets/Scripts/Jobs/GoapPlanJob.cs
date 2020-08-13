@@ -299,30 +299,33 @@ public class GoapPlanJob : JobQueueItem {
         return base.CanTakeJob(character);
     }
     public override bool CanCharacterTakeThisJob(Character character) {
-        //if(character == assignedCharacter.owner) {
-        //    return CanTakeJob(character);
-        //}
-        if(originalOwner.ownerType == JOB_OWNER.CHARACTER) {
-            //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
-            return CanTakeJob(character);
+        // if(originalOwner.ownerType == JOB_OWNER.CHARACTER) {
+        //     //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
+        //     return CanTakeJob(character);
+        // }
+        // if (canTakeThis != null) {
+        //     if (canTakeThis(character)) {
+        //         return CanTakeJob(character);
+        //     }
+        //     return false;
+        // } else if (canTakeThisJob != null) {
+        //     if (canTakeThisJob(character, this)) {
+        //         return CanTakeJob(character);
+        //     }
+        //     return false;
+        // } else if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
+        //     if (canTakeThisJobWithTarget(character, targetPOI as Character)) {
+        //         return CanTakeJob(character);
+        //     }
+        //     return false;
+        // }
+        // return CanTakeJob(character);
+        bool canTakeJob = base.CanCharacterTakeThisJob(character);
+        bool canTakeJobOverride = true;
+        if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
+            canTakeJobOverride = canTakeThisJobWithTarget(character, targetPOI as Character);
         }
-        if (canTakeThis != null) {
-            if (canTakeThis(character)) {
-                return CanTakeJob(character);
-            }
-            return false;
-        } else if (canTakeThisJob != null) {
-            if (canTakeThisJob(character, this)) {
-                return CanTakeJob(character);
-            }
-            return false;
-        } else if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
-            if (canTakeThisJobWithTarget(character, targetPOI as Character)) {
-                return CanTakeJob(character);
-            }
-            return false;
-        }
-        return CanTakeJob(character);
+        return canTakeJob && canTakeJobOverride;
     }
     //public override void OnCharacterAssignedToJob(Character character) {
     //    base.OnCharacterAssignedToJob(character);

@@ -232,7 +232,7 @@ public class MovementComponent {
     /// Does this character have a path towards the target tile?
     /// Even if that tile is part of a different region?
     /// Note: This factors in digging capabilities. If need to query without
-    /// digging use <see cref="PathfindingManager.HasPathEvenDiffRegion"/>
+    /// digging use <see cref="PathfindingManager.HasPathEvenDiffRegion(LocationGridTile, LocationGridTile)"/>
     /// </summary>
     /// <param name="toTile">The target tile</param>
     /// <returns>True or false.</returns>
@@ -246,6 +246,27 @@ public class MovementComponent {
             return true;
         } else {
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
+        }
+    }
+    /// <summary>
+    /// Does this character have a path towards the target tile?
+    /// Even if that tile is part of a different region?
+    /// Note: This factors in digging capabilities. If need to query without
+    /// digging use <see cref="PathfindingManager.HasPathEvenDiffRegion(LocationGridTile, LocationGridTile, NNConstraint)"/>
+    /// </summary>
+    /// <param name="toTile">The target tile</param>
+    /// <param name="constraint">The constraint to use when performing the query</param>
+    /// <returns>True or false.</returns>
+    public bool HasPathToEvenIfDiffRegion(LocationGridTile toTile, NNConstraint constraint) {
+        LocationGridTile fromTile = owner.gridTileLocation;
+        if (CanDig()) {
+            if (fromTile == null || toTile == null) { return false; }
+            if (fromTile == toTile) { return true; }
+
+            //If digging is enabled, always return true, because the digging will handle the blocked path
+            return true;
+        } else {
+            return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile, constraint);
         }
     }
     #endregion
