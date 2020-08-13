@@ -38,59 +38,11 @@ public class SaveManager : MonoBehaviour {
     private void OnEditorQuit() {
         SavePlayerData();
     }
+
+    #region General
     public void SetCurrentSaveDataPlayer(SaveDataPlayer save) {
         currentSaveDataPlayer = save;
     }
-    public void SaveCurrentProgress() {
-        SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
-        saveData.SaveDate();
-//        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
-//        save.SaveHextiles(GridMap.Instance.normalHexTiles);
-//        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
-//        save.SaveRegions(GridMap.Instance.allRegions);
-//        // save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
-//        save.SaveNonPlayerAreas();
-//        save.SaveFactions(FactionManager.Instance.allFactions);
-//        save.SaveCharacters(CharacterManager.Instance.allCharacters);
-//        save.SavePlayer(PlayerManager.Instance.player);
-//        save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
-//        // save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
-////        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
-//        save.SaveCurrentDate();
-//        save.SaveNotifications();
-
-//        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
-    }
-    public void SavePlayerData() {
-        //PlayerManager.Instance.player.SaveSummons();
-        //PlayerManager.Instance.player.SaveTileObjects();
-        SaveDataPlayer save = currentSaveDataPlayer;
-        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName, save);
-    }
-    public void LoadPlayerData() {
-        //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
-        //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
-        //}
-        if (WorldConfigManager.Instance.isTutorialWorld) {
-            currentSaveDataPlayer = new SaveDataPlayer();
-            currentSaveDataPlayer.InitializeInitialData();
-        } else {
-            if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
-                SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName));
-            }
-            if(currentSaveDataPlayer == null) {
-                currentSaveDataPlayer = new SaveDataPlayer();
-                currentSaveDataPlayer.InitializeInitialData();
-            }    
-        }
-        if (alwaysResetBonusTutorialsOnStartup) {
-            currentSaveDataPlayer.ResetBonusTutorialProgress();
-        }
-        if (alwaysResetSpecialPopupsOnStartup) {
-            currentSaveDataPlayer.ResetSpecialPopupsProgress();
-        }
-    }
-
     public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {
         if (trait.isNotSavable) {
             return null;
@@ -104,4 +56,63 @@ public class SaveManager : MonoBehaviour {
         }
         return saveDataTrait;
     }
+    #endregion
+
+    #region Saving
+    public void SaveCurrentProgress() {
+        SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
+        saveData.SaveDate();
+        //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
+        //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
+        //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
+        //        save.SaveRegions(GridMap.Instance.allRegions);
+        //        // save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
+        //        save.SaveNonPlayerAreas();
+        //        save.SaveFactions(FactionManager.Instance.allFactions);
+        //        save.SaveCharacters(CharacterManager.Instance.allCharacters);
+        //        save.SavePlayer(PlayerManager.Instance.player);
+        //        save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
+        //        // save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
+        ////        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
+        //        save.SaveCurrentDate();
+        //        save.SaveNotifications();
+
+        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + savedCurrentProgressFileName, saveData);
+    }
+    public void SavePlayerData() {
+        //PlayerManager.Instance.player.SaveSummons();
+        //PlayerManager.Instance.player.SaveTileObjects();
+        SaveDataPlayer save = currentSaveDataPlayer;
+        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName, save);
+    }
+    #endregion
+
+    #region Loading
+    public void LoadCurrentProgress() {
+        //TODO
+    }
+    public void LoadPlayerData() {
+        //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
+        //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
+        //}
+        if (WorldConfigManager.Instance.isTutorialWorld) {
+            currentSaveDataPlayer = new SaveDataPlayer();
+            currentSaveDataPlayer.InitializeInitialData();
+        } else {
+            if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
+                SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName));
+            }
+            if (currentSaveDataPlayer == null) {
+                currentSaveDataPlayer = new SaveDataPlayer();
+                currentSaveDataPlayer.InitializeInitialData();
+            }
+        }
+        if (alwaysResetBonusTutorialsOnStartup) {
+            currentSaveDataPlayer.ResetBonusTutorialProgress();
+        }
+        if (alwaysResetSpecialPopupsOnStartup) {
+            currentSaveDataPlayer.ResetSpecialPopupsProgress();
+        }
+    }
+    #endregion  
 }
