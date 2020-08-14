@@ -35,7 +35,7 @@ public class TornadoTileObject : MovingTileObject {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }
     public override string ToString() {
-        return "Tornado";
+        return $"Tornado {id.ToString()}";
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
