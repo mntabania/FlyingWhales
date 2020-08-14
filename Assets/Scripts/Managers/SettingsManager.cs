@@ -23,7 +23,8 @@ namespace Settings {
         public TMP_Dropdown resolutionsDropdown;
         public TMP_Dropdown graphicsDropdown;
         public Toggle fullscreenToggle;
-
+        public int targetFrameRate;
+        
         [Header("Gameplay Settings UI")] 
         [SerializeField] private Toggle edgePanningToggle;
         [SerializeField] private Toggle skipTutorialsToggle;
@@ -32,7 +33,7 @@ namespace Settings {
         [Header("Audio Settings UI")]
         [SerializeField] private Slider masterVolumeSlider;
         [SerializeField] private Slider musicVolumeSlider;
-        
+
         private List<Resolution> resolutions;
         private Settings _settings;
 
@@ -45,6 +46,7 @@ namespace Settings {
             if (Instance == null) {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                Application.targetFrameRate = targetFrameRate;
 #if UNITY_EDITOR
                 EditorApplication.quitting += OnEditorQuit;
 #endif
