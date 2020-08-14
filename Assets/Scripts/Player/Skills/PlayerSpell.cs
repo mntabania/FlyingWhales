@@ -79,7 +79,7 @@ public class PlayerSpell {
         //ActivateCooldown();
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
-        PlayerManager.Instance.player.ConsumeAbility(this);
+        //PlayerManager.Instance.player.ConsumeAbility(this);
     }
     public virtual void ActivateAction(IPointOfInterest targetPOI) { //this is called when the actions button is pressed
         ActivateAction();
@@ -197,7 +197,7 @@ public class SpellData : IPlayerSkill {
     public virtual SPELL_CATEGORY category { get { return SPELL_CATEGORY.NONE; } }
     //public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public SPELL_TARGET[] targetTypes { get; protected set; }
-    public int radius { get; protected set; }
+    //public int radius { get; protected set; }
 
     public int maxCharges { get; private set; }
     public int charges { get; private set; }

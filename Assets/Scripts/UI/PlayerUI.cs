@@ -537,6 +537,14 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
+        //if (PlayerManager.Instance.player.currentTileBeingCorrupted.region != null) {
+        //    InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.region);
+        //} else {
+        //    //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
+        //    PlayerManager.Instance.player.InvadeATile();
+        //}
+
+
         // if (tempCurrentMinionLeaderPicker != null) {
         //     PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
         // } else {
@@ -546,12 +554,6 @@ public class PlayerUI : MonoBehaviour {
         //     //    PlayerManager.Instance.player.SetMinionLeader(minion);
         //     //}
         // }
-        if (PlayerManager.Instance.player.currentTileBeingCorrupted.region != null) {
-            InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.region);
-        } else {
-            //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
-            PlayerManager.Instance.player.InvadeATile();
-        }
         //if (tempCurrentMinionLeaderPicker != null) {
         //    PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
         //    if (PlayerManager.Instance.player.currentTileBeingCorrupted.settlementOfTile == null) {

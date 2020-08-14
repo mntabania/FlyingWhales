@@ -35,7 +35,11 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _tornado = tileObject as TornadoTileObject;
         _radius = _tornado.radius;
         //PlayTornadoParticle();
-        _damagablesInTornado = new List<IDamageable>();
+        if(_damagablesInTornado == null) {
+            _damagablesInTornado = new List<IDamageable>();
+        } else {
+            _damagablesInTornado.Clear();
+        }
     }
 
     #region Particles
@@ -159,6 +163,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         _journeyLength = 0f;
         _startPosition = Vector3.zero;
         _startTime = 0f;
+        _damagablesInTornado.Clear();
         ClearTornadoParticle();
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);

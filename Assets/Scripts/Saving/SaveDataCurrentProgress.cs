@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 
-[System.Serializable]
 public class SaveDataCurrentProgress {
     //public int width;
     //public int height;
@@ -29,6 +28,9 @@ public class SaveDataCurrentProgress {
     public int tick;
     public int continuousDays;
 
+    //Player
+    public SaveDataPlayerGame player;
+
     #region Saving
     public void SaveDate() {
         GameDate today = GameManager.Instance.Today();
@@ -37,6 +39,10 @@ public class SaveDataCurrentProgress {
         year = today.year;
         tick = today.tick;
         continuousDays = GameManager.Instance.continuousDays;
+    }
+    public void SavePlayer() {
+        player = new SaveDataPlayerGame();
+        player.Save();
     }
     #endregion
 
@@ -49,6 +55,9 @@ public class SaveDataCurrentProgress {
         today.tick = tick;
         GameManager.Instance.continuousDays = continuousDays;
         GameManager.Instance.SetToday(today);
+    }
+    public Player LoadPlayer() {
+        return player.Load();
     }
     #endregion
     //public void SaveHextiles(List<HexTile> tiles) {

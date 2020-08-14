@@ -11,7 +11,7 @@ public class SaveDataPlayer {
     //public List<PlayerSkillDataCopy> learnedSkills;
     public List<SPELL_TYPE> learnedSkills;
     public List<SPELL_TYPE> unlockedSkills;
-    public List<SaveDataSummon> kennelSummons;
+    //public List<SaveDataSummon> kennelSummons;
     public List<SaveDataTileObject> cryptTileObjects;
     public List<TutorialManager.Tutorial> completedBonusTutorials;
     public List<QuestManager.Special_Popup> completedSpecialPopups;
@@ -105,28 +105,28 @@ public class SaveDataPlayer {
     }
     #endregion
 
-    #region Summons
-    public void SaveSummons(List<Summon> summons) {
-        if(kennelSummons == null) {
-            kennelSummons = new List<SaveDataSummon>();
-        }
-        for (int i = 0; i < summons.Count; i++) {
-            kennelSummons.Add(new SaveDataSummon(summons[i]));
-        }
-    }
-    public void RemoveKennelSummon(Summon summon) {
-        for (int i = 0; i < kennelSummons.Count; i++) {
-            SaveDataSummon summonData = kennelSummons[i];
-            if(summonData.className == summon.characterClass.className
-                && summonData.summonType == summon.summonType
-                && summonData.firstName == summon.firstName
-                && summonData.surName == summon.surName) {
-                kennelSummons.RemoveAt(i);
-                break;
-            }
-        }
-    }
-    #endregion
+    //#region Summons
+    //public void SaveSummons(List<Summon> summons) {
+    //    if(kennelSummons == null) {
+    //        kennelSummons = new List<SaveDataSummon>();
+    //    }
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        kennelSummons.Add(new SaveDataSummon(summons[i]));
+    //    }
+    //}
+    //public void RemoveKennelSummon(Summon summon) {
+    //    for (int i = 0; i < kennelSummons.Count; i++) {
+    //        SaveDataSummon summonData = kennelSummons[i];
+    //        if(summonData.className == summon.characterClass.className
+    //            && summonData.summonType == summon.summonType
+    //            && summonData.firstName == summon.firstName
+    //            && summonData.surName == summon.surName) {
+    //            kennelSummons.RemoveAt(i);
+    //            break;
+    //        }
+    //    }
+    //}
+    //#endregion
 
     #region Tile Objects
     public void SaveTileObjects(List<TileObject> tileObjects) {

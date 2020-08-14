@@ -22,18 +22,18 @@ public class Player : ILeader, IObjectManipulator {
     public List<IIntel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<Summon> summons { get; private set; }
-    public List<Artifact> artifacts { get; private set; }
-    private int currentCorruptionDuration { get; set; }
-    private int currentCorruptionTick { get; set; }
-    private bool isTileCurrentlyBeingCorrupted { get; set; }
-    public HexTile currentTileBeingCorrupted { get; private set; }
+    //public List<Artifact> artifacts { get; private set; }
+    //private int currentCorruptionDuration { get; set; }
+    //private int currentCorruptionTick { get; set; }
+    //private bool isTileCurrentlyBeingCorrupted { get; set; }
+    //public HexTile currentTileBeingCorrupted { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public IIntel currentActiveIntel { get; private set; }
     //public int maxSummonSlots { get; private set; } //how many summons can the player have
     //public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
-    public PlayerJobActionSlot[] interventionAbilitySlots { get; }
+    //public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
-    public float constructionRatePercentageModifier { get; private set; }
+    //public float constructionRatePercentageModifier { get; private set; }
     public List<SPELL_TYPE> unlearnedSpells { get; }
     public List<SPELL_TYPE> unlearnedAfflictions { get; }
 
@@ -56,8 +56,8 @@ public class Player : ILeader, IObjectManipulator {
         allIntel = new List<IIntel>();
         minions = new List<Minion>();
         summons = new List<Summon>();
-        artifacts = new List<Artifact>();
-        interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
+        //artifacts = new List<Artifact>();
+        //interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
         //maxSummonSlots = 0;
         //maxArtifactSlots = 0;
         unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
@@ -66,7 +66,24 @@ public class Player : ILeader, IObjectManipulator {
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);
-        ConstructAllInterventionAbilitySlots();
+        //ConstructAllInterventionAbilitySlots();
+        AddListeners();
+        currentActiveItem = TILE_OBJECT_TYPE.NONE;
+    }
+    public Player(SaveDataPlayerGame data) {
+        allIntel = new List<IIntel>();
+        unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
+        unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
+        seizeComponent = new SeizeComponent();
+        threatComponent = new ThreatComponent(this);
+        playerSkillComponent = new PlayerSkillComponent(this);
+
+        //TODO: Load Minions/Summons
+        AdjustMana(data.mana);
+        SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
+        threatComponent.AdjustThreat(data.threat);
+        playerSkillComponent.LoadSkills(data.skills);
+
         AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
     }
@@ -75,7 +92,7 @@ public class Player : ILeader, IObjectManipulator {
         if(save != null) {
             experience = save.exp;
             playerSkillComponent.LoadPlayerSkillTreeOrLoadout(save);
-            playerSkillComponent.LoadSummons(save);
+            //playerSkillComponent.LoadSummons(save);
         }
     }
 
@@ -159,11 +176,12 @@ public class Player : ILeader, IObjectManipulator {
     //}
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
         if(faction == playerFaction) {
-            if(character.minion != null) {
-                AddMinion(character.minion);
-            } else if(character is Summon summon) {
-                AddSummon(summon);
-            }
+            //if(character.minion != null) {
+            //    AddMinion(character.minion);
+            //} 
+            //else if(character is Summon summon) {
+            //    AddSummon(summon);
+            //}
             if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
                 character.traitContainer.AddTrait(character, character.characterClass.traitNameOnTamedByPlayer);
             }
@@ -171,11 +189,12 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
         if (faction == playerFaction) {
-            if (character.minion != null) {
-                RemoveMinion(character.minion);
-            } else if (character is Summon summon) {
-                RemoveSummon(summon);
-            }
+            //if (character.minion != null) {
+            //    RemoveMinion(character.minion);
+            //} 
+            //else if (character is Summon summon) {
+            //    RemoveSummon(summon);
+            //}
             if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
                 character.traitContainer.RemoveTrait(character, character.characterClass.traitNameOnTamedByPlayer);
             }
@@ -212,24 +231,9 @@ public class Player : ILeader, IObjectManipulator {
             minions.Add(minion);
             Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
         }
-        //if(minions.Count < PlayerDB.MAX_MINIONS) {
-        //    if (!minions.Contains(minion)) {
-        //        minions.Add(minion);
-        //        if (showNewMinionUI) {
-        //            PlayerUI.Instance.ShowNewMinionUI(minion);
-        //        }
-        //        //PlayerUI.Instance.UpdateRoleSlots();
-        //        Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
-        //    }
-        //} else {
-        //    PlayerUI.Instance.replaceUI.ShowReplaceUI(minions, minion, ReplaceMinion, RejectMinion);
-        //}
     }
     public void RemoveMinion(Minion minion) {
         if (minions.Remove(minion)) {
-            //if (currentMinionLeader == minion) {
-            //    SetMinionLeader(null);
-            //}
             Messenger.Broadcast(Signals.PLAYER_LOST_MINION, minion);
         }
     }
@@ -548,37 +552,37 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Tile Corruption
-    public void InvadeATile() {
-        //currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
-        //if(currentCorruptionDuration == 0) {
-        //    Debug.LogError("Cannot corrupt a tile with 0 corruption duration");
-        //} else {
-        //    GameManager.Instance.SetOnlyTickDays(true);
-        //    currentTileBeingCorrupted.StartCorruptionAnimation();
-        //    currentCorruptionTick = 0;
-        //    Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
-        //    UIManager.Instance.Unpause();
-        //    isTileCurrentlyBeingCorrupted = true;
-        //}
-        currentTileBeingCorrupted.region.InvadeActions();
-        //TODO:
-        // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
-        //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
-    }
-    private void CorruptTilePerTick() {
-        currentCorruptionTick ++;
-        if(currentCorruptionTick >= currentCorruptionDuration) {
-            TileIsCorrupted();
-        }
-    }
-    private void TileIsCorrupted() {
-        isTileCurrentlyBeingCorrupted = false;
-        Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
-        UIManager.Instance.Pause();
-        //TODO:
-        // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
-        //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
-    }
+    //public void InvadeATile() {
+    //    //currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
+    //    //if(currentCorruptionDuration == 0) {
+    //    //    Debug.LogError("Cannot corrupt a tile with 0 corruption duration");
+    //    //} else {
+    //    //    GameManager.Instance.SetOnlyTickDays(true);
+    //    //    currentTileBeingCorrupted.StartCorruptionAnimation();
+    //    //    currentCorruptionTick = 0;
+    //    //    Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
+    //    //    UIManager.Instance.Unpause();
+    //    //    isTileCurrentlyBeingCorrupted = true;
+    //    //}
+    //    currentTileBeingCorrupted.region.InvadeActions();
+    //    //TODO:
+    //    // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
+    //    //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+    //}
+    //private void CorruptTilePerTick() {
+    //    currentCorruptionTick ++;
+    //    if(currentCorruptionTick >= currentCorruptionDuration) {
+    //        TileIsCorrupted();
+    //    }
+    //}
+    //private void TileIsCorrupted() {
+    //    isTileCurrentlyBeingCorrupted = false;
+    //    Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
+    //    UIManager.Instance.Pause();
+    //    //TODO:
+    //    // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
+    //    //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+    //}
     #endregion
 
     #region Settlement Corruption
@@ -607,7 +611,7 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     private void OnCharacterDied(Character character) {
-        if(character.faction == playerFaction && character is Summon summon) {
+        if (character.faction == playerFaction && character is Summon summon) {
             RemoveSummon(summon);
         }
     }
@@ -644,267 +648,31 @@ public class Player : ILeader, IObjectManipulator {
             hoveredTile.structure.AddPOI(artifact, hoveredTile);
         }
     }
-    //private void ConstructAllArtifactSlots() {
-    //    for (int i = 0; i < artifactSlots.Length; i++) {
-    //        if(artifactSlots[i] == null) {
-    //            artifactSlots[i] = new ArtifactSlot();
+    //public bool HasArtifact(string artifactName) {
+    //    for (int i = 0; i < artifacts.Count; i++) {
+    //        Artifact currArtifact = artifacts[i];
+    //        if (currArtifact.name == artifactName) {
+    //            return true;
     //        }
     //    }
+    //    return false;
     //}
-    // private void GainArtifactSlot(bool showUI = true) {
-    //     ArtifactSlot newSlot = new ArtifactSlot();
-    //     artifacts.Add(newSlot);
-    //     //if (showUI) {
-    //     //    PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
-    //     //}
-    //     UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a new artifact slot!", null);
-    //     Messenger.Broadcast<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, newSlot);
-    // }
-    // private void LoseArtifactSlot() {
-    //     ArtifactSlot unusedSlot;
-    //     if (TryGetUnusedArtifactSlot(out unusedSlot)) {
-    //         //lose the unused slot.
-    //         LoseArtifactSlot(unusedSlot, true);
-    //     } else {
-    //         //no unused slot, show UI to pick slot to be discarded.
-    //         UIManager.Instance.ShowClickableObjectPicker(artifacts, ShowDiscardArtifactConfirmation, title: "Discard an artifact slot.", showCover: true, layer: 25, closable: false);
-    //     }
-    // }
-    // private void LoseArtifactSlot(ArtifactSlot slot, bool showUI = false) {
-    //     if (artifacts.Remove(slot)) {
-    //         PlayerUI.Instance.ShowGeneralConfirmation("Lost Artifact Slot", "You lost an artifact slot!");
-    //         Messenger.Broadcast(Signals.PLAYER_LOST_ARTIFACT_SLOT, slot);
-    //     }
-    // }
-    // private void ShowDiscardArtifactConfirmation(object s) {
-    //     ArtifactSlot slot = s as ArtifactSlot;
-    //     UIManager.Instance.ShowYesNoConfirmation("Discard artifact slot", "Are you sure you want to discard your " + slot.artifact.name + "?", () => OnClickYesDiscardArtifact(slot), layer: 26);
-    // }
-    // private void OnClickYesDiscardArtifact(ArtifactSlot slot) {
-    //     LoseArtifactSlot(slot);
-    //     UIManager.Instance.HideObjectPicker();
-    // }
-    // public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
-    //     Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
-    //     GainArtifact(newArtifact, showNewArtifactUI);
-    // }
-    // public void GainArtifact(Artifact artifact, bool showNewArtifactUI = false) {
-    //     if (maxArtifactSlots == 0) {
-    //         //no artifact slots yet.
-    //         PlayerUI.Instance.ShowGeneralConfirmation("New Artifact", "You gained a new artifact but do not yet have an artifact slot! " + artifact.name + " will be discarded.");
-    //     } else if (GetTotalArtifactCount() < maxArtifactSlots) {
-    //         AddArtifact(artifact, showNewArtifactUI);
-    //     } else {
-    //         Debug.LogWarning("Max artifacts has been reached!");
-    //         PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
-    //     }
-    // }
-    // public bool HasSpaceForNewArtifact() {
-    //     return GetTotalArtifactCount() < maxArtifactSlots;
-    // }
-    // private void ReplaceArtifact(object objToReplace, object objToAdd) {
-    //     Artifact replace = objToReplace as Artifact;
-    //     Artifact add = objToAdd as Artifact;
-    //     RemoveArtifact(replace);
-    //     AddArtifact(add);
-    // }
-    // private void RejectArtifact(object rejectedObj) { }
-    // public void LoseArtifact(ARTIFACT_TYPE type) {
-    //     if (GetAvailableArtifactsOfTypeCount(type) > 0) {
-    //         Artifact artifact = GetArtifactOfType(type);
-    //         RemoveArtifact(artifact);
-    //     } else {
-    //         Debug.LogWarning("Cannot lose artifact " + type.ToString() + " because player has none.");
-    //     }
-    // }
-    public void AddArtifact(Artifact newArtifact, bool showNewArtifactUI = false) {
-        if (!HasArtifactOfType(newArtifact.type)) {
-            artifacts.Add(newArtifact);
-            Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
-            //if (showNewArtifactUI) {
-            //    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
-            //}
-        }
-    }
-    public void AddArtifact(ARTIFACT_TYPE artifactType, bool showNewArtifactUI = false) {
-        if (!HasArtifactOfType(artifactType)) {
-            Artifact newArtifact = InnerMapManager.Instance.CreateNewArtifact(artifactType);
-            artifacts.Add(newArtifact);
-            Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
-            //if (showNewArtifactUI) {
-            //    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
-            //}
-        }
-    }
-    public bool RemoveArtifact(Artifact removedArtifact) {
-        if (artifacts.Remove(removedArtifact)) {
-            Messenger.Broadcast<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, removedArtifact);
-            return true;
-        }
-        return false;
-    }
-    public bool HasArtifactOfType(ARTIFACT_TYPE type) {
-        return GetArtifactOfType(type) != null;
-    }
-    // public int GetTotalArtifactCount() {
-    //     int count = 0;
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         if (artifacts[i].artifact != null) {
-    //             count++;
-    //         }
-    //     }
-    //     return count;
-    // }
-    // /// <summary>
-    // /// Get number of artifacts that have not been used.
-    // /// </summary>
-    // public int GetTotalAvailableArtifactCount() {
-    //     int count = 0;
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         Artifact currArtifact = artifacts[i].artifact;
-    //         if (currArtifact != null && !currArtifact.hasBeenUsed) {
-    //             count++;
-    //         }
-    //     }
-    //     return count;
-    // }
-    // public int GetAvailableArtifactsOfTypeCount(ARTIFACT_TYPE type) {
-    //     int count = 0;
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         Artifact currArtifact = artifacts[i].artifact;
-    //         if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
-    //             count++;
-    //         }
-    //     }
-    //     return count;
-    // }
-    // public bool TryGetAvailableArtifactOfType(ARTIFACT_TYPE type, out Artifact artifact) {
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         Artifact currArtifact = artifacts[i].artifact;
-    //         if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
-    //             artifact = currArtifact;
-    //             return true;
-    //         }
-    //     }
-    //     artifact = null;
-    //     return false;
-    // }
-    public bool HasArtifact(string artifactName) {
-        for (int i = 0; i < artifacts.Count; i++) {
-            Artifact currArtifact = artifacts[i];
-            if (currArtifact.name == artifactName) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
-        for (int i = 0; i < artifacts.Count; i++) {
-            Artifact currArtifact = artifacts[i];
-            if (currArtifact.type == type) {
-                return currArtifact;
-            }
-        }
-        return null;
-    }
-    // private List<Artifact> GetAllArtifacts() {
-    //     List<Artifact> all = new List<Artifact>();
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         Artifact currArtifact = artifacts[i].artifact;
-    //         if (currArtifact != null) {
-    //             all.Add(currArtifact);
-    //         }
-    //     }
-    //     return all;
-    // }
-    // public string GetArtifactDescription(ARTIFACT_TYPE type) {
-    //     switch (type) {
-    //         case ARTIFACT_TYPE.Necronomicon:
-    //             return "Raises all dead characters in the npcSettlement to attack residents.";
-    //         case ARTIFACT_TYPE.Chaos_Orb_Artifact:
-    //             return "Characters that inspect the Chaos Orb may be permanently berserked.";
-    //         case ARTIFACT_TYPE.Hermes_Statue:
-    //             return "Characters that inspect this will be teleported to a different npcSettlement. If no other npcSettlement exists, this will be useless.";
-    //         case ARTIFACT_TYPE.Ankh_Of_Anubis:
-    //             return "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
-    //         case ARTIFACT_TYPE.Miasma_Emitter:
-    //             return "Characters will avoid the npcSettlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
-    //         default:
-    //             return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
-    //     }
-    // }
-    // public Artifact GetRandomArtifact() {
-    //     List<Artifact> choices = GetAllArtifacts();
-    //     return choices[UnityEngine.Random.Range(0, choices.Count)];
-    // }
-    // private void ResetArtifacts() {
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         Artifact currArtifact = artifacts[i].artifact;
-    //         if (currArtifact != null) {
-    //             currArtifact.Reset();
-    //         }
-    //     }
-    // }
-    // public void IncreaseArtifactSlot() {
-    //     maxArtifactSlots += 1;
-    //     maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
-    //     //validate if adjusted max artifacts can accomodate current summons
-    //     if (artifacts.Count < maxArtifactSlots) {
-    //         //add new artifact slot
-    //         GainArtifactSlot();
-    //     }
-    // }
-    // public void DecreaseArtifactSlot() {
-    //     maxArtifactSlots -= 1;
-    //     maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
-    //     //validate if adjusted max artifacts can accomodate current summons
-    //     if (artifacts.Count > maxArtifactSlots) {
-    //         //remove artifact slot
-    //         LoseArtifactSlot();
-    //     }
-    // }
-    // public ArtifactSlot GetArtifactSlotByArtifact(Artifact artifact) {
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         if(artifacts[i].artifact == artifact) {
-    //             return artifacts[i];
-    //         }
-    //     }
-    //     return null;
-    // }
-    // public int GetIndexForArtifactSlot(ArtifactSlot slot) {
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         if (artifacts[i] == slot) {
-    //             return i;
-    //         }
-    //     }
-    //     return 0;
-    // }
-    // public bool AreAllArtifactSlotsMaxLevel() {
-    //     for (int i = 0; i < maxArtifactSlots; i++) {
-    //         if (artifacts[i].level < PlayerManager.MAX_LEVEL_ARTIFACT) {
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
-    // private bool TryGetUnusedArtifactSlot(out ArtifactSlot unusedSlot) {
-    //     for (int i = 0; i < artifacts.Count; i++) {
-    //         ArtifactSlot currSlot = artifacts[i];
-    //         if (currSlot.artifact == null) {
-    //             unusedSlot = currSlot;
-    //             return true;
-    //         }
-    //     }
-    //     unusedSlot = null; //no unused slot
-    //     return false;
-    // }
+    //private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
+    //    for (int i = 0; i < artifacts.Count; i++) {
+    //        Artifact currArtifact = artifacts[i];
+    //        if (currArtifact.type == type) {
+    //            return currArtifact;
+    //        }
+    //    }
+    //    return null;
+    //}
     #endregion
 
-    #region Invasion
-    public void SetConstructionRatePercentageModifier(float amount) {
-        constructionRatePercentageModifier = amount;
-    }
-    #endregion
+    //#region Invasion
+    //public void SetConstructionRatePercentageModifier(float amount) {
+    //    constructionRatePercentageModifier = amount;
+    //}
+    //#endregion
 
     #region Combat Ability
     public void SetCurrentActiveCombatAbility(CombatAbility ability) {
@@ -955,96 +723,96 @@ public class Player : ILeader, IObjectManipulator {
     }
     #endregion
 
-    #region Intervention Ability
-    private void ConstructAllInterventionAbilitySlots() {
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i] == null) {
-                interventionAbilitySlots[i] = new PlayerJobActionSlot();
-            }
-        }
-    }
-    public void GainNewInterventionAbility(SPELL_TYPE ability, bool showNewAbilityUI = false) {
-        PlayerSpell playerSpell = PlayerManager.Instance.CreateNewInterventionAbility(ability);
-        GainNewInterventionAbility(playerSpell, showNewAbilityUI);
-    }
-    public void GainNewInterventionAbility(PlayerSpell ability, bool showNewAbilityUI = false) {
-        if (!HasEmptyInterventionSlot()) {
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllInterventionAbilities(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
-        } else {
-            for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-                if (interventionAbilitySlots[i].ability == null) {
-                    interventionAbilitySlots[i].SetAbility(ability);
-                    Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, ability);
-                    if (showNewAbilityUI) {
-                        PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(null, ability);
-                    }
-                    break;
-                }
-            }
-        }
-    }
-    public void ConsumeAbility(PlayerSpell ability) {
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].ability == ability) {
-                interventionAbilitySlots[i].SetAbility(null);
-                Messenger.Broadcast(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, ability);
-                break;
-            }
-        }
-    }
-    private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
-        PlayerSpell replace = objToReplace as PlayerSpell;
-        PlayerSpell add = objToAdd as PlayerSpell;
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].ability == replace) {
-                interventionAbilitySlots[i].SetAbility(add);
-                Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, add);
-                break;
-            }
-        }
-    }
-    private void OnRejectInterventionAbility(object rejectedObj) { }
-    private int GetInterventionAbilityCount() {
-        int count = 0;
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].ability != null) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public bool HasEmptyInterventionSlot() {
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].ability == null) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public List<PlayerSpell> GetAllInterventionAbilities() {
-        List<PlayerSpell> abilities = new List<PlayerSpell>();
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].ability != null) {
-                abilities.Add(interventionAbilitySlots[i].ability);
-            }
-        }
-        return abilities;
-    }
-    public void ResetInterventionAbilitiesCD() {
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].ability != null) {
-                interventionAbilitySlots[i].ability.InstantCooldown();
-            }
-        }
-    }
-    public bool AreAllInterventionSlotsMaxLevel() {
-        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].level < PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY) {
-                return false;
-            }
-        }
-        return true;
-    }
+    //#region Intervention Ability
+    //private void ConstructAllInterventionAbilitySlots() {
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i] == null) {
+    //            interventionAbilitySlots[i] = new PlayerJobActionSlot();
+    //        }
+    //    }
+    //}
+    //public void GainNewInterventionAbility(SPELL_TYPE ability, bool showNewAbilityUI = false) {
+    //    PlayerSpell playerSpell = PlayerManager.Instance.CreateNewInterventionAbility(ability);
+    //    GainNewInterventionAbility(playerSpell, showNewAbilityUI);
+    //}
+    //public void GainNewInterventionAbility(PlayerSpell ability, bool showNewAbilityUI = false) {
+    //    if (!HasEmptyInterventionSlot()) {
+    //        PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllInterventionAbilities(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
+    //    } else {
+    //        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //            if (interventionAbilitySlots[i].ability == null) {
+    //                interventionAbilitySlots[i].SetAbility(ability);
+    //                Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, ability);
+    //                if (showNewAbilityUI) {
+    //                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(null, ability);
+    //                }
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
+    //public void ConsumeAbility(PlayerSpell ability) {
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].ability == ability) {
+    //            interventionAbilitySlots[i].SetAbility(null);
+    //            Messenger.Broadcast(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, ability);
+    //            break;
+    //        }
+    //    }
+    //}
+    //private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
+    //    PlayerSpell replace = objToReplace as PlayerSpell;
+    //    PlayerSpell add = objToAdd as PlayerSpell;
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].ability == replace) {
+    //            interventionAbilitySlots[i].SetAbility(add);
+    //            Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, add);
+    //            break;
+    //        }
+    //    }
+    //}
+    //private void OnRejectInterventionAbility(object rejectedObj) { }
+    //private int GetInterventionAbilityCount() {
+    //    int count = 0;
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].ability != null) {
+    //            count++;
+    //        }
+    //    }
+    //    return count;
+    //}
+    //public bool HasEmptyInterventionSlot() {
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].ability == null) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public List<PlayerSpell> GetAllInterventionAbilities() {
+    //    List<PlayerSpell> abilities = new List<PlayerSpell>();
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].ability != null) {
+    //            abilities.Add(interventionAbilitySlots[i].ability);
+    //        }
+    //    }
+    //    return abilities;
+    //}
+    //public void ResetInterventionAbilitiesCD() {
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].ability != null) {
+    //            interventionAbilitySlots[i].ability.InstantCooldown();
+    //        }
+    //    }
+    //}
+    //public bool AreAllInterventionSlotsMaxLevel() {
+    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+    //        if (interventionAbilitySlots[i].level < PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY) {
+    //            return false;
+    //        }
+    //    }
+    //    return true;
+    //}
     //public void LoadResearchNewInterventionAbility(SaveDataPlayer data) {
     //    if(data.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
     //        currentNewInterventionAbilityCycleIndex = data.currentNewInterventionAbilityCycleIndex;
@@ -1115,7 +883,7 @@ public class Player : ILeader, IObjectManipulator {
     //    else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
     //    return 3;
     //}
-    #endregion
+    //#endregion
 
     #region The Eye
     private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
@@ -1234,29 +1002,29 @@ public class Player : ILeader, IObjectManipulator {
     private void SaveExp() {
         SaveManager.Instance.currentSaveDataPlayer.SetExp(experience);
     }
-    public void SaveSummons() {
-        List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
-        List<Summon> kennelSummons = null;
-        if(kennels != null) {
-            for (int i = 0; i < kennels.Count; i++) {
-                LocationStructure currKennel = kennels[i];
-                for (int j = 0; j < currKennel.charactersHere.Count; j++) {
-                    Character character = currKennel.charactersHere[j];
-                    if(character is Summon summon) {
-                        if(summon.gridTileLocation != null && summon.marker) {
-                            if(kennelSummons == null) {
-                                kennelSummons = new List<Summon>();
-                            }
-                            kennelSummons.Add(summon);
-                        }
-                    }
-                }
-            }
-        }
-        if(kennelSummons != null) {
-            SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
-        }
-    }
+    //public void SaveSummons() {
+    //    List<LocationStructure> kennels = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
+    //    List<Summon> kennelSummons = null;
+    //    if(kennels != null) {
+    //        for (int i = 0; i < kennels.Count; i++) {
+    //            LocationStructure currKennel = kennels[i];
+    //            for (int j = 0; j < currKennel.charactersHere.Count; j++) {
+    //                Character character = currKennel.charactersHere[j];
+    //                if(character is Summon summon) {
+    //                    if(summon.gridTileLocation != null && summon.marker) {
+    //                        if(kennelSummons == null) {
+    //                            kennelSummons = new List<Summon>();
+    //                        }
+    //                        kennelSummons.Add(summon);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //    if(kennelSummons != null) {
+    //        SaveManager.Instance.currentSaveDataPlayer.SaveSummons(kennelSummons);
+    //    }
+    //}
     public void SaveTileObjects() {
         List<LocationStructure> crypts = playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.CRYPT);
         List<TileObject> cryptTileObjects = null;

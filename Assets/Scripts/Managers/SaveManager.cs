@@ -59,9 +59,13 @@ public class SaveManager : MonoBehaviour {
     #endregion
 
     #region Saving
+    public bool CanSaveCurrentProgress() {
+        return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI;
+    }
     public void SaveCurrentProgress() {
         SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
         saveData.SaveDate();
+        saveData.SavePlayer();
         //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
         //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
         //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);

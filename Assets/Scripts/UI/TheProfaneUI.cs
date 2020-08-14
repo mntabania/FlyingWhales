@@ -30,15 +30,15 @@ public class TheProfaneUI : MonoBehaviour {
 
 
     private void OnClickConvert(bool isOn) {
-        if (isOn) {
-            List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.HasTrait("Evil", "Treacherous") && !x.traitContainer.HasTrait("Blessed") && !x.traitContainer.HasTrait("Cultist"))); //"Disillusioned", 
-            UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), convertibleCharacters,
-                "Choose a Minion", "Choose a character to turn to Cultist",
-                null, CanBeConvertedToCultist,
-                null, ShowConvertCharacterTooltip,
-                null, (character) => UIManager.Instance.HideSmallInfo(),
-                OnConfirmConvert, "Convert");
-        }
+        //if (isOn) {
+        //    List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.traitContainer.HasTrait("Evil", "Treacherous") && !x.traitContainer.HasTrait("Blessed") && !x.traitContainer.HasTrait("Cultist"))); //"Disillusioned", 
+        //    UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), convertibleCharacters,
+        //        "Choose a Minion", "Choose a character to turn to Cultist",
+        //        null, CanBeConvertedToCultist,
+        //        null, ShowConvertCharacterTooltip,
+        //        null, (character) => UIManager.Instance.HideSmallInfo(),
+        //        OnConfirmConvert, "Convert");
+        //}
         
     }
     private void ShowConvertCharacterTooltip(Character character) {
