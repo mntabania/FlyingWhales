@@ -131,24 +131,6 @@ public partial class InteractionManager : MonoBehaviour {
     #endregion
 
     #region Goap Action Utilities
-    private bool CanRegionAdvertiseActionTo(Region region, Character actor, INTERACTION_TYPE interactionType) {
-        GoapAction action = goapActionData[interactionType];
-        return action.CanSatisfyRequirements(actor, region.regionTileObject, null);
-    }
-    public Region GetRandomRegionTarget(Character actor, INTERACTION_TYPE interactionType) {
-        List<Region> choices = new List<Region>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (CanRegionAdvertiseActionTo(currRegion, actor, interactionType)) {
-                choices.Add(currRegion);
-            }
-        }
-        if (choices.Count > 0) {
-            return CollectionUtilities.GetRandomElement(choices);    
-        }
-        Debug.LogWarning($"{actor.name} cannot find a region to target with action {interactionType.ToString()}");
-        return null;
-    }
     public bool IsActionTirednessRecovery(GoapAction action) {
         //Right now this is the checker since all tireness recovery icon is sleep icon, might be changed later
         return action.actionIconString == GoapActionStateDB.Sleep_Icon;

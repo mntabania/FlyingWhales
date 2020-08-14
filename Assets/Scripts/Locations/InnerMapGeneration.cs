@@ -20,16 +20,4 @@ public partial class LandmarkManager {
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }
     #endregion
-
-    public void MakeAllRegionsAwareOfEachOther() {
-        for (var i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            var currRegion = GridMap.Instance.allRegions[i];
-            for (var j = 0; j < GridMap.Instance.allRegions.Length; j++) {
-                var otherRegion = GridMap.Instance.allRegions[j];
-                if (currRegion != otherRegion && otherRegion.regionTileObject != null) {
-                    currRegion.AddPendingAwareness(otherRegion.regionTileObject);
-                }
-            }
-        }
-    }
 }

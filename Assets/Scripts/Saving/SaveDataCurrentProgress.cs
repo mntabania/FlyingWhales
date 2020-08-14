@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Locations.Settlements;
 using UnityEngine;
 
 [System.Serializable]
 public class SaveDataCurrentProgress {
+    public WorldMapSave worldMapSave;
+    public List<SaveDataBaseSettlement> settlementSaves;
     //public int width;
     //public int height;
     //public int borderThickness;
@@ -49,6 +52,25 @@ public class SaveDataCurrentProgress {
         today.tick = tick;
         GameManager.Instance.continuousDays = continuousDays;
         GameManager.Instance.SetToday(today);
+    }
+    #endregion
+    
+    #region Settlements
+    public void SaveSettlements(List<BaseSettlement> allSettlements) {
+        settlementSaves = new List<SaveDataBaseSettlement>();
+        for (int i = 0; i < allSettlements.Count; i++) {
+            BaseSettlement settlement = allSettlements[i];
+            SaveDataBaseSettlement saveDataBaseSettlement = CreateNewSettlementSaveData(settlement);
+            saveDataBaseSettlement.Save(settlement);
+            settlementSaves.Add(saveDataBaseSettlement);
+        }
+    }
+    private SaveDataBaseSettlement CreateNewSettlementSaveData(BaseSettlement settlement) {
+        if (settlement is PlayerSettlement) {
+            return new SaveDataPlayerSettlement();
+        } else {
+            return new SaveDataNPCSettlement();    
+        }
     }
     #endregion
     //public void SaveHextiles(List<HexTile> tiles) {

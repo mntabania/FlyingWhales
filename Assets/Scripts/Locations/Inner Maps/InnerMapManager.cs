@@ -255,10 +255,6 @@ namespace Inner_Maps {
             if (GameManager.Instance.gameHasStarted == false) {
                 return;
             }
-            if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
-                UIManager.Instance.portalPopup.SetActive(true);
-                return;
-            }
             location.innerMap.Open();
             currentlyShowingMap = location.innerMap;
             currentlyShowingLocation = location;

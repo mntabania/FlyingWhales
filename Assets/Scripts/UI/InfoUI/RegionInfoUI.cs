@@ -236,7 +236,6 @@ public class RegionInfoUI : InfoUIBase {
         
     }
     public void StartInvasion() {
-        activeRegion.StartInvasion(chosenMinionToInvade);
         HideStartInvasionConfirmation();
         // LoadActions();
     }

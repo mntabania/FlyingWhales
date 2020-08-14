@@ -5,11 +5,12 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Locations.Tile_Features;
+using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
 
 public class MapGenerationFinalization : MapGenerationComponent {
-	public override IEnumerator Execute(MapGenerationData data) {
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
@@ -27,6 +28,19 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		data.familyTreeDatabase.Save();
 	}
 
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		//TODO:
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
+	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
+	
 	private IEnumerator FinalizeInnerMaps() {
 		for (int i = 0; i < InnerMapManager.Instance.innerMaps.Count; i++) {
 			InnerTileMap map = InnerMapManager.Instance.innerMaps[i];

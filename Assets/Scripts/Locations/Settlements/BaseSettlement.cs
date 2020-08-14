@@ -7,12 +7,11 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements {
-    public class BaseSettlement : IPartyTarget {
+    public abstract class BaseSettlement : IPartyTarget {
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
         public string name { get; private set; }
         public Faction owner { get; private set; }
-        public Faction previousOwner { get; private set; }
         public List<HexTile> tiles { get; }
         public List<Character> residents { get; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
@@ -35,15 +34,15 @@ namespace Locations.Settlements {
             SetLocationType(locationType);
             StartListeningForFires();
         }
-        protected BaseSettlement(SaveDataArea saveDataArea) {
+        protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
             SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
-            id = UtilityScripts.Utilities.SetID(this, saveDataArea.id);
+            id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
             tiles = new List<HexTile>();
             residents = new List<Character>();
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
-            SetLocationType(saveDataArea.locationType);
+            SetLocationType(saveDataBaseSettlement.locationType);
             StartListeningForFires();
         }
 
@@ -251,7 +250,6 @@ namespace Locations.Settlements {
 
         #region Faction
         public void SetOwner(Faction owner) {
-            SetPreviousOwner(this.owner);
             this.owner = owner;
         
             bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
@@ -263,9 +261,6 @@ namespace Locations.Settlements {
                 }
             }
         }
-        private void SetPreviousOwner(Faction faction) {
-            previousOwner = faction;
-        }
         #endregion
 
         #region Structures
@@ -275,7 +270,7 @@ namespace Locations.Settlements {
                 AddStructure(structure);
             }
         }
-        protected virtual void LoadStructures(SaveDataArea data) {
+        protected virtual void LoadStructures(SaveDataBaseSettlement data) {
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             // for (int i = 0; i < data.structures.Count; i++) {
             //     LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);

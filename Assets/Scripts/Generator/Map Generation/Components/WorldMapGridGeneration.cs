@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
 using Object = UnityEngine.Object;
@@ -138,8 +139,9 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		},
 	};
-	
-	public override IEnumerator Execute(MapGenerationData data) {
+
+	#region Random World
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
 		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
 		if (WorldConfigManager.Instance.isTutorialWorld) {
@@ -204,7 +206,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				currHex.data.yCoordinate = y;
 				allTiles.Add(currHex);
 				normalHexTiles.Add(currHex);
-				map[x, y] = hex.GetComponent<HexTile>();
+				map[x, y] = currHex;
 				id++;
 
 				batchCount++;
@@ -216,7 +218,131 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		}
 		
 		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
-		normalHexTiles.ForEach(o => o.FindNeighbours(map));
+		//Find Neighbours for each hextile
+		for (int i = 0; i < normalHexTiles.Count; i++) {
+			HexTile hexTile = normalHexTiles[i];
+			hexTile.FindNeighbours(map);
+		}
 		yield return null;
 	}
+	#endregion
+
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
+		data.chosenWorldMapTemplate = scenarioMapData.worldMapSave.worldMapTemplate;
+		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, scenarioMapData));
+	}
+	private IEnumerator GenerateGrid(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		GridMap.Instance.SetupInitialData(data.width, data.height);
+		float newX = MapGenerationData.xOffset * (data.width / 2f);
+		float newY = MapGenerationData.yOffset * (data.height / 2f);
+		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
+		HexTile[,] map = new HexTile[data.width, data.height];
+		List<HexTile> normalHexTiles = new List<HexTile>();
+		List<HexTile> allTiles = new List<HexTile>();
+
+		SaveDataHextile[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
+		
+		int batchCount = 0;
+		for (int x = 0; x < data.width; x++) {
+			for (int y = 0; y < data.height; y++) {
+				float xPosition = x * MapGenerationData.xOffset;
+
+				float yPosition = y * MapGenerationData.yOffset;
+				if (y % 2 == 1) {
+					xPosition += MapGenerationData.xOffset / 2;
+				}
+
+				SaveDataHextile savedHexTile = savedMap[x, y];
+				
+				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
+				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+				hex.name = $"{x},{y}";
+				HexTile currHex = hex.GetComponent<HexTile>();
+				currHex.Initialize();
+				savedHexTile.Load(currHex);
+				allTiles.Add(currHex);
+				normalHexTiles.Add(currHex);
+				map[x, y] = currHex;
+
+				batchCount++;
+				if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {
+					batchCount = 0;
+					yield return null;    
+				}
+			}
+		}
+		
+		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
+		//Find Neighbours for each hextile
+		for (int i = 0; i < normalHexTiles.Count; i++) {
+			HexTile hexTile = normalHexTiles[i];
+			hexTile.FindNeighbours(map);
+		}
+		yield return null;
+	}
+	#endregion
+	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress scenarioMapData) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
+		data.chosenWorldMapTemplate = scenarioMapData.worldMapSave.worldMapTemplate;
+		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
+		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, scenarioMapData));
+	}
+	private IEnumerator GenerateGrid(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		GridMap.Instance.SetupInitialData(data.width, data.height);
+		float newX = MapGenerationData.xOffset * (data.width / 2f);
+		float newY = MapGenerationData.yOffset * (data.height / 2f);
+		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
+		HexTile[,] map = new HexTile[data.width, data.height];
+		List<HexTile> normalHexTiles = new List<HexTile>();
+		List<HexTile> allTiles = new List<HexTile>();
+
+		SaveDataHextile[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
+		
+		int batchCount = 0;
+		for (int x = 0; x < data.width; x++) {
+			for (int y = 0; y < data.height; y++) {
+				float xPosition = x * MapGenerationData.xOffset;
+
+				float yPosition = y * MapGenerationData.yOffset;
+				if (y % 2 == 1) {
+					xPosition += MapGenerationData.xOffset / 2;
+				}
+
+				SaveDataHextile savedHexTile = savedMap[x, y];
+				
+				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
+				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
+				hex.name = $"{x},{y}";
+				HexTile currHex = hex.GetComponent<HexTile>();
+				currHex.Initialize();
+				savedHexTile.Load(currHex);
+				allTiles.Add(currHex);
+				normalHexTiles.Add(currHex);
+				map[x, y] = currHex;
+
+				batchCount++;
+				if (batchCount == MapGenerationData.WorldMapTileGenerationBatches) {
+					batchCount = 0;
+					yield return null;    
+				}
+			}
+		}
+		
+		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
+		//Find Neighbours for each hextile
+		for (int i = 0; i < normalHexTiles.Count; i++) {
+			HexTile hexTile = normalHexTiles[i];
+			hexTile.FindNeighbours(map);
+		}
+		yield return null;
+	}
+	#endregion
+	
 }

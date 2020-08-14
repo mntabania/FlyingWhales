@@ -5,12 +5,13 @@ using System.Linq;
 using Cellular_Automata;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class LandmarkStructureGeneration : MapGenerationComponent {
-	public override IEnumerator Execute(MapGenerationData data) {
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating structures...");
 		List<BaseLandmark> landmarks = LandmarkManager.Instance.GetAllLandmarks();
 		for (int i = 0; i < landmarks.Count; i++) {
@@ -33,6 +34,10 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		}
 		yield return null;
 	}
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		//TODO:
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
 
 	#region Cellular Automata
 	private IEnumerator GenerateMonsterLair(HexTile hexTile, LocationStructure structure) {
@@ -54,6 +59,11 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
+	#endregion
 	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
 	#endregion
 }

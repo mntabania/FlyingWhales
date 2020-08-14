@@ -5,19 +5,33 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Region_Features;
 using Locations.Settlements;
+using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class MonsterGeneration : MapGenerationComponent {
 
-	public override IEnumerator Execute(MapGenerationData data) {
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Placing monsters...");
 		yield return MapGenerator.Instance.StartCoroutine(RegionalMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkMonsterGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(CaveMonsterGeneration());
 		yield return null;
 	}
+
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		//TODO:
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
+	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
 
 	#region Helpers
 	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,

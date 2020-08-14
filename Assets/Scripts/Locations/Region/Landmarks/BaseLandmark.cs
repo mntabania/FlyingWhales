@@ -11,7 +11,6 @@ public class BaseLandmark {
     public int id { get; }
     public LandmarkNameplate nameplate { get; }
     public Vector2 nameplatePos { get; }
-    public int invasionTicks { get; private set; }
     public Sprite landmarkPortrait { get; private set; }
 
     private string _landmarkName;
@@ -35,7 +34,6 @@ public class BaseLandmark {
         SetName(RandomNameGenerator.GetLandmarkName(specificLandmarkType));
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
-        SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         id = UtilityScripts.Utilities.SetID(this, data.id);
@@ -44,7 +42,6 @@ public class BaseLandmark {
         }
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
-        SetInvasionTicks(data.invasionTicks);
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
@@ -107,12 +104,6 @@ public class BaseLandmark {
     }
     public void CenterOnLandmark() {
         tileLocation.CenterCameraHere();
-    }
-    //private int GetInvasionTicks() {
-    //    return invasionTicks + Mathf.RoundToInt(invasionTicks * PlayerManager.Instance.player.invasionRatePercentageModifier);
-    //}
-    public void SetInvasionTicks(int amount) {
-        invasionTicks = amount;
     }
     public override string ToString() {
         return this.landmarkName;

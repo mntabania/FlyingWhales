@@ -554,12 +554,7 @@ namespace Inner_Maps.Location_Structures {
                 location.innerMap.PlaceObject(poi, tile);
                 return true;
             } else {
-                List<LocationGridTile> tilesToUse;
-                if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) { //player npcSettlement
-                    tilesToUse = tiles;
-                } else {
-                    tilesToUse = GetValidTilesToPlace(poi);
-                }
+                List<LocationGridTile> tilesToUse = GetValidTilesToPlace(poi);
                 if (tilesToUse.Count > 0) {
                     LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
                     location.innerMap.PlaceObject(poi, chosenTile);

@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Locations.Tile_Features;
+using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class TileFeatureGeneration : MapGenerationComponent {
 
-	public override IEnumerator Execute(MapGenerationData data) {
+	#region Random World
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating tile features...");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles(data));
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
@@ -103,10 +105,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		for (int x = 0; x < data.width; x++) {
 			for (int y = 0; y < data.height; y++) {
 				HexTile tile = GridMap.Instance.map[x, y];
-				string summary = $"Computing habitability for {tile}";
 				int habitability = 0;
 				if (tile.elevationType == ELEVATION.WATER || tile.elevationType == ELEVATION.MOUNTAIN) {
-					summary += "\n - 0 Elevation type is not plain";
 					habitability = 0;
 				} else {
 					int adjacentWaterTiles = 0;
@@ -125,101 +125,39 @@ public class TileFeatureGeneration : MapGenerationComponent {
 						if (tile.biomeType == BIOMES.FOREST || tile.biomeType == BIOMES.SNOW) {
 							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature)) {
 								habitability += 3;
-								summary += "\n - +3 Has adjacent wood source";
 							}	
 							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Metal_Source_Feature)) {
 								habitability += 4;
-								summary += "\n - +4 Has adjacent metal source";
 							}
 							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Fertile_Feature)) {
 								habitability += 5;
-								summary += "\n - +5 Has adjacent Fertile";
 							}
 						} else if (tile.biomeType == BIOMES.GRASSLAND || tile.biomeType == BIOMES.DESERT) {
 							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Stone_Source_Feature)) {
 								habitability += 3;
-								summary += "\n - +3 Has adjacent stone source";
 							}
 							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Metal_Source_Feature)) {
 								habitability += 4;
-								summary += "\n - +4 Has adjacent metal source";
 							}
 							if (neighbour.featureComponent.HasFeature(TileFeatureDB.Game_Feature)) {
 								habitability += 5;
-								summary += "\n - +5 Has adjacent Game";
 							}
 						}
 					}
 					if (adjacentWaterTiles == 1) {
 						habitability += 5;
-						summary += "\n - +5 Has 1 adjacent water tile";
 					}
 					if (adjacentFlatTiles < 2) {
 						habitability -= 10;
-						summary += "\n - -10 Has less than 2 adjacent flat tiles.";
 					}
 				}
 				data.habitabilityValues[x, y] = habitability;
-				summary += $"\nTotal Habitability is {habitability.ToString()}";
-				// Debug.Log(summary);
 				batchCount++;
 				if (batchCount >= MapGenerationData.WorldMapHabitabilityGenerationBatches) {
 					batchCount = 0;
 					yield return null;
 				}
 			}	
-		}
-	}
-	private bool IsGeneratedMapValid(MapGenerationData data) {
-		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-			Region region = GridMap.Instance.allRegions[i];
-			bool hasHabitableTile = false;
-			for (int j = 0; j < region.tiles.Count; j++) {
-				HexTile tile = region.tiles[j];
-				int habitabilityValue = data.habitabilityValues[tile.xCoordinate, tile.yCoordinate];
-				if (habitabilityValue >= 10) {
-					hasHabitableTile = true;
-					break;
-				}
-			}
-			if (hasHabitableTile == false) {
-				Debug.LogWarning($"{region.name} has no habitable tiles");
-				//current region has no habitable tile
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	private void DetermineSettlements(int count, MapGenerationData data) {
-		List<Region> choices = new List<Region>(GridMap.Instance.allRegions);
-		List<Region> settlementRegions = new List<Region>();
-
-		Assert.IsTrue(choices.Count >= count,
-			$"There are not enough regions for the number of settlements needed. Regions are {choices.Count.ToString()}. Needed settlements are {count.ToString()}");
-		
-		for (int i = 0; i < count; i++) {
-			Region chosen = CollectionUtilities.GetRandomElement(choices);
-			settlementRegions.Add(chosen);
-			choices.Remove(chosen);
-		}
-
-		WeightedDictionary<int> tileCountWeights = new WeightedDictionary<int>();
-		tileCountWeights.AddElement(2, 25);
-		tileCountWeights.AddElement(3, 25);
-		tileCountWeights.AddElement(4, 50);
-		
-		for (int i = 0; i < settlementRegions.Count; i++) {
-			Region region = settlementRegions[i];
-			HexTile habitableTile = GetTileWithHighestHabitability(region, data);
-			Assert.IsNotNull(habitableTile, $"{region.name} could not find a habitable tile!");
-			int tileCount = tileCountWeights.PickRandomElementGivenWeights();
-			List<HexTile> chosenTiles = GetSettlementTiles(region, habitableTile, tileCount);
-			for (int j = 0; j < chosenTiles.Count; j++) {
-				HexTile settlementTile = chosenTiles[j];
-				settlementTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, settlementTile);
-				LandmarkManager.Instance.CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.VILLAGE);
-			}
 		}
 	}
 	private bool TryCreateSettlements(MapGenerationData data) {
@@ -261,60 +199,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return createdSettlements > 0;
 	}
-	private void DetermineSettlementsForTutorial() {
-		Region region = GridMap.Instance.allRegions[0];
-		List<HexTile> chosenTiles = new List<HexTile> {
-			GridMap.Instance.map[4, 5],
-			GridMap.Instance.map[5, 5],
-			GridMap.Instance.map[4, 6],
-			GridMap.Instance.map[3, 5],
-		};
+	#endregion
 
-		for (int i = 0; i < chosenTiles.Count; i++) {
-			HexTile chosenTile = chosenTiles[i];
-			chosenTile.SetElevation(ELEVATION.PLAIN);
-			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
-		}
-		
-		List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
-		//if settlement is not adjacent to any water hex tile create one
-		if (neighbouringTiles.Any(h => h.elevationType == ELEVATION.WATER) == false) {
-			HexTile randomTile = CollectionUtilities.GetRandomElement(neighbouringTiles);
-			randomTile.SetElevation(ELEVATION.WATER);
-			randomTile.featureComponent.RemoveAllFeatures(randomTile);
-		}
-	}
-	private void DetermineSettlementsForSecondWorld() {
-		Region region = GridMap.Instance.allRegions[0];
-		List<HexTile> chosenTiles = new List<HexTile> {
-			GridMap.Instance.map[8, 5],
-			GridMap.Instance.map[7, 5],
-			GridMap.Instance.map[8, 6],
-			GridMap.Instance.map[9, 5],
-			GridMap.Instance.map[8, 4],
-		};
-
-		for (int i = 0; i < chosenTiles.Count; i++) {
-			HexTile chosenTile = chosenTiles[i];
-			chosenTile.SetElevation(ELEVATION.PLAIN);
-			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
-			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
-		}
-		
-		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
-		// for (int i = 0; i < neighbouringTiles.Count; i++) {
-		// 	HexTile neighbour = neighbouringTiles[i];
-		// 	if (i == 0) {
-		// 		neighbour.SetElevation(ELEVATION.PLAIN);
-		// 	} else {
-		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
-		// 	}
-		// }
-	}
-	
 	#region Tile Feature Utilities
 	private int GetStoneSourceToGenerate(int regionCount) {
 		switch (regionCount) {
@@ -400,42 +286,96 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		}
 		return tileWithHighestHabitability;
 	}
-	private List<HexTile> GetSettlementTiles(Region region, HexTile startingTile, int tileCount) {
-		List<HexTile> chosenTiles = new List<HexTile>(){startingTile};
-		List<HexTile> choices = new List<HexTile>(startingTile.AllNeighbours.Where(h => h.region == region));
+	#endregion
 
-		while (chosenTiles.Count != tileCount) {
-			HexTile chosenTile = null;
-			List<HexTile> flatTileWithNoFeature = choices.Where(h =>
-				h.elevationType == ELEVATION.PLAIN && h.featureComponent.features.Count == 0).ToList();
-			if (flatTileWithNoFeature.Count > 0) {
-				chosenTile = CollectionUtilities.GetRandomElement(flatTileWithNoFeature);
-			} else {
-				List<HexTile> treeTiles = choices.Where(h =>
-					h.featureComponent.HasFeature(TileFeatureDB.Wood_Source_Feature) && h.featureComponent.features.Count == 1).ToList();
-				if (treeTiles.Count > 0) {
-					chosenTile = CollectionUtilities.GetRandomElement(treeTiles);
-				} else {
-					List<HexTile> flatOrTreeTiles = choices.Where(h => h.elevationType == ELEVATION.PLAIN 
-					                                                   || h.elevationType == ELEVATION.TREES).ToList();
-					if (flatOrTreeTiles.Count > 0) {
-						chosenTile = CollectionUtilities.GetRandomElement(flatOrTreeTiles);
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		SaveDataHextile[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
+		for (int x = 0; x < data.width; x++) {
+			for (int y = 0; y < data.height; y++) {
+				SaveDataHextile savedHexTile = savedMap[x, y];
+				HexTile hexTile = GridMap.Instance.map[x, y];
+				if (savedHexTile.tileFeatureSaveData?.Count > 0) {
+					for (int i = 0; i < savedHexTile.tileFeatureSaveData.Count; i++) {
+						SaveDataTileFeature saveDataTileFeature = savedHexTile.tileFeatureSaveData[i];
+						TileFeature tileFeature = saveDataTileFeature.Load();
+						hexTile.featureComponent.AddFeature(tileFeature, hexTile);
 					}
 				}
+				yield return null;
 			}
-
-			if (chosenTile == null) {
-				break; //could not find any more tiles that meet the criteria
-			} else {
-				chosenTiles.Add(chosenTile);
-				//add neighbours of chosen tile to choices, exclude tiles that have already been chosen and are already in the choices
-				choices.AddRange(chosenTile.AllNeighbours.Where(n => choices.Contains(n) == false 
-				                                                     && chosenTiles.Contains(n) == false && n.region == region));
-			}
-			
 		}
-		return chosenTiles;
 	}
+	private void DetermineSettlementsForTutorial() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[4, 5],
+			GridMap.Instance.map[5, 5],
+			GridMap.Instance.map[4, 6],
+			GridMap.Instance.map[3, 5],
+		};
 
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
+		}
+		
+		List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		//if settlement is not adjacent to any water hex tile create one
+		if (neighbouringTiles.Any(h => h.elevationType == ELEVATION.WATER) == false) {
+			HexTile randomTile = CollectionUtilities.GetRandomElement(neighbouringTiles);
+			randomTile.SetElevation(ELEVATION.WATER);
+			randomTile.featureComponent.RemoveAllFeatures(randomTile);
+		}
+	}
+	private void DetermineSettlementsForSecondWorld() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[8, 5],
+			GridMap.Instance.map[7, 5],
+			GridMap.Instance.map[8, 6],
+			GridMap.Instance.map[9, 5],
+			GridMap.Instance.map[8, 4],
+		};
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
+		}
+		
+		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		// for (int i = 0; i < neighbouringTiles.Count; i++) {
+		// 	HexTile neighbour = neighbouringTiles[i];
+		// 	if (i == 0) {
+		// 		neighbour.SetElevation(ELEVATION.PLAIN);
+		// 	} else {
+		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
+		// 	}
+		// }
+	}
+	#endregion
+	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		SaveDataHextile[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
+		for (int x = 0; x < data.width; x++) {
+			for (int y = 0; y < data.height; y++) {
+				SaveDataHextile savedHexTile = savedMap[x, y];
+				HexTile hexTile = GridMap.Instance.map[x, y];
+				if (savedHexTile.tileFeatureSaveData?.Count > 0) {
+					for (int i = 0; i < savedHexTile.tileFeatureSaveData.Count; i++) {
+						SaveDataTileFeature saveDataTileFeature = savedHexTile.tileFeatureSaveData[i];
+						TileFeature tileFeature = saveDataTileFeature.Load();
+						hexTile.featureComponent.AddFeature(tileFeature, hexTile);
+					}
+				}
+				yield return null;
+			}
+		}
+	}
 	#endregion
 }

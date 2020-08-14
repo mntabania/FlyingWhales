@@ -42,19 +42,19 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
         
-         #region HP
-         private void OnWallRepaired(StructureWallObject structureWall, int amount) {
-            if (structureObj.walls.Contains(structureWall)) {
+        #region HP
+        private void OnWallRepaired(StructureWallObject structureWall, int amount) {
+            if (structureObj.walls != null && structureObj.walls.Contains(structureWall)) {
                 structureObj.RescanPathfindingGridOfStructure();
                 CheckInteriorState();
             }
             if (objectsThatContributeToDamage.Contains(structureWall)) {
                 AdjustHP(amount);
             }
-         }
-         private void OnWallDamaged(StructureWallObject structureWall, int amount) {
+        }
+        private void OnWallDamaged(StructureWallObject structureWall, int amount) {
             Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
-            if (structureObj.walls.Contains(structureWall)) {
+            if (structureObj.walls != null && structureObj.walls.Contains(structureWall)) {
                 //create repair job
                 structureObj.RescanPathfindingGridOfStructure();
                 OnStructureDamaged();
@@ -62,8 +62,8 @@ namespace Inner_Maps.Location_Structures {
             if (objectsThatContributeToDamage.Contains(structureWall)) {
                 AdjustHP(amount);
             }
-         }
-         #endregion
+        }
+        #endregion
 
         // #region Tiles
         // public override void OnTileDamaged(LocationGridTile tile, int amount) {
@@ -100,8 +100,7 @@ namespace Inner_Maps.Location_Structures {
             SetInteriorState(intactWalls > neededWallsToBeConsideredExterior);
         }
         #endregion
-        
-        
+
         #region Repair
         private void CreateRepairJob() {
             Assert.IsNotNull(_structureTileObject, $"Repair job is being created for {this} but it does not have a structure tile object");

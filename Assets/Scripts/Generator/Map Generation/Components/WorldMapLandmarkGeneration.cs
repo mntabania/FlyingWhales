@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Locations.Region_Features;
+using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
 
 public class WorldMapLandmarkGeneration : MapGenerationComponent {
 
-	public override IEnumerator Execute(MapGenerationData data) {
+	#region Random Generation
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		TryCreateMonsterLairs(GetLoopCount(LANDMARK_TYPE.MONSTER_LAIR, data), GetChance(LANDMARK_TYPE.MONSTER_LAIR, data));
 		yield return null;
 		TryCreateAbandonedMines(GetLoopCount(LANDMARK_TYPE.ABANDONED_MINE, data), GetChance(LANDMARK_TYPE.ABANDONED_MINE, data));
@@ -21,7 +23,15 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		LandmarkSecondPass();
 		yield return null;
 	}
-
+	private void LandmarkSecondPass() {
+		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			Region region = GridMap.Instance.allRegions[i];
+			for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
+				RegionFeature feature = region.regionFeatureComponent.features[j];
+				feature.LandmarkGenerationSecondPassActions(region);
+			}
+		}
+	}
 	private void TryCreateMonsterLairs(int loopCount, int chance) {
 		int createdCount = 0;
 		for (int i = 0; i < loopCount; i++) {
@@ -77,13 +87,13 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
 					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
-					            && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null
-					            &&  x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-						            n => n.landmarkOnTile != null && 
-						                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-						                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+					                                               && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null
+					                                               &&  x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
+						                                               n => n.landmarkOnTile != null && 
+						                                                    n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
+						                                                    (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
+						                                                     n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
+						                                                     n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
 					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
@@ -337,14 +347,27 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				return 0;
 		}
 	}
+	#endregion
 
-	private void LandmarkSecondPass() {
-		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-			Region region = GridMap.Instance.allRegions[i];
-			for (int j = 0; j < region.regionFeatureComponent.features.Count; j++) {
-				RegionFeature feature = region.regionFeatureComponent.features[j];
-				feature.LandmarkGenerationSecondPassActions(region);
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		List<SaveDataHextile> landmarkTiles = scenarioMapData.worldMapSave.GetAllTilesWithLandmarks();
+		for (int i = 0; i < landmarkTiles.Count; i++) {
+			SaveDataHextile saveData = landmarkTiles[i];
+			//do not load player landmarks here! That is handled in PlayerSettlementGeneration.
+			if (!saveData.landmarkType.IsPlayerLandmark()) {
+				HexTile hexTile = GridMap.Instance.map[saveData.xCoordinate, saveData.yCoordinate];
+				LandmarkManager.Instance.CreateNewLandmarkOnTile(hexTile, saveData.landmarkType);
+				LandmarkManager.Instance.CreateNewSettlement(hexTile.region, LOCATION_TYPE.DUNGEON, hexTile);	
 			}
 		}
+		yield return null;
 	}
+	#endregion
+	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
 }

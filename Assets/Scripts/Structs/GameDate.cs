@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Linq;
 
@@ -205,7 +206,45 @@ public struct GameDate {
     public int Sum() {
         return ConvertToContinuousDays() + tick;
     }
+    /// <summary>
+    /// Get the number of hours between this date and another date.
+    /// NOTE: This does not return a negative value, so this doesn't
+    /// take into account which date is earlier and which is later.
+    /// </summary>
+    /// <param name="otherDate">The date to compare to.</param>
+    /// <returns>The number of hours between the 2 dates.</returns>
+    public int GetHourDifference(GameDate otherDate) {
+        int yearDifference = Math.Abs(year - otherDate.year);
+        int monthDifference = Math.Abs(month - otherDate.month);
+        int tickDifference = Math.Abs(tick - otherDate.tick);
 
+        //difference in years multiplied by (number of ticks per day * number of days in a year)
+        int yearDifferenceInTicks = yearDifference * (GameManager.ticksPerDay * 360);
+        //difference in months multiplied by (number of ticks per day * number of days per month)
+        int monthDifferenceInTicks = monthDifference * (GameManager.ticksPerDay * 30);
+        int totalTickDifference = yearDifferenceInTicks + monthDifferenceInTicks + tickDifference;
+        return GameManager.Instance.GetHoursBasedOnTicks(totalTickDifference);
+    }
+    /// <summary>
+    /// Get the number of ticks between this date and another date.
+    /// NOTE: This does not return a negative value, so this doesn't
+    /// take into account which date is earlier and which is later.
+    /// </summary>
+    /// <param name="otherDate">The date to compare to.</param>
+    /// <returns>The number of ticks between the 2 dates.</returns>
+    public int GetTickDifference(GameDate otherDate) {
+        int yearDifference = Math.Abs(year - otherDate.year);
+        int monthDifference = Math.Abs(month - otherDate.month);
+        int tickDifference = Math.Abs(tick - otherDate.tick);
+
+        //difference in years multiplied by (number of ticks per day * number of days in a year)
+        int yearDifferenceInTicks = yearDifference * (GameManager.ticksPerDay * 360);
+        //difference in months multiplied by (number of ticks per day * number of days per month)
+        int monthDifferenceInTicks = monthDifference * (GameManager.ticksPerDay * 30);
+        int totalTickDifference = yearDifferenceInTicks + monthDifferenceInTicks + tickDifference;
+        return totalTickDifference;
+    }
+    
     public string ConvertToContinuousDaysWithTime(bool nextLineTime = false) {
         if (nextLineTime) {
             return $"Day {ConvertToContinuousDays()}\n{GameManager.ConvertTickToTime(this.tick)}";

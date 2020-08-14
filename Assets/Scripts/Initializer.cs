@@ -12,9 +12,7 @@ public class Initializer : MonoBehaviour {
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         TraitManager.Instance.Initialize();
-        // SecretManager.Instance.Initialize();
         LandmarkManager.Instance.Initialize();
-        //CombatManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();
         TimerHubUI.Instance.Initialize();
 
@@ -26,7 +24,6 @@ public class Initializer : MonoBehaviour {
 
         InteractionManager.Instance.Initialize();
 
-        // TokenManager.Instance.Initialize();
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
         RandomNameGenerator.Initialize();
