@@ -11,7 +11,7 @@ public class FPS : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        Application.targetFrameRate = 1000;
+        // Application.targetFrameRate = 30;
         text = GetComponent<Text>();
 		InvokeRepeating("UpdateFPS", UpdateInterval, UpdateInterval);
 	}

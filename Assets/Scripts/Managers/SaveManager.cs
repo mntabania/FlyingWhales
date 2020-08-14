@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Inner_Maps;
@@ -133,6 +134,8 @@ public class SaveManager : MonoBehaviour {
         );
         scenarioSave.worldMapSave = worldMapSave;
 
+        scenarioSave.SaveVillageSettlements(LandmarkManager.Instance.allNonPlayerSettlements.Where(x => x.locationType == LOCATION_TYPE.SETTLEMENT).ToList());
+        
         if (string.IsNullOrEmpty(fileName)) {
             fileName = savedCurrentProgressFileName;
         }

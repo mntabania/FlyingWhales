@@ -18,14 +18,12 @@ public class RegionFeatureGeneration : MapGenerationComponent {
     };
     
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-            yield return null;    
-        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
             //add dragon feature to second world
             Region chosenRegion = GridMap.Instance.allRegions[0];
             string chosenFeature = RegionFeatureDB.Dragon;
             chosenRegion.regionFeatureComponent.AddFeature(chosenFeature);
-        } else {
+        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
             if (GameUtilities.RollChance(20)) { 
                 int regionsWithSpecialFeatureCount = 0;
                 if (GridMap.Instance.allRegions.Length == 1) {

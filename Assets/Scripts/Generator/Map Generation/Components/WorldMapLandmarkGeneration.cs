@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Locations.Region_Features;
+using Locations.Tile_Features;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
@@ -37,22 +38,17 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices;
-				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					if (i == 0) {
-						choices = new List<HexTile>() { GridMap.Instance.map[14, 3] };	
+						choices = new List<HexTile>() { GridMap.Instance.map[12, 3] };	
 					} else {
-						choices = new List<HexTile>() { GridMap.Instance.map[3, 8] };
+						choices = new List<HexTile>() { GridMap.Instance.map[3, 7] };
 					}
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && //a random flat tile
 						            x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && //with no Features yet
-						            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-							            n => n.landmarkOnTile != null && 
-							                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-							                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x) //and not adjacent to player Portal, Settlement or other non-cave landmarks
 						)
 						.ToList();
 				}
@@ -86,14 +82,9 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0
-					                                               && x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null
-					                                               &&  x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-						                                               n => n.landmarkOnTile != null && 
-						                                                    n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-						                                                    (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-						                                                     n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-						                                                     n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && 
+					            x.HasNeighbourWithElevation(ELEVATION.MOUNTAIN) && x.landmarkOnTile == null &&  
+					            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
@@ -119,17 +110,12 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices;
-				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					choices = new List<HexTile>() { GridMap.Instance.map[7, 1] };	
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null && 
-						            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-							            n => n.landmarkOnTile != null && 
-							                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-							                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-							                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 						).ToList();
 				}
 					
@@ -162,14 +148,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < loopCount; i++) {
 			if (Random.Range(0, 100) < chance) {
 				List<HexTile> choices = GridMap.Instance.normalHexTiles
-					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && 
-					            x.landmarkOnTile == null &&  
-					            x.AllNeighbours.Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-						            n => n.landmarkOnTile != null && 
-						                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-						                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL || 
-						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure() ||
-						                  n.landmarkOnTile.specificLandmarkType.GetStructureType().IsSettlementStructure())) == false
+					.Where(x => x.elevationType == ELEVATION.PLAIN && x.featureComponent.features.Count == 0 && x.landmarkOnTile == null &&  
+					            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 					).ToList();
 				if (choices.Count > 0) {
 					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
@@ -208,15 +188,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				} else {
 					choices = GridMap.Instance.normalHexTiles
 						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
-						            x.AllNeighbours
-							            .Any( //and not adjacent to player Portal, Settlement or other non-cave landmarks
-								            n => n.landmarkOnTile != null &&
-								                 n.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE &&
-								                 (n.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL ||
-								                  n.landmarkOnTile.specificLandmarkType.GetStructureType()
-									                  .IsSpecialStructure() ||
-								                  n.landmarkOnTile.specificLandmarkType.GetStructureType()
-									                  .IsSettlementStructure())) == false
+						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
 						).ToList();
 				}
 				if (choices.Count > 0) {
@@ -237,7 +209,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.MONSTER_LAIR:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 2;
 				} else {
 					if (data.regionCount == 1) {
@@ -264,7 +236,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.TEMPLE:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 1;
 				} else {
 					if (data.regionCount == 1) {
@@ -291,7 +263,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 2;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					//always ensure that an ancient graveyard is spawned in second world
 					return 1;
 				} else {
@@ -306,7 +278,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.MONSTER_LAIR:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 100;
 				} else {
 					return 75;
@@ -314,7 +286,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.ABANDONED_MINE:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
 				} else {
 					return 50;
@@ -322,7 +294,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.TEMPLE:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 100;
 				} else {
 					return 35;
@@ -330,7 +302,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.MAGE_TOWER:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
 				} else {
 					return 35;
@@ -338,7 +310,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.ANCIENT_GRAVEYARD:
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 100;
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
 				} else {
 					return 0;
@@ -355,7 +327,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		for (int i = 0; i < landmarkTiles.Count; i++) {
 			SaveDataHextile saveData = landmarkTiles[i];
 			//do not load player landmarks here! That is handled in PlayerSettlementGeneration.
-			if (!saveData.landmarkType.IsPlayerLandmark()) {
+			if (saveData.landmarkType.GetStructureType().IsSpecialStructure()) {
 				HexTile hexTile = GridMap.Instance.map[saveData.xCoordinate, saveData.yCoordinate];
 				LandmarkManager.Instance.CreateNewLandmarkOnTile(hexTile, saveData.landmarkType);
 				LandmarkManager.Instance.CreateNewSettlement(hexTile.region, LOCATION_TYPE.DUNGEON, hexTile);	
@@ -368,6 +340,37 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
+	
+	#region Utilities
+	private bool IsAdjacentToPortal(HexTile tile) {
+		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
+			HexTile neighbour = tile.AllNeighbours[i];
+			if (neighbour.landmarkOnTile != null && neighbour.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private bool IsAdjacentToSettlement(HexTile tile) {
+		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
+			HexTile neighbour = tile.AllNeighbours[i];
+			if (neighbour.featureComponent.HasFeature(TileFeatureDB.Inhabited_Feature)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	private bool IsAdjacentToSpecialStructure(HexTile tile) {
+		for (int i = 0; i < tile.AllNeighbours.Count; i++) {
+			HexTile neighbour = tile.AllNeighbours[i];
+			if (neighbour.landmarkOnTile != null && 
+			    neighbour.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	#endregion
 }

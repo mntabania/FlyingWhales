@@ -681,7 +681,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Inner Map
-    public IEnumerator PlaceObjects() {
+    public IEnumerator PlaceInitialObjects() {
         PlaceResourcePiles();
         yield return null;
     }

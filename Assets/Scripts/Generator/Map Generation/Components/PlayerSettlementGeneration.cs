@@ -23,9 +23,13 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[1, 7]
 			};
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[3, 1]
+			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			validPortalTiles = new List<HexTile>() {
+				GridMap.Instance.map[6, 4]
 			};
 		} else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>

@@ -144,21 +144,41 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
 		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
-		if (WorldConfigManager.Instance.isTutorialWorld) {
-			regionCount = 1;
-		}
+		// if (WorldConfigManager.Instance.isTutorialWorld) {
+		// 	regionCount = 1;
+		// }
 		if (worldMapTemplates.ContainsKey(regionCount)) {
 			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
 			WorldMapTemplate chosenTemplate;
-			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 1,
-					worldMapWidth = 16,
-					worldMapHeight = 10,
+					worldMapWidth = 14,
+					worldMapHeight = 9,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{
 							0, new[] {
-								new RegionTemplate(16, 10),
+								new RegionTemplate(14, 9),
+							}
+						}
+					}
+				};
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 4,
+					worldMapWidth = 14,
+					worldMapHeight = 12,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(7, 6),
+								new RegionTemplate(7, 6),
+							}
+						},
+						{
+							1, new[] {
+								new RegionTemplate(7, 6),
+								new RegionTemplate(7, 6),
 							}
 						}
 					}

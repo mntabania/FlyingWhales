@@ -59,6 +59,7 @@ public class LocationStructureObject : PooledObject {
     #region Getters
     public Vector2Int size => _size;
     public Vector3Int center => _center;
+    public RESOURCE thinWallResource => _thinWallResource;
     #endregion
 
     #region Monobehaviours

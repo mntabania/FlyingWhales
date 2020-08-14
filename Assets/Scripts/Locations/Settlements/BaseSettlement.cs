@@ -400,6 +400,16 @@ namespace Locations.Settlements {
             }
             return UtilityScripts.CollectionUtilities.GetRandomElement(choices);
         }
+        public HexTile GetFirstUnoccupiedHexTile() {
+            List<HexTile> choices = new List<HexTile>();
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile tile = tiles[i];
+                if (tile.innerMapHexTile.isOccupied == false) {
+                    return tile;
+                }
+            }
+            return null;
+        }
         public HexTile GetRandomHexTile() {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         }

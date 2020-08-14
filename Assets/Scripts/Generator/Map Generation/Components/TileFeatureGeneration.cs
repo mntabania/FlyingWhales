@@ -15,8 +15,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(GenerateFeaturesForAllTiles(data));
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			DetermineSettlementsForTutorial();
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			DetermineSettlementsForSecondWorld();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			DetermineSettlementsForZenko();
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			succeess = TryCreateSettlements(data);
@@ -80,7 +82,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GameFeature sheepGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
 			sheepGameFeature.SetSpawnType(SUMMON_TYPE.Sheep);
 			sheepTile.featureComponent.AddFeature(sheepGameFeature, sheepTile);
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			//Add 2 pigs 2 tiles away from village 
 			HexTile pigTile = GridMap.Instance.map[5, 5];
 			GameFeature pigGameFeature = LandmarkManager.Instance.CreateTileFeature<GameFeature>(TileFeatureDB.Game_Feature);
@@ -188,7 +190,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							villageTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, villageTile);
 							//remove game feature from settlement tiles
 							villageTile.featureComponent.RemoveFeature(TileFeatureDB.Game_Feature, villageTile);
-							LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
+							// LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
 						}
 						createdSettlements++;
 						//when a settlement is built, reduce chance by 20% for the next loop
@@ -313,7 +315,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GridMap.Instance.map[4, 6],
 			GridMap.Instance.map[3, 5],
 		};
-
+	
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
@@ -338,13 +340,57 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GridMap.Instance.map[9, 5],
 			GridMap.Instance.map[8, 4],
 		};
+	
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+		}
+		
+		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		// for (int i = 0; i < neighbouringTiles.Count; i++) {
+		// 	HexTile neighbour = neighbouringTiles[i];
+		// 	if (i == 0) {
+		// 		neighbour.SetElevation(ELEVATION.PLAIN);
+		// 	} else {
+		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
+		// 	}
+		// }
+	}
+	private void DetermineSettlementsForZenko() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			//region 1 (snow)
+			GridMap.Instance.map[5, 9],
+			GridMap.Instance.map[4, 9],
+			GridMap.Instance.map[5, 8],
+			GridMap.Instance.map[4, 8],
+			// GridMap.Instance.map[4, 8],
+			//region 2 (grassland)
+			GridMap.Instance.map[8, 7],
+			GridMap.Instance.map[8, 8],
+			GridMap.Instance.map[9, 7],
+			GridMap.Instance.map[9, 8],
+			// GridMap.Instance.map[7, 7],
+			//region 3 (forest)
+			GridMap.Instance.map[1, 2],
+			GridMap.Instance.map[2, 2],
+			GridMap.Instance.map[3, 2],
+			GridMap.Instance.map[2, 3],
+			// GridMap.Instance.map[3, 3],
+			//region 4 (desert)
+			GridMap.Instance.map[10, 4],
+			GridMap.Instance.map[9, 5],
+			GridMap.Instance.map[8, 4],
+			GridMap.Instance.map[9, 4],
+			// GridMap.Instance.map[9, 3],
+		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {
 			HexTile chosenTile = chosenTiles[i];
 			chosenTile.SetElevation(ELEVATION.PLAIN);
 			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
 			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
-			LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.VILLAGE);
 		}
 		
 		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);

@@ -231,7 +231,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			LocationStructure ancientRuin = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			ancientRuin.AddPOI(artifact);
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			//if demo build, always spawn Ankh of anubis
 			artifactChoices.Remove(ARTIFACT_TYPE.Ankh_Of_Anubis);
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);

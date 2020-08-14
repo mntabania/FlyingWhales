@@ -10,8 +10,8 @@ public abstract class MapGenerationComponent {
 
 	public bool succeess = true; //if generation component succeeded or not.
 	public string log = "";
-	
-	public abstract IEnumerator ExecuteRandomGeneration(MapGenerationData data);
+
+	public virtual IEnumerator ExecuteRandomGeneration(MapGenerationData data) { yield return null; }
 	public virtual IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) { yield return null; }
 	public virtual IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) { yield return null; }
 	

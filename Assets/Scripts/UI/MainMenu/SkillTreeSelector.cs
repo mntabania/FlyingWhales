@@ -23,7 +23,7 @@ public class SkillTreeSelector : MonoBehaviour {
         for (int i = 0; i < playerLoadoutUI.Length; i++) {
             playerLoadoutUI[i].Initialize();
         }
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
             //if second world then disable ravager and lich builds, and go to puppet master build
             _horizontalScrollSnap.RemoveAllChildren(out var childrenRemoved);
             for (int i = 0; i < archetypeToggles.Length; i++) {
@@ -76,7 +76,7 @@ public class SkillTreeSelector : MonoBehaviour {
     private PLAYER_ARCHETYPE GetSelectedArchetype() {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             return PLAYER_ARCHETYPE.Tutorial;
-        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
             return PLAYER_ARCHETYPE.Second_World;
         } else {
             for (int i = 0; i < archetypeToggles.Length; i++) {

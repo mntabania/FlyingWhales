@@ -7,7 +7,7 @@ using TMPro;
 
 public class WorldSettings : MonoBehaviour {
     public static WorldSettings Instance;
-    public enum World { Tutorial, Oona, Icalawa, Pangat_Loo, Affatt, Leema, Customize, }
+    public enum World { Tutorial, Oona, Icalawa, Pangat_Loo, Affatt, Zenko, Customize, }
 
     public WorldSettingsData worldSettingsData { get; private set; }
 
@@ -245,10 +245,7 @@ public class WorldSettings : MonoBehaviour {
             if(worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
                 mainWindow.SetActive(false);
                 customizeWorldWindow.SetActive(true);
-            } else if (worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-                Close();
-                MainMenuManager.Instance.StartNewGame();
-            } else if (worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+            } else {
                 Close();
                 MainMenuManager.Instance.StartNewGame();
             }
@@ -297,8 +294,9 @@ public class WorldSettings : MonoBehaviour {
                 //TODO
             } else if (item.worldType == World.Affatt) {
                 //TODO
-            } else if (item.worldType == World.Leema) {
+            } else if (item.worldType == World.Zenko) {
                 //TODO
+                worldSettingsData.SetZenkoWorldSettings();
             } else if (item.worldType == World.Customize) {
                 worldSettingsData.SetDefaultCustomWorldSettings();
             }

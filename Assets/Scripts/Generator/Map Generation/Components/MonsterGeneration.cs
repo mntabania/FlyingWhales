@@ -22,7 +22,6 @@ public class MonsterGeneration : MapGenerationComponent {
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		//TODO:
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
 	#endregion
@@ -105,7 +104,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					Summon summon = CreateMonster(SUMMON_TYPE.Sludge, locationChoices);
 					locationChoices.Remove(summon.gridTileLocation);
 				}
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				//Succubus
 				int randomSuccubus = 3;
 				for (int k = 0; k < randomSuccubus; k++) {
@@ -113,7 +112,9 @@ public class MonsterGeneration : MapGenerationComponent {
 					Summon summon = CreateMonster(SUMMON_TYPE.Succubus, locationChoices);
 					locationChoices.Remove(summon.gridTileLocation);
 				}
-			} else {
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+				ZenkoRegionalMonsters(i, ref locationChoices);
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 					//spawn 4-8 ghosts
 					int ghosts = Random.Range(4, 9);
@@ -165,7 +166,7 @@ public class MonsterGeneration : MapGenerationComponent {
 	private IEnumerator LandmarkMonsterGeneration() {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//no landmark monsters in tutorial world
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			//wolves at monster lair
 			List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
 			for (int i = 0; i < monsterLairs.Count; i++) {
@@ -191,7 +192,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure);
 				}
 			}
-		} else {
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
 			for (int i = 0; i < allLandmarks.Count; i++) {
 				BaseLandmark landmark = allLandmarks[i];
@@ -223,6 +224,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			if (region.HasStructure(STRUCTURE_TYPE.CAVE)) {
 				List<LocationStructure> caves = region.GetStructuresAtLocation<LocationStructure>(STRUCTURE_TYPE.CAVE);
 				caves = caves.OrderByDescending(x => x.tiles.Count).ToList();
+				
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					for (int j = 0; j < caves.Count; j++) {
 						LocationStructure cave = caves[j];
@@ -243,7 +245,7 @@ public class MonsterGeneration : MapGenerationComponent {
 							break;
 						}
 					}
-				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Second_World) {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					for (int j = 0; j < caves.Count; j++) {
 						LocationStructure cave = caves[j];
 						if (cave.residents.Count > 0) {
@@ -263,19 +265,11 @@ public class MonsterGeneration : MapGenerationComponent {
 							for (int k = 0; k < fireElementals; k++) {
 								CreateMonster(SUMMON_TYPE.Fire_Elemental, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
-						} 
-						// else if (j == 3) {
-						// 	//Giant spiders	
-						// 	int randomGiantSpider = Random.Range(2, 5);
-						// 	for (int k = 0; k < randomGiantSpider; k++) {
-						// 		CreateMonster(SUMMON_TYPE.Giant_Spider, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
-						// 	}
-						// } 
-						else {
+						} else {
 							break;
 						}
 					}
-				} else {
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 					if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 						for (int j = 0; j < caves.Count; j++) {
 							LocationStructure cave = caves[j];
@@ -327,4 +321,43 @@ public class MonsterGeneration : MapGenerationComponent {
 		}
 		return tiles;
 	}
+
+	#region Zenko
+	private void ZenkoRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
+		if (regionIndex == 0) {
+			//nymphs
+			int randomAmount = 8;
+			SUMMON_TYPE[] nymphTypes = new[] {SUMMON_TYPE.Ice_Nymph, SUMMON_TYPE.Water_Nymph, SUMMON_TYPE.Wind_Nymph};
+			for (int k = 0; k < randomAmount; k++) {
+				if (locationChoices.Count == 0) { break; }
+				Summon summon = CreateMonster(CollectionUtilities.GetRandomElement(nymphTypes), locationChoices);
+				locationChoices.Remove(summon.gridTileLocation);
+			}
+		} else if (regionIndex == 1) {
+			//fire elementals
+			int randomAmount = 5;
+			for (int k = 0; k < randomAmount; k++) {
+				if (locationChoices.Count == 0) { break; }
+				Summon summon = CreateMonster(SUMMON_TYPE.Fire_Elemental, locationChoices);
+				locationChoices.Remove(summon.gridTileLocation);
+			}
+		} else if (regionIndex == 2) {
+			//Kobolds
+			int randomAmount = 5;
+			for (int k = 0; k < randomAmount; k++) {
+				if (locationChoices.Count == 0) { break; }
+				Summon summon = CreateMonster(SUMMON_TYPE.Kobold, locationChoices);
+				locationChoices.Remove(summon.gridTileLocation);
+			}
+		} else if (regionIndex == 3) {
+			//spiders
+			int randomAmount = 8;
+			for (int k = 0; k < randomAmount; k++) {
+				if (locationChoices.Count == 0) { break; }
+				Summon summon = CreateMonster(SUMMON_TYPE.Giant_Spider, locationChoices);
+				locationChoices.Remove(summon.gridTileLocation);
+			}
+		}
+	}
+	#endregion
 }

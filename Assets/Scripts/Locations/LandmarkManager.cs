@@ -450,7 +450,7 @@ public partial class LandmarkManager : MonoBehaviour {
     public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, RESOURCE structureResource, [NotNull]params STRUCTURE_TYPE[] structureTypes) {
         for (int i = 0; i < structureTypes.Length; i++) {
             STRUCTURE_TYPE structureType = structureTypes[i];
-            HexTile chosenTile = settlement.GetRandomUnoccupiedHexTile();
+            HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
             yield return null;
@@ -466,7 +466,7 @@ public partial class LandmarkManager : MonoBehaviour {
     public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, params StructureSetting[] structureSettings) {
         for (int i = 0; i < structureSettings.Length; i++) {
             StructureSetting structureSetting = structureSettings[i];
-            HexTile chosenTile = settlement.GetRandomUnoccupiedHexTile();
+            HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
             yield return null;
