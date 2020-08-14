@@ -88,7 +88,7 @@ public class ConsoleBase : InfoUIBase {
             {"/damage_tile", DamageTile },
             {"/create_faction", CreateFaction },
             {"/cancel_job", CancelJob },
-
+            {"/save_scenario", SaveScenarioMap },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1504,6 +1504,16 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"No tile with coordinates {x.ToString()},{y.ToString()} at {region.name} was found!");
         }
         
+    }
+    #endregion
+
+    #region Saving
+    private void SaveScenarioMap(string[] parameters) {
+        string customFileName = string.Empty;
+        if (parameters.Length > 0) {
+            customFileName = parameters[0];
+        }
+        SaveManager.Instance.SaveScenario(customFileName);
     }
     #endregion
 }

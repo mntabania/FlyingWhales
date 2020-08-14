@@ -18,15 +18,11 @@ public class Region {
     public List<HexTile> tiles { get; }
     public List<HexTile> shuffledNonMountainWaterTiles { get; }
     public HexTile coreTile { get; private set; }
-    public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
     public Color regionColor { get; }
     public List<Faction> factionsHere { get; }
     public List<Character> residents { get; }
-    public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
-    public DemonicLandmarkInvasionData demonicInvasionData { get; private set; }
     public GameObject eventIconGo { get; private set; }
     public List<Character> charactersAtLocation { get; }
-    public RegionTileObject regionTileObject { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
     public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
@@ -290,110 +286,6 @@ public class Region {
     }
     #endregion
 
-    #region Invasion
-    public bool CanBeInvaded() {
-        // if (npcSettlement != null) {
-        //     return npcSettlement.CanInvadeSettlement();
-        // }
-        //return HasCorruptedConnection() &&!coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
-        return  !coreTile.isCorrupted; //HasCorruptedConnection() && TODO:
-    }
-    public void StartInvasion(Minion assignedMinion) {
-        //PlayerManager.Instance.player.SetInvadingRegion(this);
-
-        demonicInvasionData = new DemonicLandmarkInvasionData() {
-            beingInvaded = true,
-            currentDuration = 0,
-        };
-
-        //ticksInInvasion = 0;
-        Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
-        // TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.settlementOfTile != null ? mainLandmark.tileLocation.settlementOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowRegionInfo(this));
-    }
-    public void LoadInvasion(SaveDataRegion data) {
-        //PlayerManager.Instance.player.SetInvadingRegion(this);
-        //assignedMinion.SetAssignedRegion(this);
-        //SetAssignedMinion(assignedMinion);
-
-        demonicInvasionData = data.demonicInvasionData;
-        if (demonicInvasionData.beingInvaded) {
-            Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
-            // TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.settlementOfTile != null ? mainLandmark.tileLocation.settlementOfTile.name : name), mainLandmark.invasionTicks - demonicInvasionData.currentDuration, () => UIManager.Instance.ShowRegionInfo(this));
-        }
-    }
-    private void PerInvasionTick() {
-        DemonicLandmarkInvasionData tempData = demonicInvasionData;
-        tempData.currentDuration++;
-        demonicInvasionData = tempData;
-        if (demonicInvasionData.currentDuration > mainLandmark.invasionTicks) {
-            //invaded.
-            Invade();
-            // UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
-            //     $"You have successfully invaded {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
-        }
-    }
-    private void Invade() {
-        //corrupt region
-        InvadeActions();
-        //TODO:
-        // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, this);
-        //PlayerManager.Instance.AddTileToPlayerArea(coreTile);
-        //PlayerManager.Instance.player.SetInvadingRegion(null);
-        demonicInvasionData = new DemonicLandmarkInvasionData();
-
-        //This is done so that when a region is invaded by the player, the showing Info UI will update appropriately
-        if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion == this) {
-            UIManager.Instance.ShowRegionInfo(this);
-        }
-    }
-    #endregion
-
-    #region Player Build Structure
-    public void LoadBuildingStructure(SaveDataRegion data) {
-        demonicBuildingData = data.demonicBuildingData;
-        if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-            TimerHubUI.Instance.AddItem($"Building {demonicBuildingData.landmarkName} at {name}", demonicBuildingData.buildDuration - demonicBuildingData.currentDuration, () => UIManager.Instance.ShowRegionInfo(this));
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
-        }
-    }
-    private void PerTickBuilding() {
-        DemonicLandmarkBuildingData tempData = demonicBuildingData;
-        tempData.currentDuration++;
-        demonicBuildingData = tempData;
-        if (demonicBuildingData.currentDuration >= demonicBuildingData.buildDuration) {
-            FinishBuildingStructure();
-        }
-    }
-    private void FinishBuildingStructure() {
-        //NOTE: We do not call SetAssignedMinion to null and SetAssignedRegion to null here because it is already called in CreateNewLandmarkOnTile inside DestroyLandmarkOnTile
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
-        //mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
-        //int previousID = mainLandmark.id;
-        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
-        //newLandmark.OverrideID(previousID);
-
-        // UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
-        //     $"Finished building {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())} at {this.name}", () => UIManager.Instance.ShowRegionInfo(this));
-        demonicBuildingData = new DemonicLandmarkBuildingData();
-        //assignedMinion.SetAssignedRegion(null);
-        //SetAssignedMinion(null);
-
-        newLandmark.OnFinishedBuilding();
-        coreTile.UpdateBuildSprites();
-        Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
-    }
-    private void StopBuildingStructure() {
-        if (demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
-            TimerHubUI.Instance.RemoveItem($"Building {demonicBuildingData.landmarkName} at {name}");
-            Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
-            demonicBuildingData = new DemonicLandmarkBuildingData();
-            coreTile.UpdateBuildSprites();
-        }
-    }
-    #endregion
-
     #region Corruption/Invasion
     public void InvadeActions() {
         mainLandmark?.ChangeLandmarkType(LANDMARK_TYPE.NONE);
@@ -401,15 +293,6 @@ public class Region {
         // RemoveFeaturesAfterInvade();
         // ExecuteEventAfterInvasion();
         // ExecuteOtherAfterInvasionActions();
-    }
-    #endregion
-
-    #region Events
-    public void SetEventIcon(GameObject go) {
-        eventIconGo = go;
-    }
-    public void OnCleansedRegion() {
-        StopBuildingStructure();
     }
     #endregion
 
@@ -873,12 +756,6 @@ public class Region {
     }
     public void BlockNotifications() {
         canShowNotifications = false;
-    }
-    public bool IsSameCoreLocationAs(Region location) {
-        return location.coreTile == this.coreTile;
-    }
-    public void SetRegionTileObject(RegionTileObject _regionTileObject) {
-        regionTileObject = _regionTileObject;
     }
     public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
         List<TileObject> objs = new List<TileObject>();

@@ -10,23 +10,10 @@ public class SaveDataRegion {
     public List<int> tileIDs;
     public int coreTileID;
     public ColorSave regionColor;
-    public List<int> connectionsTileIDs;
-    public int previousOwnerID;
     public List<int> factionsHereIDs;
-
     public List<int> charactersAtLocationIDs;
-    public int eventSpawnedByCharacterID;
-    public bool hasEventIconGO;
-
-    //public int invadingMinionID;
-    public DemonicLandmarkBuildingData demonicBuildingData;
-    public DemonicLandmarkInvasionData demonicInvasionData;
 
     public List<string> features;
-
-
-    //public Minion assignedMinion - NOTE: Minion assigned for the region is already saved and loaded in SaveDataMinion. It is not saved and loaded here because there will be redundancy
-    //SEE SaveDataMinion
 
     public void Save(Region region) {
         id = region.id;
@@ -40,9 +27,6 @@ public class SaveDataRegion {
         coreTileID = region.coreTile.id;
         //ticksInInvasion = region.ticksInInvasion;
         regionColor = region.regionColor;
-
-        demonicBuildingData = region.demonicBuildingData;
-        demonicInvasionData = region.demonicInvasionData;
 
         charactersAtLocationIDs = new List<int>();
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
@@ -59,9 +43,6 @@ public class SaveDataRegion {
         for (int i = 0; i < region.factionsHere.Count; i++) {
             factionsHereIDs.Add(region.factionsHere[i].id);
         }
-        
-        hasEventIconGO = region.eventIconGo != null;
-
         // features = new List<string>();
         // for (int i = 0; i < region.features.Count; i++) {
         //     features.Add(region.features[i].GetType().ToString());
@@ -91,9 +72,6 @@ public class SaveDataRegion {
         for (int i = 0; i < factionsHereIDs.Count; i++) {
             region.AddFactionHere(FactionManager.Instance.GetFactionBasedOnID(factionsHereIDs[i]));
         }
-
-        region.LoadBuildingStructure(this);
-        region.LoadInvasion(this);
         // region.LoadFeatures(this);
 
     }

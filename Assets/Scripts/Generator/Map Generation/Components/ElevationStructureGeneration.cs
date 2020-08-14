@@ -5,13 +5,14 @@ using System.Linq;
 using Cellular_Automata;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 using UtilityScripts;
 
 public class ElevationStructureGeneration : MapGenerationComponent {
-	public override IEnumerator Execute(MapGenerationData data) {
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
 			List<ElevationIsland> islandsInRegion = GetElevationIslandsInRegion(region);
@@ -206,6 +207,20 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 	private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {
 		tile.SetStructure(structure);
 		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);
+	}
+	#endregion
+
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		//TODO:
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
+	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		//TODO:
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
 	#endregion
 }

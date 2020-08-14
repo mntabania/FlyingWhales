@@ -1,60 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
 
 public class WorldMapRegionGeneration : MapGenerationComponent {
-	
-	// private List<WorldMapTemplate> worldMapTemplates = new List<WorldMapTemplate>() {
-	// 	new WorldMapTemplate() {
-	// 		regions = new Dictionary<int, RegionTemplate[]>() {
-	// 			{0, new[] {
-	// 					new RegionTemplate(5, 6),
-	// 					new RegionTemplate(5, 6),
-	// 				}
-	// 			},
-	// 			{1, new[] {
-	// 					new RegionTemplate(3, 6),
-	// 					new RegionTemplate(4, 6),
-	// 					new RegionTemplate(3, 6),
-	// 				}
-	// 			}
-	// 		}
-	// 	}, 
-	// 	new WorldMapTemplate() {
-	// 		regions = new Dictionary<int, RegionTemplate[]>() {
-	// 			{0, new[] {
-	// 					new RegionTemplate(3, 6),
-	// 					new RegionTemplate(4, 6),
-	// 					new RegionTemplate(3, 6),
-	// 				}
-	// 			},
-	// 			{1, new[] {
-	// 					new RegionTemplate(5, 6),
-	// 					new RegionTemplate(5, 6),
-	// 				}
-	// 			}
-	// 		}
-	// 	}, 
-	// 	new WorldMapTemplate() {
-	// 		regions = new Dictionary<int, RegionTemplate[]>() {
-	// 			{0, new[] {
-	// 					new RegionTemplate(6, 6),
-	// 					new RegionTemplate(4, 6),
-	// 				}
-	// 			},
-	// 			{1, new[] {
-	// 					new RegionTemplate(3, 6),
-	// 					new RegionTemplate(3, 6),
-	// 					new RegionTemplate(4, 6),
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// };
-	
-	public override IEnumerator Execute(MapGenerationData data) {
+
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating regions...");
 		WorldMapTemplate chosenTemplate = data.chosenWorldMapTemplate;
 		yield return MapGenerator.Instance.StartCoroutine(DivideToRegions(chosenTemplate, data));
@@ -89,7 +42,6 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-
 	private Region CreateNewRegionFromTemplate(RegionTemplate template, int startingX, int startingY) {
 		int maxX = startingX + template.width;
 		int maxY = startingY + template.height;
@@ -115,17 +67,28 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		return region;
 	}
+
+	#region Scenario Maps
+	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
 	
-	
-	
+	#region Saved World
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	}
+	#endregion
 }
 
+[Serializable]
 public struct WorldMapTemplate {
 	public int regionCount;
 	public int worldMapWidth;
 	public int worldMapHeight;
 	public Dictionary<int, RegionTemplate[]> regions; //key is row
 }
+[Serializable]
 public struct RegionTemplate {
 	public readonly int width;
 	public readonly int height;

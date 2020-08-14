@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
 
 public class FamilyTreeGeneration : MapGenerationComponent {
 
-    public override IEnumerator Execute(MapGenerationData data) {
+    #region Random Generation
+    public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Generating families...");
         data.InitializeFamilyTrees();
         
@@ -25,7 +27,6 @@ public class FamilyTreeGeneration : MapGenerationComponent {
         GenerateAdditionalCouples(RACE.ELVES, data);
         yield return null;
     }
-    
     private void GenerateAdditionalCouples(RACE race, MapGenerationData data) {
         List<FamilyTree> families = data.familyTreesDictionary[race];
         int pairCount = families.Count / 2;
@@ -59,11 +60,24 @@ public class FamilyTreeGeneration : MapGenerationComponent {
         for (int i = 0; i < familyTree.children.Count; i++) {
             PreCharacterData child = familyTree.children[i];
             if (RelationshipManager.IsSexuallyCompatible(target.sexuality, child.sexuality, 
-                target.gender, child.gender) 
+                    target.gender, child.gender) 
                 && child.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, database) == null) {
                 return child;
             }
         }
         return null;
     }
+    #endregion
+
+    #region Scenario Maps
+    public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+        yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+    }
+    #endregion
+    
+    #region Saved World
+    public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+        yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+    }
+    #endregion
 }

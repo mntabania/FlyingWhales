@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using Scenario_Maps;
 
 public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
@@ -20,8 +22,34 @@ public class StartupManager : MonoBehaviour {
         yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
 
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
-        Debug.Log("Generating random world...");
-        yield return StartCoroutine(this.mapGenerator.InitializeWorld());
+
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            if (WorldConfigManager.Instance.useSaveData) {
+                ScenarioMapData scenarioMapData = null;
+                switch (WorldSettings.Instance.worldSettingsData.worldType) {
+                    case WorldSettingsData.World_Type.Tutorial:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Tutorial.sce");
+                        break;
+                    case WorldSettingsData.World_Type.Second_World:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Oona.sce");
+                        break;
+                    default:
+                        throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
+                }
+                yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));
+                
+                // SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/SAVED_CURRENT_PROGRESS.sav");;
+                // yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
+            }
+            else {
+                Debug.Log("Generating random world...");
+                yield return StartCoroutine(mapGenerator.InitializeWorld());
+            }
+        } else {
+            //TODO: Add checking if player picked a save file here?
+            Debug.Log("Generating random world...");
+            yield return StartCoroutine(mapGenerator.InitializeWorld());
+        }
     }
 
     private void OnGameLoaded() {

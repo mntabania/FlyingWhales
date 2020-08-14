@@ -96,7 +96,6 @@ public class EquatorGenerator : MonoBehaviour {
                 }
             }
         }
-        MapGenerator.Instance.SetIsCoroutineRunning(false);
         //		for(int i = 0; i < listEquator.Count; i++){
         ////			listEquator[i].GetComponent<SpriteRenderer>().color = Color.red;
         //		}

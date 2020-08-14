@@ -495,7 +495,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#region Obtain Personal Food
 	private void TryTriggerObtainPersonalFood(Table table) {
 		if (table.food < 20 && _owner.HasJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, table) == false) {
-			int neededFood = table.GetMaxResourceValue(RESOURCE.FOOD) - table.food;
+			//Only get the amount of food that is missing from 30
+			int neededFood = 30 - table.food; //table.GetMaxResourceValue(RESOURCE.FOOD)
 			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, goapEffect, table, _owner);
 			job.SetCanTakeThisJobChecker(CanTakeObtainPersonalFoodJob);

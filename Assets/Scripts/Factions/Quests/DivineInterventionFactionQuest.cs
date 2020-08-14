@@ -131,15 +131,6 @@ public class DivineInterventionFactionQuest : FactionQuest {
     //         Debug.Log(summary);
     //     }
     // }
-    private bool AreThereHallowedGrounds() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.HasTileWithFeature(TileFeatureDB.Hallowed_Ground_Feature)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     #region Build Goddess Statue
     // private void CreateBuildGoddessStatueJob() {

@@ -30,6 +30,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     }
     public override void Initialize(TileObject tileObject) {
         base.Initialize(tileObject);
+        name = tileObject.ToString();
         transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         selectable = tileObject;
         _tornado = tileObject as TornadoTileObject;
@@ -225,6 +226,9 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     #region POI's
     private void AddDamageable(IDamageable poi) {
+        if (poi is MovingTileObject) {
+            return;
+        }
         if (!_damagablesInTornado.Contains(poi)) {
             _damagablesInTornado.Add(poi);
             OnAddPoiActions(poi);

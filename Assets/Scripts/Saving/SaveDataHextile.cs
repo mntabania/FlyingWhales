@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Locations.Tile_Features;
 using UnityEngine;
 
 [System.Serializable]
@@ -15,8 +16,10 @@ public class SaveDataHextile {
     public BIOMES biomeType;
     public ELEVATION elevationType;
 
-    public int landmarkID;
-    //public int areaID;
+    //Tile Features
+    public List<SaveDataTileFeature> tileFeatureSaveData;
+    
+    public LANDMARK_TYPE landmarkType;
 
     public void Save(HexTile tile) {
         id = tile.id;
@@ -28,16 +31,16 @@ public class SaveDataHextile {
         temperature = tile.temperature;
         biomeType = tile.biomeType;
         elevationType = tile.elevationType;
-        if(tile.landmarkOnTile != null) {
-            landmarkID = tile.landmarkOnTile.id;
-        } else {
-            landmarkID = -1;
+        landmarkType = tile.landmarkOnTile?.specificLandmarkType ?? LANDMARK_TYPE.NONE;
+        
+        //tile features
+        tileFeatureSaveData = new List<SaveDataTileFeature>();
+        for (int i = 0; i < tile.featureComponent.features.Count; i++) {
+            TileFeature feature = tile.featureComponent.features[i];
+            SaveDataTileFeature saveDataTileFeature = SaveManager.ConvertTileFeatureToSaveData(feature);
+            saveDataTileFeature.Save(feature);
+            tileFeatureSaveData.Add(saveDataTileFeature);
         }
-        //if (tile.settlementOfTile != null) {
-        //    areaID = tile.settlementOfTile.id;
-        //} else {
-        //    areaID = -1;
-        //}
     }
     public void Load(HexTile tile) {
         tile.data.id = id;

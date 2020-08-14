@@ -127,7 +127,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         itemsInHex = new List<TileObject>();
         spellsComponent = new HexTileSpellsComponent(this);
         _hexTileBiomeEffectTrigger = new HexTileBiomeEffectTrigger(this);
-        //demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
@@ -702,14 +701,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         rightBorderGlow.GlowColor = color;
     }
     public void UpdateBuildSprites() {
-        if (region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
-            //currently building at tile.
-            currentlyBuildingSpotGO.gameObject.SetActive(true);
-            emptyBuildingSpotGO.gameObject.SetActive(false);
-        } else {
-            emptyBuildingSpotGO.gameObject.SetActive(true);
-            currentlyBuildingSpotGO.gameObject.SetActive(false);
-        }
+        emptyBuildingSpotGO.gameObject.SetActive(true);
+        currentlyBuildingSpotGO.gameObject.SetActive(false);
     }
     #endregion
 
@@ -869,7 +862,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         string summary = $"{ToString()}";
         summary += $"\nBiome: {biomeType.ToString()}";
         summary += $"\nElevation: {elevationType.ToString()}";
-        summary += $"\nHabitability: {WorldConfigManager.Instance.mapGenerationData.GetHabitabilityValue(this).ToString()}";
         summary += "\nFeatures:";
         for (int i = 0; i < featureComponent.features.Count; i++) {
             TileFeature feature = featureComponent.features[i];

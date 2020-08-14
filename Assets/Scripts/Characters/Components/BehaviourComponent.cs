@@ -410,13 +410,17 @@ public class BehaviourComponent {
                 //if job allows digging do not check pathfinding, always allow it.
                 //TODO: Add some way to unify this checking instead of using JOB_TYPEs
                 return true;
+            } else if (goapPlanJob.jobType == JOB_TYPE.PRODUCE_FOOD) {
+                //Do not check path towards produce food target, since target isn't really used for the job,
+                //and can produce problems if that object has been destroyed.
+                return true;
             }
             
             if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null || (goapPlanJob.targetPOI is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT)) {
                 //if target is self, target is null or target is an unbuilt tile object, job is valid.
                 return true;
             }
-            return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation);
+            return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation, PathfindingManager.Instance.onlyWalkableConstraint);
         }
         return false;
     }

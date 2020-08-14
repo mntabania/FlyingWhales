@@ -8,9 +8,7 @@ public class HexTileData {
     public int id;
     public int xCoordinate;
     public int yCoordinate;
-    public int tileTag;
     public string tileName;
-    public int regionID;
 
     [Space(10)]
     [Header("Biome Settings")]
@@ -19,7 +17,4 @@ public class HexTileData {
     public float temperature;
     public BIOMES biomeType;
     public ELEVATION elevationType;
-
-    [Space(10)]
-    public int manaOnTile;
 }

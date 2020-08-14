@@ -7,13 +7,16 @@ namespace Locations.Tile_Features {
 
         private List<Character> _charactersOutside;
         private string _currentFreezingCheckSchedule;
-        //private BlizzardParticleEffect _effect;
         private GameObject _effect;
+        
+        public int expiryInTicks { get; private set; }
+        public GameDate expiryDate { get; private set; }
 
         public BlizzardFeature() {
             name = "Blizzard";
             description = "There is a blizzard in this location.";
             _charactersOutside = new List<Character>();
+            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(6);
         }
 
         #region Override
@@ -30,11 +33,15 @@ namespace Locations.Tile_Features {
             RescheduleFreezingCheck(tile); //this will start the freezing check loop
         
             //schedule removal of this feature after x amount of ticks.
-            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+            expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
-            GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Blizzard);
-            _effect = go; //go.GetComponent<BlizzardParticleEffect>()
-
+            
+            if (GameManager.Instance.gameHasStarted) {
+                //only create blizzard effect if game has started when this is added.
+                //if this was added before game was started then CreateBlizzardEffect will be
+                //handled by GameStartActions()
+                CreateBlizzardEffect(tile);    
+            }
         }
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
@@ -49,8 +56,15 @@ namespace Locations.Tile_Features {
             if (string.IsNullOrEmpty(_currentFreezingCheckSchedule) == false) {
                 SchedulingManager.Instance.RemoveSpecificEntry(_currentFreezingCheckSchedule); //this will stop the freezing check loop 
             }
-            //_effect.StopParticleEffect();
             ObjectPoolManager.Instance.DestroyObject(_effect);
+        }
+        public override void GameStartActions(HexTile tile) {
+            base.GameStartActions(tile);
+            CreateBlizzardEffect(tile);
+        }
+        private void CreateBlizzardEffect(HexTile tile) {
+            GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Blizzard);
+            _effect = go;
         }
         #endregion
 
@@ -121,5 +135,29 @@ namespace Locations.Tile_Features {
             _currentFreezingCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForFreezing(hex), this);
         }
         #endregion
+
+        #region Expiry
+        public void SetExpiryInTicks(int ticks) {
+            expiryInTicks = ticks;
+        }
+        #endregion
     }
+
+    [System.Serializable]
+    public class SaveDataBlizzardFeature : SaveDataTileFeature {
+
+        public int expiryInTicks;
+        public override void Save(TileFeature tileFeature) {
+            base.Save(tileFeature);
+            BlizzardFeature blizzardFeature = tileFeature as BlizzardFeature;
+            Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {tileFeature?.ToString() ?? "Null"}");
+            expiryInTicks = GameManager.Instance.Today().GetTickDifference(blizzardFeature.expiryDate);
+        }
+        public override TileFeature Load() {
+            BlizzardFeature blizzardFeature = base.Load() as BlizzardFeature;
+            Assert.IsNotNull(blizzardFeature, $"Passed feature is not Blizzard! {blizzardFeature?.ToString() ?? "Null"}");
+            blizzardFeature.SetExpiryInTicks(expiryInTicks);
+            return blizzardFeature;
+        }
+    } 
 }

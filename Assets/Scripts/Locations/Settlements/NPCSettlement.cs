@@ -57,12 +57,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         _plaguedExpiryKey = string.Empty;
     }
-    public NPCSettlement(SaveDataArea saveDataArea) : base (saveDataArea){
-        region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
-        newRulerDesignationWeights = new WeightedDictionary<Character>();
-        ResetNewRulerDesignationChance();
-        LoadStructures(saveDataArea);
-        _plaguedExpiryKey = string.Empty;
+    public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement){
+        // region = GridMap.Instance.GetRegionByID(saveDataBaseSettlement.regionID);
+        // newRulerDesignationWeights = new WeightedDictionary<Character>();
+        // ResetNewRulerDesignationChance();
+        // LoadStructures(saveDataBaseSettlement);
+        // _plaguedExpiryKey = string.Empty;
     }
 
     #region Listeners
@@ -605,7 +605,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 break;
         }
     }
-    protected override void LoadStructures(SaveDataArea data) {
+    protected override void LoadStructures(SaveDataBaseSettlement data) {
         base.LoadStructures(data);
         UpdatePrison();
         UpdateMainStorage();

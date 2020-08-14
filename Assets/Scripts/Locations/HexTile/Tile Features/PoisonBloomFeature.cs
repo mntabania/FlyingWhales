@@ -1,13 +1,18 @@
 ﻿using Inner_Maps;
+using UnityEngine.Assertions;
 namespace Locations.Tile_Features {
     public class PoisonBloomFeature : TileFeature {
 
         private string expirationKey;
         private HexTile owner;
+        
+        public int expiryInTicks { get; private set; }
+        public GameDate expiryDate { get; private set; }
     
         public PoisonBloomFeature() {
             name = "Poison Emitting";
             description = "This location is naturally emitting poison clouds.";
+            expiryInTicks = GameManager.ticksPerDay;
         }
         public override void OnAddFeature(HexTile tile) {
             base.OnAddFeature(tile);
@@ -27,8 +32,8 @@ namespace Locations.Tile_Features {
             }
         }
         private void ScheduleExpiry() {
-            GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
-            expirationKey = SchedulingManager.Instance.AddEntry(dueDate, () => owner.featureComponent.RemoveFeature(this, owner), this);
+            expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
+            expirationKey = SchedulingManager.Instance.AddEntry(expiryDate, () => owner.featureComponent.RemoveFeature(this, owner), this);
         }
         private void EmitPoisonCloudsPerTick() {
             if (UnityEngine.Random.Range(0, 100) < 60 && owner != null) {
@@ -39,5 +44,29 @@ namespace Locations.Tile_Features {
                 poisonCloudTileObject.SetStacks(3);
             }
         }
+        
+        #region Expiry
+        public void SetExpiryInTicks(int ticks) {
+            expiryInTicks = ticks;
+        }
+        #endregion
     }
+    
+    [System.Serializable]
+    public class SaveDataPoisonBloomFeature : SaveDataTileFeature {
+
+        public int expiryInTicks;
+        public override void Save(TileFeature tileFeature) {
+            base.Save(tileFeature);
+            PoisonBloomFeature poisonBloomFeature = tileFeature as PoisonBloomFeature;
+            Assert.IsNotNull(poisonBloomFeature, $"Passed feature is not Poison Bloom! {tileFeature?.ToString() ?? "Null"}");
+            expiryInTicks = GameManager.Instance.Today().GetTickDifference(poisonBloomFeature.expiryDate);
+        }
+        public override TileFeature Load() {
+            PoisonBloomFeature poisonBloomFeature = base.Load() as PoisonBloomFeature;
+            Assert.IsNotNull(poisonBloomFeature, $"Passed feature is not Poison Bloom! {poisonBloomFeature?.ToString() ?? "Null"}");
+            poisonBloomFeature.SetExpiryInTicks(expiryInTicks);
+            return poisonBloomFeature;
+        }
+    } 
 }

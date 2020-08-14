@@ -337,14 +337,14 @@ public partial class LandmarkManager : MonoBehaviour {
     public void RemoveArea(NPCSettlement npcSettlement) {
         allSettlements.Remove(npcSettlement);
     }
-    public NPCSettlement CreateNewArea(SaveDataArea saveDataArea) {
-        NPCSettlement newNpcSettlement = new NPCSettlement(saveDataArea);
+    public NPCSettlement CreateNewArea(SaveDataBaseSettlement saveDataBaseSettlement) {
+        NPCSettlement newNpcSettlement = new NPCSettlement(saveDataBaseSettlement);
 
         if (locationPortraits.ContainsKey(newNpcSettlement.locationType)) {
         }
         Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
         allSettlements.Add(newNpcSettlement);
-        if (saveDataArea.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
+        if (saveDataBaseSettlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
             allNonPlayerSettlements.Add(newNpcSettlement);
         }
         return newNpcSettlement;

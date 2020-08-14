@@ -1,20 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Scenario_Maps;
 using UnityEngine;
 
 public class WorldMapOuterGridGeneration : MapGenerationComponent {
     
    private const int _borderThickness = 4;
    
-	public override IEnumerator Execute(MapGenerationData data) {
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		yield return MapGenerator.Instance.StartCoroutine(GenerateOuterGrid(data));
 		Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
 		// CameraMove.Instance.CalculateCameraBounds();
 		yield return null;
 	}
-	
-	internal IEnumerator GenerateOuterGrid(MapGenerationData data) {
+
+    #region Scenario Maps
+    public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
+        yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+    }
+    #endregion
+    
+    #region Saved World
+    public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+        yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+    }
+    #endregion
+    
+    internal IEnumerator GenerateOuterGrid(MapGenerationData data) {
         int newWidth = data.width + (_borderThickness * 2);
         int newHeight = data.height + (_borderThickness * 2);
 

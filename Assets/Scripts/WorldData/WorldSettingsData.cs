@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -122,6 +123,17 @@ public class WorldSettingsData {
     #region Spells
     public void DisableSpellForWorld(SPELL_TYPE spellType) {
         disabledSpells.Add(spellType);
+    }
+    #endregion
+
+    #region Scenario Maps
+    public bool IsScenarioMap() {
+        switch (worldType) {
+            case World_Type.Custom:
+                return false;
+            default:
+                return true;
+        }
     }
     #endregion
 }

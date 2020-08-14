@@ -9,10 +9,14 @@ namespace Locations.Tile_Features {
         private string _currentRainCheckSchedule;
         private GameObject _effect;
 
+        public int expiryInTicks { get; private set; }
+        public GameDate expiryDate { get; private set; }
+        
         public HeatWaveFeature() {
             name = "Heat Wave";
             description = "There is a heat wave in this location.";
             _charactersOutside = new List<Character>();
+            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(6);
         }
 
         #region Override
@@ -31,11 +35,14 @@ namespace Locations.Tile_Features {
             RescheduleHeatWaveCheck(tile);
 
             //schedule removal of this feature after x amount of ticks.
-            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+            expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
-            GameObject go = GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Heat_Wave);
-            _effect = go;
-
+            if (GameManager.Instance.gameHasStarted) {
+                //only create effect if game has started when this is added.
+                //if this was added before game was started then CreateEffect will be
+                //handled by GameStartActions()
+                CreateEffect(tile);    
+            }
         }
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
@@ -53,6 +60,10 @@ namespace Locations.Tile_Features {
                 SchedulingManager.Instance.RemoveSpecificEntry(_currentRainCheckSchedule); //this will stop the freezing check loop 
             }
             ObjectPoolManager.Instance.DestroyObject(_effect);
+        }
+        public override void GameStartActions(HexTile tile) {
+            base.GameStartActions(tile);
+            CreateEffect(tile);
         }
         #endregion
 
@@ -110,6 +121,11 @@ namespace Locations.Tile_Features {
         #endregion
 
         #region Effects
+        private void CreateEffect(HexTile tile) {
+            GameObject go =
+                GameManager.Instance.CreateParticleEffectAt(tile.GetCenterLocationGridTile(), PARTICLE_EFFECT.Heat_Wave);
+            _effect = go;
+        }
         private void PopulateInitialCharactersOutside(HexTile hex) {
             List<Character> allCharactersInHex = hex.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
             if (allCharactersInHex != null) {
@@ -136,5 +152,30 @@ namespace Locations.Tile_Features {
             _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForOverheating(hex), this);
         }
         #endregion
+        
+        #region Expiry
+        public void SetExpiryInTicks(int ticks) {
+            expiryInTicks = ticks;
+        }
+        #endregion
     }
+    
+    [System.Serializable]
+    public class SaveDataHeatWaveFeature : SaveDataTileFeature {
+
+        public int expiryInTicks;
+        public override void Save(TileFeature tileFeature) {
+            base.Save(tileFeature);
+            HeatWaveFeature heatWaveFeature = tileFeature as HeatWaveFeature;
+            Assert.IsNotNull(heatWaveFeature, $"Passed feature is not Heat Wave! {tileFeature?.ToString() ?? "Null"}");
+            expiryInTicks = GameManager.Instance.Today().GetTickDifference(heatWaveFeature.expiryDate);
+        }
+        public override TileFeature Load() {
+            HeatWaveFeature heatWaveFeature = base.Load() as HeatWaveFeature;
+            Assert.IsNotNull(heatWaveFeature, $"Passed feature is not Heat Wave! {heatWaveFeature?.ToString() ?? "Null"}");
+            heatWaveFeature.SetExpiryInTicks(expiryInTicks);
+            return heatWaveFeature;
+        }
+    } 
+    
 }

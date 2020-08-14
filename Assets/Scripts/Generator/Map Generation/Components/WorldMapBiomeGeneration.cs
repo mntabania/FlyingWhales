@@ -4,12 +4,11 @@ using UnityEngine;
 using UtilityScripts;
 
 public class WorldMapBiomeGeneration : MapGenerationComponent {
-	public override IEnumerator Execute(MapGenerationData data) {
+	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating biomes...");
 		yield return MapGenerator.Instance.StartCoroutine(SetBiomePerRegion());
 		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 	}
-
 	private IEnumerator SetBiomePerRegion() {
 		var choices = WorldConfigManager.Instance.isTutorialWorld
 			? new List<BIOMES>() {BIOMES.GRASSLAND}

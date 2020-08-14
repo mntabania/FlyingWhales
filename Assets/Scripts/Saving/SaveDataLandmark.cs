@@ -16,7 +16,6 @@ public class SaveDataLandmark {
         landmarkName = landmark.landmarkName;
         landmarkType = landmark.specificLandmarkType;
         locationID = landmark.tileLocation.id;
-        invasionTicks = landmark.invasionTicks;
     }
     public virtual void LoadSpecificLandmarkData(BaseLandmark landmark) { }
 

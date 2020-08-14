@@ -14,6 +14,8 @@ public class PathfindingManager : MonoBehaviour {
     private GridGraph mainGraph;
     private List<CharacterAIPath> _allAgents;
 
+    public NNConstraint onlyWalkableConstraint;
+
     #region getters/setters
     public List<CharacterAIPath> allAgents {
         get { return _allAgents; }
@@ -23,6 +25,9 @@ public class PathfindingManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         _allAgents = new List<CharacterAIPath>();
+        onlyWalkableConstraint = NNConstraint.Default;
+        onlyWalkableConstraint.constrainWalkability = true;
+        onlyWalkableConstraint.walkable = true;
     }
     void Start() {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -65,6 +70,23 @@ public class PathfindingManager : MonoBehaviour {
                 LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
                 return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node,
                     AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, NNConstraint.Default).node);
+            }
+        }
+        return false;
+    }
+    public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile, NNConstraint constraint) {
+        if (fromTile == null || toTile == null) { return false; }
+        if (fromTile == toTile) { return true; }
+        if(fromTile.structure.location == toTile.structure.location) {
+            return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, constraint).node,
+                AstarPath.active.GetNearest(toTile.centeredWorldLocation, constraint).node);
+        } else {
+            LocationGridTile nearestEdgeFrom = fromTile.GetNearestEdgeTileFromThis();
+            if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, constraint).node,
+                AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, constraint).node)) {
+                LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
+                return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, constraint).node,
+                    AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, constraint).node);
             }
         }
         return false;

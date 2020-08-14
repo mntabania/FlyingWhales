@@ -6,15 +6,19 @@ using UnityEngine.Assertions;
 namespace Locations.Tile_Features {
     public class RainFeature : TileFeature {
 
-        private List<Character> _charactersOutside;
+        private readonly List<Character> _charactersOutside;
         private string _currentRainCheckSchedule;
         private GameObject _effect;
         private AudioObject _audioObject;
 
+        public int expiryInTicks { get; private set; }
+        public GameDate expiryDate { get; private set; }
+        
         public RainFeature() {
             name = "Rain";
             description = "Rain is pouring down in this location.";
             _charactersOutside = new List<Character>();
+            expiryInTicks = GameManager.Instance.GetTicksBasedOnHour(2);
         }
 
         #region Override
@@ -30,19 +34,21 @@ namespace Locations.Tile_Features {
                 (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
             //Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED,
             //    (character, gridTile) => OnTileObjectPlaced(character, gridTile, tile));
-
-            PopulateInitialCharactersOutside(tile);
+            
             RescheduleRainCheck(tile); //this will start the rain check loop
             //CheckForWet(tile);
 
             //schedule removal of this feature after x amount of ticks.
-            GameDate expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+            expiryDate = GameManager.Instance.Today().AddTicks(expiryInTicks);
             SchedulingManager.Instance.AddEntry(expiryDate, () => tile.featureComponent.RemoveFeature(this, tile), this);
-            LocationGridTile centerTile = tile.GetCenterLocationGridTile();
-            GameObject go = GameManager.Instance.CreateParticleEffectAt(centerTile, PARTICLE_EFFECT.Rain);
-            _audioObject = AudioManager.Instance.CreateAudioObject(PlayerSkillManager.Instance.GetPlayerSkillData<RainSkillData>(SPELL_TYPE.RAIN).rainSoundEffect, centerTile, 7, true);
-            _effect = go;
-
+            
+            if (GameManager.Instance.gameHasStarted) {
+                //only create effect if game has started when this is added.
+                //if this was added before game was started then CreateEffect will be
+                //handled by GameStartActions()
+                CreateEffect(tile);    
+                PopulateInitialCharactersOutside(tile);
+            }
         }
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
@@ -61,6 +67,11 @@ namespace Locations.Tile_Features {
             }
             ObjectPoolManager.Instance.DestroyObject(_effect);
             ObjectPoolManager.Instance.DestroyObject(_audioObject);
+        }
+        public override void GameStartActions(HexTile tile) {
+            base.GameStartActions(tile);
+            CreateEffect(tile);
+            PopulateInitialCharactersOutside(tile);
         }
         #endregion
 
@@ -118,6 +129,14 @@ namespace Locations.Tile_Features {
         #endregion
 
         #region Effects
+        private void CreateEffect(HexTile hex) {
+            LocationGridTile centerTile = hex.GetCenterLocationGridTile();
+            GameObject go = GameManager.Instance.CreateParticleEffectAt(centerTile, PARTICLE_EFFECT.Rain);
+            _audioObject = AudioManager.Instance.CreateAudioObject(
+                PlayerSkillManager.Instance.GetPlayerSkillData<RainSkillData>(SPELL_TYPE.RAIN).rainSoundEffect, centerTile, 7,
+                true);
+            _effect = go;
+        }
         private void PopulateInitialCharactersOutside(HexTile hex) {
             List<Character> allCharactersInHex = hex.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => !c.isDead);
             if (allCharactersInHex != null) {
@@ -151,5 +170,29 @@ namespace Locations.Tile_Features {
             _currentRainCheckSchedule = SchedulingManager.Instance.AddEntry(dueDate, () => CheckForWet(hex), this);
         }
         #endregion
+        
+        #region Expiry
+        public void SetExpiryInTicks(int ticks) {
+            expiryInTicks = ticks;
+        }
+        #endregion
     }
+    
+    [System.Serializable]
+    public class SaveDataRainFeature : SaveDataTileFeature {
+
+        public int expiryInTicks;
+        public override void Save(TileFeature tileFeature) {
+            base.Save(tileFeature);
+            RainFeature rainFeature = tileFeature as RainFeature;
+            Assert.IsNotNull(rainFeature, $"Passed feature is not Rain! {tileFeature?.ToString() ?? "Null"}");
+            expiryInTicks = GameManager.Instance.Today().GetTickDifference(rainFeature.expiryDate);
+        }
+        public override TileFeature Load() {
+            RainFeature rainFeature = base.Load() as RainFeature;
+            Assert.IsNotNull(rainFeature, $"Passed feature is not Rain! {rainFeature?.ToString() ?? "Null"}");
+            rainFeature.SetExpiryInTicks(expiryInTicks);
+            return rainFeature;
+        }
+    } 
 }
