@@ -12,9 +12,9 @@ public class PlayerSkillComponent {
     public List<SPELL_TYPE> demonicStructuresSkills { get; protected set; }
     public List<SPELL_TYPE> minionsSkills { get; protected set; }
     public List<SPELL_TYPE> summonsSkills { get; protected set; }
-    public List<Summon> summons { get; protected set; }
-    public bool canTriggerFlaw { get; protected set; }
-    public bool canRemoveTraits { get; protected set; }
+    //public List<Summon> summons { get; protected set; }
+    //public bool canTriggerFlaw { get; protected set; }
+    //public bool canRemoveTraits { get; protected set; }
 
     public PlayerSkillComponent(Player player) {
         this.player = player;
@@ -25,10 +25,21 @@ public class PlayerSkillComponent {
         demonicStructuresSkills = new List<SPELL_TYPE>();
         minionsSkills = new List<SPELL_TYPE>();
         summonsSkills = new List<SPELL_TYPE>();
-        summons = new List<Summon>();
-        canTriggerFlaw = true;
-        canRemoveTraits = true;
+        //summons = new List<Summon>();
+        //canTriggerFlaw = true;
+        //canRemoveTraits = true;
     }
+
+    #region Loading
+    public void LoadSkills(List<SaveDataPlayerSkill> data) {
+        if(data != null) {
+            for (int i = 0; i < data.Count; i++) {
+                SpellData spell = data[i].Load();
+                CategorizePlayerSkill(spell);
+            }
+        }
+    }
+    #endregion
 
     #region Skill Tree
     public void AddPlayerSkill(SpellData spellData, int charges, int manaCost, int cooldown, int threat, int threatPerHour) {
@@ -72,15 +83,15 @@ public class PlayerSkillComponent {
             PopulateAllSkills(PlayerSkillManager.Instance.constantSkills);
         }
     }
-    public void LoadSummons(SaveDataPlayer save) {
-        if(save.kennelSummons != null && save.kennelSummons.Count > 0) {
-            for (int i = 0; i < save.kennelSummons.Count; i++) {
-                SaveDataSummon summonData = save.kennelSummons[i];
-                Summon savedSummon = CharacterManager.Instance.CreateNewSummon(summonData, player.playerFaction);
-                AddSummon(savedSummon);
-            }
-        }
-    }
+    //public void LoadSummons(SaveDataPlayer save) {
+    //    if(save.kennelSummons != null && save.kennelSummons.Count > 0) {
+    //        for (int i = 0; i < save.kennelSummons.Count; i++) {
+    //            SaveDataSummon summonData = save.kennelSummons[i];
+    //            Summon savedSummon = CharacterManager.Instance.CreateNewSummon(summonData, player.playerFaction);
+    //            AddSummon(savedSummon);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Utilities
@@ -211,7 +222,7 @@ public class PlayerSkillComponent {
         spellData.SetThreatPerHour(skillData.threatPerHour);
         CategorizePlayerSkill(spellData);
     }
-    private void CategorizePlayerSkill(SpellData spellData) {
+    public void CategorizePlayerSkill(SpellData spellData) {
         Assert.IsNotNull(spellData, "Given spell data in CategorizePlayerSkill is null!");
         spellData.SetIsInUse(true);
         if (spellData.category == SPELL_CATEGORY.AFFLICTION) {
@@ -233,17 +244,17 @@ public class PlayerSkillComponent {
     #endregion
 
     #region Summons
-    public void AddSummon(Summon summon) {
-        summons.Add(summon);
-    }
-    public void RemoveSummon(Summon summon, bool removeOnSaveFile = false) {
-        if (summons.Remove(summon)) {
-            if (removeOnSaveFile) {
-                SaveManager.Instance.currentSaveDataPlayer.RemoveKennelSummon(summon);
-            }
-            Messenger.Broadcast(Signals.SUMMON_REMOVED, summon);
-        }
-    }
+    //public void AddSummon(Summon summon) {
+    //    summons.Add(summon);
+    //}
+    //public void RemoveSummon(Summon summon, bool removeOnSaveFile = false) {
+    //    if (summons.Remove(summon)) {
+    //        if (removeOnSaveFile) {
+    //            SaveManager.Instance.currentSaveDataPlayer.RemoveKennelSummon(summon);
+    //        }
+    //        Messenger.Broadcast(Signals.SUMMON_REMOVED, summon);
+    //    }
+    //}
     public string GetSummonDescription(SUMMON_TYPE currentlySelectedSummon) {
         switch (currentlySelectedSummon) {
             case SUMMON_TYPE.Wolf:

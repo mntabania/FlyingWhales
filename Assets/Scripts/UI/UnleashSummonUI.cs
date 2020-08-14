@@ -90,15 +90,15 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
 
         characterNameplateItems.Clear();
         summonMinionNameplateItems.Clear();
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summons.Count; i++) {
-            Summon summon = PlayerManager.Instance.player.playerSkillComponent.summons[i];
-            CharacterNameplateItem item = CreateNewCharacterNameplateItem();
-            item.SetAsToggle();
-            item.SetObject(summon);
-            item.AddOnToggleAction(OnToggleCharacter);
-            item.SetPortraitInteractableState(false);
-            item.gameObject.SetActive(true);
-        }
+        //for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summons.Count; i++) {
+        //    Summon summon = PlayerManager.Instance.player.playerSkillComponent.summons[i];
+        //    CharacterNameplateItem item = CreateNewCharacterNameplateItem();
+        //    item.SetAsToggle();
+        //    item.SetObject(summon);
+        //    item.AddOnToggleAction(OnToggleCharacter);
+        //    item.SetPortraitInteractableState(false);
+        //    item.gameObject.SetActive(true);
+        //}
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
             MinionPlayerSkill minionPlayerSkill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(PlayerManager.Instance.player.playerSkillComponent.minionsSkills[i]);
             SummonMinionPlayerSkillNameplateItem item = CreateNewMinionNameplateItem();
@@ -299,6 +299,6 @@ public class UnleashSummonUI : PopupMenuBase { //MonoBehaviour
         summon.SetHomeRegion(locationTile.structure.location);
         CharacterManager.Instance.PlaceSummon(summon, locationTile);
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
-        PlayerManager.Instance.player.playerSkillComponent.RemoveSummon(summon, true);
+        //PlayerManager.Instance.player.playerSkillComponent.RemoveSummon(summon, true);
     }
 }

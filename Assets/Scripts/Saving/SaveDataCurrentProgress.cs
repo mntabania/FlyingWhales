@@ -4,7 +4,6 @@ using Inner_Maps;
 using Locations.Settlements;
 using UnityEngine;
 
-[System.Serializable]
 public class SaveDataCurrentProgress {
     public WorldMapSave worldMapSave;
     public List<SaveDataBaseSettlement> settlementSaves;
@@ -32,6 +31,9 @@ public class SaveDataCurrentProgress {
     public int tick;
     public int continuousDays;
 
+    //Player
+    public SaveDataPlayerGame player;
+
     #region Saving
     public void SaveDate() {
         GameDate today = GameManager.Instance.Today();
@@ -40,6 +42,10 @@ public class SaveDataCurrentProgress {
         year = today.year;
         tick = today.tick;
         continuousDays = GameManager.Instance.continuousDays;
+    }
+    public void SavePlayer() {
+        player = new SaveDataPlayerGame();
+        player.Save();
     }
     #endregion
 
@@ -52,6 +58,9 @@ public class SaveDataCurrentProgress {
         today.tick = tick;
         GameManager.Instance.continuousDays = continuousDays;
         GameManager.Instance.SetToday(today);
+    }
+    public Player LoadPlayer() {
+        return player.Load();
     }
     #endregion
     

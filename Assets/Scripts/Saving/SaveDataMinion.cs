@@ -35,7 +35,7 @@ public class SaveDataMinion {
     }
 
     public void Load(Player player) {
-        Minion minion = player.CreateNewMinion(this);
-        player.AddMinion(minion);
+        //Minion minion = player.CreateNewMinion(this);
+        //player.AddMinion(minion);
     }
 }

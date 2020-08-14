@@ -4,8 +4,7 @@ using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Factions;
 
-[System.Serializable]
-public class SaveDataFaction {
+public class SaveDataFaction : SaveData<Faction> {
     public int id;
     public string name;
     public string description;

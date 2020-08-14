@@ -109,10 +109,10 @@ public class TheFingersUI : MonoBehaviour {
 
     #region Minion
     public void OnClickSelectMinion() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-            characters.Add(PlayerManager.Instance.player.minions[i].character);
-        }
+        //List<Character> characters = new List<Character>();
+        //for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+        //    characters.Add(PlayerManager.Instance.player.minions[i].character);
+        //}
         string title = "Select Minion";
     }
     private void SetChosenMinion(object c) {

@@ -20,10 +20,17 @@ public class OptionsMenu : PopupMenuBase {
     }
     public void SaveGame() {
         SaveManager.Instance.SavePlayerData();
-        SaveManager.Instance.SaveCurrentProgress();
+        SaveCurrentProgress();
     }
     public void ExitGame() {
         Application.Quit();
+    }
+    private void SaveCurrentProgress() {
+        if (SaveManager.Instance.CanSaveCurrentProgress()) {
+            SaveManager.Instance.SaveCurrentProgress();
+        } else {
+            PlayerUI.Instance.ShowGeneralConfirmation("Save Progress", "Cannot save while seizing.");
+        }
     }
     public void AbandonWorld() {
         UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50, showCover: true);

@@ -1216,7 +1216,7 @@ public class ConsoleBase : InfoUIBase {
             //if (level > 1) {
             //    minion.character.LevelUp(level - 1);
             //}
-            PlayerManager.Instance.player.AddMinion(minion);
+            //PlayerManager.Instance.player.AddMinion(minion);
         }
     }
     #endregion
@@ -1274,11 +1274,11 @@ public class ConsoleBase : InfoUIBase {
         ARTIFACT_TYPE type;
         if (typeParameterString.Equals("All")) {
             ARTIFACT_TYPE[] types = CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>();
-            for (int i = 1; i < types.Length; i++) {
-                PlayerManager.Instance.player.AddArtifact(types[i]);
-            }
+            //for (int i = 1; i < types.Length; i++) {
+            //    PlayerManager.Instance.player.AddArtifact(types[i]);
+            //}
         } else if (Enum.TryParse(typeParameterString, out type)) {
-            PlayerManager.Instance.player.AddArtifact(type);
+            //PlayerManager.Instance.player.AddArtifact(type);
             AddSuccessMessage($"Gained new artifact: {type}");
         } else {
             AddErrorMessage($"There is no artifact of type {typeParameterString}");
@@ -1314,8 +1314,8 @@ public class ConsoleBase : InfoUIBase {
         string typeParameterString = parameters[0];
         SPELL_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
-            PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
-            AddSuccessMessage($"Gained new Spell: {type}");
+            //PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
+            //AddSuccessMessage($"Gained new Spell: {type}");
         } else {
             AddErrorMessage($"There is no spell of type {typeParameterString}");
         }

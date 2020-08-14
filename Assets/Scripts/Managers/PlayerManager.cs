@@ -61,6 +61,15 @@ public class PlayerManager : MonoBehaviour {
         // }
         
     }
+    public void InitializePlayer(SaveDataCurrentProgress data) {
+        player = data.LoadPlayer();
+
+        PlayerUI.Instance.UpdateUI();
+        // if (WorldConfigManager.Instance.isDemoWorld) {
+        //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    
+        // }
+
+    }
     //public void InitializePlayer(SaveDataPlayer data) {
     //    player = new Player(data);
     //    player.CreatePlayerFaction(data);
