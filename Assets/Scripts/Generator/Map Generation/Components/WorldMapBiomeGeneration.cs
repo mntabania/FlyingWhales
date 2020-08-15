@@ -10,31 +10,32 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ElevationBiomeRefinement());
 	}
 	private IEnumerator SetBiomePerRegion() {
-		var choices = WorldConfigManager.Instance.isTutorialWorld
-			? new List<BIOMES>() {BIOMES.GRASSLAND}
-			// : new List<BIOMES>() {BIOMES.SNOW};
-			: WorldSettings.Instance.worldSettingsData.biomes;
+		var choices = WorldSettings.Instance.worldSettingsData.biomes;
 		 
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
-			BIOMES randomBiome = CollectionUtilities.GetRandomElement(choices);
+			BIOMES biome;
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+				if (i == 0) {
+					biome = BIOMES.FOREST;
+				} else if (i == 1) {
+					biome = BIOMES.DESERT;
+				} else if (i == 2) {
+					biome = BIOMES.SNOW;
+				} else {
+					biome = BIOMES.GRASSLAND;
+				}
+			} else {
+				biome = CollectionUtilities.GetRandomElement(choices);
+			}
+			
 			for (int j = 0; j < region.tiles.Count; j++) {
 				HexTile tile = region.tiles[j];
-				Biomes.Instance.SetBiomeForTile(randomBiome, tile);
-			}
+				Biomes.Instance.SetBiomeForTile(biome, tile);
+			}	
 		}
 		yield return null;
 	}
-	private bool HasRegionWithBiome(BIOMES biome) {
-		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-			Region region = GridMap.Instance.allRegions[i];
-			if (region.coreTile.biomeType == biome) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private IEnumerator ElevationBiomeRefinement() {
 		int batchCount = 0;
 		for (int i = 0; i < GridMap.Instance.allTiles.Count; i++) {

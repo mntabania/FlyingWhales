@@ -2804,7 +2804,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
     }
-    public void CreateInitialTraits() {
+    public void CreateDefaultTraits() {
+        traitContainer.AddTrait(this, "Character Trait");
+        traitContainer.AddTrait(this, "Flammable");
+        defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+    }
+    public void CreateRandomInitialTraits() {
         if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
  
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
@@ -2869,10 +2874,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.AddTrait(this, chosenTrait);
             }
         }
-
-        traitContainer.AddTrait(this, "Character Trait");
-        traitContainer.AddTrait(this, "Flammable");
-        defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Add(trait);

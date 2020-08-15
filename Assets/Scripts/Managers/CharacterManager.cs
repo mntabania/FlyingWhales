@@ -354,7 +354,8 @@ public class CharacterManager : MonoBehaviour {
             newCharacter.MigrateHomeTo(homeLocation, null, false);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraits();
+        newCharacter.CreateRandomInitialTraits();
+        newCharacter.CreateDefaultTraits();
         //newCharacter.CreateInitialTraitsByRace();
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
@@ -386,7 +387,8 @@ public class CharacterManager : MonoBehaviour {
             homeRegion.AddResident(newCharacter);
             homeRegion.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraits();
+        newCharacter.CreateRandomInitialTraits();
+        newCharacter.CreateDefaultTraits();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
@@ -410,7 +412,8 @@ public class CharacterManager : MonoBehaviour {
             //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraits();
+        newCharacter.CreateRandomInitialTraits();
+        newCharacter.CreateDefaultTraits();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
@@ -482,7 +485,8 @@ public class CharacterManager : MonoBehaviour {
             //homeLocation.region.AddResident(newCharacter);
             homeLocation.region.AddCharacterToLocation(newCharacter);
         }
-        newCharacter.CreateInitialTraits();
+        // newCharacter.CreateInitialTraits();
+        newCharacter.CreateDefaultTraits();
         AddNewCharacter(newCharacter);
         data.SetHasBeenSpawned();
         return newCharacter;
@@ -736,7 +740,8 @@ public class CharacterManager : MonoBehaviour {
         //    homeRegion.AddResident(newCharacter);
         //    homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
         //}
-        newCharacter.CreateInitialTraits();
+        newCharacter.CreateRandomInitialTraits();
+        newCharacter.CreateDefaultTraits();
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
@@ -773,7 +778,8 @@ public class CharacterManager : MonoBehaviour {
         //    homeRegion.AddResident(newCharacter);
         //    homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
         //}
-        newCharacter.CreateInitialTraits();
+        newCharacter.CreateRandomInitialTraits();
+        newCharacter.CreateDefaultTraits();
         AddNewCharacter(newCharacter);
         return newCharacter;
     }

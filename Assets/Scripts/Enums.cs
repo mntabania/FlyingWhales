@@ -1108,6 +1108,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.FARM:
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.TAVERN:
                 return true;
             default:
                 return false;

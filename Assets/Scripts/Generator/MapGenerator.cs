@@ -25,7 +25,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
             new TileFeatureGeneration(), new PlayerSettlementGeneration(), new RegionFeatureGeneration(), 
             new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), new RegionInnerMapGeneration(), 
-            new SettlementGeneration(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
+            new SettlementGeneration(), new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
             new RegionFeatureActivation(), new MonsterGeneration(), new MapGenerationFinalization(), 
             new PlayerDataGeneration(),
         };
@@ -126,9 +126,9 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
             new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
+            new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), new LandmarkStructureGeneration(), 
             new ElevationStructureGeneration(), new RegionFeatureActivation(), new MonsterGeneration(), 
-            new MapGenerationFinalization(), new PlayerDataGeneration(),
+            new FactionFinalization(), new MapGenerationFinalization(), new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeScenarioWorldCoroutine(mapGenerationComponents, scenarioMapData));
     }
@@ -220,12 +220,12 @@ public class MapGenerator : MonoBehaviour {
     #region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration()/*, new SupportingFactionGeneration()*/, new WorldMapRegionGeneration(), 
-            new WorldMapOuterGridGeneration(), new TileFeatureGeneration()/*, new RegionFeatureGeneration()*/, 
-            /*new PlayerSettlementGeneration(), */new WorldMapLandmarkGeneration()/*, new FamilyTreeGeneration()*/, 
-            new RegionInnerMapGeneration()/*, new SettlementGeneration(), new LandmarkStructureGeneration()*/ ,
-            //new ElevationStructureGeneration(), new RegionFeatureActivation(), new MonsterGeneration(), 
-            new MapGenerationFinalization(), new LoadAllFactionsGeneration(), new LoadAllFactionRelationshipsGeneration(), new PlayerDataGeneration(),
+            new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
+            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
+            new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
+            new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), 
+            new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new RegionFeatureActivation(), 
+            new MonsterGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }

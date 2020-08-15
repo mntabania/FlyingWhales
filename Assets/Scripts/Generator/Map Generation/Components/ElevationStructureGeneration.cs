@@ -212,7 +212,6 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		//TODO:
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
 	#endregion

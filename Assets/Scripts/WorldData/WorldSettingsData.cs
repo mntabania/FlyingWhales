@@ -7,8 +7,9 @@ public class WorldSettingsData {
 
     public enum World_Type {
         Tutorial,
-        Second_World,
-        Custom
+        Oona,
+        Custom,
+        Zenko,
     };
     
     public int numOfRegions { get; private set; }
@@ -93,7 +94,7 @@ public class WorldSettingsData {
     }
     public void SetSecondWorldSettings() {
         Debug.Log("Set world settings as Second World");
-        worldType = World_Type.Second_World;
+        worldType = World_Type.Oona;
         numOfRegions = 1;
         omnipotentMode = false;
         noThreatMode = false;
@@ -117,6 +118,22 @@ public class WorldSettingsData {
         AddBiome(BIOMES.GRASSLAND);
         AddBiome(BIOMES.SNOW);
         AddBiome(BIOMES.FOREST);
+    }
+    public void SetZenkoWorldSettings() {
+        Debug.Log("Set world settings as Zenko");
+        worldType = World_Type.Zenko;
+        numOfRegions = 4;
+        omnipotentMode = false;
+        noThreatMode = false;
+        ClearBiomes();
+        ClearRaces();
+        AddRace(RACE.HUMANS);
+        AddRace(RACE.ELVES);
+        AddBiome(BIOMES.SNOW);
+        AddBiome(BIOMES.GRASSLAND);
+        AddBiome(BIOMES.FOREST);
+        AddBiome(BIOMES.DESERT);
+        //DisableSpellForWorld(SPELL_TYPE.EARTHQUAKE);
     }
     #endregion
 

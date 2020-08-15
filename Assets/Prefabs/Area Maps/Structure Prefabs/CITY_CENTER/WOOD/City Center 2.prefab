@@ -1525,9 +1525,10 @@ MonoBehaviour:
   _center: {x: 5, y: 4, z: 0}
   objectsParent: {fileID: 4500718970289644}
   _blockWallType: 0
-  _thinWallResource: 0
+  _thinWallResource: 1
   predeterminedOccupiedCoordinates: []
   roomTemplates: []
+  wallsContributeToDamage: 1
   wallTileMap: {fileID: 0}
   leftWall: {fileID: 0}
   rightWall: {fileID: 0}
