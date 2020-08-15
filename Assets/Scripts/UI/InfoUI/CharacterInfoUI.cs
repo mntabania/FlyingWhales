@@ -296,14 +296,8 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
     }
     private void OnClickHomeStructure(object obj) {
-        if (activeCharacter.homeRegion != null) {
-            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != activeCharacter.homeRegion.innerMap) {
-                InnerMapManager.Instance.HideAreaMap();
-            }
-            if (activeCharacter.homeRegion.innerMap.isShowing == false) {
-                InnerMapManager.Instance.ShowInnerMap(activeCharacter.homeRegion);
-            }
-            InnerMapCameraMove.Instance.CenterCameraOn(activeCharacter.homeStructure.structureObj.gameObject);
+        if (activeCharacter.homeStructure != null) {
+            activeCharacter.homeStructure.CenterOnStructure();
         }
         
     }

@@ -60,10 +60,5 @@ namespace Inner_Maps.Location_Structures {
         public LocationStructure GetLocationStructure() {
             return this;
         }
-        public override void SetStructureObject(LocationStructureObject structureObj) {
-            base.SetStructureObject(structureObj);
-            Vector3 position = structureObj.transform.position;
-            worldPosition = position;
-        }
     }
 }

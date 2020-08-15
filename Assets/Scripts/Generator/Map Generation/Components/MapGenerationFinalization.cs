@@ -37,7 +37,15 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
+		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
+		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+			Region region = GridMap.Instance.allRegions[i]; 
+			region.GenerateOuterBorders();
+			region.HideBorders();
+		}
+		yield return null;
 	}
 	#endregion
 	

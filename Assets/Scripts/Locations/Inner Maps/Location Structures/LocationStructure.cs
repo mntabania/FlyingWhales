@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using BayatGames.SaveGameFree.Types;
-using Inner_Maps;
-using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
@@ -14,7 +11,6 @@ namespace Inner_Maps.Location_Structures {
         public string name { get; protected set; }
         public string nameWithoutID { get; protected set; }
         public int maxResidentCapacity { get; protected set; }
-        public virtual string nameplateName => name;
         public STRUCTURE_TYPE structureType { get; private set; }
         public List<STRUCTURE_TAG> structureTags { get; protected set; }
         public List<Character> charactersHere { get; private set; }
@@ -22,14 +18,11 @@ namespace Inner_Maps.Location_Structures {
         public BaseSettlement settlementLocation { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
-        public POI_STATE state { get; private set; }
-        public LocationStructureObject structureObj {get; private set;}
         public virtual InnerMapHexTile occupiedHexTile { get; private set; }
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> passableTiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
-        //public List<LocationGridTile> outerTiles { get; private set; }
         public bool isInterior { get; private set; }
         public bool hasBeenDestroyed { get; private set; }
         //HP
@@ -43,9 +36,10 @@ namespace Inner_Maps.Location_Structures {
         //protected Faction _owner;
 
         #region getters
+        public virtual string nameplateName => name;
         public virtual bool isDwelling => false;
         public virtual Vector3 worldPosition { get; protected set; }
-        public virtual Vector2 selectableSize => structureObj.size;
+        public virtual Vector2 selectableSize => Vector2.zero;
         public LocationStructure currentStructure => this;
         public BaseSettlement targetSettlement => settlementLocation;
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
@@ -79,13 +73,14 @@ namespace Inner_Maps.Location_Structures {
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
-            structureTags = new List<STRUCTURE_TAG>();
-            //outerTiles = new List<LocationGridTile>();
+            structureTags = new List<STRUCTURE_TAG>(data.structureTags);
             tiles = new List<LocationGridTile>();
             passableTiles = new List<LocationGridTile>();
+            unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            SetMaxHPAndReset(3000);
+            SetMaxHP(3000);
+            currentHP = data.currentHP;
             SetInteriorState(structureType.IsInterior());
             maxResidentCapacity = 5;
         }
@@ -175,17 +170,7 @@ namespace Inner_Maps.Location_Structures {
         public void SetInteriorState(bool _isInterior) {
             isInterior = _isInterior;
         }
-        public void CenterOnStructure() {
-            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != location.innerMap) {
-                InnerMapManager.Instance.HideAreaMap();
-            }
-            if (location.innerMap.isShowing == false) {
-                InnerMapManager.Instance.ShowInnerMap(location);
-            }
-            if (structureObj != null) {
-                InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
-            }
-        }
+        public abstract void CenterOnStructure();
         public void AddStructureTag(STRUCTURE_TAG tag) {
             structureTags.Add(tag);
         }
@@ -588,14 +573,14 @@ namespace Inner_Maps.Location_Structures {
                     } else if (poi is TreasureChest || poi is ElementalCrystal) {
                         return unoccupiedTiles.Where(x => x.IsPartOfSettlement() == false).ToList();
                     } else if (poi is Guitar || poi is Bed || poi is Table) {
-                        return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
+                        return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x)).ToList();
                     } else {
-                        return unoccupiedTiles.Where(x => x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList(); ;
+                        return unoccupiedTiles.ToList();
                     }
                 case POINT_OF_INTEREST_TYPE.CHARACTER:
                     return unoccupiedTiles.ToList();
                 default:
-                    return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
+                    return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle))).ToList();
             }
         }
         // public void OwnTileObjectsInLocation(Faction owner) {
@@ -669,14 +654,7 @@ namespace Inner_Maps.Location_Structures {
             return unoccupiedTiles.ElementAt(Random.Range(0, unoccupiedTiles.Count));
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
-        public virtual void OnTileRepaired(LocationGridTile tile, int amount) {
-            if (hasBeenDestroyed) { return; }
-            if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
-                // ReSharper disable once Unity.NoNullPropagation
-                structureObj?.ApplyGroundTileAssetForTile(tile);    
-                tile.CreateSeamlessEdgesForSelfAndNeighbours();
-            }
-        }
+        public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
         #endregion
 
         #region Tile Objects
@@ -739,13 +717,6 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Structure Objects
-        public virtual void SetStructureObject(LocationStructureObject structureObj) {
-            this.structureObj = structureObj;
-            Vector3 position = structureObj.transform.position;
-            position.x -= 0.5f;
-            position.y -= 0.5f;
-            worldPosition = position;
-        }
         public void SetOccupiedHexTile(InnerMapHexTile hexTile) {
             InnerMapHexTile previousOccupiedHexTile = occupiedHexTile;
             occupiedHexTile = hexTile;
@@ -786,21 +757,16 @@ namespace Inner_Maps.Location_Structures {
                     tile.genericTileObject.AdjustHP(-tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
                 }
             }
-        
+            AfterStructureDestruction();
+        }
+        protected virtual void AfterStructureDestruction() {
             //disable game object. Destruction of structure game object is handled by it's parent structure template.
-            structureObj.OnOwnerStructureDestroyed(); 
             location.RemoveStructure(this);
             settlementLocation.RemoveStructure(this);
             Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
             SetOccupiedHexTile(null);
             UnsubscribeListeners();
             Messenger.Broadcast(Signals.STRUCTURE_DESTROYED, this);
-        }
-        #endregion
-
-        #region Resource
-        public void ChangeResourceMadeOf(RESOURCE resource) {
-            structureObj.ChangeResourceMadeOf(resource);
         }
         #endregion
 
@@ -968,55 +934,6 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
-        #region Facilities
-        public bool HasUnoccupiedFurnitureSpot() {
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile currTile = tiles[i];
-                if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        //public bool HasFacilityDeficit() {
-        //    foreach (KeyValuePair<FACILITY_TYPE, int> kvp in facilities) {
-        //        if (kvp.Value <= 0) {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-        //public FACILITY_TYPE GetMostNeededValidFacility() {
-        //    //get the facility with the lowest value, that can be provided given the unoccupied furnitureSpots
-        //    int lowestValue = 99999;
-        //    FACILITY_TYPE lowestFacility = FACILITY_TYPE.NONE;
-        //    foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in facilities) {
-        //        if (keyValuePair.Value < lowestValue && HasUnoccupiedFurnitureSpotsThatCanProvide(keyValuePair.Key)) {
-        //            lowestValue = keyValuePair.Value;
-        //            lowestFacility = keyValuePair.Key;
-        //        }
-        //    }
-        //    return lowestFacility;
-        //}
-        //public List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-        //    List<LocationGridTile> validTiles = new List<LocationGridTile>();
-        //    for (int i = 0; i < tiles.Count; i++) {
-        //        LocationGridTile currTile = tiles[i];
-        //        if (currTile.objHere == null && currTile.hasFurnitureSpot && currTile.furnitureSpot.allowedFurnitureTypes != null) {
-        //            for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
-        //                FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
-        //                TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
-        //                if (tileObject.CanProvideFacility(type)) {
-        //                    validTiles.Add(currTile);
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return validTiles;
-        //}
-        #endregion
-
         #region Rooms
         public void CreateRoomsBasedOnStructureObject(LocationStructureObject structureObject) {
             if (structureObject.roomTemplates == null || structureObject.roomTemplates.Length == 0) { return; }
@@ -1046,53 +963,8 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
-        //#region Faction
-        //public void SetOwner(Faction owner) {
-        //    _owner = owner;
-        //}
-        //#endregion
-
         public virtual void OnCharacterUnSeizedHere(Character character) { }
         
-    }
-}
-
-[System.Serializable]
-public class SaveDataLocationStructure {
-    public int id;
-    public string name;
-    public STRUCTURE_TYPE structureType;
-    public bool isInside;
-    public POI_STATE state;
-
-    public Vector3Save entranceTile;
-    public bool isFromTemplate;
-
-    private LocationStructure loadedStructure;
-    public void Save(LocationStructure structure) {
-        id = structure.id;
-        name = structure.name;
-        structureType = structure.structureType;
-        state = structure.state;
-    }
-
-    public LocationStructure Load(Region location) {
-        LocationStructure createdStructure = LandmarkManager.Instance.CreateNewStructureAt(location, structureType);
-        loadedStructure = createdStructure;
-        return createdStructure;
-    }
-
-    //This is loaded last so release loadedStructure
-    public void LoadEntranceTile() {
-        if(entranceTile.z != -1f) {
-            for (int i = 0; i < loadedStructure.tiles.Count; i++) {
-                LocationGridTile tile = loadedStructure.tiles[i];
-                if(tile.localPlace.x == (int)entranceTile.x && tile.localPlace.y == (int) entranceTile.y) {
-                    break;
-                }
-            }
-        }
-        loadedStructure = null;
     }
 }
 

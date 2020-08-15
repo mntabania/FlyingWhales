@@ -153,4 +153,22 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         //Not Applicable
     }
     #endregion
+
+    #region Loading
+    public void LoadDataFromSave(SaveDataStructureWallObject saveDataStructureWallObject) {
+        currentHP = saveDataStructureWallObject.currentHP;
+        _visual.UpdateWallAssets(this);
+        _visual.UpdateWallState(this);
+    }
+    #endregion
+}
+
+public class SaveDataStructureWallObject : SaveData<StructureWallObject> {
+    public int currentHP;
+    public List<SaveDataTrait> traits;
+    
+    public override void Save(StructureWallObject data) {
+        currentHP = data.currentHP;
+        //TODO: Save traits!
+    }
 }

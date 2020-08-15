@@ -17,14 +17,6 @@ public class SpawnBoulder : PlayerSpell {
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         targetTile.structure.AddPOI(wall, targetTile);
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        targetTile.HighlightTile();
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        targetTile.UnhighlightTile();
-    }
     public virtual bool CanTarget(LocationGridTile tile) {
         return tile.structure != null && tile.objHere == null;
     }

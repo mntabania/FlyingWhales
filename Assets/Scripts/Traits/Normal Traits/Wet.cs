@@ -124,7 +124,7 @@ namespace Traits {
         }
         private void TryFreezeWetObject(HexTile hexTile) {
             if (GameUtilities.RollChance(25)) {
-                if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                if (_owner.gridTileLocation != null && _owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                     if (_owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hexTile) {
                         _owner.traitContainer.AddTrait(_owner, "Frozen", bypassElementalChance: true);
                     }

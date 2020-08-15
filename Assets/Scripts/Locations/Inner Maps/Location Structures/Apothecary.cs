@@ -3,6 +3,8 @@
         public Apothecary(Region location) : base(STRUCTURE_TYPE.APOTHECARY, location) {
             SetMaxHPAndReset(8000);
         }
-        public Apothecary(Region location, SaveDataLocationStructure data) : base(location, data) { }
+        public Apothecary(Region location, SaveDataLocationStructure data) : base(location, data) {
+            SetMaxHP(8000);
+        }
     }
 }

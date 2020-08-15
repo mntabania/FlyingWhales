@@ -4,7 +4,7 @@ using Locations.Tile_Features;
 using UnityEngine;
 
 [System.Serializable]
-public class SaveDataHextile {
+public class SaveDataHextile : SaveData<HexTile> {
     public int id;
     public int xCoordinate;
     public int yCoordinate;
@@ -21,7 +21,7 @@ public class SaveDataHextile {
     
     public LANDMARK_TYPE landmarkType;
 
-    public void Save(HexTile tile) {
+    public override void Save(HexTile tile) {
         id = tile.id;
         xCoordinate = tile.xCoordinate;
         yCoordinate = tile.yCoordinate;

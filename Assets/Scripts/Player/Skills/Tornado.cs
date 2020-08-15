@@ -41,16 +41,6 @@ public class Tornado : PlayerSpell {
             durationInTicks = GameManager.Instance.GetTicksBasedOnHour(6);
         }
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
-    }
     public virtual bool CanTarget(LocationGridTile tile) {
         return tile.structure != null;
     }

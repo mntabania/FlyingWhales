@@ -2,89 +2,67 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Inner_Maps.Location_Structures;
 
 [System.Serializable]
-public class SaveDataRegion {
+public class SaveDataRegion : SaveData<Region> {
     public int id;
     public string name;
-    public List<int> tileIDs;
     public int coreTileID;
     public ColorSave regionColor;
-    public List<int> factionsHereIDs;
-    public List<int> charactersAtLocationIDs;
+    public RegionTemplate regionTemplate;
+    public int[] residentIDs;
+    public SaveDataLocationStructure[] structureSaveData;
 
-    public List<string> features;
-
-    public void Save(Region region) {
+    public SaveDataInnerMap innerMapSave;
+    
+    public override void Save(Region region) {
         id = region.id;
         name = region.name;
-
-        tileIDs = new List<int>();
-        for (int i = 0; i < region.tiles.Count; i++) {
-            tileIDs.Add(region.tiles[i].id);
-        }
-
         coreTileID = region.coreTile.id;
-        //ticksInInvasion = region.ticksInInvasion;
         regionColor = region.regionColor;
-
-        charactersAtLocationIDs = new List<int>();
-        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            charactersAtLocationIDs.Add(region.charactersAtLocation[i].id);
+        regionTemplate = region.regionTemplate;
+        
+        //residents
+        residentIDs = new int[region.residents.Count];
+        for (int i = 0; i < region.residents.Count; i++) {
+            Character character = region.residents[i];
+            residentIDs[i] = character.id;
         }
-
-        // if(region.previousOwner != null) {
-        //     previousOwnerID = region.previousOwner.id;
-        // } else {
-        //     previousOwnerID = -1;
-        // }
-
-        factionsHereIDs = new List<int>();
-        for (int i = 0; i < region.factionsHere.Count; i++) {
-            factionsHereIDs.Add(region.factionsHere[i].id);
+        
+        //structures
+        structureSaveData = new SaveDataLocationStructure[region.allStructures.Count];
+        for (int i = 0; i < region.allStructures.Count; i++) {
+            LocationStructure structure = region.allStructures[i];
+            SaveDataLocationStructure saveDataLocationStructure = CreateNewSaveDataFor(structure);
+            saveDataLocationStructure.Save(structure);
+            structureSaveData[i] = saveDataLocationStructure;
         }
-        // features = new List<string>();
-        // for (int i = 0; i < region.features.Count; i++) {
-        //     features.Add(region.features[i].GetType().ToString());
-        // }
-
-        //if (region.assignedMinion != null) {
-        //    invadingMinionID = region.assignedMinion.character.id;
-        //} else {
-        //    invadingMinionID = -1;
-        //}
+        
+        innerMapSave = new SaveDataInnerMap();
+        innerMapSave.Save(region.innerMap);
     }
 
-    public Region Load() {
-        Region region = new Region(this);
-        for (int i = 0; i < tileIDs.Count; i++) {
-            region.AddTile(GridMap.Instance.normalHexTiles[tileIDs[i]]);
-        }
-        return region;
-    }
-
-    public void LoadRegionAdditionalData(Region region) {
-        //Region region = GridMap.Instance.GetRegionByID(id);
-        // if(previousOwnerID != -1) {
-        //     region.SetPreviousOwner(FactionManager.Instance.GetFactionBasedOnID(previousOwnerID));
-        // }
-
-        for (int i = 0; i < factionsHereIDs.Count; i++) {
-            region.AddFactionHere(FactionManager.Instance.GetFactionBasedOnID(factionsHereIDs[i]));
-        }
-        // region.LoadFeatures(this);
-
-    }
-    public void LoadRegionCharacters(Region region) {
-        for (int i = 0; i < charactersAtLocationIDs.Count; i++) {
-            region.LoadCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersAtLocationIDs[i]));
+    #region Structure
+    private SaveDataLocationStructure CreateNewSaveDataFor(LocationStructure structure) {
+        if (structure is DemonicStructure) {
+            return new SaveDataDemonicStructure();
+        } else if (structure is NaturalStructure) {
+            return new SaveDataNaturalStructure();
+        } else {
+            return new SaveDataManMadeStructure();
         }
     }
-    //public Minion LoadInvadingMinion() {
-    //    if(invadingMinionID != -1) {
-    //        Minion minion = CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion;
-    //        return minion;
-    //    }
-    //    return null;
-    //}
+    public void InitialLoadStructures(Region location) {
+        location.CreateStructureList();
+        for (int i = 0; i < structureSaveData.Length; i++) {
+            SaveDataLocationStructure saveDataLocationStructure = structureSaveData[i];
+            LocationStructure createdStructure = saveDataLocationStructure.InitialLoad(location);
+            if (createdStructure != null) {
+                location.AddStructure(createdStructure);
+            }
+            saveDataLocationStructure.Load();
+        }
+    }
+    #endregion
 }

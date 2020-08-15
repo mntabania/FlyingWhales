@@ -22,7 +22,10 @@ namespace Inner_Maps.Location_Structures {
             occupiedHexTiles = new List<InnerMapHexTile>();
         }
 
-        public Cave(Region location, SaveDataLocationStructure data) : base(location, data) { }
+        public Cave(Region location, SaveDataLocationStructure data) : base(location, data) {
+            resourceYield = GetRandomResourceYield();
+            occupiedHexTiles = new List<InnerMapHexTile>();
+        }
 
         private WeightedDictionary<string> GetRandomResourceYield() {
             WeightedDictionary<string> randomYield = new WeightedDictionary<string>();
@@ -74,10 +77,10 @@ namespace Inner_Maps.Location_Structures {
             base.OnTileRemovedFromStructure(tile);
             tile.genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.MINE);
         }
-        public override void SetStructureObject(LocationStructureObject structureObj) {
-            base.SetStructureObject(structureObj);
-            Vector3 position = structureObj.transform.position;
-            worldPosition = position;
+        public override void CenterOnStructure() {
+            if (occupiedHexTile != null) {
+                occupiedHexTile.hexTileOwner.CenterCameraHere();
+            }
         }
     }
 }

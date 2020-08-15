@@ -32,6 +32,7 @@ public class Region {
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
     public List<BaseSettlement> settlementsInRegion { get; }
+    public RegionTemplate regionTemplate { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
     private string _activeEventAfterEffectScheduleId;
@@ -52,10 +53,11 @@ public class Region {
         regionFeatureComponent = new RegionFeatureComponent();
         settlementsInRegion = new List<BaseSettlement>();
     }
-    public Region(HexTile coreTile) : this() {
+    public Region(HexTile coreTile, RegionTemplate regionTemplate) : this() {
         id = UtilityScripts.Utilities.SetID(this);
         name = RandomNameGenerator.GetRegionName();
         this.coreTile = coreTile;
+        this.regionTemplate = regionTemplate;
         tiles = new List<HexTile>();
         shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
@@ -509,9 +511,12 @@ public class Region {
     #endregion
     
     #region Structures
-    public void GenerateStructures() {
+    public void CreateStructureList() {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         allStructures = new List<LocationStructure>();
+    }
+    public void GenerateStructures() {
+        CreateStructureList();
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
     }
     public void AddStructure(LocationStructure structure) {

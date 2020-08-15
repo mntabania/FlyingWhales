@@ -230,7 +230,7 @@ public class MapGenerator : MonoBehaviour {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), 
-            new WorldMapLandmarkGeneration(),
+            new WorldMapLandmarkGeneration(), new SettlementLoading(),
             new RegionInnerMapGeneration(),
             new LoadAllFactionsGeneration(), new LoadAllFactionRelationshipsGeneration(), new MapGenerationFinalization(),
             new PlayerDataGeneration(), new LoadDateGeneration(),
@@ -278,31 +278,30 @@ public class MapGenerator : MonoBehaviour {
             Debug.Log(
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
-            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-                Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorNonPlayer) {
-                    faction.DesignateNewLeader(false);
-                    faction.GenerateInitialOpinionBetweenMembers();
-                }
-            }
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                region.UpdateAwareness();
-                for (int j = 0; j < region.tiles.Count; j++) {
-                    HexTile tile = region.tiles[j];
-                    if (!tile.isCorrupted
-                        && tile.landmarkOnTile != null
-                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
-                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-                        && tile.settlementOnTile is NPCSettlement npcSettlement) {
-                        if(npcSettlement.ruler == null) {
-                            npcSettlement.DesignateNewRuler(false);
-                        }
-                        npcSettlement.GenerateInitialOpinionBetweenResidents();
-                    }
-                }
-            }
-
+            // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            //     Faction faction = FactionManager.Instance.allFactions[i];
+            //     if (faction.isMajorNonPlayer) {
+            //         faction.DesignateNewLeader(false);
+            //         faction.GenerateInitialOpinionBetweenMembers();
+            //     }
+            // }
+            // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //     Region region = GridMap.Instance.allRegions[i];
+            //     region.UpdateAwareness();
+            //     for (int j = 0; j < region.tiles.Count; j++) {
+            //         HexTile tile = region.tiles[j];
+            //         if (!tile.isCorrupted
+            //             && tile.landmarkOnTile != null
+            //             && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
+            //                 || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
+            //             && tile.settlementOnTile is NPCSettlement npcSettlement) {
+            //             if(npcSettlement.ruler == null) {
+            //                 npcSettlement.DesignateNewRuler(false);
+            //             }
+            //             npcSettlement.GenerateInitialOpinionBetweenResidents();
+            //         }
+            //     }
+            // }
             WorldSettings.Instance.worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom); //Always use Custom world type for Loading Save Data
             WorldConfigManager.Instance.mapGenerationData = data;
             WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
@@ -15,6 +17,7 @@ namespace Inner_Maps {
         public TileBase flowerTile;
         public TileBase rockTile;
         public TileBase randomGarbTile;
+        public TileBase dirtTile;
 
         [Header("Snow Tiles")]
         public TileBase snowOutsideTile;
@@ -35,6 +38,8 @@ namespace Inner_Maps {
         
         [Header("Inside Detail Tiles")]
         public TileBase crateBarrelTile;
+        public TileBase structureStoneFloor;
+        public TileBase ruinedStoneFloorTile;
 
         [Header("Seamless Edges")]
         public SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
@@ -124,6 +129,42 @@ namespace Inner_Maps {
                 default:
                     return rockTile;
             }
+        }
+
+        public Dictionary<string, TileBase> GetFloorAndWallTileAssetDB() {
+            Dictionary<string, TileBase> tileAssetDB = new Dictionary<string, TileBase>();
+            tileAssetDB.Add(outsideTile.name, outsideTile);
+            tileAssetDB.Add(dirtTile.name, dirtTile);
+            tileAssetDB.Add(grassTile.name, grassTile);
+            tileAssetDB.Add(soilTile.name, soilTile);
+            tileAssetDB.Add(stoneTile.name, stoneTile);
+            tileAssetDB.Add(snowOutsideTile.name, snowOutsideTile);
+            tileAssetDB.Add(snowTile.name, snowTile);
+            tileAssetDB.Add(tundraTile.name, tundraTile);
+            tileAssetDB.Add(snowDirt.name, snowDirt);
+            tileAssetDB.Add(desertOutsideTile.name, desertOutsideTile);
+            tileAssetDB.Add(desertGrassTile.name, desertGrassTile);
+            tileAssetDB.Add(desertSandTile.name, desertSandTile);
+            tileAssetDB.Add(desertStoneGroundTile.name, desertStoneGroundTile);
+            tileAssetDB.Add(shoreTile.name, shoreTile);
+            tileAssetDB.Add(caveGroundTile.name, caveGroundTile);
+            tileAssetDB.Add(caveWallTile.name, caveWallTile);
+            tileAssetDB.Add(monsterLairWallTile.name, monsterLairWallTile);
+            tileAssetDB.Add(monsterLairGroundTile.name, monsterLairGroundTile);
+            tileAssetDB.Add(corruptedTile.name, corruptedTile);
+            tileAssetDB.Add(demonicWallTile.name, demonicWallTile);
+            tileAssetDB.Add(woodFloorTile.name, woodFloorTile);
+            tileAssetDB.Add(stoneFloorTile.name, stoneFloorTile);
+            tileAssetDB.Add(structureStoneFloor.name, structureStoneFloor);
+            tileAssetDB.Add(ruinedStoneFloorTile.name, ruinedStoneFloorTile);
+
+            return tileAssetDB;
+        }
+        public TileBase TryGetTileAsset(string assetName, Dictionary<string, TileBase> tileAssetDB) {
+            if (tileAssetDB.ContainsKey(assetName)) {
+                return tileAssetDB[assetName];    
+            }
+            throw new Exception($"Could not find asset with name {assetName}");
         }
     }
 }

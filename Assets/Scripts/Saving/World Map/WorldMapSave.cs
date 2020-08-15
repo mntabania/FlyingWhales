@@ -5,10 +5,12 @@ using Locations.Settlements;
 public class WorldMapSave {
     public WorldMapTemplate worldMapTemplate;
     public List<SaveDataHextile> hextileSaves;
-
-    public void SaveWorld(WorldMapTemplate _worldMapTemplate, List<HexTile> normalHexTiles) {
+    public List<SaveDataRegion> regionSaves;
+    
+    public void SaveWorld(WorldMapTemplate _worldMapTemplate, List<HexTile> normalHexTiles, Region[] regions) {
         worldMapTemplate = _worldMapTemplate;
         SaveHexTiles(normalHexTiles);
+        SaveRegions(regions);
     }
 
     #region Hex Tiles
@@ -47,6 +49,18 @@ public class WorldMapSave {
             }
         }
         return tiles;
+    }
+    #endregion
+
+    #region Regions
+    private void SaveRegions(Region[] regions) {
+        regionSaves = new List<SaveDataRegion>();
+        for (int i = 0; i < regions.Length; i++) {
+            Region region = regions[i];
+            SaveDataRegion saveDataRegion = new SaveDataRegion();
+            saveDataRegion.Save(region);
+            regionSaves.Add(saveDataRegion);
+        }
     }
     #endregion
 }

@@ -7,6 +7,9 @@ namespace Inner_Maps.Location_Structures {
         public Defiler(Region location) : base(STRUCTURE_TYPE.DEFILER, location) {
             selectableSize = new Vector2(10f, 10f);
         }
+        public Defiler(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(10f, 10f);
+        }
         
         public override void OnCharacterUnSeizedHere(Character character) {
             base.OnCharacterUnSeizedHere(character);

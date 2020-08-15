@@ -46,6 +46,8 @@ namespace Settings {
             if (Instance == null) {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                // Turn off v-sync
+                QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = targetFrameRate;
 #if UNITY_EDITOR
                 EditorApplication.quitting += OnEditorQuit;

@@ -21,9 +21,6 @@ namespace Inner_Maps {
         
         public static readonly Vector2Int BuildingSpotSize = new Vector2Int(7, 7);
         public static readonly int BuildingSpotBorderSize = 1; //how many tiles, per side of the build spot, should not be occupied by the structure.
-
-        public static readonly string VisibleAllTag = "Visible_All";
-        public static readonly string InvisibleToCharacterTag = "Invisible_Character";
         
         public const int DefaultCharacterSortingOrder = 82;
         public const int GroundTilemapSortingOrder = 10;
@@ -66,10 +63,6 @@ namespace Inner_Maps {
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         private LocationGridTile lastClickedTile;
-
-        public TILE_OBJECT_TYPE[] tileObjectsThatAreItems =
-            new[] { TILE_OBJECT_TYPE.HEALING_POTION, TILE_OBJECT_TYPE.ANTIDOTE, TILE_OBJECT_TYPE.TOOL, TILE_OBJECT_TYPE.EMBER, TILE_OBJECT_TYPE.WATER_FLASK, TILE_OBJECT_TYPE.POISON_FLASK, };
-
         public List<LocationStructure> worldKnownDemonicStructures { get; private set; }
 
         #region Monobehaviours
@@ -165,7 +158,8 @@ namespace Inner_Maps {
                     if (tile.structure != null) {
                         if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                             return room;
-                        } else if (ReferenceEquals(tile.structure.structureObj, null) == false && 
+                        } else if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) ||
+                                   (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && 
                                    tile.structure is CityCenter == false) {
                             return tile.structure;    
                         }
@@ -217,7 +211,8 @@ namespace Inner_Maps {
                         if (tile.structure.IsTilePartOfARoom(tile, out var room)) {
                             selectables.Add(room);
                         }
-                        if (ReferenceEquals(tile.structure.structureObj, null) == false && 
+                        if ((tile.structure is ManMadeStructure manMadeStructure && !ReferenceEquals(manMadeStructure.structureObj, null)) || //if man made structure check if structure object has not yet been destroyed 
+                            (tile.structure is DemonicStructure demonicStructure && !ReferenceEquals(demonicStructure.structureObj, null)) && //if demonic structure structure check if structure object has not yet been destroyed
                             tile.structure is CityCenter == false) {
                             selectables.Add(tile.structure);
                         }
@@ -335,30 +330,6 @@ namespace Inner_Maps {
                 }
             }
             return points;
-        }
-        #endregion
-
-        #region UI
-        public void HighlightTiles(List<LocationGridTile> tiles) {
-            if (tiles != null) {
-                for (int i = 0; i < tiles.Count; i++) {
-                    tiles[i].HighlightTile();
-                }
-            }
-            currentlyHighlightedTiles = tiles;
-        }
-        public void UnhighlightTiles() {
-            if (currentlyHighlightedTiles != null) {
-                for (int i = 0; i < currentlyHighlightedTiles.Count; i++) {
-                    currentlyHighlightedTiles[i].UnhighlightTile();
-                }
-            }
-            currentlyHighlightedTiles = null;
-        }
-        public void UnhighlightTiles(List<LocationGridTile> tiles) {
-            for (int i = 0; i < tiles.Count; i++) {
-                tiles[i].UnhighlightTile();
-            }
         }
         #endregion
 

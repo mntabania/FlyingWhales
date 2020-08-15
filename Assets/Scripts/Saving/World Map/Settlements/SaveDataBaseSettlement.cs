@@ -7,11 +7,11 @@ using Locations.Settlements;
 using UnityEngine.Serialization;
 
 [System.Serializable]
-public abstract class SaveDataBaseSettlement {
+public abstract class SaveDataBaseSettlement : SaveData<BaseSettlement> {
     public int id;
     public LOCATION_TYPE locationType;
     public string name;
-    public List<int> tileIDs;
+    public List<Point> tileCoordinates;
 
     public List<SaveDataLocationStructure> structures;
     
@@ -20,10 +20,10 @@ public abstract class SaveDataBaseSettlement {
         locationType = baseSettlement.locationType;
         name = baseSettlement.name;
 
-        tileIDs = new List<int>();
+        tileCoordinates = new List<Point>();
         for (int i = 0; i < baseSettlement.tiles.Count; i++) {
             HexTile tile = baseSettlement.tiles[i];
-            tileIDs.Add(tile.id);
+            tileCoordinates.Add(new Point(tile.xCoordinate, tile.yCoordinate));
         }
 
         // structures = new List<SaveDataLocationStructure>();

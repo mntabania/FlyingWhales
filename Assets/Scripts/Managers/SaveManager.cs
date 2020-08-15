@@ -72,13 +72,14 @@ public class SaveManager : MonoBehaviour {
         SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
         saveData.SaveDate();
         saveData.SavePlayer();
-        saveData.SaveFactions();
+        // saveData.SaveFactions();
         
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles
+            GridMap.Instance.normalHexTiles,
+            GridMap.Instance.allRegions
         );
         saveData.worldMapSave = worldMapSave;
         
@@ -115,7 +116,8 @@ public class SaveManager : MonoBehaviour {
         WorldMapSave worldMapSave = new WorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles
+            GridMap.Instance.normalHexTiles,
+            GridMap.Instance.allRegions
         );
         completeSave.worldMapSave = worldMapSave;
         
@@ -136,7 +138,8 @@ public class SaveManager : MonoBehaviour {
         WorldMapSave worldMapSave = new WorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles
+            GridMap.Instance.normalHexTiles,
+            GridMap.Instance.allRegions
         );
         scenarioSave.worldMapSave = worldMapSave;
 

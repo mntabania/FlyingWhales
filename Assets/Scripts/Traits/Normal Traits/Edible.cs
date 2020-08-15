@@ -57,13 +57,15 @@ namespace Traits {
             if (action == INTERACTION_TYPE.EAT) {
                 goapNode.actor.needsComponent.AdjustFullness(8.5f);
                 //goapNode.actor.needsComponent.AdjustStamina(2f);
-                if(owner is Table || owner is FoodPile) {
-                    owner.AdjustResource(RESOURCE.FOOD, -1);
-                }
                 if (!goapNode.actor.traitContainer.HasTrait("Infected")) {
                     if (owner.traitContainer.HasTrait("Infected")) {
                         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Infected");
                     }
+                }
+                if(owner is Table) {
+                    owner.AdjustResource(RESOURCE.FOOD, -1);
+                } else if (owner is FoodPile foodPile) {
+                    foodPile.AdjustResourceInPile(-1);
                 }
             }
         }
@@ -119,7 +121,7 @@ namespace Traits {
         //}
 
         private string GetEdibleType() {
-            if (owner is BerryShrub || owner is Mushroom) {
+            if (owner is Crops) {
                 return "Plant";
             } else if (owner is Table) {
                 return "Table";

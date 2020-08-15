@@ -7,6 +7,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Pathfinding;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -124,7 +125,58 @@ namespace Inner_Maps {
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
+        protected IEnumerator LoadGrid(int width, int height, MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            this.width = width;
+            this.height = height;
 
+            map = new LocationGridTile[width, height];
+            allTiles = new List<LocationGridTile>();
+            allEdgeTiles = new List<LocationGridTile>();
+            int batchCount = 0;
+            
+            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
+                SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];
+                LocationGridTile tile = saveDataLocationGridTile.InitialLoad(groundTilemap, this);
+                tile.SetStructure(wilderness);
+                allTiles.Add(tile);
+                if (tile.IsAtEdgeOfWalkableMap()) {
+                    allEdgeTiles.Add(tile);
+                }
+                map[tile.localPlace.x, tile.localPlace.y] = tile;
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }
+            }
+            allTiles.ForEach(x => x.FindNeighbours(map));
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} Load Grid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+        }
+        protected IEnumerator LoadTileVisuals(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, Dictionary<string, TileBase> tileAssetDB) {
+            int batchCount = 0;
+            for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
+                SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];
+                LocationGridTile tile = map[(int)saveDataLocationGridTile.localPlace.x, (int)saveDataLocationGridTile.localPlace.y];
+                //load tile assets
+                if (!string.IsNullOrEmpty(saveDataLocationGridTile.groundTileMapAssetName)) {
+                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.TryGetTileAsset(saveDataLocationGridTile.groundTileMapAssetName, tileAssetDB));    
+                }
+                if (!string.IsNullOrEmpty(saveDataLocationGridTile.wallTileMapAssetName)) {
+                    tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.TryGetTileAsset(saveDataLocationGridTile.wallTileMapAssetName, tileAssetDB));    
+                }    
+                batchCount++;
+                if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }
+            }
+            
+            
+        } 
         #endregion
 
         #region Visuals
@@ -391,8 +443,14 @@ namespace Inner_Maps {
                     LocationGridTile tile = occupiedTiles[j];
                     tile.SetStructure(structure);
                 }
-                //structure.SetOuterTiles();
-                structure.SetStructureObject(structureObject);
+                
+                Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+                if (structure is DemonicStructure demonicStructure) {
+                    demonicStructure.SetStructureObject(structureObject);    
+                } else if (structure is ManMadeStructure manMadeStructure) {
+                    manMadeStructure.SetStructureObject(structureObject);    
+                }
+                
                 structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
                 structureObject.OnBuiltStructureObjectPlaced(this, structure);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
@@ -491,62 +549,37 @@ namespace Inner_Maps {
                 float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
                 
                 //trees and shrubs
-                if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
+                if (currTile.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
                     if (sampleDetail < 0.5f) {
                         if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
                             if (Random.Range(0, 100) < 50) {
                                 //shrubs
                                 if (region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA) {
-                                    currTile.hasDetail = true;
                                     TileBase tileBase = null;
                                     //plant or herb plant
-                                    if(UnityEngine.Random.Range(0, 2) == 0) {
-                                        tileBase = InnerMapManager.Instance.assetManager.shrubTile;
-                                    } else {
-                                        tileBase = InnerMapManager.Instance.assetManager.herbPlantTile;
-                                    }
+                                    tileBase = Random.Range(0, 2) == 0 ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                                     detailsTilemap.SetTile(currTile.localPlace, tileBase);
-                                    if (currTile.structure != null) {
-                                        //place tile object
-                                        ConvertDetailToTileObject(currTile);
-                                    } else {
-                                        //place detail instead
-                                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
-                                    }
-                                    continue; //go to next tile.
+                                    Assert.IsNotNull(currTile.structure);
+                                    //place tile object
+                                    ConvertDetailToTileObject(currTile);
+                                    continue; //skip next processing, since detail was already placed.
                                 }
                             }
                         }
                     } 
                     
                     if (Random.Range(0, 100) < 3) {
-                        currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(region));
-                        if (currTile.structure != null) {
-                            ConvertDetailToTileObject(currTile);
-                        } else {
-                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                        }
-                        
+                        Assert.IsNotNull(currTile.structure);
+                        ConvertDetailToTileObject(currTile);
                     } else if (Random.Range(0, 100) < 4) {
-                        currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(region));
-                        if (currTile.structure != null) {
-                            ConvertDetailToTileObject(currTile);
-                        } else {
-                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                        }
+                        Assert.IsNotNull(currTile.structure);
+                        ConvertDetailToTileObject(currTile);
                     } else if (Random.Range(0, 100) < 3) {
-                        currTile.hasDetail = true;
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(region));
-                        if (currTile.structure != null) {
-                            ConvertDetailToTileObject(currTile);
-                        } else {
-                            currTile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                        }
+                        Assert.IsNotNull(currTile.structure);
+                        ConvertDetailToTileObject(currTile);
                     }
                 }
                 

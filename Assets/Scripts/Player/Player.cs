@@ -684,7 +684,6 @@ public class Player : ILeader, IObjectManipulator {
         currentActiveCombatAbility = ability;
         if (currentActiveCombatAbility == null) {
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
-            InnerMapManager.Instance.UnhighlightTiles();
             // InputManager.Instance.ClearLeftClickActions();
             //GameManager.Instance.SetPausedState(false);
         } else {
