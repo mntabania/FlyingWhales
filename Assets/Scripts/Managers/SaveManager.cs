@@ -72,7 +72,7 @@ public class SaveManager : MonoBehaviour {
         SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
         saveData.SaveDate();
         saveData.SavePlayer();
-        saveData.SaveFactions();
+        // saveData.SaveFactions();
         
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();

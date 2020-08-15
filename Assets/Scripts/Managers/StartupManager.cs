@@ -47,15 +47,17 @@ public class StartupManager : MonoBehaviour {
                 //    Debug.Log("Generating random world...");
                 //    yield return StartCoroutine(mapGenerator.InitializeWorld());
                 //}
-            } else {
-            // if (WorldConfigManager.Instance.useSaveData) {
-            //     SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/Test.sav");;
-            //     yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
-            // }
-            // else {
+            }
+            else {
+                // if (WorldConfigManager.Instance.useSaveData) {
+                //     SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/Test.sav");;
+                //     yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
+                // }
+                // else {
                 Debug.Log("Generating random world...");
-                yield return StartCoroutine(mapGenerator.InitializeWorld());    
-            // }
+                yield return StartCoroutine(mapGenerator.InitializeWorld());
+                // }
+            }
         }
     }
 
