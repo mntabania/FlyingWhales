@@ -9,13 +9,12 @@ public class FactionRelationship {
     protected Faction _faction2;
 
 
-    private int relationshipStatInt;
+    private int _relationshipStatInt;
     //protected FACTION_RELATIONSHIP_STATUS _relationshipStatus;
 
-    public int currentWarCombatCount { get; private set; } //this will be reset once relationship status is set to anything but AT_WAR
-
     #region getters/setters
-    public FACTION_RELATIONSHIP_STATUS relationshipStatus => (FACTION_RELATIONSHIP_STATUS)relationshipStatInt;
+    public FACTION_RELATIONSHIP_STATUS relationshipStatus => (FACTION_RELATIONSHIP_STATUS)_relationshipStatInt;
+    public int relationshipStatInt => _relationshipStatInt;
     public Faction faction1 {
 		get { return _faction1; }
 	}
@@ -27,7 +26,7 @@ public class FactionRelationship {
     public FactionRelationship(Faction faction1, Faction faction2) {
         _faction1 = faction1;
         _faction2 = faction2;
-        relationshipStatInt = 0; //Friendly
+        _relationshipStatInt = 0; //Friendly
     }
 
     #region Relationship Status
@@ -37,24 +36,19 @@ public class FactionRelationship {
         }
         FACTION_RELATIONSHIP_STATUS oldStatus = relationshipStatus;
         //_relationshipStatus = newStatus;
-        relationshipStatInt = (int)newStatus;
+        _relationshipStatInt = (int)newStatus;
         Messenger.Broadcast(Signals.CHANGE_FACTION_RELATIONSHIP, _faction1, _faction2, relationshipStatus, oldStatus);
         //if (_relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
         //    currentWarCombatCount = 0;
         //}
     }
     public void AdjustRelationshipStatus(int amount) {
-        int previousValue = relationshipStatInt;
-        relationshipStatInt += amount;
-        relationshipStatInt = Mathf.Clamp(relationshipStatInt, 1, CollectionUtilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
-        if (relationshipStatInt != previousValue) {
+        int previousValue = _relationshipStatInt;
+        _relationshipStatInt += amount;
+        _relationshipStatInt = Mathf.Clamp(_relationshipStatInt, 1, CollectionUtilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
+        if (_relationshipStatInt != previousValue) {
             Messenger.Broadcast(Signals.FACTION_RELATIONSHIP_CHANGED, this);
         }
     }
     #endregion
-
-    public void AdjustWarCombatCount(int amount) {
-        currentWarCombatCount += amount;
-        currentWarCombatCount = Mathf.Max(0, currentWarCombatCount);
-    }
 }

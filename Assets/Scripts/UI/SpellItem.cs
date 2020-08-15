@@ -139,6 +139,7 @@ public class SpellItem : NameplateItem<SpellData> {
     #region Cooldown
     private void StartCooldownFill() {
         _coverImg.fillAmount = 1f;
+        PerTickCooldown();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {

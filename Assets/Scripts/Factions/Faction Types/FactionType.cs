@@ -46,6 +46,9 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Structures
+        public void AddNeededStructure(StructureSetting structureSetting) {
+            neededStructures.Add(structureSetting);
+        }
         public void AddNeededStructure(STRUCTURE_TYPE structureType, RESOURCE resource) {
             StructureSetting structureSetting = new StructureSetting(structureType, resource);
             neededStructures.Add(structureSetting);

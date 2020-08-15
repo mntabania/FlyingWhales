@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class FactionIdeology {
     public FACTION_IDEOLOGY ideologyType { get; protected set; }
     public string name { get; protected set; }

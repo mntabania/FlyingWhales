@@ -37,8 +37,14 @@ public class Initializer : MonoBehaviour {
         AudioManager.Instance.OnGameLoaded();
     }
     public void InitializeDataAfterLoadoutSelection() {
-        PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
+        if (!SaveManager.Instance.useSaveData) {
+            //Do not load player data if save data is used because we will use the data of the saved one
+            PlayerManager.Instance.player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);
+        }
         PlayerUI.Instance.InitializeAfterLoadOutPicked();
+        if (SaveManager.Instance.useSaveData) {
+            PlayerUI.Instance.OnLoadSaveData();
+        }
         TutorialManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterLoadoutPicked();
     }

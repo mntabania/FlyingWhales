@@ -23,7 +23,13 @@ public class PlayerDataGeneration : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+		yield return MapGenerator.Instance.StartCoroutine(LoadSaveDataPlayerGame(data, saveData));
 	}
+    private IEnumerator LoadSaveDataPlayerGame(MapGenerationData data, SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
+        PlayerManager.Instance.InitializePlayer(saveData);
+        data.portal = PlayerManager.Instance.player.portalTile;
+        yield return null;
+    }
 	#endregion
 }

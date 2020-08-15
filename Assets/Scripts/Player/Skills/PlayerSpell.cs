@@ -322,6 +322,13 @@ public class SpellData : IPlayerSkill {
     //protected void IncreaseThreatThatSeesTile(LocationGridTile targetTile, int amount) {
     //    Messenger.Broadcast(Signals.INCREASE_THREAT_THAT_SEES_TILE, targetTile, amount);
     //}
+    public void OnLoadSpell() {
+        Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
+        if (hasCooldown && charges <= 0) {
+            Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
+            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+    }
     public void OnExecuteSpellActionAffliction() {
         if (PlayerSkillManager.Instance.unlimitedCast == false) {
             if(hasCharges && charges > 0) {

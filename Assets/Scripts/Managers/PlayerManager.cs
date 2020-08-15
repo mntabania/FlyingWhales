@@ -45,11 +45,11 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
     }
-    public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure, PLAYER_ARCHETYPE archeType) {
+    public void InitializePlayer(HexTile portal, LocationStructure portalStructure, PLAYER_ARCHETYPE archeType) {
         player = new Player();
         player.CreatePlayerFaction();
-        player.SetPortalTile(portal.tileLocation);
-        PlayerSettlement existingPlayerNpcSettlement = portal.tileLocation.settlementOnTile as PlayerSettlement;
+        player.SetPortalTile(portal);
+        PlayerSettlement existingPlayerNpcSettlement = portal.settlementOnTile as PlayerSettlement;
         Assert.IsNotNull(existingPlayerNpcSettlement, $"Portal does not have a player settlement on its tile");
         player.SetPlayerArea(existingPlayerNpcSettlement);
         
@@ -63,7 +63,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public void InitializePlayer(SaveDataCurrentProgress data) {
         player = data.LoadPlayer();
-
+        player.CreatePlayerFaction(data.playerSave);
         PlayerUI.Instance.UpdateUI();
         // if (WorldConfigManager.Instance.isDemoWorld) {
         //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    

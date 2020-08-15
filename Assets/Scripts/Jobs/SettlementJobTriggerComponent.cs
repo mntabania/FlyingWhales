@@ -509,7 +509,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		GoapPlanJob goapPlanJob = job as GoapPlanJob;
         if(goapPlanJob.targetPOI != null && goapPlanJob.targetPOI.gridTileLocation != null) {
             return goapPlanJob.targetPOI.gridTileLocation.structure.IsResident(character);
-        } else if (goapPlanJob.targetPOI is TileObject targetTileObject) {
+        } else if (goapPlanJob.targetPOI != null && goapPlanJob.targetPOI.gridTileLocation != null && goapPlanJob.targetPOI is TileObject targetTileObject) {
             if (targetTileObject.IsOwnedBy(character)) {
                 return true;
             }

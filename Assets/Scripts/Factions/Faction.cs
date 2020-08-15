@@ -35,7 +35,7 @@ public class Faction : IJobOwner {
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; }
     public List<Character> characters { get; }//List of characters that are part of the faction
     public List<BaseSettlement> ownedSettlements { get; }
-    private List<Character> bannedCharacters { get; }
+    public List<Character> bannedCharacters { get; }
     public Dictionary<Faction, FactionRelationship> relationships { get; }
     public FactionType factionType { get; }
     public bool isActive { get; private set; }
@@ -44,7 +44,7 @@ public class Faction : IJobOwner {
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
     
-    private int newLeaderDesignationChance;
+    public int newLeaderDesignationChance { get; private set; }
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
     #region getters/setters
@@ -77,11 +77,18 @@ public class Faction : IJobOwner {
     }
     public Faction(SaveDataFaction data) {
         id = UtilityScripts.Utilities.SetID(this, data.id);
+        ideologyComponent = new FactionIdeologyComponent(this);
+        factionJobTriggerComponent = new FactionJobTriggerComponent(this);
+        factionType = data.factionType.Load();
+
         SetName(data.name);
         SetDescription(data.description);
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         SetFactionColor(data.factionColor);
         SetFactionActiveState(data.isActive);
+        SetIsMajorFaction(data.isMajorFaction);
+        SetNewLeaderDesignationChance(data.newLeaderDesignationChance);
+
 
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
@@ -91,21 +98,15 @@ public class Faction : IJobOwner {
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
-        ideologyComponent = new FactionIdeologyComponent(this);
-        factionJobTriggerComponent = new FactionJobTriggerComponent(this);
-        ResetNewLeaderDesignationChance();
+
         AddListeners();
     }
 
     #region Characters
     public bool JoinFaction(Character character, bool broadcastSignal = true, bool bypassIdeologyChecking = false) {
         if (bypassIdeologyChecking || ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-            if (!characters.Contains(character)) {
-                characters.Add(character);
-                Faction prevFaction = character.prevFaction;
-                character.SetFaction(this);
-
-                
+            Faction prevFaction = character.prevFaction;
+            if (AddCharacter(character)) {
                 //Once a character joins a non major faction and the previous faction is the owner of the home settlement, leave the settlement also
                 //Reason: One village = One faction, no other faction can co exist in a village, for simplification
                 if (character.homeSettlement != null && character.homeSettlement.owner != null && character.homeSettlement.owner == prevFaction) {
@@ -129,6 +130,14 @@ public class Faction : IJobOwner {
             }
             character.SetFaction(null);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            return true;
+        }
+        return false;
+    }
+    public bool AddCharacter(Character character) {
+        if (!characters.Contains(character)) {
+            characters.Add(character);
+            character.SetFaction(this);
             return true;
         }
         return false;
@@ -356,6 +365,9 @@ public class Faction : IJobOwner {
     }
     private void ResetNewLeaderDesignationChance() {
         newLeaderDesignationChance = 5;
+    }
+    public void SetNewLeaderDesignationChance(int amount) {
+        newLeaderDesignationChance = amount;
     }
     public void GenerateInitialOpinionBetweenMembers() {
         for (int i = 0; i < characters.Count; i++) {

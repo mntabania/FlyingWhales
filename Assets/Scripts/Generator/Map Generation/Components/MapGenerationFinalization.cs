@@ -14,18 +14,18 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
-		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
-		yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
-		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
-		yield return MapGenerator.Instance.StartCoroutine(LoadItems());
-		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
-		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		//yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
+		//yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
+		//yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
+		//yield return MapGenerator.Instance.StartCoroutine(LoadItems());
+		//yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
+		//yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
 			region.HideBorders();
 		}
-		data.familyTreeDatabase.Save();
+		//data.familyTreeDatabase.Save();
 	}
 
 	#region Scenario Maps

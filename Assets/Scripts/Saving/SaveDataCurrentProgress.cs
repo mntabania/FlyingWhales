@@ -5,8 +5,6 @@ using Locations.Settlements;
 using UnityEngine;
 
 public class SaveDataCurrentProgress {
-    public WorldMapSave worldMapSave;
-    public List<SaveDataBaseSettlement> settlementSaves;
     //public int width;
     //public int height;
     //public int borderThickness;
@@ -15,7 +13,7 @@ public class SaveDataCurrentProgress {
     //public List<SaveDataLandmark> landmarkSaves;
     //public List<SaveDataRegion> regionSaves;
     //public List<SaveDataArea> nonPlayerAreaSaves;
-    //public List<SaveDataFaction> factionSaves;
+    
     //public List<SaveDataCharacter> characterSaves;
     //public List<SaveDataTileObject> tileObjectSaves;
     //// public List<SaveDataSpecialObject> specialObjectSaves;
@@ -31,8 +29,13 @@ public class SaveDataCurrentProgress {
     public int tick;
     public int continuousDays;
 
+    public WorldMapSave worldMapSave;
+
     //Player
-    public SaveDataPlayerGame player;
+    public SaveDataPlayerGame playerSave;
+
+    public List<SaveDataBaseSettlement> settlementSaves;
+    public List<SaveDataFaction> factionSaves;
 
     #region Saving
     public void SaveDate() {
@@ -44,8 +47,17 @@ public class SaveDataCurrentProgress {
         continuousDays = GameManager.Instance.continuousDays;
     }
     public void SavePlayer() {
-        player = new SaveDataPlayerGame();
-        player.Save();
+        playerSave = new SaveDataPlayerGame();
+        playerSave.Save();
+    }
+    public void SaveFactions() {
+        factionSaves = new List<SaveDataFaction>();
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            SaveDataFaction saveData = new SaveDataFaction();
+            saveData.Save(faction);
+            factionSaves.Add(saveData);
+        }
     }
     #endregion
 
@@ -60,10 +72,34 @@ public class SaveDataCurrentProgress {
         GameManager.Instance.SetToday(today);
     }
     public Player LoadPlayer() {
-        return player.Load();
+        return playerSave.Load();
+    }
+    public void LoadFactions() {
+        for (int i = 0; i < factionSaves.Count; i++) {
+            SaveDataFaction saveData = factionSaves[i];
+            saveData.Load();
+        }
+    }
+    public void LoadFactionCharacters() {
+        for (int i = 0; i < factionSaves.Count; i++) {
+            SaveDataFaction saveData = factionSaves[i];
+            saveData.LoadCharacters();
+        }
+    }
+    public void LoadFactionRelationships() {
+        for (int i = 0; i < factionSaves.Count; i++) {
+            SaveDataFaction saveData = factionSaves[i];
+            saveData.LoadRelationships();
+        }
+    }
+    public void LoadFactionLogs() {
+        for (int i = 0; i < factionSaves.Count; i++) {
+            SaveDataFaction saveData = factionSaves[i];
+            saveData.LoadLogs();
+        }
     }
     #endregion
-    
+
     #region Settlements
     public void SaveSettlements(List<BaseSettlement> allSettlements) {
         settlementSaves = new List<SaveDataBaseSettlement>();

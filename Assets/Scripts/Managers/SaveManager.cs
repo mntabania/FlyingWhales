@@ -98,7 +98,7 @@ public class SaveManager : MonoBehaviour {
         //        save.SaveCurrentDate();
         //        save.SaveNotifications();
 
-        SaveGame.Encode = true;
+        //SaveGame.Encode = true;
         SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", saveData);
     }
     public void SavePlayerData() {

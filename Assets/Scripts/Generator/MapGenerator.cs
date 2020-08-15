@@ -99,7 +99,7 @@ public class MapGenerator : MonoBehaviour {
             }
             
             WorldConfigManager.Instance.mapGenerationData = data;
-            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             // InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
             // InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
             AudioManager.Instance.TransitionToWorld();
@@ -199,7 +199,7 @@ public class MapGenerator : MonoBehaviour {
             }
             
             WorldConfigManager.Instance.mapGenerationData = data;
-            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
@@ -219,13 +219,21 @@ public class MapGenerator : MonoBehaviour {
     
     #region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
+        //MapGenerationComponent[] mapGenerationComponents = {
+        //    new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
+        //    new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
+        //    new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
+        //    new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), 
+        //    new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new RegionFeatureActivation(), 
+        //    new MonsterGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(),
+        //};
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
-            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
-            new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), 
-            new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new RegionFeatureActivation(), 
-            new MonsterGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(),
+            new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
+            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), 
+            new WorldMapLandmarkGeneration(),
+            new RegionInnerMapGeneration(),
+            new LoadAllFactionsGeneration(), new LoadAllFactionRelationshipsGeneration(), new MapGenerationFinalization(),
+            new PlayerDataGeneration(), new LoadDateGeneration(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }
@@ -294,21 +302,18 @@ public class MapGenerator : MonoBehaviour {
                     }
                 }
             }
-            
+
+            WorldSettings.Instance.worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom); //Always use Custom world type for Loading Save Data
             WorldConfigManager.Instance.mapGenerationData = data;
-            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
             UIManager.Instance.initialWorldSetupMenu.Show();
-            if (WorldConfigManager.Instance.isTutorialWorld) {
-                Messenger.Broadcast(Signals.GAME_LOADED);
-                UIManager.Instance.initialWorldSetupMenu.loadOutMenu.OnClickContinue();
-                LevelLoaderManager.Instance.SetLoadingState(false);
-            } else {
-                LevelLoaderManager.Instance.SetLoadingState(false);
-                Messenger.Broadcast(Signals.GAME_LOADED);
-            }
+
+            Messenger.Broadcast(Signals.GAME_LOADED);
+            UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(saveData.playerSave.archetype);
+            LevelLoaderManager.Instance.SetLoadingState(false);
             yield return new WaitForSeconds(1f);
         }
     }

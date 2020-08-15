@@ -41,7 +41,6 @@ public class MainMenuUI : MonoBehaviour {
     }
     private void Start() {
         newGameButton.interactable = true;
-        loadGameButton.interactable = false;
         steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
     }
     public void ShowMenuButtons() {
@@ -89,6 +88,7 @@ public class MainMenuUI : MonoBehaviour {
         //_skillTreeSelector.Show();
     }
     public void OnClickLoadGame() {
+        SaveManager.Instance.useSaveData = true;
         newGameButton.interactable = false;
         loadGameButton.interactable = false;
         AudioManager.Instance.TransitionToLoading();
@@ -96,5 +96,8 @@ public class MainMenuUI : MonoBehaviour {
     }
     public void OnClickSettings() {
         SettingsManager.Instance.OpenSettings();
+    }
+    public void UpdateLoadButton() {
+        loadGameButton.interactable = SaveManager.Instance.hasSavedDataCurrentProgress;
     }
 }

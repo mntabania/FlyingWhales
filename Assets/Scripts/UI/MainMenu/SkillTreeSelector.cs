@@ -68,9 +68,19 @@ public class SkillTreeSelector : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();
         
-        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.tileLocation.gameObject);
-        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.tileLocation.region);
-        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal.tileLocation);
+        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
+        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
+        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
+    }
+    public void SkipLoadout(PLAYER_ARCHETYPE archetype) {
+        PlayerSkillManager.Instance.SetSelectedArchetype(archetype);
+        Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
+        GameManager.Instance.StartProgression();
+        UIManager.Instance.initialWorldSetupMenu.Hide();
+
+        WorldMapCameraMove.Instance.CenterCameraOn(WorldConfigManager.Instance.mapGenerationData.portal.gameObject);
+        InnerMapManager.Instance.TryShowLocationMap(WorldConfigManager.Instance.mapGenerationData.portal.region);
+        InnerMapCameraMove.Instance.CenterCameraOnTile(WorldConfigManager.Instance.mapGenerationData.portal);
     }
 
     private PLAYER_ARCHETYPE GetSelectedArchetype() {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Peaceful : FactionIdeology {
     public Peaceful() : base(FACTION_IDEOLOGY.Peaceful) {
 

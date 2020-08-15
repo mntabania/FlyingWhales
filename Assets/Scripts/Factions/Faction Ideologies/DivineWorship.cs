@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class DivineWorship : FactionIdeology {
     public DivineWorship() : base(FACTION_IDEOLOGY.Divine_Worship) {
 

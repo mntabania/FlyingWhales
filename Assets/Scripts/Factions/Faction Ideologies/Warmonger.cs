@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Warmonger : FactionIdeology {
 
     public Warmonger() : base(FACTION_IDEOLOGY.Warmonger) {

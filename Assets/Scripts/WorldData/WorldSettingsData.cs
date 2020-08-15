@@ -40,6 +40,9 @@ public class WorldSettingsData {
     public void SetChaosVictoryMode(bool state) {
         chaosVictoryMode = state;
     }
+    public void SetWorldType(World_Type type) {
+        worldType = type;
+    }
 
     public void AddRace(RACE race) {
         if (!races.Contains(race)) {

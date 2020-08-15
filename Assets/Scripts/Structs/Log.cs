@@ -244,7 +244,7 @@ public class Log {
 }
 
 [System.Serializable]
-public class SaveDataLog {
+public class SaveDataLog : SaveData<Log> {
     public int id;
 
     public MONTH month;
@@ -261,7 +261,8 @@ public class SaveDataLog {
 
     public List<SaveDataLogFiller> fillers;
 
-    public void Save(Log log) {
+    #region Overrides
+    public override void Save(Log log) {
         id = log.id;
         month = log.month;
         day = log.day;
@@ -283,7 +284,8 @@ public class SaveDataLog {
         }
     }
 
-    public Log Load() {
+    public override Log Load() {
         return new Log(this);
     }
+    #endregion
 }

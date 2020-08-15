@@ -220,6 +220,28 @@ public class PlayerUI : MonoBehaviour {
         _buildListUI.Initialize();
         cultistsList.Initialize();
     }
+    public void OnLoadSaveData() {
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {
+            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.spells[i];
+            SpellData skill = PlayerSkillManager.Instance.GetSpellData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count; i++) {
+            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills[i];
+            SpellData skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
+            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.minionsSkills[i];
+            SpellData skill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summonsSkills.Count; i++) {
+            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.summonsSkills[i];
+            SpellData skill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(skillType);
+            skill.OnLoadSpell();
+        }
+    }
 
     #region Listeners
     private void OnInnerMapOpened(Region location) {

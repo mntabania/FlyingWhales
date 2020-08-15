@@ -79,6 +79,6 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 		BaseLandmark portalLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(portalTile, LANDMARK_TYPE.THE_PORTAL);
 		PlayerSettlement playerSettlement = LandmarkManager.Instance.CreateNewPlayerSettlement(portalTile);
 		playerSettlement.SetName("Demonic Intrusion");
-		data.portal = portalLandmark;
+		data.portal = portalTile;
 	}
 }

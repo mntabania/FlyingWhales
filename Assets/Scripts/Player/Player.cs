@@ -163,11 +163,11 @@ public class Player : ILeader, IObjectManipulator {
         faction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(faction);
     }
-    //public void CreatePlayerFaction(SaveDataPlayer data) {
-    //    Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.playerFactionID);
-    //    faction.SetLeader(this);
-    //    SetPlayerFaction(faction);
-    //}
+    public void CreatePlayerFaction(SaveDataPlayerGame data) {
+        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
+        faction.SetLeader(this);
+        SetPlayerFaction(faction);
+    }
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }

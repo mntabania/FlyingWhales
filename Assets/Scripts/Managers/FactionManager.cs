@@ -87,6 +87,9 @@ public class FactionManager : MonoBehaviour {
     private void SetDisguisedFaction(Faction faction) {
         disguisedFaction = faction;
     }
+    private void SetUndeadFaction(Faction faction) {
+        _undeadFaction = faction;
+    }
     public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
         Faction newFaction = new Faction(factionType);
         allFactions.Add(newFaction);
@@ -110,8 +113,14 @@ public class FactionManager : MonoBehaviour {
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
         Faction newFaction = new Faction(data);
-        if(data.name == "Neutral") {
+        if(data.factionType.type == FACTION_TYPE.Disguised) {
+            SetDisguisedFaction(newFaction);
+        } else if (data.factionType.type == FACTION_TYPE.Undead) {
+            SetUndeadFaction(newFaction);
+        } else if (data.factionType.type == FACTION_TYPE.Wild_Monsters) {
             SetNeutralFaction(newFaction);
+        } else if (data.factionType.type == FACTION_TYPE.Vagrants) {
+            SetVagrantFaction(newFaction);
         }
         allFactions.Add(newFaction);
         if (!newFaction.isPlayerFaction) {

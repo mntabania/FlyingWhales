@@ -19,9 +19,7 @@ public class WorldConfigManager : MonoBehaviour {
 
     [Header("Testing")] 
     [SerializeField] private bool _disableLogs;
-    public MapGenerationData mapGenerationData;
-    public bool useSaveData;
-    
+    public MapGenerationData mapGenerationData;    
     
     
     #region Getters

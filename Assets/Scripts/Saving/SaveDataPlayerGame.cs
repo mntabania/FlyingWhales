@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class SaveDataPlayerGame : SaveData<Player> {
     //TODO: Player Faction, Player Settlement
-
+    public int factionID;
     public int mana;
 
     public int portalTileXCoordinate;
     public int portalTileYCoordinate;
+
+    public PLAYER_ARCHETYPE archetype;
 
     //TODO: Minions, Summons
 
@@ -25,11 +28,14 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public override void Save() {
         base.Save();
         Player player = PlayerManager.Instance.player;
+        factionID = player.playerFaction.id;
         mana = player.mana;
         portalTileXCoordinate = player.portalTile.data.xCoordinate;
         portalTileYCoordinate = player.portalTile.data.yCoordinate;
 
         threat = player.threatComponent.threat;
+
+        archetype = PlayerSkillManager.Instance.selectedArchetype;
 
         //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
         //canRemoveTraits = player.playerSkillComponent.canRemoveTraits;

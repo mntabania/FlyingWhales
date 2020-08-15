@@ -50,6 +50,9 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
 
     #region General
     private void OnStartGameAfterLoadoutSelect() {
+        if (SaveManager.Instance.useSaveData) {
+            return; //If using a save data, do not reset player skills because we will use the ones that are saved
+        }
         SaveManager.Instance.currentSaveDataPlayer.ClearLoadoutSaveData(loadout.archetype);
         SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraSpells(loadout.archetype, spellsSkillSlotItems.extraSkillSlotItems);
         SaveManager.Instance.currentSaveDataPlayer.SaveLoadoutExtraAfflictions(loadout.archetype, afflictionsSkillSlotItems.extraSkillSlotItems);

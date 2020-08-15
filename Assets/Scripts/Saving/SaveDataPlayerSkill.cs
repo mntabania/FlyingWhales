@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class SaveDataPlayerSkill : SaveData<SpellData> {
     public SPELL_TYPE type;
     public int maxCharges;
@@ -34,7 +35,7 @@ public class SaveDataPlayerSkill : SaveData<SpellData> {
 
         data.SetCurrentCooldownTick(currentCooldownTick);
         data.SetMaxCharges(maxCharges);
-        return base.Load();
+        return data;
     }
     #endregion
 }

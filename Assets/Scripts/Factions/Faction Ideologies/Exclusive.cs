@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 
+[System.Serializable]
 public class Exclusive : FactionIdeology {
     public EXCLUSIVE_IDEOLOGY_CATEGORIES category { get; private set; }
     public RACE raceRequirement { get; private set; }

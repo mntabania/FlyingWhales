@@ -31,7 +31,7 @@ public class MapGenerationData {
 	public int height => chosenWorldMapTemplate.worldMapHeight;
 	public int regionCount => chosenWorldMapTemplate.regionCount;
 	public int[,] habitabilityValues;
-	public BaseLandmark portal;
+	public HexTile portal;
 	public LocationStructure portalStructure;
 	
 	//family trees
