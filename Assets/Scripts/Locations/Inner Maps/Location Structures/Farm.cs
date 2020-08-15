@@ -6,5 +6,8 @@ namespace Inner_Maps.Location_Structures {
         public Farm(Region location) : base(STRUCTURE_TYPE.FARM, location){
             selectableSize = new Vector2(5f, 5f);
         }
+        public Farm(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(5f, 5f);
+        }
     }
 }

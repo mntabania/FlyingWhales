@@ -12,6 +12,9 @@ namespace Inner_Maps.Location_Structures {
         public TortureChambers(Region location) : base(STRUCTURE_TYPE.TORTURE_CHAMBERS, location){
             selectableSize = new Vector2(10f, 10f);
         }
+        public TortureChambers(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(10f, 10f);
+        }
 
         public override void OnCharacterUnSeizedHere(Character character) {
             character.traitContainer.AddTrait(character, "Restrained");

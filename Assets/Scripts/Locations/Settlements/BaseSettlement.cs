@@ -35,7 +35,7 @@ namespace Locations.Settlements {
             StartListeningForFires();
         }
         protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
-            SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
+            SetName(saveDataBaseSettlement.name);
             id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
             tiles = new List<HexTile>();
             residents = new List<Character>();

@@ -8,6 +8,8 @@ namespace Inner_Maps.Location_Structures {
         public Tavern(Region location) : base(STRUCTURE_TYPE.TAVERN, location) {
             SetMaxHPAndReset(8000);
         }
-        public Tavern(Region location, SaveDataLocationStructure data) : base(location, data) { }
+        public Tavern(Region location, SaveDataLocationStructure data) : base(location, data) {
+            SetMaxHP(8000);
+        }
     }
 }

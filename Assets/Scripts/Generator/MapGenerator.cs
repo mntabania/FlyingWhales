@@ -221,11 +221,12 @@ public class MapGenerator : MonoBehaviour {
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
-            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
-            new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), 
-            new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new RegionFeatureActivation(), 
-            new MonsterGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(),
+            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new SettlementLoading(), 
+            new WorldMapLandmarkGeneration(), new RegionInnerMapGeneration(), new MapGenerationFinalization()
+            //  new SettlementGeneration(), 
+            // new CharacterFinalization(), 
+            // new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new RegionFeatureActivation(), 
+            // new MonsterGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }
@@ -270,45 +271,45 @@ public class MapGenerator : MonoBehaviour {
             Debug.Log(
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
-            for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-                Faction faction = FactionManager.Instance.allFactions[i];
-                if (faction.isMajorNonPlayer) {
-                    faction.DesignateNewLeader(false);
-                    faction.GenerateInitialOpinionBetweenMembers();
-                }
-            }
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                region.UpdateAwareness();
-                for (int j = 0; j < region.tiles.Count; j++) {
-                    HexTile tile = region.tiles[j];
-                    if (!tile.isCorrupted
-                        && tile.landmarkOnTile != null
-                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
-                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-                        && tile.settlementOnTile is NPCSettlement npcSettlement) {
-                        if(npcSettlement.ruler == null) {
-                            npcSettlement.DesignateNewRuler(false);
-                        }
-                        npcSettlement.GenerateInitialOpinionBetweenResidents();
-                    }
-                }
-            }
+            // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            //     Faction faction = FactionManager.Instance.allFactions[i];
+            //     if (faction.isMajorNonPlayer) {
+            //         faction.DesignateNewLeader(false);
+            //         faction.GenerateInitialOpinionBetweenMembers();
+            //     }
+            // }
+            // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            //     Region region = GridMap.Instance.allRegions[i];
+            //     region.UpdateAwareness();
+            //     for (int j = 0; j < region.tiles.Count; j++) {
+            //         HexTile tile = region.tiles[j];
+            //         if (!tile.isCorrupted
+            //             && tile.landmarkOnTile != null
+            //             && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
+            //                 || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
+            //             && tile.settlementOnTile is NPCSettlement npcSettlement) {
+            //             if(npcSettlement.ruler == null) {
+            //                 npcSettlement.DesignateNewRuler(false);
+            //             }
+            //             npcSettlement.GenerateInitialOpinionBetweenResidents();
+            //         }
+            //     }
+            // }
             
             WorldConfigManager.Instance.mapGenerationData = data;
-            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
+            // WorldMapCameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
             AudioManager.Instance.TransitionToWorld();
             
-            UIManager.Instance.initialWorldSetupMenu.Initialize();
-            UIManager.Instance.initialWorldSetupMenu.Show();
-            if (WorldConfigManager.Instance.isTutorialWorld) {
-                Messenger.Broadcast(Signals.GAME_LOADED);
-                UIManager.Instance.initialWorldSetupMenu.loadOutMenu.OnClickContinue();
+            // UIManager.Instance.initialWorldSetupMenu.Initialize();
+            // UIManager.Instance.initialWorldSetupMenu.Show();
+            // if (WorldConfigManager.Instance.isTutorialWorld) {
+            //     Messenger.Broadcast(Signals.GAME_LOADED);
+            //     UIManager.Instance.initialWorldSetupMenu.loadOutMenu.OnClickContinue();
+            //     LevelLoaderManager.Instance.SetLoadingState(false);
+            // } else {
                 LevelLoaderManager.Instance.SetLoadingState(false);
-            } else {
-                LevelLoaderManager.Instance.SetLoadingState(false);
                 Messenger.Broadcast(Signals.GAME_LOADED);
-            }
+            // }
             yield return new WaitForSeconds(1f);
         }
     }

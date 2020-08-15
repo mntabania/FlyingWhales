@@ -7,5 +7,9 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(10f, 9f);
             SetMaxHPAndReset(8000);
         }
+        public MageQuarters(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(10f, 9f);
+            SetMaxHP(8000);
+        }
     }
 }

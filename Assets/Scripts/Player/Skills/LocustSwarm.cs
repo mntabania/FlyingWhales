@@ -17,16 +17,6 @@ public class LocustSwarm : PlayerSpell {
         tornadoTileObject.SetGridTileLocation(targetTile);
         tornadoTileObject.OnPlacePOI();
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
-    }
     public virtual bool CanTarget(LocationGridTile tile) {
         return tile.structure != null;
     }

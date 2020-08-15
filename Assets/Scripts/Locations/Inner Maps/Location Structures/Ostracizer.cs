@@ -13,6 +13,9 @@ namespace Inner_Maps.Location_Structures {
         public Ostracizer(Region location) : base(STRUCTURE_TYPE.OSTRACIZER, location){
             selectableSize = new Vector2(10f, 10f);
         }
+        public Ostracizer(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(10f, 10f);
+        }
 
         #region Overrides
         public override void Initialize() {

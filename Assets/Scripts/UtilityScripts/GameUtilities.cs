@@ -339,6 +339,15 @@ namespace UtilityScripts {
             int roll = UnityEngine.Random.Range(0, 100);
             return roll < chance;
         }
+        public static List<HexTile> GetHexTilesGivenCoordinates(List<Point> coordinates, HexTile[,] map) {
+            List<HexTile> tiles = new List<HexTile>();
+            for (int i = 0; i < coordinates.Count; i++) {
+                Point point = coordinates[i];
+                HexTile tile = map[point.X, point.Y];
+                tiles.Add(tile);
+            }
+            return tiles;
+        }
     }    
 }
 

@@ -7,6 +7,7 @@ using UtilityScripts;
 
 public class WorldMapRegionGeneration : MapGenerationComponent {
 
+	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating regions...");
 		WorldMapTemplate chosenTemplate = data.chosenWorldMapTemplate;
@@ -50,7 +51,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		int centerY = startingY + (template.height / 2);
 		HexTile center = GridMap.Instance.map[centerX, centerY];
 		
-		Region region = new Region(center);
+		Region region = new Region(center, template);
 		for (int x = startingX; x < maxX; x++) {
 			for (int y = startingY; y < maxY; y++) {
 				try {
@@ -67,6 +68,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 
 		return region;
 	}
+	#endregion
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
@@ -76,7 +78,47 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading regions...");
+		yield return MapGenerator.Instance.StartCoroutine(LoadRegions(saveData));
+	}
+	private IEnumerator LoadRegions(SaveDataCurrentProgress saveData) {
+		int lastX = 0;
+		int lastY = 0;
+		Region[] allRegions = new Region[saveData.worldMapSave.regionSaves.Count];
+
+		for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+			SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+			Region region = CreateNewRegionFromSave(saveDataRegion, lastX, lastY);
+			lastX += saveDataRegion.regionTemplate.width;
+			if (lastX == GridMap.Instance.width) {
+				lastX = 0;
+				lastY += saveDataRegion.regionTemplate.height;
+			}
+			allRegions[i] = region;
+		}
+		GridMap.Instance.SetRegions(allRegions);
+		string summary = "Region Generation Summary: ";
+		for (int i = 0; i < allRegions.Length; i++) {
+			Region region = allRegions[i];
+			summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
+		}
+		Debug.Log(summary);
+		
+		yield return null;
+	}
+	private Region CreateNewRegionFromSave(SaveDataRegion saveDataRegion, int startingX, int startingY) {
+		int maxX = startingX + saveDataRegion.regionTemplate.width;
+		int maxY = startingY + saveDataRegion.regionTemplate.height;
+		
+		Region region = new Region(saveDataRegion);
+		for (int x = startingX; x < maxX; x++) {
+			for (int y = startingY; y < maxY; y++) {
+				HexTile tile = GridMap.Instance.map[x, y];
+				region.AddTile(tile);
+			}
+		}
+
+		return region;
 	}
 	#endregion
 }

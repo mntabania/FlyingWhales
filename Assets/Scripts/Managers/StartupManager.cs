@@ -40,18 +40,20 @@ public class StartupManager : MonoBehaviour {
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }
                 yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));
-                
-                // SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/SAVED_CURRENT_PROGRESS.sav");;
-                // yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
             }
             else {
                 Debug.Log("Generating random world...");
                 yield return StartCoroutine(mapGenerator.InitializeWorld());
             }
         } else {
-            //TODO: Add checking if player picked a save file here?
-            Debug.Log("Generating random world...");
-            yield return StartCoroutine(mapGenerator.InitializeWorld());
+            // if (WorldConfigManager.Instance.useSaveData) {
+            //     SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/Test.sav");;
+            //     yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
+            // }
+            // else {
+                Debug.Log("Generating random world...");
+                yield return StartCoroutine(mapGenerator.InitializeWorld());    
+            // }
         }
     }
 

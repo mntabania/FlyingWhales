@@ -7,5 +7,9 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2(10f, 7f);
             SetMaxHPAndReset(8000);
         }
+        public Lumberyard(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(10f, 7f);
+            SetMaxHP(8000);
+        }
     }
 }

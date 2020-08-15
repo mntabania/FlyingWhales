@@ -57,12 +57,18 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
         _plaguedExpiryKey = string.Empty;
     }
-    public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement){
-        // region = GridMap.Instance.GetRegionByID(saveDataBaseSettlement.regionID);
-        // newRulerDesignationWeights = new WeightedDictionary<Character>();
-        // ResetNewRulerDesignationChance();
-        // LoadStructures(saveDataBaseSettlement);
-        // _plaguedExpiryKey = string.Empty;
+    public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
+        //NOTE: This assumes that all tiles in this settlement is part of the same region.
+        region = GameUtilities.GetHexTilesGivenCoordinates(saveDataBaseSettlement.tileCoordinates, GridMap.Instance.map)[0].region;
+        newRulerDesignationWeights = new WeightedDictionary<Character>();
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
+        ResetNewRulerDesignationChance();
+        availableJobs = new List<JobQueueItem>();
+        classManager = new LocationClassManager();
+        eventManager = new LocationEventManager(this);
+        jobPriorityComponent = new SettlementJobPriorityComponent(this);
+        settlementJobTriggerComponent = new SettlementJobTriggerComponent(this);
+        _plaguedExpiryKey = string.Empty;
     }
 
     #region Listeners

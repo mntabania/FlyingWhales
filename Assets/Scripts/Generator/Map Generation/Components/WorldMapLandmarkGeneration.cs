@@ -339,7 +339,14 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 	
 	#region Saved World
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+		List<SaveDataHextile> landmarkTiles = saveData.worldMapSave.GetAllTilesWithLandmarks();
+		for (int i = 0; i < landmarkTiles.Count; i++) {
+			SaveDataHextile saveDataHextile = landmarkTiles[i];
+			HexTile hexTile = GridMap.Instance.map[saveDataHextile.xCoordinate, saveDataHextile.yCoordinate];
+			LandmarkManager.Instance.CreateNewLandmarkOnTile(hexTile, saveDataHextile.landmarkType);
+			hexTile.UpdateLandmarkVisuals();
+		}
+		yield return null;
 	}
 	#endregion
 	

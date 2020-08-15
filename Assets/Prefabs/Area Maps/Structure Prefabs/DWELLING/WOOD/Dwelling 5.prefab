@@ -317,7 +317,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 4
-      m_TileSpriteIndex: 1
+      m_TileSpriteIndex: 3
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -379,12 +379,12 @@ Tilemap:
   - first: {x: 2, y: 2, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 3
+      m_TileIndex: 4
       m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
-      m_AllTileFlags: 1073741824
+      m_AllTileFlags: 2
   - first: {x: 3, y: 2, z: 0}
     second:
       serializedVersion: 2
@@ -397,21 +397,21 @@ Tilemap:
   - first: {x: 1, y: 3, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 3
-      m_TileSpriteIndex: 2
+      m_TileIndex: 4
+      m_TileSpriteIndex: 1
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
-      m_AllTileFlags: 1073741824
+      m_AllTileFlags: 2
   - first: {x: 2, y: 3, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 3
-      m_TileSpriteIndex: 2
+      m_TileIndex: 4
+      m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
-      m_AllTileFlags: 1073741824
+      m_AllTileFlags: 2
   - first: {x: 3, y: 3, z: 0}
     second:
       serializedVersion: 2
@@ -429,19 +429,19 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 6
     m_Data: {fileID: 11400000, guid: 942a9b0cbfffcca4ab500fd02c6356cb, type: 2}
-  - m_RefCount: 3
-    m_Data: {fileID: 11400000, guid: c2eede523bc47a143a45c7945aba4cde, type: 2}
-  - m_RefCount: 6
-    m_Data: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
-  m_TileSpriteArray:
-  - m_RefCount: 2
-    m_Data: {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
-  - m_RefCount: 6
-    m_Data: {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 9
+    m_Data: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
+  m_TileSpriteArray:
+  - m_RefCount: 3
+    m_Data: {fileID: 21300000, guid: 9e70eb347cc091f4194765e6de46ad52, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: acd979997eb35524b8cb032c7c3dd425, type: 3}
+  - m_RefCount: 4
+    m_Data: {fileID: 21300000, guid: 80deb517aa362ca4692d227826ab98d7, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 32d101c7287c00b43888ac765c65ea92, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: 57f83423e69b25346a6823cc60bd07a1, type: 3}
   - m_RefCount: 2
@@ -1150,10 +1150,11 @@ MonoBehaviour:
   _size: {x: 4, y: 4}
   _center: {x: 2, y: 2, z: 0}
   objectsParent: {fileID: 4690149816732072}
-  _furnitureSpotsParent: {fileID: 4395778514389028}
-  _wallType: 0
-  _wallResource: 1
+  _blockWallType: 0
+  _thinWallResource: 1
   predeterminedOccupiedCoordinates: []
+  roomTemplates: []
+  wallsContributeToDamage: 1
   wallTileMap: {fileID: 8195094281979378832}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}
   rightWall: {fileID: 1585498277213060, guid: 70407332126550d4b81db31716c0b3fe, type: 3}
@@ -1803,7 +1804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 6027071803344479682}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &965179965243429738
 GameObject:
   m_ObjectHideFlags: 0
@@ -1849,7 +1850,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 8777415375912404241}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &1049323890244184340
 GameObject:
   m_ObjectHideFlags: 0
@@ -2974,7 +2975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 3229882202114208726}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &2064969269376479426
 GameObject:
   m_ObjectHideFlags: 0
@@ -3571,7 +3572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 4943040519679138533}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &2796769074496761592
 GameObject:
   m_ObjectHideFlags: 0
@@ -3617,7 +3618,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 2417416868121290374}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &3158766822871786807
 GameObject:
   m_ObjectHideFlags: 0
@@ -3663,7 +3664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 3112168726991749660}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &3179020240657031942
 GameObject:
   m_ObjectHideFlags: 0
@@ -3709,7 +3710,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 5316028960226999793}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &3425238674785072899
 GameObject:
   m_ObjectHideFlags: 0
@@ -3989,7 +3990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 1515039619533830234}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &3852520417048314948
 GameObject:
   m_ObjectHideFlags: 0
@@ -5152,7 +5153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 2708110412408439228}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &5173210016603762991
 GameObject:
   m_ObjectHideFlags: 0
@@ -5252,7 +5253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 2809417875175252232}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &5559514978520226067
 GameObject:
   m_ObjectHideFlags: 0
@@ -5298,7 +5299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 663855098848461764}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &5662883772426290341
 GameObject:
   m_ObjectHideFlags: 0
@@ -5533,7 +5534,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 6824246914565319200}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &6087946538246402076
 GameObject:
   m_ObjectHideFlags: 0
@@ -5866,7 +5867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 1638068549597757123}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &6708407193994572924
 GameObject:
   m_ObjectHideFlags: 0
@@ -6296,7 +6297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 5696597128074132112}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &7268013098378025871
 GameObject:
   m_ObjectHideFlags: 0
@@ -6671,7 +6672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 4613531669144545080}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &7795845096103547818
 GameObject:
   m_ObjectHideFlags: 0
@@ -6974,7 +6975,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 2898055539228932741}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &8320087683827474694
 GameObject:
   m_ObjectHideFlags: 0
@@ -7129,7 +7130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 7932168197508474176}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &8467129718516888929
 GameObject:
   m_ObjectHideFlags: 0
@@ -7550,7 +7551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileReceiver: {fileID: 1569514090035075599}
-  mainCollider: {fileID: 0}
+  _mainCollider: {fileID: 0}
 --- !u!1 &9193219359551846182
 GameObject:
   m_ObjectHideFlags: 0

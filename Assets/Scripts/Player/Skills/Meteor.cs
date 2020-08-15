@@ -26,16 +26,6 @@ public class Meteor : PlayerSpell {
         base.OnLevelUp();
         abilityRadius++;
     }
-    public override void ShowRange(LocationGridTile targetTile) {
-        base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.HighlightTiles(tiles);
-    }
-    public override void HideRange(LocationGridTile targetTile) {
-        base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
-        InnerMapManager.Instance.UnhighlightTiles(tiles);
-    }
     #endregion
 
     //private void CreateMeteorStrikeAt(LocationGridTile tile) {

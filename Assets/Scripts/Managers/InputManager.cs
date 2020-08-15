@@ -125,26 +125,26 @@ namespace Ruinarch {
                         } 
                     }
                 } else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
-                    UIManager.Instance.HideSmallInfo();
-                    CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
-                    if (ability.abilityRadius == 0) {
-                        IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                        if (hoveredPOI != null) {
-                            SetCursorTo(ability.CanTarget(hoveredPOI) ? Cursor_Type.Check : Cursor_Type.Cross);
-                        }
-                    } else {
-                        LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                        if (hoveredTile != null) {
-                            SetCursorTo(Cursor_Type.Check);
-                            List<LocationGridTile> highlightTiles = hoveredTile.GetTilesInRadius(ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                            if (InnerMapManager.Instance.currentlyHighlightedTiles != null) {
-                                InnerMapManager.Instance.UnhighlightTiles();
-                                InnerMapManager.Instance.HighlightTiles(highlightTiles);
-                            } else {
-                                InnerMapManager.Instance.HighlightTiles(highlightTiles);
-                            }
-                        }
-                    }
+                    // UIManager.Instance.HideSmallInfo();
+                    // CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
+                    // if (ability.abilityRadius == 0) {
+                    //     IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
+                    //     if (hoveredPOI != null) {
+                    //         SetCursorTo(ability.CanTarget(hoveredPOI) ? Cursor_Type.Check : Cursor_Type.Cross);
+                    //     }
+                    // } else {
+                    //     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    //     if (hoveredTile != null) {
+                    //         SetCursorTo(Cursor_Type.Check);
+                    //         List<LocationGridTile> highlightTiles = hoveredTile.GetTilesInRadius(ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                    //         if (InnerMapManager.Instance.currentlyHighlightedTiles != null) {
+                    //             InnerMapManager.Instance.UnhighlightTiles();
+                    //             InnerMapManager.Instance.HighlightTiles(highlightTiles);
+                    //         } else {
+                    //             InnerMapManager.Instance.HighlightTiles(highlightTiles);
+                    //         }
+                    //     }
+                    // }
                 } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                     IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
                     if (hoveredPOI != null) {

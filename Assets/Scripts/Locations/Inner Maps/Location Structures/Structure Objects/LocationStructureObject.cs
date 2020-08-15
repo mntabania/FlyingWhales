@@ -53,13 +53,12 @@ public class LocationStructureObject : PooledObject {
     private Tilemap[] allTilemaps;
     private WallVisual[] wallVisuals;
     public LocationGridTile[] tiles { get; private set; }
-    public StructureWallObject[] walls { get; private set; }
+    // public StructureWallObject[] walls { get; private set; }
     #endregion
 
     #region Getters
     public Vector2Int size => _size;
     public Vector3Int center => _center;
-    public RESOURCE thinWallResource => _thinWallResource;
     #endregion
 
     #region Monobehaviours
@@ -220,14 +219,12 @@ public class LocationStructureObject : PooledObject {
     public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
-            //check if the template has details at this tiles location
-            tile.hasDetail = _detailTileMap.GetTile(_detailTileMap.WorldToCell(tile.worldLocation)) != null;
-            if (tile.hasDetail) { //if it does then set that tile as occupied
-                tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-            }
             //set the ground asset of the parent npcSettlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
+            if (tile.objHere != null) {
+                tile.structure.RemovePOI(tile.objHere);
+            }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
         RegisterWalls(innerMap, structure);
@@ -235,6 +232,14 @@ public class LocationStructureObject : PooledObject {
         RegisterPreplacedObjects(structure, innerMap);
         RescanPathfindingGridOfStructure();
         UpdateSortingOrders();
+        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
+    }
+    public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
+        RegisterWalls(innerMap, structure);
+        _groundTileMap.gameObject.SetActive(false);
+        RescanPathfindingGridOfStructure();
+        UpdateSortingOrders();
+        SetPreplacedObjectsState(false);
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnOwnerStructureDestroyed() {
@@ -408,9 +413,9 @@ public class LocationStructureObject : PooledObject {
             }
             //disable block walls tilemap
             _blockWallsTilemap.gameObject.SetActive(false);
-        } else if (wallVisuals != null && wallVisuals.Length > 0) {
+        } else if (wallVisuals != null && wallVisuals.Length > 0 && structure is ManMadeStructure manMadeStructure) {
             //structure walls
-            walls = new StructureWallObject[wallVisuals.Length];
+            List<StructureWallObject> wallObjects = new List<StructureWallObject>();
             for (int i = 0; i < wallVisuals.Length; i++) {
                 WallVisual wallVisual = wallVisuals[i];
                 StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual, _thinWallResource);
@@ -422,41 +427,42 @@ public class LocationStructureObject : PooledObject {
                 if (wallsContributeToDamage) {
                     structure.AddObjectAsDamageContributor(structureWallObject);    
                 }
-                walls[i] = structureWallObject;
+                wallObjects.Add(structureWallObject);
             }    
+            manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
         }
     }
-    internal void ChangeResourceMadeOf(RESOURCE resource) {
-        for (int i = 0; i < walls.Length; i++) {
-            StructureWallObject structureWallObject = walls[i];
-            structureWallObject.ChangeResourceMadeOf(resource);
-        }
-        for (int i = 0; i < tiles.Length; i++) {
-            LocationGridTile tile = tiles[i];
-            switch (resource) {
-                case RESOURCE.WOOD:
-                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.woodFloorTile);
-                    break;
-                case RESOURCE.STONE:
-                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
-                    break;
-                case RESOURCE.METAL:
-                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
-                    break;
-            }
-        }
-    }
+    // internal void ChangeResourceMadeOf(RESOURCE resource) {
+    //     for (int i = 0; i < walls.Length; i++) {
+    //         StructureWallObject structureWallObject = walls[i];
+    //         structureWallObject.ChangeResourceMadeOf(resource);
+    //     }
+    //     for (int i = 0; i < tiles.Length; i++) {
+    //         LocationGridTile tile = tiles[i];
+    //         switch (resource) {
+    //             case RESOURCE.WOOD:
+    //                 tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.woodFloorTile);
+    //                 break;
+    //             case RESOURCE.STONE:
+    //                 tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
+    //                 break;
+    //             case RESOURCE.METAL:
+    //                 tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
+    //                 break;
+    //         }
+    //     }
+    // }
     /// <summary>
     /// Get what this structures walls are made of.
     /// </summary>
     /// <returns>A resource type. NOTE: this defaults to wood if no walls are present.</returns>
-    public RESOURCE WallsMadeOf() {
-        if (walls.Length > 0) {
-            StructureWallObject structureWallObject = walls[0];
-            return structureWallObject.madeOf;
-        }
-        return RESOURCE.WOOD;
-    }
+    // public RESOURCE WallsMadeOf() {
+    //     if (walls.Length > 0) {
+    //         StructureWallObject structureWallObject = walls[0];
+    //         return structureWallObject.madeOf;
+    //     }
+    //     return RESOURCE.WOOD;
+    // }
     #endregion
 
     #region Pathfinding

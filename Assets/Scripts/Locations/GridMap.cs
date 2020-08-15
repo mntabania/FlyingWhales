@@ -213,28 +213,28 @@ public class GridMap : MonoBehaviour {
             // allRegions[i].HideBorders();
         }
     }
-    private Region[] CreateRandomRegions(int regionCount, List<HexTile> tiles, ref List<HexTile> remainingTiles) {
-        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles
-            .Where(x => x.IsAtEdgeOfMap() == false && x.HasNeighbourAtEdgeOfMap())
-        );
-        Region[] createdRegions = new Region[regionCount];
-        for (int i = 0; i < regionCount; i++) {
-            if (regionCoreTileChoices.Count == 0) {
-                throw new System.Exception("No more core tiles for regions!");
-            }
-            HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
-            Region newRegion = new Region(chosenTile);
-            int range = 2;
-            List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
-            regionCoreTileChoices.Remove(chosenTile);
-            remainingTiles.Remove(chosenTile);
-            for (int j = 0; j < tilesInRange.Count; j++) {
-                regionCoreTileChoices.Remove(tilesInRange[j]);
-            }
-            createdRegions[i] = newRegion;
-        }
-        return createdRegions;
-    }
+    // private Region[] CreateRandomRegions(int regionCount, List<HexTile> tiles, ref List<HexTile> remainingTiles) {
+    //     List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles
+    //         .Where(x => x.IsAtEdgeOfMap() == false && x.HasNeighbourAtEdgeOfMap())
+    //     );
+    //     Region[] createdRegions = new Region[regionCount];
+    //     for (int i = 0; i < regionCount; i++) {
+    //         if (regionCoreTileChoices.Count == 0) {
+    //             throw new System.Exception("No more core tiles for regions!");
+    //         }
+    //         HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
+    //         Region newRegion = new Region(chosenTile);
+    //         int range = 2;
+    //         List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
+    //         regionCoreTileChoices.Remove(chosenTile);
+    //         remainingTiles.Remove(chosenTile);
+    //         for (int j = 0; j < tilesInRange.Count; j++) {
+    //             regionCoreTileChoices.Remove(tilesInRange[j]);
+    //         }
+    //         createdRegions[i] = newRegion;
+    //     }
+    //     return createdRegions;
+    // }
     private List<HexTile> GetNonRegionCoreTiles(List<HexTile> tiles) {
         List<HexTile> nonCoreTiles = new List<HexTile>();
         for (int i = 0; i < tiles.Count; i++) {

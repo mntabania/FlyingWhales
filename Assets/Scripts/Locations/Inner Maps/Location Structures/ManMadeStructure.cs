@@ -1,10 +1,19 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Inner_Maps.Location_Structures {
     public abstract class ManMadeStructure : LocationStructure {
 
         private StructureTileObject _structureTileObject;
+        public List<StructureWallObject> structureWalls { get; private set; }
+
+        public RESOURCE wallsAreMadeOf { get; private set; }
+        public LocationStructureObject structureObj {get; private set;}
+
+        #region Getters
+        public override Vector2 selectableSize => structureObj.size;
+        #endregion
         
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
         protected ManMadeStructure(Region location, SaveDataLocationStructure data) : base(location, data) { }
@@ -44,7 +53,7 @@ namespace Inner_Maps.Location_Structures {
         
         #region HP
         private void OnWallRepaired(StructureWallObject structureWall, int amount) {
-            if (structureObj.walls != null && structureObj.walls.Contains(structureWall)) {
+            if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 structureObj.RescanPathfindingGridOfStructure();
                 CheckInteriorState();
             }
@@ -54,7 +63,7 @@ namespace Inner_Maps.Location_Structures {
         }
         private void OnWallDamaged(StructureWallObject structureWall, int amount) {
             Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
-            if (structureObj.walls != null && structureObj.walls.Contains(structureWall)) {
+            if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 //create repair job
                 structureObj.RescanPathfindingGridOfStructure();
                 OnStructureDamaged();
@@ -63,17 +72,15 @@ namespace Inner_Maps.Location_Structures {
                 AdjustHP(amount);
             }
         }
+        public override void OnTileRepaired(LocationGridTile tile, int amount) {
+            if (hasBeenDestroyed) { return; }
+            if (tile.genericTileObject.currentHP >= tile.genericTileObject.maxHP) {
+                // ReSharper disable once Unity.NoNullPropagation
+                structureObj?.ApplyGroundTileAssetForTile(tile);    
+                tile.CreateSeamlessEdgesForSelfAndNeighbours();
+            }
+        }
         #endregion
-
-        // #region Tiles
-        // public override void OnTileDamaged(LocationGridTile tile, int amount) {
-        //     OnStructureDamaged();
-        //     AdjustHP(amount);
-        // }
-        // public override void OnTileRepaired(LocationGridTile tile, int amount) {
-        //     AdjustHP(amount);
-        // }
-        // #endregion
 
         #region Utilities
         private void OnStructureDamaged() {
@@ -95,9 +102,20 @@ namespace Inner_Maps.Location_Structures {
         }
         private void CheckInteriorState() {
             //if structure object only has 70% or less of walls intact, set it as exterior, else, set it as interior
-            int neededWallsToBeConsideredExterior = Mathf.FloorToInt(structureObj.walls.Length * 0.7f);
-            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
+            int neededWallsToBeConsideredExterior = Mathf.FloorToInt(structureWalls.Count * 0.7f);
+            int intactWalls = structureWalls.Count(wall => wall.currentHP > 0);
             SetInteriorState(intactWalls > neededWallsToBeConsideredExterior);
+        }
+        public override void CenterOnStructure() {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != location.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (location.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(location);
+            }
+            if (structureObj != null) {
+                InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);
+            } 
         }
         #endregion
 
@@ -125,6 +143,27 @@ namespace Inner_Maps.Location_Structures {
                  }
             }
             base.DestroyStructure();
+        }
+        protected override void AfterStructureDestruction() {
+            structureObj.OnOwnerStructureDestroyed(); 
+            base.AfterStructureDestruction();
+        }
+        #endregion
+
+        #region Walls
+        public void SetWallObjects(List<StructureWallObject> wallObjects, RESOURCE resource) {
+            structureWalls = wallObjects;
+            wallsAreMadeOf = resource;
+        }
+        #endregion
+
+        #region Structure Object
+        public virtual void SetStructureObject(LocationStructureObject structureObj) {
+            this.structureObj = structureObj;
+            Vector3 position = structureObj.transform.position;
+            position.x -= 0.5f;
+            position.y -= 0.5f;
+            worldPosition = position;
         }
         #endregion
     }

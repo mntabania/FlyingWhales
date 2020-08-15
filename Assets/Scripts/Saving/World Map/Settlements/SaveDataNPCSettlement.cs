@@ -22,4 +22,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         //     jobs.Add(data);
         // }
     }
+    public override BaseSettlement Load() {
+        return LandmarkManager.Instance.LoadNPCSettlement(this);
+    }
 }

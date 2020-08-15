@@ -30,7 +30,6 @@ namespace Traits {
                         GetSprite(tile.localPlace);
                     mapObject.baseMapObjectVisual.SetVisual(floorSprite);
                     tile.parentTileMap.SetColor(tile.localPlace, burntColor);
-                    tile.SetDefaultTileColor(burntColor);
                     tile.parentMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
                     tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
                     tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
@@ -52,7 +51,6 @@ namespace Traits {
                 if (mapObject is GenericTileObject genericTileObject) {
                     LocationGridTile tile = genericTileObject.gridTileLocation;
                     tile.parentTileMap.SetColor(tile.localPlace, Color.white);
-                    tile.SetDefaultTileColor(Color.white);
                     tile.parentMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
                     tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
                     tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);

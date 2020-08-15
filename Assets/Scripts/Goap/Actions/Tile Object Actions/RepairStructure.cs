@@ -23,8 +23,8 @@ public class RepairStructure : GoapAction {
         Assert.IsTrue(target is StructureTileObject, $"Repair structure is being advertised by something that is not a StructureTileObject! {target}");
         StructureTileObject structureTileObject = target as StructureTileObject;
         List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
-        if (structureTileObject.structureParent?.structureObj != null) {
-            switch (structureTileObject.structureParent.structureObj.WallsMadeOf()) {
+        if (structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
+            switch (manMadeStructure.wallsAreMadeOf) {
                 case RESOURCE.WOOD:
                     p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" , false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
                     break;
@@ -68,10 +68,14 @@ public class RepairStructure : GoapAction {
     #region Preconditions
     private bool HasResource(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         StructureTileObject tileObj = poiTarget as StructureTileObject;
+        Assert.IsNotNull(tileObj, $"Target of repair is not Structure Tile Object! {poiTarget}");
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
         int craftCost = (int)(data.constructionCost * 0.5f);
 
-        RESOURCE neededResourceType = tileObj.structureParent.structureObj.WallsMadeOf();
+        ManMadeStructure manMadeStructure = tileObj.structureParent as ManMadeStructure;
+        Assert.IsNotNull(manMadeStructure, $"Parent structure is not Man Made structure! {tileObj.structureParent}");
+        RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
+        
         if (poiTarget.HasResourceAmount(neededResourceType, craftCost)) {
             return true;
         }
@@ -114,9 +118,9 @@ public class RepairStructure : GoapAction {
                 structureWall.AdjustHP(structureWall.maxHP, ELEMENTAL_TYPE.Normal);
             }
         }
-        if (goapNode.poiTarget is StructureTileObject structureTileObject && structureTileObject.structureParent?.structureObj != null) {
+        if (goapNode.poiTarget is StructureTileObject structureTileObject && structureTileObject.structureParent is ManMadeStructure manMadeStructure) {
             //clear out resources stored at structure tile object
-            RESOURCE neededResourceType = structureTileObject.structureParent.structureObj.WallsMadeOf();
+            RESOURCE neededResourceType = manMadeStructure.wallsAreMadeOf;
             goapNode.poiTarget.SetResource(neededResourceType, 0);
         }
     }
@@ -128,7 +132,7 @@ public class RepairStructure : GoapAction {
         if (requirementsSatisfied) {
             if (target is StructureTileObject structureTileObject) {
                 if (structureTileObject.gridTileLocation == null || structureTileObject.structureParent.hasBeenDestroyed
-                    || structureTileObject.structureParent.structureObj == null) {
+                    || structureTileObject.structureParent is ManMadeStructure == false) {
                     return false;
                 }
             }

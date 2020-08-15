@@ -6,6 +6,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Tilemaps;
 using Debug = UnityEngine.Debug;
 namespace Inner_Maps {
     public class RegionInnerTileMap : InnerTileMap {
@@ -32,6 +33,20 @@ namespace Inner_Maps {
             ConnectHexTilesToTileCollections(mapGenerationComponent);
             SetFogOfWar();
             yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
+            groundMapLocalBounds = groundTilemap.localBounds;
+        }
+        public IEnumerator LoadMap(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, Dictionary<string, TileBase> tileAssetDB) {
+            name = $"{region.name}'s Inner Map";
+            region.SetRegionInnerMap(this);
+            ClearAllTileMaps();
+            Vector2Int buildSpotGridSize = CreateTileCollectionGrid(mapGenerationComponent);
+            int tileMapWidth = buildSpotGridSize.x * InnerMapManager.BuildingSpotSize.x;
+            int tileMapHeight = buildSpotGridSize.y * InnerMapManager.BuildingSpotSize.y;
+            yield return StartCoroutine(LoadGrid(tileMapWidth, tileMapHeight, mapGenerationComponent, saveDataInnerMap));
+            InitializeTileCollections(mapGenerationComponent);
+            ConnectHexTilesToTileCollections(mapGenerationComponent);
+            SetFogOfWar();
+            yield return StartCoroutine(LoadTileVisuals(mapGenerationComponent, saveDataInnerMap, tileAssetDB));
             groundMapLocalBounds = groundTilemap.localBounds;
         }
 

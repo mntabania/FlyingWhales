@@ -13,18 +13,17 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         //facilities
-        public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
 
         public Dwelling(Region location) : base(STRUCTURE_TYPE.DWELLING, location) {
             //residents = new List<Character>();
-            InitializeFacilities();
             maxResidentCapacity = 2;
             SetMaxHPAndReset(3500);
         }
 
         public Dwelling(Region location, SaveDataLocationStructure data) : base(location, data) {
             //residents = new List<Character>();
-            InitializeFacilities();
+            maxResidentCapacity = 2;
+            SetMaxHP(3500);
         }
 
         #region Overrides
@@ -66,27 +65,6 @@ namespace Inner_Maps.Location_Structures {
         }
         #endregion
 
-        #region Residents
-        public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null) {
-            if (base.AddPOI(poi, tileLocation)) {
-                if (poi is TileObject) {
-                    UpdateFacilityValues();
-                }
-                return true;
-            }
-            return false;
-        }
-        public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
-            if (base.RemovePOI(poi, removedBy)) {
-                if (poi is TileObject) {
-                    UpdateFacilityValues();
-                }
-                return true;
-            }
-            return false;
-        }
-        #endregion
-
         #region Misc
         public override string GetNameRelativeTo(Character character) {
             if (character.homeStructure == this) {
@@ -115,54 +93,6 @@ namespace Inner_Maps.Location_Structures {
         }
         public LocationStructure GetLocationStructure() {
             return this;
-        }
-        #endregion
-
-        #region Facilities
-        private void InitializeFacilities() {
-            facilities = new Dictionary<FACILITY_TYPE, int>();
-            FACILITY_TYPE[] facilityTypes = CollectionUtilities.GetEnumValues<FACILITY_TYPE>();
-            for (int i = 0; i < facilityTypes.Length; i++) {
-                if (facilityTypes[i] != FACILITY_TYPE.NONE) {
-                    facilities.Add(facilityTypes[i], 0);
-                }
-            }
-        }
-        private void UpdateFacilityValues() {
-            if (facilities == null) {
-                return;
-            }
-            FACILITY_TYPE[] facilityTypes = CollectionUtilities.GetEnumValues<FACILITY_TYPE>();
-            for (int i = 0; i < facilityTypes.Length; i++) {
-                if (facilityTypes[i] != FACILITY_TYPE.NONE) {
-                    facilities[facilityTypes[i]] = 0;
-                }
-            }
-            List<TileObject> objects = GetTileObjects();
-            for (int i = 0; i < objects.Count; i++) {
-                TileObject currObj = objects[i];
-                TileObjectData data;
-                if (TileObjectDB.TryGetTileObjectData(currObj.tileObjectType, out data)) {
-                    if (data.providedFacilities != null) {
-                        for (int j = 0; j < data.providedFacilities.Length; j++) {
-                            ProvidedFacility facility = data.providedFacilities[j];
-                            facilities[facility.type] += facility.value;
-                        }
-                    }
-                }
-            }
-        }
-        /// <summary>
-        /// Does this dwelling have any facilities that are at 0?
-        /// </summary>
-        /// <returns></returns>
-        public bool HasFacilityDeficit() {
-            foreach (KeyValuePair<FACILITY_TYPE, int> kvp in facilities) {
-                if (kvp.Value <= 0) {
-                    return true;
-                }
-            }
-            return false;
         }
         #endregion
     }

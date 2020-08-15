@@ -1,0 +1,17 @@
+﻿using System.Collections;
+using Locations.Settlements;
+using UnityEngine;
+namespace Generator.Map_Generation.Components {
+    public class SettlementLoading : MapGenerationComponent {
+        public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+            LevelLoaderManager.Instance.UpdateLoadingInfo("Loading settlements...");
+            AddLog($"Loading settlements");
+            for (int i = 0; i < saveData.settlementSaves.Count; i++) {
+                SaveDataBaseSettlement saveDataBaseSettlement = saveData.settlementSaves[i];
+                BaseSettlement settlement = saveDataBaseSettlement.Load();
+                AddLog($" - Loaded settlement {settlement.name} with {settlement.tiles.Count} tiles.");
+                yield return null;
+            }
+        }
+    }
+}

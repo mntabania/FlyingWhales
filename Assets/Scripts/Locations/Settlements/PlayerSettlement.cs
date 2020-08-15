@@ -7,7 +7,7 @@ namespace Locations.Settlements {
     public class PlayerSettlement : BaseSettlement{
         
         public PlayerSettlement() : base(LOCATION_TYPE.DEMONIC_INTRUSION) { }
-        protected PlayerSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base(saveDataBaseSettlement) { }
+        public PlayerSettlement(SaveDataPlayerSettlement saveDataBaseSettlement) : base(saveDataBaseSettlement) { }
 
 
         #region Residents

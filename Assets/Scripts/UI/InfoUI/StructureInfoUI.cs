@@ -34,9 +34,15 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void CloseMenu() {
         base.CloseMenu();
-        if(activeStructure != null && activeStructure.structureObj != null) {
+        if(activeStructure != null) {
             Selector.Instance.Deselect();
-            if (InnerMapCameraMove.Instance.target == activeStructure.structureObj.transform) {
+            GameObject structureObject = null;
+            if (activeStructure is ManMadeStructure manMadeStructure) {
+                structureObject = manMadeStructure.structureObj.gameObject;
+            } else if (activeStructure is DemonicStructure demonicStructure) {
+                structureObject = demonicStructure.structureObj.gameObject;
+            }
+            if (structureObject != null && InnerMapCameraMove.Instance.target == structureObject.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
         }
@@ -44,9 +50,16 @@ public class StructureInfoUI : InfoUIBase {
     }
     public override void OpenMenu() {
         activeStructure = _data as LocationStructure;
-        if(activeStructure.structureObj != null && activeStructure.structureObj.gameObject) {
+        
+        GameObject structureObject = null;
+        if (activeStructure is ManMadeStructure manMadeStructure) {
+            structureObject = manMadeStructure.structureObj.gameObject;
+        } else if (activeStructure is DemonicStructure demonicStructure) {
+            structureObject = demonicStructure.structureObj.gameObject;
+        }
+        if(structureObject != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.location);
-            InnerMapCameraMove.Instance.CenterCameraOn(activeStructure.structureObj.gameObject, instantCenter);
+            InnerMapCameraMove.Instance.CenterCameraOn(structureObject, instantCenter);
         }
         base.OpenMenu();
         Selector.Instance.Select(activeStructure);

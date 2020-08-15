@@ -289,9 +289,38 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         return newNpcSettlement;
     }
+    public NPCSettlement LoadNPCSettlement(SaveDataNPCSettlement saveDataNpcSettlement) {
+        List<HexTile> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
+        NPCSettlement newNpcSettlement = new NPCSettlement(saveDataNpcSettlement);
+        
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            newNpcSettlement.AddTileToSettlement(tile);
+        }
+        
+        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
+        allSettlements.Add(newNpcSettlement);
+        if(newNpcSettlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
+            allNonPlayerSettlements.Add(newNpcSettlement);
+        }
+        return newNpcSettlement;
+    }
     public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement();
         newPlayerSettlement.AddTileToSettlement(tiles);
+        Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
+        allSettlements.Add(newPlayerSettlement);
+        return newPlayerSettlement;
+    }
+    public PlayerSettlement LoadPlayerSettlement(SaveDataPlayerSettlement saveDataPlayerSettlement) {
+        PlayerSettlement newPlayerSettlement = new PlayerSettlement(saveDataPlayerSettlement);
+
+        List<HexTile> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataPlayerSettlement.tileCoordinates, GridMap.Instance.map);
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile tile = tiles[i];
+            newPlayerSettlement.AddTileToSettlement(tile);
+        }
+
         Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
         allSettlements.Add(newPlayerSettlement);
         return newPlayerSettlement;
@@ -403,21 +432,23 @@ public partial class LandmarkManager : MonoBehaviour {
             throw new Exception($"No structure class for type {structureType.ToString()}, {noSpacesTypeName}");
         }
     }
-    public LocationStructure LoadStructureAt(Region location, SaveDataLocationStructure data) {
-        LocationStructure createdStructure = data.Load(location);
-        if (createdStructure != null) {
-            location.AddStructure(createdStructure);
+    public LocationStructure LoadNewStructureAt(Region location, STRUCTURE_TYPE structureType, SaveDataLocationStructure saveDataLocationStructure) {
+        string noSpacesTypeName = UtilityScripts.Utilities.RemoveAllWhiteSpace(UtilityScripts.Utilities
+            .NormalizeStringUpperCaseFirstLettersNoSpace(structureType.ToString()));
+        string typeName = $"Inner_Maps.Location_Structures.{ noSpacesTypeName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            var structure = Activator.CreateInstance(type, location, saveDataLocationStructure) as LocationStructure;
+            Assert.IsNotNull(structure, $"Structure at {location.name} is null {structureType}");
+            location.AddStructure(structure);
+            structure.Initialize();
+            return structure;
         }
-        return createdStructure;
+        else {
+            throw new Exception($"No structure class for type {structureType.ToString()}, {noSpacesTypeName}");
+        }
     }
     private void ConstructRaceStructureRequirements() {
-        //humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE };
-        //humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE };
-        //humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE };
-        //elfSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE };
-        //elfUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE };
-        //elfCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE };
-
         humanSurvivalStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.CEMETERY, STRUCTURE_TYPE.PRISON, STRUCTURE_TYPE.SMITHY, STRUCTURE_TYPE.BARRACKS, STRUCTURE_TYPE.APOTHECARY };
         humanUtilityStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.GRANARY, STRUCTURE_TYPE.MINER_CAMP, STRUCTURE_TYPE.TAVERN };
         humanCombatStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.RAIDER_CAMP, STRUCTURE_TYPE.ASSASSIN_GUILD, STRUCTURE_TYPE.HUNTER_LODGE, STRUCTURE_TYPE.MAGE_QUARTERS };

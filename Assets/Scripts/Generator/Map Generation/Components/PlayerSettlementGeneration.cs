@@ -66,12 +66,6 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 	}
 	#endregion
 
-	#region Saved World
-	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
-	}
-	#endregion
-	
 
 	private void PlacePortal(HexTile portalTile, MapGenerationData data) {
 		portalTile.SetElevation(ELEVATION.PLAIN);

@@ -75,7 +75,6 @@ public class ConsoleBase : InfoUIBase {
             {"/gain_i_ability", GainInterventionAbility },
             {"/destroy_tile_obj", DestroyTileObj },
             {"/force_update_animation", ForceUpdateAnimation },
-            {"/highlight_structure_tiles", HighlightStructureTiles },
             {"/log_obj_advertisements", LogObjectAdvertisements },
             {"/adjust_opinion", AdjustOpinion },
             {"/join_faction", JoinFaction },
@@ -89,6 +88,7 @@ public class ConsoleBase : InfoUIBase {
             {"/create_faction", CreateFaction },
             {"/cancel_job", CancelJob },
             {"/save_scenario", SaveScenarioMap },
+            {"/save_manual", SaveManual },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1373,43 +1373,6 @@ public class ConsoleBase : InfoUIBase {
     }
     #endregion
 
-    #region NPCSettlement Map
-    private void HighlightStructureTiles(string[] parameters) {
-        if (parameters.Length != 3) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of HighlightStructureTiles");
-            return;
-        }
-        string typeParameterString = parameters[0];
-        string idParameterString = parameters[1];
-        string highlightParameterString = parameters[2];
-        int id = System.Int32.Parse(idParameterString);
-        bool highlight = System.Boolean.Parse(highlightParameterString);
-
-        STRUCTURE_TYPE structureType;
-        if (System.Enum.TryParse(typeParameterString, out structureType) == false) {
-            AddErrorMessage($"There is no structure type named {typeParameterString}");
-            return;
-        }
-
-        LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.region.GetStructureByID(structureType, id);
-        if (structure == null) {
-            AddErrorMessage($"There is no {structureType} with id {id}");
-            return;
-        }
-
-        for (int i = 0; i < structure.tiles.Count; i++) {
-            LocationGridTile tile = structure.tiles[i];
-            if (highlight) {
-                tile.HighlightTile();
-            } else {
-                tile.UnhighlightTile();
-            }
-            
-        }
-    }
-    #endregion
-
     #region IPointOfInterest
     private void LogObjectAdvertisements(string[] parameters) {
         if (parameters.Length != 3) { //POI Type, Object Type (TILE_OBJECT, SPECIAL_TOKEN), id 
@@ -1514,6 +1477,13 @@ public class ConsoleBase : InfoUIBase {
             customFileName = parameters[0];
         }
         SaveManager.Instance.SaveScenario(customFileName);
+    }
+    private void SaveManual(string[] parameters) {
+        string customFileName = string.Empty;
+        if (parameters.Length > 0) {
+            customFileName = parameters[0];
+        }
+        SaveManager.Instance.DoManualSave(customFileName);
     }
     #endregion
 }

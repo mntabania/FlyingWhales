@@ -8,6 +8,9 @@ namespace Inner_Maps.Location_Structures {
         public Meddler(Region location) : base(STRUCTURE_TYPE.MEDDLER, location){
             selectableSize = new Vector2(10f, 10f);
         }
+        public Meddler(Region location, SaveDataLocationStructure data) : base(location, data) {
+            selectableSize = new Vector2(10f, 10f);
+        }
 
         #region Initialization
         public override void Initialize() {
