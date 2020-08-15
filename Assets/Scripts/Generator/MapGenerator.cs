@@ -220,12 +220,12 @@ public class MapGenerator : MonoBehaviour {
     #region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         MapGenerationComponent[] mapGenerationComponents = {
-            new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
-            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
-            new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
-            new ElevationStructureGeneration(), new RegionFeatureActivation(), new MonsterGeneration(), 
-            new MapGenerationFinalization(), new PlayerDataGeneration(),
+            new WorldMapGridGeneration()/*, new SupportingFactionGeneration()*/, new WorldMapRegionGeneration(), 
+            new WorldMapOuterGridGeneration(), new TileFeatureGeneration()/*, new RegionFeatureGeneration()*/, 
+            /*new PlayerSettlementGeneration(), */new WorldMapLandmarkGeneration()/*, new FamilyTreeGeneration()*/, 
+            new RegionInnerMapGeneration()/*, new SettlementGeneration(), new LandmarkStructureGeneration()*/ ,
+            //new ElevationStructureGeneration(), new RegionFeatureActivation(), new MonsterGeneration(), 
+            new MapGenerationFinalization(), new LoadAllFactionsGeneration(), new LoadAllFactionRelationshipsGeneration(), new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }
