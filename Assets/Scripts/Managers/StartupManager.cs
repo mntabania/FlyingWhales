@@ -23,8 +23,11 @@ public class StartupManager : MonoBehaviour {
 
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
 
-        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
-            if (WorldConfigManager.Instance.useSaveData) {
+        if (SaveManager.Instance.useSaveData) {
+            SaveDataCurrentProgress saveData = SaveManager.Instance.currentSaveDataProgress;
+            yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
+        } else {
+            if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
                 ScenarioMapData scenarioMapData = null;
                 switch (WorldSettings.Instance.worldSettingsData.worldType) {
                     case WorldSettingsData.World_Type.Tutorial:
@@ -40,12 +43,11 @@ public class StartupManager : MonoBehaviour {
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }
                 yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));
-            }
-            else {
-                Debug.Log("Generating random world...");
-                yield return StartCoroutine(mapGenerator.InitializeWorld());
-            }
-        } else {
+                //else {
+                //    Debug.Log("Generating random world...");
+                //    yield return StartCoroutine(mapGenerator.InitializeWorld());
+                //}
+            } else {
             // if (WorldConfigManager.Instance.useSaveData) {
             //     SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/Test.sav");;
             //     yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));

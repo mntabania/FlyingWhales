@@ -16,12 +16,16 @@ public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
     private const string savedPlayerDataFileName = "SAVED_PLAYER_DATA";
     private const string savedCurrentProgressFileName = "SAVED_CURRENT_PROGRESS";
-    
+    public bool useSaveData;
+
     public SaveDataPlayer currentSaveDataPlayer { get; private set; }
+    public SaveDataCurrentProgress currentSaveDataProgress { get; private set; }
 
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
     [SerializeField] private bool alwaysResetBonusTutorialsOnStartup;
+
+    public bool hasSavedDataCurrentProgress => currentSaveDataProgress != null;
 
     private void Awake() {
         if (Instance == null) {
@@ -68,6 +72,7 @@ public class SaveManager : MonoBehaviour {
         SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
         saveData.SaveDate();
         saveData.SavePlayer();
+        saveData.SaveFactions();
         
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
@@ -94,6 +99,7 @@ public class SaveManager : MonoBehaviour {
         //        save.SaveCurrentDate();
         //        save.SaveNotifications();
 
+        SaveGame.Encode = true;
         SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", saveData);
     }
     public void SavePlayerData() {
@@ -173,7 +179,10 @@ public class SaveManager : MonoBehaviour {
             currentSaveDataPlayer.ResetSpecialPopupsProgress();
         }
     }
-    public SaveDataCurrentProgress GetSaveFileData(string path) {
+    public void LoadSaveDataCurrentProgress() {
+        currentSaveDataProgress = GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/SAVED_CURRENT_PROGRESS.sav");
+    }
+    private SaveDataCurrentProgress GetSaveFileData(string path) {
         return SaveGame.Load<SaveDataCurrentProgress>(path);
     }
     #endregion
