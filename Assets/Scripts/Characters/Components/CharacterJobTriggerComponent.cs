@@ -292,6 +292,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = job;
         return true;
     }
+    public bool PlanZombieStrollOutside(out JobQueueItem producedJob) {
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ZOMBIE_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, _owner);
+        producedJob = job;
+        return true;
+    }
     public bool PlanIdleBerserkStrollOutside(out JobQueueItem producedJob) {
         CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.BERSERK_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, _owner);
         producedJob = job;

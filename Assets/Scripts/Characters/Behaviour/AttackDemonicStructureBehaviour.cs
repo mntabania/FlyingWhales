@@ -22,11 +22,11 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                         if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == counterattackParty.waitingHexArea) {
                             log += $"\n-Character is in waiting area, roam";
-                            character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                            return character.jobComponent.TriggerRoamAroundTile(out producedJob);
                         } else {
                             log += $"\n-Character is not in waiting area, go to it";
                             LocationGridTile targetTile = counterattackParty.waitingHexArea.GetRandomTile();
-                            character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+                            return character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                         }
                     }
                 } else {
@@ -45,13 +45,16 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         }
                         if (chosenTileObject != null) {
                             character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+                            return true;
                         } else {
                             log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
                             counterattackParty.DisbandParty();
+                            return true;
                         }
                     } else {
                         log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
                         counterattackParty.DisbandParty();
+                        return true;
                     }
                 }
 
@@ -84,7 +87,6 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         if (CharacterManager.Instance.currentDemonicStructureTargetOfAngels != null) {
                             log += $"\n-New target demonic structure is set: " + CharacterManager.Instance.currentDemonicStructureTargetOfAngels.structureType.ToString();
                             character.behaviourComponent.SetDemonicStructureTarget(CharacterManager.Instance.currentDemonicStructureTargetOfAngels);
-                            producedJob = null;
                             return true;
                         } else {
                             log += $"\n-Still no target structure";
@@ -94,6 +96,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 log += $"\n-No more demonic structure to be attacked, will remove this behaviour";
                 character.marker.visionCollider.VoteToFilterVision();
                 character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
+                return true;
             } else {
                 LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
                 if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
@@ -106,13 +109,16 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     }
                     if (chosenTileObject != null) {
                         character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+                        return true;
                     } else {
                         log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
                         character.behaviourComponent.SetDemonicStructureTarget(null);
+                        return true;
                     }
                 } else {
                     log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
                     character.behaviourComponent.SetDemonicStructureTarget(null);
+                    return true;
                 }
 
                 //if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
@@ -128,6 +134,6 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 //}
             }
         }
-        return true;
+        return false;
     }
 }

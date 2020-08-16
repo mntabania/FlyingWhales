@@ -69,6 +69,10 @@ public class Artifact : TileObject {
             _artifactEffectGO = null;
         }
         _artifactEffectGO = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Artifact);
+        if(characterOwner != null) {
+            //Artifacts must clear out ownership if it is placed on a tile, so that it can be picked up again
+            SetCharacterOwner(null);
+        }
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

@@ -13,7 +13,7 @@ public class SaveDataCombatAbility {
     }
     public void Load(Minion minion) {
         CombatAbility ability = PlayerManager.Instance.CreateNewCombatAbility(type);
-        minion.SetCombatAbility(ability);
+        //minion.SetCombatAbility(ability);
         ability.SetLevel(lvl);
     }
 }

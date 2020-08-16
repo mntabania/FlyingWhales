@@ -14,6 +14,14 @@ public class Necronomicon : Artifact {
     //}
 
     #region Overrides
+    public override void SetInventoryOwner(Character character) {
+        base.SetInventoryOwner(character);
+        if(isBeingCarriedBy != character) {
+            if (isBeingCarriedBy != null) {
+                isBeingCarriedBy.interruptComponent.NecromanticTranform();
+            }
+        }
+    }
     public override void ActivateTileObject() {
         if (gridTileLocation != null) {
             base.ActivateTileObject();
@@ -53,14 +61,14 @@ public class Necronomicon : Artifact {
             //gridTileLocation.structure.RemovePOI(this);
         }
     }
-    public override void OnTileObjectAddedToInventoryOf(Character inventoryOwner) {
-        base.OnTileObjectAddedToInventoryOf(inventoryOwner);
-        if(CharacterManager.Instance.necromancerInTheWorld == null) {
-            if (inventoryOwner.traitContainer.HasTrait("Evil") || inventoryOwner.traitContainer.HasTrait("Treacherous")) { //|| (inventoryOwner.traitContainer.HasTrait("Treacherous") && inventoryOwner.traitContainer.HasTrait("Betrayed", "Heartbroken", "Griefstricken"))
-                //Necromantic Transformation
-                inventoryOwner.interruptComponent.TriggerInterrupt(INTERRUPT.Necromantic_Transformation, inventoryOwner);
-            }
-        }
-    }
+    //public override void OnTileObjectAddedToInventoryOf(Character inventoryOwner) {
+    //    base.OnTileObjectAddedToInventoryOf(inventoryOwner);
+    //    if(CharacterManager.Instance.necromancerInTheWorld == null) {
+    //        if (inventoryOwner.traitContainer.HasTrait("Evil") || inventoryOwner.traitContainer.HasTrait("Treacherous")) { //|| (inventoryOwner.traitContainer.HasTrait("Treacherous") && inventoryOwner.traitContainer.HasTrait("Betrayed", "Heartbroken", "Griefstricken"))
+    //            //Necromantic Transformation
+    //            inventoryOwner.interruptComponent.TriggerInterrupt(INTERRUPT.Necromantic_Transformation, inventoryOwner);
+    //        }
+    //    }
+    //}
     #endregion
 }

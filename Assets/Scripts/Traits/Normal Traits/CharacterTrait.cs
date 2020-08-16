@@ -12,7 +12,6 @@ namespace Traits {
         //Meaning that he/she cannot do the things specified in here anymore unless he/she switch to the ego which this trait is present
         public List<TileObject> alreadyInspectedTileObjects { get; private set; }
         public List<Character> charactersAlreadySawForHope { get; private set; }
-        //public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
         public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
         public Character owner { get; private set; }
 

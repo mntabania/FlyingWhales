@@ -253,4 +253,21 @@ public class InterruptComponent {
         raidTargetStructure = structure;
     }
     #endregion
+
+    #region Necromancer
+    public bool NecromanticTranform() {
+        if (CanNecromanticTransform()) {
+            if (owner.HasItem("Necronomicon")) {
+                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Necromantic_Transformation, owner);
+            }
+        }
+        return false;
+    }
+    public bool CanNecromanticTransform() {
+        if(CharacterManager.Instance.necromancerInTheWorld == null) {
+            return owner.traitContainer.HasTrait("Evil", "Treacherous");
+        }
+        return false; 
+    }
+    #endregion
 }

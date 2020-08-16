@@ -34,7 +34,7 @@ public class MinionAbilityChoiceItem : MonoBehaviour {
         if(abilityIdentifier == "combat") {
             GameObject go = GameObject.Instantiate(abilityItemPrefab, abilityGrid.transform);
             AbilityItem item = go.GetComponent<AbilityItem>();
-            item.SetAbility(minion.combatAbility);
+            //item.SetAbility(minion.combatAbility);
         } 
         //else if (abilityIdentifier == "intervention") {
         //    for (int i = 0; i < minion.unlockedInterventionSlots; i++) {

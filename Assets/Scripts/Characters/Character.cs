@@ -47,8 +47,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public NPCSettlement homeSettlement { get; protected set; }
     public LocationStructure homeStructure { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; }
-    public int supply { get; set; }
-    public int food { get; set; }
+    //public int supply { get; set; }
+    //public int food { get; set; }
     public CharacterMarker marker { get; private set; }
     public JobQueueItem currentJob { get; private set; }
     public GoapPlan currentPlan { get; private set; }
@@ -354,9 +354,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         AssignClass(data.className, true);
         AssignRace(race, true);
         SetName(data.name);
-        visuals = new CharacterVisuals(data);
+        //visuals = new CharacterVisuals(data);
         
-        numOfActionsBeingPerformedOnThis = data.isStoppedByOtherCharacter;
+        //numOfActionsBeingPerformedOnThis = data.isStoppedByOtherCharacter;
 
         _overrideThoughts = new List<string>();
         advertisedActions = new List<INTERACTION_TYPE>();
@@ -401,18 +401,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         speedPercentMod = data.speedPercentMod;
         maxHPPercentMod = data.maxHPPercentMod;
 
-        //currentInteractionTypes = data.currentInteractionTypes;
-        supply = data.supply;
-        canCombat = data.isCombatant;
+        //supply = data.supply;
+        //canCombat = data.isCombatant;
         isDisabledByPlayer = data.isDisabledByPlayer;
-        //speedModifier = data.speedModifier;
         deathStr = data.deathStr;
-        _state = data.state;
 
         moodComponent.Load(data);
         needsComponent.LoadAllStatsOfCharacter(data);
         
-        returnedToLife = data.returnedToLife;
+        //returnedToLife = data.returnedToLife;
         
     }
     /// <summary>
@@ -432,7 +429,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         //supply
-        SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
+        //SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
     public virtual void InitialCharacterPlacement(LocationGridTile tile, bool addToRegionLocation) {
         if (needsComponent.HasNeeds()) {
@@ -3108,9 +3105,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
             return;
         }
-        if (returnedToLife) {
-            //characters that have returned to life will just stroll.
-            jobComponent.PlanIdleStrollOutside(); //currentStructure
+        if (interruptComponent.NecromanticTranform()) {
             return;
         }
         string idleLog = OtherIdlePlans();
@@ -3375,7 +3370,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private bool AddItem(TileObject item) {
         if (!items.Contains(item)) {
             items.Add(item);
-            item.OnTileObjectAddedToInventoryOf(this);
+            //item.OnTileObjectAddedToInventoryOf(this);
             Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, item, this);
             return true;
         }
@@ -4861,35 +4856,35 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Supply
-    public void AdjustSupply(int amount) {
-        supply += amount;
-        if (supply < 0) {
-            supply = 0;
-        }
-    }
-    public void SetSupply(int amount) {
-        supply = amount;
-        if (supply < 0) {
-            supply = 0;
-        }
-    }
-    #endregion
+    //#region Supply
+    //public void AdjustSupply(int amount) {
+    //    supply += amount;
+    //    if (supply < 0) {
+    //        supply = 0;
+    //    }
+    //}
+    //public void SetSupply(int amount) {
+    //    supply = amount;
+    //    if (supply < 0) {
+    //        supply = 0;
+    //    }
+    //}
+    //#endregion
 
-    #region Food
-    public void AdjustFood(int amount) {
-        food += amount;
-        if (food < 0) {
-            food = 0;
-        }
-    }
-    public void SetFood(int amount) {
-        food = amount;
-        if (food < 0) {
-            food = 0;
-        }
-    }
-    #endregion
+    //#region Food
+    //public void AdjustFood(int amount) {
+    //    food += amount;
+    //    if (food < 0) {
+    //        food = 0;
+    //    }
+    //}
+    //public void SetFood(int amount) {
+    //    food = amount;
+    //    if (food < 0) {
+    //        food = 0;
+    //    }
+    //}
+    //#endregion
 
     #region Hostility
     /// <summary>
@@ -5492,6 +5487,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
             ConstructDefaultActions();
+            if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))){
+                behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
+            }
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
@@ -5612,9 +5610,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 carrier.UncarryPOI(this);
             }
             avatar.gameObject.SetActive(false);
-            currentRegion?.RemoveCharacterFromLocation(this);
-            SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
-            SetCurrentStructureLocation(deathStructure, false);
+
+            //No longer remove from region list even if character died to prevent inconsistency in data because if a dead character is picked up and dropped, he will be added in the structure location list again but wont be in region list
+            //https://trello.com/c/WTiGxjrK/1786-inconsistent-characters-at-location-list-in-region-with-characters-at-structure
+            //currentRegion?.RemoveCharacterFromLocation(this);
+            //SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            //SetCurrentStructureLocation(deathStructure, false);
 
             //if (this.race != RACE.SKELETON) {
             //    deathLocation.AddCorpse(this, deathStructure, deathTile);

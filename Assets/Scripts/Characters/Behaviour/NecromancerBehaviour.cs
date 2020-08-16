@@ -11,7 +11,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a necromancer";
-        if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure.tiles.Count > 0 && character.homeStructure == character.necromancerTrait.lairStructure) {
+        if (character.homeStructure != null && !character.homeStructure.hasBeenDestroyed && character.homeStructure == character.necromancerTrait.lairStructure) {
             log += $"\n-Character has a home structure/territory";
             if (character.marker) {
                 Character deadCharacter = null;

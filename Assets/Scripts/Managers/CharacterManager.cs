@@ -322,8 +322,8 @@ public class CharacterManager : MonoBehaviour {
         classManager.Initialize();
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-        CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72); //72
-        CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72); //72
+        CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
+        CHARACTER_PRESUMED_DEAD_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(24); //72
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood, Destroy_Action };
@@ -424,22 +424,26 @@ public class CharacterManager : MonoBehaviour {
         //    data.alterEgos[i].Load(newCharacter);
         //}
 
-        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
-        if(faction != null) {
-            faction.JoinFaction(newCharacter);
-            if (data.isFactionLeader) {
-                faction.OnlySetLeader(newCharacter);
-            }
-        }
+        //Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
+        //if(faction != null) {
+        //    faction.JoinFaction(newCharacter);
+        //    if (data.isFactionLeader) {
+        //        faction.OnlySetLeader(newCharacter);
+        //    }
+        //}
         newCharacter.CreateAvatar();
         
-        Region currRegion = null;
-        if (data.currentLocationID != -1) {
-            currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
-        }
-        if (currRegion != null) {
-            newCharacter.avatar.SetPosition(currRegion.coreTile.transform.position);
-        }
+        //Region currRegion = null;
+        //if (data.currentLocationID != -1) {
+        //    currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
+        //}
+        //if (currRegion != null) {
+        //    newCharacter.avatar.SetPosition(currRegion.coreTile.transform.position);
+        //}
+
+
+
+
         // if (data.isDead) {
         //     if (home != null) {
         //         newCharacter.SetHomeRegion(home); //keep this data with character to prevent errors
@@ -829,18 +833,18 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     private Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
-        switch (data.summonType) {
-            case SUMMON_TYPE.Wolf:
-                return new Wolf(data);
-            case SUMMON_TYPE.Skeleton:
-                return new Skeleton(data);
-            case SUMMON_TYPE.Succubus:
-                return new Succubus(data);
-            case SUMMON_TYPE.Incubus:
-                return new Incubus(data);
-            case SUMMON_TYPE.Golem:
-                return new Golem(data);
-        }
+        //switch (data.summonType) {
+        //    case SUMMON_TYPE.Wolf:
+        //        return new Wolf(data);
+        //    case SUMMON_TYPE.Skeleton:
+        //        return new Skeleton(data);
+        //    case SUMMON_TYPE.Succubus:
+        //        return new Succubus(data);
+        //    case SUMMON_TYPE.Incubus:
+        //        return new Incubus(data);
+        //    case SUMMON_TYPE.Golem:
+        //        return new Golem(data);
+        //}
         return null;
     }
     private Summon CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
@@ -1373,11 +1377,14 @@ public class CharacterManager : MonoBehaviour {
 
     #region Necromancer
     public void SetNecromancerInTheWorld(Character character) {
-        necromancerInTheWorld = character;
-        if (necromancerInTheWorld != null) {
-            hasSpawnedNecromancerOnce = true;
-            Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, character);
+        if(necromancerInTheWorld != character) {
+            necromancerInTheWorld = character;
+            if (necromancerInTheWorld != null) {
+                hasSpawnedNecromancerOnce = true;
+                Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, character);
+            }
         }
+        
     }
     #endregion
 
@@ -1391,6 +1398,25 @@ public class CharacterManager : MonoBehaviour {
         newParty.SetLeader(leader);
         return newParty;
     }
+    #endregion
+
+    #region Minions
+    public Minion CreateNewMinion(Character character, bool initialize = true, bool keepData = false) {
+        Minion minion = new Minion(character, keepData);
+        if (initialize) {
+            InitializeMinion(minion);
+        }
+        return minion;
+    }
+    public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
+        Player player = PlayerManager.Instance.player;
+        Minion minion = new Minion(CreateNewCharacter(className, race, GENDER.MALE, player.playerFaction, player.playerSettlement, player.portalTile.region), false);
+        if (initialize) {
+            InitializeMinion(minion);
+        }
+        return minion;
+    }
+    private void InitializeMinion(Minion minion) { }
     #endregion
 
 }

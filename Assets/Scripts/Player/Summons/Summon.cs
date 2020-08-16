@@ -19,7 +19,7 @@ public class Summon : Character {
         showNotificationOnDeath = true;
     }
     protected Summon(SaveDataCharacter data) : base(data) {
-        this.summonType = data.summonType;
+        //this.summonType = data.summonType;
     }
 
     #region Overrides
@@ -105,9 +105,12 @@ public class Summon : Character {
             }
             //ownParty.PartyDeath();
             avatar.gameObject.SetActive(false);
-            currentRegion?.RemoveCharacterFromLocation(this);
-            SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
-            SetCurrentStructureLocation(deathStructure, false);
+
+            //No longer remove from region list even if character died to prevent inconsistency in data because if a dead character is picked up and dropped, he will be added in the structure location list again but wont be in region list
+            //https://trello.com/c/WTiGxjrK/1786-inconsistent-characters-at-location-list-in-region-with-characters-at-structure
+            //currentRegion?.RemoveCharacterFromLocation(this);
+            //SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            //SetCurrentStructureLocation(deathStructure, false);
 
             // if (_role != null) {
             //     _role.OnDeath(this);

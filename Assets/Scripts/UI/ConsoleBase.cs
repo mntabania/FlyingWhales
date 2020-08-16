@@ -1212,7 +1212,7 @@ public class ConsoleBase : InfoUIBase {
         string className = classDropdown.options[classDropdown.value].text;
         int level = int.Parse(levelInput.text);
         if (race != RACE.NONE) {
-            Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, race);
+            Minion minion = CharacterManager.Instance.CreateNewMinion(className, race);
             //if (level > 1) {
             //    minion.character.LevelUp(level - 1);
             //}

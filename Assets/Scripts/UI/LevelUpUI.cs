@@ -42,7 +42,7 @@ public class LevelUpUI : PopupMenuBase {
 
         List<object> choices = new List<object>();
         if(identifierToLevelUp.ToLower() == "combat ability") {
-            choices.Add(minionToLevelUp.combatAbility);
+            //choices.Add(minionToLevelUp.combatAbility);
         }
          //else if (identifierToLevelUp.ToLower() == "intervention ability") {
          //    for (int i = 0; i < minionToLevelUp.interventionAbilities.Length; i++) {

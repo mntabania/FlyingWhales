@@ -24,8 +24,32 @@ public class UndeadBehaviour : CharacterBehaviourComponent {
                         character.ClearTerritory();
                     }
                     if (character.currentStructure == lair && undeadFactionLeader.currentStructure == lair) {
+                        if (undeadFactionLeader.combatComponent.isInCombat) {
+                            log += $"\n-Faction leader in combat, will try to combat also";
+                            bool hasFought = false;
+                            CombatState combatState = undeadFactionLeader.stateComponent.currentState as CombatState;
+                            if (combatState.currentClosestHostile != null) {
+                                CombatData combatData = undeadFactionLeader.combatComponent.GetCombatData(combatState.currentClosestHostile);
+                                character.combatComponent.Fight(combatState.currentClosestHostile, combatData.reasonForCombat, combatData.connectedAction, combatData.isLethal);
+                                hasFought = true;
+                            } else {
+                                if (undeadFactionLeader.combatComponent.avoidInRange.Count > 0) {
+                                    for (int i = 0; i < undeadFactionLeader.combatComponent.avoidInRange.Count; i++) {
+                                        if (undeadFactionLeader.combatComponent.avoidInRange[i] is Character targetCharacter) {
+                                            character.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
+                                            hasFought = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if (hasFought) {
+                                producedJob = null;
+                                return true;
+                            }
+                        }
                         log += $"\n-Character and faction leader is in lair, roam";
                         character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                        return true;
                     } else {
                         if (!undeadFactionLeader.isBeingSeized && undeadFactionLeader.marker && undeadFactionLeader.gridTileLocation != null && !undeadFactionLeader.isDead
                             && character.gridTileLocation != null && character.movementComponent.HasPathToEvenIfDiffRegion(undeadFactionLeader.gridTileLocation)) {

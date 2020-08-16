@@ -87881,7 +87881,6 @@ MonoBehaviour:
   crateBarrelTile: {fileID: 11400000, guid: 6b086f52f77704c46a54b33f4dffaedd, type: 2}
   structureStoneFloor: {fileID: 11400000, guid: 942a9b0cbfffcca4ab500fd02c6356cb,
     type: 2}
-  grayStoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
   ruinedStoneFloorTile: {fileID: 11400000, guid: 223ec6e7f4915bf4b99adff35de3ab6e,
     type: 2}
   edgeAssets:
@@ -116473,7 +116472,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1978547266
 RectTransform:
   m_ObjectHideFlags: 0

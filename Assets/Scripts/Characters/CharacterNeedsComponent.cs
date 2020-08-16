@@ -138,19 +138,19 @@ public class CharacterNeedsComponent {
 
     #region Loading
     public void LoadAllStatsOfCharacter(SaveDataCharacter data) {
-        tiredness = data.tiredness;
-        fullness = data.fullness;
-        happiness = data.happiness;
-        fullnessDecreaseRate = data.fullnessDecreaseRate;
-        tirednessDecreaseRate = data.tirednessDecreaseRate;
-        happinessDecreaseRate = data.happinessDecreaseRate;
-        SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
-        SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
-        SetFullnessForcedTick(data.fullnessForcedTick);
-        SetTirednessForcedTick(data.tirednessForcedTick);
-        currentSleepTicks = data.currentSleepTicks;
-        sleepScheduleJobID = data.sleepScheduleJobID;
-        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
+        //tiredness = data.tiredness;
+        //fullness = data.fullness;
+        //happiness = data.happiness;
+        //fullnessDecreaseRate = data.fullnessDecreaseRate;
+        //tirednessDecreaseRate = data.tirednessDecreaseRate;
+        //happinessDecreaseRate = data.happinessDecreaseRate;
+        //SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
+        //SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
+        //SetFullnessForcedTick(data.fullnessForcedTick);
+        //SetTirednessForcedTick(data.tirednessForcedTick);
+        //currentSleepTicks = data.currentSleepTicks;
+        //sleepScheduleJobID = data.sleepScheduleJobID;
+        //hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
     }
     #endregion
 
@@ -904,7 +904,7 @@ public class CharacterNeedsComponent {
     }
     public void PlanScheduledFullnessRecovery(Character character) {
         if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.Today().tick >= fullnessForcedTick && character.canPerform && doNotGetHungry <= 0) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {
                     jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
@@ -939,7 +939,7 @@ public class CharacterNeedsComponent {
             return false;
         }
         if (this.isStarving) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
                 JobQueueItem hungerRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
                 if (hungerRecoveryJob != null) {

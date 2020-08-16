@@ -98,6 +98,6 @@ public class MainMenuUI : MonoBehaviour {
         SettingsManager.Instance.OpenSettings();
     }
     public void UpdateLoadButton() {
-        loadGameButton.interactable = SaveManager.Instance.hasSavedDataCurrentProgress;
+        loadGameButton.interactable = false; // SaveManager.Instance.hasSavedDataCurrentProgress;
     }
 }

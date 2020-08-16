@@ -89,7 +89,7 @@ public class NewMinionAbilityUI : PopupMenuBase {
         Close();
         if (objToAdd is CombatAbility) {
             CombatAbility ability = objToAdd as CombatAbility;
-            selectedMinion.SetCombatAbility(ability, true);
+            //selectedMinion.SetCombatAbility(ability, true);
         } 
         //else if (objToAdd is PlayerJobAction) {
         //    PlayerJobAction ability = objToAdd as PlayerJobAction;

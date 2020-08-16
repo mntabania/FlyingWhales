@@ -203,29 +203,6 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Minions
-    public Minion CreateNewMinion(Character character, bool initialize = true) {
-        Minion minion = new Minion(character, true);
-        if (initialize) {
-            InitializeMinion(minion);
-        }
-        return minion;
-    }
-    public Minion CreateNewMinion(SaveDataMinion data) {
-        Minion minion = new Minion(data);
-        InitializeMinion(data, minion);
-        return minion;
-    }
-    public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerSettlement, portalTile.region), false);
-        if (initialize) {
-            InitializeMinion(minion);
-        }
-        return minion;
-    }
-    private void InitializeMinion(Minion minion) { }
-    private void InitializeMinion(SaveDataMinion data, Minion minion) {
-        data.combatAbility.Load(minion);
-    }
     public void AddMinion(Minion minion) {
         if (!minions.Contains(minion)) {
             minions.Add(minion);
@@ -440,8 +417,8 @@ public class Player : ILeader, IObjectManipulator {
                 hoverText = "Sleeping characters cannot be targeted.";
                 return false;
             }
-            if (character.traitContainer.HasTrait("Unconscious")) {
-                hoverText = "Unconscious characters cannot be targeted.";
+            if (!character.canWitness) {
+                //hoverText = "Unconscious characters cannot be targeted.";
                 return false;
             }
             if (!character.faction.isPlayerFaction && !GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER

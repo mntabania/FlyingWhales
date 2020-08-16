@@ -34,11 +34,23 @@ public class SocialParty : Party {
     //    base.OnAddMember(member);
     //    member.movementComponent.SetEnableDigging(true);
     //}
-    //protected override void OnRemoveMember(Character member) {
-    //    base.OnRemoveMember(member);
-    //    member.movementComponent.SetEnableDigging(false);
-    //    member.traitContainer.RemoveTrait(member, "Travelling");
-    //}
+    protected override void OnRemoveMember(Character member) {
+        base.OnRemoveMember(member);
+        if (!isDisbanded) {
+            if(members.Count > 0) {
+                bool stillHasMemberInTargetStructure = false;
+                for (int i = 0; i < members.Count; i++) {
+                    if(members[i].currentStructure == targetStructure) {
+                        stillHasMemberInTargetStructure = true;
+                        break;
+                    }
+                }
+                if (!stillHasMemberInTargetStructure) {
+                    DisbandParty();
+                }
+            }
+        }
+    }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();
         targetStructure.SetHasActiveSocialParty(false);

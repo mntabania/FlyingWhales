@@ -68,6 +68,8 @@ public class ShareInformation : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (targetCharacter.carryComponent.IsNotBeingCarried() == false) {
                 goapActionInvalidity.isInvalid = true;
+            } else if (!targetCharacter.canWitness) {
+                goapActionInvalidity.isInvalid = true;
             }
         }
         return goapActionInvalidity;

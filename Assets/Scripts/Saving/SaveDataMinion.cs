@@ -3,39 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class SaveDataMinion {
-    public int characterID;
-    public int exp;
-    public SaveDataCombatAbility combatAbility;
-    public int assignedRegionID;
+public class SaveDataMinion : SaveData<Minion> {
+    //public int characterID; //Does not need to save character id because the process will be handled by SaveDataCharacter
+    public bool isSummoned;
+    public SPELL_TYPE minionPlayerSkillType;
 
-    public List<string> traitsToAdd;
-    public List<SPELL_TYPE> interventionAbilitiesToResearch;
-    public int spellExtractionCount;
-
-    public void Save(Minion minion) {
-        characterID = minion.character.id;
-        exp = minion.exp;
-        spellExtractionCount = minion.spellExtractionCount;
-        //unlockedInterventionSlots = minion.unlockedInterventionSlots;
-
-        //interventionAbilities = new List<SaveDataInterventionAbility>();
-        //for (int i = 0; i < minion.interventionAbilities.Length; i++) {
-        //    if(minion.interventionAbilities[i] != null) {
-        //        SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
-        //        saveDataInterventionAbility.Save(minion.interventionAbilities[i]);
-        //        interventionAbilities.Add(saveDataInterventionAbility);
-        //    }
-        //}
-
-        combatAbility = new SaveDataCombatAbility();
-        combatAbility.Save(minion.combatAbility);
-
-        traitsToAdd = minion.traitsToAdd;
+    #region Saving
+    public override void Save(Minion minion) {
+        isSummoned = minion.isSummoned;
+        minionPlayerSkillType = minion.minionPlayerSkillType;
     }
 
-    public void Load(Player player) {
-        //Minion minion = player.CreateNewMinion(this);
-        //player.AddMinion(minion);
+
+    #endregion
+
+    public Minion Load(Character character) {
+        Minion minion = CharacterManager.Instance.CreateNewMinion(character, keepData: true);
+        return minion;
     }
 }

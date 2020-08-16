@@ -32,10 +32,12 @@ public class CharacterVisuals {
         UpdateMarkerAnimations(character);
     }
    
-    public CharacterVisuals(SaveDataCharacter data) {
+    public CharacterVisuals(Character character, SaveDataCharacter data) {
+        _owner = character;
         portraitSettings = data.portraitSettings;
         _hasBlood = true;
         CreateHairMaterial();
+        UpdateMarkerAnimations(character);
     }
 
     #region Listeners
@@ -116,7 +118,11 @@ public class CharacterVisuals {
         } 
         selectableSize = new Vector2(size, size);
 
-        markerAnimations = new Dictionary<string, Sprite>();
+        if(markerAnimations == null) {
+            markerAnimations = new Dictionary<string, Sprite>();
+        } else {
+            markerAnimations.Clear();
+        }
         for (int i = 0; i < assets.animationSprites.Count; i++) {
             Sprite currSprite = assets.animationSprites[i];
             markerAnimations.Add(currSprite.name, currSprite);

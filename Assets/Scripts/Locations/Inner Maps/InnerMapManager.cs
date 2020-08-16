@@ -451,7 +451,7 @@ namespace Inner_Maps {
         private string GetCharacterHoverData(Character character) {
             string summary = $"Character: {character.name}";
             summary = $"{summary}\n<b>Mood:</b>{character.moodComponent.moodState.ToString()}";
-            summary = $"{summary} <b>Supply:</b>{character.supply.ToString()}";
+            //summary = $"{summary} <b>Supply:</b>{character.supply.ToString()}";
             summary = $"{summary} <b>Can Move:</b>{character.canMove.ToString()}";
             summary = $"{summary} <b>Can Witness:</b>{character.canWitness.ToString()}";
             summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAttacked.ToString()}";

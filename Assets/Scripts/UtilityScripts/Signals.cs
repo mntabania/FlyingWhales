@@ -688,6 +688,7 @@ public static class Signals {
     /// Parameters (Character necromancer)
     /// </summary>
     public static string NECROMANCER_SPAWNED = "OnNecromancerSpawned";
+    //public static string NECROMANCER_DESPAWNED = "OnNecromancerDespawned";
     #endregion
 
     #region Elements

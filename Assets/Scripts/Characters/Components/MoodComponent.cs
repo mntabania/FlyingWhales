@@ -111,7 +111,7 @@ public class MoodComponent {
 
 	#region Loading
 	public void Load(SaveDataCharacter saveDataCharacter) {
-		SetMoodValue(saveDataCharacter.moodValue);
+		//SetMoodValue(saveDataCharacter.moodValue);
 	}
 	#endregion
 

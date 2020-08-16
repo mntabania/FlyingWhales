@@ -10,21 +10,24 @@ public class Minion {
     public const int MAX_INTERVENTION_ABILITY_SLOT = 5;
 
     public Character character { get; private set; }
-    public int exp { get; private set; }
-    public CombatAbility combatAbility { get; private set; }
-    public List<string> traitsToAdd { get; private set; }
-    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
-    public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
-    public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
+    //public int exp { get; private set; }
+    //public CombatAbility combatAbility { get; private set; }
+    //public List<string> traitsToAdd { get; private set; }
+    //public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both npcSettlement and non npcSettlement landmarks
+    //public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
     public bool isSummoned { get; private set; }
     public SPELL_TYPE minionPlayerSkillType { get; private set; }
 
     private string _assignedDeadlySinName;
-    
+
+    #region getters
+    public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
+    #endregion
+
     public Minion(Character character, bool keepData) {
         this.character = character;
-        this.exp = 0;
-        traitsToAdd = new List<string>();
+        //this.exp = 0;
+        //traitsToAdd = new List<string>();
         character.SetMinion(this);
         //character.StartingLevel();
         SetAssignedDeadlySinName(character.characterClass.className);
@@ -40,17 +43,6 @@ public class Minion {
             character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Minion_Behaviour);    
         }
         character.visuals.UpdateAllVisuals(character);
-    }
-    public Minion(SaveDataMinion data) {
-        this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
-        this.exp = data.exp;
-        traitsToAdd = data.traitsToAdd;
-        character.SetMinion(this);
-        character.avatar.SetVisualState(true);
-        SetAssignedDeadlySinName(character.characterClass.className);
-        spellExtractionCount = data.spellExtractionCount;
-        character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
-        // RemoveInvalidPlayerActions();
     }
     public void SetAssignedDeadlySinName(string name) {
         _assignedDeadlySinName = name;
@@ -86,9 +78,12 @@ public class Minion {
             }
             //character.ownParty.PartyDeath();
             character.avatar.gameObject.SetActive(false);
-            character.currentRegion?.RemoveCharacterFromLocation(character);
-            character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
-            character.SetCurrentStructureLocation(deathStructure, false);
+
+            //No longer remove from region list even if character died to prevent inconsistency in data because if a dead character is picked up and dropped, he will be added in the structure location list again but wont be in region list
+            //https://trello.com/c/WTiGxjrK/1786-inconsistent-characters-at-location-list-in-region-with-characters-at-structure
+            //character.currentRegion?.RemoveCharacterFromLocation(character);
+            //character.SetRegionLocation(deathLocation); //set the specific location of this party, to the location it died at
+            //character.SetCurrentStructureLocation(deathStructure, false);
 
             // character.role?.OnDeath(character);
             character.traitContainer.RemoveAllTraitsAndStatusesByName(character, "Criminal"); //remove all criminal type traits
@@ -146,32 +141,32 @@ public class Minion {
         }
     }
 
-    #region Combat Ability
-    public void SetCombatAbility(CombatAbility combatAbility, bool showNewAbilityUI = false) {
-        if (this.combatAbility == null) {
-            this.combatAbility = combatAbility;
-            if (combatAbility != null && showNewAbilityUI) {
-                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, combatAbility);
-            }
-            Messenger.Broadcast(Signals.MINION_CHANGED_COMBAT_ABILITY, this);
-        } else {
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(new List<CombatAbility>() { this.combatAbility }, combatAbility, ReplaceCombatAbility, RejectCombatAbility);
-        }
-    }
-    public void SetCombatAbility(COMBAT_ABILITY combatAbility, bool showNewAbilityUI = false) {
-        SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(combatAbility), showNewAbilityUI);
-    }
-    private void ReplaceCombatAbility(object objToReplace, object objToAdd) {
-        CombatAbility newAbility = objToAdd as CombatAbility;
-        this.combatAbility = newAbility;
-    }
-    private void RejectCombatAbility(object objToReplace) {
+    //#region Combat Ability
+    //public void SetCombatAbility(CombatAbility combatAbility, bool showNewAbilityUI = false) {
+    //    if (this.combatAbility == null) {
+    //        this.combatAbility = combatAbility;
+    //        if (combatAbility != null && showNewAbilityUI) {
+    //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, combatAbility);
+    //        }
+    //        Messenger.Broadcast(Signals.MINION_CHANGED_COMBAT_ABILITY, this);
+    //    } else {
+    //        PlayerUI.Instance.replaceUI.ShowReplaceUI(new List<CombatAbility>() { this.combatAbility }, combatAbility, ReplaceCombatAbility, RejectCombatAbility);
+    //    }
+    //}
+    //public void SetCombatAbility(COMBAT_ABILITY combatAbility, bool showNewAbilityUI = false) {
+    //    SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(combatAbility), showNewAbilityUI);
+    //}
+    //private void ReplaceCombatAbility(object objToReplace, object objToAdd) {
+    //    CombatAbility newAbility = objToAdd as CombatAbility;
+    //    this.combatAbility = newAbility;
+    //}
+    //private void RejectCombatAbility(object objToReplace) {
 
-    }
-    public void ResetCombatAbilityCD() {
-        combatAbility.StopCooldown();
-    }
-    #endregion
+    //}
+    //public void ResetCombatAbilityCD() {
+    //    combatAbility.StopCooldown();
+    //}
+    //#endregion
 
     #region Invasion
     private void OnTickEnded() {
@@ -218,6 +213,14 @@ public class Minion {
         Messenger.AddListener(Signals.TICK_STARTED, UnsummonedHPRecovery);
         UnSubscribeListeners();
         SetIsSummoned(false);
+
+        //If a minion is unsummoned remove it from the region/structure list of characters
+        Region deathLocation = character.currentRegion;
+        LocationStructure deathStructure = character.currentStructure;
+        character.currentRegion?.RemoveCharacterFromLocation(character);
+        character.SetRegionLocation(deathLocation);
+        character.SetCurrentStructureLocation(deathStructure, false);
+
         character.behaviourComponent.SetIsHarassing(false, null);
         character.behaviourComponent.SetIsDefending(false, null);
         character.behaviourComponent.SetIsInvading(false, null);

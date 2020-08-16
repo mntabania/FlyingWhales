@@ -83,7 +83,7 @@ namespace Traits {
 
         private void HourlyCheck() {
             if (!_hasAlreadyDied) {
-                if(UnityEngine.Random.Range(0, 100) < 5) { //20
+                if(UnityEngine.Random.Range(0, 100) < 50) { //20
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Zombie_Death, owner);
                     owner.movementComponent.AdjustRunSpeedModifier(1f);
                     owner.movementComponent.AdjustWalkSpeedModifier(-0.5f);

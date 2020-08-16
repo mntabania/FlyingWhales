@@ -150,13 +150,13 @@ public class MinionCard : MonoBehaviour {
 
 
     public void OnHoverCombatAbility(object obj) {
-        COMBAT_ABILITY action;
-        if (minion != null) {
-            action = minion.combatAbility.type;
-        } else {
-            action = minionData.combatAbility;
-        }
-        UIManager.Instance.ShowSmallInfo(action.Description(), UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
+        //COMBAT_ABILITY action;
+        //if (minion != null) {
+        //    action = minion.combatAbility.type;
+        //} else {
+        //    action = minionData.combatAbility;
+        //}
+        //UIManager.Instance.ShowSmallInfo(action.Description(), UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
     }
     public void OnHoverExitCombatAbility() {
         UIManager.Instance.HideSmallInfo();

@@ -13,8 +13,8 @@ public class MinionPlayerSkill : SpellData {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, RACE.DEMON, false);
-        minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
+        Minion minion = CharacterManager.Instance.CreateNewMinion(className, RACE.DEMON, false);
+        //minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
         if (targetTile.structure?.settlementLocation != null && 
@@ -27,8 +27,8 @@ public class MinionPlayerSkill : SpellData {
         base.ActivateAbility(targetTile);
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
-        Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, RACE.DEMON, false);
-        minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
+        Minion minion = CharacterManager.Instance.CreateNewMinion(className, RACE.DEMON, false);
+        //minion.SetCombatAbility(COMBAT_ABILITY.FLAMESTRIKE);
         //PlayerManager.Instance.player.AddMinion(minion);
         minion.Summon(targetTile);
         minion.SetMinionPlayerSkillType(type);
