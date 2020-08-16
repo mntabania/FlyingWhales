@@ -22,7 +22,11 @@ public class MonsterGeneration : MapGenerationComponent {
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			yield return null; //no monsters in affatt
+		} else {
+			yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));	
+		}
 	}
 	#endregion
 	

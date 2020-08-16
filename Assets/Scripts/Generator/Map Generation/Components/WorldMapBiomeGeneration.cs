@@ -31,6 +31,14 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 				} else {
 					biome = BIOMES.DESERT;
 				} 
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+				if (i == 0) {
+					biome = BIOMES.FOREST;
+				} else if (i == 1) {
+					biome = BIOMES.SNOW;
+				} else {
+					biome = BIOMES.FOREST;
+				} 
 			} else {
 				biome = CollectionUtilities.GetRandomElement(choices);
 			}

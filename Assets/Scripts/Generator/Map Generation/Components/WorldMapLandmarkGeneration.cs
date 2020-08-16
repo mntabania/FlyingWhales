@@ -282,6 +282,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 100;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 0;
 				} else {
 					return 75;
 				}
@@ -290,6 +292,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
 				} else {
 					return 50;
 				}
@@ -297,6 +301,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+					return 100;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 					return 100;
 				} else {
 					return 35;
@@ -306,6 +312,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
 				} else {
 					return 35;
 				}
@@ -316,6 +324,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					return 75;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
 				} else {
 					return 0;
 				}

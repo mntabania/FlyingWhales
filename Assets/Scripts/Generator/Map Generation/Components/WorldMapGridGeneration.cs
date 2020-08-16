@@ -144,9 +144,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
 		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
-		// if (WorldConfigManager.Instance.isTutorialWorld) {
-		// 	regionCount = 1;
-		// }
 		if (worldMapTemplates.ContainsKey(regionCount)) {
 			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
 			WorldMapTemplate chosenTemplate;
@@ -183,7 +180,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 						}
 					}
 				};
-			}  else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 2,
 					worldMapWidth = 8,
@@ -193,6 +190,25 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 							0, new[] {
 								new RegionTemplate(4, 6),
 								new RegionTemplate(4, 6),
+							}
+						}
+					}
+				};
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 3,
+					worldMapWidth = 9,
+					worldMapHeight = 10,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(9, 5),
+							}
+						},
+						{
+							1, new[] {
+								new RegionTemplate(5, 5),
+								new RegionTemplate(4, 5),
 							}
 						}
 					}

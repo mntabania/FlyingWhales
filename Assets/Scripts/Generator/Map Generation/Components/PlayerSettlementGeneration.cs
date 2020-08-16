@@ -35,6 +35,10 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[3, 5]
 			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			validPortalTiles = new List<HexTile>() {
+				GridMap.Instance.map[4, 4]
+			};
 		}  else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
 				(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)

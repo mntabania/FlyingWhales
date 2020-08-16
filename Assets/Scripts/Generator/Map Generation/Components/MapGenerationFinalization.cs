@@ -79,7 +79,8 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 
-		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona || 
+		    WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
 			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
@@ -279,6 +280,16 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			structure.AddPOI(artifact);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
+			for (int i = 0; i < artifactChoices.Count; i++) {
+				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+				ARTIFACT_TYPE randomArtifact = artifactChoices[i];
+				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+				List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement() == false).ToList();
+				wilderness.AddPOI(artifact, CollectionUtilities.GetRandomElement(choices));
+			}	
 		} else {
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
 			//randomly generate 3 Artifacts

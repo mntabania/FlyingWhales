@@ -42,6 +42,9 @@ public class StartupManager : MonoBehaviour {
                     case WorldSettingsData.World_Type.Zenko:
                         scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Zenko.sce");
                         break;
+                    case WorldSettingsData.World_Type.Affatt:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
+                        break;
                     default:
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }

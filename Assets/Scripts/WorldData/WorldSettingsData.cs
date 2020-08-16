@@ -10,7 +10,8 @@ public class WorldSettingsData {
         Oona,
         Custom,
         Zenko,
-        Pangat_Loo
+        Pangat_Loo,
+        Affatt
     };
     
     public int numOfRegions { get; private set; }
@@ -149,6 +150,19 @@ public class WorldSettingsData {
         AddRace(RACE.HUMANS); ;
         AddBiome(BIOMES.GRASSLAND);
         AddBiome(BIOMES.DESERT);
+    }
+    public void SetAffattWorldSettings() {
+        Debug.Log("Set world settings as Affatt");
+        worldType = World_Type.Affatt;
+        numOfRegions = 3;
+        omnipotentMode = false;
+        noThreatMode = false;
+        ClearBiomes();
+        ClearRaces();
+        AddRace(RACE.HUMANS);
+        AddRace(RACE.ELVES);
+        AddBiome(BIOMES.SNOW);
+        AddBiome(BIOMES.FOREST);
     }
     #endregion
 

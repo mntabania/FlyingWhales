@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public class WorldPickerItem : MonoBehaviour {
     public WorldSettings.World worldType;
+    [TextArea]
     public string description;
     
     public void OnHoverEnter() {
