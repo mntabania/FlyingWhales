@@ -14,12 +14,12 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
-		//yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
-		//yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
-		//yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
-		//yield return MapGenerator.Instance.StartCoroutine(LoadItems());
-		//yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
-		//yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
+		yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
+		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
+		yield return MapGenerator.Instance.StartCoroutine(LoadItems());
+		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
+		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -30,7 +30,6 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		//TODO:
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
 	#endregion
@@ -80,7 +79,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			}
 		}
 
-		if (!WorldConfigManager.Instance.isTutorialWorld) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
 			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
@@ -96,37 +95,68 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
 				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
 			if (locationChoices.Count > 0) {
-				ItemGenerationSetting itemGenerationSetting =
-					WorldConfigManager.Instance.worldWideItemGenerationSetting;
-				List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
-				if (itemChoices != null) {
-					int iterations = itemGenerationSetting.iterations.Random();
-					for (int j = 0; j < iterations; j++) {
-						if (locationChoices.Count == 0) { break; } //no more location choices
-						ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
-						int randomAmount = randomMonsterSetting.minMaxRange.Random();
-						for (int k = 0; k < randomAmount; k++) {
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+					if (i == 1) {
+						//spawn multiple tombstones
+						string[] _classChoices = new[] {"Barbarian", "Archer", "Noble", "Peasant"};
+						int randomAmount = Random.Range(20, 30);
+						for (int j = 0; j < randomAmount; j++) {
 							if (locationChoices.Count == 0) { break; } //no more location choices
-							TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
 							LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
-							chosenTile.structure.AddPOI(
-								InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), chosenTile);
+							Tombstone tombstone = InnerMapManager.Instance.CreateNewTileObject<Tombstone>(TILE_OBJECT_TYPE.TOMBSTONE);
+							locationChoices.Remove(chosenTile);
+							
+						
+							Character character = CharacterManager.Instance.CreateNewCharacter(CollectionUtilities.GetRandomElement(_classChoices), RACE.ELVES, 
+								GameUtilities.RollChance(50) ? GENDER.MALE : GENDER.FEMALE, homeRegion: chosenTile.structure.location);
+							character.CreateMarker();
+							character.InitialCharacterPlacement(chosenTile, false);
+							character.marker.UpdatePosition();
+							character.Death();
+							tombstone.SetCharacter(character);
+							chosenTile.structure.AddPOI(tombstone, chosenTile);
+						}	
+					} else {
+						RandomRegionalItemGeneration(region, ref locationChoices);
+					}
+				} else {
+					RandomRegionalItemGeneration(region, ref locationChoices);
+					if (WorldConfigManager.Instance.isTutorialWorld && locationChoices.Count > 0) {
+						//spawn 7 chests randomly
+						for (int j = 0; j < 7; j++) {
+							if (locationChoices.Count == 0) { break; } //no more location choices
+							LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+							chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREASURE_CHEST), chosenTile);
 							locationChoices.Remove(chosenTile);
 						}
-					}	
-				}
-				if (WorldConfigManager.Instance.isTutorialWorld && locationChoices.Count > 0) {
-					//spawn 7 chests randomly
-					for (int j = 0; j < 7; j++) {
-						if (locationChoices.Count == 0) { break; } //no more location choices
-						LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
-						chosenTile.structure.AddPOI(
-							InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREASURE_CHEST), chosenTile);
-						locationChoices.Remove(chosenTile);
 					}
 				}
 			}
 			yield return null;
+		}
+	}
+	private void RandomRegionalItemGeneration(Region region, ref List<LocationGridTile> locationChoices) {
+		ItemGenerationSetting itemGenerationSetting =
+			WorldConfigManager.Instance.worldWideItemGenerationSetting;
+		List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
+		if (itemChoices != null) {
+			int iterations = itemGenerationSetting.iterations.Random();
+			for (int j = 0; j < iterations; j++) {
+				if (locationChoices.Count == 0) {
+					break;
+				} //no more location choices
+				ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
+				int randomAmount = randomMonsterSetting.minMaxRange.Random();
+				for (int k = 0; k < randomAmount; k++) {
+					if (locationChoices.Count == 0) {
+						break;
+					} //no more location choices
+					TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
+					LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+					chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), chosenTile);
+					locationChoices.Remove(chosenTile);
+				}
+			}
 		}
 	}
 	private IEnumerator LandmarkItemGeneration() {
@@ -229,24 +259,28 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Artifacts
 	private IEnumerator LoadArtifacts() {
-		List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
-
 		if (WorldConfigManager.Instance.isTutorialWorld) {
 			//if demo build, always spawn necronomicon at ancient ruins
-			artifactChoices.Remove(ARTIFACT_TYPE.Necronomicon);
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			//tutorial should always have 2 ancient graveyards.
 			LocationStructure ancientRuin = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			ancientRuin.AddPOI(artifact);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-			//if demo build, always spawn Ankh of anubis
-			artifactChoices.Remove(ARTIFACT_TYPE.Ankh_Of_Anubis);
+			//always spawn Ankh of anubis
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			LocationStructure targetStructure = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
 			targetStructure.AddPOI(artifact);
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			//always spawn Necronomicon
+			Region randomRegion = GridMap.Instance.allRegions[1];
+			//tutorial should always have 2 ancient graveyards.
+			LocationStructure structure = randomRegion.structures[STRUCTURE_TYPE.ANCIENT_GRAVEYARD][1];
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
+			structure.AddPOI(artifact);
 		} else {
+			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
 			//randomly generate 3 Artifacts
 			for (int i = 0; i < 3; i++) {
 				if (artifactChoices.Count == 0) { break; }

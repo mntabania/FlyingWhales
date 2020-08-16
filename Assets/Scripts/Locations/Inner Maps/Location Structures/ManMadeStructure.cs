@@ -8,7 +8,7 @@ namespace Inner_Maps.Location_Structures {
         private StructureTileObject _structureTileObject;
         public List<StructureWallObject> structureWalls { get; private set; }
 
-        public RESOURCE wallsAreMadeOf { get; private set; }
+        public RESOURCE wallsAreMadeOf { get; protected set; }
         public LocationStructureObject structureObj {get; private set;}
 
         #region Getters

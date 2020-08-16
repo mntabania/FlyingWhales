@@ -291,11 +291,10 @@ public class WorldSettings : MonoBehaviour {
             } else if (item.worldType == World.Icalawa) {
                 //TODO
             } else if (item.worldType == World.Pangat_Loo) {
-                //TODO
+                worldSettingsData.SetPangatLooWorldSettings();
             } else if (item.worldType == World.Affatt) {
                 //TODO
             } else if (item.worldType == World.Zenko) {
-                //TODO
                 worldSettingsData.SetZenkoWorldSettings();
             } else if (item.worldType == World.Customize) {
                 worldSettingsData.SetDefaultCustomWorldSettings();

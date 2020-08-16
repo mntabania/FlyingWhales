@@ -153,12 +153,12 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 1,
-					worldMapWidth = 14,
-					worldMapHeight = 9,
+					worldMapWidth = 13,
+					worldMapHeight = 8,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{
 							0, new[] {
-								new RegionTemplate(14, 9),
+								new RegionTemplate(13, 8),
 							}
 						}
 					}
@@ -179,6 +179,20 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 							1, new[] {
 								new RegionTemplate(7, 6),
 								new RegionTemplate(7, 6),
+							}
+						}
+					}
+				};
+			}  else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 2,
+					worldMapWidth = 8,
+					worldMapHeight = 6,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(4, 6),
+								new RegionTemplate(4, 6),
 							}
 						}
 					}

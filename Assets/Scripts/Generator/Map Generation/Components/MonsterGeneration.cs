@@ -114,6 +114,8 @@ public class MonsterGeneration : MapGenerationComponent {
 				}
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 				ZenkoRegionalMonsters(i, ref locationChoices);
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+				PangatLooRegionalMonsters(i, ref locationChoices);
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 				if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 					//spawn 4-8 ghosts
@@ -167,31 +169,9 @@ public class MonsterGeneration : MapGenerationComponent {
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//no landmark monsters in tutorial world
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-			//wolves at monster lair
-			List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-			for (int i = 0; i < monsterLairs.Count; i++) {
-				BaseLandmark landmark = monsterLairs[i];
-				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				int randomAmount = 3;
-				for (int k = 0; k < randomAmount; k++) {
-					CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);	
-				}
-			}
-			//Spiders at Temple
-			List<BaseLandmark> temples = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
-			for (int i = 0; i < temples.Count; i++) {
-				BaseLandmark landmark = temples[i];
-				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-				// int randomAmount = 2;
-				// for (int k = 0; k < randomAmount; k++) {
-				// 	CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
-				// }
-				//Giant spiders	
-				int randomGiantSpider = Random.Range(2, 5);
-				for (int k = 0; k < randomGiantSpider; k++) {
-					CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure);
-				}
-			}
+			OonaLandmarkMonsterGeneration();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			PangatLooLandmarkMonsterGeneration();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
 			for (int i = 0; i < allLandmarks.Count; i++) {
@@ -356,6 +336,72 @@ public class MonsterGeneration : MapGenerationComponent {
 				if (locationChoices.Count == 0) { break; }
 				Summon summon = CreateMonster(SUMMON_TYPE.Giant_Spider, locationChoices);
 				locationChoices.Remove(summon.gridTileLocation);
+			}
+		}
+	}
+	#endregion
+
+	#region Oona
+	private void OonaLandmarkMonsterGeneration() {
+		//wolves at monster lair
+		List<BaseLandmark> monsterLairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+		for (int i = 0; i < monsterLairs.Count; i++) {
+			BaseLandmark landmark = monsterLairs[i];
+			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			int randomAmount = 3;
+			for (int k = 0; k < randomAmount; k++) {
+				CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);
+			}
+		}
+		//Spiders at Temple
+		List<BaseLandmark> temples = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
+		for (int i = 0; i < temples.Count; i++) {
+			BaseLandmark landmark = temples[i];
+			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			// int randomAmount = 2;
+			// for (int k = 0; k < randomAmount; k++) {
+			// 	CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure);	
+			// }
+			//Giant spiders	
+			int randomGiantSpider = Random.Range(2, 5);
+			for (int k = 0; k < randomGiantSpider; k++) {
+				CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure);
+			}
+		}
+	}
+	#endregion
+	
+	#region Pangat Loo
+	private void PangatLooRegionalMonsters(int regionIndex, ref List<LocationGridTile> locationChoices) {
+		if (regionIndex == 1) {
+			//ghosts
+			int randomAmount = 8;
+			for (int k = 0; k < randomAmount; k++) {
+				if (locationChoices.Count == 0) { break; }
+				Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices);
+				locationChoices.Remove(summon.gridTileLocation);
+			}
+		}
+	}
+	private void PangatLooLandmarkMonsterGeneration() {
+		//skeletons at ancient graveyard
+		List<BaseLandmark> graveyards = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.ANCIENT_GRAVEYARD);
+		for (int i = 0; i < graveyards.Count; i++) {
+			BaseLandmark landmark = graveyards[i];
+			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			int randomAmount = 3;
+			for (int k = 0; k < randomAmount; k++) {
+				CreateMonster(SUMMON_TYPE.Skeleton, landmark.tileLocation.settlementOnTile, landmark, structure);
+			}
+		}
+		//Wolves at Monster Lair
+		List<BaseLandmark> monsterLair = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+		for (int i = 0; i < monsterLair.Count; i++) {
+			BaseLandmark landmark = monsterLair[i];
+			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+			int randomAmount = Random.Range(2, 5);
+			for (int k = 0; k < randomAmount; k++) {
+				CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);
 			}
 		}
 	}

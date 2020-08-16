@@ -17,6 +17,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			DetermineSettlementsForTutorial();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			DetermineSettlementsForSecondWorld();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			DetermineSettlementsForPangatLoo();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			DetermineSettlementsForZenko();
 		} else {
@@ -402,6 +404,27 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
 		// 	}
 		// }
+	}
+	private void DetermineSettlementsForPangatLoo() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			//region 1 (grassland)
+			GridMap.Instance.map[0, 1],
+			GridMap.Instance.map[1, 2],
+			GridMap.Instance.map[1, 3],
+			GridMap.Instance.map[1, 4],
+			GridMap.Instance.map[0, 2],
+			GridMap.Instance.map[2, 2],
+			GridMap.Instance.map[2, 3],
+			GridMap.Instance.map[2, 4],
+			GridMap.Instance.map[0, 3],
+		};
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+		}
 	}
 	#endregion
 	
