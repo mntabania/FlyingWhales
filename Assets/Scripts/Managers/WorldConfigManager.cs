@@ -19,12 +19,13 @@ public class WorldConfigManager : MonoBehaviour {
 
     [Header("Testing")] 
     [SerializeField] private bool _disableLogs;
+    public bool useRandomGenerationForScenarioMaps;
     public MapGenerationData mapGenerationData;    
     
     
     #region Getters
     public bool isTutorialWorld => WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial;
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     private bool disableLogs => _disableLogs;
 #else
     public bool disableLogs => true;

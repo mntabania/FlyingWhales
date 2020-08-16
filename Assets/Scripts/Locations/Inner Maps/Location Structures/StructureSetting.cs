@@ -8,5 +8,8 @@
             this.structureType = structureType;
             this.resource = resource;
         }
+        public override string ToString() {
+            return $"{resource.ToString()} {structureType.ToString()}";
+        }
     }
 }

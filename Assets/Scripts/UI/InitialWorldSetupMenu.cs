@@ -17,8 +17,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     public void Show() {
         UIManager.Instance.SetSpeedTogglesState(false);
 
-        regenerateWorldBtn.interactable =
-            WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom;
+        regenerateWorldBtn.interactable = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom;
         
         gameObject.SetActive(true);
     }

@@ -40,7 +40,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				List<HexTile> choices;
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					if (i == 0) {
-						choices = new List<HexTile>() { GridMap.Instance.map[12, 3] };	
+						choices = new List<HexTile>() { GridMap.Instance.map[11, 3] };	
 					} else {
 						choices = new List<HexTile>() { GridMap.Instance.map[3, 7] };
 					}
@@ -266,6 +266,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					//always ensure that an ancient graveyard is spawned in second world
 					return 1;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+					return 3;
 				} else {
 					return 0;
 				}
@@ -280,6 +282,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 100;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 0;
 				} else {
 					return 75;
 				}
@@ -288,6 +292,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
 				} else {
 					return 50;
 				}
@@ -295,6 +301,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+					return 100;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 					return 100;
 				} else {
 					return 35;
@@ -304,6 +312,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
 				} else {
 					return 35;
 				}
@@ -312,6 +322,10 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 100;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+					return 75;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
 				} else {
 					return 0;
 				}

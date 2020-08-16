@@ -11,7 +11,8 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class SettlementGeneration : MapGenerationComponent {
-	
+
+	#region Random World
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Creating settlements...");
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -24,6 +25,90 @@ public class SettlementGeneration : MapGenerationComponent {
 		ApplyPreGeneratedRelationships(data);
 		yield return null;
 	}
+	private IEnumerator CreateSettlement(Region region, MapGenerationData data) {
+		List<HexTile> settlementTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
+		if (WorldConfigManager.Instance.isTutorialWorld) {
+			Assert.IsTrue(settlementTiles.Count == 4, "Settlement tiles of demo build is not 4!");
+		}
+		//create village landmark on settlement tiles
+		for (int i = 0; i < settlementTiles.Count; i++) {
+			HexTile villageTile = settlementTiles[i];
+			LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
+		}
+
+		List<HexTileIsland> settlementIslands = GetSettlementIslandsInRegion(region);
+
+		for (int i = 0; i < settlementIslands.Count; i++) {
+			HexTileIsland island = settlementIslands[i];
+			yield return MapGenerator.Instance.StartCoroutine(GenerateRandomSettlement(region, data, island.tilesInIsland));
+		}
+	}
+	private IEnumerator GenerateRandomSettlement(Region region, MapGenerationData data, List<HexTile> settlementTiles) {
+		List<RACE> validRaces = WorldSettings.Instance.worldSettingsData.races;
+		RACE neededRace = GetFactionRaceForRegion(region);
+		if (validRaces.Contains(neededRace)) {
+			Faction faction = GetFactionToOccupySettlement(neededRace);
+			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
+
+			NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTiles.ToArray());
+			npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
+			List<StructureSetting> structureTypes;
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
+				structureTypes = new List<StructureSetting>() {
+					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE)
+				};
+			}
+			else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+				structureTypes = new List<StructureSetting>() {
+					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
+				};
+			}
+			else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+				structureTypes = new List<StructureSetting>() {
+					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
+					new StructureSetting(STRUCTURE_TYPE.BARRACKS, RESOURCE.STONE),
+				};
+			}
+			else {
+				structureTypes = GenerateStructures(npcSettlement, faction);
+			}
+			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
+			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjects());
+
+			int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
+			//Add combatant classes from faction type to location class manager
+			for (int i = 0; i < faction.factionType.combatantClasses.Count; i++) {
+				npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[i]);
+			}
+			List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
+			
+			List<TileObject> objectsInDwellings =
+				npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
+			for (int i = 0; i < objectsInDwellings.Count; i++) {
+				TileObject tileObject = objectsInDwellings[i];
+				tileObject.UpdateOwners();
+			}
+
+			CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
+			npcSettlement.Initialize();
+		}
+	}
+	#endregion
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
@@ -41,10 +126,8 @@ public class SettlementGeneration : MapGenerationComponent {
 				}
 				
 				//create faction
-				FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForRace(settlementTemplate.factionRace);
-				Faction faction = FactionManager.Instance.CreateNewFaction(factionType);
-				faction.factionType.SetAsDefault();
-				
+				Faction faction = GetFactionForScenario(settlementTemplate);
+
 				LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, tilesInSettlement);
@@ -56,11 +139,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjects());
 				
 				int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
-				//Add combatant classes from faction type to location class manager
-				for (int j = 0; j < faction.factionType.combatantClasses.Count; j++) {
-					npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[j]);
-				}
-				List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, settlementTemplate.minimumVillagerCount);
+				List<Character> spawnedCharacters = CreateSettlementResidentsForScenario(dwellingCount, npcSettlement, faction, data, settlementTemplate.minimumVillagerCount);
 
 				//update objects owners in dwellings
 				List<TileObject> objectsInDwellings = npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
@@ -75,6 +154,140 @@ public class SettlementGeneration : MapGenerationComponent {
 			}
 		}
 	}
+	private Faction GetFactionForScenario(SettlementTemplate settlementTemplate) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			if (settlementTemplate.factionRace == RACE.ELVES) {
+				List<Faction> factions = FactionManager.Instance.GetMajorFactionWithRace(settlementTemplate.factionRace);
+				if (factions != null) {
+					return CollectionUtilities.GetRandomElement(factions);
+				} else {
+					return CreateDefaultFaction(settlementTemplate.factionRace); 
+				}
+			} else {
+				return CreateDefaultFaction(settlementTemplate.factionRace);
+			}
+		} else {
+			Faction faction = CreateDefaultFaction(settlementTemplate.factionRace);
+			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+				faction.factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
+			}
+			return faction;
+		}
+	}
+	private static Faction CreateDefaultFaction(RACE race) {
+		FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForRace(race);
+		Faction faction = FactionManager.Instance.CreateNewFaction(factionType);
+		faction.factionType.SetAsDefault();
+		return faction;
+	}
+	private List<Character> CreateSettlementResidentsForScenario(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data, int providedCitizenCount = -1) {
+		//Add combatant classes from faction type to location class manager
+		for (int j = 0; j < faction.factionType.combatantClasses.Count; j++) {
+			npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[j]);
+		}
+
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			List<string> elfClassesInOrder = new List<string> {"Craftsman", "Craftsman", "Peasant", "Peasant", "Miner", "Miner"};
+			List<Character> createdCharacters = new List<Character>();
+			int citizenCount = 0;
+			for (int i = 0; i < dwellingCount; i++) {
+				List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
+				if (availableDwellings.Count == 0) {
+					break; //no more dwellings
+				}
+				Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
+				if (i >= 0 && i < 9) {
+					int coupleChance = 35;
+					int afterCoupleGenerationAmount = citizenCount + 2;
+					if (afterCoupleGenerationAmount <= 18) {
+						coupleChance = 100;
+					}
+
+					if (GameUtilities.RollChance(coupleChance)) {
+						//spawn human couples
+						//couple
+						List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
+						if (couples.Count > 0) {
+							Couple couple = CollectionUtilities.GetRandomElement(couples);
+							createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement));
+							citizenCount += 2;
+						} else {
+							//no more couples left	
+							List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(faction.race, data);
+							if (siblingCouples.Count > 0) {
+								Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
+								createdCharacters.AddRange( SpawnCouple(couple, dwelling, faction, npcSettlement));
+								citizenCount += 2;
+							} else {
+								//no more sibling Couples	
+								//spawn single
+								TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount);
+							}
+						}
+					} else {
+						//spawn single
+						TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount);
+					}
+				} else {
+					if (citizenCount >= 24) {
+						break;
+					}
+					//spawn peasant elves couple
+					if (elfClassesInOrder.Count == 0) {
+						elfClassesInOrder.Add("Craftsman");
+						elfClassesInOrder.Add("Craftsman");
+						elfClassesInOrder.Add("Peasant");
+						elfClassesInOrder.Add("Peasant");
+						elfClassesInOrder.Add("Miner");
+						elfClassesInOrder.Add("Miner");
+					}
+					List<Couple> couples = GetAvailableCouplesToBeSpawned(RACE.ELVES, data);
+					if (couples.Count > 0) {
+						Couple couple = CollectionUtilities.GetRandomElement(couples);
+						createdCharacters.Add(SpawnCharacter(couple.character1, elfClassesInOrder.First(), dwelling, faction, npcSettlement));
+						createdCharacters.Add(SpawnCharacter(couple.character2, elfClassesInOrder[1], dwelling, faction, npcSettlement));
+						elfClassesInOrder.RemoveRange(0, 2);
+						citizenCount += 2;
+					} else {
+						//no more couples left	
+						List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(RACE.ELVES, data);
+						if (siblingCouples.Count > 0) {
+							Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
+							createdCharacters.Add(SpawnCharacter(couple.character1, elfClassesInOrder.First(), dwelling, faction, npcSettlement));
+							createdCharacters.Add(SpawnCharacter(couple.character2, elfClassesInOrder[1], dwelling, faction, npcSettlement));
+							elfClassesInOrder.RemoveRange(0, 2);
+							citizenCount += 2;
+						} else {
+							//no more sibling Couples	
+							//spawn single
+							TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, elfClassesInOrder.First());
+							elfClassesInOrder.RemoveAt(0);
+						}
+					}
+				}
+			}
+			return createdCharacters;
+		} else {
+			return GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, providedCitizenCount);	
+		}
+	}
+	private void TrySpawnSingleCharacter(NPCSettlement npcSettlement, Faction faction, MapGenerationData data, Dwelling dwelling, ref List<Character> createdCharacters, ref int citizenCount, string className = "") {
+		PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
+		string classString = string.IsNullOrEmpty(className) ? npcSettlement.classManager.GetCurrentClassToCreate() : className;
+		if (singleCharacter != null) {
+			createdCharacters.Add(SpawnCharacter(singleCharacter, classString, dwelling, faction, npcSettlement));
+			citizenCount += 1;
+		} else {
+			//no more characters to spawn
+			Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
+			FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
+			data.familyTreeDatabase.AddFamilyTree(newFamily);
+			singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
+			Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
+			createdCharacters.Add(SpawnCharacter(singleCharacter, classString, dwelling, faction, npcSettlement));
+			citizenCount += 1;
+		}
+	}
 	#endregion
 	
 	#region Saved World
@@ -82,74 +295,6 @@ public class SettlementGeneration : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
 	#endregion
-	
-	private IEnumerator CreateSettlement(Region region, MapGenerationData data) {
-		List<HexTile> settlementTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
-		if (WorldConfigManager.Instance.isTutorialWorld) {
-			Assert.IsTrue(settlementTiles.Count == 4, "Settlement tiles of demo build is not 4!");
-		}
-
-		//create village landmark on settlement tiles
-		for (int i = 0; i < settlementTiles.Count; i++) {
-			HexTile villageTile = settlementTiles[i];
-			LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
-		}
-
-		List<RACE> validRaces = WorldConfigManager.Instance.isTutorialWorld
-			? new List<RACE>() {RACE.HUMANS, RACE.ELVES}
-			: WorldSettings.Instance.worldSettingsData.races;
-
-		RACE neededRace = GetFactionRaceForRegion(region);
-		if (validRaces.Contains(neededRace)) {
-			Faction faction = GetFactionToOccupySettlement(neededRace);
-			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
-			
-			NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement
-				(region, locationType, settlementTiles.ToArray());
-			npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
-			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
-			List<StructureSetting> structureTypes;
-			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
-				structureTypes = new List<StructureSetting>() {
-					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
-					new StructureSetting(STRUCTURE_TYPE.FARM, RESOURCE.STONE), 
-					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE), 
-					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE)
-				};
-			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-				structureTypes = new List<StructureSetting>() {
-					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE), 
-					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
-					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
-					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
-					new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
-				};
-			} else {
-				structureTypes = GenerateStructures(npcSettlement, faction);
-			}
-			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(npcSettlement, region.innerMap, structureTypes.ToArray()));
-			yield return MapGenerator.Instance.StartCoroutine(npcSettlement.PlaceInitialObjects());
-
-			int dwellingCount = npcSettlement.structures[STRUCTURE_TYPE.DWELLING].Count;
-			//Add combatant classes from faction type to location class manager
-			for (int i = 0; i < faction.factionType.combatantClasses.Count; i++) {
-				npcSettlement.classManager.AddCombatantClass(faction.factionType.combatantClasses[i]);
-			}
-			List<Character> spawnedCharacters = GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data);
-			
-
-			List<TileObject> objectsInDwellings =
-				npcSettlement.GetTileObjectsFromStructures<TileObject>(STRUCTURE_TYPE.DWELLING, o => true);
-			for (int i = 0; i < objectsInDwellings.Count; i++) {
-				TileObject tileObject = objectsInDwellings[i];
-				tileObject.UpdateOwners();
-			}
-			
-			CharacterManager.Instance.PlaceInitialCharacters(spawnedCharacters, npcSettlement);
-			npcSettlement.Initialize();
-			
-		}
-	}
 
 	#region Settlement Structures
 	private List<StructureSetting> GenerateStructures(NPCSettlement settlement, Faction faction) {
@@ -461,8 +606,59 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 		return chosenFaction;
 	}
+	private List<HexTileIsland> GetSettlementIslandsInRegion(Region region) {
+		List<HexTile> inhabitedTiles = region.GetTilesWithFeature(TileFeatureDB.Inhabited_Feature);
+		
+		List<HexTileIsland> islands = new List<HexTileIsland>();
+		for (int i = 0; i < inhabitedTiles.Count; i++) {
+			HexTile tile = inhabitedTiles[i];
+			HexTileIsland island = new HexTileIsland(tile);
+			islands.Add(island);
+		}
+
+		for (int i = 0; i < islands.Count; i++) {
+			HexTileIsland island = islands[i];
+			for (int j = 0; j < islands.Count; j++) {
+				HexTileIsland otherIsland = islands[j];
+				if (island != otherIsland) {
+					if (island.IsConnectedToThisIsland(otherIsland)) {
+						island.MergeIsland(otherIsland);
+					}
+				}
+			}
+		}
+
+		return islands.Where(x => x.tilesInIsland.Count > 0).ToList();
+	}
 	#endregion
 	
+}
+
+public class HexTileIsland {
+	public List<HexTile> tilesInIsland { get; }
+
+	public HexTileIsland(HexTile tile) {
+		tilesInIsland = new List<HexTile> {tile};
+	}
+	public void MergeIsland(HexTileIsland otherIsland) {
+		tilesInIsland.AddRange(otherIsland.tilesInIsland);
+		otherIsland.ClearIsland();
+	}
+	public void ClearIsland() {
+		tilesInIsland.Clear();
+	}
+	public bool IsConnectedToThisIsland(HexTileIsland otherIsland) {
+		for (int i = 0; i < tilesInIsland.Count; i++) {
+			HexTile tileInIsland = tilesInIsland[i];
+			for (int j = 0; j < tileInIsland.AllNeighbours.Count; j++) {
+				HexTile neighbour = tileInIsland.AllNeighbours[j];
+				if (otherIsland.tilesInIsland.Contains(neighbour)) {
+					return true;
+				}	
+			}
+		}
+		return false;
+	}
 }
 
 public class Couple : IEquatable<Couple> {

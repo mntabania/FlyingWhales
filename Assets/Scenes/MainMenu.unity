@@ -3570,6 +3570,51 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &442909253 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1035131528441808496, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 9016050650342384831}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &442909255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442909253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 10
+    m_Right: 10
+    m_Top: 0
+    m_Bottom: 10
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+--- !u!114 &442909257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 442909253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
 --- !u!1 &447629299
 GameObject:
   m_ObjectHideFlags: 0
@@ -3840,6 +3885,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e84516e6c42154a95deac0b8f2b562, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &502459206 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5651743549493244524, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 9016050650342384831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba0368c7b6c604543b020e8a34f5ab84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!224 &502459208 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 9016050650342384831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &503975100
 GameObject:
   m_ObjectHideFlags: 0
@@ -18535,6 +18598,79 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!1 &1266967643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1266967646}
+  - component: {fileID: 1266967645}
+  - component: {fileID: 1266967644}
+  m_Layer: 5
+  m_Name: TMP SubMeshUI [Eczar-SemiBold(Hinted Smooth 24) Material]
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1266967644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266967643}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_fontAsset: {fileID: 11400000, guid: a0d8948b3ccafa2479b8a2f54583dc3e, type: 2}
+  m_spriteAsset: {fileID: 0}
+  m_material: {fileID: 0}
+  m_sharedMaterial: {fileID: 0}
+  m_isDefaultMaterial: 0
+  m_padding: 0
+  m_canvasRenderer: {fileID: 1266967645}
+  m_TextComponent: {fileID: 502459206}
+  m_materialReferenceIndex: 1
+--- !u!222 &1266967645
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266967643}
+  m_CullTransparentMesh: 0
+--- !u!224 &1266967646
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266967643}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 502459208}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1287872044
 GameObject:
   m_ObjectHideFlags: 0
@@ -19021,7 +19157,7 @@ MonoBehaviour:
   resolutionsDropdown: {fileID: 1064729828}
   graphicsDropdown: {fileID: 144290788}
   fullscreenToggle: {fileID: 1999545694}
-  targetFrameRate: 144
+  targetFrameRate: 60
   edgePanningToggle: {fileID: 86800207}
   skipTutorialsToggle: {fileID: 182572116}
   miscParentGO: {fileID: 1874249760}
@@ -19744,6 +19880,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1547830528}
   m_CullTransparentMesh: 0
+--- !u!21 &1552568059
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Eczar-SemiBold(Hinted Smooth 18) Material
+  m_Shader: {fileID: 4800000, guid: 128e987d567d4e2c824d754223b3f3b0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _FaceTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 28392858005991328, guid: c3002a16d75dbb14ba70296a0a340a66,
+          type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ColorMask: 15
+    - _DiffusePower: 1
+    - _MaskSoftnessX: 0
+    - _MaskSoftnessY: 0
+    - _Padding: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _VertexOffsetX: 0
+    - _VertexOffsetY: 0
+    m_Colors:
+    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1574324793
 GameObject:
   m_ObjectHideFlags: 0
@@ -20365,6 +20546,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479e32eb96228f24da67da1bf52322c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useSaveData: 0
   alwaysResetSpecialPopupsOnStartup: 0
   alwaysResetBonusTutorialsOnStartup: 0
 --- !u!4 &1625756931
@@ -20431,7 +20613,7 @@ MonoBehaviour:
   initialArtifactChoices: 010000000200000003000000
   _isDemoBuild: 0
   _disableLogs: 0
-  useSaveData: 1
+  useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1665094242
 GameObject:
   m_ObjectHideFlags: 0
@@ -25211,7 +25393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2083051828}
+  m_Material: {fileID: 1552568059}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -25221,7 +25403,7 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: c3002a16d75dbb14ba70296a0a340a66, type: 2}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 2083051828}
+  m_sharedMaterial: {fileID: 1552568059}
   m_isDefaultMaterial: 0
   m_padding: 0
   m_canvasRenderer: {fileID: 1670528556}
@@ -26657,6 +26839,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1881192751}
   m_CullTransparentMesh: 0
+--- !u!1 &1892223955 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4884844105650126151, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+    type: 3}
+  m_PrefabInstance: {fileID: 9016050650342384831}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1892223959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1892223955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &1903149705
 GameObject:
   m_ObjectHideFlags: 0
@@ -28835,51 +29037,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 0
---- !u!21 &2083051828
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Eczar-SemiBold(Hinted Smooth 18) Material
-  m_Shader: {fileID: 4800000, guid: 128e987d567d4e2c824d754223b3f3b0, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _FaceTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 28392858005991328, guid: c3002a16d75dbb14ba70296a0a340a66,
-          type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _ColorMask: 15
-    - _DiffusePower: 1
-    - _MaskSoftnessX: 0
-    - _MaskSoftnessY: 0
-    - _Padding: 0
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _VertexOffsetX: 0
-    - _VertexOffsetY: 0
-    m_Colors:
-    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2097671370
 GameObject:
   m_ObjectHideFlags: 0
@@ -29228,6 +29385,268 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 148659447016155246, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 210856350599830974, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 836583924083511358, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: description
+      value: A single desert region with a burgeoning human town. Unknown to these
+        residents, the surrounding caves are filled with danger. There is a hibernating
+        dragon in one of the nearby caves. And dangerous trolls lurk in some of the
+        others. Rumors also abound of women seeing doppelgangers of themselves, and
+        wolves can sometimes be seen hunting. Finally, there is a strange artifact
+        of unknown origin somewhere nearby - is it connected to the dozens of various
+        crystals scattered around the place?
+      objectReference: {fileID: 0}
+    - target: {fileID: 1035131528441808496, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051141547691287360, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_text
+      value: 'A single snow region home to a small but powerful elven tribe. Somehow,
+        most of them are Blessed. Those who are not are unfortunately Robust. There
+        is however one lone Evil elf among them that can be the key to shattering
+        the peace.
+
+        
+
+        A legendary sword can be found in the middle
+        of the place but it is stuck in stone and it doesn''t look like it can be
+        taken out easily. And on the other side of the map are ruined structures
+        housing various creatures. An abandoned zoo, perhaps?'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051141547691287360, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: 183
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051141547691287360, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 480
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051141547691287360, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051141547691287360, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1051141547691287360, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1108991453496799278, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: description
+      value: 'A single snow region home to a small but powerful elven tribe. Somehow,
+        most of them are Blessed. Those who are not are unfortunately Robust. There
+        is however one lone Evil elf among them that can be the key to shattering
+        the peace.
+
+
+        A legendary sword can be found in the middle of the
+        place but it is stuck in stone and it doesn''t look like it can be taken
+        out easily. And on the other side of the map are ruined structures housing
+        various creatures. An abandoned zoo, perhaps?'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 753
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.00030517578
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 275.4404
+      objectReference: {fileID: 0}
+    - target: {fileID: 1128708192604602362, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 563.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2981778139588901591, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2998376086300823303, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -39.600403
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 225.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 543.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5248787348825084065, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5651743549493244524, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_fontStyle
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5651743549493244524, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_textInfo.materialCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -19.800201
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 39.600403
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 543.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6448516970590072686, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 281.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 6853414469538171111, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: description
+      value: Four regions, each one a different biome and home to a different faction.
+        The snow region is the residence of 10 Cold Blooded elves. The grassland
+        region is home to 10 Electric humans. The forest region is where 10 Venomous
+        elves reside. The desert region houses 10 Fireproof humans. They are all
+        at peace with each other... for now.
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911108010467577613, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: description
+      value: This is a 2 region scenario for our undead loving overlords. There is
+        a huge human town on one region, while the other region is a haunted desert
+        full of elven tombstones, skeletons and ghosts. The Necronomicon makes a
+        repeat appearance here.
+      objectReference: {fileID: 0}
+    - target: {fileID: 8387193232896632932, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: description
+      value: 'A 3 region scenario. All three regions are claimed by a sprawling elven
+        kingdom. There is also a small human town on one region and they are fighting
+        for survival. For some strange reason, there are no monsters in this world
+        but there are plenty of various artifacts to work with.
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8391787373515163499, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9016050650569718918, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -29337,6 +29756,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: World Settings
+      objectReference: {fileID: 0}
+    - target: {fileID: 9016050650819365467, guid: abf7ee04770a5b04fa3e6f27bf35a6ad,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abf7ee04770a5b04fa3e6f27bf35a6ad, type: 3}

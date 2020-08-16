@@ -272,7 +272,7 @@ public class WorldSettings : MonoBehaviour {
 
     #region World Picker
     public void OnHoverEnterWorldPicker(WorldPickerItem item) {
-        ShowHover(item.worldType.ToString(), item.description);
+        ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), item.description);
     }
     public void OnHoverExitWorldPicker(WorldPickerItem item) {
         if(toggledWorldPicker != null && toggledWorldPicker.description != string.Empty) {
@@ -291,11 +291,10 @@ public class WorldSettings : MonoBehaviour {
             } else if (item.worldType == World.Icalawa) {
                 //TODO
             } else if (item.worldType == World.Pangat_Loo) {
-                //TODO
+                worldSettingsData.SetPangatLooWorldSettings();
             } else if (item.worldType == World.Affatt) {
-                //TODO
+                worldSettingsData.SetAffattWorldSettings();
             } else if (item.worldType == World.Zenko) {
-                //TODO
                 worldSettingsData.SetZenkoWorldSettings();
             } else if (item.worldType == World.Customize) {
                 worldSettingsData.SetDefaultCustomWorldSettings();

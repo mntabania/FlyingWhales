@@ -144,21 +144,18 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Generating world map...");
 		int regionCount = WorldSettings.Instance.worldSettingsData.numOfRegions;
-		// if (WorldConfigManager.Instance.isTutorialWorld) {
-		// 	regionCount = 1;
-		// }
 		if (worldMapTemplates.ContainsKey(regionCount)) {
 			List<WorldMapTemplate> choices = worldMapTemplates[regionCount];
 			WorldMapTemplate chosenTemplate;
 			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 1,
-					worldMapWidth = 14,
-					worldMapHeight = 9,
+					worldMapWidth = 13,
+					worldMapHeight = 8,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{
 							0, new[] {
-								new RegionTemplate(14, 9),
+								new RegionTemplate(13, 8),
 							}
 						}
 					}
@@ -179,6 +176,39 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 							1, new[] {
 								new RegionTemplate(7, 6),
 								new RegionTemplate(7, 6),
+							}
+						}
+					}
+				};
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 2,
+					worldMapWidth = 8,
+					worldMapHeight = 6,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(4, 6),
+								new RegionTemplate(4, 6),
+							}
+						}
+					}
+				};
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+				chosenTemplate = new WorldMapTemplate() {
+					regionCount = 3,
+					worldMapWidth = 9,
+					worldMapHeight = 10,
+					regions = new Dictionary<int, RegionTemplate[]>() {
+						{
+							0, new[] {
+								new RegionTemplate(9, 5),
+							}
+						},
+						{
+							1, new[] {
+								new RegionTemplate(5, 5),
+								new RegionTemplate(4, 5),
 							}
 						}
 					}

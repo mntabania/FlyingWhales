@@ -9,12 +9,12 @@ namespace Inner_Maps.Location_Structures {
         //public List<Character> residents => null;
         //#endregion
 
-        public CityCenter(Region location)
-            : base(STRUCTURE_TYPE.CITY_CENTER, location) {
+        public CityCenter(Region location) : base(STRUCTURE_TYPE.CITY_CENTER, location) {
+            wallsAreMadeOf = RESOURCE.WOOD;
         }
 
-        public CityCenter(Region location, SaveDataLocationStructure data)
-            : base(location, data) {
+        public CityCenter(Region location, SaveDataLocationStructure data) : base(location, data) {
+            wallsAreMadeOf = RESOURCE.WOOD;
         }
 
         //public void AddResident(Character character) {

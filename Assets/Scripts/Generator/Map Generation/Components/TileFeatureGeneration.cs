@@ -17,8 +17,12 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			DetermineSettlementsForTutorial();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 			DetermineSettlementsForSecondWorld();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			DetermineSettlementsForPangatLoo();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
 			DetermineSettlementsForZenko();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			DetermineSettlementsForAffatt();
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			succeess = TryCreateSettlements(data);
@@ -384,6 +388,70 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GridMap.Instance.map[8, 4],
 			GridMap.Instance.map[9, 4],
 			// GridMap.Instance.map[9, 3],
+		};
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+		}
+		
+		// List<HexTile> neighbouringTiles = GetNeighbouringTiles(chosenTiles);
+		// for (int i = 0; i < neighbouringTiles.Count; i++) {
+		// 	HexTile neighbour = neighbouringTiles[i];
+		// 	if (i == 0) {
+		// 		neighbour.SetElevation(ELEVATION.PLAIN);
+		// 	} else {
+		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
+		// 	}
+		// }
+	}
+	private void DetermineSettlementsForPangatLoo() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			//region 1 (grassland)
+			GridMap.Instance.map[0, 1],
+			GridMap.Instance.map[1, 2],
+			GridMap.Instance.map[1, 3],
+			GridMap.Instance.map[1, 4],
+			GridMap.Instance.map[0, 2],
+			GridMap.Instance.map[2, 2],
+			GridMap.Instance.map[2, 3],
+			GridMap.Instance.map[2, 4],
+			GridMap.Instance.map[0, 3],
+		};
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+		}
+	}
+	private void DetermineSettlementsForAffatt() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			//region 1 (big forest region)
+			//first settlement
+			GridMap.Instance.map[1, 2],
+			GridMap.Instance.map[1, 3],
+			GridMap.Instance.map[2, 3],
+			GridMap.Instance.map[2, 2],
+			//second settlement
+			GridMap.Instance.map[7, 2],
+			GridMap.Instance.map[7, 3],
+			GridMap.Instance.map[6, 1],
+			GridMap.Instance.map[5, 3],
+			GridMap.Instance.map[6, 2],
+			//region 4 (snow region)
+			GridMap.Instance.map[3, 6],
+			GridMap.Instance.map[2, 6],
+			GridMap.Instance.map[2, 7],
+			GridMap.Instance.map[3, 7],
+			//region 4 (forest region)
+			GridMap.Instance.map[6, 8],
+			GridMap.Instance.map[6, 7],
+			GridMap.Instance.map[7, 7],
+			GridMap.Instance.map[8, 7],
 		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {

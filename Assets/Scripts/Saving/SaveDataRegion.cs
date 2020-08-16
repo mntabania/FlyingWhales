@@ -16,7 +16,7 @@ public class SaveDataRegion : SaveData<Region> {
 
     public SaveDataInnerMap innerMapSave;
     
-    public override void Save(Region region) {
+    public void Save(Region region, bool saveInnerMap = true) {
         id = region.id;
         name = region.name;
         coreTileID = region.coreTile.id;
@@ -38,9 +38,10 @@ public class SaveDataRegion : SaveData<Region> {
             saveDataLocationStructure.Save(structure);
             structureSaveData[i] = saveDataLocationStructure;
         }
-        
-        innerMapSave = new SaveDataInnerMap();
-        innerMapSave.Save(region.innerMap);
+        if (saveInnerMap) {
+            innerMapSave = new SaveDataInnerMap();
+            innerMapSave.Save(region.innerMap);    
+        }
     }
 
     #region Structure

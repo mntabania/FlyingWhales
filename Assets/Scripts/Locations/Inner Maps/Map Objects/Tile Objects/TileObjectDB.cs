@@ -228,7 +228,7 @@ public static class TileObjectDB {
             maxHP = 200,
         } },
         { TILE_OBJECT_TYPE.ICE, new TileObjectData() {
-            maxHP = 100,
+            maxHP = 200,
         } },
         { TILE_OBJECT_TYPE.TREASURE_CHEST, new TileObjectData() {
             maxHP = 200,

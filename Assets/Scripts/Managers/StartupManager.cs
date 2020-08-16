@@ -36,27 +36,29 @@ public class StartupManager : MonoBehaviour {
                     case WorldSettingsData.World_Type.Oona:
                         scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Oona.sce");
                         break;
+                    case WorldSettingsData.World_Type.Pangat_Loo:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Pangat_Loo.sce");
+                        break;
                     case WorldSettingsData.World_Type.Zenko:
                         scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Zenko.sce");
+                        break;
+                    case WorldSettingsData.World_Type.Affatt:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
                         break;
                     default:
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }
-                yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));
-                //else {
-                //    Debug.Log("Generating random world...");
-                //    yield return StartCoroutine(mapGenerator.InitializeWorld());
-                //}
+
+                if (scenarioMapData != null && !WorldConfigManager.Instance.useRandomGenerationForScenarioMaps) {
+                    yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));    
+                } else {
+                    Debug.Log("Generating random world...");
+                    yield return StartCoroutine(mapGenerator.InitializeWorld());    
+                }
             }
             else {
-                // if (WorldConfigManager.Instance.useSaveData) {
-                //     SaveDataCurrentProgress saveData = SaveManager.Instance.GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/Test.sav");;
-                //     yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
-                // }
-                // else {
                 Debug.Log("Generating random world...");
                 yield return StartCoroutine(mapGenerator.InitializeWorld());
-                // }
             }
         }
     }

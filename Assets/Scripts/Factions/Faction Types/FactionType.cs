@@ -25,6 +25,11 @@ namespace Factions.Faction_Types {
         public void AddIdeology(FactionIdeology ideology) {
             ideologies.Add(ideology);
         }
+        public void RemoveIdeology(FACTION_IDEOLOGY ideology) {
+            if (HasIdeology(ideology, out var factionIdeology)) {
+                ideologies.Remove(factionIdeology);
+            }
+        }
         public void ClearIdeologies() {
             ideologies.Clear();
         }
@@ -35,6 +40,17 @@ namespace Factions.Faction_Types {
                     return true;
                 }
             }
+            return false;
+        }
+        public bool HasIdeology(FACTION_IDEOLOGY ideology, out FactionIdeology factionIdeology) {
+            for (int i = 0; i < ideologies.Count; i++) {
+                FactionIdeology ideal = ideologies[i];
+                if (ideal.ideologyType == ideology) {
+                    factionIdeology = ideal;
+                    return true;
+                }
+            }
+            factionIdeology = null;
             return false;
         }
         #endregion

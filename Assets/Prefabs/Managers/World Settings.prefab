@@ -1,5 +1,78 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1266967643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1266967646}
+  - component: {fileID: 1266967645}
+  - component: {fileID: 1266967644}
+  m_Layer: 5
+  m_Name: TMP SubMeshUI [Eczar-SemiBold(Hinted Smooth 24) Material]
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1266967646
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266967643}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6448516970590072686}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1266967645
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266967643}
+  m_CullTransparentMesh: 0
+--- !u!114 &1266967644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1266967643}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_fontAsset: {fileID: 11400000, guid: a0d8948b3ccafa2479b8a2f54583dc3e, type: 2}
+  m_spriteAsset: {fileID: 0}
+  m_material: {fileID: 0}
+  m_sharedMaterial: {fileID: 0}
+  m_isDefaultMaterial: 0
+  m_padding: 0
+  m_canvasRenderer: {fileID: 1266967645}
+  m_TextComponent: {fileID: 5651743549493244524}
+  m_materialReferenceIndex: 1
 --- !u!1 &221997693785457453
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,6 +1217,8 @@ GameObject:
   - component: {fileID: 1128708192604602362}
   - component: {fileID: 1823938677278383247}
   - component: {fileID: 8610716957967594121}
+  - component: {fileID: 442909255}
+  - component: {fileID: 442909257}
   m_Layer: 5
   m_Name: Hover
   m_TagString: Untagged
@@ -1167,11 +1242,11 @@ RectTransform:
   m_Father: {fileID: 5214033405165916122}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 666.5, y: 211.5}
-  m_SizeDelta: {x: 543.1, y: 145.9997}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 753, y: -0.00030517578}
+  m_SizeDelta: {x: 563.1, y: 275.4404}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &1823938677278383247
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1209,6 +1284,45 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &442909255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035131528441808496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 10
+    m_Right: 10
+    m_Top: 0
+    m_Bottom: 10
+  m_ChildAlignment: 0
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+--- !u!114 &442909257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1035131528441808496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
 --- !u!1 &1060653644624583134
 GameObject:
   m_ObjectHideFlags: 0
@@ -4634,6 +4748,7 @@ GameObject:
   - component: {fileID: 5248787348825084065}
   - component: {fileID: 4903299759322701157}
   - component: {fileID: 1051141547691287360}
+  - component: {fileID: 1892223959}
   m_Layer: 5
   m_Name: Description
   m_TagString: Untagged
@@ -4655,11 +4770,11 @@ RectTransform:
   m_Father: {fileID: 1128708192604602362}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -21.7}
-  m_SizeDelta: {x: 0, y: -43.4}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 10, y: -39.600403}
+  m_SizeDelta: {x: 543.1, y: 225.84}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &4903299759322701157
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4687,9 +4802,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: A four region world. A burgeoning elven faction occupies two of the regions
-    while a peaceful upstart human town is nestled in another one. The last region
-    is full of powerful beasts.
+  m_text: 'A single snow region home to a small but powerful elven tribe. Somehow,
+    most of them are Blessed. Those who are not are unfortunately Robust. There is
+    however one lone Evil elf among them that can be the key to shattering the peace.
+
+    
+
+    A
+    legendary sword can be found in the middle of the place but it is stuck in stone
+    and it doesn''t look like it can be taken out easily. And on the other side of
+    the map are ruined structures housing various creatures. An abandoned zoo, perhaps?'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f8d165fc58518da4b871ca2551648bf9, type: 2}
   m_sharedMaterial: {fileID: 21189737157306288, guid: f8d165fc58518da4b871ca2551648bf9,
@@ -4735,7 +4857,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 183
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -4759,12 +4881,12 @@ MonoBehaviour:
   m_margin: {x: 12.460571, y: -0.20367432, z: 15.405762, w: 16.837524}
   m_textInfo:
     textComponent: {fileID: 1051141547691287360}
-    characterCount: 182
+    characterCount: 480
     spriteCount: 0
-    spaceCount: 31
-    wordCount: 32
+    spaceCount: 90
+    wordCount: 90
     linkCount: 0
-    lineCount: 3
+    lineCount: 9
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -4782,6 +4904,20 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &1892223959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4884844105650126151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &5070957695319303733
 GameObject:
   m_ObjectHideFlags: 0
@@ -7934,14 +8070,15 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1266967646}
   m_Father: {fileID: 1128708192604602362}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 60.799988}
-  m_SizeDelta: {x: 0, y: -121.6}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 281.55, y: -19.800201}
+  m_SizeDelta: {x: 543.1, y: 39.600403}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4090765914788993024
 CanvasRenderer:
@@ -8005,7 +8142,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_textAlignment: 257
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -8047,7 +8184,7 @@ MonoBehaviour:
     linkCount: 0
     lineCount: 1
     pageCount: 1
-    materialCount: 1
+    materialCount: 2
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
@@ -13331,6 +13468,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e32fd4ca008aa408a19e769e1013f7, type: 3}
+--- !u!224 &8631526133152885922 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1314172656414354384}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3883553889160089245 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
@@ -13343,12 +13486,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &8631526133152885922 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 1314172656414354384}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2934705829489431907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13364,9 +13501,16 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A two region world. One region is home to a human faction. The other
-        region is occupied by an elven faction. They are already at war with each
-        other.
+      value: 'A single snow region home to a small but powerful elven tribe. Somehow,
+        most of them are Blessed. Those who are not are unfortunately Robust. There
+        is however one lone Evil elf among them that can be the key to shattering
+        the peace.
+
+
+        A legendary sword can be found in the middle of the
+        place but it is stuck in stone and it doesn''t look like it can be taken
+        out easily. And on the other side of the map are ruined structures housing
+        various creatures. An abandoned zoo, perhaps?'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13588,8 +13732,13 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A single region desert world with a human town. There is a sleeping
-        dragon nearby but no one knows how to awaken it.
+      value: A single desert region with a burgeoning human town. Unknown to these
+        residents, the surrounding caves are filled with danger. There is a hibernating
+        dragon in one of the nearby caves. And dangerous trolls lurk in some of the
+        others. Rumors also abound of women seeing doppelgangers of themselves, and
+        wolves can sometimes be seen hunting. Finally, there is a strange artifact
+        of unknown origin somewhere nearby - is it connected to the dozens of various
+        crystals scattered around the place?
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13778,6 +13927,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e32fd4ca008aa408a19e769e1013f7, type: 3}
+--- !u!224 &5309836609064120833 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 3190204518158464371}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &836583924083511358 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
@@ -13790,12 +13945,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &5309836609064120833 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 3190204518158464371}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3890969044956732707
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13986,6 +14135,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e32fd4ca008aa408a19e769e1013f7, type: 3}
+--- !u!114 &1307936177064343662 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 3890969044956732707}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7229357335225251940 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
@@ -14004,18 +14165,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 3890969044956732707}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1307936177064343662 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 3890969044956732707}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6033853113067081001
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14031,9 +14180,12 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A four region world. A burgeoning elven faction occupies two of the
-        regions while a peaceful upstart human town is nestled in another one. The
-        last region is full of powerful beasts.
+      value: 'A 3 region scenario. All three regions are claimed by a sprawling elven
+        kingdom. There is also a small human town on one region and they are fighting
+        for survival. For some strange reason, there are no monsters in this world
+        but there are plenty of various artifacts to work with.
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14043,7 +14195,7 @@ PrefabInstance:
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14083,7 +14235,7 @@ PrefabInstance:
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_Interactable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7346978856635274194, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14227,12 +14379,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e32fd4ca008aa408a19e769e1013f7, type: 3}
---- !u!224 &3911722795342514779 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 6033853113067081001}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8387193232896632932 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
@@ -14245,6 +14391,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &3911722795342514779 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 6033853113067081001}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8660693253343177280
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14260,8 +14412,10 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A two region world. The snow region is unoccupied but is full of corpses
-        and ancient tombstones
+      value: This is a 2 region scenario for our undead loving overlords. There is
+        a huge human town on one region, while the other region is a haunted desert
+        full of elven tombstones, skeletons and ghosts. The Necronomicon makes a
+        repeat appearance here.
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14271,7 +14425,7 @@ PrefabInstance:
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14311,7 +14465,7 @@ PrefabInstance:
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_Interactable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7346978856635274194, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14455,12 +14609,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e32fd4ca008aa408a19e769e1013f7, type: 3}
---- !u!224 &2145192233843535154 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 8660693253343177280}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6911108010467577613 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
@@ -14473,6 +14621,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &2145192233843535154 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 8660693253343177280}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8702641787799006634
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14488,8 +14642,11 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A huge single region snow world bereft of any monsters. The small elven
-        village is full of powerful residents.
+      value: Four regions, each one a different biome and home to a different faction.
+        The snow region is the residence of 10 Cold Blooded elves. The grassland
+        region is home to 10 Electric humans. The forest region is where 10 Venomous
+        elves reside. The desert region houses 10 Fireproof humans. They are all
+        at peace with each other... for now.
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14683,12 +14840,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43e32fd4ca008aa408a19e769e1013f7, type: 3}
---- !u!224 &2103261018845424344 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 8702641787799006634}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6853414469538171111 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
@@ -14701,3 +14852,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc287110ed6839459477a8f53c96c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &2103261018845424344 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7346978857189099378, guid: 43e32fd4ca008aa408a19e769e1013f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 8702641787799006634}
+  m_PrefabAsset: {fileID: 0}
