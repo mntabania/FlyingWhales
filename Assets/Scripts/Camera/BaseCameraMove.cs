@@ -20,7 +20,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
     [SerializeField] private float cameraPanSpeed = 50f;
     
     [Header("Dragging")]
-    private float dragThreshold = 0.1f;
+    private float dragThreshold = 0.05f;
     private float currDragTime;
     private Vector3 dragOrigin;
     public bool isDragging = false;
@@ -106,7 +106,7 @@ public abstract class BaseCameraMove : MonoBehaviour{
         }
         if (!isDragging) {
             if (Input.GetMouseButtonDown(2)) {
-                if (UIManager.Instance.IsMouseOnUI() || InnerMapManager.Instance.currentlyHoveredPoi != null) { //if the dragging started on UI, a tileobject or a character, do not allow drag
+                if (UIManager.Instance.IsMouseOnUI()) { //if the dragging started on UI, a tileobject or a character, do not allow drag
                     startedOnUI = true;
                     return;
                 }

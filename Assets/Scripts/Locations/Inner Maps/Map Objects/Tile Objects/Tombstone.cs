@@ -38,6 +38,7 @@ public class Tombstone : TileObject {
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
         }
+        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
@@ -51,6 +52,7 @@ public class Tombstone : TileObject {
         character.marker.PlaceMarkerAt(tile, false);
         character.SetGrave(null);
         character.jobComponent.TriggerBuryMe();
+        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
     }
     public override string ToString() {
         return $"Tombstone of {character.name}";

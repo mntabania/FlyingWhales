@@ -1261,7 +1261,7 @@
           "structureType": "CITY_CENTER"
         },
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "FARM"
         },
         {
