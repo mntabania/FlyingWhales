@@ -25,7 +25,7 @@ public class WorldConfigManager : MonoBehaviour {
     
     #region Getters
     public bool isTutorialWorld => WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial;
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
     private bool disableLogs => _disableLogs;
 #else
     public bool disableLogs => true;
