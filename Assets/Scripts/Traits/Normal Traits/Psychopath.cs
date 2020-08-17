@@ -288,7 +288,7 @@ namespace Traits {
             }
         }
         private bool IsCharacterNotApplicableAsVictim(Character target) {
-            return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead/* || target.isMissing*/;
+            return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead || !target.isNormalCharacter/* || target.isMissing*/;
         }
         public bool CreateHuntVictimJob() {
             if (character.jobQueue.HasJob(JOB_TYPE.RITUAL_KILLING)) {
@@ -618,6 +618,10 @@ namespace Traits {
         private bool DoesCharacterFitVictimTypeDescription(SERIAL_VICTIM_TYPE victimType, string victimDesc, Character character) {
             if(victimType == SERIAL_VICTIM_TYPE.None) {
                 return true;
+            }
+            if (!character.isNormalCharacter) {
+                //only allow normal characters to be targeted
+                return false;
             }
             string comparer = string.Empty;
             if (victimType == SERIAL_VICTIM_TYPE.Gender) {

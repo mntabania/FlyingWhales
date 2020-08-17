@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class BaseRelationshipContainer : IRelationshipContainer {
     public const string Close_Friend = "Close Friend";
@@ -30,6 +31,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         relationships[relatable.id].AddRelationship(relType);
     }
     public IRelationshipData CreateNewRelationship(Relatable owner, Relatable relatable) {
+        Assert.IsFalse(owner == relatable, $"{owner.relatableName} is trying to add a relationship with itself!");
         IRelationshipData data = new BaseRelationshipData();
         data.SetTargetName(relatable.relatableName);
         data.SetTargetGender(relatable.gender);
@@ -41,6 +43,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return data;
     }
     public IRelationshipData CreateNewRelationship(Relatable owner, int id, string name, GENDER gender) {
+        Assert.IsFalse(owner.id == id, $"{owner.relatableName} is trying to add a relationship with itself!");
         IRelationshipData data = new BaseRelationshipData();
         data.SetTargetName(name);
         data.SetTargetGender(gender);

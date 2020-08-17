@@ -308,7 +308,7 @@ public class PlayerManager : MonoBehaviour {
                 Quaternion.identity, mapLocation.objectsParent);
             chaosOrbGO.transform.position = worldPos;
             ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
-            chaosOrb.Initialize();
+            chaosOrb.Initialize(mapLocation.region);
             AddAvailableChaosOrb(chaosOrb);
             yield return null;
         }
