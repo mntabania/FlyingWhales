@@ -51,7 +51,7 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
         }
 
         //try to lay an egg
-        if (GameUtilities.RollChance(3)) {//10
+        if (GameUtilities.RollChance(3) && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsAtTerritory())) {//10
             int residentCount = 0;
             int eggCount = 0;
             if (character.homeStructure != null) {
@@ -64,9 +64,9 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                     eggCount += hexTile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
                 }
             }
-            if (residentCount < 5 && eggCount < 2) {
+            // if (residentCount < 5 && eggCount < 2) {
                 return character.jobComponent.TriggerLayEgg(out producedJob);
-            }
+            // }
         }
 
         if (GameUtilities.RollChance(30)) {

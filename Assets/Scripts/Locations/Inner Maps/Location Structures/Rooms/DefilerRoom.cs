@@ -34,45 +34,56 @@ namespace Inner_Maps.Location_Structures {
         public bool WasBrainwashSuccessful(Character actor) {
             WeightedDictionary<bool> brainwashWeightedDictionary = new WeightedDictionary<bool>();
 
-            int failWeight = 100;
-            int successWeight = 20;
-
+            int failWeight;
+            int successWeight;
+            
             if (wasBrainwashStartedInTutorial) {
                 //if create a cultist tutorial is currently active then make sure that the brainwashing always succeeds
                 failWeight = 0;
                 successWeight = 100;
             } else {
-                if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
-                    if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
-                        successWeight += 50;
-                    } else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
-                        successWeight += 200;
-                    }
-
-                    if (actor.traitContainer.HasTrait("Evil")) {
-                        successWeight += 100;
-                    }
-                    if (actor.traitContainer.HasTrait("Treacherous")) {
-                        successWeight += 100;
-                    }
-                    if (actor.traitContainer.HasTrait("Betrayed")) {
-                        successWeight += 100;
-                    }
-                    if (actor.isFactionLeader) {
-                        failWeight += 600;
-                    }
-                    if (actor.isSettlementRuler) {
-                        failWeight += 600;
-                    }
-                }
+                GetBrainwashSuccessAndFailWeights(actor, out successWeight, out failWeight);
             }
-            
+
             brainwashWeightedDictionary.AddElement(true, successWeight);
             brainwashWeightedDictionary.AddElement(false, failWeight);
 
             brainwashWeightedDictionary.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{actor.name} brainwash weights:");
             
             return brainwashWeightedDictionary.PickRandomElementGivenWeights();
+        }
+        private static void GetBrainwashSuccessAndFailWeights(Character actor, out int successWeight, out int failWeight) {
+            failWeight = 100;
+            successWeight = 20;
+
+            if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
+                if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
+                    successWeight += 100;
+                } else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
+                    successWeight += 200;
+                }
+
+                if (actor.traitContainer.HasTrait("Evil")) {
+                    successWeight += 150;
+                }
+                if (actor.traitContainer.HasTrait("Treacherous")) {
+                    successWeight += 300;
+                }
+            }
+            
+            if (actor.traitContainer.HasTrait("Betrayed")) {
+                successWeight += 100;
+            }
+            if (actor.isFactionLeader) {
+                failWeight += 600;
+            }
+            if (actor.isSettlementRuler) {
+                failWeight += 600;
+            }
+        }
+        public static float GetBrainwashSuccessRate(Character character) {
+            GetBrainwashSuccessAndFailWeights(character, out int successWeight, out int failWeight);
+            return ((float)successWeight / (successWeight + failWeight)) * 100f;
         }
         public bool HasValidBrainwashTarget() {
             List<Character> characters = charactersInRoom;

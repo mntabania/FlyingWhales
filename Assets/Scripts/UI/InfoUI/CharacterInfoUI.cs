@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using TMPro;
 using UnityEngine.UI;
 using Traits;
@@ -872,8 +873,8 @@ public class CharacterInfoUI : InfoUIBase {
         moodSummary.text = summary;
     }
     public void ShowMoodTooltip() {
-        string summary = $"Represents the Villager's overall state of mind. Lower a Villager's Mood to make him less effective and more volatile.\n\n" +
-                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100";
+        string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +
+                         $"{_activeCharacter.moodComponent.moodValue.ToString()}/100\nBrainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(_activeCharacter).ToString("N0")}%";
         // summary +=
         //     $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}";
         UIManager.Instance.ShowSmallInfo(summary, $"MOOD: {_activeCharacter.moodComponent.moodStateName}");

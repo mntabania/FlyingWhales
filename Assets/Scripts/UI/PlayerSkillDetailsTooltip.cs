@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Inner_Maps.Location_Structures;
 using Scriptable_Object_Scripts;
 using UnityEngine;
 using UnityEngine.UI;
@@ -107,7 +110,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
     }
     private void UpdateData(SpellData spellData) {
         titleText.text = spellData.name;
-        descriptionText.SetTextAndReplaceWithIcons(spellData.description);
+        string fullDescription = spellData.description;
         int charges = spellData.charges;
         int manaCost = spellData.manaCost;
         int cooldown = spellData.cooldown;
@@ -154,6 +157,16 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 }
             }
         }
+        
+        if (spellData is BrainwashData && UIManager.Instance.structureRoomInfoUI.isShowing && UIManager.Instance.structureRoomInfoUI.activeRoom is DefilerRoom defilerRoom && defilerRoom.charactersInRoom.Count > 0) {
+            Character targetCharacter = defilerRoom.charactersInRoom.First();
+            if (targetCharacter != null) {
+                fullDescription += $"\n<b>{targetCharacter.name} Brainwash Success Rate: {DefilerRoom.GetBrainwashSuccessRate(targetCharacter).ToString("N0")}%</b>";    
+            }
+        }
+        
+        descriptionText.SetTextAndReplaceWithIcons(fullDescription);
+        
         if(HasEnoughMana(spellData) == false) {
             additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
         }

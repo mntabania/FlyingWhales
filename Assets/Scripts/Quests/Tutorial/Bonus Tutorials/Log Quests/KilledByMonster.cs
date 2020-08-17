@@ -26,12 +26,6 @@ namespace Tutorial {
         private void SetTargetCharacter(QuestCriteria criteria) {
             if (criteria is CharacterDied metCriteria) {
                 _targetCharacter = metCriteria.character;
-                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
-            }
-        }
-        private void OnCharacterMarkerDestroyed(Character character) {
-            if (character == _targetCharacter) {
-                FailQuest();
             }
         }
         #endregion
@@ -51,6 +45,7 @@ namespace Tutorial {
         public override void Activate() {
             base.Activate();
             Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
         }
         public override void Deactivate() {
             base.Deactivate();
@@ -96,6 +91,11 @@ namespace Tutorial {
         #endregion
 
         #region Failure
+        private void OnCharacterMarkerDestroyed(Character character) {
+            if (character == _targetCharacter) {
+                FailQuest();
+            }
+        }
         private void OnLogRemoved(Log log, IPointOfInterest poi) {
             if (poi == _targetCharacter && log.key.Equals("death_attacked")) {
                 //check if target character still has any logs about being killed by a monster
