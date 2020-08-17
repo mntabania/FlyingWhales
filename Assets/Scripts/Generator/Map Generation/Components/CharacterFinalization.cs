@@ -40,6 +40,7 @@ namespace Generator.Map_Generation.Components {
                 }
             } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
                 List<Character> validCharacters = CharacterManager.Instance.allCharacters.Where(x => x.isDead == false && x.isNormalCharacter).ToList();
+                validCharacters = CollectionUtilities.Shuffle(validCharacters);
                 for (int i = 0; i < validCharacters.Count; i++) {
                     Character character = validCharacters[i];
                     IcalawaCharacterRandomInitialTraits(i, character);
@@ -127,7 +128,14 @@ namespace Generator.Map_Generation.Components {
                 //last villager is Evil.
                 character.traitContainer.AddTrait(character, "Evil");
             }
-            character.CreateRandomInitialTraits();
+            List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
+            buffTraits.Remove("Blessed");
+            buffTraits.Remove("Robust");
+            List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
+            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+            flawTraits.Remove("Evil");
+            
+            character.CreateRandomInitialTraits(buffTraits, neutralTraits, flawTraits);
         }
         #endregion
     }

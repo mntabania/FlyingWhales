@@ -2806,12 +2806,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         traitContainer.AddTrait(this, "Flammable");
         defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
     }
-    public void CreateRandomInitialTraits() {
+    public void CreateRandomInitialTraits(List<string> buffPool = null, List<string> neutralPool = null, List<string> flawPool = null) {
         if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
  
-            List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
-            List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
-            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+            List<string> buffTraits = new List<string>(buffPool == null ? TraitManager.Instance.buffTraitPool : buffPool);
+            List<string> neutralTraits = new List<string>(neutralPool == null ? TraitManager.Instance.neutralTraitPool : neutralPool);
+            List<string> flawTraits = new List<string>(flawPool == null ? TraitManager.Instance.flawTraitPool : flawPool);
 
             //remove character's existing traits from pool, as well as any mutual exclusive traits because of said existing trait
             for (int i = 0; i < traitContainer.traits.Count; i++) {

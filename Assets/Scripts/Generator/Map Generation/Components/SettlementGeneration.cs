@@ -268,6 +268,9 @@ public class SettlementGeneration : MapGenerationComponent {
 				}
 			}
 			return createdCharacters;
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			//always spawn couples for Icalawa since there are always 6 dwellings and citizen count needs to be always 12
+			return GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, providedCitizenCount, coupleChanceOverride: 100);
 		} else {
 			return GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, providedCitizenCount);	
 		}
@@ -366,26 +369,30 @@ public class SettlementGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Residents
-	private List<Character> GenerateSettlementResidents(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data, int providedCitizenCount = -1) {
+	private List<Character> GenerateSettlementResidents(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data, int providedCitizenCount = -1, int coupleChanceOverride = -1) {
 		List<Character> createdCharacters = new List<Character>();
 		int citizenCount = 0;
 		for (int i = 0; i < dwellingCount; i++) {
 			int roll = Random.Range(0, 100);
-			
-			int coupleChance = 35;
-			if (providedCitizenCount > 0) {
-				if (citizenCount >= providedCitizenCount) {
-					break;
-				}
+			int coupleChance;
+			if (coupleChanceOverride != -1) {
+				coupleChance = coupleChanceOverride;
+			} else {
+				coupleChance = 35;
+				if (providedCitizenCount > 0) {
+					if (citizenCount >= providedCitizenCount) {
+						break;
+					}
 				
-				//if number of citizens are provided, check if the current citizen count + 2 (Couple), is still less than the given amount
-				//if it is, then increase chance to spawn a couple
-				int afterCoupleGenerationAmount = citizenCount + 2;
-				if (afterCoupleGenerationAmount < providedCitizenCount) {
-					coupleChance = 70;
-				}
+					//if number of citizens are provided, check if the current citizen count + 2 (Couple), is still less than the given amount
+					//if it is, then increase chance to spawn a couple
+					int afterCoupleGenerationAmount = citizenCount + 2;
+					if (afterCoupleGenerationAmount < providedCitizenCount) {
+						coupleChance = 70;
+					}
+				}	
 			}
-			
+
 			List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
 			if (availableDwellings.Count == 0) {
 				break; //no more dwellings
