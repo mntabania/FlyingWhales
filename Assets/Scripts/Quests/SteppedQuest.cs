@@ -72,12 +72,14 @@ namespace Quests {
         #region Failure
         protected override void FailQuest() {
             base.FailQuest();
-            //fail uncompleted steps.
-            for (int i = 0; i < activeStepCollection.steps.Count; i++) {
-                QuestStep step = activeStepCollection.steps[i];
-                if (step.isCompleted == false) {
-                    step.FailStep();
-                }
+            if (activeStepCollection != null && activeStepCollection.steps != null) {
+                //fail uncompleted steps.
+                for (int i = 0; i < activeStepCollection.steps.Count; i++) {
+                    QuestStep step = activeStepCollection.steps[i];
+                    if (step.isCompleted == false) {
+                        step.FailStep();
+                    }
+                }    
             }
         }
         #endregion
