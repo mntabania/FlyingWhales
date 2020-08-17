@@ -87605,6 +87605,8 @@ MonoBehaviour:
       structureType: 2
     - resource: 4
       structureType: 43
+    - resource: 4
+      structureType: 44
     m_values:
     - data:
       - {fileID: 1052932554014340, guid: 128f887a5cf7a32458e387f1a5ac6f12, type: 3}
@@ -87716,6 +87718,8 @@ MonoBehaviour:
       - {fileID: 1141179552670562, guid: fef47f679840f2349bbbdd68a5d554de, type: 3}
     - data:
       - {fileID: 1113093889188924, guid: 03eb6a1ff19727d498dffbbe4bab784c, type: 3}
+    - data:
+      - {fileID: 1113093889188924, guid: b9a44a528d8d4a642826b4ccf26d21a5, type: 3}
   assetManager: {fileID: 1536722386}
   wallResourceAssets:
     m_keys: 010000000200000003000000

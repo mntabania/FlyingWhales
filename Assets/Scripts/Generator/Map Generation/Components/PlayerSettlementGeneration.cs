@@ -39,6 +39,10 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 			validPortalTiles = new List<HexTile>() {
 				GridMap.Instance.map[4, 4]
 			};
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			validPortalTiles = new List<HexTile>() {
+				GridMap.Instance.map[2, 1]
+			};
 		}  else {
 			validPortalTiles = GridMap.Instance.normalHexTiles.Where(h =>
 				(h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES)

@@ -38,7 +38,10 @@ namespace Inner_Maps.Location_Structures {
             base.SetStructureObject(structureObj);
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
         }
-        public override void OnBuiltStructure() {
+        public override void OnBuiltNewStructure() {
+            _tortureChamberStructureObject.SetEntrance(location.innerMap);
+        }
+        public override void OnDoneLoadStructure() {
             _tortureChamberStructureObject.SetEntrance(location.innerMap);
         }
         #endregion

@@ -807,6 +807,26 @@ MonoBehaviour:
     elvenLandmarkTileSprites: []
     monsterGenerationSetting: {fileID: 0}
     itemGenerationSetting: {fileID: 0}
+  - landmarkTypeString: Ruined Zoo
+    landmarkType: 65
+    buildDuration: 0
+    description: A Ruined Zoo
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    defaultLandmarkPortrait: {fileID: 21300000, guid: 04d161f6df0c0ea4a9a3268c50b2df70,
+      type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 3bc5ae8edcf5dfc4ca9f51fdc0a28946, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+      overrideLandmarkPortrait: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+    monsterGenerationSetting: {fileID: 0}
+    itemGenerationSetting: {fileID: 0}
   areaData:
   - locationType: 0
     baseAreaType: 0

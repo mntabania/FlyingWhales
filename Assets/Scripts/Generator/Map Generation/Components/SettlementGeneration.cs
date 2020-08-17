@@ -152,6 +152,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				npcSettlement.Initialize();
 				yield return null;
 			}
+			ApplyPreGeneratedRelationships(data);
 		}
 	}
 	private Faction GetFactionForScenario(SettlementTemplate settlementTemplate) {

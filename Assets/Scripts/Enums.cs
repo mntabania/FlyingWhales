@@ -232,6 +232,7 @@ public enum LANDMARK_TYPE {
     MINE = 62,
     ANCIENT_GRAVEYARD = 63,
     TEMPLE = 64,
+    RUINED_ZOO = 65,
 }
 public enum CHARACTER_ROLE {
     NONE,
@@ -633,6 +634,7 @@ public enum STRUCTURE_TYPE {
     MINE_SHACK = 41,
     ANCIENT_GRAVEYARD = 42,
     TEMPLE = 43,
+    RUINED_ZOO = 44,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1162,6 +1164,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.KENNEL:
             case STRUCTURE_TYPE.CAVE:
             case STRUCTURE_TYPE.DEFILER:
+            case STRUCTURE_TYPE.RUINED_ZOO:
                 return true;
             default:
                 return false;
@@ -1176,6 +1179,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.MONSTER_LAIR:
             case STRUCTURE_TYPE.CAVE:
             case STRUCTURE_TYPE.TEMPLE:
+            case STRUCTURE_TYPE.RUINED_ZOO:
                 return true;
             default:
                 return false;

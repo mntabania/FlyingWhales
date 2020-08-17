@@ -21,6 +21,10 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		yield return null;
 		TryCreateAncientGraveyard(GetLoopCount(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data), GetChance(LANDMARK_TYPE.ANCIENT_GRAVEYARD, data));
 		yield return null;
+		TryCreateRuinedZoo(GetLoopCount(LANDMARK_TYPE.RUINED_ZOO, data), GetChance(LANDMARK_TYPE.RUINED_ZOO, data));
+		yield return null;
+		TryCreateAncientRuin(GetLoopCount(LANDMARK_TYPE.ANCIENT_RUIN, data), GetChance(LANDMARK_TYPE.ANCIENT_RUIN, data));
+		yield return null;
 		LandmarkSecondPass();
 		yield return null;
 	}
@@ -204,6 +208,60 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 		}
 		Debug.Log($"Created {createdCount.ToString()} Ancient Graveyards");
 	}
+	private void TryCreateRuinedZoo(int loopCount, int chance) {
+		int createdCount = 0;
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) {
+				List<HexTile> choices;
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					choices = new List<HexTile>() {
+						GridMap.Instance.map[2, 4]
+					};
+				} else {
+					choices = GridMap.Instance.normalHexTiles
+						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
+						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
+						).ToList();
+				}
+				if (choices.Count > 0) {
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.RUINED_ZOO);
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, chosenTile);
+					createdCount++;
+				} else {
+					break;
+				}
+			}
+		}
+		Debug.Log($"Created {createdCount.ToString()} Ruined Zoo");
+	}
+	private void TryCreateAncientRuin(int loopCount, int chance) {
+		int createdCount = 0;
+		for (int i = 0; i < loopCount; i++) {
+			if (Random.Range(0, 100) < chance) {
+				List<HexTile> choices;
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					choices = new List<HexTile>() {
+						GridMap.Instance.map[4, 3]
+					};
+				} else {
+					choices = GridMap.Instance.normalHexTiles
+						.Where(x => x.elevationType == ELEVATION.PLAIN && x.landmarkOnTile == null &&
+						            !IsAdjacentToPortal(x) && !IsAdjacentToSettlement(x) && !IsAdjacentToSpecialStructure(x)//and not adjacent to player Portal, Settlement or other non-cave landmarks
+						).ToList();
+				}
+				if (choices.Count > 0) {
+					HexTile chosenTile = CollectionUtilities.GetRandomElement(choices);
+					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.ANCIENT_RUIN);
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, chosenTile);
+					createdCount++;
+				} else {
+					break;
+				}
+			}
+		}
+		Debug.Log($"Created {createdCount.ToString()} Ruined Zoo");
+	}
 	private int GetLoopCount(LANDMARK_TYPE landmarkType, MapGenerationData data) {
 		switch (landmarkType) {
 			case LANDMARK_TYPE.MONSTER_LAIR:
@@ -211,6 +269,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 2;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 0;
 				} else {
 					if (data.regionCount == 1) {
 						return 1;
@@ -223,7 +283,9 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.ABANDONED_MINE:
 				if (WorldConfigManager.Instance.isTutorialWorld) {
 					return 0;
-				}
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 0;
+				} 
 				bool monsterLairWasBuilt =
 					LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.MONSTER_LAIR) != null;
 				if (data.regionCount == 1) {
@@ -238,6 +300,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 					return 1;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 0;
 				} else {
 					if (data.regionCount == 1) {
 						return 1;
@@ -250,7 +314,9 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 			case LANDMARK_TYPE.MAGE_TOWER:
 				if (WorldConfigManager.Instance.isTutorialWorld) {
 					return 0;
-				}
+				}  if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 0;
+				} 
 				bool templeWasBuilt =
 					LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.ANCIENT_RUIN) != null;
 				if (data.regionCount == 1) {
@@ -268,6 +334,20 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 1;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					return 3;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 0;
+				} else {
+					return 0;
+				}
+			case LANDMARK_TYPE.RUINED_ZOO:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 1;
+				} else {
+					return 0;
+				}
+			case LANDMARK_TYPE.ANCIENT_RUIN:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 1;
 				} else {
 					return 0;
 				}
@@ -325,6 +405,18 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					return 75;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 100;
+				} else {
+					return 0;
+				}
+			case LANDMARK_TYPE.RUINED_ZOO:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 100;
+				} else {
+					return 0;
+				}
+			case LANDMARK_TYPE.ANCIENT_RUIN:
+				if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 					return 100;
 				} else {
 					return 0;

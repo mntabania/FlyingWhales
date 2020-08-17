@@ -86,7 +86,16 @@ namespace Inner_Maps.Location_Structures {
         }
 
         #region Virtuals
-        public virtual void OnBuiltStructure() { }
+        /// <summary>
+        /// Called when this structure is newly built.
+        /// This function assumes that the structure that was built is in perfect condition.
+        /// </summary>
+        public virtual void OnBuiltNewStructure() { }
+        /// <summary>
+        /// Called when this structure has been fully loaded. (Tiles, StructureObject, Walls, etc.)
+        /// NOTE: This is called instead of <see cref="OnBuiltNewStructure"/> when loading from save data.
+        /// </summary>
+        public virtual void OnDoneLoadStructure() { }
         protected virtual void OnAddResident(Character newResident) { }
         protected virtual void OnRemoveResident(Character newResident) { }
         public virtual bool CanBeResidentHere(Character character) { return true; }
@@ -490,6 +499,32 @@ namespace Inner_Maps.Location_Structures {
                     return tileObjectsAndCount.count > 0;
                 }
                 
+            }
+            return false;
+        }
+        public bool AnyTileObjectsOfType<T>(TILE_OBJECT_TYPE tileObjectType, out string log, System.Func<T, bool> validityChecker = null) where T : TileObject {
+            log = $"Checking for tile objects of type {tileObjectType.ToString()} at {ToString()}";
+            if (groupedTileObjects.ContainsKey(tileObjectType)) {
+                TileObjectsAndCount tileObjectsAndCount = groupedTileObjects[tileObjectType];
+                if (validityChecker != null) {
+                    log += $"\nFound {tileObjectsAndCount.tileObjects.Count.ToString()}, checking validity...";
+                    for (int i = 0; i < tileObjectsAndCount.tileObjects.Count; i++) {
+                        TileObject tileObject = tileObjectsAndCount.tileObjects[i];
+                        if (tileObject is T obj) {
+                            log += $"\nChecking validity of {obj.nameWithID}";
+                            if (validityChecker.Invoke(obj)) {
+                                log += $"\n{obj.nameWithID} is valid! Returning true!";
+                                return true;
+                            } else {
+                                log += $"\n{obj.nameWithID} is not valid! Map Object State {obj.mapObjectState.ToString()}. Character Owner {obj.characterOwner.name}";
+                            }
+                        }
+                        
+                    }
+                } else {
+                    //if no validity checker was provided then check if count of tile objects is greater than 0.
+                    return tileObjectsAndCount.count > 0;
+                }
             }
             return false;
         }
@@ -940,8 +975,7 @@ namespace Inner_Maps.Location_Structures {
             rooms = new StructureRoom[structureObject.roomTemplates.Length];
             for (int i = 0; i < rooms.Length; i++) {
                 RoomTemplate roomTemplate = structureObject.roomTemplates[i];
-                StructureRoom newRoom =
-                    CreteNewRoomForStructure(structureObject.GetTilesOccupiedByRoom(location.innerMap, roomTemplate));
+                StructureRoom newRoom = CreteNewRoomForStructure(structureObject.GetTilesOccupiedByRoom(location.innerMap, roomTemplate));
                 rooms[i] = newRoom;
             }
         }

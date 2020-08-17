@@ -23,45 +23,45 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure();
             RemoveActivateAction();
         }
-        public override void OnBuiltStructure() {
-            base.OnBuiltStructure();
-            List<SaveDataTileObject> tileobjectsData = SaveManager.Instance.currentSaveDataPlayer.cryptTileObjects;
-            if(tileobjectsData != null && tileobjectsData.Count > 0) {
-                for (int i = 0; i < tileobjectsData.Count; i++) {
-                    SaveDataTileObject data = tileobjectsData[i];
-                    TileObject obj = null;
-                    if (data.isArtifact) {
-                        obj = InnerMapManager.Instance.CreateNewArtifact(data.artifactType);
-                    } else {
-                        obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(data.tileObjectType);
-                    }
-                    obj.SetIsSaved(true);
-                    obj.traitContainer.RemoveAllTraits(obj);
-                    if (data.traitNames != null && data.traitNames.Length > 0) {
-                        for (int j = 0; j < data.traitNames.Length; j++) {
-                            obj.traitContainer.AddTrait(obj, data.traitNames[j]);
-                        }
-                    }
-                    //if (data.statusNames != null && data.statusNames.Length > 0) {
-                    //    for (int j = 0; j < data.statusNames.Length; j++) {
-                    //        int stacks = data.statusStacks[j];
-                    //        for (int k = 0; k < stacks; k++) {
-                    //            obj.traitContainer.AddTrait(obj, data.statusNames[j]);
-                    //        }
-                    //    }
-                    //}
-                    if (data.storedResourcesTypes != null && data.storedResourcesTypes.Length > 0) {
-                        for (int j = 0; j < data.storedResourcesTypes.Length; j++) {
-                            obj.SetResource(data.storedResourcesTypes[j], data.storedResourcesAmount[j]);
-                        }
-                    }
-                    LocationGridTile tileLocation = GetRandomUnoccupiedTile();
-                    if(tileLocation != null) {
-                        AddPOI(obj, tileLocation);
-                    }
-                }
-            }
-        }
+        // public override void OnBuiltStructure() {
+        //     base.OnBuiltStructure();
+        //     List<SaveDataTileObject> tileobjectsData = SaveManager.Instance.currentSaveDataPlayer.cryptTileObjects;
+        //     if(tileobjectsData != null && tileobjectsData.Count > 0) {
+        //         for (int i = 0; i < tileobjectsData.Count; i++) {
+        //             SaveDataTileObject data = tileobjectsData[i];
+        //             TileObject obj = null;
+        //             if (data.isArtifact) {
+        //                 obj = InnerMapManager.Instance.CreateNewArtifact(data.artifactType);
+        //             } else {
+        //                 obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(data.tileObjectType);
+        //             }
+        //             obj.SetIsSaved(true);
+        //             obj.traitContainer.RemoveAllTraits(obj);
+        //             if (data.traitNames != null && data.traitNames.Length > 0) {
+        //                 for (int j = 0; j < data.traitNames.Length; j++) {
+        //                     obj.traitContainer.AddTrait(obj, data.traitNames[j]);
+        //                 }
+        //             }
+        //             //if (data.statusNames != null && data.statusNames.Length > 0) {
+        //             //    for (int j = 0; j < data.statusNames.Length; j++) {
+        //             //        int stacks = data.statusStacks[j];
+        //             //        for (int k = 0; k < stacks; k++) {
+        //             //            obj.traitContainer.AddTrait(obj, data.statusNames[j]);
+        //             //        }
+        //             //    }
+        //             //}
+        //             if (data.storedResourcesTypes != null && data.storedResourcesTypes.Length > 0) {
+        //                 for (int j = 0; j < data.storedResourcesTypes.Length; j++) {
+        //                     obj.SetResource(data.storedResourcesTypes[j], data.storedResourcesAmount[j]);
+        //                 }
+        //             }
+        //             LocationGridTile tileLocation = GetRandomUnoccupiedTile();
+        //             if(tileLocation != null) {
+        //                 AddPOI(obj, tileLocation);
+        //             }
+        //         }
+        //     }
+        // }
         #endregion
 
         #region Activate

@@ -30,8 +30,8 @@ namespace Inner_Maps.Location_Structures {
         }
         protected override void AfterStructureDestruction() {
             structureObj.OnOwnerStructureDestroyed(); 
-            base.AfterStructureDestruction();
             HexTile hexTile = occupiedHexTile.hexTileOwner;
+            base.AfterStructureDestruction();
             hexTile.RemoveCorruption();
             CharacterManager.Instance.SetNewCurrentDemonicStructureTargetOfAngels();
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);

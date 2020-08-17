@@ -2812,9 +2812,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
             List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+
+            //remove character's existing traits from pool, as well as any mutual exclusive traits because of said existing trait
+            for (int i = 0; i < traitContainer.traits.Count; i++) {
+                Trait trait = traitContainer.traits[i];
+                buffTraits.Remove(trait.name);
+                neutralTraits.Remove(trait.name);
+                flawTraits.Remove(trait.name);
+                if (trait.mutuallyExclusive != null) {
+                    buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, trait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                    neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, trait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                    flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, trait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                }
+            }
+            
             
             //Up to three traits
-
             //100% Trait 1: Buff List
             string chosenBuffTraitName;
             if (buffTraits.Count > 0) {

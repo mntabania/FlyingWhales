@@ -332,15 +332,6 @@ public class LocationStructureObject : PooledObject {
         }
         return occupiedTiles;
     }
-    public bool IsBiggerThanBuildSpot() {
-        return _size.x > InnerMapManager.BuildingSpotSize.x || _size.y > InnerMapManager.BuildingSpotSize.y;
-    }
-    public bool IsHorizontallyBig() {
-        return _size.x > InnerMapManager.BuildingSpotSize.x;
-    }
-    public bool IsVerticallyBig() {
-        return _size.y > InnerMapManager.BuildingSpotSize.y;
-    }
     #endregion
 
     #region Visuals
