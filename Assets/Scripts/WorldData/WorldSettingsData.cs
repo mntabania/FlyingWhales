@@ -11,7 +11,8 @@ public class WorldSettingsData {
         Custom,
         Zenko,
         Pangat_Loo,
-        Affatt
+        Affatt,
+        Icalawa,
     };
     
     public int numOfRegions { get; private set; }
@@ -163,6 +164,17 @@ public class WorldSettingsData {
         AddRace(RACE.ELVES);
         AddBiome(BIOMES.SNOW);
         AddBiome(BIOMES.FOREST);
+    }
+    public void SetIcalawaWorldSettings() {
+        Debug.Log("Set world settings as Icalawa");
+        worldType = World_Type.Icalawa;
+        numOfRegions = 1;
+        omnipotentMode = false;
+        noThreatMode = false;
+        ClearBiomes();
+        ClearRaces();
+        AddRace(RACE.ELVES);
+        AddBiome(BIOMES.SNOW);
     }
     #endregion
 

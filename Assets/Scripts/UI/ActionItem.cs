@@ -43,7 +43,6 @@ public class ActionItem : PooledObject {
         if (coverImg.gameObject.activeSelf) {
 	        coverImg.fillAmount = 1;
         }
-        Debug.Log($"Set Interactable state of {name} to {state.ToString()}");
     }
     public void ToggleHighlight() {
         if (button.interactable) {

@@ -289,7 +289,7 @@ public class WorldSettings : MonoBehaviour {
             } else if (item.worldType == World.Oona) {
                 worldSettingsData.SetSecondWorldSettings();
             } else if (item.worldType == World.Icalawa) {
-                //TODO
+                worldSettingsData.SetIcalawaWorldSettings();
             } else if (item.worldType == World.Pangat_Loo) {
                 worldSettingsData.SetPangatLooWorldSettings();
             } else if (item.worldType == World.Affatt) {

@@ -76,7 +76,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 
                 structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
-                structure.OnBuiltStructure();
+                structure.OnDoneLoadStructure();
 
                 if (manMadeStructure.structureWalls != null) {
                     //load wall data
@@ -107,7 +107,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 
                 structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
-                structure.OnBuiltStructure();
+                structure.OnDoneLoadStructure();
 
                 yield return null;
             }

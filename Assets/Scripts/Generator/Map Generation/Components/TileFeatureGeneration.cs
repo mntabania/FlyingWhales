@@ -23,6 +23,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			DetermineSettlementsForZenko();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 			DetermineSettlementsForAffatt();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			DetermineSettlementsForIcalawa();
 		} else {
 			yield return MapGenerator.Instance.StartCoroutine(ComputeHabitabilityValues(data));
 			succeess = TryCreateSettlements(data);
@@ -470,6 +472,21 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		// 		neighbour.SetElevation(ELEVATION.MOUNTAIN);
 		// 	}
 		// }
+	}
+	private void DetermineSettlementsForIcalawa() {
+		List<HexTile> chosenTiles = new List<HexTile> {
+			GridMap.Instance.map[8, 2],
+			GridMap.Instance.map[7, 2],
+			GridMap.Instance.map[8, 3],
+			GridMap.Instance.map[8, 1],
+		};
+
+		for (int i = 0; i < chosenTiles.Count; i++) {
+			HexTile chosenTile = chosenTiles[i];
+			chosenTile.SetElevation(ELEVATION.PLAIN);
+			chosenTile.featureComponent.RemoveAllFeatures(chosenTile);
+			chosenTile.featureComponent.AddFeature(TileFeatureDB.Inhabited_Feature, chosenTile);
+		}
 	}
 	#endregion
 	

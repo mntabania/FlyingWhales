@@ -454,7 +454,7 @@ namespace Inner_Maps {
                 structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
                 structureObject.OnBuiltStructureObjectPlaced(this, structure);
                 structure.CreateRoomsBasedOnStructureObject(structureObject);
-                structure.OnBuiltStructure();
+                structure.OnBuiltNewStructure();
             }
 
             hexTile.innerMapHexTile.Occupy();

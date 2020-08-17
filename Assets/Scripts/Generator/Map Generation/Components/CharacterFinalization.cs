@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Scenario_Maps;
 using Traits;
 using UtilityScripts;
@@ -36,6 +37,13 @@ namespace Generator.Map_Generation.Components {
                     if (character.isNormalCharacter && !character.isDead) {
                         ZenkoCharacterRandomInitialTraits(character);
                     }
+                }
+            } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+                List<Character> validCharacters = CharacterManager.Instance.allCharacters.Where(x => x.isDead == false && x.isNormalCharacter).ToList();
+                validCharacters = CollectionUtilities.Shuffle(validCharacters);
+                for (int i = 0; i < validCharacters.Count; i++) {
+                    Character character = validCharacters[i];
+                    IcalawaCharacterRandomInitialTraits(i, character);
                 }
             } else {
                 yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
@@ -105,6 +113,29 @@ namespace Generator.Map_Generation.Components {
                 character.traitContainer.AddTrait(character, chosenTrait);
             }
 
+        }
+        #endregion
+
+        #region Icalawa
+        private void IcalawaCharacterRandomInitialTraits(int index, Character character) {
+            if (index < 8) {
+                //first 8 villagers are blessed.
+                character.traitContainer.AddTrait(character, "Blessed");
+            } else if (index < 11) {
+                //next 3 villagers are robust.
+                character.traitContainer.AddTrait(character, "Robust");
+            } else {
+                //last villager is Evil.
+                character.traitContainer.AddTrait(character, "Evil");
+            }
+            List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
+            buffTraits.Remove("Blessed");
+            buffTraits.Remove("Robust");
+            List<string> neutralTraits = new List<string>(TraitManager.Instance.neutralTraitPool);
+            List<string> flawTraits = new List<string>(TraitManager.Instance.flawTraitPool);
+            flawTraits.Remove("Evil");
+            
+            character.CreateRandomInitialTraits(buffTraits, neutralTraits, flawTraits);
         }
         #endregion
     }

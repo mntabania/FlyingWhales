@@ -45,6 +45,9 @@ public class StartupManager : MonoBehaviour {
                     case WorldSettingsData.World_Type.Affatt:
                         scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Affatt.sce");
                         break;
+                    case WorldSettingsData.World_Type.Icalawa:
+                        scenarioMapData = SaveManager.Instance.GetScenarioMapData($"{Application.streamingAssetsPath}/Scenario Maps/Icalawa.sce");
+                        break;
                     default:
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }

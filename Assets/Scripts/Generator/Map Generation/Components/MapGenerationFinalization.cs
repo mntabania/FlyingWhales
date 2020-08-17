@@ -17,7 +17,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(RegionalItemGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(LandmarkItemGeneration());
 		yield return MapGenerator.Instance.StartCoroutine(CaveItemGeneration());
-		yield return MapGenerator.Instance.StartCoroutine(LoadItems());
+		yield return MapGenerator.Instance.StartCoroutine(LoadSettlementItems());
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
 		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
@@ -25,7 +25,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			region.GenerateOuterBorders();
 			region.HideBorders();
 		}
-		//data.familyTreeDatabase.Save();
+		data.familyTreeDatabase.Save();
 	}
 
 	#region Scenario Maps
@@ -70,21 +70,13 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	}
 
 	#region Item Generation
-	private IEnumerator LoadItems() {
+	private IEnumerator LoadSettlementItems() {
 		for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
 			NPCSettlement npcSettlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
 			if (npcSettlement.locationType != LOCATION_TYPE.DUNGEON) {
 				InnerMapManager.Instance.LoadInitialSettlementItems(npcSettlement);
 				yield return null;	
 			}
-		}
-
-		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona || 
-		    WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
-			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
-			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");	
 		}
 	}
 	private IEnumerator RegionalItemGeneration() {
@@ -273,6 +265,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			LocationStructure targetStructure = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
 			targetStructure.AddPOI(artifact);
+			//excalibur
+			randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
+			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
+			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//always spawn Necronomicon
 			Region randomRegion = GridMap.Instance.allRegions[1];
@@ -281,15 +278,27 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			structure.AddPOI(artifact);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+			//excalibur
+			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
+			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
+			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
+			
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
 			for (int i = 0; i < artifactChoices.Count; i++) {
-				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+				randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 				LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 				ARTIFACT_TYPE randomArtifact = artifactChoices[i];
 				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
 				List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement() == false).ToList();
 				wilderness.AddPOI(artifact, CollectionUtilities.GetRandomElement(choices));
-			}	
+			}
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+			//excalibur
+			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
+			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN).AddPOI(excalibur);
+			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else {
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
 			//randomly generate 3 Artifacts

@@ -210,7 +210,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 
                     && character.trapStructure.IsTrapped() == false) {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
-                    if (GameUtilities.RollChance(25) && CanCreateCraftMissingBedJob(character)) {
+                    if (GameUtilities.RollChance(25) && CanCreateCraftMissingBedJob(character, ref log)) {
                         log += $"\n  -No Available bed will create craft missing bed job";
                         return character.jobComponent.CreateCraftMissingFurniture(TILE_OBJECT_TYPE.BED,
                             character.currentStructure, out producedJob);
@@ -288,18 +288,24 @@ public class DefaultAtHome : CharacterBehaviourComponent {
     }
 
 
-    private bool CanCreateCraftMissingBedJob(Character character) {
+    private bool CanCreateCraftMissingBedJob(Character character, ref string log) {
+        log += $"\n{character.name} is checking if it can create craft missing bed job.";
         if (character.currentStructure is Wilderness == false) {
             Character lover = character.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+            if (lover != null) {
+                log += $"\n{character.name} has a lover {lover.name}.";
+            }
             //get built un owned beds or beds owned by this characters lover.
-            if (!character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED, bed => 
+            if (!character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED, out var objectLog, bed => 
                 bed.mapObjectState == MAP_OBJECT_STATE.BUILT && (bed.characterOwner == null || bed.characterOwner == character || (lover != null && bed.characterOwner == lover)))) {
                 //if there are none, check if there are any unbuilt beds (Means there is an active job at the structure)
                 //if there are no unbuilt beds then the character can create a craft missing bed job.
+                log += objectLog;
                 return !character.currentStructure.AnyTileObjectsOfType<Bed>(TILE_OBJECT_TYPE.BED,
                     bed => bed.mapObjectState == MAP_OBJECT_STATE.UNBUILT);
             } else {
                 //do not create craft bed since character found an unowned bed or a bed that is owned by his/her lover
+                log += objectLog;
                 return false;
             }
         }

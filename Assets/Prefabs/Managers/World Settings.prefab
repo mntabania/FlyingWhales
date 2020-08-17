@@ -4806,7 +4806,7 @@ MonoBehaviour:
     most of them are Blessed. Those who are not are unfortunately Robust. There is
     however one lone Evil elf among them that can be the key to shattering the peace.
 
-    
+
 
     A
     legendary sword can be found in the middle of the place but it is stuck in stone
@@ -13520,7 +13520,7 @@ PrefabInstance:
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13560,7 +13560,7 @@ PrefabInstance:
     - target: {fileID: 5885265226405307719, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_Interactable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7346978856635274194, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
