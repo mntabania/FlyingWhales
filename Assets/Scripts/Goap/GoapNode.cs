@@ -226,7 +226,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.NEARBY) {
             if (actor.canMove && !actor.movementComponent.isStationary) {
                 List<LocationGridTile> choices = action.NearbyLocationGetter(this) ?? actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
-                if (choices.Count > 0) {
+                if (choices != null && choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
                 } else {
                     targetTile = actor.gridTileLocation;

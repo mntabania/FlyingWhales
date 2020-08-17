@@ -90,7 +90,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += "\n-If character has a Friend who it considers Missing";
                     missingCharacter = character.relationshipContainer.GetMissingCharacterWithOpinion(RelationshipManager.Friend);
                     if (missingCharacter != null) {
-                        log += "\n-Missing close friend: " + missingCharacter;
+                        log += "\n-Missing friend: " + missingCharacter;
                         if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
                             log += "\n-Character is combatant, 5% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
                             if (!character.homeSettlement.HasAResidentThatIsAPartyLeader(PARTY_TYPE.Rescue)) {
@@ -113,6 +113,34 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     } else {
                         log += "\n-No missing friend";
                     }
+
+                    log += "\n-If character has a Lover/Affair/Relative who it considers Missing";
+                    missingCharacter = character.relationshipContainer.GetMissingCharacterThatMeetCriteria(c => character.relationshipContainer.IsFamilyMember(c) || character.relationshipContainer.HasRelationshipWith(c, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR));
+                    if (missingCharacter != null) {
+                        log += "\n-Missing Lover/Affair/Relative: " + missingCharacter;
+                        if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
+                            log += "\n-Character is combatant, 15% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
+                            if (!character.homeSettlement.HasAResidentThatIsAPartyLeader(PARTY_TYPE.Rescue)) {
+                                int chance = Random.Range(0, 100);
+                                log += $"\nRoll: {chance}";
+                                if (chance < 15) {
+                                    character.jobComponent.TriggerRescueJob(missingCharacter, out producedJob);
+                                    return true;
+                                }
+                            }
+                        } else {
+                            log += "\n-Character is not combatant, 15% chance to Request Rescue";
+                            int chance = Random.Range(0, 100);
+                            log += $"\nRoll: {chance}";
+                            if (chance < 15) {
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry_Request, missingCharacter, "Missing " + missingCharacter.name);
+                                return true;
+                            }
+                        }
+                    } else {
+                        log += "\n-No missing Lover/Affair/Relative";
+                    }
+
                 } else {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }

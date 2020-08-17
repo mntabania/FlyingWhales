@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public interface IRelationshipContainer {
 
@@ -34,6 +35,7 @@ public interface IRelationshipContainer {
     RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
     bool IsFamilyMember(Character target);
     Character GetMissingCharacterWithOpinion(string opinionLabel);
+    Character GetMissingCharacterThatMeetCriteria(Func<Character, bool> checker);
     Character GetFirstCharacterWithRelationship(params RELATIONSHIP_TYPE[] type);
     #endregion
 

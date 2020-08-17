@@ -29,7 +29,7 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
                     } else if (roll >= 30 && roll < 40) {
                         TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.TABLE);
                         if (tileObject != null) {
-                            if (character.jobComponent.TriggerDrinkJob(tileObject as Table, out producedJob)) {
+                            if (character.jobComponent.TriggerPartyDrinkJob(tileObject as Table, out producedJob)) {
                                 return true;
                             }
                         }

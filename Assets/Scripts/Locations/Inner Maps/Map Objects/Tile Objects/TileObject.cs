@@ -16,7 +16,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
-    public Character characterOwner { get; private set; }
+    public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
     public LocationStructure structureLocation => gridTileLocation.structure;

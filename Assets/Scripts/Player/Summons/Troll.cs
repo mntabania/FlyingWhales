@@ -31,6 +31,9 @@ public class Troll : Summon {
     }
     protected override void OnTickStarted() {
         base.OnTickStarted();
+        if(faction != null && faction.isPlayerFaction) {
+            return;
+        }
         CheckBecomeStone();
     }
     public override void SubscribeToSignals() {

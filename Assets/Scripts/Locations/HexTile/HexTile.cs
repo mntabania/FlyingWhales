@@ -393,6 +393,31 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public LocationGridTile GetRandomTile() {
         return locationGridTiles[UnityEngine.Random.Range(0, locationGridTiles.Count)];
     }
+    public LocationGridTile GetRandomUnoccupiedTile() {
+        List<LocationGridTile> tiles = null;
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if(tile.objHere == null) {
+                if(tiles == null) { tiles = new List<LocationGridTile>(); }
+                tiles.Add(tile);
+            }
+        }
+        if(tiles != null && tiles.Count > 0) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        return null;
+    }
+    public List<LocationGridTile> GetUnoccupiedTiles() {
+        List<LocationGridTile> tiles = null;
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (tile.objHere == null) {
+                if (tiles == null) { tiles = new List<LocationGridTile>(); }
+                tiles.Add(tile);
+            }
+        }
+        return tiles;
+    }
     public bool IsNextToOrPartOfVillage() {
         return IsPartOfVillage() || IsNextToVillage();
     }

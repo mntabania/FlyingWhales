@@ -181,13 +181,34 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return RELATIONSHIP_TYPE.NONE;
     }
     public Character GetMissingCharacterWithOpinion(string opinionLabel) {
+        List<Character> characters = null;
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character target = charactersWithOpinion[i];
             if (!target.isDead && GetAwarenessState(target) == AWARENESS_STATE.Missing) {
                 if (GetOpinionLabel(target) == opinionLabel) {
-                    return target;
+                    if(characters == null) { characters = new List<Character>(); }
+                    characters.Add(target);
                 }
             }
+        }
+        if(characters != null && characters.Count > 0) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(characters);
+        }
+        return null;
+    }
+    public Character GetMissingCharacterThatMeetCriteria(Func<Character, bool> checker) {
+        List<Character> characters = null;
+        for (int i = 0; i < charactersWithOpinion.Count; i++) {
+            Character target = charactersWithOpinion[i];
+            if (!target.isDead && GetAwarenessState(target) == AWARENESS_STATE.Missing) {
+                if (checker.Invoke(target)) {
+                    if (characters == null) { characters = new List<Character>(); }
+                    characters.Add(target);
+                }
+            }
+        }
+        if (characters != null && characters.Count > 0) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(characters);
         }
         return null;
     }

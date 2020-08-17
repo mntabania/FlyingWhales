@@ -111,6 +111,7 @@ public class CharacterManager : MonoBehaviour {
                 typeof(DefaultOtherStructure),
                 typeof(DefaultExtraCatcher),
                 typeof(MovementProcessing),
+                typeof(DefaultOutsideHomeRegion),
             }
         },
         { Default_Monster_Behaviour,
