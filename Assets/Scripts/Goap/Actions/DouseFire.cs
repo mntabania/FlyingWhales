@@ -11,6 +11,8 @@ public class DouseFire : GoapAction {
         actionIconString = GoapActionStateDB.Douse_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        shouldAddLogs = false;
+        showNotification = false;
     }
 
     #region Overrides

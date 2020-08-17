@@ -139,8 +139,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         pickedSlotItem = slotItem;
         loadoutChoices.Clear();
         if (spellsTab.isOn) {
-            for (int i = 0; i < PlayerSkillManager.Instance.allSpells.Length; i++) {
-                SPELL_TYPE skillType = PlayerSkillManager.Instance.allSpells[i];
+            for (int i = 0; i < loadout.availableSpells.Length; i++) {
+                SPELL_TYPE skillType = loadout.availableSpells[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                     if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.spells.fixedSkills.Contains(skillType) && !spellsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
@@ -148,8 +148,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
                 }
             }
         } else if (afflictionsTab.isOn) {
-            for (int i = 0; i < PlayerSkillManager.Instance.allAfflictions.Length; i++) {
-                SPELL_TYPE skillType = PlayerSkillManager.Instance.allAfflictions[i];
+            for (int i = 0; i < loadout.availableAfflictions.Length; i++) {
+                SPELL_TYPE skillType = loadout.availableAfflictions[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                     if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.afflictions.fixedSkills.Contains(skillType) && !afflictionsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
@@ -157,8 +157,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
                 }
             }
         } else if (minionsTab.isOn) {
-            for (int i = 0; i < PlayerSkillManager.Instance.allMinionPlayerSkills.Length; i++) {
-                SPELL_TYPE skillType = PlayerSkillManager.Instance.allMinionPlayerSkills[i];
+            for (int i = 0; i < loadout.availableMinions.Length; i++) {
+                SPELL_TYPE skillType = loadout.availableMinions[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                     if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.minions.fixedSkills.Contains(skillType) && !minionsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
@@ -166,8 +166,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
                 }
             }
         } else if (structuresTab.isOn) {
-            for (int i = 0; i < PlayerSkillManager.Instance.allDemonicStructureSkills.Length; i++) {
-                SPELL_TYPE skillType = PlayerSkillManager.Instance.allDemonicStructureSkills[i];
+            for (int i = 0; i < loadout.availableStructures.Length; i++) {
+                SPELL_TYPE skillType = loadout.availableStructures[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                     if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.structures.fixedSkills.Contains(skillType) && !structuresSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
@@ -175,8 +175,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
                 }
             }
         } else if (miscsTab.isOn) {
-            for (int i = 0; i < PlayerSkillManager.Instance.allPlayerActions.Length; i++) {
-                SPELL_TYPE skillType = PlayerSkillManager.Instance.allPlayerActions[i];
+            for (int i = 0; i < loadout.availableMiscs.Length; i++) {
+                SPELL_TYPE skillType = loadout.availableMiscs[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
                     if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.miscs.fixedSkills.Contains(skillType) && !miscsSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
