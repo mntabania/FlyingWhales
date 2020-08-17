@@ -276,7 +276,7 @@ public class WorldSettings : MonoBehaviour {
     }
     public void OnHoverExitWorldPicker(WorldPickerItem item) {
         if(toggledWorldPicker != null && toggledWorldPicker.description != string.Empty) {
-            ShowHover(toggledWorldPicker.worldType.ToString(), toggledWorldPicker.description);
+            ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), toggledWorldPicker.description);
         } else {
             HideHover();
         }
