@@ -223,6 +223,8 @@ public class CharacterVisuals {
         if (_owner.isNormalCharacter == false) {
             if (_owner.characterClass.className == "Necromancer") {
                 return UtilityScripts.Utilities.VillagerIcon();        
+            } else if (_owner.faction.isPlayerFaction) {
+                return UtilityScripts.Utilities.DemonIcon();
             }
             return UtilityScripts.Utilities.MonsterIcon();
         } else if (_owner.isAlliedWithPlayer) {

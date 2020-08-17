@@ -772,6 +772,9 @@ namespace UtilityScripts {
         public static string LeaderIcon() {
             return "<sprite=\"Text_Sprites\" name=\"Leader_Icon\"> ";
         }
+        public static string DemonIcon() {
+            return "<sprite=\"Text_Sprites\" name=\"Demon_Icon\"> ";
+        }
         public static string ColorizeAction(string actionString) {
             return $"<color=#f87f43>{actionString}</color>";
         }

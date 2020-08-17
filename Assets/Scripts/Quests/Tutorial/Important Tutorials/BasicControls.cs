@@ -40,8 +40,8 @@ namespace Tutorial {
 
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(hoveredStep, look, zoom, unpause),
-                new QuestStepCollection(objectClick, characterClick),
-                new QuestStepCollection(structureClick, hexTileClick),
+                new QuestStepCollection(objectClick, characterClick, structureClick),
+                // new QuestStepCollection(structureClick, hexTileClick),
             };
         }
 
