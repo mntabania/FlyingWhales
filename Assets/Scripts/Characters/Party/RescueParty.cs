@@ -42,6 +42,11 @@ public class RescueParty : Party {
         member.movementComponent.SetEnableDigging(false);
         member.traitContainer.RemoveTrait(member, "Travelling");
     }
+    protected override void OnRemoveMemberOnDisband(Character member) {
+        base.OnRemoveMemberOnDisband(member);
+        member.movementComponent.SetEnableDigging(false);
+        member.traitContainer.RemoveTrait(member, "Travelling");
+    }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {

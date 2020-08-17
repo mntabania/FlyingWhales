@@ -143,6 +143,13 @@ public class InterruptComponent {
     //    }
     //}
     private void EndInterrupt() {
+        if(currentInterrupt == null || currentInterrupt.interrupt == null) {
+            //Will not process anymore if there is no current interrupt, this means that the interrupt has already been ended before and has returned to the object pool
+            //This can happen if the actor is a minion and the ExecuteInterruptEndEffect triggers the death of the actor
+            //In this manner, the minion actor will have already ended the interrupt during death because we the ForceEndNonSimultaneousInterrupt is being called when a minion dies/unsummoned
+            //so when the EndInterrupt is called again after the ExecuteInterruptEndEffect call, the current interrupt is already null
+            return;
+        }
         bool willCheckInVision = currentInterrupt.interrupt.duration > 0;
         Interrupt finishedInterrupt = currentInterrupt.interrupt;
         SetNonSimultaneousInterrupt(null);

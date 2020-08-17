@@ -34,27 +34,36 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 }
             } else {
                 if (counterattackParty.target is LocationStructure targetStructure) {
-                    //LocationStructure targetStructure = character.currentStructure;
-                    if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
-                        log += "\n-Has tile object that contribute damage";
-                        log += "\n-Adding tile object as hostile";
-                        TileObject chosenTileObject = null;
-                        IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
-                        if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
-                            chosenTileObject = tileObject;
-                        }
-                        if (chosenTileObject != null) {
-                            character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
-                            return true;
+                    //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
+                    //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
+                    if(targetStructure.location == character.currentRegion) {
+                        //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
+
+                        //LocationStructure targetStructure = character.currentStructure;
+                        if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
+                            log += "\n-Has tile object that contribute damage";
+                            log += "\n-Adding tile object as hostile";
+                            TileObject chosenTileObject = null;
+                            IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
+                            if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
+                                chosenTileObject = tileObject;
+                            }
+                            if (chosenTileObject != null) {
+                                character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+                                return true;
+                            } else {
+                                log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                                counterattackParty.DisbandParty();
+                                return true;
+                            }
                         } else {
                             log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
                             counterattackParty.DisbandParty();
                             return true;
                         }
                     } else {
-                        log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
-                        counterattackParty.DisbandParty();
-                        return true;
+                        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
+                        return character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
                     }
                 }
 
@@ -98,28 +107,38 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 character.behaviourComponent.SetIsAttackingDemonicStructure(false, null);
                 return true;
             } else {
+                //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
+                //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
+
                 LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
-                if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
-                    log += "\n-Has tile object that contribute damage";
-                    log += "\n-Adding tile object as hostile";
-                    TileObject chosenTileObject = null;
-                    IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
-                    if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
-                        chosenTileObject = tileObject;
-                    }
-                    if (chosenTileObject != null) {
-                        character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
-                        return true;
+                if (targetStructure.location == character.currentRegion) {
+                    //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
+                    if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
+                        log += "\n-Has tile object that contribute damage";
+                        log += "\n-Adding tile object as hostile";
+                        TileObject chosenTileObject = null;
+                        IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
+                        if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
+                            chosenTileObject = tileObject;
+                        }
+                        if (chosenTileObject != null) {
+                            character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+                            return true;
+                        } else {
+                            log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+                            character.behaviourComponent.SetDemonicStructureTarget(null);
+                            return true;
+                        }
                     } else {
                         log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
                         character.behaviourComponent.SetDemonicStructureTarget(null);
                         return true;
                     }
                 } else {
-                    log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
-                    character.behaviourComponent.SetDemonicStructureTarget(null);
-                    return true;
+                    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
+                    return character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
                 }
+
 
                 //if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 //    && character.gridTileLocation.collectionOwner.partOfHextile == character.behaviourComponent.attackDemonicStructureTarget.occupiedHexTile) {

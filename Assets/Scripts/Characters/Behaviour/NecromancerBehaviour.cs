@@ -211,6 +211,10 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     LocationGridTile centerTileOfHex = chosenHex.GetCenterLocationGridTile();
                     character.jobComponent.TriggerSpawnLair(centerTileOfHex, out producedJob);
                 } else {
+                    if(character.homeStructure != character.necromancerTrait.lairStructure) {
+                        log += $"\n-Lair is not his home, will migrate home first";
+                        character.MigrateHomeStructureTo(character.necromancerTrait.lairStructure);
+                    }
                     log += $"\n-Character will return home";
                     character.jobComponent.PlanIdleReturnHome(out producedJob);
                 }

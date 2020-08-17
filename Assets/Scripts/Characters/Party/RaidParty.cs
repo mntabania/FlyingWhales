@@ -42,6 +42,11 @@ public class RaidParty : Party {
         member.movementComponent.SetEnableDigging(false);
         member.traitContainer.RemoveTrait(member, "Travelling");
     }
+    protected override void OnRemoveMemberOnDisband(Character member) {
+        base.OnRemoveMemberOnDisband(member);
+        member.movementComponent.SetEnableDigging(false);
+        member.traitContainer.RemoveTrait(member, "Travelling");
+    }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();
         //TODO: notif reason why raid party disbanded
