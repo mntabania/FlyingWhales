@@ -1058,8 +1058,18 @@ public class ReactionComponent {
                         debugLog += "\n-Target will Puke";
                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, "saw dead " + targetCharacter.name);
                     }
-                } else if (opinionLabel == RelationshipManager.Rival) {
-                    debugLog += "\n-Target is Rival";
+                } else if ((actor.relationshipContainer.IsFamilyMember(targetCharacter) || actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                && opinionLabel != RelationshipManager.Rival) {
+                    debugLog += "\n-Target is Relative/Lover/Affair and not Rival";
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        debugLog += "\n-Target will Cry";
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, "saw dead " + targetCharacter.name);
+                    } else {
+                        debugLog += "\n-Target will Puke";
+                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, "saw dead " + targetCharacter.name);
+                    }
+                } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
+                    debugLog += "\n-Target is Enemy/Rival";
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         debugLog += "\n-Target will Mock";
                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, targetCharacter);
@@ -1067,6 +1077,9 @@ public class ReactionComponent {
                         debugLog += "\n-Target will Laugh At";
                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                     }
+                } else {
+                    debugLog += "\n-Otherwise, Shock";
+                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                 }
             }
         }

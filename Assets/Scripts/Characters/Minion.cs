@@ -64,9 +64,10 @@ public class Minion {
             if (character.stateComponent.currentState != null) {
                 character.stateComponent.ExitCurrentState();
             }
-            if (character.currentSettlement != null && character.isHoldingItem) {
-                character.DropAllItems(deathTile);
-            }
+            //if (character.currentSettlement != null && character.isHoldingItem) {
+            //    character.DropAllItems(deathTile);
+            //}
+            character.DropAllItems(deathTile);
 
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
