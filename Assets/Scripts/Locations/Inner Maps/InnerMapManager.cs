@@ -164,7 +164,7 @@ namespace Inner_Maps {
                             return tile.structure;    
                         }
                     }
-                    return tile.collectionOwner.partOfHextile.hexTileOwner;
+                    // return tile.collectionOwner.partOfHextile.hexTileOwner;
                 }
             }
             
@@ -217,7 +217,7 @@ namespace Inner_Maps {
                             selectables.Add(tile.structure);
                         }
                     }
-                    selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
+                    // selectables.Add(tile.collectionOwner.partOfHextile.hexTileOwner);
                 }
             }
             return true;

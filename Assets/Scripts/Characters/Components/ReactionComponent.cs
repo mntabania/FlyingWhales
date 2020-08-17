@@ -720,14 +720,12 @@ public class ReactionComponent {
                             }
                         } else if (!disguisedActor.traitContainer.HasTrait("Psychopath")) {
                             debugLog += "\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
-                            bool targetIsParalyzedOrEnsnared =
-                                targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
-                            bool targetIsRestrainedCriminal =
-                                (targetCharacter.traitContainer.HasTrait("Restrained") &&
-                                 disguisedTarget.traitContainer.HasTrait("Criminal"));
-                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal) {
-                                debugLog += $"\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()})";
-                                if (targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) {
+                            bool targetIsParalyzedOrEnsnared = targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
+                            bool targetIsRestrainedCriminal = (targetCharacter.traitContainer.HasTrait("Restrained") && disguisedTarget.traitContainer.HasTrait("Criminal"));
+                            bool targetIsCatatonic = targetCharacter.traitContainer.HasTrait("Catatonic");
+                            if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
+                                debugLog += $"\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
+                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetCharacter.traitContainer.HasTrait("Vampiric")) {
                                     debugLog += "\n-Target is hungry or starving, will create feed job";
                                     if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);

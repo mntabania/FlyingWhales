@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8228764
+    totalSpriteSurfaceArea: 8229079
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -106,6 +106,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fed4f602cdd25ce45ac3c95e68292179, type: 3}
   - {fileID: 21300000, guid: 5b15da026bff8444596c56e4941d0a5e, type: 3}
   - {fileID: 21300000, guid: 4bdc5012594c6c2428feb60b9110bb6e, type: 3}
+  - {fileID: 5398943851152672197, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -4696520873778137625, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: 8525357217409305892, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
   - {fileID: -7319396352633551538, guid: f0f73412fb5958346808998fdabb9ccc, type: 3}
@@ -541,6 +542,7 @@ SpriteAtlas:
   - tutorial_goal_checkbox_complete
   - button_intel_disabled
   - tab_traits_inactive
+  - Text_Sprites_13
   - Text_Sprites_12
   - Text_Sprites_11
   - Text_Sprites_10

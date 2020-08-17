@@ -19,7 +19,10 @@ public class ChaosOrb : PooledObject {
 	[SerializeField] private Collider2D _collider;
 	[SerializeField] private TrailRenderer _trail;
 	
-	public void Initialize() {
+	public Region location { get; private set; }
+	
+	public void Initialize(Region location) {
+		this.location = location;
 		GameDate expiry = GameManager.Instance.Today();
 		expiry = expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(ExpiryInHours));
 		expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
@@ -83,6 +86,7 @@ public class ChaosOrb : PooledObject {
 	}
 	public override void Reset() {
 		base.Reset();
+		location = null;
 		_trail.Clear();
 		_collider.enabled = true;
 		positionCoroutine = null;

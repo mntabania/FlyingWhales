@@ -4,6 +4,7 @@ using UnityEngine;
 using Interrupts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class InterruptComponent {
     public Character owner { get; private set; }
@@ -93,7 +94,14 @@ public class InterruptComponent {
     }
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
         Log effectLog = null;
+        Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} is null!");
+        Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} is null!");
+        INTERRUPT interruptType = interruptHolder.interrupt.type;
         interruptHolder.interrupt.ExecuteInterruptStartEffect(interruptHolder, ref effectLog, actionThatTriggered);
+        
+        Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} became null after executing start effect of {interruptType.ToString()}!");
+        Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} became null after executing start effect of {interruptType.ToString()}!");
+        
         if(effectLog == null) {
             effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }

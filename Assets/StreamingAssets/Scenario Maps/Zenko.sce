@@ -2669,7 +2669,7 @@
           "structureType": "FARM"
         }
       ],
-      "minimumVillagerCount": 10,
+      "minimumVillagerCount": 9,
       "factionRace": "ELVES"
     },
     {
@@ -2709,7 +2709,7 @@
           "structureType": "MINE_SHACK"
         }
       ],
-      "minimumVillagerCount": 10,
+      "minimumVillagerCount": 9,
       "factionRace": "HUMANS"
     },
     {
@@ -2749,7 +2749,7 @@
           "structureType": "LUMBERYARD"
         }
       ],
-      "minimumVillagerCount": 10,
+      "minimumVillagerCount": 9,
       "factionRace": "ELVES"
     },
     {
@@ -2789,7 +2789,7 @@
           "structureType": "MAGE_QUARTERS"
         }
       ],
-      "minimumVillagerCount": 10,
+      "minimumVillagerCount": 9,
       "factionRace": "HUMANS"
     }
   ]

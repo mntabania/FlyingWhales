@@ -1634,13 +1634,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Update Portrait to use new race
         visuals.UpdateAllVisuals(this, true);
         //update goap interactions that should no longer be valid
-        if (race == RACE.SKELETON) {
-            RemoveAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
-            RemoveAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
-        } else {
-            AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
-            AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
-        }
+        // if (race == RACE.SKELETON) {
+        //     RemoveAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
+        //     RemoveAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+        // } else {
+        //     AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
+        //     AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+        // }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
         } else {
@@ -3969,6 +3969,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
             AddAdvertisedAction(INTERACTION_TYPE.RAID);
             AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
+            AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
+            AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);

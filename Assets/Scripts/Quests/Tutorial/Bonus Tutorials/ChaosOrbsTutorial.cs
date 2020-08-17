@@ -48,8 +48,7 @@ namespace Tutorial {
                         .SetObjectsToCenter(() => 
                             PlayerManager.Instance.availableChaosOrbs.Select(x => x.gameObject).ToList(), 
                             IsChaosOrbSelected, CenterChaosOrb
-                        )
-                        .SetCompleteAction(OnCompleteClickChaosOrb)
+                        ).SetCompleteAction(OnCompleteClickChaosOrb)
                 ),
             };
         }
@@ -73,7 +72,16 @@ namespace Tutorial {
                    || InnerMapCameraMove.Instance.lastCenteredTarget == gameObject.transform;
         }
         private void CenterChaosOrb(GameObject gameObject) {
-            InnerMapCameraMove.Instance.CenterCameraOn(gameObject);
+            ChaosOrb chaosOrb = gameObject.GetComponent<ChaosOrb>();
+            if (chaosOrb.location != null) {
+                if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != chaosOrb.location.innerMap) {
+                    InnerMapManager.Instance.HideAreaMap();
+                }
+                if (chaosOrb.location.innerMap.isShowing == false) {
+                    InnerMapManager.Instance.ShowInnerMap(chaosOrb.location);
+                }
+                InnerMapCameraMove.Instance.CenterCameraOn(gameObject);    
+            }
         }
         #endregion
 

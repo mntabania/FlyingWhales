@@ -157,5 +157,11 @@ namespace Interrupts {
             awareCharacters.Clear();
         }
         #endregion
+
+        #region Testing
+        public override string ToString() {
+            return $"Interrupt: {interrupt?.type.ToString() ?? "None"}. Actor: {actor?.name ?? "None"}";
+        }
+        #endregion
     }
 }

@@ -307,6 +307,7 @@ public class WorldSettings : MonoBehaviour {
             hoverTitle.text = title;
             hoverText.text = text;
             hoverGO.SetActive(true);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(hoverGO.transform as RectTransform);
         }
     }
     public void HideHover() {

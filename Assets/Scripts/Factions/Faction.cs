@@ -58,7 +58,7 @@ public class Faction : IJobOwner {
     public Faction(FACTION_TYPE _factionType) {
         id = UtilityScripts.Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.GenerateKingdomName());
-        SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
+        // SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
         SetFactionActiveState(true);
         factionType = FactionManager.Instance.CreateFactionType(_factionType);

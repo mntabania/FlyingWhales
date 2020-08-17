@@ -160,7 +160,6 @@ public class Player : ILeader, IObjectManipulator {
     public void CreatePlayerFaction() {
         Faction faction = FactionManager.Instance.CreateNewFaction(FACTION_TYPE.Demons, "Demons");
         faction.SetLeader(this);
-        faction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(faction);
     }
     public void CreatePlayerFaction(SaveDataPlayerGame data) {

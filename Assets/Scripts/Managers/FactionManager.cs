@@ -19,7 +19,12 @@ public class FactionManager : MonoBehaviour {
     [Space(10)]
     [Header("Visuals")]
     [SerializeField] private List<Sprite> _factionEmblems;
-
+    [SerializeField] private Sprite wildMonsterFactionEmblem;
+    [SerializeField] private Sprite vagrantFactionEmblem;
+    [SerializeField] private Sprite disguisedFactionEmblem;
+    [SerializeField] private Sprite undeadFactionEmblem;
+    [SerializeField] private Sprite playerFactionEmblem;
+    
     private List<Sprite> usedEmblems = new List<Sprite>();
 
     public readonly string[] exclusiveIdeologyTraitRequirements = new string[] { "Worker", "Combatant", "Royalty" };
@@ -49,7 +54,7 @@ public class FactionManager : MonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Wild_Monsters);
         newFaction.SetName("Wild Monsters");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(GetFactionEmblem(4));
+        newFaction.SetEmblem(wildMonsterFactionEmblem);
         newFaction.factionType.SetAsDefault();
         allFactions.Add(newFaction);
         SetNeutralFaction(newFaction);
@@ -60,7 +65,7 @@ public class FactionManager : MonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Vagrants);
         newFaction.SetName("Vagrants");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(GetFactionEmblem(4));
+        newFaction.SetEmblem(vagrantFactionEmblem);
         newFaction.factionType.SetAsDefault();
         allFactions.Add(newFaction);
         SetVagrantFaction(newFaction);
@@ -71,7 +76,7 @@ public class FactionManager : MonoBehaviour {
         Faction newFaction = new Faction(FACTION_TYPE.Disguised);
         newFaction.SetName("Disguised");
         newFaction.SetFactionActiveState(false);
-        newFaction.SetEmblem(GetFactionEmblem(4));
+        newFaction.SetEmblem(disguisedFactionEmblem);
         newFaction.factionType.SetAsDefault();
         allFactions.Add(newFaction);
         SetDisguisedFaction(newFaction);
@@ -93,6 +98,13 @@ public class FactionManager : MonoBehaviour {
     public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
         Faction newFaction = new Faction(factionType);
         allFactions.Add(newFaction);
+        if (factionType == FACTION_TYPE.Demons) {
+            newFaction.SetEmblem(playerFactionEmblem);
+        } else if (factionType == FACTION_TYPE.Undead) {
+            newFaction.SetEmblem(undeadFactionEmblem);
+        } else {
+            newFaction.SetEmblem(GenerateFactionEmblem(newFaction));
+        }
         CreateRelationshipsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);

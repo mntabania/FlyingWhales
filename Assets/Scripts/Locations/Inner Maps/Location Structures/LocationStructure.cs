@@ -833,6 +833,7 @@ namespace Inner_Maps.Location_Structures {
                    && UIManager.Instance.structureInfoUI.activeStructure == this;
         }
         public void LeftSelectAction() {
+            CenterOnStructure();
             UIManager.Instance.ShowStructureInfo(this);
         }
         public void RightSelectAction() { }

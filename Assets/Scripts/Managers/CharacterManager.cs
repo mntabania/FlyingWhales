@@ -305,6 +305,13 @@ public class CharacterManager : MonoBehaviour {
                 typeof(TrollBehaviour),
             }
         },
+        { Baby_Infestor_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(BabyInfestorBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
     };
 
     #region getters/setters
