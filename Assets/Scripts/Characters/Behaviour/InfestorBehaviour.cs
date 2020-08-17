@@ -29,10 +29,10 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
                         HexTile hex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                         currentCapacity = hex.GetNumOfCharactersInsideHexThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
                     }
-                    if(currentCapacity < 8) {
+                    // if(currentCapacity < 8) {
                         character.jobComponent.TriggerLayEgg(out producedJob);
                         return true;
-                    }
+                    // }
                 }
             }
         }

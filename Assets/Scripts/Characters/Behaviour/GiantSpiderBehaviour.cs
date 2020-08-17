@@ -64,9 +64,9 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
                     eggCount += hexTile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
                 }
             }
-            if (residentCount < 5 && eggCount < 2) {
+            // if (residentCount < 5 && eggCount < 2) {
                 return character.jobComponent.TriggerLayEgg(out producedJob);
-            }
+            // }
         }
 
         if (GameUtilities.RollChance(30)) {
