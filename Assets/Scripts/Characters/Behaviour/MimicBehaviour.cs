@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 
@@ -15,9 +16,12 @@ public class MimicBehaviour : CharacterBehaviourComponent {
         _actionWeights.AddElement("Revert", 5);
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
-        log += $"\n-{character.name} is Ent";
+        log += $"\n-{character.name} is Mimic";
 
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
+        if (character.currentStructure is Kennel && chosenAction == "Revert") {
+            chosenAction = "Stand";
+        }
         if (chosenAction == "Roam") {
             return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
         } else if (chosenAction == "Stand") {

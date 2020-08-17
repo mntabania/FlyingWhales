@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 
@@ -18,6 +19,10 @@ public class EntBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} is Ent";
 
         string chosenAction = _actionWeights.PickRandomElementGivenWeights();
+        if (character.currentStructure is Kennel && chosenAction == "Revert") {
+            chosenAction = "Stand";
+        }
+
         if (chosenAction == "Roam") {
             return character.jobComponent.TriggerRoamAroundTerritory(out producedJob);
         } else if (chosenAction == "Stand") {
