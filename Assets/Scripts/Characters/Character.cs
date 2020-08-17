@@ -2978,6 +2978,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     protected virtual void OnHourStarted() {
         ProcessTraitsOnHourStarted();
+        if (needsComponent.HasNeeds()) {
+            needsComponent.PlanScheduledTirednessRecovery(this);
+        }
     }
     protected void StartTickGoapPlanGeneration() {
         //This is to ensure that this character will not be idle forever
@@ -2986,7 +2989,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //SetHasAlreadyAskedForPlan(false);
         if (needsComponent.HasNeeds()) {
             needsComponent.PlanScheduledFullnessRecovery(this);
-            needsComponent.PlanScheduledTirednessRecovery(this);
+            //needsComponent.PlanScheduledTirednessRecovery(this);
         }
         if (isNormalCharacter) {
             //try to take settlement job that this character can see the target of.
@@ -3457,9 +3460,40 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DropAllItems(LocationGridTile tile) { //, bool removeFactionOwner = false
         for (int i = 0; i < items.Count; i++) {
             TileObject item = items[i];
-            if (DropItem(item)) {
+            if (DropItem(item, tile)) {
                 i--;
             }
+        }
+    }
+    public void UnownOrTransferOwnershipOfAllItems() {
+        //https://trello.com/c/LbfWIBBh/1866-item-ownership-dead
+        //All owned items of character must be unowned when he dies
+        //The items must either be unowned or transfered to another resident in his home structure, depending on where the item is currently
+        //If it is in home structure transfer it to another random resident, otherwise, unown only
+
+        List<Character> potentialOwners = null;
+        if(homeStructure != null) {
+            for (int i = 0; i < homeStructure.residents.Count; i++) {
+                Character resident = homeStructure.residents[i];
+                if(resident != this) {
+                    if (potentialOwners == null) { potentialOwners = new List<Character>(); }
+                    potentialOwners.Add(resident);
+                }
+            }
+        }
+        for (int i = 0; i < ownedItems.Count; i++) {
+            TileObject item = ownedItems[i];
+            if(item.gridTileLocation == null || item.gridTileLocation.structure != homeStructure) {
+                item.SetCharacterOwner(null);
+            } else {
+                if (potentialOwners != null && potentialOwners.Count > 0) {
+                    Character newOwner = CollectionUtilities.GetRandomElement(potentialOwners);
+                    item.SetCharacterOwner(newOwner);
+                } else {
+                    item.SetCharacterOwner(null);
+                }
+            }
+            i--;
         }
     }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
@@ -5579,6 +5613,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             jobQueue.CancelAllJobs();
 
             DropAllItems(deathTile);
+            UnownOrTransferOwnershipOfAllItems();
 
             //if (currentSettlement != null && isHoldingItem) {
             //    DropAllItems(deathTile);

@@ -88,9 +88,11 @@ public class Summon : Character {
             //if (currentActionNode != null) {
             //    currentActionNode.StopActionNode(false);
             //}
-            if (currentSettlement != null && isHoldingItem) {
-                DropAllItems(deathTile);
-            }
+            //if (currentSettlement != null && isHoldingItem) {
+            //    DropAllItems(deathTile);
+            //}
+            DropAllItems(deathTile);
+
             //if (ownParty.specificLocation != null && isHoldingItem) {
             //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
             //}
