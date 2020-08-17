@@ -395,8 +395,17 @@ public class ActualGoapNode : IReactable, IRumorable {
         return true;
     }
     private void OnArriveAtTargetLocation() {
-        if(action.actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION && (action.actionLocationType != ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL || targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS)) {
-            //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
+        if(action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            if(actor.marker && actor.marker.inVisionPOIs.Contains(poiTarget)) {
+                //Only do perform goap action on arrive at location if the location type is not target in vision, because if it is, we no longer need this function because perform goap action is already called upon entering vision
+                actor.PerformGoapAction();
+            }
+        } else if (action.actionLocationType == ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL) {
+            //If action location type is Upon Structure Arrival and the character already reached the target tile but the target structure is wilderness or the target structure is not the current structure, perform again
+            if(targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS || actor.currentStructure != targetStructure) {
+                actor.PerformGoapAction();
+            }
+        } else {
             actor.PerformGoapAction();
         }
     }

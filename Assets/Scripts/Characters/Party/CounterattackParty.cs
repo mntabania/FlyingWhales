@@ -53,6 +53,12 @@ public class CounterattackParty : Party {
         member.traitContainer.RemoveTrait(member, "Fervor");
         member.traitContainer.RemoveTrait(member, "Travelling");
     }
+    protected override void OnRemoveMemberOnDisband(Character member) {
+        base.OnRemoveMemberOnDisband(member);
+        member.movementComponent.SetEnableDigging(false);
+        member.traitContainer.RemoveTrait(member, "Fervor");
+        member.traitContainer.RemoveTrait(member, "Travelling");
+    }
     #endregion
 
     #region General

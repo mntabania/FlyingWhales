@@ -493,9 +493,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (character.gridTileLocation == destinationTile || character.gridTileLocation.IsNeighbour(destinationTile)) {
                 attainedDestinationTile = destinationTile;
             } else {
-                Vector3 lastPositionInPath = pathfindingAI.currentPath.vectorPath.Last();
-                //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
-                attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
+                List<Vector3> vectorPath = pathfindingAI.currentPath.vectorPath;
+                if (vectorPath != null && vectorPath.Count > 0) {
+                    Vector3 lastPositionInPath = vectorPath.Last();
+                    //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
+                    attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
+                } else {
+                    attainedDestinationTile = character.gridTileLocation;
+                }
             }
             if (character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
@@ -1097,7 +1102,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.currentActionNode.associatedJob?.CancelJob(false);
         }
         if (character.currentActionNode != null && character.currentActionNode.action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentActionNode.poiTarget == poi) {
-            StopMovement();
+            pathfindingAI.ClearAllCurrentPathData();
             character.PerformGoapAction();
         }
         if(poi is Character target) {
@@ -1470,7 +1475,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
 
-        Vector3[] avoidThisPositions = new Vector3[character.combatComponent.avoidInRange.Count + PlayerManager.Instance.player.playerSettlement.allStructures.Count];
+        List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
+        Vector3[] avoidThisPositions = new Vector3[character.combatComponent.avoidInRange.Count + playerHexes.Count];
         int lastIndex = 0;
         if (character.combatComponent.avoidInRange.Count > 0) {
             for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
@@ -1481,14 +1487,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         //Corrupted hexes should also be avoided
         //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
-        List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
         if(playerHexes.Count > 0) {
             for (int i = 0; i < playerHexes.Count; i++) {
                 avoidThisPositions[i + lastIndex] = playerHexes[i].GetCenterLocationGridTile().worldLocation;
             }
         }
 
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 10000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, 10000);
         fleePath.aimStrength = 1;
         fleePath.spread = 2000;
         seeker.StartPath(fleePath);

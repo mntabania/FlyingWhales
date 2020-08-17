@@ -10,6 +10,13 @@ public class PlayerSkillLoadout : ScriptableObject {
     public PlayerSkillLoadoutData minions;
     public PlayerSkillLoadoutData structures;
     public PlayerSkillLoadoutData miscs;
+
+    public SPELL_TYPE[] availableSpells;
+    public SPELL_TYPE[] availableAfflictions;
+    public SPELL_TYPE[] availableMinions;
+    public SPELL_TYPE[] availableStructures;
+    public SPELL_TYPE[] availableMiscs;
+
 }
 
 [System.Serializable]

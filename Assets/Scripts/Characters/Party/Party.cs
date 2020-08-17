@@ -47,6 +47,13 @@ public class Party {
             leader.RemoveAdvertisedAction(INTERACTION_TYPE.JOIN_PARTY);
         }
     }
+    protected virtual void OnRemoveMemberOnDisband(Character member) {
+        member.partyComponent.SetCurrentParty(null);
+        member.behaviourComponent.RemoveBehaviourComponent(relatedBehaviour);
+        if (member == leader) {
+            leader.RemoveAdvertisedAction(INTERACTION_TYPE.JOIN_PARTY);
+        }
+    }
     protected virtual void OnDisbandParty() {
         Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband");
         log.AddToFillers(leader, leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -97,7 +104,7 @@ public class Party {
         if (isDisbanded) { return; }
         OnBeforeDisbandParty();
         for (int i = 0; i < members.Count; i++) {
-            OnRemoveMember(members[i]);
+            OnRemoveMemberOnDisband(members[i]);
         }
         members.Clear();
         OnDisbandParty();

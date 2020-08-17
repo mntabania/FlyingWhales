@@ -36,18 +36,16 @@ public class SocialParty : Party {
     //}
     protected override void OnRemoveMember(Character member) {
         base.OnRemoveMember(member);
-        if (!isDisbanded) {
-            if(members.Count > 0) {
-                bool stillHasMemberInTargetStructure = false;
-                for (int i = 0; i < members.Count; i++) {
-                    if(members[i].currentStructure == targetStructure) {
-                        stillHasMemberInTargetStructure = true;
-                        break;
-                    }
+        if (members.Count > 0) {
+            bool stillHasMemberInTargetStructure = false;
+            for (int i = 0; i < members.Count; i++) {
+                if (members[i].currentStructure == targetStructure) {
+                    stillHasMemberInTargetStructure = true;
+                    break;
                 }
-                if (!stillHasMemberInTargetStructure) {
-                    DisbandParty();
-                }
+            }
+            if (!stillHasMemberInTargetStructure) {
+                DisbandParty();
             }
         }
     }
