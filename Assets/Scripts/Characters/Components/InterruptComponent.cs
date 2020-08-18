@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Interrupts;
 using Inner_Maps;
@@ -18,6 +20,7 @@ public class InterruptComponent {
 
     public Log thoughtBubbleLog { get; private set; }
 
+    private List<System.Action> _pendingSimultaneousInterrupts;
     //private Log _currentEffectLog;
 
     #region getters
@@ -28,6 +31,7 @@ public class InterruptComponent {
 
     public InterruptComponent(Character owner) {
         this.owner = owner;
+        _pendingSimultaneousInterrupts = new List<Action>();
         //identifier = string.Empty;
         //simultaneousIdentifier = string.Empty;
     }
@@ -76,21 +80,33 @@ public class InterruptComponent {
         }
         return true;
     }
-    private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered, string reason) {
+    private void TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered, string reason) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
-        bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
+        if (hasTriggeredSimultaneousInterrupt) {
+            //character is currently running a simultaneous interrupt.
+            AddPendingSimultaneousInterrupt(() => TriggeredSimultaneousInterrupt(interrupt, targetPOI, identifier, actionThatTriggered, reason));
+            return;
+        }
+        // bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
         InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
         interruptHolder.Initialize(interrupt, owner, targetPOI, identifier, reason);
         SetSimultaneousInterrupt(interruptHolder);
-        //simultaneousIdentifier = identifier;
         ExecuteStartInterrupt(triggeredSimultaneousInterrupt, actionThatTriggered);
         AddEffectLog(triggeredSimultaneousInterrupt);
         interrupt.ExecuteInterruptEndEffect(triggeredSimultaneousInterrupt);
         currentSimultaneousInterruptDuration = 0;
-        if (!alreadyHasSimultaneousInterrupt) {
+        // if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
+        // }
+    }
+    private void AddPendingSimultaneousInterrupt(System.Action pendingSimultaneousInterrupt) {
+        _pendingSimultaneousInterrupts.Add(pendingSimultaneousInterrupt);
+    }
+    private void TryExecutePendingSimultaneousInterrupt() {
+        if (_pendingSimultaneousInterrupts.Count > 0) {
+            _pendingSimultaneousInterrupts.First().Invoke();
+            _pendingSimultaneousInterrupts.RemoveAt(0);
         }
-        return true;
     }
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
         Log effectLog = null;
@@ -130,6 +146,7 @@ public class InterruptComponent {
                 if (owner.marker) {
                     owner.marker.UpdateActionIcon();
                 }
+                TryExecutePendingSimultaneousInterrupt();
             }
         }
     }
