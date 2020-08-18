@@ -22,14 +22,10 @@ namespace Locations.Tile_Features {
         #region Override
         public override void OnAddFeature(HexTile tile) {
             base.OnAddFeature(tile);
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE,
-                (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
-            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE,
-                (character, structure) => OnCharacterLeftStructure(character, structure, tile));
-            Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE,
-                (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
-            Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE,
-                (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
+            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
+            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, (character, structure) => OnCharacterLeftStructure(character, structure, tile));
+            Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
+            Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
 
             PopulateInitialCharactersOutside(tile);
             RescheduleHeatWaveCheck(tile);
@@ -46,14 +42,10 @@ namespace Locations.Tile_Features {
         }
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE,
-                (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE,
-                (character, structure) => OnCharacterLeftStructure(character, structure, tile));
-            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE,
-                (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
-            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE,
-                (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
+            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, (character, structure) => OnCharacterArrivedAtStructure(character, structure, tile));
+            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, (character, structure) => OnCharacterLeftStructure(character, structure, tile));
+            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, (character, hexTile) => OnCharacterLeftHexTile(character, hexTile, tile));
+            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, (character, hexTile) => OnCharacterEnteredHexTile(character, hexTile, tile));
             //Messenger.RemoveListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED,
             //    (character, gridTile) => OnTileObjectPlaced(character, gridTile, tile));
             if (string.IsNullOrEmpty(_currentRainCheckSchedule) == false) {
@@ -81,8 +73,8 @@ namespace Locations.Tile_Features {
         private void OnCharacterLeftStructure(Character character, LocationStructure structure, HexTile featureOwner) {
             //character left a structure that was outside. If the character entered a structure that is outside. That 
             //is handled at OnCharacterArrivedAtStructure
-            if (structure.isInterior == false && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                                              && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == featureOwner) {
+            if (structure.isInterior == false && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && 
+                character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == featureOwner) {
                 RemoveCharacterOutside(character);
             }
         }
