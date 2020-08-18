@@ -14,6 +14,13 @@ namespace Tutorial {
                 new StructureBuiltCriteria(STRUCTURE_TYPE.DEFILER)
             };
         }
+        protected override bool HasMetAllCriteria() {
+            bool hasMetCriteria = base.HasMetAllCriteria();
+            if (hasMetCriteria) {
+                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_CHARACTER).isInUse;
+            }
+            return false;
+        }
         #endregion
       
         protected override void ConstructSteps() {

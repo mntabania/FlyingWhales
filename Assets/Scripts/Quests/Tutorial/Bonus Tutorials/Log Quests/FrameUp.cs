@@ -27,6 +27,14 @@ namespace Tutorial {
                 )
             };
         }
+        protected override bool HasMetAllCriteria() {
+            bool hasMetCriteria = base.HasMetAllCriteria();
+            if (hasMetCriteria) {
+                return PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_OBJECT).isInUse &&
+                       PlayerSkillManager.Instance.GetPlayerSpellData(SPELL_TYPE.SEIZE_CHARACTER).isInUse;
+            }
+            return false;
+        }
         #endregion
 
         #region Availability

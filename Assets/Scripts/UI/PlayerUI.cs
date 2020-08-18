@@ -204,7 +204,7 @@ public class PlayerUI : MonoBehaviour {
         // CreateInitialSpells();
         // _buildListUI.Initialize();
         // cultistsList.Initialize();
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+#if UNITY_EDITOR
         itemsToggle.gameObject.SetActive(true);
         artifactsToggle.gameObject.SetActive(true);
         CreateItemsForTesting();

@@ -21,8 +21,8 @@ public class RegionFeatureGeneration : MapGenerationComponent {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
             //add dragon feature to second world
             Region chosenRegion = GridMap.Instance.allRegions[0];
-            string chosenFeature = RegionFeatureDB.Dragon;
-            chosenRegion.regionFeatureComponent.AddFeature(chosenFeature);
+            chosenRegion.regionFeatureComponent.AddFeature(RegionFeatureDB.Dragon);
+            chosenRegion.regionFeatureComponent.AddFeature(RegionFeatureDB.Crystals);
         } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
             if (GameUtilities.RollChance(20)) { 
                 int regionsWithSpecialFeatureCount = 0;

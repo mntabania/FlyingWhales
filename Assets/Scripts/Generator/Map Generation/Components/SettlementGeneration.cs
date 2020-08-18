@@ -189,6 +189,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			List<string> elfClassesInOrder = new List<string> {"Craftsman", "Craftsman", "Peasant", "Peasant", "Miner", "Miner"};
+			List<string> humanClassesPriority = new List<string>() { "Knight", "Shaman", "Knight", "Shaman", "Knight",  "Shaman" };
 			List<Character> createdCharacters = new List<Character>();
 			int citizenCount = 0;
 			for (int i = 0; i < dwellingCount; i++) {
@@ -210,24 +211,44 @@ public class SettlementGeneration : MapGenerationComponent {
 						List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
 						if (couples.Count > 0) {
 							Couple couple = CollectionUtilities.GetRandomElement(couples);
-							createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement));
+							createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement, 
+								humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty,
+								humanClassesPriority.Count > 1 ? humanClassesPriority[1] : string.Empty));
+							if (humanClassesPriority.Count > 1) {
+								humanClassesPriority.RemoveRange(0, 2);	
+							} else if (humanClassesPriority.Count > 0) {
+								humanClassesPriority.RemoveAt(0);	
+							}
 							citizenCount += 2;
 						} else {
 							//no more couples left	
 							List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(faction.race, data);
 							if (siblingCouples.Count > 0) {
 								Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
-								createdCharacters.AddRange( SpawnCouple(couple, dwelling, faction, npcSettlement));
+								createdCharacters.AddRange( SpawnCouple(couple, dwelling, faction, npcSettlement, 
+									humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty,
+									humanClassesPriority.Count > 1 ? humanClassesPriority[1] : string.Empty));
+								if (humanClassesPriority.Count > 1) {
+									humanClassesPriority.RemoveRange(0, 2);	
+								} else if (humanClassesPriority.Count > 0) {
+									humanClassesPriority.RemoveAt(0);	
+								}
 								citizenCount += 2;
 							} else {
 								//no more sibling Couples	
 								//spawn single
-								TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount);
+								TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty);
+								if (humanClassesPriority.Count > 0) {
+									humanClassesPriority.RemoveAt(0);	
+								}
 							}
 						}
 					} else {
 						//spawn single
-						TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount);
+						TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty);
+						if (humanClassesPriority.Count > 0) {
+							humanClassesPriority.RemoveAt(0);	
+						}
 					}
 				} else {
 					if (citizenCount >= 24) {
@@ -534,10 +555,10 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 		return dwellings;
 	}
-	private List<Character> SpawnCouple(Couple couple, Dwelling dwelling, Faction faction, NPCSettlement npcSettlement) {
+	private List<Character> SpawnCouple(Couple couple, Dwelling dwelling, Faction faction, NPCSettlement npcSettlement, string className1 = "", string className2 = "") {
 		List<Character> characters = new List<Character>() {
-			SpawnCharacter(couple.character1, npcSettlement.classManager.GetCurrentClassToCreate(), dwelling, faction, npcSettlement),
-			SpawnCharacter(couple.character2, npcSettlement.classManager.GetCurrentClassToCreate(), dwelling, faction, npcSettlement)	
+			SpawnCharacter(couple.character1, string.IsNullOrEmpty(className1) ? npcSettlement.classManager.GetCurrentClassToCreate() : className1, dwelling, faction, npcSettlement),
+			SpawnCharacter(couple.character2, string.IsNullOrEmpty(className2) ? npcSettlement.classManager.GetCurrentClassToCreate() : className2, dwelling, faction, npcSettlement)	
 		};
 		return characters;
 	}

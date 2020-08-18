@@ -23,21 +23,21 @@ public class SkillTreeSelector : MonoBehaviour {
         for (int i = 0; i < playerLoadoutUI.Length; i++) {
             playerLoadoutUI[i].Initialize();
         }
-        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-            //if second world then disable ravager and lich builds, and go to puppet master build
-            _horizontalScrollSnap.RemoveAllChildren(out var childrenRemoved);
-            for (int i = 0; i < archetypeToggles.Length; i++) {
-                Toggle toggle = archetypeToggles[i];
-                PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
-                if (toggle.gameObject.name == "Second World") {
-                    toggle.isOn = true;
-                    _horizontalScrollSnap.AddChild(loadoutUI.gameObject);
-                } else {
-                    toggle.gameObject.SetActive(false);
-                    loadoutUI.gameObject.SetActive(false);
-                }
-            }
-        } else {
+        // if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+        //     //if second world then disable ravager and lich builds, and go to puppet master build
+        //     _horizontalScrollSnap.RemoveAllChildren(out var childrenRemoved);
+        //     for (int i = 0; i < archetypeToggles.Length; i++) {
+        //         Toggle toggle = archetypeToggles[i];
+        //         PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
+        //         if (toggle.gameObject.name == "Second World") {
+        //             toggle.isOn = true;
+        //             _horizontalScrollSnap.AddChild(loadoutUI.gameObject);
+        //         } else {
+        //             toggle.gameObject.SetActive(false);
+        //             loadoutUI.gameObject.SetActive(false);
+        //         }
+        //     }
+        // } else {
             //disable other non main loadouts
             //Second World
             for (int i = 0; i < archetypeToggles.Length; i++) {
@@ -49,7 +49,7 @@ public class SkillTreeSelector : MonoBehaviour {
                     _horizontalScrollSnap.RemoveChild(i, out var removed);
                 }
             }
-        }
+        // }
         this.gameObject.SetActive(false);
     }
     public void Show() {

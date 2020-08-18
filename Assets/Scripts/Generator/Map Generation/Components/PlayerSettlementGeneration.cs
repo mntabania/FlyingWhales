@@ -37,7 +37,7 @@ public class PlayerSettlementGeneration : MapGenerationComponent {
 			};
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 			validPortalTiles = new List<HexTile>() {
-				GridMap.Instance.map[4, 4]
+				GridMap.Instance.map[8, 8]
 			};
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 			validPortalTiles = new List<HexTile>() {

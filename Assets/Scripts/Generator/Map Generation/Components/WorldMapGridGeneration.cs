@@ -196,19 +196,18 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				};
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 				chosenTemplate = new WorldMapTemplate() {
-					regionCount = 3,
-					worldMapWidth = 9,
+					regionCount = 2,
+					worldMapWidth = 10,
 					worldMapHeight = 10,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{
 							0, new[] {
-								new RegionTemplate(9, 5),
+								new RegionTemplate(10, 5),
 							}
 						},
 						{
 							1, new[] {
-								new RegionTemplate(5, 5),
-								new RegionTemplate(4, 5),
+								new RegionTemplate(10, 5),
 							}
 						}
 					}

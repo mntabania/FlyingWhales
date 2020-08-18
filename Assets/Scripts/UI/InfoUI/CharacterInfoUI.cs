@@ -574,19 +574,31 @@ public class CharacterInfoUI : InfoUIBase {
         List<int> keys = _activeCharacter.relationshipContainer.relationships.Keys.ToList();
         for (int i = 0; i < orderedRels.Keys.Count; i++) {
             int targetID = orderedRels.Keys.ElementAt(i);
-            //if(targetID == _activeCharacter.id) {
-            //    //Quick fix only for having an entry of self in the relations tab, needs actual fix
-            //    //https://trello.com/c/vTMvQAL6/1698-various-arthur-bugs
-            //    continue;
-            //}
             int actualIndex = keys.IndexOf(targetID);
-            IRelationshipData relationshipData =
-                _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
-            relationshipTypesLbl.text += $"{_activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID)}\n";
+            IRelationshipData relationshipData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
+            string relationshipName = _activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID);
+            Character target = CharacterManager.Instance.GetCharacterByID(targetID);
+
+            
+            //Hide relationship in UI if both consider each other an Acquaintance and no other special relationships (relative, lover, etc)
+            //Reference: https://trello.com/c/7uR4Iwya/1874-hide-relationship-in-ui-if-both-consider-each-other-an-acquaintance-and-no-other-special-relationships-relative-lover-etc
+            bool shouldShowRelationship = relationshipName != BaseRelationshipContainer.Acquaintance;
+            if (!shouldShowRelationship) {
+                //if active character considers target an acquaintance, then check if target also considers active character as an Acquaintance  
+                if (target != null) {
+                    string targetRelationshipName = target.relationshipContainer.GetRelationshipNameWith(_activeCharacter.id);
+                    shouldShowRelationship = targetRelationshipName != BaseRelationshipContainer.Acquaintance;
+                }    
+            }
+
+            if (!shouldShowRelationship) {
+                continue; //skip
+            }
+
+            relationshipTypesLbl.text += $"{relationshipName}\n";
             
             int opinionOfOther = 0;
             string opinionText;
-            Character target = CharacterManager.Instance.GetCharacterByID(targetID);
             if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
                 opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
                 opinionText = GetOpinionText(opinionOfOther);
