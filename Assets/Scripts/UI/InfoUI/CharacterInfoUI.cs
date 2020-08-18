@@ -912,7 +912,7 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.ShowSmallInfo(summary, "ENTERTAINMENT");
     }
     public void ShowHopeTooltip() {
-        string summary = $"For future implementation.\n\n" +
+        string summary = $"How much this Villager trusts you. If this gets too low, they will be uncooperative towards you in various way.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.hope.ToString("N0")}/100";
         UIManager.Instance.ShowSmallInfo(summary, "TRUST");
     }
