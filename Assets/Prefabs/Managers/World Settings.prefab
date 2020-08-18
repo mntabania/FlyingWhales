@@ -2974,7 +2974,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 88.00012, y: -87.5}
+  m_AnchoredPosition: {x: 88, y: -87.5}
   m_SizeDelta: {x: 458, y: 85}
   m_Pivot: {x: 0.000000067055225, y: 1.0000001}
 --- !u!222 &6033937808333873732
@@ -13835,13 +13835,13 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A single desert region with a burgeoning human town. Unknown to these
+      value: "A single desert region with a burgeoning human town. Unknown to these
         residents, the surrounding caves are filled with danger. There is a hibernating
         dragon in one of the nearby caves. And dangerous trolls lurk in some of the
         others. Rumors also abound of women seeing doppelgangers of themselves, and
-        wolves can sometimes be seen hunting. Finally, there is a strange artifact
+        wolves can sometimes be seen hunting. \n\nFinally, there is a strange artifact
         of unknown origin somewhere nearby - is it connected to the dozens of various
-        crystals scattered around the place?
+        crystals scattered around the place?"
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
