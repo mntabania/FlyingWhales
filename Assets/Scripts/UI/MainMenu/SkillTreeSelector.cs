@@ -86,8 +86,6 @@ public class SkillTreeSelector : MonoBehaviour {
     private PLAYER_ARCHETYPE GetSelectedArchetype() {
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
             return PLAYER_ARCHETYPE.Tutorial;
-        } else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
-            return PLAYER_ARCHETYPE.Second_World;
         } else {
             for (int i = 0; i < archetypeToggles.Length; i++) {
                 if (archetypeToggles[i].isOn) {
