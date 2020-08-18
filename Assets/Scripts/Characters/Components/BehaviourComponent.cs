@@ -447,6 +447,7 @@ public class BehaviourComponent {
             if (isAttackingDemonicStructure) {
                 combatModeBeforeAttackingDemonicStructure = owner.combatComponent.combatMode;
                 owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+                owner.movementComponent.SetEnableDigging(true);
                 AddBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
                 owner.traitContainer.AddTrait(owner, "Fervor");
                 StartCheckingIfShouldStopAttackingDemonicStructure();
@@ -454,6 +455,7 @@ public class BehaviourComponent {
                 owner.combatComponent.SetCombatMode(combatModeBeforeAttackingDemonicStructure);
                 RemoveBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
                 owner.traitContainer.RemoveTrait(owner, "Fervor");
+                owner.movementComponent.SetEnableDigging(false);
                 StopCheckingIfShouldStopAttackingDemonicStructure();
             }
         }
