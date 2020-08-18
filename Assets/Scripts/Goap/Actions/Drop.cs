@@ -4,6 +4,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
+using UtilityScripts;
 
 public class Drop : GoapAction {
 
@@ -98,9 +99,19 @@ public class Drop : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget;
+            if (actor == poiTarget) {
+                return false;
+            }
+            if (otherData != null) {
+                if (otherData.Length == 1 && otherData[0] is LocationStructure structure) {
+                    return actor.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(structure.passableTiles));
+                } else if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile targetTile) {
+                    return actor.movementComponent.HasPathToEvenIfDiffRegion(targetTile);
+                }
+            }
+            return true;
         }
-        return satisfied;
+        return false;
     }
     #endregion
 
