@@ -6,11 +6,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class BaseRelationshipContainer : IRelationshipContainer {
-    public const string Close_Friend = "Close Friend";
-    public const string Friend = "Friend";
-    public const string Acquaintance = "Acquaintance";
-    public const string Enemy = "Enemy";
-    public const string Rival = "Rival";
     
     private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend
     private const int Enemy_Requirement = -1; //opinion requirement to consider someone an enemy
@@ -404,15 +399,15 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         if (HasRelationshipWith(id)) {
             int totalOpinion = GetTotalOpinion(id);
             if (totalOpinion > 70) {
-                return Close_Friend;
+                return RelationshipManager.Close_Friend;
             } else if (totalOpinion > 20 && totalOpinion <= 70) {
-                return Friend;
+                return RelationshipManager.Friend;
             } else if (totalOpinion > -21 && totalOpinion <= 20) {
-                return Acquaintance;
+                return RelationshipManager.Acquaintance;
             } else if (totalOpinion > -71 && totalOpinion <= -21) {
-                return Enemy;
+                return RelationshipManager.Enemy;
             } else if (totalOpinion <= -71) {
-                return Rival;
+                return RelationshipManager.Rival;
             }
         }
         return string.Empty;
@@ -435,11 +430,11 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     }
     public bool IsFriendsWith(Character character) {
         string opinionLabel = GetOpinionLabel(character);
-        return opinionLabel == Friend || opinionLabel == Close_Friend;
+        return opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend;
     }
     public bool IsEnemiesWith(Character character) {
         string opinionLabel = GetOpinionLabel(character);
-        return opinionLabel == Enemy || opinionLabel == Rival;
+        return opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival;
     }
     public List<Character> GetCharactersWithPositiveOpinion() {
         List<Character> characters = new List<Character>();
@@ -622,12 +617,12 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                     return data.targetGender == GENDER.MALE ? "Husband" : "Wife";
                 case RELATIONSHIP_TYPE.NONE:
                     string opinionLabel = GetOpinionLabel(id);
-                    return string.IsNullOrEmpty(opinionLabel) == false ? opinionLabel : Acquaintance;
+                    return string.IsNullOrEmpty(opinionLabel) == false ? opinionLabel : RelationshipManager.Acquaintance;
                 default:
                     return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());
             }
         }
-        return Acquaintance;
+        return RelationshipManager.Acquaintance;
     }
     #endregion
 

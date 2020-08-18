@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 using Locations.Settlements;
 using UnityEngine.Assertions;
+
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
     public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyTarget {
@@ -576,7 +578,7 @@ namespace Inner_Maps.Location_Structures {
             } else {
                 List<LocationGridTile> tilesToUse = GetValidTilesToPlace(poi);
                 if (tilesToUse.Count > 0) {
-                    LocationGridTile chosenTile = tilesToUse[Random.Range(0, tilesToUse.Count)];
+                    LocationGridTile chosenTile = tilesToUse[UnityEngine.Random.Range(0, tilesToUse.Count)];
                     location.innerMap.PlaceObject(poi, chosenTile);
                     return true;
                 } 
@@ -674,19 +676,19 @@ namespace Inner_Maps.Location_Structures {
             if (tiles.Count <= 0) {
                 return null;
             }
-            return tiles[Random.Range(0, tiles.Count)];
+            return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         }
         public LocationGridTile GetRandomPassableTile() {
             if (passableTiles.Count <= 0) {
                 return null;
             }
-            return passableTiles[Random.Range(0, passableTiles.Count)];
+            return passableTiles[UnityEngine.Random.Range(0, passableTiles.Count)];
         }
         public LocationGridTile GetRandomUnoccupiedTile() {
             if (unoccupiedTiles.Count <= 0) {
                 return null;
             }
-            return unoccupiedTiles.ElementAt(Random.Range(0, unoccupiedTiles.Count));
+            return unoccupiedTiles.ElementAt(UnityEngine.Random.Range(0, unoccupiedTiles.Count));
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
@@ -964,6 +966,18 @@ namespace Inner_Maps.Location_Structures {
                             return true;
                         }
                     }
+                }
+            }
+            return false;
+        }
+        public bool HasReachedMaxResidentCapacity() {
+            return residents.Count >= maxResidentCapacity;
+        }
+        public bool HasResidentThatMeetCriteria(Func<Character, bool> checker) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (checker.Invoke(resident)) {
+                    return true;
                 }
             }
             return false;

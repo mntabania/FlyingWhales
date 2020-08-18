@@ -128,7 +128,8 @@ public class CharacterNeedsComponent {
         // ResetHopeMeter();
     }
     public void InitialCharacterPlacement() {
-        ResetHopeMeter();
+        //ResetHopeMeter();
+        SetHope(50);
         SetTiredness(UnityEngine.Random.Range(50, 101));
         SetFullness(UnityEngine.Random.Range(50, 101));
         SetHappiness(UnityEngine.Random.Range(50, 101));
@@ -227,7 +228,7 @@ public class CharacterNeedsComponent {
         summary += $"\nTiredness: {tiredness.ToString(CultureInfo.InvariantCulture)}/{TIREDNESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         summary += $"\nHappiness: {happiness.ToString(CultureInfo.InvariantCulture)}/{HAPPINESS_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         summary += $"\nStamina: {stamina.ToString(CultureInfo.InvariantCulture)}/{STAMINA_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
-        summary += $"\nHope: {hope.ToString(CultureInfo.InvariantCulture)}/{HOPE_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
+        summary += $"\nTrust: {hope.ToString(CultureInfo.InvariantCulture)}/{HOPE_DEFAULT.ToString(CultureInfo.InvariantCulture)}";
         return summary;
     }
     public void AdjustFullnessDecreaseRate(float amount) {

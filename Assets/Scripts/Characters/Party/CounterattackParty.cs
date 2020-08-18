@@ -35,6 +35,10 @@ public class CounterattackParty : Party {
         if (targetStructure is DemonicStructure demonicStructure) {
             Messenger.Broadcast(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, members, demonicStructure);    
         }
+        for (int i = 0; i < members.Count; i++) {
+            Character member = members[i];
+            member.traitContainer.AddTrait(member, "Travelling");
+        }
     }
     // protected override void OnWaitTimeOverButPartyIsDisbanded() {
     //     base.OnWaitTimeOverButPartyIsDisbanded();
@@ -45,7 +49,7 @@ public class CounterattackParty : Party {
         base.OnAddMember(member);
         member.movementComponent.SetEnableDigging(true);
         member.traitContainer.AddTrait(member, "Fervor");
-        member.traitContainer.AddTrait(member, "Travelling");
+        //member.traitContainer.AddTrait(member, "Travelling");
     }
     protected override void OnRemoveMember(Character member) {
         base.OnRemoveMember(member);

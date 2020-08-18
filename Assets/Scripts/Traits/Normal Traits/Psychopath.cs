@@ -288,7 +288,7 @@ namespace Traits {
             }
         }
         private bool IsCharacterNotApplicableAsVictim(Character target) {
-            return target.currentRegion != character.currentRegion || target.isBeingSeized || target.isDead || !target.isNormalCharacter/* || target.isMissing*/;
+            return /*target.currentRegion != character.currentRegion ||*/ target.isBeingSeized || target.isDead || !target.isNormalCharacter/* || target.isMissing*/;
         }
         public bool CreateHuntVictimJob() {
             if (character.jobQueue.HasJob(JOB_TYPE.RITUAL_KILLING)) {
@@ -579,11 +579,21 @@ namespace Traits {
                 text = $"{firstText} {secondText}";
             } else {
                 //if (shouldAddPeopleText) {
+                if(victimFirstType == SERIAL_VICTIM_TYPE.Race || victimSecondType == SERIAL_VICTIM_TYPE.Race
+                   || victimFirstType == SERIAL_VICTIM_TYPE.Gender || victimSecondType == SERIAL_VICTIM_TYPE.Gender) {
+                    if (firstText != string.Empty) {
+                        text = $"{UtilityScripts.Utilities.PluralizeString(firstText)}";
+                    } else {
+                        text = $"{UtilityScripts.Utilities.PluralizeString(secondText)}";
+                    }
+                } else {
                     if (firstText != string.Empty) {
                         text = $"{firstText} people";
                     } else {
                         text = $"{secondText} people";
                     }
+                }
+
                 //} else {
                 //    text = $"{firstText} {secondText}";
                 //}

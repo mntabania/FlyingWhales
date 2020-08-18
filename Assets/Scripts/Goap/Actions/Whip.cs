@@ -53,7 +53,7 @@ public class Whip : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Acquaintance)) {
+        if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Acquaintance)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false && Random.Range(0, 100) < 50) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
             }

@@ -233,7 +233,7 @@ public class Minion {
         SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         
         int missingHealth = character.maxHP - character.currentHP;
-        int cooldown = Mathf.CeilToInt((float)missingHealth / 15);
+        int cooldown = Mathf.CeilToInt((float)missingHealth / 7);
         spellData.SetCooldown(cooldown);
         spellData.SetCurrentCooldownTick(0);
 
@@ -241,7 +241,7 @@ public class Minion {
         Messenger.Broadcast(Signals.UNSUMMON_MINION, this);
     }
     private void UnsummonedHPRecovery() {
-        this.character.AdjustHP(15, ELEMENTAL_TYPE.Normal);
+        this.character.AdjustHP(7, ELEMENTAL_TYPE.Normal);
         SpellData spellData = PlayerSkillManager.Instance.GetMinionPlayerSkillData(minionPlayerSkillType);
         spellData.SetCurrentCooldownTick(spellData.currentCooldownTick + 1);
         if (character.currentHP >= character.maxHP) {

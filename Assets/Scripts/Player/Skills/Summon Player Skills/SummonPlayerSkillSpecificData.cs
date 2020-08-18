@@ -464,3 +464,14 @@ public class TrollData : SummonPlayerSkill {
         className = "Troll";
     }
 }
+public class RevenantData : SummonPlayerSkill {
+    public override SPELL_TYPE type => SPELL_TYPE.REVENANT;
+    public override string name { get { return "Revenant"; } }
+    public override string description { get { return "Revenant"; } }
+
+    public RevenantData() {
+        summonType = SUMMON_TYPE.Revenant;
+        race = RACE.REVENANT;
+        className = "Revenant";
+    }
+}

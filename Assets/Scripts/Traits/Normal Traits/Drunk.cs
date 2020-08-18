@@ -35,9 +35,9 @@ namespace Traits {
             if (targetPOI is Character targetCharacter) {
                 if (!targetCharacter.isDead && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                     int chance = 0;
-                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {
+                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Enemy)) {
                         chance = 10;
-                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
+                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival)) {
                         chance = 25;
                     } else {
                         Debug.LogWarning($"There is no drunk combat chance case for character {characterThatWillDoJob.name}!");

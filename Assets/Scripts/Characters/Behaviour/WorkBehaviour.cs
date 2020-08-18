@@ -34,6 +34,10 @@ public class WorkBehaviour : CharacterBehaviourComponent {
                         if (logKey == "flaw_effect") {
                             log += $"\n-{character.name} triggered flaw: " + chosenFlaw.name;
                             triggeredFlaw = true;
+                            //When flaw is triggered, leave from party
+                            if (character.partyComponent.hasParty) {
+                                character.partyComponent.currentParty.RemoveMember(character);
+                            }
                         } else {
                             log += $"\n-{character.name} failed to trigger flaw: " + chosenFlaw.name;
                         }

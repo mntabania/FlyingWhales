@@ -57,7 +57,7 @@ public class Execute : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Acquaintance)) {
+        if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Acquaintance)) {
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
             }
@@ -65,7 +65,7 @@ public class Execute : GoapAction {
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, targetCharacter, status, node);
             }
-        } else if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
+        } else if (witness.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival)) {
             if (witness.traitContainer.HasTrait("Diplomatic") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status, node);
             }

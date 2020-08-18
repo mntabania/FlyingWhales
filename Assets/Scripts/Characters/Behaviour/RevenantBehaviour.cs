@@ -11,7 +11,7 @@ public class RevenantBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         log += $"\n-{character.name} is a revenant";
-        if (character.gridTileLocation != null) {
+        if (character.gridTileLocation != null && (character.isAtHomeStructure || character.IsInHomeSettlement() || character.IsInTerritory())) {
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
             if(currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT || currentTimeOfDay == TIME_IN_WORDS.LATE_NIGHT || currentTimeOfDay == TIME_IN_WORDS.AFTER_MIDNIGHT) {
                 log += $"\n-Early/Late Night or After Midnight, 9% chance to spawn a ghost";
@@ -31,7 +31,6 @@ public class RevenantBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
-                
             }
 
             if ((character.HasTerritory() && !character.IsInTerritory()) || (character.homeStructure != null && !character.isAtHomeStructure)) {

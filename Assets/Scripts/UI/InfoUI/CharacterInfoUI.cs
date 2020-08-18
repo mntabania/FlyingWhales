@@ -763,7 +763,11 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateTriggerFlaw(Trait trait) {
         UIManager.Instance.HideObjectPicker();
-        trait.TriggerFlaw(activeCharacter);
+        string result = trait.TriggerFlaw(activeCharacter);
+        //When flaw is triggered, leave from party
+        if (result == "flaw_effect" && activeCharacter.partyComponent.hasParty) {
+            activeCharacter.partyComponent.currentParty.RemoveMember(activeCharacter);
+        }
         Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
         PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
     }
@@ -910,7 +914,7 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowHopeTooltip() {
         string summary = $"For future implementation.\n\n" +
                          $"Value: {_activeCharacter.needsComponent.hope.ToString("N0")}/100";
-        UIManager.Instance.ShowSmallInfo(summary, "HOPE");
+        UIManager.Instance.ShowSmallInfo(summary, "TRUST");
     }
     public void ShowStaminaTooltip() {
         string summary = $"Villagers will be unable to run when this Meter is empty. This is used up when the Villager is running and quickly replenished when he isn't.\n\n" +

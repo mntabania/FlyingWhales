@@ -22,7 +22,7 @@
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-            if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinion(actor, BaseRelationshipContainer.Acquaintance)) {
+            if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinion(actor, RelationshipManager.Acquaintance)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);    
             }
             if (witness.traitContainer.HasTrait("Coward")) {

@@ -1068,7 +1068,9 @@ namespace UtilityScripts {
                     return $"{s.Substring(0, s.Length - 1)}ves";
                 } else if (s.EndsWith("fe", StringComparison.InvariantCultureIgnoreCase) && s.Length > 2) {
                     return $"{s.Substring(0, s.Length - 2)}ves";
-                } else if (!s.Equals("Shaman", StringComparison.InvariantCultureIgnoreCase) && s.EndsWith("man", StringComparison.InvariantCultureIgnoreCase)) {
+                } else if (!s.Equals("Shaman", StringComparison.InvariantCultureIgnoreCase)
+                        && !s.Equals("Human", StringComparison.InvariantCultureIgnoreCase) 
+                        && s.EndsWith("man", StringComparison.InvariantCultureIgnoreCase)) {
                     return $"{s.Substring(0, s.Length - 3)}men";
                 } else {
                     return $"{s}s";

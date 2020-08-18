@@ -445,6 +445,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             _owner.jobQueue.AddJobInQueue(job);
         }
     }
+    private void TriggerFeed(Character target) {
+		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, _owner);
+		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+		_owner.jobQueue.AddJobInQueue(job);
+	}
     //private bool TriggerMoveCharacterToBed(Character target) {
 	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
 	//		Bed bed = target.homeStructure.GetTileObjectOfType<Bed>(TILE_OBJECT_TYPE.BED);
@@ -2063,13 +2069,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    Character character = choices[i];
 			    int weight = 0;
 			    string opinionLabel = _owner.relationshipContainer.GetOpinionLabel(character);
-			    if (opinionLabel == BaseRelationshipContainer.Close_Friend) {
+			    if (opinionLabel == RelationshipManager.Close_Friend) {
 				    weight += Random.Range(10, 51);
-			    } else if (opinionLabel == BaseRelationshipContainer.Friend) {
+			    } else if (opinionLabel == RelationshipManager.Friend) {
 				    weight += Random.Range(100, 151);
-			    } else if (opinionLabel == BaseRelationshipContainer.Acquaintance) {
+			    } else if (opinionLabel == RelationshipManager.Acquaintance) {
 				    weight += Random.Range(150, 251);
-			    } else if (opinionLabel == BaseRelationshipContainer.Enemy || opinionLabel == BaseRelationshipContainer.Rival) {
+			    } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
 				    weight += Random.Range(200, 351);
 			    }
 			    targetWeights.AddElement(character, weight);

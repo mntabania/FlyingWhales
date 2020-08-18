@@ -30,7 +30,7 @@ namespace Interrupts {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             } else if ((witness.relationshipContainer.IsFamilyMember(actor) || 
                         witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) && 
-                       !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, BaseRelationshipContainer.Rival)) {
+                       !witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Rival)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             } else if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);

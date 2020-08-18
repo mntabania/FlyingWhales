@@ -85,9 +85,9 @@ namespace Traits {
                 if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.Critical) {
                     log += "\n -In critical mood";
                     int combatChance = 0;
-                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {
+                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Enemy)) {
                         combatChance = 10;
-                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
+                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival)) {
                         combatChance = 25;
                     }
                     int roll = Random.Range(0, 100);
@@ -98,11 +98,11 @@ namespace Traits {
                 } else if (characterThatWillDoJob.moodComponent.moodState == MOOD_STATE.Bad) {
                     log += "\n -In low mood";
                     int combatChance = 0;
-                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Enemy)) {
+                    if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Enemy)) {
                         if (targetCharacter.traitContainer.HasTrait("Unconscious") == false) {
                             combatChance = 10;
                         }
-                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, BaseRelationshipContainer.Rival)) {
+                    } else if (characterThatWillDoJob.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter, RelationshipManager.Rival)) {
                         if (targetCharacter.traitContainer.HasTrait("Unconscious") == false) {
                             combatChance = 25;
                         }

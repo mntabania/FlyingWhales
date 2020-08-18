@@ -326,7 +326,7 @@ namespace Interrupts {
                         if (baseSettlement.locationType == LOCATION_TYPE.DUNGEON) {
                             for (int j = 0; j < baseSettlement.allStructures.Count; j++) {
                                 LocationStructure structure = baseSettlement.allStructures[j];
-                                if (structure.residents.Count < structure.maxResidentCapacity) {
+                                if (!structure.HasReachedMaxResidentCapacity()) {
                                     if (structure.HasCloseFriendOrNonEnemyRivalRelative(actor)) {
                                         chosenHabitableSpecialWithCloseFriendOrNonEnemyRivalRelative = structure;
                                         break;
@@ -398,7 +398,7 @@ namespace Interrupts {
             if (dwellings != null) {
                 for (int i = 0; i < dwellings.Count; i++) {
                     LocationStructure currDwelling = dwellings[i];
-                    if (currDwelling.residents.Count < currDwelling.maxResidentCapacity && currDwelling.residents.Count > 0) {
+                    if (!currDwelling.HasReachedMaxResidentCapacity() && currDwelling.residents.Count > 0) {
                         Character resident = currDwelling.residents[0];
                         bool isCloseFriend = actor.relationshipContainer.IsFriendsWith(resident);
                         if (isCloseFriend) {

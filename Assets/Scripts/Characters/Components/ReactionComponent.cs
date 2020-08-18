@@ -807,7 +807,7 @@ public class ReactionComponent {
                             }
                         } else if ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) || 
                                     disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)) && 
-                                  !disguisedActor.relationshipContainer.HasOpinionLabelWithCharacter(disguisedTarget, BaseRelationshipContainer.Rival)) {
+                                  !disguisedActor.relationshipContainer.HasOpinionLabelWithCharacter(disguisedTarget, RelationshipManager.Rival)) {
                             debugLog += "\n-Target is Relative, Lover or Affair and not Rival";
                             // if Actor is Relative, Lover, Affair and not a Rival
                             if (UnityEngine.Random.Range(0, 2) == 0) {
