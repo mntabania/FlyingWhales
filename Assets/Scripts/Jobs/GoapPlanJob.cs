@@ -451,6 +451,15 @@ public class GoapPlanJob : JobQueueItem {
     public void SetCancelOnDeath(bool state) {
         shouldBeCancelledOnDeath = state;
     }
+    public bool HasOtherData(INTERACTION_TYPE actionType) {
+        return otherData.ContainsKey(actionType);
+    }
+    public object[] GetOtherData(INTERACTION_TYPE actionType) {
+        if (HasOtherData(actionType)) {
+            return otherData[actionType];
+        }
+        return null;
+    }
     #endregion
 
     #region Goap Effects

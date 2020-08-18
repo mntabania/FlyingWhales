@@ -4,6 +4,7 @@ using UnityEngine;
 using Factions.Faction_Types;
 using Locations.Settlements;
 using Traits;
+using Inner_Maps.Location_Structures;
 
 public class Faction : IJobOwner {
     
@@ -789,6 +790,19 @@ public class Faction : IJobOwner {
             }
         }
     }
+    public bool HasActiveReportDemonicStructureJob(LocationStructure demonicStructure) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character factionMember = characters[i];
+            JobQueueItem job = factionMember.jobQueue.GetJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE);
+            if(job != null && job is GoapPlanJob goapJob) {
+                object[] otherData = goapJob.GetOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+                if(otherData != null && otherData.Length == 1 && otherData[0] == demonicStructure) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region IJobOwner
@@ -813,6 +827,23 @@ public class Faction : IJobOwner {
             }
             forcedCancelJobsOnTickEnded.Clear();
         }
+    }
+    #endregion
+
+    #region Party
+    public bool HasActiveParty(params PARTY_TYPE[] party) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character factionMember = characters[i];
+            if (factionMember.partyComponent.hasParty) {
+                for (int j = 0; j < party.Length; j++) {
+                    PARTY_TYPE partyType = party[j];
+                    if (factionMember.partyComponent.currentParty.partyType == partyType) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     #endregion
 }

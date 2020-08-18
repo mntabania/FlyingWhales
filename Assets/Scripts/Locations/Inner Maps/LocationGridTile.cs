@@ -521,25 +521,34 @@ namespace Inner_Maps {
 
                 LocationStructure mostImportantStructureOnTile =
                     collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
-                if(!character.behaviourComponent.isAttackingDemonicStructure 
-                   && character.homeSettlement != null 
-                   //&& character.faction.isMajorNonPlayer
-                   && character.necromancerTrait == null
-                   && (character.race == RACE.HUMANS || character.race == RACE.ELVES) && mostImportantStructureOnTile is DemonicStructure
-                   && character.marker != null && character.carryComponent.IsNotBeingCarried()
-                   && character.isAlliedWithPlayer == false
-                   && !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
-                   && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
-                    character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
-                } else {
+                if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
+                    if (!character.behaviourComponent.isAttackingDemonicStructure
+                       && character.homeSettlement != null
+                       && character.necromancerTrait == null
+                       && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
+                       && character.marker != null && character.carryComponent.IsNotBeingCarried()
+                       && character.isAlliedWithPlayer == false
+                       //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
+                       && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
+                        if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.HasActiveParty(PARTY_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
+                            character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
+                            return;
+                        }
+                    }
                     //If cannot report flee instead
                     //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
-                    if (!character.behaviourComponent.isAttackingDemonicStructure && (!character.partyComponent.hasParty || 
-                        character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack) && character.isAlliedWithPlayer == false && 
+                    if (!character.behaviourComponent.isAttackingDemonicStructure && (!character.partyComponent.hasParty ||
+                        character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack) && character.isAlliedWithPlayer == false &&
                         character.necromancerTrait == null) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
-                            genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                            if (character.isNormalCharacter) {
+                                if (character.characterClass.IsCombatant()) {
+                                    character.behaviourComponent.SetIsAttackingDemonicStructure(true, demonicStructure);
+                                } else {
+                                    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                                }
+                            }
                         }
                     }
                 }

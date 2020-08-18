@@ -17,20 +17,36 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
             Party counterattackParty = character.partyComponent.currentParty;
             if (!counterattackParty.isWaitTimeOver) {
                 log += $"\n-Party is waiting";
-                if (counterattackParty.waitingHexArea != null) {
-                    log += $"\n-Party has waiting area";
-                    if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                        if (character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == counterattackParty.waitingHexArea) {
-                            log += $"\n-Character is in waiting area, roam";
-                            return character.jobComponent.TriggerRoamAroundTile(out producedJob);
+                if (character.homeSettlement != null) {
+                    log += $"\n-Character has home settlement";
+                    if (character.homeSettlement.locationType == LOCATION_TYPE.DUNGEON) {
+                        log += $"\n-Character home settlement is a special structure";
+                        character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    } else {
+                        log += $"\n-Character home settlement is a village";
+                        LocationStructure targetStructure = null;
+                        if (character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+                            targetStructure = character.currentStructure;
                         } else {
-                            log += $"\n-Character is not in waiting area, go to it";
-                            LocationGridTile targetTile = counterattackParty.waitingHexArea.GetRandomTile();
-                            return character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+                            targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
+                        }
+                        if (targetStructure == null) {
+                            if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+                                targetStructure = character.currentStructure;
+                            } else {
+                                targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                            }
+                        }
+
+                        if (targetStructure != null) {
+                            log += $"\n-Character will roam around " + targetStructure.name;
+                            LocationGridTile targetTile = null;
+                            if (character.currentStructure != targetStructure) {
+                                targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+                            }
+                            character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
                         }
                     }
-                } else {
-                    log += $"\n-Party has no waiting area";
                 }
             } else {
                 if (counterattackParty.target is LocationStructure targetStructure) {

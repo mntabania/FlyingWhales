@@ -64,14 +64,14 @@ public class ReportCorruptedStructure : GoapAction {
         LocationStructure structureToReport = otherData[0] as LocationStructure;
         if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structureToReport)) {
             InnerMapManager.Instance.AddWorldKnownDemonicStructure(structureToReport);
-            PlayerManager.Instance.player.threatComponent.AdjustThreat(20); //15
-            TriggerCounterattack(goapNode.actor);
             // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Reported",
             //     $"Your demonic structure {structureToReport.name} has been reported by {goapNode.actor.name}! They can now attack this structure!", 
             //     onClickNoAction: goapNode.actor.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {goapNode.actor.name}", 
             //     showCover:true, pauseAndResume: true);
             // PlayerUI.Instance.ShowGeneralConfirmation("Demonic Structure Reported", "Your demonic structure " + structureToReport.name + " has been reported! They can now attack this structure!");
         }
+        PlayerManager.Instance.player.threatComponent.AdjustThreat(20); //15
+        TriggerCounterattack(goapNode.actor);
     }
     #endregion
     

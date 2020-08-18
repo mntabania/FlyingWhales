@@ -7,11 +7,11 @@ using Inner_Maps.Location_Structures;
 public class CounterattackParty : Party {
 
     public LocationStructure targetStructure { get; private set; }
-    public HexTile waitingArea { get; private set; }
+    //public HexTile waitingArea { get; private set; }
 
     #region getters
     public override IPartyTarget target => targetStructure;
-    public override HexTile waitingHexArea => waitingArea;
+    //public override HexTile waitingHexArea => waitingArea;
     #endregion
 
     public CounterattackParty() : base(PARTY_TYPE.Counterattack) {
@@ -65,18 +65,18 @@ public class CounterattackParty : Party {
     public void SetTargetStructure(LocationStructure structure) {
         if(targetStructure != structure) {
             targetStructure = structure;
-            if (targetStructure != null) {
-                SetWaitingArea();
-            }
+            //if (targetStructure != null) {
+            //    SetWaitingArea();
+            //}
         }
     }
-    private void SetWaitingArea() {
-        List<HexTile> hexes = targetStructure.occupiedHexTile.hexTileOwner.ValidTilesNoSettlementWithinRegion;
-        if(hexes != null && hexes.Count > 0) {
-            waitingArea = UtilityScripts.CollectionUtilities.GetRandomElement(hexes);
-        } else {
-            waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
-        }
-    }
+    //private void SetWaitingArea() {
+    //    List<HexTile> hexes = targetStructure.occupiedHexTile.hexTileOwner.ValidTilesNoSettlementWithinRegion;
+    //    if(hexes != null && hexes.Count > 0) {
+    //        waitingArea = UtilityScripts.CollectionUtilities.GetRandomElement(hexes);
+    //    } else {
+    //        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+    //    }
+    //}
     #endregion
 }

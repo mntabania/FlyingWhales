@@ -24,13 +24,13 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
                     if(character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
                         targetStructure = character.currentStructure;
                     } else {
-                        targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+                        targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
                     }
                     if (targetStructure == null) {
                         if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
                             targetStructure = character.currentStructure;
                         } else {
-                            targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+                            targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
                         }
                     }
 
