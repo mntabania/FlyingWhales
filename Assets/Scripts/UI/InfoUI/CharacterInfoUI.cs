@@ -582,12 +582,12 @@ public class CharacterInfoUI : InfoUIBase {
             
             //Hide relationship in UI if both consider each other an Acquaintance and no other special relationships (relative, lover, etc)
             //Reference: https://trello.com/c/7uR4Iwya/1874-hide-relationship-in-ui-if-both-consider-each-other-an-acquaintance-and-no-other-special-relationships-relative-lover-etc
-            bool shouldShowRelationship = relationshipName != BaseRelationshipContainer.Acquaintance;
+            bool shouldShowRelationship = relationshipName != RelationshipManager.Acquaintance;
             if (!shouldShowRelationship) {
                 //if active character considers target an acquaintance, then check if target also considers active character as an Acquaintance  
                 if (target != null) {
                     string targetRelationshipName = target.relationshipContainer.GetRelationshipNameWith(_activeCharacter.id);
-                    shouldShowRelationship = targetRelationshipName != BaseRelationshipContainer.Acquaintance;
+                    shouldShowRelationship = targetRelationshipName != RelationshipManager.Acquaintance;
                 }    
             }
 
