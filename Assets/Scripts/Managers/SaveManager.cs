@@ -14,7 +14,7 @@ using UnityEditor;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
-    private const string savedPlayerDataFileName = "SAVED_PLAYER_DATA";
+    private const string savedPlayerDataFileName = "SAVED_PLAYER_DATA_2";
     private const string savedCurrentProgressFileName = "SAVED_CURRENT_PROGRESS";
     public bool useSaveData;
 
