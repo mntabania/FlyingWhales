@@ -271,6 +271,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 2;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 0;
 				} else {
 					if (data.regionCount == 1) {
 						return 1;
@@ -285,7 +287,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 0;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 					return 0;
-				} 
+				}
 				bool monsterLairWasBuilt =
 					LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.MONSTER_LAIR) != null;
 				if (data.regionCount == 1) {
@@ -302,6 +304,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 					return 1;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
+					return 5;
 				} else {
 					if (data.regionCount == 1) {
 						return 1;
@@ -335,6 +339,8 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 					return 3;
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					return 0;
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
 					return 0;
 				} else {
 					return 0;

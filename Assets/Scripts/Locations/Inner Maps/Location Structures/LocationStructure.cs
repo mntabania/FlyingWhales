@@ -516,7 +516,7 @@ namespace Inner_Maps.Location_Structures {
                                 log += $"\n{obj.nameWithID} is valid! Returning true!";
                                 return true;
                             } else {
-                                log += $"\n{obj.nameWithID} is not valid! Map Object State {obj.mapObjectState.ToString()}. Character Owner {obj.characterOwner.name}";
+                                log += $"\n{obj.nameWithID} is not valid! Map Object State {obj.mapObjectState.ToString()}. Character Owner {obj.characterOwner?.name}";
                             }
                         }
                         

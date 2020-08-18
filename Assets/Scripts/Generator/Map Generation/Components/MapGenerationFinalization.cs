@@ -252,7 +252,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 
 	#region Artifacts
 	private IEnumerator LoadArtifacts() {
-		if (WorldConfigManager.Instance.isTutorialWorld) {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
 			//if demo build, always spawn necronomicon at ancient ruins
 			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
 			//tutorial should always have 2 ancient graveyards.
@@ -278,20 +278,18 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Necronomicon);
 			structure.AddPOI(artifact);
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Affatt) {
-			//excalibur
-			Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
-			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
-			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
-			
-			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
-			for (int i = 0; i < artifactChoices.Count; i++) {
-				randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-				LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-				ARTIFACT_TYPE randomArtifact = artifactChoices[i];
+			List<BaseLandmark> landmarks = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.TEMPLE);
+			List<ARTIFACT_TYPE> artifactChoices = new List<ARTIFACT_TYPE>() {
+				ARTIFACT_TYPE.Necronomicon, ARTIFACT_TYPE.Heart_Of_The_Wind, ARTIFACT_TYPE.Gorgon_Eye, ARTIFACT_TYPE.Berserk_Orb, ARTIFACT_TYPE.Ankh_Of_Anubis
+			};
+			for (int i = 0; i < landmarks.Count; i++) {
+				if (artifactChoices.Count == 0) { break; }
+				BaseLandmark landmark = landmarks[i];
+				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				ARTIFACT_TYPE randomArtifact = artifactChoices.First();
 				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
-				List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement() == false).ToList();
-				wilderness.AddPOI(artifact, CollectionUtilities.GetRandomElement(choices));
+				structure.AddPOI(artifact);
+				artifactChoices.Remove(randomArtifact);
 			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 			//excalibur
@@ -299,6 +297,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
 			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.ANCIENT_RUIN).AddPOI(excalibur);
 			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			List<BaseLandmark> landmarks = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+			LocationStructure structure = landmarks[0].tileLocation.GetMostImportantStructureOnTile();
+			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
+			structure.AddPOI(artifact);
 		} else {
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
 			//randomly generate 3 Artifacts

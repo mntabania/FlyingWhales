@@ -449,11 +449,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			GridMap.Instance.map[2, 6],
 			GridMap.Instance.map[2, 7],
 			GridMap.Instance.map[3, 7],
-			//region 4 (forest region)
-			GridMap.Instance.map[6, 8],
-			GridMap.Instance.map[6, 7],
-			GridMap.Instance.map[7, 7],
-			GridMap.Instance.map[8, 7],
+			GridMap.Instance.map[4, 6],
 		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {
