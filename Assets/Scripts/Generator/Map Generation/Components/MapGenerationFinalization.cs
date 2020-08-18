@@ -318,5 +318,4 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return null;
 	}
 	#endregion
-	
 }
