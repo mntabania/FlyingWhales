@@ -20,7 +20,7 @@
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.SERIOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinion(actor, RelationshipManager.Acquaintance)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);    

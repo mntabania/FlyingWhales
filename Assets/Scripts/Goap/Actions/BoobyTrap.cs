@@ -73,7 +73,7 @@ public class BoobyTrap : GoapAction {
                 }
             }
         }
-        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
         return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {

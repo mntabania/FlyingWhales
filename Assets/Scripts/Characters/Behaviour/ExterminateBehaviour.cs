@@ -48,6 +48,9 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
+        if (producedJob != null) {
+            producedJob.SetIsThisAPartyJob(true);
+        }
         return true;
     }
 }

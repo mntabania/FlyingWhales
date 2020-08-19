@@ -135,7 +135,7 @@ public class DrinkBlood : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         if (!witness.traitContainer.HasTrait("Vampiric")) {
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
 
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
@@ -171,7 +171,7 @@ public class DrinkBlood : GoapAction {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character) {
             Character targetCharacter = target as Character;
-            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_SEVERITY.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             if (targetCharacter.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status, node);

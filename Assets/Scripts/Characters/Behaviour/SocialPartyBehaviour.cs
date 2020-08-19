@@ -9,36 +9,29 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+        bool hasJob = false;
         log += $"\n-Character is partying";
         Party socialParty = character.partyComponent.currentParty;
         if (!socialParty.isWaitTimeOver) {
             if (character.currentStructure == socialParty.target) {
                 log += $"\n-Character is already in target structure, will do party jobs";
                 if(character.previousCurrentActionNode != null && character.previousCurrentActionNode.associatedJobType == JOB_TYPE.PARTY_GO_TO) {
-                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     int roll = UnityEngine.Random.Range(0, 100);
                     if (roll < 15) {
-                        if (character.jobComponent.TriggerSingJob(out producedJob)) {
-                            return true;
-                        }
+                        hasJob = character.jobComponent.TriggerSingJob(out producedJob);
                     } else if (roll >= 15 && roll < 30) {
-                        if (character.jobComponent.TriggerDanceJob(out producedJob)) {
-                            return true;
-                        }
+                        hasJob = character.jobComponent.TriggerDanceJob(out producedJob);
                     } else if (roll >= 30 && roll < 40) {
                         TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.TABLE);
                         if (tileObject != null) {
-                            if (character.jobComponent.TriggerPartyDrinkJob(tileObject as Table, out producedJob)) {
-                                return true;
-                            }
+                            hasJob = character.jobComponent.TriggerPartyDrinkJob(tileObject as Table, out producedJob);
                         }
                     } else if (roll >= 40 && roll < 50) {
                         TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.TABLE);
                         if (tileObject != null) {
-                            if (character.jobComponent.TriggerPartyEatJob(tileObject as Table, out producedJob)) {
-                                return true;
-                            }
+                            hasJob = character.jobComponent.TriggerPartyEatJob(tileObject as Table, out producedJob);
                         }
                     } else if (roll >= 50 && roll < 70) {
                         Character chosenCharacter = character.currentStructure.GetRandomCharacterThatMeetCriteria(
@@ -46,28 +39,29 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
                                  x != character
                         );
                         if (chosenCharacter != null) {
-                            if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter)) {
-                                return true;
-                            }
+                            hasJob = character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter);
                         }
                     } else if (roll >= 70 && roll < 85) {
                         TileObject tileObject = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK);
                         if (tileObject != null) {
-                            if (character.jobComponent.TriggerPlayCardsJob(tileObject as Desk, out producedJob)) {
-                                return true;
-                            }
+                            hasJob = character.jobComponent.TriggerPlayCardsJob(tileObject as Desk, out producedJob);
                         }
+                    } else {
+                        hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                     }
-                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+
                 }
             } else {
                 log += $"\n-Character is not in target structure, go to it";
                 if (socialParty.target is LocationStructure targetStructure) {
                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                    character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+                    hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                 }
             }
         }
-        return true;
+        if (producedJob != null) {
+            producedJob.SetIsThisAPartyJob(true);
+        }
+        return hasJob;
     }
 }

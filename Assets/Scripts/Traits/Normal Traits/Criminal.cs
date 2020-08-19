@@ -63,7 +63,7 @@ namespace Traits {
         public bool HasCharacterThatIsAlreadyWorried(Character character) {
             return charactersThatAreAlreadyWorried.Contains(character);
         }
-        public void SetCrime(CRIME_TYPE crimeType, ICrimeable crime, IPointOfInterest crimeTarget) {
+        public void SetCrime(CRIME_SEVERITY crimeType, ICrimeable crime, IPointOfInterest crimeTarget) {
             if(crimeData != null) {
                 Debug.LogError(
                     $"Cannot set crime to criminal {owner.name} because it already has a crime: {crimeData.crimeType}");

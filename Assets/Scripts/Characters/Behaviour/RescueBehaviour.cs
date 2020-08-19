@@ -66,6 +66,9 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
             }
         }
+        if (producedJob != null) {
+            producedJob.SetIsThisAPartyJob(true);
+        }
         return true;
     }
 }

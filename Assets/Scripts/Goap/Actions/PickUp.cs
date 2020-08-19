@@ -126,7 +126,7 @@ public class PickUp : GoapAction {
                 } else if (targetTileObject.IsOwnedBy(witness)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                 }
-                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
             }
         }
         return response;

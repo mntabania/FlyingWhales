@@ -31,6 +31,7 @@ public class JobQueueItem {
     public System.Action<Character, JobQueueItem> onUnassignJobAction { get; protected set; }
     public bool doNotRecalculate { get; protected set; }
     public int invalidCounter { get; protected set; }
+    public bool isThisAPartyJob { get; protected set; }
 
     protected int _priority; //The lower the amount the higher the priority
 
@@ -310,6 +311,9 @@ public class JobQueueItem {
     public void ResetInvalidCounter() {
         invalidCounter = 0;
     }
+    public void SetIsThisAPartyJob(bool state) {
+        isThisAPartyJob = state;
+    }
     #endregion
 
     #region Job Object Pool
@@ -335,6 +339,7 @@ public class JobQueueItem {
         SetStillApplicableChecker(null);
         SetFinishedSuccessfully(false);
         SetDoNotRecalculate(false);
+        SetIsThisAPartyJob(false);
         ResetInvalidCounter();
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);

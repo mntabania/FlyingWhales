@@ -103,7 +103,7 @@ public class ShareInformation : GoapAction {
                     }
                 }
             }
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.INFRACTION);
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.INFRACTION);
         } else {
             if (witness == reactable.actor) {
                 if (reactable is ActualGoapNode) {

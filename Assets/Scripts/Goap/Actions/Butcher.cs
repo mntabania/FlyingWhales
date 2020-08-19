@@ -154,7 +154,7 @@ public class Butcher : GoapAction {
         if (targetCharacter != null) {
             if (!witness.traitContainer.HasTrait("Cannibal") &&
                 (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
-                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.HEINOUS);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
             

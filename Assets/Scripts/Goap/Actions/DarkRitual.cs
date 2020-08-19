@@ -27,7 +27,7 @@ public class DarkRitual : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         if (witness.traitContainer.HasTrait("Cultist") == false) {
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.SERIOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
 
             if (witness.relationshipContainer.IsFriendsWith(actor) || 

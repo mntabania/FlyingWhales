@@ -61,7 +61,7 @@ public class Assault : GoapAction {
                         bool targetHasHeinousOrSeriousCrime = false;
                         if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                             CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").crimeData;
-                            targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_TYPE.SERIOUS || crimeData.crimeType == CRIME_TYPE.HEINOUS;
+                            targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_SEVERITY.SERIOUS || crimeData.crimeType == CRIME_SEVERITY.HEINOUS;
                         }
                         if (targetHasHeinousOrSeriousCrime) {
                             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
@@ -99,7 +99,7 @@ public class Assault : GoapAction {
                         }
                     }
                     if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
-                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
                     }
                 }
             }
@@ -117,8 +117,8 @@ public class Assault : GoapAction {
                     bool targetHasMisdemeanour = false;
                     if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                         CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").crimeData;
-                        targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_TYPE.SERIOUS || crimeData.crimeType == CRIME_TYPE.HEINOUS;
-                        targetHasMisdemeanour = crimeData.crimeType == CRIME_TYPE.MISDEMEANOR;
+                        targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_SEVERITY.SERIOUS || crimeData.crimeType == CRIME_SEVERITY.HEINOUS;
+                        targetHasMisdemeanour = crimeData.crimeType == CRIME_SEVERITY.MISDEMEANOR;
                     }
                     if (targetHasHeinousOrSeriousCrime) {
                         if (opinionLabel == RelationshipManager.Acquaintance) {
