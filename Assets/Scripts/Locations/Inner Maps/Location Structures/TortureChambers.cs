@@ -18,6 +18,9 @@ namespace Inner_Maps.Location_Structures {
 
         public override void OnCharacterUnSeizedHere(Character character) {
             character.traitContainer.AddTrait(character, "Restrained");
+            if (character.partyComponent.hasParty) {
+                character.partyComponent.currentParty.RemoveMember(character);
+            }
         }
         
         // #region Listeners

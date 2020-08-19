@@ -16,6 +16,9 @@ namespace Inner_Maps.Location_Structures {
             if (character.gridTileLocation != null && IsTilePartOfARoom(character.gridTileLocation, out var room)) {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
+                if (character.partyComponent.hasParty) {
+                    character.partyComponent.currentParty.RemoveMember(character);
+                }
             }
         }
 
