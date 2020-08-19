@@ -1671,12 +1671,21 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Nameplate
     public void ShowThoughtsAndNameplate() {
+        if (!_nameplate) {
+            return;
+        }
         _nameplate.ShowThoughtsAndNameplate();
     }
     public void HideThoughtsAndNameplate() {
+        if (!_nameplate) {
+            return;
+        }
         _nameplate.HideThoughtsAndNameplate();
     }
     public void UpdateNameplateElementsState() {
+        if (!_nameplate) {
+            return;
+        }
         _nameplate.UpdateElementsStateBasedOnActiveCharacter();
     }
     #endregion
