@@ -71,6 +71,9 @@ namespace Traits {
             if (status.hindersPerform) {
                 character.DecreaseCanPerform();
             }
+            if (status.hindersSocials) {
+                character.DecreaseSociable();
+            }
         }
         private void ApplyTraitEffects(Character character, Trait trait) {
             //if (trait.type == TRAIT_TYPE.DISABLER) {
@@ -195,6 +198,9 @@ namespace Traits {
             }
             if (status.hindersPerform) {
                 character.IncreaseCanPerform();
+            }
+            if (status.hindersSocials) {
+                character.IncreaseSociable();
             }
         }
         public void UnapplyTraitEffects(Character character, Trait trait) {

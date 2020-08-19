@@ -22,7 +22,7 @@ public class SocialParty : Party {
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
         if(UnityEngine.Random.Range(0, 2) == 0) {
-            return !character.relationshipContainer.IsEnemiesWith(leader) && !character.traitContainer.HasTrait("Agoraphobic");
+            return !character.relationshipContainer.IsEnemiesWith(leader) && !character.traitContainer.HasTrait("Agoraphobic") && character.isSociable;
         }
         return false;
     }

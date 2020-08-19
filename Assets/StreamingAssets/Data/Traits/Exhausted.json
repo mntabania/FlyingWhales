@@ -1,1 +1,24 @@
-{"name":"Exhausted","description":"Severely lacking Energy.","thoughtText":"","type":0,"effect":2,"advertisedInteractions":[],"ticksDuration":0,"level":0,"moodEffect":-12,"isHidden":false,"mutuallyExclusive":[],"canBeTriggered":false,"elementalType":0,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false,"hindersPerform":false,"isStacking":false,"stackLimit":0,"stackModifier":0.0,"isTangible":false}
+{
+  "advertisedInteractions": [],
+  "canBeTriggered": false,
+  "description": "Severely lacking Energy.",
+  "effect": 2,
+  "elementalType": 0,
+  "hindersAttackTarget": false,
+  "hindersMovement": false,
+  "hindersPerform": false,
+  "hindersWitness": false,
+  "hindersSocials": true,
+  "isHidden": false,
+  "isStacking": false,
+  "isTangible": false,
+  "level": 0,
+  "moodEffect": -12,
+  "mutuallyExclusive": [],
+  "name": "Exhausted",
+  "stackLimit": 0,
+  "stackModifier": 0.0,
+  "thoughtText": "",
+  "ticksDuration": 0,
+  "type": 0
+}

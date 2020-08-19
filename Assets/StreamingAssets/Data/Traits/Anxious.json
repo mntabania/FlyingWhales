@@ -1,1 +1,26 @@
-{"name":"Anxious","description":"Worried about something.","thoughtText":"","type":0,"effect":2,"advertisedInteractions":[],"ticksDuration":48,"level":0,"moodEffect":-5,"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false,"hindersPerform":false,"hasOnCollideWith":false,"hasOnEnterGridTile":false,"isStacking":true,"stackLimit":5,"stackModifier":0.5}
+{
+  "advertisedInteractions": [],
+  "canBeTriggered": false,
+  "description": "Worried about something.",
+  "effect": 2,
+  "hasOnCollideWith": false,
+  "hasOnEnterGridTile": false,
+  "hindersAttackTarget": false,
+  "hindersMovement": false,
+  "hindersPerform": false,
+  "hindersWitness": false,
+  "hindersSocials": true,
+  "isHidden": false,
+  "isStacking": true,
+  "level": 0,
+  "moodEffect": -5,
+  "mutuallyExclusive": [
+    ""
+  ],
+  "name": "Anxious",
+  "stackLimit": 5,
+  "stackModifier": 0.5,
+  "thoughtText": "",
+  "ticksDuration": 48,
+  "type": 0
+}

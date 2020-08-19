@@ -1,1 +1,27 @@
-{"name":"Annoyed","description":"Recently experienced something that ticked it off.","thoughtText":"","type":0,"effect":2,"advertisedInteractions":[],"ticksDuration":96,"level":0,"moodEffect":-4,"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hasOnCollideWith":false,"hasOnEnterGridTile":false,"elementalType":0,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false,"hindersPerform":false,"isStacking":true,"stackLimit":5,"stackModifier":0.5}
+{
+  "advertisedInteractions": [],
+  "canBeTriggered": false,
+  "description": "Recently experienced something that ticked it off.",
+  "effect": 2,
+  "elementalType": 0,
+  "hasOnCollideWith": false,
+  "hasOnEnterGridTile": false,
+  "hindersAttackTarget": false,
+  "hindersMovement": false,
+  "hindersPerform": false,
+  "hindersWitness": false,
+  "hindersSocials": true,
+  "isHidden": false,
+  "isStacking": true,
+  "level": 0,
+  "moodEffect": -4,
+  "mutuallyExclusive": [
+    ""
+  ],
+  "name": "Annoyed",
+  "stackLimit": 5,
+  "stackModifier": 0.5,
+  "thoughtText": "",
+  "ticksDuration": 96,
+  "type": 0
+}

@@ -7,7 +7,8 @@ namespace Traits {
         public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
         public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
         public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
-        public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
+        public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot perform
+        public bool hindersSocials; //if a character has this trait, and this is true, then he/she does not want to talk
         public bool isStacking;
         public int stackLimit;
         public float stackModifier;

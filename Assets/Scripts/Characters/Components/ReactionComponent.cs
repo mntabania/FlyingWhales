@@ -615,11 +615,9 @@ public class ReactionComponent {
                             debugLog += "\n-Chat triggered";
                             actor.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
                         } else {
-                            debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
-                            Trait angry = actor.traitContainer.GetNormalTrait<Trait>("Angry");
-                            bool isAngryWithTarget = angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(disguisedTarget);
+                            debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover and character is sociable.";
                             if (RelationshipManager.IsSexuallyCompatibleOneSided(disguisedActor.sexuality, disguisedTarget.sexuality, disguisedActor.gender, disguisedTarget.gender)
-                                && disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && isAngryWithTarget == false) {
+                                && disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) == false && disguisedActor.isSociable) {
                                 
                                 if (disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                                     || disguisedActor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1

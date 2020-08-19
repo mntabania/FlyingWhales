@@ -16,6 +16,7 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.25f;
+            hindersSocials = true;
         }
 
         #region Overrides
