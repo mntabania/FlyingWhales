@@ -26,7 +26,7 @@ namespace Traits {
             ticksDuration = 0;
             canBeTriggered = true;
             opinionCopy = new Dictionary<Character, OpinionData>();
-            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
@@ -61,9 +61,9 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character potentialVictim = targetPOI as Character;
-                CheckTargetVictimIfStillAvailable();
-                if (targetVictim == null) {
-                    if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                if (!potentialVictim.isDead && DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                    CheckTargetVictimIfStillAvailable();
+                    if (targetVictim == null) {
                         SetTargetVictim(potentialVictim);
 
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
@@ -78,11 +78,13 @@ namespace Traits {
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public override string TriggerFlaw(Character character) {
+            CheckTargetVictimIfStillAvailable();
             if (targetVictim == null) {
                 List<Character> victims = null;
                 for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                     Character potentialVictim = character.currentRegion.charactersAtLocation[i];
-                    if (potentialVictim == character) {
+                    if (potentialVictim == character 
+                        || potentialVictim.currentRegion != character.currentRegion) {
                         continue;
                     }
                     if (IsCharacterNotApplicableAsVictim(potentialVictim)) {
@@ -109,10 +111,10 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
-            CheckPsychopath();
-        }
+        //public override void OnTickStarted() {
+        //    base.OnTickStarted();
+        //    CheckPsychopath();
+        //}
         #endregion
 
         public void SetVictimRequirements(SerialVictim serialVictim) {
@@ -159,122 +161,18 @@ namespace Traits {
                 SetTargetVictim(null);
             }
         }
-        private void CheckPsychopath() {
-            CheckTargetVictimIfStillAvailable();
-            //if (character.isDead || !character.canPerform || !character.canMove) { //character.doNotDisturb > 0 || !character.canMove //character.currentArea != InnerMapManager.Instance.currentlyShowingArea
-            //    if (hasStartedFollowing) {
-            //        StopFollowing();
-            //        SetHasStartedFollowing(false);
-            //    }
-            //    return;
-            //}
-            //if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
-            //    return;
-            //}
-            //if (!hasStartedFollowing) {
-            //    HuntVictim();
-            //} else {
-            //    CheckerWhileFollowingTargetVictim();
-            //}
-        }
-        //private void HuntVictim() {
-        //    if (character.needsComponent.isSulking || character.needsComponent.isBored) {
-        //        int chance = UnityEngine.Random.Range(0, 100);
-        //        if (chance < 20) {
-        //            //CheckTargetVictimIfStillAvailable();
-        //            if (targetVictim != null) {
-        //                character.CancelAllJobs();
-        //                if (character.stateComponent.currentState != null) {
-        //                    character.stateComponent.ExitCurrentState();
-        //                    //if (character.stateComponent.currentState != null) {
-        //                    //    character.stateComponent.currentState.OnExitThisState();
-        //                    //}
-        //                }
-        //                FollowTargetVictim();
-        //                SetHasStartedFollowing(true);
-        //            }
-        //        }
-        //    }
-        //}
-        //private bool ForceHuntVictim() {
-        //    CheckTargetVictimIfStillAvailable();
-        //    if (hasStartedFollowing && targetVictim != null) {
-        //        return true;
-        //    }
-        //    if (targetVictim == null) {
-        //        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-        //            Character potentialVictim = CharacterManager.Instance.allCharacters[i];
-        //            if (potentialVictim.currentRegion != this.character.currentRegion || potentialVictim.isDead || potentialVictim is Summon) {
-        //                continue;
-        //            }
-        //            if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
-        //                SetTargetVictim(potentialVictim);
-
-        //                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
-        //                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //                log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //                this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    if (targetVictim != null) {
-        //        character.CancelAllJobs();
-        //        if (character.stateComponent.currentState != null) {
-        //            character.stateComponent.ExitCurrentState();
-        //            //if (character.stateComponent.currentState != null) {
-        //            //    character.stateComponent.currentState.OnExitThisState();
-        //            //}
-        //        }
-        //        FollowTargetVictim();
-        //        SetHasStartedFollowing(true);
-        //        return true;
-        //    }
-        //    return false;
-        //}
-        //private void CheckerWhileFollowingTargetVictim() {
-        //    if (isFollowing) {
-        //        if (!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
-        //            SetIsFollowing(false);
-        //            if (character.marker.targetPOI != targetVictim) {
-        //                SetHasStartedFollowing(false);
-        //            }
-        //            return;
-        //        }
-
-        //        CheckTargetVictimIfStillAvailable();
-        //        if (targetVictim != null) {
-        //            if (character.marker.inVisionCharacters.Contains(targetVictim)) {
-        //                StopFollowing();
-        //            }
-        //            if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
-        //                CreateHuntVictimJob();
-        //            }
-        //        }
-        //    } else {
-        //        CheckTargetVictimIfStillAvailable();
-        //        if (targetVictim != null) {
-        //            if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
-        //                FollowTargetVictim();
-        //            } else if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
-        //                CreateHuntVictimJob();
-        //            }
+        //private void CheckPsychopath() {
+        //    if(targetVictim != null) {
+        //        if (targetVictim.isDead || !targetVictim.isNormalCharacter) {
+        //            SetTargetVictim(null);
         //        } else {
-        //            SetHasStartedFollowing(false);
+        //            AWARENESS_STATE awarenessState = character.relationshipContainer.GetAwarenessState(targetVictim);
+        //            if(awarenessState == AWARENESS_STATE.Missing || awarenessState == AWARENESS_STATE.Presumed_Dead) {
+        //                SetTargetVictim(null);
+        //            }
         //        }
         //    }
-        //}
-        //private void StopFollowing() {
-        //    if (isFollowing) {
-        //        SetIsFollowing(false);
-        //        character.marker.StopMovement();
-        //    }
-        //}
-        //private void FollowTargetVictim() {
-        //    if (!isFollowing) {
-        //        SetIsFollowing(true);
-        //        character.marker.GoToPOI(targetVictim);
-        //    }
+        //    //CheckTargetVictimIfStillAvailable();
         //}
         public void CheckTargetVictimIfStillAvailable() {
             if (targetVictim != null) {
@@ -288,7 +186,15 @@ namespace Traits {
             }
         }
         private bool IsCharacterNotApplicableAsVictim(Character target) {
-            return /*target.currentRegion != character.currentRegion ||*/ target.isBeingSeized || target.isDead || !target.isNormalCharacter/* || target.isMissing*/;
+            if (/*target.currentRegion != character.currentRegion ||*/ target.isBeingSeized || target.isDead || !target.isNormalCharacter || !character.movementComponent.HasPathToEvenIfDiffRegion(target.gridTileLocation) || target.traitContainer.HasTrait("Travelling")) {
+                return true;
+            } else {
+                AWARENESS_STATE awarenessState = character.relationshipContainer.GetAwarenessState(target);
+                if (awarenessState == AWARENESS_STATE.Missing || awarenessState == AWARENESS_STATE.Presumed_Dead) {
+                    return true;
+                }
+            }
+            return false;
         }
         public bool CreateHuntVictimJob() {
             if (character.jobQueue.HasJob(JOB_TYPE.RITUAL_KILLING)) {

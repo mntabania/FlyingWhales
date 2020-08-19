@@ -132,6 +132,7 @@ public class LocationClassManager {
         }
     }
     public void OnRemoveResident(Character residentRemoved) {
+        return;
         string residentClassName = residentRemoved.characterClass.className;
 
         if (residentClassName == "Miner") {
@@ -187,6 +188,7 @@ public class LocationClassManager {
         RevertCharacterClassOrderByOne();
     }
     public void OnResidentChangeClass(Character resident, CharacterClass previousClass, CharacterClass currentClass) {
+        return;
         string previousClassName = previousClass.className;
         string currentClassName = currentClass.className;
 

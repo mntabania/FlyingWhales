@@ -15,7 +15,7 @@ public class PsychopathBehaviour : CharacterBehaviourComponent {
         log += $"\n  -RNG roll: {chance}";
         if (chance < 15) {
             Psychopath psychopath = character.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
-            //psychopath.CheckTargetVictimIfStillAvailable();
+            psychopath.CheckTargetVictimIfStillAvailable();
             if (psychopath.targetVictim != null) {
                 log += $"\n  -Target victim is {psychopath.targetVictim.name}, will try to Hunt Victim";
                 if (psychopath.targetVictim.isAtHomeStructure || psychopath.targetVictim.IsInHomeSettlement()) {

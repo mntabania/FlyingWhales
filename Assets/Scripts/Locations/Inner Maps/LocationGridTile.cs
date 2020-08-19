@@ -543,11 +543,12 @@ namespace Inner_Maps {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
                             if (character.isNormalCharacter) {
-                                if (character.characterClass.IsCombatant()) {
-                                    character.behaviourComponent.SetIsAttackingDemonicStructure(true, demonicStructure);
-                                } else {
-                                    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
-                                }
+                                genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                                //if (character.characterClass.IsCombatant()) {
+                                //    character.behaviourComponent.SetIsAttackingDemonicStructure(true, demonicStructure);
+                                //} else {
+                                //    genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                                //}
                             }
                         }
                     }
