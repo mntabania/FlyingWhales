@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Inner_Maps;
-using UnityEngine;
+﻿using System.Linq;
 
 namespace Traits {
     public class Agoraphobic : Trait {
         public override bool isSingleton => true;
 
+        public bool hasReactedThisTick;
+        
         public Agoraphobic() {
             name = "Agoraphobic";
             description = "Crowds? Oh no!";
@@ -14,6 +13,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            hasReactedThisTick = false;
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //effects = new List<TraitEffect>();
         }
@@ -41,11 +41,44 @@ namespace Traits {
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                //Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.traitContainer.HasTrait("Berserked")) {
+                // //Character targetCharacter = targetPOI as Character;
+                // if (characterThatWillDoJob.traitContainer.HasTrait("Berserked")) {
+                //     return false;
+                // }
+                // ApplyAgoraphobicEffect(characterThatWillDoJob);
+                if (hasReactedThisTick) {
                     return false;
                 }
-                ApplyAgoraphobicEffect(characterThatWillDoJob);
+                if (characterThatWillDoJob.canWitness && characterThatWillDoJob.marker.inVisionCharacters.Count(x => x.isNormalCharacter && x.isDead == false) >= 3) {
+                    string debugLog = $"{characterThatWillDoJob.name} Is agoraphobic and has 3+ alive villagers in vision";
+                    int roll = UnityEngine.Random.Range(0, 100);
+                    if (roll < 10) {
+                        debugLog += $"{characterThatWillDoJob.name} became catatonic";
+                        characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Catatonic");
+                    } else if (roll < 25) {
+                        debugLog += $"{characterThatWillDoJob.name} became berserked";
+                        characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Berserked");
+                    } else if (roll < 40) {
+                        debugLog += $"{characterThatWillDoJob.name} Had a seizure";
+                        characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, characterThatWillDoJob);
+                    } else if (roll < 50 && (characterThatWillDoJob.characterClass.className == "Druid" || characterThatWillDoJob.characterClass.className == "Shaman" || characterThatWillDoJob.characterClass.className == "Mage")) {
+                        debugLog += $"{characterThatWillDoJob.name} Had a loss of control";
+                        characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, characterThatWillDoJob);
+                    } else {
+                        debugLog += $"{characterThatWillDoJob.name} became anxious and is cowering.";
+                        characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Anxious");
+                        characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, characterThatWillDoJob, reason: "Agoraphobic");
+                    }
+                    characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
+                    Log log = new Log(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first");
+                    log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddLogToInvolvedObjects();
+                    hasReactedThisTick = true;
+
+                    GameDate date = GameManager.Instance.Today();
+                    date.AddTicks(1);
+                    SchedulingManager.Instance.AddEntry(date, () => hasReactedThisTick = false, this);
+                }
                 return true;
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);

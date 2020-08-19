@@ -55,7 +55,7 @@ namespace Tutorial {
         protected override void MakeAvailable() {
             base.MakeAvailable();
             PlayerUI.Instance.ShowGeneralConfirmation("Prison", "You've just built a new Demonic Structure: The Prison! " +
-                                                                "This Structure allows you to capture and torture Villagers." +
+                                                                "This Structure allows you to capture and torture Villagers. " +
                                                                 "A Tutorial Quest has been created to teach you how to use it.", 
                 onClickOK: () => TutorialManager.Instance.ActivateTutorial(this));
         }
