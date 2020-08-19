@@ -101,7 +101,15 @@ public class Eat : GoapAction {
                         }
                     }
                 }
-            } 
+            } else {
+                if (table.characterOwner != null && !table.IsOwnedBy(actor) && actor.relationshipContainer.IsFriendsWith(table.characterOwner)) {
+                    cost = UtilityScripts.Utilities.Rng.Next(500, 551);;
+                    costLog += $" {cost}(Otherwise, if Table personally owned by Friend or Close Friend)";
+                } else {
+                    cost += UtilityScripts.Utilities.Rng.Next(800, 851);;
+                    costLog += $" {cost}(Otherwise, if Table is NOT owned by Friend or Close Friend)";
+                }
+            }
         } else {
             if (target is ElfMeat || target is HumanMeat) {
                 if (actor.traitContainer.HasTrait("Cannibal")) {
