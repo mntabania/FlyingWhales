@@ -845,7 +845,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
-        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP,
+        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
@@ -871,7 +871,7 @@ public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTS
     CLEANSE_TILES,
     TEND_FARM
 }
-public enum CRIME_TYPE {
+public enum CRIME_SEVERITY {
     NONE,
     INFRACTION,
     MISDEMEANOR,
@@ -887,25 +887,25 @@ public enum CRIME_STATUS {
 }
 public enum CRIME {
     NONE,
-    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
     THEFT,
-    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
     ASSAULT,
-    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
     ATTEMPTED_MURDER,
-    [SubcategoryOf(CRIME_TYPE.SERIOUS)]
+    [SubcategoryOf(CRIME_SEVERITY.SERIOUS)]
     MURDER,
-    [SubcategoryOf(CRIME_TYPE.HEINOUS)]
+    [SubcategoryOf(CRIME_SEVERITY.HEINOUS)]
     ABERRATION,
-    [SubcategoryOf(CRIME_TYPE.INFRACTION)]
+    [SubcategoryOf(CRIME_SEVERITY.INFRACTION)]
     INFIDELITY,
-    [SubcategoryOf(CRIME_TYPE.HEINOUS)]
+    [SubcategoryOf(CRIME_SEVERITY.HEINOUS)]
     HERETIC,
-    [SubcategoryOf(CRIME_TYPE.INFRACTION)]
+    [SubcategoryOf(CRIME_SEVERITY.INFRACTION)]
     MINOR_ASSAULT,
-    [SubcategoryOf(CRIME_TYPE.MISDEMEANOR)]
+    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
     MANSLAUGHTER,
-    [SubcategoryOf(CRIME_TYPE.SERIOUS)]
+    [SubcategoryOf(CRIME_SEVERITY.SERIOUS)]
     ARSON,
 }
 public enum CHARACTER_MOOD {
@@ -1044,33 +1044,33 @@ public enum COMBAT_REACTION { None, Fight, Flight }
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class SubcategoryOf : System.Attribute {
-    public SubcategoryOf(CRIME_TYPE cat) {
+    public SubcategoryOf(CRIME_SEVERITY cat) {
         Category = cat;
     }
-    public CRIME_TYPE Category { get; private set; }
+    public CRIME_SEVERITY Category { get; private set; }
 }
 #endregion
 public static class Extensions {
 
     #region Crimes
-    public static bool IsSubcategoryOf(this CRIME sub, CRIME_TYPE cat) {
+    public static bool IsSubcategoryOf(this CRIME sub, CRIME_SEVERITY cat) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException($"Subcategory {sub} has no category.");
         SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category == cat;
     }
-    public static CRIME_TYPE GetCategory(this CRIME sub) {
+    public static CRIME_SEVERITY GetCategory(this CRIME sub) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException($"Subcategory {sub} has no category.");
         SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category;
     }
-    public static bool IsLessThan(this CRIME_TYPE sub, CRIME_TYPE other) {
+    public static bool IsLessThan(this CRIME_SEVERITY sub, CRIME_SEVERITY other) {
         return sub < other;
     }
-    public static bool IsGreaterThanOrEqual(this CRIME_TYPE sub, CRIME_TYPE other) {
+    public static bool IsGreaterThanOrEqual(this CRIME_SEVERITY sub, CRIME_SEVERITY other) {
         return sub >= other;
     }
     #endregion
@@ -1438,15 +1438,18 @@ public static class Extensions {
             case JOB_TYPE.BERSERK_STROLL:
                 priority = 1088;
                 break;
-            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+            case JOB_TYPE.NO_PATH_IDLE:
                 priority = 1087;
+                break;
+            case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
+                priority = 1086;
                 break;
             //case JOB_TYPE.FLEE_CRIME:
             //case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.DESTROY:
             //case JOB_TYPE.BERSERK_STROLL:
             ////case JOB_TYPE.GO_TO:
-                priority = 1086;
+                priority = 1085;
                 break;
             case JOB_TYPE.REPORT_CORRUPTED_STRUCTURE:
             case JOB_TYPE.COUNTERATTACK:

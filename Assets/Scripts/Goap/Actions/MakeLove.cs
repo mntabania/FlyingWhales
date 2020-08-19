@@ -142,7 +142,7 @@ public class MakeLove : GoapAction {
                         //if actor has a lover that is different from target
                         //actor considered Infraction.
                         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, 
-                            CRIME_TYPE.INFRACTION);    
+                            CRIME_SEVERITY.INFRACTION);    
                     } else if (actorLover == witness) {
                         //if witness is lover of actor
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
@@ -194,7 +194,7 @@ public class MakeLove : GoapAction {
                         //if target has a lover that is different from actor
                         //target considered Infraction.
                         CrimeManager.Instance.ReactToCrime(witness, targetCharacter, node, node.associatedJobType, 
-                            CRIME_TYPE.INFRACTION);    
+                            CRIME_SEVERITY.INFRACTION);    
                     } else if (targetLover == witness) {
                         //if witness is lover of target
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status, node);

@@ -1246,18 +1246,22 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    jobQueue.AddJobInQueue(job);
     //}
     public void NoPathToDoJobOrAction(JobQueueItem job, ActualGoapNode action) {
+        if (partyComponent.hasParty && job.isThisAPartyJob) {
+            //If a party has no path to do action and the job that has no path is a party job, leave party
+            partyComponent.currentParty.RemoveMember(this);
+        }
         if(job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            jobComponent.TriggerRoamAroundTile();
+            jobComponent.TriggerRoamAroundTile(JOB_TYPE.NO_PATH_IDLE);
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY 
             || job.jobType == JOB_TYPE.ROAM_AROUND_CORRUPTION
             || job.jobType == JOB_TYPE.ROAM_AROUND_PORTAL) {
-            jobComponent.TriggerRoamAroundTile();
+            jobComponent.TriggerRoamAroundTile(JOB_TYPE.NO_PATH_IDLE);
         } else if (action.goapType == INTERACTION_TYPE.RETURN_HOME) {
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
-            jobComponent.TriggerRoamAroundTile();
+            jobComponent.TriggerRoamAroundTile(JOB_TYPE.NO_PATH_IDLE);
         } else {
-            jobComponent.TriggerStand();
+            jobComponent.TriggerStand(JOB_TYPE.NO_PATH_IDLE);
         }
     }
     #endregion
@@ -4800,6 +4804,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (trapStructure.IsTrapped()) {
             trapStructure.SetStructureAndDuration(null, 0);
             trapStructure.SetForcedStructure(null);
+        }
+        if(partyComponent.hasParty && partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack) {
+            //Once a character is seized, leave party also - except counter attack
+            partyComponent.currentParty.RemoveMember(this);
         }
         minion?.OnSeize();
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");

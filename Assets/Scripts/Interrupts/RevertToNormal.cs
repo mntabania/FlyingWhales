@@ -41,7 +41,7 @@ namespace Interrupts {
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm, status);
                 }
-                CrimeManager.Instance.ReactToCrime(witness, originalForm, this, CRIME_TYPE.HEINOUS);
+                CrimeManager.Instance.ReactToCrime(witness, originalForm, this, CRIME_SEVERITY.HEINOUS);
             }
             return response;
         }

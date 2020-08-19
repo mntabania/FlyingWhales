@@ -56,6 +56,9 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
+        if (producedJob != null) {
+            producedJob.SetIsThisAPartyJob(true);
+        }
         return true;
     }
 }

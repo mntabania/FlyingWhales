@@ -55,17 +55,17 @@ public class JudgeCharacter : GoapAction {
             exile = 10;
             debugLog += "\n-Hostile Faction or No Crime Data: absolve = 0, whip = 5, kill = 100, exile = 10";
         } else {
-            if (crimeData.crimeType == CRIME_TYPE.MISDEMEANOR) {
+            if (crimeData.crimeType == CRIME_SEVERITY.MISDEMEANOR) {
                 absolve = 50;
                 whip = 100;
                 debugLog += "\n-Misdemeanor: absolve = 50, whip = 100, kill = 0, exile = 0";
-            } else if (crimeData.crimeType == CRIME_TYPE.SERIOUS) {
+            } else if (crimeData.crimeType == CRIME_SEVERITY.SERIOUS) {
                 absolve = 5;
                 whip = 20;
                 kill = 50;
                 exile = 50;
                 debugLog += "\n-Serious Crime: absolve = 5, whip = 20, kill = 50, exile = 50";
-            } else if (crimeData.crimeType == CRIME_TYPE.HEINOUS) {
+            } else if (crimeData.crimeType == CRIME_SEVERITY.HEINOUS) {
                 whip = 5;
                 kill = 100;
                 exile = 50;

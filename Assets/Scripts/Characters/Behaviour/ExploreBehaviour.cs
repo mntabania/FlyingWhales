@@ -69,6 +69,9 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
+        if (producedJob != null) {
+            producedJob.SetIsThisAPartyJob(true);
+        }
         return true;
     }
 }

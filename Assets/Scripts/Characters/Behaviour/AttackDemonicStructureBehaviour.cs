@@ -21,7 +21,11 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Character has home settlement";
                     if (character.homeSettlement.locationType == LOCATION_TYPE.DUNGEON) {
                         log += $"\n-Character home settlement is a special structure";
-                        character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        bool hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        if(producedJob != null) {
+                            producedJob.SetIsThisAPartyJob(true);
+                        }
+                        return hasJob;
                     } else {
                         log += $"\n-Character home settlement is a village";
                         LocationStructure targetStructure = null;
@@ -44,7 +48,11 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                             if (character.currentStructure != targetStructure) {
                                 targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
                             }
-                            character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
+                            bool hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
+                            if (producedJob != null) {
+                                producedJob.SetIsThisAPartyJob(true);
+                            }
+                            return hasJob;
                         }
                     }
                 }
@@ -79,7 +87,11 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                         }
                     } else {
                         LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
-                        return character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                        bool hasJob = character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                        if (producedJob != null) {
+                            producedJob.SetIsThisAPartyJob(true);
+                        }
+                        return hasJob;
                     }
                 }
 

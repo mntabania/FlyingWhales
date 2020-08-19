@@ -48,6 +48,9 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
+        if (producedJob != null) {
+            producedJob.SetIsThisAPartyJob(true);
+        }
         return true;
     }
 }

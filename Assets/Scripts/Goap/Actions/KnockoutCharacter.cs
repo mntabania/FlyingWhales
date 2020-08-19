@@ -62,7 +62,7 @@ public class KnockoutCharacter : GoapAction {
                     if (witness.homeSettlement == targetCharacter.homeSettlement || 
                         witness.faction == targetCharacter.faction || 
                         witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
-                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
                     }
                 }
             }

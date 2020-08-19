@@ -83,7 +83,7 @@ public class RitualKilling : GoapAction {
                 }
             }
         }
-        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.SERIOUS);
         return response;
     }
     public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
@@ -115,7 +115,7 @@ public class RitualKilling : GoapAction {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
                 }
             }
-            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_SEVERITY.SERIOUS);
         }
         return response;
     }

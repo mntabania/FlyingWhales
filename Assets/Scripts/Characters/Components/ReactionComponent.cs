@@ -1317,9 +1317,9 @@ public class ReactionComponent {
                 CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(characterHit);
                 if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
                     ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
-                    CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+                    CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
                     log += "\n-Crime committed is: " + crimeType.ToString();
-                    if (crimeType != CRIME_TYPE.NONE) {
+                    if (crimeType != CRIME_SEVERITY.NONE) {
                         log += "\n-Reactor will react to crime";
                         CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
                     }
@@ -1334,9 +1334,9 @@ public class ReactionComponent {
                 CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(objectHit);
                 if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
                     ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
-                    CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+                    CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
                     log += "\n-Crime committed is: " + crimeType.ToString();
-                    if (crimeType != CRIME_TYPE.NONE) {
+                    if (crimeType != CRIME_SEVERITY.NONE) {
                         log += "\n-Reactor will react to crime";
                         CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
                     }
