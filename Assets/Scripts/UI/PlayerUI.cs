@@ -200,7 +200,7 @@ public class PlayerUI : MonoBehaviour {
         //currencies
         Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateKillCountCharacterItems();
-        UpdateIntel();
+        // UpdateIntel();
         // CreateInitialSpells();
         // _buildListUI.Initialize();
         // cultistsList.Initialize();
@@ -213,12 +213,14 @@ public class PlayerUI : MonoBehaviour {
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
 #endif
-        OnThreatUpdated();
+        // OnThreatUpdated();
     }
     public void InitializeAfterLoadOutPicked() {
+        UpdateIntel();
         CreateInitialSpells();
         _buildListUI.Initialize();
         cultistsList.Initialize();
+        OnThreatUpdated();
     }
     public void OnLoadSaveData() {
         for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {

@@ -57,7 +57,7 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
                 hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
                 hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
                 HexTile currHex = hex.GetComponent<HexTile>();
-                currHex.Initialize();
+                currHex.Initialize(false);
                 currHex.data.id = id;
                 currHex.data.tileName = hex.name;
                 currHex.data.xCoordinate = x - _borderThickness;

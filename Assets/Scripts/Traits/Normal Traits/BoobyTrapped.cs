@@ -42,7 +42,7 @@ namespace Traits {
                         List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
                         for (int j = 0; j < pois.Count; j++) {
                             IPointOfInterest currPOI = pois[j];
-                            currPOI.AdjustHP(-500, _element, true);
+                            currPOI.AdjustHP(-800, _element, true);
                         }
                     }
                     willStillContinueAction = false;

@@ -62,7 +62,7 @@ public class Player : ILeader, IObjectManipulator {
         //maxArtifactSlots = 0;
         unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
         unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
-        AdjustMana(EditableValuesManager.Instance.startingMana);
+        mana = EditableValuesManager.Instance.startingMana;
         seizeComponent = new SeizeComponent();
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);

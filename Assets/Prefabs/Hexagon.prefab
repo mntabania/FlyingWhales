@@ -90,15 +90,12 @@ MonoBehaviour:
     id: 0
     xCoordinate: 0
     yCoordinate: 0
-    tileTag: 0
     tileName: 
-    regionID: 0
     elevationNoise: 0
     moistureNoise: 0
     temperature: 0
     biomeType: 0
     elevationType: 0
-    manaOnTile: 0
   spriteRenderer: {fileID: 212478927369850800}
   _centerPiece: {fileID: 1562654379075156}
   _highlightGO: {fileID: 1478738842886404}
@@ -128,6 +125,8 @@ MonoBehaviour:
   botRightBeach: {fileID: 212451169657419164}
   rightBeach: {fileID: 212180639557770306}
   topRightBeach: {fileID: 212686564265827298}
+  colliders:
+  - {fileID: 60902655800805408}
   range: 0
   borderLine: {fileID: 120253390373825672}
   vertices:
@@ -202,7 +201,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000010250898800}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0

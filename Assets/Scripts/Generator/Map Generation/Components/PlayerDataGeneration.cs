@@ -10,13 +10,12 @@ using UtilityScripts;
 
 public class PlayerDataGeneration : MapGenerationComponent {
 	public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
-        PlayerManager.Instance.InitializePlayer(data.portal, data.portalStructure, PLAYER_ARCHETYPE.Normal);
+        PlayerManager.Instance.InitializePlayer(data.portal);
         yield return null;
 	}
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
-		//TODO:
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
 	#endregion

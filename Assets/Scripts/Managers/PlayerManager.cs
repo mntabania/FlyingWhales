@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
-using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Traits;
@@ -45,7 +44,7 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
         Messenger.AddListener(Signals.CHECK_IF_PLAYER_WINS, CheckWinCondition);
     }
-    public void InitializePlayer(HexTile portal, LocationStructure portalStructure, PLAYER_ARCHETYPE archeType) {
+    public void InitializePlayer(HexTile portal) {
         player = new Player();
         player.CreatePlayerFaction();
         player.SetPortalTile(portal);
@@ -56,10 +55,6 @@ public class PlayerManager : MonoBehaviour {
         LandmarkManager.Instance.OwnSettlement(player.playerFaction, existingPlayerNpcSettlement);
 
         PlayerUI.Instance.UpdateUI();
-        // if (WorldConfigManager.Instance.isDemoWorld) {
-        //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    
-        // }
-        
     }
     public void InitializePlayer(SaveDataCurrentProgress data) {
         player = data.LoadPlayer();

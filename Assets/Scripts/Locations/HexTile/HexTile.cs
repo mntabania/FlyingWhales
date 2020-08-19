@@ -8,6 +8,7 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Settlements;
 using Locations.Tile_Features;
+using Ruinarch;
 using SpriteGlow;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -60,6 +61,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     [SerializeField] private SpriteRenderer botRightBeach;
     [SerializeField] private SpriteRenderer rightBeach;
     [SerializeField] private SpriteRenderer topRightBeach;
+    
+    [Space(10)]
+    [Header("Colliders")]
+    [SerializeField] private Collider2D[] colliders;
 
     //properties
     public BaseLandmark landmarkOnTile { get; private set; }
@@ -122,18 +127,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Random.ColorHSV();
         ConstructDefaultActions();
     }
-    public void Initialize() {
+    public void Initialize(bool listenForGameLoad = true) {
         featureComponent = new TileFeatureComponent();
         itemsInHex = new List<TileObject>();
         spellsComponent = new HexTileSpellsComponent(this);
         _hexTileBiomeEffectTrigger = new HexTileBiomeEffectTrigger(this);
         selectableSize = new Vector2Int(12, 12);
-        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        SetBordersState(false, false, Color.red);
+        if (listenForGameLoad) {
+            Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);    
+        }
     }
     private void OnGameLoaded() {
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         SubscribeListeners();
-        SetBordersState(false, false, Color.red);
+        EnableColliders();
         if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
             CheckIfStructureVisualsAreStillValid();
         }
@@ -733,10 +741,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
 
     #region Tile Functions
     public void DisableColliders() {
-        GetComponent<Collider2D>().enabled = false;
-        Collider[] colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = false;
+        }
+    }
+    private void EnableColliders() {
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = true;
         }
     }
     private InfoUIBase GetMenuToShowWhenTileIsClicked() {
@@ -769,20 +780,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     #region Monobehaviour Functions
     private void LeftClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || 
-            WorldMapCameraMove.Instance.isDragging || GameManager.Instance.gameHasStarted == false) {
+            WorldMapCameraMove.Instance.isDragging) { // || GameManager.Instance.gameHasStarted == false
             return;
         }
-        Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
-        InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
-        if (baseToShow != null) {
-            if (baseToShow is RegionInfoUI) {
-                Messenger.Broadcast(Signals.REGION_SELECTED, region);
-                UIManager.Instance.ShowRegionInfo(region);
-            } else if (baseToShow is HextileInfoUI) {
-                UIManager.Instance.ShowHexTileInfo(this);
-            }
+        if (!UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
+            InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
+            if (baseToShow != null) {
+                if (baseToShow is RegionInfoUI) {
+                    Messenger.Broadcast(Signals.REGION_SELECTED, region);
+                    UIManager.Instance.ShowRegionInfo(region);
+                } else if (baseToShow is HextileInfoUI) {
+                    UIManager.Instance.ShowHexTileInfo(this);
+                }
+            }    
         }
         MouseOver();
+        Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
     }
     private void RightClick() {
         if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() ||
@@ -792,11 +805,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Messenger.Broadcast(Signals.TILE_RIGHT_CLICKED, this);
     }
     private void MouseOver() {
-        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
-        if (baseToOpen is RegionInfoUI) {
-            region.ShowBorders(Color.red);
-        } else if (baseToOpen is HextileInfoUI) {
-            SetBordersState(true, false, Color.red);
+        if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
+            if (CanBuildDemonicStructure()) {
+                SetBordersState(true, false, Color.green);
+            } else {
+                SetBordersState(true, false, Color.red);    
+            }
+        } else {
+            InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+            if (baseToOpen is RegionInfoUI) {
+                region.ShowBorders(Color.red);
+            } else if (baseToOpen is HextileInfoUI) {
+                SetBordersState(true, false, Color.red);
+            }    
         }
         if (GameManager.showAllTilesTooltip) {
             ShowTileInfo();    
@@ -804,11 +825,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
     }
     private void MouseExit() {
-        InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
-        if (baseToOpen is RegionInfoUI) {
-            region.HideBorders();
-        } else if (baseToOpen is HextileInfoUI) {
+        if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
             SetBordersState(false, false, Color.red);
+        } else {
+            InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+            if (baseToOpen is RegionInfoUI) {
+                region.HideBorders();
+            } else if (baseToOpen is HextileInfoUI) {
+                SetBordersState(false, false, Color.red);
+            }
         }
         if (GameManager.showAllTilesTooltip) {
             UIManager.Instance.HideSmallInfo();    
