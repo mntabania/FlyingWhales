@@ -1,1 +1,26 @@
-{"name":"Ashamed","description":"Embarrassed about something.","thoughtText":"","type":0,"effect":2,"advertisedInteractions":[],"ticksDuration":96,"level":0,"moodEffect":-4,"isHidden":false,"mutuallyExclusive":[""],"canBeTriggered":false,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false,"hindersPerform":false,"hasOnCollideWith":false,"hasOnEnterGridTile":false,"isStacking":true,"stackLimit":5,"stackModifier":0.25}
+{
+  "advertisedInteractions": [],
+  "canBeTriggered": false,
+  "description": "Embarrassed about something.",
+  "effect": 2,
+  "hasOnCollideWith": false,
+  "hasOnEnterGridTile": false,
+  "hindersAttackTarget": false,
+  "hindersMovement": false,
+  "hindersPerform": false,
+  "hindersWitness": false,
+  "hindersSocials": true,
+  "isHidden": false,
+  "isStacking": true,
+  "level": 0,
+  "moodEffect": -4,
+  "mutuallyExclusive": [
+    ""
+  ],
+  "name": "Ashamed",
+  "stackLimit": 5,
+  "stackModifier": 0.25,
+  "thoughtText": "",
+  "ticksDuration": 96,
+  "type": 0
+}

@@ -13,6 +13,7 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.25f;
+            hindersSocials = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
         public override bool OnDeath(Character character) {

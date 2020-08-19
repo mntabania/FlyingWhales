@@ -5,7 +5,7 @@ namespace Quests.Steps {
     public class EliminateCharacterStep : QuestStep {
         private readonly Func<List<Character>, int, string> _descriptionGetter;
         private readonly List<Character> _targets;
-        private readonly int _initialCharactersToEliminate;
+        private int _initialCharactersToEliminate;
         
         public EliminateCharacterStep(Func<List<Character>, int, string> descriptionGetter, List<Character> targets) 
             : base(string.Empty) {
@@ -25,12 +25,13 @@ namespace Quests.Steps {
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
             Messenger.AddListener<Character>(Signals.FACTION_SET, CheckForCompletion);
             Messenger.AddListener<Character>(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         }
-        
         protected override void UnSubscribeListeners() {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, CheckForCompletion);
             Messenger.RemoveListener<Character>(Signals.FACTION_SET, CheckForCompletion);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_ALLIANCE_WITH_PLAYER_CHANGED, CheckForCompletion);
+            Messenger.RemoveListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
         }
 
         #region Listeners
@@ -45,6 +46,11 @@ namespace Quests.Steps {
                     }
                 }    
             }
+        }
+        private void OnNewVillagerArrived(Character newVillager) {
+            _targets.Add(newVillager);
+            _initialCharactersToEliminate++;
+            Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
         #endregion
 

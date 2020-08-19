@@ -21,6 +21,7 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
+            hindersSocials = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 

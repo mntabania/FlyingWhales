@@ -12,6 +12,7 @@ namespace Traits {
 			description = "Might end up killing itself anytime soon.";
 			type = TRAIT_TYPE.STATUS;
 			effect = TRAIT_EFFECT.NEGATIVE;
+			hindersSocials = true;
 			ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }

@@ -20,6 +20,7 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.5f;
+            hindersSocials = true;
             responsibleCharactersStack = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //effects = new List<TraitEffect>();

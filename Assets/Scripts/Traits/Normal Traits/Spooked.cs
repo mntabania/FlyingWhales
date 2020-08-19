@@ -17,6 +17,7 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.5f;
+            hindersSocials = true;
             //effects = new List<TraitEffect>();
             //terrifyingCharacters = new List<Character>();
         }

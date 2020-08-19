@@ -738,6 +738,13 @@ public static class Signals {
     /// </summary>
     public static string AWAKEN_DRAGON = "OnDragonAwakened";
     #endregion
+
+    #region World Events
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string NEW_VILLAGER_ARRIVED = "OnNewVillagerArrived";
+    #endregion
     
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new[] {

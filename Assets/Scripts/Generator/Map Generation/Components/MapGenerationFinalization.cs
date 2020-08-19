@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Events.World_Events;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Locations.Tile_Features;
+using Managers;
 using Scenario_Maps;
 using UnityEngine;
 using UtilityScripts;
@@ -20,6 +22,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		yield return MapGenerator.Instance.StartCoroutine(LoadSettlementItems());
 		yield return MapGenerator.Instance.StartCoroutine(CharacterFinalization());
 		yield return MapGenerator.Instance.StartCoroutine(LoadArtifacts());
+		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
@@ -27,6 +30,13 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		}
 		data.familyTreeDatabase.Save();
 	}
+
+	#region Events
+	private IEnumerator LoadWorldEvents() {
+		WorldEventManager.Instance.AddActiveEvent(new VillagerMigration());
+		yield return null;
+	}
+	#endregion
 
 	#region Scenario Maps
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {

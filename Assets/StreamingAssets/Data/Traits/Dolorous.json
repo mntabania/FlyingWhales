@@ -1,1 +1,24 @@
-{"name":"Dolorous","description":"Mysteriously feeling really down.","thoughtText":"","type":0,"effect":2,"advertisedInteractions":[],"ticksDuration":96,"level":0,"moodEffect":-30,"isHidden":false,"mutuallyExclusive":[],"canBeTriggered":false,"elementalType":0,"hindersWitness":false,"hindersMovement":false,"hindersAttackTarget":false,"hindersPerform":false,"isStacking":true,"stackLimit":5,"stackModifier":0.5,"isTangible":false}
+{
+  "advertisedInteractions": [],
+  "canBeTriggered": false,
+  "description": "Mysteriously feeling really down.",
+  "effect": 2,
+  "elementalType": 0,
+  "hindersAttackTarget": false,
+  "hindersMovement": false,
+  "hindersPerform": false,
+  "hindersWitness": false,
+  "hindersSocials": true,
+  "isHidden": false,
+  "isStacking": true,
+  "isTangible": false,
+  "level": 0,
+  "moodEffect": -30,
+  "mutuallyExclusive": [],
+  "name": "Dolorous",
+  "stackLimit": 5,
+  "stackModifier": 0.5,
+  "thoughtText": "",
+  "ticksDuration": 96,
+  "type": 0
+}

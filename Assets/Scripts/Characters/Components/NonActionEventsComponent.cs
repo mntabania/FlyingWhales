@@ -212,10 +212,20 @@ public class NonActionEventsComponent {
             strLog += "\n\nActor is Diplomatic, modified weights...";
             strLog += "\nInsult: -30, Praise: +30";
         }
-        
-        if (disguisedActor.traitContainer.HasTrait("Hero") || disguisedTarget.traitContainer.HasTrait("Hero")) {
-            chatWeights.RemoveElement(Argument);
-            strLog += "\n\nActor or target is Hero, removing argument weight...";
+
+        if (!disguisedActor.isSociable) {
+            chatWeights.AddWeightToElement(Warm_Chat, -20);
+            chatWeights.AddWeightToElement(Awkward_Chat, 20);
+            chatWeights.AddWeightToElement(Argument, 20);
+            chatWeights.AddWeightToElement(Insult, 50);
+            chatWeights.AddWeightToElement(Praise, -20);
+            strLog += "\n\nActor is unsociable";
+        }
+        if (!disguisedTarget.isSociable) {
+            chatWeights.AddWeightToElement(Warm_Chat, -20);
+            chatWeights.AddWeightToElement(Awkward_Chat, 20);
+            chatWeights.AddWeightToElement(Argument, 20);
+            strLog += "\n\nTarget is unsociable";
         }
 
         Trait angryActor = disguisedActor.traitContainer.GetNormalTrait<Trait>("Angry");
@@ -228,13 +238,21 @@ public class NonActionEventsComponent {
             chatWeights.AddWeightToElement(Argument, 50);
             chatWeights.AddWeightToElement(Insult, 100);
             chatWeights.AddWeightToElement(Praise, -50);
+            strLog += "\n\nActor is angry with target";
         }
         if (angryTarget != null && angryTarget.responsibleCharacters != null && angryTarget.responsibleCharacters.Contains(disguisedActor)) {
             //target is angry with actor
             chatWeights.AddWeightToElement(Warm_Chat, -50);
             chatWeights.AddWeightToElement(Awkward_Chat, 20);
             chatWeights.AddWeightToElement(Argument, 50);
+            strLog += "\n\nTarget is angry with actor";
         }
+        
+        if (disguisedActor.traitContainer.HasTrait("Hero") || disguisedTarget.traitContainer.HasTrait("Hero")) {
+            chatWeights.RemoveElement(Argument);
+            strLog += "\n\nActor or target is Hero, removing argument weight...";
+        }
+        
 
         strLog += $"\n\n{chatWeights.GetWeightsSummary("FINAL WEIGHTS")}";
 
@@ -400,6 +418,12 @@ public class NonActionEventsComponent {
         if (target.reactionComponent.disguisedCharacter != null) {
             targetIsDisguised = true;
             disguisedTarget = target.reactionComponent.disguisedCharacter;
+        }
+        
+        if (!disguisedTarget.isSociable) {
+            owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");
+            target.relationshipContainer.AdjustOpinion(target, disguisedActor, "Conversations", -12, "engaged in disastrous flirting");
+            return "unsociable";
         }
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {

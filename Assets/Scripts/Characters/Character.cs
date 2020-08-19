@@ -101,12 +101,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private int _canBeAttackedValue; //if this is >= 0 then character can be attacked
     private int _canPerformValue; //if this is >= 0 then character can perform
     private int canTakeJobsValue; //if this is >= 0 then character can take jobs
+    private int _sociableValue; //if this is >= 0 then character wants to socialize
 
     public bool canWitness => _canWitnessValue >= 0;
     public bool canMove => _canMoveValue >= 0;
     public bool canBeAttacked => _canBeAttackedValue >= 0;
     public bool canPerform => _canPerformValue >= 0;
     public bool canTakeJobs => canTakeJobsValue >= 0;
+    public bool isSociable => _sociableValue >= 0;
 
     //alter egos
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
@@ -5223,6 +5225,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DecreaseCanTakeJobs() {
         canTakeJobsValue--;
     }
+    public void IncreaseSociable() {
+        _sociableValue++;
+    }
+    public void DecreaseSociable() {
+        _sociableValue--;
+    }
     /// <summary>
     /// Set whether this character is allied with the player outside the faction system.
     /// i.e. when we want that character to be considered as an ally to the player, but don't want to
@@ -5693,6 +5701,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Region home = homeRegion;
                 LocationStructure homeStructure = this.homeStructure;
                 homeRegion.RemoveResident(this);
+                MigrateHomeStructureTo(null, addToRegionResidents: false);
                 SetHomeRegion(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }

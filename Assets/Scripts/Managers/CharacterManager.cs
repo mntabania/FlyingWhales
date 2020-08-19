@@ -475,8 +475,7 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null,
-        NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
+    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
         Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
         newCharacter.SetName(data.name);
         

@@ -1,1 +1,1 @@
-{"items":[{"key":"flee","value":"%00@ saw a fire and fled from it."},{"key":"catatonic","value":"%00@ saw a fire and became Catatonic."}]}
+{"items":[{"key":"flee","value":"%00@ saw a fire and fled from it."},{"key":"catatonic","value":"%00@ saw a fire and became Catatonic."},{"key":"on_see_first","value":"%00@ is acting strangely after seeing fire!"}]}

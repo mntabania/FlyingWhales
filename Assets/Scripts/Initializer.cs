@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Managers;
 using Quests;
 using Tutorial;
 using UnityEngine;
@@ -27,6 +28,7 @@ public class Initializer : MonoBehaviour {
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
         RandomNameGenerator.Initialize();
+        WorldEventManager.Instance.Initialize();
         yield return null;
     }
 
