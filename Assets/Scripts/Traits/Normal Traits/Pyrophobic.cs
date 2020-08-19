@@ -45,6 +45,9 @@ namespace Traits {
                 seenBurningSources.Add(burningSource);
                 TriggerReactionToFireOnFirstTimeSeeing(burningPOI);
                 return true;
+            } else {
+                //When a character sees a fire source for the second time: Trigger Flight Response.
+                owner.combatComponent.Flight(burningPOI);
             }
             return false;
         }
@@ -52,21 +55,31 @@ namespace Traits {
             seenBurningSources.Remove(burningSource);
         }
         private void TriggerReactionToFireOnFirstTimeSeeing(IPointOfInterest burningPOI) {
-            string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20, add Anxious status";
+            string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20. ";
             owner.needsComponent.AdjustHappiness(-20f);
-            owner.traitContainer.AddTrait(owner, "Anxious");
-            int chance = UnityEngine.Random.Range(0, 2);
-            if(chance == 0) {
-                debugLog += "\n-Character decided to flee";
-                //Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
-                //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                //owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                owner.combatComponent.Flight(burningPOI, "pyrophobic");
+            int roll = UnityEngine.Random.Range(0, 100);
+            if (roll < 10) {
+                debugLog += $"{owner.name} became catatonic";
+                owner.traitContainer.AddTrait(owner, "Catatonic");
+            } else if (roll < 25) {
+                debugLog += $"{owner.name} became berserked";
+                owner.traitContainer.AddTrait(owner, "Berserked");
+            } else if (roll < 40) {
+                debugLog += $"{owner.name} Had a seizure";
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Seizure, owner);
+            } else if (roll < 50 && (owner.characterClass.className == "Druid" || owner.characterClass.className == "Shaman" || owner.characterClass.className == "Mage")) {
+                debugLog += $"{owner.name} Had a loss of control";
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, owner);
             } else {
-                debugLog += "\n-Character decided to trigger Cowering interrupt";
+                debugLog += $"{owner.name} became anxious and is cowering.";
+                owner.traitContainer.AddTrait(owner, "Anxious");
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner, reason: "saw fire");
             }
             owner.logComponent.PrintLogIfActive(debugLog);
+            
+            Log log = new Log(GameManager.Instance.Today(), "Trait", "Pyrophobic", "on_see_first");
+            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToInvolvedObjects();
         }
 
         #region Listeners
