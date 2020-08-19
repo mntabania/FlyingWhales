@@ -9,8 +9,7 @@ using UnityEngine.Tilemaps;
 namespace Cellular_Automata {
 	public static class CellularAutomataGenerator {
 
-		public static int[,] GenerateMap(LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, 
-			int smoothing, int randomFillPercent, string seed = "", bool edgesAreAlwaysWalls = true) {
+		public static int[,] GenerateMap(LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, int smoothing, int randomFillPercent, string seed = "", bool edgesAreAlwaysWalls = true) {
 			
 			int width = tileMap.GetUpperBound(0) + 1;
 			int height = tileMap.GetUpperBound(1) + 1;
@@ -19,13 +18,11 @@ namespace Cellular_Automata {
 			RandomFillMap(width, height, map, randomFillPercent, tileMap, allTiles, seed, edgesAreAlwaysWalls);
 			
 			for (int i = 0; i < smoothing; i++) {
-				SmoothMap(map, width, height, tileMap, allTiles, edgesAreAlwaysWalls);	
+				map = SmoothMap(map, width, height, tileMap, allTiles, edgesAreAlwaysWalls);	
 			}
 			return map;
 		}
-		private static void RandomFillMap(int width, int height, int[,] map, int randomFillPercent, 
-			LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, string seed, 
-			bool edgesAreAlwaysWalls = true) {
+		private static void RandomFillMap(int width, int height, int[,] map, int randomFillPercent, LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, string seed, bool edgesAreAlwaysWalls = true) {
 			if (string.IsNullOrEmpty(seed)) {
 				seed = Time.time.ToString();
 			}
@@ -44,8 +41,7 @@ namespace Cellular_Automata {
 				}	
 			}
 		}
-		private static void SmoothMap(int[,] map, int width, int height, LocationGridTile[,] tileMap, 
-			List<LocationGridTile> allTiles, bool edgesAreAlwaysWalls = true) {
+		private static int[,] SmoothMap(int[,] map, int width, int height, LocationGridTile[,] tileMap, List<LocationGridTile> allTiles, bool edgesAreAlwaysWalls = true) {
 			int[,] tempMap = map;
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
@@ -64,7 +60,7 @@ namespace Cellular_Automata {
 					
 				}	
 			}
-			map = tempMap;
+			return tempMap;
 		}
 
 		private static int GetSurroundingWallCount(int[,] map, int gridX, int gridY, int width, int height) {

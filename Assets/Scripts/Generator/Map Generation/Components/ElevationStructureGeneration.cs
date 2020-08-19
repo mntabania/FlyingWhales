@@ -115,7 +115,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		if (island.elevation == ELEVATION.WATER) {
 			WaterCellAutomata(locationGridTiles, elevationStructure);
 		} else if (island.elevation == ELEVATION.MOUNTAIN) {
-			MountainCellAutomata(locationGridTiles, elevationStructure);
+			MountainCellAutomata(locationGridTiles, elevationStructure, island);
 		}
 
 		for (int i = 0; i < island.tilesInIsland.Count; i++) {
@@ -173,17 +173,17 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		tile.SetStructure(structure);
 		tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, "Wet", overrideDuration: 0);
 	}
-	private void MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure) {
+	private void MountainCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, ElevationIsland elevationIsland) {
 		List<LocationGridTile> refinedTiles =
 			locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(refinedTiles);
-		int fillPercent = 15;
-		int smoothing = 1;
-		if (locationGridTiles.Count > 196) {
-			fillPercent = 32;
-			smoothing = 2;
-		}
+		int fillPercent = 25;
+		int smoothing = 2;
+		// if (locationGridTiles.Count > 196) {
+		// 	fillPercent = 32;
+		// 	smoothing = 2;
+		// }
 		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, refinedTiles, smoothing, fillPercent);
 		
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
@@ -192,6 +192,41 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			null, 
 			(locationGridTile) => SetAsMountainWall(locationGridTile, elevationStructure),
 			(locationGridTile) => SetAsMountainGround(locationGridTile, elevationStructure));
+
+		for (int i = 0; i < elevationIsland.tilesInIsland.Count; i++) {
+			HexTile tile = elevationIsland.tilesInIsland[i];
+			LocationGridTile randomTile = tile.GetCenterLocationGridTile();
+			for (int j = 0; j < tile.AllNeighbours.Count; j++) {
+				HexTile neighbour = tile.AllNeighbours[j];
+				if (elevationIsland.tilesInIsland.Contains(neighbour)) {
+					LocationGridTile targetTile = neighbour.GetCenterLocationGridTile();
+					bool hasPath = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.NORMAL) != null;
+					if (hasPath) {
+						continue; //already has path towards center of neighbour, skip.
+					}
+					//neighbour is part of elevation island, make path towards each other
+					List<LocationGridTile> path = PathGenerator.Instance.GetPath(randomTile, targetTile, GRID_PATHFINDING_MODE.CAVE_INTERCONNECTION);
+					if (path != null) {
+						for (int k = 0; k < path.Count; k++) {
+							LocationGridTile pathTile = path[k];
+							if (pathTile.objHere is BlockWall) {
+								pathTile.structure.RemovePOI(pathTile.objHere);
+							}		
+						}	
+					}
+				}
+			}
+			
+			// for (int j = 0; j < tile.borderTiles.Count; j++) {
+			// 	LocationGridTile borderTile = tile.borderTiles[j];
+			// 	if (borderTile.objHere is BlockWall) {
+			// 		if (!borderTile.HasDifferentStructureNeighbour(true)) {
+			// 			borderTile.structure.RemovePOI(borderTile.objHere);
+			// 		}
+			// 	}
+			// }
+		}
+		
 	}
 	private void SetAsMountainWall(LocationGridTile tile, LocationStructure structure) {
 		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.caveGroundTile);

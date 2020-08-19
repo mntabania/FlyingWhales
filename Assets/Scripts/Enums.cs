@@ -87,6 +87,7 @@ public enum PATHFINDING_MODE{
 public enum GRID_PATHFINDING_MODE {
     NORMAL,
     UNCONSTRAINED,
+    CAVE_INTERCONNECTION
 }
 
 public enum GENDER{

@@ -1517,16 +1517,12 @@
       {
         "biomeType": "SNOW",
         "elevationNoise": 0.6723681,
-        "elevationType": "MOUNTAIN",
+        "elevationType": "PLAIN",
         "id": 87,
         "landmarkType": "NONE",
         "moistureNoise": 0.2315848,
         "temperature": 0.7312806,
-        "tileFeatureSaveData": [
-          {
-            "tileFeatureName": "MetalSourceFeature"
-          }
-        ],
+        "tileFeatureSaveData": [],
         "tileName": "Kruniary",
         "xCoordinate": 8,
         "yCoordinate": 7
