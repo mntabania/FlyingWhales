@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class WorldPickerItem : MonoBehaviour {
     public WorldSettings.World worldType;
-    [TextArea]
+    [TextArea(3, 10)]
     public string description;
     
     public void OnHoverEnter() {

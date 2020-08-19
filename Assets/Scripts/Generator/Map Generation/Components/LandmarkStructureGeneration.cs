@@ -26,10 +26,6 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 				yield return MapGenerator.Instance.StartCoroutine(
 					LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(landmark.tileLocation.settlementOnTile, 
 						landmark.tileLocation.region.innerMap, RESOURCE.NONE, landmark.specificLandmarkType.GetStructureType()));
-				if (landmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
-					data.portalStructure = landmark.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
-					// landmark.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
-				}
 			}
 		}
 		yield return null;

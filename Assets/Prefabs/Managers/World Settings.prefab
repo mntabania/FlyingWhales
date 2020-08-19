@@ -13604,16 +13604,10 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'A single snow region home to a small but powerful elven tribe. Somehow,
+      value: A single snow region home to a small but powerful elven tribe. Somehow,
         most of them are Blessed. Those who are not are unfortunately Robust. There
         is however one lone Evil elf among them that can be the key to shattering
         the peace.
-
-
-        A legendary sword can be found in the middle of the
-        place but it is stuck in stone and it doesn''t look like it can be taken
-        out easily. And on the other side of the map are ruined structures housing
-        various creatures. An abandoned zoo, perhaps?'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13836,12 +13830,9 @@ PrefabInstance:
         type: 3}
       propertyPath: description
       value: "A single desert region with a burgeoning human town. Unknown to these
-        residents, the surrounding caves are filled with danger. There is a hibernating
-        dragon in one of the nearby caves. And dangerous trolls lurk in some of the
-        others. Rumors also abound of women seeing doppelgangers of themselves, and
-        wolves can sometimes be seen hunting. \n\nFinally, there is a strange artifact
-        of unknown origin somewhere nearby - is it connected to the dozens of various
-        crystals scattered around the place?"
+        residents, the surrounding caves are filled with danger. \r\n\r\nFinally,
+        there is a strange artifact of unknown origin somewhere nearby - is it connected
+        to the dozens of various crystals scattered around the place?"
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14283,12 +14274,9 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: 'A 3 region scenario. All three regions are claimed by a sprawling elven
+      value: Another 2 region scenario. Both regions are claimed by a warmonger elven
         kingdom. There is also a small human town on one region and they are fighting
-        for survival. For some strange reason, there are no monsters in this world
-        but there are plenty of various artifacts to work with.
-
-'
+        for survival. For some strange reason, there are no monsters in this world.
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14515,10 +14503,10 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: This is a 2 region scenario for our undead loving overlords. There is
-        a huge human town on one region, while the other region is a haunted desert
-        full of elven tombstones, skeletons and ghosts. The Necronomicon makes a
-        repeat appearance here.
+      value: "This is a 2 region scenario for our undead loving overlords. There
+        is a huge strongly defended human town on one region, while the other region
+        is a haunted desert full of elven tombstones, skeletons and ghosts. It might
+        require a large undead horde to breach the human town's defenses.\r"
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14745,11 +14733,8 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: Four regions, each one a different biome and home to a different faction.
-        The snow region is the residence of 10 Cold Blooded elves. The grassland
-        region is home to 10 Electric humans. The forest region is where 10 Venomous
-        elves reside. The desert region houses 10 Fireproof humans. They are all
-        at peace with each other... for now.
+      value: Four regions - each one a different biome and home to a different faction.
+        They are all at peace with each other... for now.
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

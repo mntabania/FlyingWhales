@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Ruinarch;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -29,6 +30,7 @@ public class LevelLoaderManager : MonoBehaviour {
     public void LoadLevel(string sceneName, bool updateSceneProgress = false) {
         _progressBar.value = 0f;
         Messenger.Broadcast(Signals.STARTED_LOADING_SCENE, sceneName);
+        InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
         StartCoroutine(LoadLevelAsynchronously(sceneName, updateSceneProgress));
     }
 

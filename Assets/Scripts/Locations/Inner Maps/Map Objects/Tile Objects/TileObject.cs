@@ -184,7 +184,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         UnsubscribeListeners();
     }
     public virtual void OnPlacePOI() {
-        // Assert.IsNull(gridTileLocation, $"Grid tile location of {this.ToString()} is null, but OnPlacePOI was called!");
         SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
             InitializeMapObject(this);
@@ -194,8 +193,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         PlaceMapObjectAt(gridTileLocation);
         mapVisual.UpdateSortingOrders(this);
         OnPlaceTileObjectAtTile(gridTileLocation);
-        TileObjectData objData;
-        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {
+        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out var objData)) {
             if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
@@ -204,8 +202,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.OnPlacePOIInHex(this);
         }
         SubscribeListeners();
-        // Assert.IsTrue((this is MovingTileObject) == false && gridTileLocation.structure.pointsOfInterest.Contains(this), 
-        //     $"{this} was placed at {gridTileLocation.structure} but was not included in the list of POI's");
+        if (gridTileLocation.genericTileObject.traitContainer.HasTrait("Poisoned")) {
+            //add poisoned to floor
+            //Reference: https://trello.com/c/mzPmP1Qv/1933-if-you-drop-food-on-a-poisoned-tile-it-should-also-get-poisoned
+            traitContainer.AddTrait(this, "Poisoned");
+        }
     }
     public virtual void RemoveTileObject(Character removedBy) {
         SetGridTileLocation(null);
