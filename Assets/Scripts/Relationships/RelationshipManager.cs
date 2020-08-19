@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class RelationshipManager : MonoBehaviour {
@@ -84,172 +85,6 @@ public class RelationshipManager : MonoBehaviour {
                 return RELATIONSHIP_TYPE.NONE;
         }
     }
-    public void GenerateRelationships(List<Character> characters) {
-        int maxInitialRels = 4;
-        RELATIONSHIP_TYPE[] relsInOrder = new RELATIONSHIP_TYPE[] { RELATIONSHIP_TYPE.RELATIVE, RELATIONSHIP_TYPE.LOVER }; //RELATIONSHIP_TYPE.ENEMY, RELATIONSHIP_TYPE.FRIEND 
-
-        // Loop through all characters in the world
-        for (int i = 0; i < characters.Count; i++) {
-            Character currCharacter = characters[i];
-            if (currCharacter.isFactionless) {
-                continue; //skip factionless characters
-            }
-            int currentRelCount = currCharacter.relationshipContainer.relationships.Count;
-            if (currentRelCount >= maxInitialRels) {
-                continue; //skip
-            }
-            int totalCreatedRels = currentRelCount;
-            string summary = $"{currCharacter.name}({currCharacter.sexuality}) relationship generation summary:";
-
-            //  Loop through all relationship types
-            for (int k = 0; k < relsInOrder.Length; k++) {
-                RELATIONSHIP_TYPE currRel = relsInOrder[k];
-                if (totalCreatedRels >= maxInitialRels) {
-                    summary +=
-                        $"\nMax Initial Relationships reached, stopping relationship generation for {currCharacter.name}";
-                    break; //stop generating more relationships for this character
-                }
-                int relsToCreate = 0;
-                int chance = Random.Range(0, 100);
-
-                // Compute the number of relations to create per relationship type
-                switch (currRel) {
-                    case RELATIONSHIP_TYPE.RELATIVE:
-                        if (UtilityScripts.GameUtilities.IsRaceBeast(currCharacter.race)) { continue; } //a beast character has no relatives
-                        // if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
-                        else {
-                            //- a non-beast character may have either zero (75%), one (20%) or two (5%) relatives from characters of the same race
-                            if (chance < 75) relsToCreate = 0;
-                            else if (chance >= 75 && chance < 95) relsToCreate = 1;
-                            else relsToCreate = 2;
-                        }
-                        break;
-                    case RELATIONSHIP_TYPE.LOVER:
-                        //- a character has a 20% chance to have a lover
-                        if (chance < 20) relsToCreate = 1;
-                        //relsToCreate = 1;
-                        break;
-                }
-                summary += $"\n===========Creating {relsToCreate} {currRel} Relationships...==========";
-
-
-                if (relsToCreate > 0) {
-                    WeightedFloatDictionary<Character> relWeights = new WeightedFloatDictionary<Character>();
-                    // Loop through all characters that are in the same faction as the current character
-                    for (int l = 0; l < currCharacter.faction.characters.Count; l++) {
-                        Character otherCharacter = currCharacter.faction.characters[l];
-                        if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
-                            List<RELATIONSHIP_TYPE> existingRelsOfCurrentCharacter = currCharacter.relationshipContainer.GetRelationshipDataWith(otherCharacter)?.relationships ?? null;
-                            List<RELATIONSHIP_TYPE> existingRelsOfOtherCharacter = otherCharacter.relationshipContainer.GetRelationshipDataWith(currCharacter)?.relationships ?? null;
-                            //if the current character already has a relationship of the same type with the other character, skip
-                            if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(currRel)) {
-                                continue; //skip
-                            }
-                            float weight = 0;
-
-                            // Compute the weight that determines how likely this character will have the current relationship type with current character
-                            switch (currRel) {
-                                case RELATIONSHIP_TYPE.RELATIVE:
-                                    if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) { continue; } //a beast character has no relatives
-                                    else {
-                                        if (otherCharacter.currentRegion == currCharacter.currentRegion) {
-                                            // character is in same location: +50 Weight
-                                            weight += 50;
-                                        } else {
-                                            //character is in different location: +10 Weight
-                                            weight += 10;
-                                        }
-
-                                        if (currCharacter.race != otherCharacter.race) weight *= 0; //character is a different race: Weight x0
-                                        if (currCharacter.faction != otherCharacter.faction) {
-                                            weight *= 0; //disabled different faction positive relationships
-                                        }
-                                    }
-                                    break;
-                                case RELATIONSHIP_TYPE.LOVER:
-                                    if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
-                                        if (!UtilityScripts.GameUtilities.IsRaceBeast(currCharacter.race)) {
-                                            //- if non beast, from valid characters, choose based on these weights
-                                            if (otherCharacter.currentRegion == currCharacter.currentRegion) {
-                                                //- character is in same location: +500 Weight
-                                                weight += 500;
-                                            } else {
-                                                //- character is in different location: +5 Weight
-                                                weight += 5;
-                                            }
-                                            if (currCharacter.race == otherCharacter.race) {
-                                                //- character is the same race: Weight x5
-                                                weight *= 5;
-                                            }
-                                            if (!IsSexuallyCompatible(currCharacter.sexuality, otherCharacter.sexuality, currCharacter.gender, otherCharacter.gender)) {
-                                                //- character is sexually incompatible: Weight x0.1
-                                                weight *= 0.05f;
-                                            }
-                                            if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) {
-                                                //- character is a beast: Weight x0
-                                                weight *= 0;
-                                            }
-                                            if (existingRelsOfCurrentCharacter != null && existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.RELATIVE)) {
-                                                //- character is a relative: Weight x0.1    
-                                                weight *= 0.1f;
-                                            }
-                                            if (currCharacter.faction != otherCharacter.faction) {
-                                                weight *= 0; //disabled different faction positive relationships
-                                            }
-                                        } else {
-                                            //- if beast, from valid characters, choose based on these weights
-                                            if (otherCharacter.currentRegion == currCharacter.currentRegion) {
-                                                //- character is in same location: +50 Weight
-                                                weight += 50;
-                                            } else {
-                                                // - character is in different location: +5 Weight
-                                                weight += 5;
-                                            }
-                                            if (currCharacter.race != otherCharacter.race) {
-                                                //- character is a different race: Weight x0
-                                                weight *= 0;
-                                            }
-                                            if (currCharacter.gender != otherCharacter.gender) {
-                                                //- character is the opposite gender: Weight x6
-                                                weight *= 6;
-                                            }
-                                        }
-                                    }
-                                    break;
-                            }
-                            if (weight > 0f) {
-                                relWeights.AddElement(otherCharacter, weight);
-                            }
-                        }
-                    }
-                    if (relWeights.GetTotalOfWeights() > 0) {
-                        summary += $"\n{relWeights.GetWeightsSummary("Weights are: ")}";
-                    } else {
-                        summary += "\nThere are no valid characters to have a relationship with.";
-                    }
-
-
-                    for (int j = 0; j < relsToCreate; j++) {
-                        if (relWeights.GetTotalOfWeights() > 0) {
-                            Character chosenCharacter = relWeights.PickRandomElementGivenWeights();
-                            CreateNewRelationshipBetween(currCharacter, chosenCharacter, currRel);
-                            totalCreatedRels++;
-                            summary +=
-                                $"\nCreated new relationship {currRel} between {currCharacter.name} and {chosenCharacter.name}. Total relationships created for {currCharacter.name} are {totalCreatedRels}";
-                            relWeights.RemoveElement(chosenCharacter);
-                        } else {
-                            break;
-                        }
-                        if (totalCreatedRels >= maxInitialRels) {
-                            //summary += "\nMax Initial Relationships reached, stopping relationship generation for " + currCharacter.name;
-                            break; //stop generating more relationships for this character
-                        }
-                    }
-                }
-            }
-            Debug.Log(summary);
-        }
-    }
     public static bool IsSexuallyCompatible(SEXUALITY sexuality1, SEXUALITY sexuality2, GENDER gender1, GENDER gender2) {
         bool sexuallyCompatible = IsSexuallyCompatibleOneSided(sexuality1, sexuality2, gender1, gender2);
         if (!sexuallyCompatible) {
@@ -268,6 +103,24 @@ public class RelationshipManager : MonoBehaviour {
                 return gender1 == gender2;
             default:
                 return false;
+        }
+    }
+    public void ApplyPreGeneratedRelationships(MapGenerationData data, PreCharacterData characterData, Character character) {
+        Assert.IsTrue(characterData.id == character.id, $"Provided character data and character are inconsistent {character.name}");
+        foreach (var kvp in characterData.relationships) {
+            PreCharacterData targetCharacterData = data.familyTreeDatabase.GetCharacterWithID(kvp.Key);
+            IRelationshipData relationshipData = character.relationshipContainer.GetOrCreateRelationshipDataWith(character, targetCharacterData.id, 
+                targetCharacterData.firstName, targetCharacterData.gender);
+
+            character.relationshipContainer.SetOpinion(character, targetCharacterData.id, targetCharacterData.firstName, targetCharacterData.gender, 
+                "Base", kvp.Value.baseOpinion, true);
+
+            relationshipData.opinions.SetCompatibilityValue(kvp.Value.compatibility);
+
+            for (int k = 0; k < kvp.Value.relationships.Count; k++) {
+                RELATIONSHIP_TYPE relationshipType = kvp.Value.relationships[k];
+                relationshipData.AddRelationship(relationshipType);
+            }
         }
     }
 

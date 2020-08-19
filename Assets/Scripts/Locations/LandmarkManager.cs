@@ -172,9 +172,9 @@ public partial class LandmarkManager : MonoBehaviour {
 
     #region Utilities
     public BaseLandmark GetLandmarkByID(int id) {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
+        List<BaseLandmark> landmarks = GetAllLandmarks();
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
             if (currLandmark.id == id) {
                 return currLandmark;
             }
@@ -182,9 +182,9 @@ public partial class LandmarkManager : MonoBehaviour {
         return null;
     }
     public BaseLandmark GetLandmarkByName(string name) {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark currLandmark = allLandmarks[i];
+        List<BaseLandmark> landmarks = GetAllLandmarks();
+        for (int i = 0; i < landmarks.Count; i++) {
+            BaseLandmark currLandmark = landmarks[i];
             if (currLandmark.landmarkName.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
                 return currLandmark;
             }
@@ -269,16 +269,7 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    #region Areas
-    public AreaData GetAreaData(LOCATION_TYPE locationType) {
-        for (int i = 0; i < areaData.Count; i++) {
-            AreaData currData = areaData[i];
-            if (currData.locationType == locationType) {
-                return currData;
-            }
-        }
-        throw new System.Exception($"No npcSettlement data for type {locationType}");
-    }
+    #region Settlements
     public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, params HexTile[] tiles) {
         NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType);
         newNpcSettlement.AddTileToSettlement(tiles);
@@ -330,6 +321,20 @@ public partial class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
             if(settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                if(villages == null) { villages = new List<NPCSettlement>(); }
+                villages.Add(settlement);
+            }
+        }
+        if(villages != null && villages.Count > 0) {
+            return villages[UnityEngine.Random.Range(0, villages.Count)];
+        }
+        return null;
+    }
+    public NPCSettlement GetRandomActiveVillageSettlement() {
+        List<NPCSettlement> villages = null;
+        for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
+            NPCSettlement settlement = allNonPlayerSettlements[i];
+            if(settlement.locationType == LOCATION_TYPE.SETTLEMENT && settlement.owner != null && settlement.residents.Count > 0) {
                 if(villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }
@@ -425,6 +430,7 @@ public partial class LandmarkManager : MonoBehaviour {
             var structure = Activator.CreateInstance(type, location) as LocationStructure;
             location.AddStructure(structure);
             settlement?.AddStructure(structure);
+            Assert.IsNotNull(structure, $"Created structure of {structureType.ToString()} is null!");
             structure.Initialize();
             return structure;
         }

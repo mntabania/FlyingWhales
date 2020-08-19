@@ -575,24 +575,8 @@ public class SettlementGeneration : MapGenerationComponent {
 				for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
 					PreCharacterData characterData = familyTree.allFamilyMembers[j];
 					if (characterData.hasBeenSpawned) {
-						Character character = CharacterManager.Instance.GetCharacterByID(characterData.id);
-						foreach (var kvp in characterData.relationships) {
-							PreCharacterData targetCharacterData = data.familyTreeDatabase.GetCharacterWithID(kvp.Key);
-							IRelationshipData relationshipData = character.relationshipContainer
-								.GetOrCreateRelationshipDataWith(character, targetCharacterData.id,
-									targetCharacterData.firstName, targetCharacterData.gender);
-							
-							character.relationshipContainer.SetOpinion(character, targetCharacterData.id, 
-								targetCharacterData.firstName, targetCharacterData.gender,
-								"Base", kvp.Value.baseOpinion, true);
-							
-							relationshipData.opinions.SetCompatibilityValue(kvp.Value.compatibility);
-							
-							for (int k = 0; k < kvp.Value.relationships.Count; k++) {
-								RELATIONSHIP_TYPE relationshipType = kvp.Value.relationships[k];
-								relationshipData.AddRelationship(relationshipType);
-							}
-						}
+						Character character = CharacterManager.Instance.GetCharacterByID(characterData.id); 
+						RelationshipManager.Instance.ApplyPreGeneratedRelationships(data, characterData, character);
 					}
 				}
 			}

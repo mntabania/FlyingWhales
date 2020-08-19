@@ -16,9 +16,18 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public BaseRelationshipContainer() {
         relationships = new Dictionary<int, IRelationshipData>();
         charactersWithOpinion = new List<Character>();
+        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
     }
 
     #region Adding
+    public void OnNewVillagerArrived(Character character) {
+        if (HasRelationshipWith(character)) {
+            //if this character already has a relationship with the character that just spawned, 
+            //add that character to its charactersWithOpinion list since it wasn't added to begin with, since
+            //that character did not have an instance yet.
+            charactersWithOpinion.Add(character);
+        }
+    }
     public void AddRelationship(Relatable owner, Relatable relatable, RELATIONSHIP_TYPE relType) {
         if (HasRelationshipWith(relatable) == false) {
             CreateNewRelationship(owner, relatable);

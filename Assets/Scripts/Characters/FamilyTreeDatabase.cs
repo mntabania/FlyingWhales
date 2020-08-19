@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
+using UtilityScripts;
 
 [System.Serializable]
 public class FamilyTreeDatabase {
@@ -31,6 +32,34 @@ public class FamilyTreeDatabase {
             }
         }
         return null;
+    }
+    
+    /// <summary>
+    /// Get a list of unspawned characters. If there are no unspawned characters left, this will
+    /// generate a new family tree and return all newly generated characters
+    /// </summary>
+    /// <param name="race">Race to check.</param>
+    /// <returns>List of character data.</returns>
+    public List<PreCharacterData> ForceGetAllUnspawnedCharacters(RACE race) {
+        List<PreCharacterData> availableCharacters = new List<PreCharacterData>();
+        List<FamilyTree> familyTrees = allFamilyTreesDictionary[race];
+        for (int i = 0; i < familyTrees.Count; i++) {
+            FamilyTree familyTree = familyTrees[i];
+            for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
+                PreCharacterData familyMember = familyTree.allFamilyMembers[j];
+                if (familyMember.hasBeenSpawned == false) {
+                    availableCharacters.Add(familyMember);
+                }
+            }
+        }
+        if (availableCharacters.Count > 0) {
+            return availableCharacters;
+        } else {
+            FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(race);
+            AddFamilyTree(newFamily);
+            availableCharacters.AddRange(newFamily.allFamilyMembers);
+            return availableCharacters;
+        }
     }
     
     public void Save() {
