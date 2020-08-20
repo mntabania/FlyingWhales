@@ -94,12 +94,13 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
 
     private void UpdateStatusIcons() {
-        if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
-            //character is travelling outside
-            travellingIcon.SetActive(true);
-            arrivedIcon.SetActive(false);
-            restrainedIcon.SetActive(false);
-        } else if (!character.isAtHomeRegion) {
+        // if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
+        //     //character is travelling outside
+        //     travellingIcon.SetActive(true);
+        //     arrivedIcon.SetActive(false);
+        //     restrainedIcon.SetActive(false);
+        // } else 
+        if (!character.isAtHomeRegion) {
             //character is at another location other than his/her home region
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(true);
