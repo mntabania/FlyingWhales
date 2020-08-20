@@ -56,8 +56,9 @@ namespace Traits {
             seenBurningSources.Remove(burningSource);
         }
         private void TriggerReactionToFireOnFirstTimeSeeing(IPointOfInterest burningPOI) {
-            string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20. ";
+            string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20 and become anxious. ";
             owner.needsComponent.AdjustHappiness(-20f);
+            owner.traitContainer.AddTrait(owner, "Anxious");
             int roll = UnityEngine.Random.Range(0, 100);
             if (roll < 10) {
                 debugLog += $"{owner.name} became catatonic";
@@ -73,7 +74,6 @@ namespace Traits {
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, owner);
             } else {
                 debugLog += $"{owner.name} became anxious and is cowering.";
-                owner.traitContainer.AddTrait(owner, "Anxious");
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner, reason: "saw fire");
             }
             owner.logComponent.PrintLogIfActive(debugLog);

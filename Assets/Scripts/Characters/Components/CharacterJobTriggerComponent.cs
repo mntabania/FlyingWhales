@@ -356,12 +356,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			_owner.jobQueue.AddJobInQueue(job);
 		}
 	}
-	public void TriggerBuryPsychopathVictim(Character target) {
-		JobQueueItem buryJob = target.homeSettlement.GetJob(JOB_TYPE.BURY, target);
-		buryJob?.ForceCancelJob(false);
-		
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM,
-			INTERACTION_TYPE.BURY_CHARACTER, target, _owner);
+	public void TriggerBuryPsychopathVictim(Character target, NPCSettlement settlementOfTarget) {
+		if (settlementOfTarget != null) {
+			JobQueueItem buryJob = settlementOfTarget.GetJob(JOB_TYPE.BURY, target);
+			buryJob?.ForceCancelJob(false);	
+		}
+
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.BURY_CHARACTER, target, _owner);
 
         bool hasChosenTile = false;
         HexTile chosenHex = _owner.currentRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.IsNextToVillage() && h.settlementOnTile == null && _owner.movementComponent.HasPathTo(h));
@@ -374,8 +375,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         if (!hasChosenTile) {
             LocationStructure wilderness = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            List<LocationGridTile> choices = wilderness.unoccupiedTiles
-                .Where(x => x.IsPartOfSettlement(_owner.homeSettlement) == false).ToList();
+            List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement(_owner.homeSettlement) == false).ToList();
             LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
             job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { wilderness, targetTile });
         }

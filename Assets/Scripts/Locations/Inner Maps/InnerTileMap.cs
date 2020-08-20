@@ -415,7 +415,11 @@ namespace Inner_Maps {
         }
         public LocationGridTile GetTile(Vector3 worldPosition) {
             Vector3Int cell = groundTilemap.WorldToCell(worldPosition);
-            return map[cell.x, cell.y];
+            if (UtilityScripts.Utilities.IsInRange(cell.x, 0, width) &&
+                UtilityScripts.Utilities.IsInRange(cell.y, 0, height)) {
+                return map[cell.x, cell.y];    
+            }
+            return null;
         }
         #endregion
 
