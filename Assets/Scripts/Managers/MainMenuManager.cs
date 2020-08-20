@@ -47,7 +47,7 @@ public class MainMenuManager : MonoBehaviour {
     private void Initialize() {
         SaveManager.Instance.LoadSaveDataPlayer();
         SaveManager.Instance.LoadSaveDataCurrentProgress();
-        MainMenuUI.Instance.UpdateLoadButton();
+        // MainMenuUI.Instance.UpdateLoadButton();
         //for (int i = 0; i < parentPlayerSkillTrees.Length; i++) {
         //    parentPlayerSkillTrees[i].LoadSkillTree();
         //}
