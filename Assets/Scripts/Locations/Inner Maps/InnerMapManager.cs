@@ -538,6 +538,17 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public TileObject GetFirstArtifact(ARTIFACT_TYPE artifactType) {
+            if (allTileObjects.ContainsKey(TILE_OBJECT_TYPE.ARTIFACT)) {
+                for (int i = 0; i < allTileObjects[TILE_OBJECT_TYPE.ARTIFACT].Count; i++) {
+                    TileObject to = allTileObjects[TILE_OBJECT_TYPE.ARTIFACT][i];
+                    if (to is Artifact artifact && artifact.type == artifactType) {
+                        return to;
+                    }
+                }
+            }
+            return null;
+        }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
             var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             System.Type type = System.Type.GetType(typeName);
