@@ -8,12 +8,10 @@ public class Ghost : Summon {
     public Character betrayedBy { get; private set; }
 
     public override string raceClassName => characterClass.className;
-    public Ghost() : base(SUMMON_TYPE.Ghost, "Ghost", RACE.GHOST,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public Ghost() : base(SUMMON_TYPE.Ghost, "Ghost", RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public Ghost(string className) : base(SUMMON_TYPE.Ghost, className, RACE.GHOST,
-    UtilityScripts.Utilities.GetRandomGender()) {
+    public Ghost(string className) : base(SUMMON_TYPE.Ghost, className, RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
     public Ghost(SaveDataCharacter data) : base(data) {

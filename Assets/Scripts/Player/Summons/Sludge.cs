@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class Sludge : Summon {
     public override string raceClassName => characterClass.className;
-    public Sludge() : base(SUMMON_TYPE.Sludge, "Sludge", RACE.SLUDGE,
-        UtilityScripts.Utilities.GetRandomGender()) { }
+    public Sludge() : base(SUMMON_TYPE.Sludge, "Sludge", RACE.SLUDGE, UtilityScripts.Utilities.GetRandomGender()) { }
     public Sludge(string className) : base(SUMMON_TYPE.Sludge, className, RACE.SLUDGE, UtilityScripts.Utilities.GetRandomGender()) { }
     public Sludge(SaveDataCharacter data) : base(data) { }
 

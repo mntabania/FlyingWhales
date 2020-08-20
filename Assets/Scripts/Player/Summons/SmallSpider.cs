@@ -12,13 +12,11 @@ public class SmallSpider : Summon {
     private GameDate _growUpDate;
     private bool _shouldGrowUpOnUnSeize;
     
-    public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
     }
     public SmallSpider(SaveDataCharacter data) : base(data) {

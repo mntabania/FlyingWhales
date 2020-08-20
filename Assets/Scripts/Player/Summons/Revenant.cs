@@ -9,13 +9,11 @@ public class Revenant : Summon {
     public int numOfSummonedGhosts { get; private set; }
 
     public override string raceClassName => characterClass.className;
-    public Revenant() : base(SUMMON_TYPE.Revenant, "Revenant", RACE.REVENANT,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public Revenant() : base(SUMMON_TYPE.Revenant, "Revenant", RACE.REVENANT, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
         //betrayers = new List<Character>();
     }
-    public Revenant(string className) : base(SUMMON_TYPE.Revenant, className, RACE.REVENANT,
-    UtilityScripts.Utilities.GetRandomGender()) {
+    public Revenant(string className) : base(SUMMON_TYPE.Revenant, className, RACE.REVENANT, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
         //betrayers = new List<Character>();
     }

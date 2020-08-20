@@ -40,5 +40,29 @@ namespace Inner_Maps.Location_Structures {
             return new ZooCell(tilesInRoom);
         }
         #endregion
+        
+        #region Listeners
+        protected override void SubscribeListeners() {
+            base.SubscribeListeners();
+            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+        }
+        protected override void UnsubscribeListeners() {
+            base.UnsubscribeListeners();
+            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_LEFT_STRUCTURE, OnCharacterLeftStructure);
+        }
+        #endregion
+        
+        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+            if (structure == this && character is Summon && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is ZooCell) {
+                character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+            }
+        }
+        private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
+            if (structure == this && character is Summon summon) {
+                summon.combatComponent.SetCombatMode(summon.defaultCombatMode);
+            }
+        }
     }
 }

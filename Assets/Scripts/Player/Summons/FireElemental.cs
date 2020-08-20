@@ -7,10 +7,8 @@ public class FireElemental : Summon {
     
     public override string raceClassName => $"Fire Elemental";
     
-    public FireElemental() : base(SUMMON_TYPE.Fire_Elemental, ClassName, RACE.ELEMENTAL,
-        UtilityScripts.Utilities.GetRandomGender()) { }
-    public FireElemental(string className) : base(SUMMON_TYPE.Fire_Elemental, className, RACE.ELEMENTAL,
-        UtilityScripts.Utilities.GetRandomGender()) { }
+    public FireElemental() : base(SUMMON_TYPE.Fire_Elemental, ClassName, RACE.ELEMENTAL, UtilityScripts.Utilities.GetRandomGender()) { }
+    public FireElemental(string className) : base(SUMMON_TYPE.Fire_Elemental, className, RACE.ELEMENTAL, UtilityScripts.Utilities.GetRandomGender()) { }
     public FireElemental(SaveDataCharacter data) : base(data) { }
     public override void Initialize() {
         base.Initialize();
