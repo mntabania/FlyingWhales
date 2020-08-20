@@ -253,6 +253,35 @@ public class MonsterGeneration : MapGenerationComponent {
 							break;
 						}
 					}
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
+					List<LocationStructure> shuffledCaves = CollectionUtilities.Shuffle(caves);
+					for (int j = 0; j < shuffledCaves.Count; j++) {
+						LocationStructure cave = shuffledCaves[j];
+						if (cave.residents.Count > 0) {
+							//if cave already has occupants, then do not generate monsters for that cave
+							continue;
+						}
+						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+						if (j < 4) {
+							CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
+						}
+					}
+				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+					for (int j = 0; j < caves.Count; j++) {
+						LocationStructure cave = caves[j];
+						if (cave.residents.Count > 0) {
+							//if cave already has occupants, then do not generate monsters for that cave
+							continue;
+						}
+						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
+						if (j == 0) {
+							for (int k = 0; k < 8; k++) {
+								CreateMonster(SUMMON_TYPE.Wurm, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());	
+							}
+						} else {
+							break;
+						}
+					}
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 					if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 						for (int j = 0; j < caves.Count; j++) {

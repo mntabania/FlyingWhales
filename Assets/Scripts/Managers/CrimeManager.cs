@@ -365,10 +365,16 @@ public class CrimeManager : MonoBehaviour {
 
     #region Crime Severity
     public CrimeSeverity GetCrimeSeverity(CRIME_SEVERITY severityType) {
-        return _crimeSeverities[severityType];
+        if (_crimeSeverities.ContainsKey(severityType)) {
+            return _crimeSeverities[severityType];
+        }
+        return null;
     }
     public CrimeType GetCrimeType(CRIME_TYPE crimeType) {
-        return _crimeTypes[crimeType];
+        if (_crimeTypes.ContainsKey(crimeType)) {
+            return _crimeTypes[crimeType];
+        }
+        return null;
     }
     #endregion
 }

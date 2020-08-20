@@ -50,7 +50,8 @@ namespace Traits {
                     return false;
                 }
                 if (characterThatWillDoJob.canWitness && characterThatWillDoJob.marker.inVisionCharacters.Count(x => x.isNormalCharacter && x.isDead == false) >= 3) {
-                    string debugLog = $"{characterThatWillDoJob.name} Is agoraphobic and has 3+ alive villagers in vision";
+                    string debugLog = $"{characterThatWillDoJob.name} Is agoraphobic and has 3+ alive villagers in vision. Character became anxious.";
+                    characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Anxious");
                     int roll = UnityEngine.Random.Range(0, 100);
                     if (roll < 10) {
                         debugLog += $"{characterThatWillDoJob.name} became catatonic";
@@ -66,7 +67,6 @@ namespace Traits {
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, characterThatWillDoJob);
                     } else {
                         debugLog += $"{characterThatWillDoJob.name} became anxious and is cowering.";
-                        characterThatWillDoJob.traitContainer.AddTrait(characterThatWillDoJob, "Anxious");
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, characterThatWillDoJob, reason: "Agoraphobic");
                     }
                     characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);

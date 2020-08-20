@@ -27,7 +27,7 @@ namespace Interrupts {
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness,
-            Interrupt interrupt, REACTION_STATUS status) {
+            InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
             if (actor.homeSettlement is NPCSettlement npcSettlement && npcSettlement.isPlagued) {

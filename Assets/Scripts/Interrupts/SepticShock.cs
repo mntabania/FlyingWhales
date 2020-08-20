@@ -19,7 +19,7 @@ namespace Interrupts {
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
-            Character witness, Interrupt interrupt, REACTION_STATUS status) {
+            Character witness, InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);

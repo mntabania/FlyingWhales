@@ -35,14 +35,13 @@ public class IntelNotificationItem : PlayerNotificationItem {
         Vector3 controlPointB = intelTabPos;
         controlPointB.y -= 5f;
         controlPointB.z = 0f;
-		
-        effectGO.transform.DOPath(new[] {intelTabPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
-            .SetEase(Ease.InSine)
-            .OnComplete(() => OnReachIntelTab(effectGO));
+
+        IIntel storedIntel = intel;
+        effectGO.transform.DOPath(new[] {intelTabPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier).SetEase(Ease.InSine).OnComplete(() => OnReachIntelTab(effectGO, storedIntel));
         
         DeleteNotification();
     }
-    private void OnReachIntelTab(GameObject effectGO) {
+    private void OnReachIntelTab(GameObject effectGO, IIntel intel) {
         PlayerUI.Instance.DoIntelTabPunchEffect();
         ObjectPoolManager.Instance.DestroyObject(effectGO);
         PlayerManager.Instance.player.AddIntel(intel);
