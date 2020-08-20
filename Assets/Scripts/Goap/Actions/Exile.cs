@@ -1,4 +1,6 @@
-﻿public class Exile : GoapAction {
+﻿using Traits;
+
+public class Exile : GoapAction {
     public Exile() : base(INTERACTION_TYPE.EXILE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         doesNotStopTargetCharacter = true;
@@ -24,7 +26,12 @@
     #region State Effects
     public void AfterExileSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
-        target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
+        if (target.traitContainer.HasTrait("Criminal")) {
+            Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            criminalTrait.SetIsImprisoned(false);
+            criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
+        }
+        //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
         Faction oldFaction = target.faction;
         oldFaction.KickOutCharacter(target);

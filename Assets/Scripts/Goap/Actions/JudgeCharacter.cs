@@ -34,116 +34,127 @@ public class JudgeCharacter : GoapAction {
         FactionRelationship factionRelationship = actor.faction.GetRelationshipWith(targetCharacter.faction); //Will only be null if target and actor HAVE THE SAME FACTION
         string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
 
+        //TODO: Loop all through crime and get weight result of each, at the end the highest count result will be the ultimate punishment
+        //Right now just get the first crime
+        List<CrimeData> allCrimesToFaction = criminalTrait.GetListOfUnpunishedCrimesWantedBy(actor.faction);
         CrimeData crimeData = null;
-        if(criminalTrait != null) {
-            crimeData = criminalTrait.crimeData;
-            crimeData.SetJudge(actor);
+        if(allCrimesToFaction != null && allCrimesToFaction.Count > 0) {
+            crimeData = allCrimesToFaction[0];
         }
 
-        string debugLog = $"{actor.name} is going to judge {targetCharacter.name}";
+        if(crimeData != null) {
+            string debugLog = $"{actor.name} is going to judge {targetCharacter.name}";
 
+            int absolve = 0;
+            int whip = 0;
+            int kill = 0;
+            int exile = 0;
 
-        int absolve = 0;
-        int whip = 0;
-        int kill = 0;
-        int exile = 0;
-
-        //Base Weights
-        if ((factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) || crimeData == null) {
-            whip = 5;
-            kill = 100;
-            exile = 10;
-            debugLog += "\n-Hostile Faction or No Crime Data: absolve = 0, whip = 5, kill = 100, exile = 10";
-        } else {
-            if (crimeData.crimeType == CRIME_SEVERITY.MISDEMEANOR) {
-                absolve = 50;
-                whip = 100;
-                debugLog += "\n-Misdemeanor: absolve = 50, whip = 100, kill = 0, exile = 0";
-            } else if (crimeData.crimeType == CRIME_SEVERITY.SERIOUS) {
-                absolve = 5;
-                whip = 20;
-                kill = 50;
-                exile = 50;
-                debugLog += "\n-Serious Crime: absolve = 5, whip = 20, kill = 50, exile = 50";
-            } else if (crimeData.crimeType == CRIME_SEVERITY.HEINOUS) {
+            //Base Weights
+            if ((factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) || crimeData == null) {
                 whip = 5;
                 kill = 100;
-                exile = 50;
-                debugLog += "\n-Heinous Crime: absolve = 0, whip = 5, kill = 100, exile = 50";
+                exile = 10;
+                debugLog += "\n-Hostile Faction or No Crime Data: absolve = 0, whip = 5, kill = 100, exile = 10";
+            } else {
+                if (crimeData.crimeSeverity == CRIME_SEVERITY.Misdemeanor) {
+                    absolve = 50;
+                    whip = 100;
+                    debugLog += "\n-Misdemeanor: absolve = 50, whip = 100, kill = 0, exile = 0";
+                } else if (crimeData.crimeSeverity == CRIME_SEVERITY.Serious) {
+                    absolve = 5;
+                    whip = 20;
+                    kill = 50;
+                    exile = 50;
+                    debugLog += "\n-Serious Crime: absolve = 5, whip = 20, kill = 50, exile = 50";
+                } else if (crimeData.crimeSeverity == CRIME_SEVERITY.Heinous) {
+                    whip = 5;
+                    kill = 100;
+                    exile = 50;
+                    debugLog += "\n-Heinous Crime: absolve = 0, whip = 5, kill = 100, exile = 50";
+                }
             }
-        }
 
-        //Modifiers
-        if(targetCharacter.faction == actor.faction) {
-            absolve = Mathf.RoundToInt(absolve * 1.5f);
-            whip = Mathf.RoundToInt(whip * 1.5f);
-            debugLog += "\n-Same Faction: absolve = x1.5, whip = x1.5, kill = x1, exile = x1";
-        } else {
-            if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
-                absolve = Mathf.RoundToInt(absolve * 0.5f);
-                whip = Mathf.RoundToInt(whip * 0.5f);
-                kill = Mathf.RoundToInt(kill * 1.5f);
-                exile *= 2;
-                debugLog += "\n-Cold War Faction: absolve = x0.5, whip = x0.5, kill = x1.5, exile = x2";
-            } else if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
-                absolve = Mathf.RoundToInt(absolve * 0.2f);
+            //Modifiers
+            if (targetCharacter.faction == actor.faction) {
+                absolve = Mathf.RoundToInt(absolve * 1.5f);
+                whip = Mathf.RoundToInt(whip * 1.5f);
+                debugLog += "\n-Same Faction: absolve = x1.5, whip = x1.5, kill = x1, exile = x1";
+            } else {
+                if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
+                    absolve = Mathf.RoundToInt(absolve * 0.5f);
+                    whip = Mathf.RoundToInt(whip * 0.5f);
+                    kill = Mathf.RoundToInt(kill * 1.5f);
+                    exile *= 2;
+                    debugLog += "\n-Cold War Faction: absolve = x0.5, whip = x0.5, kill = x1.5, exile = x2";
+                } else if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                    absolve = Mathf.RoundToInt(absolve * 0.2f);
+                    whip = Mathf.RoundToInt(whip * 0.5f);
+                    kill *= 2;
+                    exile = Mathf.RoundToInt(exile * 1.5f);
+                    debugLog += "\n-Hostile Faction: absolve = x0.2, whip = x0.5, kill = x2, exile = x1.5";
+                }
+            }
+
+            if (opinionLabel == RelationshipManager.Close_Friend) {
+                absolve *= 3;
+                whip *= 2;
+                kill *= 0;
+                exile = Mathf.RoundToInt(exile * 0.2f);
+                debugLog += "\n-Close Friend: absolve = x3, whip = x2, kill = x0, exile = x0.2";
+            } else if (opinionLabel == RelationshipManager.Friend) {
+                absolve *= 2;
+                whip *= 2;
+                kill = Mathf.RoundToInt(kill * 0.1f);
+                exile = Mathf.RoundToInt(exile * 0.5f);
+                debugLog += "\n-Friend: absolve = x2, whip = x2, kill = x0.1, exile = x0.5";
+            } else if (opinionLabel == RelationshipManager.Enemy) {
+                absolve = Mathf.RoundToInt(absolve * 0.1f);
                 whip = Mathf.RoundToInt(whip * 0.5f);
                 kill *= 2;
                 exile = Mathf.RoundToInt(exile * 1.5f);
-                debugLog += "\n-Hostile Faction: absolve = x0.2, whip = x0.5, kill = x2, exile = x1.5";
+                debugLog += "\n-Enemy: absolve = x0.1, whip = x0.5, kill = x2, exile = x1.5";
+            } else if (opinionLabel == RelationshipManager.Rival) {
+                absolve *= 0;
+                whip = Mathf.RoundToInt(whip * 0.5f);
+                kill *= 3;
+                exile = Mathf.RoundToInt(exile * 1.5f);
+                debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
+            }
+
+            weights.AddElement("Absolve", absolve);
+            weights.AddElement("Whip", whip);
+            weights.AddElement("Execute", kill);
+            weights.AddElement("Exile", exile);
+
+            debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
+
+            string chosen = weights.PickRandomElementGivenWeights();
+            debugLog += $"\n\n{chosen}";
+            actor.logComponent.PrintLogIfActive(debugLog);
+
+            CreateJudgeLog(goapNode, chosen);
+            CRIME_STATUS decision = CRIME_STATUS.Absolved;
+            if (chosen == "Absolve") {
+                decision = CRIME_STATUS.Absolved;
+                TargetAbsolved(goapNode);
+            } else if (chosen == "Whip") {
+                decision = CRIME_STATUS.Punished;
+                TargetWhip(goapNode);
+            } else if (chosen == "Execute") {
+                decision = CRIME_STATUS.Executed;
+                TargetExecuted(goapNode);
+            } else if (chosen == "Exile") {
+                decision = CRIME_STATUS.Exiled;
+                TargetExiled(goapNode);
+            }
+            for (int i = 0; i < allCrimesToFaction.Count; i++) {
+                CrimeData crimeToFaction = allCrimesToFaction[i];
+                crimeToFaction.SetCrimeStatus(decision);
+                crimeToFaction.SetJudge(actor);
             }
         }
 
-        if(opinionLabel == RelationshipManager.Close_Friend) {
-            absolve *= 3;
-            whip *= 2;
-            kill *= 0;
-            exile = Mathf.RoundToInt(exile * 0.2f);
-            debugLog += "\n-Close Friend: absolve = x3, whip = x2, kill = x0, exile = x0.2";
-        } else if (opinionLabel == RelationshipManager.Friend) {
-            absolve *= 2;
-            whip *= 2;
-            kill = Mathf.RoundToInt(kill * 0.1f);
-            exile = Mathf.RoundToInt(exile * 0.5f);
-            debugLog += "\n-Friend: absolve = x2, whip = x2, kill = x0.1, exile = x0.5";
-        } else if (opinionLabel == RelationshipManager.Enemy) {
-            absolve = Mathf.RoundToInt(absolve * 0.1f);
-            whip = Mathf.RoundToInt(whip * 0.5f);
-            kill *= 2;
-            exile = Mathf.RoundToInt(exile * 1.5f);
-            debugLog += "\n-Enemy: absolve = x0.1, whip = x0.5, kill = x2, exile = x1.5";
-        } else if (opinionLabel == RelationshipManager.Rival) {
-            absolve *= 0;
-            whip = Mathf.RoundToInt(whip * 0.5f);
-            kill *= 3;
-            exile = Mathf.RoundToInt(exile * 1.5f);
-            debugLog += "\n-Rival: absolve = x0, whip = x0.5, kill = x3, exile = x1.5";
-        }
-
-        weights.AddElement("Absolve", absolve);
-        weights.AddElement("Whip", whip);
-        weights.AddElement("Execute", kill);
-        weights.AddElement("Exile", exile);
-
-        debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
-
-        string chosen = weights.PickRandomElementGivenWeights();
-        debugLog += $"\n\n{chosen}";
-        actor.logComponent.PrintLogIfActive(debugLog);
-        
-        CreateJudgeLog(goapNode, chosen);
-        if (chosen == "Absolve") {
-            crimeData?.SetCrimeStatus(CRIME_STATUS.Absolved);
-            TargetAbsolved(goapNode);
-        } else if (chosen == "Whip") {
-            crimeData?.SetCrimeStatus(CRIME_STATUS.Punished);
-            TargetWhip(goapNode);
-        } else if (chosen == "Execute") {
-            TargetExecuted(goapNode);
-        } else if (chosen == "Exile") {
-            crimeData?.SetCrimeStatus(CRIME_STATUS.Exiled);
-            TargetExiled(goapNode);
-        }
         //if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
         //TargetExiled(goapNode);
     }

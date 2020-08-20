@@ -60,8 +60,8 @@ public class Assault : GoapAction {
                     if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                         bool targetHasHeinousOrSeriousCrime = false;
                         if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                            CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").crimeData;
-                            targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_SEVERITY.SERIOUS || crimeData.crimeType == CRIME_SEVERITY.HEINOUS;
+                            targetHasHeinousOrSeriousCrime = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
+                            //targetHasHeinousOrSeriousCrime = crimeData.crimeSeverity == CRIME_SEVERITY.Serious || crimeData.crimeSeverity == CRIME_SEVERITY.Heinous;
                         }
                         if (targetHasHeinousOrSeriousCrime) {
                             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
@@ -99,7 +99,7 @@ public class Assault : GoapAction {
                         }
                     }
                     if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
-                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
+                        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                     }
                 }
             }
@@ -116,9 +116,13 @@ public class Assault : GoapAction {
                     bool targetHasHeinousOrSeriousCrime = false;
                     bool targetHasMisdemeanour = false;
                     if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                        CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").crimeData;
-                        targetHasHeinousOrSeriousCrime = crimeData.crimeType == CRIME_SEVERITY.SERIOUS || crimeData.crimeType == CRIME_SEVERITY.HEINOUS;
-                        targetHasMisdemeanour = crimeData.crimeType == CRIME_SEVERITY.MISDEMEANOR;
+                        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                        targetHasHeinousOrSeriousCrime = criminalTrait.HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
+                        targetHasMisdemeanour = criminalTrait.HasCrime(CRIME_SEVERITY.Misdemeanor);
+
+                        //CrimeData crimeData = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").dataCrime;
+                        //targetHasHeinousOrSeriousCrime = crimeData.crimeSeverity == CRIME_SEVERITY.Serious || crimeData.crimeSeverity == CRIME_SEVERITY.Heinous;
+                        //targetHasMisdemeanour = crimeData.crimeSeverity == CRIME_SEVERITY.Misdemeanor;
                     }
                     if (targetHasHeinousOrSeriousCrime) {
                         if (opinionLabel == RelationshipManager.Acquaintance) {
@@ -165,6 +169,12 @@ public class Assault : GoapAction {
     }
     public override bool IsInvalidOnVision(ActualGoapNode node) {
         return false;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if(crime.associatedJobType != JOB_TYPE.APPREHEND) {
+            return CRIME_TYPE.Assault;
+        }
+        return base.GetCrimeType(actor, target, crime);
     }
     #endregion
 

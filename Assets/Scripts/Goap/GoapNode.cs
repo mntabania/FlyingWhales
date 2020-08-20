@@ -103,7 +103,7 @@ public abstract class JobNode {
 }
 
 //actual nodes located in a finished plan that is going to be executed by a character
-public class ActualGoapNode : IReactable, IRumorable {
+public class ActualGoapNode : IRumorable, ICrimeable {
     //public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
     public Character actor { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
@@ -133,10 +133,12 @@ public class ActualGoapNode : IReactable, IRumorable {
 
     public List<Character> awareCharacters { get; private set; }
 
+    //Crime
+    public CRIME_TYPE crimeType { get; private set; }
+
     private JobQueueItem _associatedJob;
     private Character _actor;
     private IPointOfInterest _target;
-    //public CRIME_TYPE crimeType { get; private set; }
 
     #region getters
     //TODO: Refactor these getters after all errors are resolved.
@@ -170,7 +172,7 @@ public class ActualGoapNode : IReactable, IRumorable {
         currentStateName = string.Empty;
         awareCharacters = new List<Character>();
 
-        //Whenever a disguised character is being set as actor/target, assign na disguised actor/target
+        //Whenever a disguised character is being set as actor/target, assign disguised actor/target
         disguisedActor = actor.reactionComponent.disguisedCharacter;
         if(poiTarget is Character targetCharacter) {
             disguisedTarget = targetCharacter.reactionComponent.disguisedCharacter;
@@ -195,6 +197,9 @@ public class ActualGoapNode : IReactable, IRumorable {
         actor.marker.UpdateActionIcon();
         action.OnActionStarted(this);
         //poiTarget.AddTargettedByAction(this);
+
+        //Set Crime Type
+        SetCrimeType();
 
         //Move To Do Action
         actor.marker.pathfindingAI.ResetEndReachedDistance();
@@ -475,10 +480,6 @@ public class ActualGoapNode : IReactable, IRumorable {
         }
         action.Perform(this);
         Messenger.Broadcast(Signals.ACTION_PERFORMED, this);
-        //CRIME_TYPE crimeType = CrimeManager.Instance.GetCrimeType(this);
-        //if(crimeType != CRIME_TYPE.NONE) {
-        //    CrimeManager.Instance.MakeCharacterACriminal(actor, crimeType, action);
-        //}
     }
     public void ActionInterruptedWhilePerforming(bool shouldDoAfterEffect) {
         string log =
@@ -946,6 +947,22 @@ public class ActualGoapNode : IReactable, IRumorable {
     }
     public REACTABLE_EFFECT GetReactableEffect(Character witness) {
         return action.GetReactableEffect(this, witness);
+    }
+    #endregion
+
+    #region Crime
+    public void SetCrimeType() {
+        if(crimeType == CRIME_TYPE.Unset) {
+            Character actor = this.actor;
+            IPointOfInterest target = poiTarget;
+            if (this.actor.reactionComponent.disguisedCharacter != null) {
+                actor = this.actor.reactionComponent.disguisedCharacter;
+            }
+            if (poiTarget is Character targetCharacter && targetCharacter.reactionComponent.disguisedCharacter != null) {
+                target = targetCharacter.reactionComponent.disguisedCharacter;
+            }
+            crimeType = action.GetCrimeType(actor, target, this);
+        }
     }
     #endregion
 }

@@ -1736,6 +1736,47 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
         return true;
     }
+    public bool CreateReportCrimeJob(Character source, CrimeData crimeData, ICrimeable crime) {
+        if(source.faction != null && source.faction.isMajorNonPlayer) {
+            if (crimeData.IsWantedBy(source.faction)) {
+                //Should no longer report if already wanted by the source's faction
+                return false;
+            }
+        }
+        bool canReportToFactionLeader = false;
+        bool canReportToSettlementRuler = false;
+        if (source.faction != null && source.faction.isMajorNonPlayer && source.faction.leader != null && source.faction.leader is Character characterLeader
+            && !characterLeader.isDead && characterLeader != source && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
+            if(!crimeData.HasWitness(characterLeader)) {
+                canReportToFactionLeader = true;
+            }
+        }
+        if (source.homeSettlement != null && source.homeSettlement.ruler != null && !source.homeSettlement.ruler.isDead && source.homeSettlement.ruler != source && source.homeSettlement.ruler != crimeData.criminal && source.homeSettlement.ruler != crimeData.target) {
+            if (!crimeData.HasWitness(source.homeSettlement.ruler)) {
+                canReportToSettlementRuler = true;
+            }
+        }
+        Character targetCharacter = null;
+        if(canReportToFactionLeader && canReportToSettlementRuler) {
+            if(UnityEngine.Random.Range(0, 2) == 0) {
+                targetCharacter = source.faction.leader as Character;
+            } else {
+                targetCharacter = source.homeSettlement.ruler;
+            }
+        } else {
+            if (canReportToFactionLeader) {
+                targetCharacter = source.faction.leader as Character;
+            } else if (canReportToSettlementRuler) {
+                targetCharacter = source.homeSettlement.ruler;
+            }
+        }
+        if(targetCharacter != null) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, targetCharacter, _owner);
+            job.AddOtherData(INTERACTION_TYPE.REPORT_CRIME, new object[] { crime });
+            return _owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
     #endregion
 
     #region Visit Different Region
@@ -2003,11 +2044,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(_owner, target) && settlementToGoTo != null;
         if (target.traitContainer.HasTrait("Criminal") && canDoJob) {
             if (_owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
-                job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, settlementToGoTo));
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
-                return _owner.jobQueue.AddJobInQueue(job);
+                Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                if (criminalTrait.IsWantedBy(_owner.faction)) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
+                    job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, settlementToGoTo));
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
+                    return _owner.jobQueue.AddJobInQueue(job);
+                }
             }
+
         }
         return false;
     }

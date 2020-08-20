@@ -15,6 +15,7 @@ public class Initializer : MonoBehaviour {
         TraitManager.Instance.Initialize();
         LandmarkManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();
+        CrimeManager.Instance.Initialize();
         TimerHubUI.Instance.Initialize();
 
         WorldMapCameraMove.Instance.Initialize();

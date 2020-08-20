@@ -144,6 +144,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CarryComponent carryComponent { get; private set; }
     public PartyComponent partyComponent { get; private set; }
     public TileObjectComponent tileObjectComponent { get; private set; }
+    public CrimeComponent crimeComponent { get; private set; }
 
 
     #region getters / setters
@@ -346,6 +347,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         carryComponent = new CarryComponent(this);
         partyComponent = new PartyComponent(this);
         tileObjectComponent = new TileObjectComponent(this);
+        crimeComponent = new CrimeComponent(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -1643,9 +1645,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (race == RACE.SKELETON) {
             RemoveAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             RemoveAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+            RemoveAdvertisedAction(INTERACTION_TYPE.REPORT_CRIME);
         } else {
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+            AddAdvertisedAction(INTERACTION_TYPE.REPORT_CRIME);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
@@ -1910,7 +1914,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         pendingActionsAfterMultiThread.Clear();
     }
-    public void SetHaUnresolvedCrime(bool state) {
+    public void SetHasUnresolvedCrime(bool state) {
         hasUnresolvedCrime = state;
     }
     public void SetIsInLimbo(bool state) {
@@ -3966,6 +3970,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
             //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_FREEZING);
             AddAdvertisedAction(INTERACTION_TYPE.SHARE_INFORMATION);
+            AddAdvertisedAction(INTERACTION_TYPE.REPORT_CRIME);
             AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             AddAdvertisedAction(INTERACTION_TYPE.HAVE_AFFAIR);

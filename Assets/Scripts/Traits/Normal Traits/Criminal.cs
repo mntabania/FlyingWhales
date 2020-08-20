@@ -6,9 +6,10 @@ using Interrupts;
 namespace Traits {
     public class Criminal : Status {
 
-        public CrimeData crimeData { get; protected set; }
+        public List<CrimeData> dataCrime { get; protected set; }
         public Character owner { get; private set; }
         public List<Character> charactersThatAreAlreadyWorried { get; private set; }
+        public bool isImprisoned { get; private set; }
 
         public Criminal() {
             name = "Criminal";
@@ -17,6 +18,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             charactersThatAreAlreadyWorried = new List<Character>();
+            dataCrime = new List<CrimeData>();
         }
 
         #region Overrides
@@ -26,21 +28,7 @@ namespace Traits {
                 owner = sourcePOI as Character;
                 //TODO: sourceCharacter.homeNpcSettlement.jobQueue.UnassignAllJobsTakenBy(sourceCharacter);
                 owner.CancelOrUnassignRemoveTraitRelatedJobs();
-                CharacterApprehension();
-
-                if (owner.isSettlementRuler) {
-                    owner.ruledSettlement.SetRuler(null);
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler");
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                }
-
-                if (owner.isFactionLeader) {
-                    owner.faction.SetLeader(null);
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader");
-                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
-                }
+                //CharacterApprehension();
             }
 
         }
@@ -63,13 +51,116 @@ namespace Traits {
         public bool HasCharacterThatIsAlreadyWorried(Character character) {
             return charactersThatAreAlreadyWorried.Contains(character);
         }
-        public void SetCrime(CRIME_SEVERITY crimeType, ICrimeable crime, IPointOfInterest crimeTarget) {
-            if(crimeData != null) {
-                Debug.LogError(
-                    $"Cannot set crime to criminal {owner.name} because it already has a crime: {crimeData.crimeType}");
-                return;
+        public void SetIsImprisoned(bool state) {
+            if(isImprisoned != state) {
+                isImprisoned = state;
             }
-            crimeData = new CrimeData(crimeType, crime, owner, crimeTarget);
+        }
+        public CrimeData GetCrimeDataOf(ICrimeable crime) {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if(data.crime == crime) {
+                    return data;
+                }
+            }
+            return null;
+        }
+        public CrimeData AddCrime(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, Criminal criminalTrait, IPointOfInterest target, Faction targetFaction, REACTION_STATUS reactionStatus) {
+            CrimeData newData = new CrimeData(crimeType, crimeSeverity, crime, criminal, target, targetFaction);
+            newData.SetCriminalTrait(criminalTrait);
+            dataCrime.Add(newData);
+            return newData;
+        }
+        public void RemoveAllCrimesWantedBy(Faction faction) {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if (data.IsWantedBy(faction)) {
+                    dataCrime.RemoveAt(i);
+                    i--;
+                }
+            }
+            if(dataCrime.Count <= 0) {
+                owner.traitContainer.RemoveTrait(owner, this);
+            }
+        }
+        public void RemoveCrime(CrimeData crimeData) {
+            if (dataCrime.Remove(crimeData)) {
+                if (dataCrime.Count <= 0) {
+                    owner.traitContainer.RemoveTrait(owner, this);
+                }
+            }
+        }
+        public bool HasCrime(params CRIME_SEVERITY[] severity) {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                for (int j = 0; j < severity.Length; j++) {
+                    CRIME_SEVERITY currSeverity = severity[j];
+                    if (data.crimeSeverity == currSeverity) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        public bool IsWantedBy(Faction faction) {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if (data.IsWantedBy(faction)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasWantedCrime() {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if (data.HasWanted()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool IsTargetOfACrime(IPointOfInterest poi) {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if (data.target == poi) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public List<CrimeData> GetListOfCrimesWantedBy(Faction faction) {
+            List<CrimeData> dataList = null;
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if (data.IsWantedBy(faction)) {
+                    if(dataList == null) { dataList = new List<CrimeData>(); }
+                    dataList.Add(data);
+                }
+            }
+            return dataList;
+        }
+        public List<CrimeData> GetListOfUnpunishedCrimesWantedBy(Faction faction) {
+            List<CrimeData> dataList = null;
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if(data.crimeStatus == CRIME_STATUS.Unpunished) {
+                    if (data.IsWantedBy(faction)) {
+                        if (dataList == null) { dataList = new List<CrimeData>(); }
+                        dataList.Add(data);
+                    }
+                }
+            }
+            return dataList;
+        }
+        public bool IsCrimeAlreadyWitnessedBy(Character character, ICrimeable crime) {
+            for (int i = 0; i < dataCrime.Count; i++) {
+                CrimeData data = dataCrime[i];
+                if(data.crime == crime) {
+                    return data.HasWitness(character);
+                }
+            }
+            return false;
         }
         private void CharacterApprehension() {
             bool hasCreatedPersonalApprehend = false;

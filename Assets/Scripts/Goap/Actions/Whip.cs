@@ -32,18 +32,18 @@ public class Whip : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal"); 
-        if (criminalTrait != null && criminalTrait.crimeData.target == witness) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, node.actor, status, node);
+        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+        if (criminalTrait != null && criminalTrait.HasWantedCrime() && criminalTrait.IsTargetOfACrime(witness)) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, node.actor, status, node);
         } else {
-            if (witness.relationshipContainer.IsFriendsWith(targetCharacter) 
+            if (witness.relationshipContainer.IsFriendsWith(targetCharacter)
                 && witness.traitContainer.HasTrait("Psychopath") == false) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, node.actor, status, node);
             }
             if (witness.traitContainer.HasTrait("Psychopath") == false) {
                 if ((witness.traitContainer.HasTrait("Coward") && Random.Range(0, 100) < 75) ||
                     (witness.traitContainer.HasTrait("Coward") == false && Random.Range(0, 100) < 15)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, node.actor, status, node);    
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, node.actor, status, node);
                 }
             }
         }
@@ -85,7 +85,12 @@ public class Whip : GoapAction {
     #region State Effects
     public void AfterWhipSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
-        target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
+        if (target.traitContainer.HasTrait("Criminal")) {
+            Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            criminalTrait.SetIsImprisoned(false);
+            criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
+        }
+        //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
         target.traitContainer.AddTrait(target, "Injured", goapNode.actor, goapNode);
     }

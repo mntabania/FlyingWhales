@@ -56,8 +56,8 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Crimes
-        public virtual bool IsActionConsideredCrime(ActualGoapNode action) {
-            return true;
+        public virtual CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+            return CRIME_SEVERITY.Unapplicable;
         }
         #endregion
 

@@ -141,8 +141,9 @@ public class MakeLove : GoapAction {
                     if (actorLover != targetCharacter) {
                         //if actor has a lover that is different from target
                         //actor considered Infraction.
-                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, 
-                            CRIME_SEVERITY.INFRACTION);    
+                        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, 
+                        //    CRIME_SEVERITY.Infraction);    
+                        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                     } else if (actorLover == witness) {
                         //if witness is lover of actor
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
@@ -193,8 +194,9 @@ public class MakeLove : GoapAction {
                     if (targetLover != actor) {
                         //if target has a lover that is different from actor
                         //target considered Infraction.
-                        CrimeManager.Instance.ReactToCrime(witness, targetCharacter, node, node.associatedJobType, 
-                            CRIME_SEVERITY.INFRACTION);    
+                        //CrimeManager.Instance.ReactToCrime(witness, targetCharacter, node, node.associatedJobType, 
+                        //    CRIME_SEVERITY.Infraction);
+                        CrimeManager.Instance.ReactToCrime(witness, targetCharacter, actor, actor.factionOwner, node.crimeType, node, status);
                     } else if (targetLover == witness) {
                         //if witness is lover of target
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status, node);
@@ -235,6 +237,15 @@ public class MakeLove : GoapAction {
             }
         }
         return REACTABLE_EFFECT.Neutral;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if(target is Character targetCharacter) {
+            if ((actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER) == false && actor.relationshipContainer.HasRelationship(RELATIONSHIP_TYPE.LOVER))
+                || (targetCharacter.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER) == false && targetCharacter.relationshipContainer.HasRelationship(RELATIONSHIP_TYPE.LOVER))){
+                return CRIME_TYPE.Infidelity;
+            }
+        }
+        return base.GetCrimeType(actor, target, crime);
     }
     #endregion
 

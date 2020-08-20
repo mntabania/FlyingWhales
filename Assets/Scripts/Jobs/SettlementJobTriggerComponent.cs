@@ -444,16 +444,19 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Apprehend
 	public void TryCreateApprehend(Character target) {
-		if (target.currentSettlement == _owner && target.traitContainer.HasTrait("Criminal")) {
+		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal")) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, 
-					target, _owner);
-				job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
-				job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, job));
-				job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
-				job.SetDoNotRecalculate(true);
-				job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.prison });
-				_owner.AddToAvailableJobs(job);	
+                Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                if (criminalTrait.IsWantedBy(_owner.owner)) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP,
+                    target, _owner);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
+                    job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, job));
+                    job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
+                    job.SetDoNotRecalculate(true);
+                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.prison });
+                    _owner.AddToAvailableJobs(job);
+                }
 			}
 		}
 	}

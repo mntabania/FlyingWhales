@@ -64,7 +64,9 @@ public class RemoveBuff : GoapAction {
         string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
         if (witness.traitContainer.HasTrait("Cultist") == false) {
             //not a cultist
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.SERIOUS);
+            //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
+            CrimeManager.Instance.ReactToCrime(witness, actor, poiTarget, poiTarget.factionOwner, node.crimeType, node, status);
+
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinionLabelWithCharacter(actor, RelationshipManager.Acquaintance)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node); 
@@ -96,7 +98,9 @@ public class RemoveBuff : GoapAction {
         REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character targetCharacter) {
-            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_SEVERITY.SERIOUS);
+            //CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
+            CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             if (targetCharacter.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status, node);
@@ -110,6 +114,9 @@ public class RemoveBuff : GoapAction {
         }
 
         return response;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        return CRIME_TYPE.Demon_Worship;
     }
     #endregion
 }
