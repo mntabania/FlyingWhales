@@ -22,7 +22,7 @@ namespace Interrupts {
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness,
-            Interrupt interrupt, REACTION_STATUS status) {
+            InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             

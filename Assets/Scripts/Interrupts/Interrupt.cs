@@ -29,12 +29,9 @@ namespace Interrupts {
         public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, 
             ActualGoapNode goapNode = null) { return false; }
 
-        public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-            Interrupt interrupt, REACTION_STATUS status) { return string.Empty; }
-        public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
-            Interrupt interrupt, REACTION_STATUS status) { return string.Empty; }
-        public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, Interrupt interrupt,
-            REACTION_STATUS status) { return string.Empty; }
+        public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
+        public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
+        public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
                 Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
@@ -101,18 +98,17 @@ namespace Interrupts {
         #endregion
 
         #region IReactable
-        public string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-            REACTION_STATUS status) {
-            return interrupt.ReactionToActor(actor, target, witness, interrupt, status);
+        public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
+            return interrupt.ReactionToActor(actor, target, witness, this, status);
         }
 
         public string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
             REACTION_STATUS status) {
-            return interrupt.ReactionToTarget(actor, target, witness, interrupt, status);
+            return interrupt.ReactionToTarget(actor, target, witness, this, status);
         }
 
         public string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status) {
-            return interrupt.ReactionOfTarget(actor, target, interrupt, status);
+            return interrupt.ReactionOfTarget(actor, target, this, status);
         }
         public REACTABLE_EFFECT GetReactableEffect(Character witness) {
             return REACTABLE_EFFECT.Neutral;

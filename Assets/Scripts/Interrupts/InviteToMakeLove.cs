@@ -141,7 +141,7 @@ namespace Interrupts {
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,
             Character witness,
-            Interrupt interrupt, REACTION_STATUS status) {
+            InterruptHolder interrupt, REACTION_STATUS status) {
             string response = base.ReactionToActor(actor, target, witness, interrupt, status);
             if (target != witness && target is Character targetCharacter) {
                 bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
