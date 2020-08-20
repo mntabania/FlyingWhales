@@ -1101,6 +1101,9 @@ namespace Inner_Maps {
         public bool IsPartOfHumanElvenSettlement() {
             return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
         }
+        public bool IsPartOfActiveHumanElvenSettlement() {
+            return IsPartOfHumanElvenSettlement() && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.residents.Count > 0;
+        }
         public bool IsNextToSettlement(out BaseSettlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {
                 LocationGridTile tile = neighbourList[i];

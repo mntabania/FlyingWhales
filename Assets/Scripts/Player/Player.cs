@@ -588,7 +588,8 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void OnCharacterDied(Character character) {
         if (character.faction == playerFaction && character is Summon summon) {
-            RemoveSummon(summon);
+            // RemoveSummon(summon);
+            Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON, summon);
         }
     }
     #endregion

@@ -41,8 +41,16 @@ public class MinionPlayerSkill : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
-            //only allow summoning on linked tiles
-            return targetTile.collectionOwner.isPartOfParentRegionMap;
+            if (!targetTile.collectionOwner.isPartOfParentRegionMap) {
+                //only allow summoning on linked tiles
+                return false;
+            }
+            CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(className);
+            if (characterClass.traitNameOnTamedByPlayer == "Defender") {
+                //if minion is defender then do not allow it to be spawned on villages.
+                return !targetTile.IsPartOfActiveHumanElvenSettlement();
+            }
+            return true;
         }
         return false;
     }
