@@ -140,7 +140,7 @@ namespace Traits {
                             }
                         }
                         if(owner.isNormalCharacter && targetCharacter.isNormalCharacter && owner.faction != targetCharacter.faction) {
-                            if(owner.faction != null && targetCharacter.currentStructure != null && targetCharacter.currentStructure.settlementLocation != null
+                            if(owner.faction != null && targetCharacter.currentStructure != null && targetCharacter.currentStructure.isInterior && targetCharacter.currentStructure.settlementLocation != null
                                 && targetCharacter.currentStructure.settlementLocation.owner == owner.faction) {
                                 bool willReact = true;
                                 switch (targetCharacter.currentStructure.structureType) {
