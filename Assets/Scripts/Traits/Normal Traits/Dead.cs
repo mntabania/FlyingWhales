@@ -40,7 +40,7 @@ namespace Traits {
         }
         public override string GetToolTipText() {
             if (responsibleCharacter == null) {
-                return description;
+                return descriptionInUI;
             }
             return $"This character was killed by {responsibleCharacter.name}";
         }

@@ -56,7 +56,7 @@ public class SummonListUI : PopupMenuBase {
 
         if (!string.IsNullOrEmpty(summon.characterClass.traitNameOnTamedByPlayer) && TraitManager.Instance.allTraits.ContainsKey(summon.characterClass.traitNameOnTamedByPlayer)) {
             Trait trait = TraitManager.Instance.allTraits[summon.characterClass.traitNameOnTamedByPlayer];
-            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.description, _hoverPosition, trait.name));
+            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
     }
@@ -69,7 +69,7 @@ public class SummonListUI : PopupMenuBase {
         CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(summonPlayerSkill.className);
         if (!string.IsNullOrEmpty(characterClass.traitNameOnTamedByPlayer) && TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
             Trait trait = TraitManager.Instance.allTraits[characterClass.traitNameOnTamedByPlayer];
-            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.description, _hoverPosition, trait.name));
+            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
         

@@ -258,7 +258,7 @@ public class TileObjectInfoUI : InfoUIBase {
             string text = (string) obj;
             int index = int.Parse(text);
             Trait trait = activeTileObject.traitContainer.traits[index];
-            UIManager.Instance.ShowSmallInfo(trait.description);
+            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
         }
     }
     public void OnHoverStatus(object obj) {
@@ -266,7 +266,7 @@ public class TileObjectInfoUI : InfoUIBase {
             string text = (string) obj;
             int index = int.Parse(text);
             Trait trait = activeTileObject.traitContainer.statuses[index];
-            UIManager.Instance.ShowSmallInfo(trait.description);
+            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
         }
     }
     public void OnHoverOutTrait() {

@@ -180,7 +180,7 @@ public class MonsterInfoUI : InfoUIBase {
     public void OnHoverBehaviour(object obj) {
         if (TraitManager.Instance.allTraits.ContainsKey(_activeMonster.characterClass.traitNameOnTamedByPlayer)) {
             Trait trait = TraitManager.Instance.allTraits[_activeMonster.characterClass.traitNameOnTamedByPlayer];
-            UIManager.Instance.ShowSmallInfo(trait.description);    
+            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
         }
     }
     public void OnHoverOutBehaviour() {
@@ -248,14 +248,14 @@ public class MonsterInfoUI : InfoUIBase {
         if (obj is string text) {
             int index = int.Parse(text);
             Trait trait = activeMonster.traitContainer.traits[index];
-            UIManager.Instance.ShowSmallInfo(trait.description);
+            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
         }
     }
     public void OnHoverStatus(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
             Trait trait = activeMonster.traitContainer.statuses[index];
-            UIManager.Instance.ShowSmallInfo(trait.description);
+            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
         }
     }
     public void OnHoverOutTrait() {

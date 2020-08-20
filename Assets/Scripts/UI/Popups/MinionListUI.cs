@@ -46,7 +46,7 @@ public class MinionListUI : PopupMenuBase {
 
         if (TraitManager.Instance.allTraits.ContainsKey(minion.character.characterClass.traitNameOnTamedByPlayer)) {
             Trait trait = TraitManager.Instance.allTraits[minion.character.characterClass.traitNameOnTamedByPlayer];
-            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.description, PlayerUI.Instance.minionListHoverPosition, trait.name));
+            item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, PlayerUI.Instance.minionListHoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
     }
@@ -95,7 +95,7 @@ public class MinionListUI : PopupMenuBase {
             CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
             if (TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
                 Trait trait = TraitManager.Instance.allTraits[characterClass.traitNameOnTamedByPlayer];
-                UIManager.Instance.ShowSmallInfo(trait.description, _hoverPosition, trait.name);
+                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name);
             }
         }
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(spellData, PlayerUI.Instance.minionListHoverPosition);

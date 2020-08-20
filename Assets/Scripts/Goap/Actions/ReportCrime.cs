@@ -34,8 +34,9 @@ public class ReportCrime : GoapAction {
         object[] otherData = node.otherData;
         if (otherData.Length == 1 && otherData[0] is ICrimeable) {
             ICrimeable crime = otherData[0] as ICrimeable;
-            CrimeType crimeTypObj = CrimeManager.Instance.GetCrimeType(crime.crimeType);
-            log.AddToFillers(null, crimeTypObj.name, LOG_IDENTIFIER.STRING_1);
+            //CrimeType crimeTypObj = CrimeManager.Instance.GetCrimeType(crime.crimeType);
+            //log.AddToFillers(null, crimeTypObj.name, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(crime.actor, crime.actor.name, LOG_IDENTIFIER.CHARACTER_3);
         }
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
