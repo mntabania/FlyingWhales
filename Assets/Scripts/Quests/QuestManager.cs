@@ -21,7 +21,7 @@ namespace Quests {
             Threat, Counterattack, Divine_Intervention, Special_Events, Pause_Reminder, 
             //Finished_Tutorial,
             //Wolf_Migration, Villager_Migration,
-            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened,
+            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon
         }
         
         private void Awake() {
@@ -52,12 +52,12 @@ namespace Quests {
             InstantiatePendingSpecialPopups();    
         }
         private void InstantiatePendingSpecialPopups() {
-            List<Special_Popup> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedSpecialPopups;
-            Special_Popup[] allTutorials = CollectionUtilities.GetEnumValues<Special_Popup>();
-            for (int i = 0; i < allTutorials.Length; i++) {
-                Special_Popup popup = allTutorials[i];
+            List<Special_Popup> completedSpecialPopups = SaveManager.Instance.currentSaveDataPlayer.completedSpecialPopups;
+            Special_Popup[] specialPopups = CollectionUtilities.GetEnumValues<Special_Popup>();
+            for (int i = 0; i < specialPopups.Length; i++) {
+                Special_Popup popup = specialPopups[i];
                 //only instantiate popup if it has not yet been completed
-                bool instantiateTutorial = completedTutorials.Contains(popup) == false;
+                bool instantiateTutorial = completedSpecialPopups.Contains(popup) == false;
                 if (instantiateTutorial) {
                     SpecialPopup specialPopup = InstantiateSpecialPopup(popup);
                     specialPopup.Initialize();

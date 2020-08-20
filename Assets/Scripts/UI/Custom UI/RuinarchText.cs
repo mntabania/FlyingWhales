@@ -26,8 +26,8 @@ public class RuinarchText : TextMeshProUGUI {
             if (text.Contains("Mana")) {
                 text = text.Replace("Mana", $"{UtilityScripts.Utilities.ManaIcon()}Mana");
             }
-            if (text.Contains("mana")) {
-                text = text.Replace("mana", $"{UtilityScripts.Utilities.ManaIcon()}mana");
+            if (text.Contains("mana ")) {
+                text = text.Replace("mana", $"{UtilityScripts.Utilities.ManaIcon()}mana ");
             }
             //charges
             if (text.Contains("Charges")) {

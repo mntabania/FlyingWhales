@@ -35,7 +35,6 @@ namespace Quests.Special_Popups {
         }
         public override void Activate() {
             Messenger.RemoveListener(Signals.PAUSED_BY_PLAYER, OnPausedByPlayer);
-            StopCheckingCriteria();
             PlayerUI.Instance.ShowGeneralConfirmation("Pause", 
                 $"Don't forget that you can {UtilityScripts.Utilities.ColorizeAction("Pause")} the game at anytime! " +
                 "A smart Ruinarch will liberally use his time-bending powers to ruminate over what's taking place in the world." +
@@ -45,6 +44,7 @@ namespace Quests.Special_Popups {
         }
         public override void Deactivate() {
             base.Deactivate();
+            StopCheckingCriteria();
             Messenger.RemoveListener(Signals.PAUSED_BY_PLAYER, OnPausedByPlayer);
         }
     }

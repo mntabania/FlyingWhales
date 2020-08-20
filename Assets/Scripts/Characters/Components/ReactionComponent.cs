@@ -531,6 +531,10 @@ public class ReactionComponent {
             debugLog += "\n-actor is demooder or disabler, do not react!";
             return;    
         }
+        if (actor is VengefulGhost) {
+            debugLog += "\n-actor is vengeful ghost, do not react!";
+            return;
+        }
         
         if (isHostile) {
             debugLog += "\n-Target is hostile";
