@@ -30,9 +30,9 @@ public class FactionRelationship {
     }
 
     #region Relationship Status
-    public void SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS newStatus) {
+    public bool SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS newStatus) {
 		if(newStatus == relationshipStatus) {
-            return;
+            return false;
         }
         FACTION_RELATIONSHIP_STATUS oldStatus = relationshipStatus;
         //_relationshipStatus = newStatus;
@@ -41,6 +41,7 @@ public class FactionRelationship {
         //if (_relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
         //    currentWarCombatCount = 0;
         //}
+        return true;
     }
     public void AdjustRelationshipStatus(int amount) {
         int previousValue = _relationshipStatInt;

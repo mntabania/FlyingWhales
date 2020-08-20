@@ -463,6 +463,11 @@ public class CrimeData {
                 log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
             }
+            if (target is Character targetCharacter && crime is ActualGoapNode crimeAction) {
+                CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(null, criminal, target, crimeType, crime);
+                faction.CheckForWar(criminal.faction, severityOfCrime, criminal, targetCharacter, crimeAction);    
+            }
+            
         }
     }
     public bool IsWantedBy(Faction faction) {

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Factions.Faction_Types;
 using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
+using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner {
     
@@ -518,11 +520,12 @@ public class Faction : IJobOwner {
             Debug.LogWarning($"There is no key for {otherFaction.name} in {this.name}'s relationship dictionary");
         }
     }
-    public void SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
+    public bool SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
         if (relationships.ContainsKey(otherFaction)) {
-            relationships[otherFaction].SetRelationshipStatus(status);
+            return relationships[otherFaction].SetRelationshipStatus(status);
         } else {
             Debug.LogWarning($"There is no key for {otherFaction.name} in {this.name}'s relationship dictionary");
+            return false;
         }
     }
     public bool IsAtWar() {
@@ -844,6 +847,87 @@ public class Faction : IJobOwner {
             }
         }
         return false;
+    }
+    #endregion
+
+    #region War Declaration
+    public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {
+        if (targetFaction != this) {
+            string debugLog = $"Checking for war {name} against {targetFaction.name}";
+            if (!factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+                debugLog += $"\n{name} is not a peaceful faction.";
+                bool isTargetPartOfFaction = crimeTarget != null && crimeTarget.faction == this;
+                debugLog += $"\nTarget of committed crime is part of faction {name}: {isTargetPartOfFaction.ToString()}";
+                debugLog += $"\nSeverity of committed crime is {crimeSeverity.ToString()}.";
+                float chance = 0f;
+                if (isTargetPartOfFaction) {
+                    switch (crimeSeverity) {
+                        case CRIME_SEVERITY.Misdemeanor:
+                            if (crimeTarget.isFactionLeader) {
+                                chance = 30f;
+                            } else if (crimeTarget.isSettlementRuler) {
+                                chance = 15f;
+                            } else {
+                                chance = 5f;
+                            }
+                            break;
+                        case CRIME_SEVERITY.Serious:
+                            if (crimeTarget.isFactionLeader) {
+                                chance = 60f;
+                            } else if (crimeTarget.isSettlementRuler) {
+                                chance = 40f;
+                            } else {
+                                chance = 20f;
+                            }
+                            break;
+                        case CRIME_SEVERITY.Heinous:
+                            if (crimeTarget.isFactionLeader) {
+                                chance = 90f;
+                            } else if (crimeTarget.isSettlementRuler) {
+                                chance = 65f;
+                            } else {
+                                chance = 35f;
+                            }
+                            break;
+                    }
+                    if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+                        debugLog += $"\n{name} is a warmonger faction.";
+                        chance *= 1.5f;
+                    }
+                } else {
+                    debugLog += $"\nTarget is not part of faction.";
+                    //target is not part of faction
+                    if (crimeSeverity == CRIME_SEVERITY.Heinous && (crimeCommitter.isFactionLeader || crimeCommitter.isSettlementRuler)) {
+                        debugLog += $"\nCrime severity is Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
+                        chance = 20f;
+                    }
+                    if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+                        debugLog += $"\n{name} is a warmonger faction.";
+                        chance *= 1.5f;
+                    }
+                }
+
+                float roll = Random.Range(0f, 100f);
+                debugLog += $"\nChance for war is {chance.ToString()}. Roll is {roll.ToString()}";
+                if (roll < chance) {
+                    debugLog += $"\nChance for war met, setting {name} and {targetFaction.name} as Hostile.";
+                    if (SetRelationshipFor(targetFaction, FACTION_RELATIONSHIP_STATUS.Hostile)) {
+                        debugLog += $"\nSuccessfully set {name} and {targetFaction.name} as Hostile.";
+                        Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war");
+                        log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                        log.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
+                        log.AddToFillers(crime.descriptionLog.fillers);
+                        log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(crime.descriptionLog), LOG_IDENTIFIER.APPEND);
+                        log.AddLogToInvolvedObjects();    
+                    } else {
+                        debugLog += $"\nCould not set {name} and {targetFaction.name} as Hostile.";
+                    }
+                }
+            } else {
+                debugLog += $"\n{name} is a peaceful faction.";
+            }
+            Debug.Log(debugLog);
+        }
     }
     #endregion
 

@@ -363,7 +363,7 @@ namespace UtilityScripts {
                     if (logFiller.identifier == identifier) {
                         if (logFiller.obj != null) {
                             wordToReplace = $"<b><link=\"{i}\">{logFiller.value}</link></b>";
-                            if (logFiller.obj is Character || logFiller.obj is TileObject) {
+                            if (logFiller.obj is Character || logFiller.obj is TileObject || logFiller.obj is Faction) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
                             if (logFiller.obj is Character character) {
