@@ -20,7 +20,7 @@ namespace Quests.Special_Popups {
         protected override bool HasMetAllCriteria() {
             bool criteriaMet = base.HasMetAllCriteria();
             if (criteriaMet) {
-                return WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
+                return WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona;
             }
             return false;
         }
@@ -32,7 +32,7 @@ namespace Quests.Special_Popups {
         public override void Activate() {
             StopCheckingCriteria();
             PlayerUI.Instance.ShowGeneralConfirmation("Dragon Awakened", 
-                $"{_targetCharacter.name} has been awakened from its long slumber!", 
+                $"{UtilityScripts.Utilities.ColorizeAction(_targetCharacter.name)} has been awakened from its long slumber!", 
                 onClickCenter: () => UIManager.Instance.ShowCharacterInfo(_targetCharacter, true));
             CompleteQuest();
         }

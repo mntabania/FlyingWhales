@@ -32,7 +32,6 @@ namespace Quests.Special_Popups {
             CompleteQuest();
         }
         public override void Activate() {
-            StopCheckingCriteria();
             UIManager.Instance.generalConfirmationWithVisual.ShowGeneralConfirmation("Special Events", 
                 "As a procedural game, Ruinarch will eventually be full of special events that have various triggers. " +
                 $"In this world, you can turn an {UtilityScripts.Utilities.ColorizeAction("Evil")} or " +
@@ -43,6 +42,7 @@ namespace Quests.Special_Popups {
         }
         public override void Deactivate() {
             base.Deactivate();
+            StopCheckingCriteria();
             Messenger.RemoveListener<Character>(Signals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
         }
     }

@@ -35,10 +35,12 @@ public class DefendBehaviour : CharacterBehaviourComponent {
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
             List<Character> charactersAtHexTile =
-                tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => defender.IsHostileWith(c) && 
-                                                                    c.isDead == false && c.isAlliedWithPlayer == false && 
-                                                                    c.marker.isMainVisualActive && 
-                                                                    defender.movementComponent.HasPathTo(c.gridTileLocation));
+                tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(
+                    c => defender.IsHostileWith(c) && 
+                         c.isDead == false && c.isAlliedWithPlayer == false && 
+                         c.marker.isMainVisualActive && 
+                         defender.movementComponent.HasPathTo(c.gridTileLocation)
+                );
             if (charactersAtHexTile != null) {
                 if (characters == null) {
                     characters = new List<Character>();

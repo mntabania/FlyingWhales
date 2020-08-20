@@ -6,7 +6,7 @@ namespace Traits {
         
         public Defender() {
             name = "Defender";
-            description = "Defends area where it was summoned.";
+            description = "Defends area where it was summoned. NOTE: Cannot be summoned on an active settlement.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

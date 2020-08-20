@@ -25,6 +25,7 @@ public class SummonPlayerSkill : SpellData {
         }
         summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
+        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
         base.ActivateAbility(targetTile);
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
@@ -51,8 +52,16 @@ public class SummonPlayerSkill : SpellData {
                     return false;
                 }
             }
-            //only allow summoning on linked tiles
-            return targetTile.collectionOwner.isPartOfParentRegionMap;
+            if (!targetTile.collectionOwner.isPartOfParentRegionMap) {
+                //only allow summoning on linked tiles
+                return false;
+            }
+            CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(className);
+            if (characterClass.traitNameOnTamedByPlayer == "Defender") {
+                //if minion is defender then do not allow it to be spawned on villages.
+                return !targetTile.IsPartOfActiveHumanElvenSettlement();
+            }
+            return true;
         }
         return false;
     }
