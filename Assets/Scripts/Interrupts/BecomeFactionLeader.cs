@@ -72,10 +72,32 @@ namespace Interrupts {
                             //Check each Faction Leader of other existing factions if available:
                             if (interruptHolder.actor.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
                                 //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
-                                factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                                if (factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile)) {
+                                    Log dislikeLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "dislike_leader");
+                                    dislikeLog.AddToFillers(faction.leader, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                    dislikeLog.AddToFillers(otherFaction.leader, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                    
+                                    Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war");
+                                    log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                                    log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
+                                    log.AddToFillers(dislikeLog.fillers);
+                                    log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(dislikeLog), LOG_IDENTIFIER.APPEND);
+                                    log.AddLogToInvolvedObjects();    
+                                }
                             } else if (interruptHolder.actor.relationshipContainer.IsFriendsWith(otherFactionLeader)) {
                                 //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
-                                factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
+                                if (factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly)) {
+                                    Log likeLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "like_leader");
+                                    likeLog.AddToFillers(faction.leader, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                    likeLog.AddToFillers(otherFaction.leader, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                    
+                                    Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_peace");
+                                    log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                                    log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
+                                    log.AddToFillers(likeLog.fillers);
+                                    log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(likeLog), LOG_IDENTIFIER.APPEND);
+                                    log.AddLogToInvolvedObjects();
+                                }
                             } else {
                                 //The rest should be set as neutral
                                 factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
@@ -88,9 +110,9 @@ namespace Interrupts {
                 changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
                 changeIdeologyLog.AddLogToInvolvedObjects();
 
-                Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
-                changeRelationsLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
-                changeRelationsLog.AddLogToInvolvedObjects();
+                // Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
+                // changeRelationsLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
+                // changeRelationsLog.AddLogToInvolvedObjects();
                 
                 //check if faction characters still meets ideology requirements
                 List<Character> charactersToCheck = new List<Character>(faction.characters);
