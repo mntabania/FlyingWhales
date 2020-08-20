@@ -154,7 +154,9 @@ public class Butcher : GoapAction {
         if (targetCharacter != null) {
             if (!witness.traitContainer.HasTrait("Cannibal") &&
                 (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
-                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.HEINOUS);
+                //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Heinous);
+                CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status, node);
             
@@ -212,6 +214,16 @@ public class Butcher : GoapAction {
             }
         }
         return REACTABLE_EFFECT.Positive;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if (target is Character targetCharacter) {
+            if ((actor.race == RACE.HUMANS || actor.race == RACE.ELVES) && (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
+                return CRIME_TYPE.Cannibalism;
+            } else if((actor.race == RACE.HUMANS || actor.race == RACE.ELVES) && (targetCharacter is Animal || targetCharacter.race == RACE.WOLF || targetCharacter.race == RACE.SPIDER || targetCharacter.race == RACE.KOBOLD)) {
+                return CRIME_TYPE.Animal_Killing;
+            }
+        }
+        return base.GetCrimeType(actor, target, crime);
     }
     #endregion
 

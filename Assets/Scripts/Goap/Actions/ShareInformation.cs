@@ -30,6 +30,14 @@ public class ShareInformation : GoapAction {
         base.AddFillersToLog(log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
+
+        if (node.disguisedActor != null) {
+            actor = node.disguisedActor;
+        }
+        if (node.disguisedTarget != null) {
+            poiTarget = node.disguisedTarget;
+        }
+
         object[] otherData = node.otherData;
         if (otherData.Length == 1 && otherData[0] is IReactable) {
             IReactable reactable = otherData[0] as IReactable;
@@ -51,12 +59,13 @@ public class ShareInformation : GoapAction {
             } else {
                 articleWord = UtilityScripts.Utilities.GetArticleForWord(reactable.classificationName);
             }
-            if(information == string.Empty) {
+            string actionDescription = articleWord + " " + reactable.classificationName.ToLower();
+            if (information == string.Empty) {
                 information = UtilityScripts.Utilities.LogReplacer(reactable.informationLog);
             }
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.OTHER);
             log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
-            log.AddToFillers(null, articleWord + " " + reactable.classificationName.ToLower(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
+            log.AddToFillers(null, actionDescription, LOG_IDENTIFIER.ACTION_DESCRIPTION);
             log.AddToFillers(null, information, LOG_IDENTIFIER.STRING_1);
             //log.AddToFillers(reactable.informationLog.fillers);
         }
@@ -103,7 +112,8 @@ public class ShareInformation : GoapAction {
                     }
                 }
             }
-            CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.INFRACTION);
+            //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Infraction);
+            CrimeManager.Instance.ReactToCrime(witness, actor, poiTarget, poiTarget.factionOwner, node.crimeType, node, status);
         } else {
             if (witness == reactable.actor) {
                 if (reactable is ActualGoapNode) {
@@ -135,6 +145,9 @@ public class ShareInformation : GoapAction {
         }
         return REACTABLE_EFFECT.Neutral;
     }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        return CRIME_TYPE.Rumormongering;
+    }
     #endregion
 
     #region State Effects
@@ -146,8 +159,17 @@ public class ShareInformation : GoapAction {
         ProcessInformation(sharer, recipient, reactable, goapNode);
     }
     private void ProcessInformation(Character sharer, Character recipient, IReactable reactable, ActualGoapNode shareActionItself) {
-        if (reactable.actor != recipient) {
-            string weightLog = "Share Information of " + sharer.name + " to " + recipient.name + ": " + reactable.name + " with actor " + reactable.actor.name + " and target " + reactable.target.name;
+        Character actor = reactable.actor;
+        IPointOfInterest target = reactable.target;
+        if (reactable.disguisedActor != null) {
+            actor = reactable.disguisedActor;
+        }
+        if (reactable.disguisedTarget != null) {
+            target = reactable.disguisedTarget;
+        }
+
+        if (actor != recipient) {
+            string weightLog = "Share Information of " + sharer.name + " to " + recipient.name + ": " + reactable.name + " with actor " + actor.name + " and target " + target.name;
             weightLog += "\nBase Belief Weight: 50";
             weightLog += "\nBase Disbelief Weight: 50";
 
@@ -155,7 +177,7 @@ public class ShareInformation : GoapAction {
             int beliefWeight = 50;
             int disbeliefWeight = 50;
             string opinionLabelOfRecipientToSharer = recipient.relationshipContainer.GetOpinionLabel(sharer);
-            string opinionLabelOfRecipientToActor = recipient.relationshipContainer.GetOpinionLabel(reactable.actor);
+            string opinionLabelOfRecipientToActor = recipient.relationshipContainer.GetOpinionLabel(actor);
 
             if (sharer.traitContainer.HasTrait("Persuasive")) {
                 beliefWeight += 500;
@@ -225,7 +247,7 @@ public class ShareInformation : GoapAction {
                 //Recipient does not believe
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, reactable as ActualGoapNode);
                 if (UnityEngine.Random.Range(0, 100) < 35) {
-                    recipient.jobComponent.CreateConfirmRumorJob(reactable.actor, shareActionItself);
+                    recipient.jobComponent.CreateConfirmRumorJob(actor, shareActionItself);
                 }
             }
             Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);

@@ -846,4 +846,10 @@ public class Faction : IJobOwner {
         return false;
     }
     #endregion
+
+    #region Crime
+    public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+        return factionType.GetCrimeSeverity(witness, actor, target, crimeType, crime);
+    }
+    #endregion
 }

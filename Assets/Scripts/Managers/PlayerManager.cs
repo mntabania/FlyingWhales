@@ -312,19 +312,19 @@ public class PlayerManager : MonoBehaviour {
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
         if (character.isNormalCharacter) {
             CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
-            if (crimeType != CRIME_SEVERITY.NONE) {
+            if (crimeType != CRIME_SEVERITY.None) {
                 int orbsToCreate;
                 switch (crimeType) {
-                    case CRIME_SEVERITY.INFRACTION:
+                    case CRIME_SEVERITY.Infraction:
                         orbsToCreate = 2;
                         break;
-                    case CRIME_SEVERITY.MISDEMEANOR:
+                    case CRIME_SEVERITY.Misdemeanor:
                         orbsToCreate = 2;
                         break;
-                    case CRIME_SEVERITY.SERIOUS:
+                    case CRIME_SEVERITY.Serious:
                         orbsToCreate = 3;
                         break;
-                    case CRIME_SEVERITY.HEINOUS:
+                    case CRIME_SEVERITY.Heinous:
                         orbsToCreate = 3;
                         break;
                     default:

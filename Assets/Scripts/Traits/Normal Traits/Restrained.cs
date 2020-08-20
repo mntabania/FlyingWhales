@@ -7,7 +7,7 @@ namespace Traits {
         private Character owner;
         //private bool _createdFeedJob;
 
-        public bool isPrisoner { get; private set; }
+        //public bool isPrisoner { get; private set; }
         //public bool isCriminal { get; private set; }
         //public bool isLeader { get; private set; }
 
@@ -125,16 +125,15 @@ namespace Traits {
         //         owner.currentNpcSettlement.AddToAvailableJobs(job);
         //     }
         // }
-        public void SetIsPrisoner(bool state) {
-            if(isPrisoner != state) {
-                isPrisoner = state;
-                if (isPrisoner) {
-                    // CreateJudgementJob();
-                    Criminal criminalTrait = owner.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                    criminalTrait?.crimeData.SetCrimeStatus(CRIME_STATUS.Imprisoned);
-                }
-            }
-        }
+        //public void SetIsPrisoner(bool state) {
+        //    if(isPrisoner != state) {
+        //        isPrisoner = state;
+        //        if (isPrisoner) {
+        //            // CreateJudgementJob();
+
+        //        }
+        //    }
+        //}
     }
 
 }

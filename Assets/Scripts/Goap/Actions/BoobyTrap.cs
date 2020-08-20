@@ -73,7 +73,8 @@ public class BoobyTrap : GoapAction {
                 }
             }
         }
-        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
+        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
         return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
@@ -93,6 +94,9 @@ public class BoobyTrap : GoapAction {
         base.OnStoppedInterrupt(node);
         //Remove added booby trapped action
         node.poiTarget.traitContainer.RemoveTrait(node.poiTarget, "Booby Trapped");
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        return CRIME_TYPE.Assault;
     }
     #endregion
 

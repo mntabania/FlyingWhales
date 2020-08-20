@@ -1,37 +1,141 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using Interrupts;
+using Crime_System;
+using UtilityScripts;
 
 public class CrimeManager : MonoBehaviour {
     public static CrimeManager Instance;
 
-	// Use this for initialization
-	void Awake () {
+    private Dictionary<CRIME_SEVERITY, CrimeSeverity> _crimeSeverities;
+    private Dictionary<CRIME_TYPE, CrimeType> _crimeTypes;
+
+    // Use this for initialization
+    void Awake () {
         Instance = this;
 	}
 
-    #region Character
-    public void MakeCharacterACriminal(Character character, IPointOfInterest target, CRIME_SEVERITY crimeType,
-        ICrimeable committedCrime) {
-        if (character.traitContainer.HasTrait("Criminal")) {
-            //Criminal criminalTrait = character.traitContainer.GetNormalTrait<Criminal>("Criminal");
-            //criminalTrait.SetCrime(crimeType, committedCrime, target);
-        } else {
-            Criminal criminalTrait = new Criminal();
-            character.traitContainer.AddTrait(character, criminalTrait);
-            criminalTrait.SetCrime(crimeType, committedCrime, target);
+    #region General
+    public void Initialize() {
+        ConstructCrimeSeverities();
+        ConstructCrimeTypes();
+    }
+    private void ConstructCrimeSeverities() {
+        _crimeSeverities = new Dictionary<CRIME_SEVERITY, CrimeSeverity>();
+        CRIME_SEVERITY[] enumValues = CollectionUtilities.GetEnumValues<CRIME_SEVERITY>();
+        for (int i = 0; i < enumValues.Length; i++) {
+            CRIME_SEVERITY severity = enumValues[i];
+            var typeName = $"Crime_System.{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(severity.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            Type type = Type.GetType(typeName);
+            if (type != null) {
+                CrimeSeverity data = Activator.CreateInstance(type) as CrimeSeverity;
+                _crimeSeverities.Add(severity, data);
+            } else {
+                Debug.LogWarning($"Crime Severity {typeName} has no data!");
+            }
+        }
+    }
+    private void ConstructCrimeTypes() {
+        _crimeTypes = new Dictionary<CRIME_TYPE, CrimeType>();
+        CRIME_TYPE[] enumValues = CollectionUtilities.GetEnumValues<CRIME_TYPE>();
+        for (int i = 0; i < enumValues.Length; i++) {
+            CRIME_TYPE crimeType = enumValues[i];
+            var typeName = $"Crime_System.{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(crimeType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            Type type = Type.GetType(typeName);
+            if (type != null) {
+                CrimeType data = Activator.CreateInstance(type) as CrimeType;
+                _crimeTypes.Add(crimeType, data);
+            } else {
+                Debug.LogWarning($"Crime Type {typeName} has no data!");
+            }
+        }
+    }
+    private bool ShouldCreateCrimeStatus(CRIME_SEVERITY severity) {
+        if(severity == CRIME_SEVERITY.Infraction || severity == CRIME_SEVERITY.None || severity == CRIME_SEVERITY.Unapplicable) {
+            return false;
+        }
+        return true;
+    }
+    #endregion
 
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_criminal");
-            addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            addLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(criminalTrait.crimeData.strCrimeType), LOG_IDENTIFIER.STRING_1);
-            addLog.AddToFillers(null, criminalTrait.crimeData.strCrimeType, LOG_IDENTIFIER.STRING_2);
+    #region Character
+    public void MakeCharacterACriminal(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character witness, Character criminal, IPointOfInterest target, Faction targetFaction, REACTION_STATUS reactionStatus, Criminal criminalTrait) {
+        if(criminalTrait == null) {
+            Trait trait = null;
+            criminal.traitContainer.AddTrait(criminal, "Criminal", out trait);
+            if(trait != null) {
+                criminalTrait = trait as Criminal;
+            }
+        }
+        CrimeData existingCrimeData = criminalTrait.GetCrimeDataOf(crime);
+        if (existingCrimeData == null) {
+            existingCrimeData = criminalTrait.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
+
+            CrimeType crimeTypeObj = GetCrimeType(crimeType);
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal");
+            addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(crimeTypeObj.name), LOG_IDENTIFIER.STRING_1);
+            addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
             addLog.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotificationFrom(character, addLog);
+            PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
         }
 
+
+        if (!existingCrimeData.HasWitness(witness)) {
+            existingCrimeData.AddWitness(witness);
+
+            bool willDecideWantedOrNot = false;
+            if (witness.isNormalCharacter && witness.faction != null && witness.faction.isMajorNonPlayer) {
+                if(witness.isFactionLeader || witness.isSettlementRuler) {
+                    if (!existingCrimeData.IsWantedBy(witness.faction)) {
+                        //Decide whether to switch to wanted by the faction or not
+                        willDecideWantedOrNot = true;
+                        WantedOrNotDecisionMaking(witness, criminal, witness.faction, existingCrimeData);
+                    }
+                }
+            }
+            if (!willDecideWantedOrNot) {
+                //TODO: Report Crime
+                witness.jobComponent.CreateReportCrimeJob(witness, existingCrimeData, crime);
+            }
+        }
+    }
+    //Returns true if wanted, false if not
+    public bool WantedOrNotDecisionMaking(Character authority, Character criminal, Faction authorityFaction, CrimeData crimeData) {
+        string opinionLabel = authority.relationshipContainer.GetOpinionLabel(criminal);
+        string key = string.Empty;
+        if(opinionLabel == RelationshipManager.Close_Friend) {
+            key = "not_wanted";
+        } else if ((authority.relationshipContainer.IsFamilyMember(criminal) || authority.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+            && opinionLabel != RelationshipManager.Rival) {
+            key = "wanted";
+        } else if (opinionLabel == RelationshipManager.Friend) {
+            if(UnityEngine.Random.Range(0, 100) < authority.relationshipContainer.GetTotalOpinion(criminal)) {
+                key = "not_wanted";
+            } else {
+                key = "wanted";
+            }
+        } else {
+            key = "wanted";
+        }
+
+        if(key == "wanted") {
+            crimeData.AddFactionThatConsidersWanted(authorityFaction);
+        }
+
+        if (key != string.Empty) {
+            CrimeType crimeTypeObj = GetCrimeType(crimeData.crimeType);
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", key);
+            addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
+            addLog.AddLogToInvolvedObjects();
+        }
+        return key == "wanted";
     }
     public CRIME_SEVERITY GetCrimeTypeConsideringAction(ActualGoapNode consideredAction) {
         Character actor = consideredAction.actor;
@@ -42,7 +146,7 @@ public class CrimeManager : MonoBehaviour {
                 Character targetCharacter = target as Character;
                 int loverID = actor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER);
                 if (loverID != -1 && loverID != targetCharacter.id) {
-                    return CRIME_SEVERITY.INFRACTION;
+                    return CRIME_SEVERITY.Infraction;
                 }
             }
         } else if (consideredAction.associatedJobType == JOB_TYPE.DESTROY) {
@@ -50,21 +154,21 @@ public class CrimeManager : MonoBehaviour {
                 if (tileObject.characterOwner != null && 
                     !tileObject.IsOwnedBy(consideredAction.actor)) {
                     //only consider destroy job as infraction if target object is owned by someone else
-                    return CRIME_SEVERITY.INFRACTION;    
+                    return CRIME_SEVERITY.Infraction;    
                 } else {
-                    return CRIME_SEVERITY.NONE;
+                    return CRIME_SEVERITY.None;
                 }
             }
-            return CRIME_SEVERITY.INFRACTION;
+            return CRIME_SEVERITY.Infraction;
         } else if (consideredAction.associatedJobType == JOB_TYPE.SPREAD_RUMOR) {
-            return CRIME_SEVERITY.INFRACTION;
+            return CRIME_SEVERITY.Infraction;
         } else if (actionType == INTERACTION_TYPE.STEAL
             || actionType == INTERACTION_TYPE.POISON) {
-            return CRIME_SEVERITY.MISDEMEANOR;
+            return CRIME_SEVERITY.Misdemeanor;
         } else if (actionType == INTERACTION_TYPE.PICK_UP) {
             if(consideredAction.poiTarget is TileObject targetTileObject) {
                 if(targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(consideredAction.actor)) {
-                    return CRIME_SEVERITY.MISDEMEANOR;
+                    return CRIME_SEVERITY.Misdemeanor;
                 }
             }
         } else if (actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
@@ -72,7 +176,7 @@ public class CrimeManager : MonoBehaviour {
             if(consideredAction.associatedJobType != JOB_TYPE.APPREHEND) {
                 if (target is Character targetCharacter && targetCharacter.isNormalCharacter) {
                     if (!actor.IsHostileWith(targetCharacter)) {
-                        return CRIME_SEVERITY.MISDEMEANOR;
+                        return CRIME_SEVERITY.Misdemeanor;
                     }
                 } else if (target is TileObject targetTileObject && !targetTileObject.IsOwnedBy(actor)) {
                     //added checking for gridTileLocation because targetTileObject could've been destroyed already. 
@@ -80,27 +184,27 @@ public class CrimeManager : MonoBehaviour {
                     if(structureLocation != null) {
                         if (structureLocation.settlementLocation != null
                         && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.SETTLEMENT)) {
-                            return CRIME_SEVERITY.MISDEMEANOR;
+                            return CRIME_SEVERITY.Misdemeanor;
                         }
                     }
                 }
             }
         } else if ((actionType == INTERACTION_TYPE.STRANGLE && actor != target)
          || actionType == INTERACTION_TYPE.RITUAL_KILLING || actionType == INTERACTION_TYPE.MURDER) {
-            return CRIME_SEVERITY.SERIOUS;
+            return CRIME_SEVERITY.Serious;
         } else if (actionType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM
             || actionType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM
             || actionType == INTERACTION_TYPE.DRINK_BLOOD) {
-            return CRIME_SEVERITY.HEINOUS;
+            return CRIME_SEVERITY.Heinous;
         }
-        return CRIME_SEVERITY.NONE;
+        return CRIME_SEVERITY.None;
     }
     public CRIME_SEVERITY GetCrimeTypeConsideringInterrupt(Character considerer, Character actor, Interrupt interrupt) {
         if (interrupt.type == INTERRUPT.Transform_To_Wolf
             || interrupt.type == INTERRUPT.Revert_To_Normal) {
-            return CRIME_SEVERITY.HEINOUS;
+            return CRIME_SEVERITY.Heinous;
         }
-        return CRIME_SEVERITY.NONE;
+        return CRIME_SEVERITY.None;
     }
     #endregion
 
@@ -109,116 +213,201 @@ public class CrimeManager : MonoBehaviour {
     //    committedCrime.SetAsCrime(crimeType);
     //    Messenger.Broadcast(Signals.ON_COMMIT_CRIME, committedCrime, crimeJob);
     //}
-    public void ReactToCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType, CRIME_SEVERITY crimeType) {
-        switch (crimeType) {
-            case CRIME_SEVERITY.INFRACTION:
-                ReactToInfraction(reactor, crimeCommitter, committedCrime, crimeJobType);
-                break;
-            case CRIME_SEVERITY.MISDEMEANOR:
-                ReactToMisdemeanor(reactor, crimeCommitter, committedCrime, crimeJobType);
-                break;
-            case CRIME_SEVERITY.SERIOUS:
-                ReactToSeriousCrime(reactor, crimeCommitter, committedCrime, crimeJobType);
-                break;
-            case CRIME_SEVERITY.HEINOUS:
-                ReactToHeinousCrime(reactor, crimeCommitter, committedCrime, crimeJobType);
-                break;
+    public void ReactToCrime(Character witness, Character actor, IPointOfInterest target, Faction targetFaction, CRIME_TYPE crimeType, ICrimeable crime, REACTION_STATUS reactionStatus) {
+        if(witness == actor) {
+            //Will not react if witness is the actor
+            return;
+        }
+        if (crimeType != CRIME_TYPE.Unset) {
+            if(crimeType != CRIME_TYPE.None) {
+                bool hasAlreadyReacted = false;
+                Criminal existingCriminalTrait = null; 
+                if (actor.traitContainer.HasTrait("Criminal")) {
+                    existingCriminalTrait = actor.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    hasAlreadyReacted = existingCriminalTrait.IsCrimeAlreadyWitnessedBy(witness, crime);
+                }
+                if (hasAlreadyReacted) {
+                    //Will only react to crime once
+                    return;
+                }
+
+                CrimeType crimeTypeObj = GetCrimeType(crimeType);
+
+                CRIME_SEVERITY factionCrimeSeverity = CRIME_SEVERITY.Unapplicable;
+                if (witness.faction != null) {
+                    factionCrimeSeverity = witness.faction.GetCrimeSeverity(witness, actor, target, crimeType, crime);
+                }
+                CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target, crime);
+
+                //Check if personal decision on crime severity takes precendence over faction's decision
+                //Default is YES
+                CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
+                if(witnessCrimeSeverity == CRIME_SEVERITY.Unapplicable) {
+                    finalCrimeSeverity = factionCrimeSeverity;
+                }
+
+                if(finalCrimeSeverity != CRIME_SEVERITY.None && finalCrimeSeverity != CRIME_SEVERITY.Unapplicable) {
+                    CrimeSeverity crimeSeverityObj = GetCrimeSeverity(finalCrimeSeverity);
+                    string emotions = crimeSeverityObj.EffectAndReaction(witness, actor, target, crimeTypeObj, crime, reactionStatus);
+                    if (emotions != string.Empty) {
+                        if (!CharacterManager.Instance.EmotionsChecker(emotions)) {
+                            string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
+                            error += $"\n-Witness: {witness}";
+                            error += $"\n-Action: {crime.name}";
+                            error += $"\n-Actor: {actor.name}";
+                            error += $"\n-Target: {target.nameWithID}";
+                            witness.logComponent.PrintLogErrorIfActive(error);
+                        } else {
+                            //add log of emotions felt
+                            Log log = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower());
+                            log.AddToFillers(witness, witness.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotions, 2), LOG_IDENTIFIER.STRING_1);
+                            log.AddLogToInvolvedObjects();
+                        }
+                    }
+
+
+                    if (ShouldCreateCrimeStatus(finalCrimeSeverity)) {
+                        MakeCharacterACriminal(crimeType, finalCrimeSeverity, crime, witness, actor, target, targetFaction, reactionStatus, existingCriminalTrait);
+                    }
+                }
+            }
         }
     }
-    public void ReactToCrime(Character reactor, Character actor, Interrupt interrupt, CRIME_SEVERITY crimeType) {
-        switch (crimeType) {
-            //case CRIME_TYPE.INFRACTION:
-            //    ReactToInfraction(reactor, committedCrime, crimeJobType);
-            //    break;
-            //case CRIME_TYPE.MISDEMEANOR:
-            //    ReactToMisdemeanor(reactor, committedCrime, crimeJobType);
-            //    break;
-            //case CRIME_TYPE.SERIOUS:
-            //    ReactToSeriousCrime(reactor, committedCrime, crimeJobType);
-            //    break;
-            case CRIME_SEVERITY.HEINOUS:
-                ReactToHeinousCrime(reactor, actor, interrupt);
-                break;
+
+    //public void ReactToCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType, CRIME_SEVERITY crimeType) {
+    //    switch (crimeType) {
+    //        case CRIME_SEVERITY.Infraction:
+    //            ReactToInfraction(reactor, crimeCommitter, committedCrime, crimeJobType);
+    //            break;
+    //        case CRIME_SEVERITY.Misdemeanor:
+    //            ReactToMisdemeanor(reactor, crimeCommitter, committedCrime, crimeJobType);
+    //            break;
+    //        case CRIME_SEVERITY.Serious:
+    //            ReactToSeriousCrime(reactor, crimeCommitter, committedCrime, crimeJobType);
+    //            break;
+    //        case CRIME_SEVERITY.Heinous:
+    //            ReactToHeinousCrime(reactor, crimeCommitter, committedCrime, crimeJobType);
+    //            break;
+    //    }
+    //}
+    //public void ReactToCrime(Character reactor, Character actor, Interrupt interrupt, CRIME_SEVERITY crimeType) {
+    //    switch (crimeType) {
+    //        //case CRIME_TYPE.INFRACTION:
+    //        //    ReactToInfraction(reactor, committedCrime, crimeJobType);
+    //        //    break;
+    //        //case CRIME_TYPE.MISDEMEANOR:
+    //        //    ReactToMisdemeanor(reactor, committedCrime, crimeJobType);
+    //        //    break;
+    //        //case CRIME_TYPE.SERIOUS:
+    //        //    ReactToSeriousCrime(reactor, committedCrime, crimeJobType);
+    //        //    break;
+    //        case CRIME_SEVERITY.Heinous:
+    //            ReactToHeinousCrime(reactor, actor, interrupt);
+    //            break;
+    //    }
+    //}
+    //private void ReactToInfraction(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
+    //    string lastStrawReason = string.Empty;
+    //    if(committedCrime.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+    //        lastStrawReason = "is unfaithful";
+    //    } else if (crimeJobType == JOB_TYPE.DESTROY) {
+    //        lastStrawReason = "has destructive behaviour";
+    //    } else if (crimeJobType == JOB_TYPE.SPREAD_RUMOR) {
+    //        lastStrawReason = "is a rumormonger";
+    //    }
+    //    reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Infraction", -5, lastStrawReason);
+    //}
+    //private void ReactToMisdemeanor(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
+    //    string lastStrawReason = string.Empty;
+    //    if (committedCrime.action.goapType == INTERACTION_TYPE.STEAL) {
+    //        lastStrawReason = "stole something";
+    //    } else if (committedCrime.action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER || committedCrime.action.goapType == INTERACTION_TYPE.ASSAULT) {
+    //        lastStrawReason = "attacked someone";
+    //    } else if (committedCrime.action.goapType == INTERACTION_TYPE.POISON) {
+    //        lastStrawReason = "attacked someone";
+    //    } else if (committedCrime.action.goapType == INTERACTION_TYPE.BOOBY_TRAP) {
+    //        lastStrawReason = "got caught";
+    //    }
+    //    reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Misdemeanor", -10, lastStrawReason);
+    //    MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_SEVERITY.Misdemeanor, committedCrime);
+    //}
+    //private void ReactToSeriousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
+    //    string lastStrawReason = string.Empty;
+    //    if (committedCrime.action.goapType == INTERACTION_TYPE.STRANGLE) {
+    //        lastStrawReason = "murdered someone";
+    //    } else if (committedCrime.action.goapType == INTERACTION_TYPE.RITUAL_KILLING) {
+    //        lastStrawReason = "is a Psychopath killer";
+    //    }
+    //    reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Serious Crime", -20);
+    //    MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_SEVERITY.Serious, committedCrime);
+    //}
+    //private void ReactToHeinousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
+    //    string lastStrawReason = string.Empty;
+    //    if (committedCrime.action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || committedCrime.action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) {
+    //        lastStrawReason = "is a werewolf";
+    //    } else if (committedCrime.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+    //        lastStrawReason = "is a vampire";
+    //    }
+    //    reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Heinous Crime", -40);
+    //    MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_SEVERITY.Heinous, committedCrime.action);
+    //}
+    //private void ReactToHeinousCrime(Character reactor, Character actor, Interrupt interrupt) {
+    //    string lastStrawReason = string.Empty;
+    //    if (interrupt.type == INTERRUPT.Transform_To_Wolf || interrupt.type == INTERRUPT.Revert_To_Normal) {
+    //        lastStrawReason = "is a werewolf";
+    //    }
+    //    reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -40);
+    //    MakeCharacterACriminal(actor, null, CRIME_SEVERITY.Heinous, interrupt);
+    //}
+    #endregion
+
+    #region Crime Severity
+    public CrimeSeverity GetCrimeSeverity(CRIME_SEVERITY severityType) {
+        if (_crimeSeverities.ContainsKey(severityType)) {
+            return _crimeSeverities[severityType];
         }
+        return null;
     }
-    private void ReactToInfraction(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
-        string lastStrawReason = string.Empty;
-        if(committedCrime.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            lastStrawReason = "is unfaithful";
-        } else if (crimeJobType == JOB_TYPE.DESTROY) {
-            lastStrawReason = "has destructive behaviour";
-        } else if (crimeJobType == JOB_TYPE.SPREAD_RUMOR) {
-            lastStrawReason = "is a rumormonger";
+    public CrimeType GetCrimeType(CRIME_TYPE crimeType) {
+        if (_crimeTypes.ContainsKey(crimeType)) {
+            return _crimeTypes[crimeType];
         }
-        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Infraction", -5, lastStrawReason);
-    }
-    private void ReactToMisdemeanor(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
-        string lastStrawReason = string.Empty;
-        if (committedCrime.action.goapType == INTERACTION_TYPE.STEAL) {
-            lastStrawReason = "stole something";
-        } else if (committedCrime.action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER || committedCrime.action.goapType == INTERACTION_TYPE.ASSAULT) {
-            lastStrawReason = "attacked someone";
-        } else if (committedCrime.action.goapType == INTERACTION_TYPE.POISON) {
-            lastStrawReason = "attacked someone";
-        } else if (committedCrime.action.goapType == INTERACTION_TYPE.BOOBY_TRAP) {
-            lastStrawReason = "got caught";
-        }
-        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Misdemeanor", -10, lastStrawReason);
-        MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_SEVERITY.MISDEMEANOR, committedCrime.action);
-    }
-    private void ReactToSeriousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
-        string lastStrawReason = string.Empty;
-        if (committedCrime.action.goapType == INTERACTION_TYPE.STRANGLE) {
-            lastStrawReason = "murdered someone";
-        } else if (committedCrime.action.goapType == INTERACTION_TYPE.RITUAL_KILLING) {
-            lastStrawReason = "is a Psychopath killer";
-        }
-        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Serious Crime", -20);
-        MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_SEVERITY.SERIOUS, committedCrime.action);
-    }
-    private void ReactToHeinousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
-        string lastStrawReason = string.Empty;
-        if (committedCrime.action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || committedCrime.action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) {
-            lastStrawReason = "is a werewolf";
-        } else if (committedCrime.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-            lastStrawReason = "is a vampire";
-        }
-        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Heinous Crime", -40);
-        MakeCharacterACriminal(crimeCommitter, committedCrime.target, CRIME_SEVERITY.HEINOUS, committedCrime.action);
-    }
-    private void ReactToHeinousCrime(Character reactor, Character actor, Interrupt interrupt) {
-        string lastStrawReason = string.Empty;
-        if (interrupt.type == INTERRUPT.Transform_To_Wolf || interrupt.type == INTERRUPT.Revert_To_Normal) {
-            lastStrawReason = "is a werewolf";
-        }
-        reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -40);
-        MakeCharacterACriminal(actor, null, CRIME_SEVERITY.HEINOUS, interrupt);
+        return null;
     }
     #endregion
 }
 
 public class CrimeData {
-    public CRIME_SEVERITY crimeType { get; }
+    public CRIME_SEVERITY crimeSeverity { get; }
+    public CRIME_TYPE crimeType { get; }
     public CRIME_STATUS crimeStatus { get; private set; }
     public ICrimeable crime { get; }
-    public string strCrimeType { get; }
 
     public Character criminal { get; }
+    public Criminal criminalTrait { get; private set; }
     public IPointOfInterest target { get; }
     public Faction targetFaction { get; }
     public Character judge { get; private set; }
     public List<Character> witnesses { get; }
+    public List<Faction> factionsThatConsidersWanted { get; }
+    //public List<Character> authoritiesAlreadyDecided { get; }
 
-    public CrimeData(CRIME_SEVERITY crimeType, ICrimeable crime, Character criminal, IPointOfInterest target) {
+    #region getters
+    public bool isReported => criminalTrait.isImprisoned || crimeStatus != CRIME_STATUS.Unpunished;
+    #endregion
+
+    public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         this.crimeType = crimeType;
+        this.crimeSeverity = crimeSeverity;
         this.crime = crime;
         this.criminal = criminal;
         this.target = target;
-        strCrimeType = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(this.crimeType.ToString());
-        if(crimeType == CRIME_SEVERITY.SERIOUS || crimeType == CRIME_SEVERITY.HEINOUS) {
-            strCrimeType += " Crime";
-        }
+        this.targetFaction = targetFaction;
         witnesses = new List<Character>();
+        factionsThatConsidersWanted = new List<Faction>();
+        //authoritiesAlreadyDecided = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
     }
 
@@ -226,10 +415,10 @@ public class CrimeData {
     public void SetCrimeStatus(CRIME_STATUS status) {
         if(crimeStatus != status) {
             crimeStatus = status;
-            if(crimeStatus == CRIME_STATUS.Unpunished || crimeStatus == CRIME_STATUS.Imprisoned) {
-                criminal.SetHaUnresolvedCrime(true);
+            if(crimeStatus == CRIME_STATUS.Unpunished) {
+                criminal.SetHasUnresolvedCrime(true);
             } else {
-                criminal.SetHaUnresolvedCrime(false);
+                criminal.SetHasUnresolvedCrime(false);
             }
             //if(crimeStatus == CRIME_STATUS.Imprisoned) {
             //    CreateJudgementJob();
@@ -239,23 +428,54 @@ public class CrimeData {
     public void SetJudge(Character character) {
         judge = character;
     }
-    #endregion
-
-    #region Witnesses
-    public void AddWitness(Character character) {
-        if (!witnesses.Contains(character)) {
-            witnesses.Add(character);
-        }
+    public void SetCriminalTrait(Criminal criminalTrait) {
+        this.criminalTrait = criminalTrait;
     }
     #endregion
 
-    //#region Prisoner
-    //private void CreateJudgementJob() {
-    //    if (!criminal.HasJobTargetingThis(JOB_TYPE.JUDGEMENT)) {
-    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, criminal, criminal.currentNpcSettlement);
-    //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-    //        criminal.currentNpcSettlement.AddToAvailableJobs(job);
-    //    }
+    #region Witnesses
+    public bool HasWitness(Character character) {
+        return witnesses.Contains(character);
+    }
+    public void AddWitness(Character character) {
+        witnesses.Add(character);
+        character.crimeComponent.AddWitnessedCrime(this);
+    }
+    #endregion
+
+    #region Faction
+    public void AddFactionThatConsidersWanted(Faction faction) {
+        if (!factionsThatConsidersWanted.Contains(faction)) {
+            factionsThatConsidersWanted.Add(faction);
+
+            if (criminal.isSettlementRuler) {
+                if(criminal.ruledSettlement.owner == faction) {
+                    criminal.ruledSettlement.SetRuler(null);
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler");
+                    log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                }
+            }
+
+            if (faction.leader == criminal) {
+                faction.SetLeader(null);
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader");
+                log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+            }
+        }
+    }
+    public bool IsWantedBy(Faction faction) {
+        return factionsThatConsidersWanted.Contains(faction);
+    }
+    public bool HasWanted() {
+        return factionsThatConsidersWanted.Count > 0;
+    }
+    #endregion
+
+    //#region Authority
+    //public void AddAuthorityAlreadyDecided(Character character) {
+    //    authoritiesAlreadyDecided.Add(character);
     //}
     //#endregion
 }

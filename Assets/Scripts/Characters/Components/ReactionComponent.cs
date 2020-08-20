@@ -1309,38 +1309,39 @@ public class ReactionComponent {
                 }
             }
             //Check for crime
-            if ((reactor.faction != null && reactor.faction == attacker.faction) || (reactor.homeSettlement != null && reactor.homeSettlement == attacker.homeSettlement)) {
-                log += "\n-Reactor is the same faction/home settlement as Attacker";
-                log += "\n-Reactor is checking for crime";
-                CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(characterHit);
-                if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
-                    ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
-                    CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
-                    log += "\n-Crime committed is: " + crimeType.ToString();
-                    if (crimeType != CRIME_SEVERITY.NONE) {
-                        log += "\n-Reactor will react to crime";
-                        CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
-                    }
-                }
-            }
+            //if ((reactor.faction != null && reactor.faction == attacker.faction) || (reactor.homeSettlement != null && reactor.homeSettlement == attacker.homeSettlement)) {
+            //    log += "\n-Reactor is the same faction/home settlement as Attacker";
+            //    log += "\n-Reactor is checking for crime";
+            //    CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(characterHit);
+            //    if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
+            //        ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
+            //        CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+            //        log += "\n-Crime committed is: " + crimeType.ToString();
+            //        if (crimeType != CRIME_SEVERITY.NONE) {
+            //            log += "\n-Reactor will react to crime";
+            //            CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
+            //        }
+            //    }
+            //}
 
-        } else if (poiHit is TileObject objectHit) {
-            if(!objectHit.IsOwnedBy(attacker)) {
-                //CrimeManager.Instance.ReactToCrime()
-                log += "\n-Object Hit is not owned by the Attacker";
-                log += "\n-Reactor is checking for crime";
-                CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(objectHit);
-                if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
-                    ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
-                    CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
-                    log += "\n-Crime committed is: " + crimeType.ToString();
-                    if (crimeType != CRIME_SEVERITY.NONE) {
-                        log += "\n-Reactor will react to crime";
-                        CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
-                    }
-                }
-            }
-        }
+        } 
+        //else if (poiHit is TileObject objectHit) {
+        //    if(!objectHit.IsOwnedBy(attacker)) {
+        //        //CrimeManager.Instance.ReactToCrime()
+        //        log += "\n-Object Hit is not owned by the Attacker";
+        //        log += "\n-Reactor is checking for crime";
+        //        CombatData combatDataAgainstPOIHit = attacker.combatComponent.GetCombatData(objectHit);
+        //        if (combatDataAgainstPOIHit != null && combatDataAgainstPOIHit.connectedAction != null) {
+        //            ActualGoapNode possibleCrimeAction = combatDataAgainstPOIHit.connectedAction;
+        //            CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(possibleCrimeAction);
+        //            log += "\n-Crime committed is: " + crimeType.ToString();
+        //            if (crimeType != CRIME_SEVERITY.NONE) {
+        //                log += "\n-Reactor will react to crime";
+        //                CrimeManager.Instance.ReactToCrime(reactor, attacker, possibleCrimeAction, possibleCrimeAction.associatedJobType, crimeType);
+        //            }
+        //        }
+        //    }
+        //}
 
         reactor.logComponent.PrintLogIfActive(log);
     }

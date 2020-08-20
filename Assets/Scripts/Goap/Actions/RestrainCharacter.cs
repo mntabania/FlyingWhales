@@ -60,7 +60,8 @@ public class RestrainCharacter : GoapAction {
                 }
             } else {
                 if (!witness.relationshipContainer.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
-                    CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
+                    //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
+                    CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                     if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                         if (!witness.traitContainer.HasTrait("Psychopath")) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);    

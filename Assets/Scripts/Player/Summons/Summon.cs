@@ -196,7 +196,7 @@ public class Summon : Character {
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
         //If you drop a monster at a structure that is not yet full and not occupied by villagers, they will set their home to that place.
-        if(tileLocation.structure != null && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+        if(tileLocation.structure != null && tileLocation.structure.structureType != STRUCTURE_TYPE.WILDERNESS && !(tileLocation.structure is DemonicStructure)) {
             if(!tileLocation.structure.HasReachedMaxResidentCapacity() && !tileLocation.structure.HasResidentThatMeetCriteria(r => r.isNormalCharacter)) {
                 MigrateHomeStructureTo(tileLocation.structure);
             }

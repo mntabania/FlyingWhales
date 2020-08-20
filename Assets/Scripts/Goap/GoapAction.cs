@@ -8,7 +8,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
 
-public class GoapAction : ICrimeable {
+public class GoapAction {
 
     public INTERACTION_TYPE goapType { get; private set; }
     public virtual ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
@@ -412,6 +412,12 @@ public class GoapAction : ICrimeable {
             }
         }
         return effects;
+    }
+    #endregion
+
+    #region Crime
+    public virtual CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        return CRIME_TYPE.None;
     }
     #endregion
 }

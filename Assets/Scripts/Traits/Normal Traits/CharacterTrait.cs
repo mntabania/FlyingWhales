@@ -139,6 +139,27 @@ namespace Traits {
                                 }
                             }
                         }
+                        if(owner.isNormalCharacter && targetCharacter.isNormalCharacter && owner.faction != targetCharacter.faction) {
+                            if(owner.faction != null && targetCharacter.currentStructure != null && targetCharacter.currentStructure.settlementLocation != null
+                                && targetCharacter.currentStructure.settlementLocation.owner == owner.faction) {
+                                bool willReact = true;
+                                switch (targetCharacter.currentStructure.structureType) {
+                                    case STRUCTURE_TYPE.TAVERN:
+                                    case STRUCTURE_TYPE.FARM:
+                                    case STRUCTURE_TYPE.APOTHECARY:
+                                    case STRUCTURE_TYPE.CEMETERY:
+                                    case STRUCTURE_TYPE.CITY_CENTER:
+                                        willReact = false;
+                                        break;
+                                }
+                                if (willReact) {
+                                    if (owner.marker) {
+                                        ActualGoapNode node = owner.assumptionComponent.CreateNewActionToReactTo(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING);
+                                        owner.marker.AddUnprocessedAction(node);
+                                    }
+                                }
+                            }
+                        }
                     }
                 } else {
                     //if (owner.needsComponent.isStarving) {

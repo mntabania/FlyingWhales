@@ -1,4 +1,6 @@
-﻿public class Absolve : GoapAction {
+﻿using Traits;
+
+public class Absolve : GoapAction {
     public Absolve() : base(INTERACTION_TYPE.ABSOLVE) {
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -23,7 +25,12 @@
     #region State Effects
     public void AfterAbsolveSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
-        target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
+        if (target.traitContainer.HasTrait("Criminal")) {
+            Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            criminalTrait.SetIsImprisoned(false);
+            criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
+        }
+        //target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);
         target.traitContainer.RemoveTrait(target, "Restrained", goapNode.actor);
     }
     #endregion

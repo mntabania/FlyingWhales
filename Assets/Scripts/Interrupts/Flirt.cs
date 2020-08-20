@@ -52,6 +52,15 @@ namespace Interrupts {
             }
             return response;
         }
+        public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
+            if (target is Character targetCharacter) {
+                if ((actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER) == false && actor.relationshipContainer.HasRelationship(RELATIONSHIP_TYPE.LOVER))
+                    || (targetCharacter.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER) == false && targetCharacter.relationshipContainer.HasRelationship(RELATIONSHIP_TYPE.LOVER))) {
+                    return CRIME_TYPE.Infidelity;
+                }
+            }
+            return base.GetCrimeType(actor, target, crime);
+        }
         #endregion
     }
 }

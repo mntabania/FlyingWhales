@@ -62,7 +62,8 @@ public class KnockoutCharacter : GoapAction {
                     if (witness.homeSettlement == targetCharacter.homeSettlement || 
                         witness.faction == targetCharacter.faction || 
                         witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
-                        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
+                        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
+                        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
                     }
                 }
             }
@@ -81,6 +82,14 @@ public class KnockoutCharacter : GoapAction {
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if(target is Character targetCharacter) {
+            if ((targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) && (crime.associatedJobType != JOB_TYPE.APPREHEND || crime.associatedJobType != JOB_TYPE.RESTRAIN)) {
+                return CRIME_TYPE.Assault;
+            }
+        }
+        return base.GetCrimeType(actor, target, crime);
     }
     #endregion
 

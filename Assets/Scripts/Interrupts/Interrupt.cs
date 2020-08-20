@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Interrupts {
-    public class Interrupt : ICrimeable {
+    public class Interrupt {
         public INTERRUPT type { get; protected set; }
         public string name { get; protected set; }
         public int duration { get; protected set; }
@@ -51,10 +51,13 @@ namespace Interrupts {
             return null;
         }
         public virtual void AddAdditionalFillersToThoughtLog(Log log, Character actor){ }
+        public virtual CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
+            return CRIME_TYPE.None;
+        }
         #endregion
     }
 
-    public class InterruptHolder : IReactable, IRumorable {
+    public class InterruptHolder : IRumorable, ICrimeable {
         public Interrupt interrupt { get; private set; }
         public Character actor { get; private set; }
         public IPointOfInterest target { get; private set; }
@@ -65,6 +68,7 @@ namespace Interrupts {
         public Rumor rumor { get; private set; }
         public List<Character> awareCharacters { get; private set; }
         public string reason { get; private set; }
+        public CRIME_TYPE crimeType { get; private set; }
 
         #region getters
         public string name => interrupt.name;
@@ -126,6 +130,22 @@ namespace Interrupts {
         }
         #endregion
 
+        #region Crime
+        public void SetCrimeType() {
+            if (crimeType == CRIME_TYPE.Unset) {
+                Character actor = this.actor;
+                IPointOfInterest poiTarget = target;
+                if (this.actor.reactionComponent.disguisedCharacter != null) {
+                    actor = this.actor.reactionComponent.disguisedCharacter;
+                }
+                if (target is Character targetCharacter && targetCharacter.reactionComponent.disguisedCharacter != null) {
+                    poiTarget = targetCharacter.reactionComponent.disguisedCharacter;
+                }
+                crimeType = interrupt.GetCrimeType(actor, target, this);
+            }
+        }
+        #endregion
+
         #region Object Pool
         public void Initialize(Interrupt interrupt, Character actor, IPointOfInterest target, string identifier, string reason) {
             this.interrupt = interrupt;
@@ -150,6 +170,7 @@ namespace Interrupts {
             effectLog = null;
             rumor = null;
             identifier = string.Empty;
+            crimeType = CRIME_TYPE.Unset;
             awareCharacters.Clear();
         }
         #endregion

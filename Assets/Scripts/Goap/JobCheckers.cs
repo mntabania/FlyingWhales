@@ -58,8 +58,8 @@ public partial class InteractionManager {
             && character.homeSettlement != null 
             && character.homeSettlement.prison != null
             /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/) {
-            Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
-            if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
+            Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            if (criminalTrait == null || !criminalTrait.isImprisoned) {
                 return /*character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&*/
                    !character.relationshipContainer.IsFriendsWith(targetCharacter);
             }

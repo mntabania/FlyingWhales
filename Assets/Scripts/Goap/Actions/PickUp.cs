@@ -126,10 +126,22 @@ public class PickUp : GoapAction {
                 } else if (targetTileObject.IsOwnedBy(witness)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                 }
-                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.MISDEMEANOR);
+                //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
+                CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
             }
         }
         return response;
+    }
+    public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
+        if(target is TileObject tileObject) {
+            if(tileObject.characterOwner != null) {
+                Character ownerLover = tileObject.characterOwner.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+                if(actor != tileObject.characterOwner && actor != ownerLover) {
+                    return CRIME_TYPE.Theft;
+                }
+            }
+        }
+        return base.GetCrimeType(actor, target, crime);
     }
     #endregion
 

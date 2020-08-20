@@ -492,6 +492,8 @@ public enum INTERACTION_TYPE {
     BUILD_WOLF_LAIR = 189,
     BUILD_CAMPFIRE = 190,
     WARM_UP = 191,
+    REPORT_CRIME = 192,
+    TRESPASSING = 193,
 }
 public enum INTERRUPT {
     None,
@@ -845,7 +847,7 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
         , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
-        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE,
+        , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
@@ -871,43 +873,10 @@ public enum CHARACTER_STATE { NONE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTS
     CLEANSE_TILES,
     TEND_FARM
 }
-public enum CRIME_SEVERITY {
-    NONE,
-    INFRACTION,
-    MISDEMEANOR,
-    SERIOUS,
-    HEINOUS,
-}
-public enum CRIME_STATUS {
-    Unpunished,
-    Imprisoned,
-    Punished,
-    Exiled,
-    Absolved,
-}
-public enum CRIME {
-    NONE,
-    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
-    THEFT,
-    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
-    ASSAULT,
-    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
-    ATTEMPTED_MURDER,
-    [SubcategoryOf(CRIME_SEVERITY.SERIOUS)]
-    MURDER,
-    [SubcategoryOf(CRIME_SEVERITY.HEINOUS)]
-    ABERRATION,
-    [SubcategoryOf(CRIME_SEVERITY.INFRACTION)]
-    INFIDELITY,
-    [SubcategoryOf(CRIME_SEVERITY.HEINOUS)]
-    HERETIC,
-    [SubcategoryOf(CRIME_SEVERITY.INFRACTION)]
-    MINOR_ASSAULT,
-    [SubcategoryOf(CRIME_SEVERITY.MISDEMEANOR)]
-    MANSLAUGHTER,
-    [SubcategoryOf(CRIME_SEVERITY.SERIOUS)]
-    ARSON,
-}
+public enum CRIME_SEVERITY { Unapplicable, None, Infraction, Misdemeanor, Serious, Heinous, }
+public enum CRIME_STATUS { Unpunished, Punished, Exiled, Absolved, Executed }
+public enum CRIME_TYPE { Unset, None, Infidelity, Disturbances, Rumormongering, Kidnapping, Theft, Assault, Attempted_Murder, Murder, Arson, Demon_Worship, Divine_Worship, Nature_Worship,
+    Aberration, Cannibalism, Plagued, Animal_Killing, Vampire, Werewolf, Treason, Trespassing, }
 public enum CHARACTER_MOOD {
     DARK, BAD, GOOD, GREAT,
 }
@@ -1053,20 +1022,6 @@ public class SubcategoryOf : System.Attribute {
 public static class Extensions {
 
     #region Crimes
-    public static bool IsSubcategoryOf(this CRIME sub, CRIME_SEVERITY cat) {
-        System.Type t = typeof(CRIME);
-        MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
-        if (mi == null) throw new System.ArgumentException($"Subcategory {sub} has no category.");
-        SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
-        return subAttr.Category == cat;
-    }
-    public static CRIME_SEVERITY GetCategory(this CRIME sub) {
-        System.Type t = typeof(CRIME);
-        MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
-        if (mi == null) throw new System.ArgumentException($"Subcategory {sub} has no category.");
-        SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
-        return subAttr.Category;
-    }
     public static bool IsLessThan(this CRIME_SEVERITY sub, CRIME_SEVERITY other) {
         return sub < other;
     }
@@ -1532,6 +1487,7 @@ public static class Extensions {
                 priority = 970;
                 break;
             case JOB_TYPE.APPREHEND:
+            case JOB_TYPE.REPORT_CRIME:
             //case JOB_TYPE.BURY:
                 priority = 870;
                 break;

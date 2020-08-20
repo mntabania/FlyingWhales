@@ -227,6 +227,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.SHARE_INFORMATION, new[]{
             new StateNameAndDuration(){ name = "Share Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.REPORT_CRIME, new[]{
+            new StateNameAndDuration(){ name = "Report Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
         {INTERACTION_TYPE.WATCH, new[]{
             new StateNameAndDuration(){ name = "Watch Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },//-1
         } },
@@ -584,6 +587,9 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.WARM_UP, new[]{
             new StateNameAndDuration(){ name = "Warm Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.TRESPASSING, new[]{
+            new StateNameAndDuration(){ name = "Trespass Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
     };
 }
