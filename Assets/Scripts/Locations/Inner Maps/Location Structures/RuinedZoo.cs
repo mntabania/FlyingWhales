@@ -14,7 +14,7 @@ namespace Inner_Maps.Location_Structures {
             SUMMON_TYPE.Fire_Elemental,
             SUMMON_TYPE.Ice_Nymph,
             SUMMON_TYPE.Incubus,
-            SUMMON_TYPE.Revenant,
+            SUMMON_TYPE.Golem,
             SUMMON_TYPE.Abomination,
         };
         
