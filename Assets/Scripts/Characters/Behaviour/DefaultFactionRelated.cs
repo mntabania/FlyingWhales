@@ -43,7 +43,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
         if(character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler) {
             for (int i = 0; i < character.crimeComponent.witnessedCrimes.Count; i++) {
                 CrimeData crimeData = character.crimeComponent.witnessedCrimes[i];
-                if (!crimeData.isReported) {
+                if (!character.crimeComponent.IsReported(crimeData)) {
                     if (character.jobComponent.CreateReportCrimeJob(character, crimeData, crimeData.crime)) {
                         return true;
                     }

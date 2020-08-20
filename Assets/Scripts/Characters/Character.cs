@@ -613,14 +613,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (IsInHomeSettlement()) {
                     GameDate dueDate = GameManager.Instance.Today();
                     dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
-                    SchedulingManager.Instance.AddEntry(dueDate, () => SpawnRevenant(responsibleCharacter, homeSettlement, homeRegion), null);
+                    LocationGridTile deathTile = gridTileLocation;
+                    SchedulingManager.Instance.AddEntry(dueDate, () => SpawnRevenant(responsibleCharacter, deathTile), null);
                 }
             }
         }
     }
-    private void SpawnRevenant(Character responsibleCharacter, BaseSettlement homeSettlement, Region homeRegion) {
+    private void SpawnRevenant(Character responsibleCharacter, LocationGridTile deathTile) {
+        BaseSettlement homeSettlement = deathTile.structure.settlementLocation;
+        Region homeRegion = deathTile.structure.location;
+
+        if(homeSettlement == null) {
+            //Will not spawn revenant if death tile has no settlement
+            return;
+        }
+
         Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Revenant, FactionManager.Instance.undeadFaction, homeLocation: homeSettlement, homeRegion: homeRegion);
-        CharacterManager.Instance.PlaceSummon(summon, gridTileLocation);
+        CharacterManager.Instance.PlaceSummon(summon, deathTile);
         Revenant revenant = summon as Revenant;
         if (responsibleCharacter.partyComponent.hasParty) {
             for (int i = 0; i < responsibleCharacter.partyComponent.currentParty.members.Count; i++) {

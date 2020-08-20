@@ -48,6 +48,7 @@ namespace Traits {
         //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
         public string moodModificationDescription => name;
         public int moodModifier => moodEffect;
+        public string descriptionInUI => GetDescriptionInUI();
 
         public virtual bool isPersistent => false; //should this trait persist through all a character's alter egos
         public virtual bool isSingleton => false;
@@ -189,6 +190,7 @@ namespace Traits {
         public virtual string GetNameInUI(ITraitable traitable) {
             return name;
         }
+        protected virtual string GetDescriptionInUI() { return description; }
         #endregion
 
         #region Utilities

@@ -27,7 +27,7 @@ namespace Traits {
         #region Overrides
         public override string GetToolTipText() {
             if (responsibleCharacter == null) {
-                return description;
+                return descriptionInUI;
             }
             return $"This character has been knocked out by {responsibleCharacter.name}";
         }

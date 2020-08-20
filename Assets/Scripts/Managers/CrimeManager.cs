@@ -394,10 +394,6 @@ public class CrimeData {
     public List<Faction> factionsThatConsidersWanted { get; }
     //public List<Character> authoritiesAlreadyDecided { get; }
 
-    #region getters
-    public bool isReported => criminalTrait.isImprisoned || crimeStatus != CRIME_STATUS.Unpunished;
-    #endregion
-
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         this.crimeType = crimeType;
         this.crimeSeverity = crimeSeverity;
@@ -430,6 +426,38 @@ public class CrimeData {
     }
     public void SetCriminalTrait(Criminal criminalTrait) {
         this.criminalTrait = criminalTrait;
+    }
+    public string GetCrimeDataDescription() {
+        string desc = CrimeManager.Instance.GetCrimeType(crimeType).name + " - " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(crimeStatus.ToString());
+        desc += "\n     Wanted at: " + GetFactionsThatConsidersWantedAsText();
+        desc += "\n     Witnesses: " + GetWitnessesAsText();
+        return desc;
+    }
+    private string GetFactionsThatConsidersWantedAsText() {
+        string text = "None";
+        if(factionsThatConsidersWanted.Count > 0) {
+            text = string.Empty;
+            for (int i = 0; i < factionsThatConsidersWanted.Count; i++) {
+                if(i > 0) {
+                    text += ", ";
+                }
+                text += factionsThatConsidersWanted[i].name;
+            }
+        }
+        return text;
+    }
+    private string GetWitnessesAsText() {
+        string text = "None";
+        if (witnesses.Count > 0) {
+            text = string.Empty;
+            for (int i = 0; i < witnesses.Count; i++) {
+                if (i > 0) {
+                    text += ", ";
+                }
+                text += witnesses[i].name;
+            }
+        }
+        return text;
     }
     #endregion
 

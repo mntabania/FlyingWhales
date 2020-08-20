@@ -36,6 +36,7 @@ public class AssumptionComponent {
     }
     public ActualGoapNode CreateNewActionToReactTo(Character actor, IPointOfInterest target, INTERACTION_TYPE actionType) {
         ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], actor, target, null, 0);
+        assumedAction.SetAsIllusion();
         assumedAction.SetCrimeType();
         return assumedAction;
     }
