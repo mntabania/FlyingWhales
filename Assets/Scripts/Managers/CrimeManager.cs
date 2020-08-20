@@ -233,18 +233,9 @@ public class CrimeManager : MonoBehaviour {
 
                 CrimeType crimeTypeObj = GetCrimeType(crimeType);
 
-                CRIME_SEVERITY factionCrimeSeverity = CRIME_SEVERITY.Unapplicable;
-                if (witness.faction != null) {
-                    factionCrimeSeverity = witness.faction.GetCrimeSeverity(witness, actor, target, crimeType, crime);
-                }
-                CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target, crime);
-
                 //Check if personal decision on crime severity takes precendence over faction's decision
                 //Default is YES
-                CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
-                if(witnessCrimeSeverity == CRIME_SEVERITY.Unapplicable) {
-                    finalCrimeSeverity = factionCrimeSeverity;
-                }
+                CRIME_SEVERITY finalCrimeSeverity = GetCrimeSeverity(witness, actor, target, crimeType, crime);
 
                 if(finalCrimeSeverity != CRIME_SEVERITY.None && finalCrimeSeverity != CRIME_SEVERITY.Unapplicable) {
                     CrimeSeverity crimeSeverityObj = GetCrimeSeverity(finalCrimeSeverity);
@@ -274,6 +265,19 @@ public class CrimeManager : MonoBehaviour {
                 }
             }
         }
+    }
+    public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+        CrimeType crimeTypeObj = GetCrimeType(crimeType);
+        CRIME_SEVERITY factionCrimeSeverity = CRIME_SEVERITY.Unapplicable;
+        if (witness.faction != null) {
+            factionCrimeSeverity = witness.faction.GetCrimeSeverity(witness, actor, target, crimeType, crime);
+        }
+        CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target, crime);
+        CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
+        if (witnessCrimeSeverity == CRIME_SEVERITY.Unapplicable) {
+            finalCrimeSeverity = factionCrimeSeverity;
+        }
+        return finalCrimeSeverity;
     }
 
     //public void ReactToCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType, CRIME_SEVERITY crimeType) {

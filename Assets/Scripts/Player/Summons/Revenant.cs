@@ -12,21 +12,22 @@ public class Revenant : Summon {
     public Revenant() : base(SUMMON_TYPE.Revenant, "Revenant", RACE.REVENANT,
         UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
-        betrayers = new List<Character>();
+        //betrayers = new List<Character>();
     }
     public Revenant(string className) : base(SUMMON_TYPE.Revenant, className, RACE.REVENANT,
     UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
-        betrayers = new List<Character>();
+        //betrayers = new List<Character>();
     }
     public Revenant(SaveDataCharacter data) : base(data) {
         visuals.SetHasBlood(false);
-        betrayers = new List<Character>();
+        //betrayers = new List<Character>();
     }
 
     #region Overrides
     public override void Initialize() {
         base.Initialize();
+        betrayers = new List<Character>();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Revenant_Behaviour);
     }
     #endregion

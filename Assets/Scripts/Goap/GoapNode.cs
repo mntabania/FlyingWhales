@@ -934,6 +934,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
 
     #region Illusion
     //Illusion actions are actions that are not really performed by the actor physically but is perceived by the witnesses that is was performed
+    //Example: Trespassing
     public void SetAsIllusion() {
         actionStatus = ACTION_STATUS.SUCCESS;
         currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;

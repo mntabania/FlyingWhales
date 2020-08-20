@@ -35,7 +35,7 @@ namespace Interrupts {
                 CrimeType crimeTypeObj = CrimeManager.Instance.GetCrimeType(interrupt.crimeType);
                 CRIME_SEVERITY severity = CRIME_SEVERITY.None;
                 if (crimeTypeObj != null) {
-                    severity = crimeTypeObj.GetCrimeSeverity(witness, originalForm, target, interrupt);
+                    severity = CrimeManager.Instance.GetCrimeSeverity(witness, originalForm, target, interrupt.crimeType, interrupt);
                 }
                 if(severity == CRIME_SEVERITY.Heinous) {
                     // response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm);
