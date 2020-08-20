@@ -932,6 +932,15 @@ public class ActualGoapNode : IRumorable, ICrimeable {
     }
     #endregion
 
+    #region Illusion
+    //Illusion actions are actions that are not really performed by the actor physically but is perceived by the witnesses that is was performed
+    public void SetAsIllusion() {
+        actionStatus = ACTION_STATUS.SUCCESS;
+        currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
+        CreateDescriptionLog(currentState);
+    }
+    #endregion
+
     #region IReactable
     public string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status) {
         return action.ReactionToActor(actor, target, witness, this, status);
