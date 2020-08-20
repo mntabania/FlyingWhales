@@ -41,9 +41,15 @@ namespace Interrupts {
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm, status);
                 }
-                CrimeManager.Instance.ReactToCrime(witness, originalForm, this, CRIME_SEVERITY.HEINOUS);
+                //CrimeManager.Instance.ReactToCrime(witness, originalForm, this, CRIME_SEVERITY.Heinous);
+                //CrimeManager.Instance.ReactToCrime(witness, originalForm, target, target.factionOwner, node.crimeType, node, status);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, originalForm, status);
             }
             return response;
+        }
+        public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
+            return CRIME_TYPE.Werewolf;
         }
         #endregion
     }
