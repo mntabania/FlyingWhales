@@ -529,6 +529,15 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public TileObject GetFirstTileObject(TILE_OBJECT_TYPE type) {
+            if (allTileObjects.ContainsKey(type)) {
+                for (int i = 0; i < allTileObjects[type].Count; i++) {
+                    TileObject to = allTileObjects[type][i];
+                    return to;
+                }
+            }
+            return null;
+        }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
             var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             System.Type type = System.Type.GetType(typeName);

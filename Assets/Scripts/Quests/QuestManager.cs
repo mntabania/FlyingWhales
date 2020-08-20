@@ -21,7 +21,9 @@ namespace Quests {
             Threat, Counterattack, Divine_Intervention, Special_Events, Pause_Reminder, 
             //Finished_Tutorial,
             //Wolf_Migration, Villager_Migration,
-            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon
+            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon,
+            The_Sword,
+            The_Crack
         }
         
         private void Awake() {
