@@ -20,7 +20,8 @@ public class AudioManager : MonoBehaviour {
     private const string MusicVolume = "musicMasterVolume";
     private const string MasterVolume = "masterVolume";
     private const string ThreatMusicVolume = "threatMusicVolume";
-
+    private const int MaxAudioObjects = 100;
+    
     public static float Minimum_Volume_Level = -30f;
     public static float Maximum_Volume_Level = -10f;
     
@@ -66,6 +67,7 @@ public class AudioManager : MonoBehaviour {
     [SerializeField] private AudioClip[] punchAudio;
 
     private bool isPlayingThreatMusic;
+    private int _activeAudioObjects;
     
     private void Awake() {
         if (Instance == null) {
@@ -234,25 +236,36 @@ public class AudioManager : MonoBehaviour {
     }
     #endregion
 
-    #region Spells
-    public AudioObject CreateAudioObject(AudioClip audioClip, LocationGridTile centerTile, int tileRange, bool loopAudio = true) {
+    #region Audio Objects
+    public AudioObject TryCreateAudioObject(AudioClip audioClip, LocationGridTile centerTile, int tileRange, bool loopAudio = true, bool followLimit = false) {
+        if (followLimit) {
+            if (_activeAudioObjects >= MaxAudioObjects) {
+                //if maximum number audio objects has been reached and audio should follow limit, then do not create an audio object.
+                //This is a possible fix for this: https://trello.com/c/5rsxPv4a/1867-strange-crash
+                return null;
+            }
+        }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(spellAudioObjectPrefab.name,
             centerTile.centeredWorldLocation, Quaternion.identity, centerTile.parentMap.objectsParent, true);
         AudioObject audioObject = go.GetComponent<AudioObject>();
         audioObject.Initialize(audioClip, tileRange, loopAudio);
+        _activeAudioObjects++;
         return audioObject;
+    }
+    public void OnAudioObjectReset() {
+        _activeAudioObjects--;
     }
     #endregion
 
     #region Poison Explosion
     public void CreatePoisonExplosionAudio(LocationGridTile tile) {
-        CreateAudioObject(CollectionUtilities.GetRandomElement(poisonExplosionAudio), tile, 1, false);
+        TryCreateAudioObject(CollectionUtilities.GetRandomElement(poisonExplosionAudio), tile, 1, false, true);
     }
     #endregion
     
     #region Frozen Explosion
     public void CreateFrozenExplosionAudio(LocationGridTile tile) {
-        CreateAudioObject(CollectionUtilities.GetRandomElement(frozenExplosionAudio), tile, 1, false);
+        TryCreateAudioObject(CollectionUtilities.GetRandomElement(frozenExplosionAudio), tile, 1, false, true);
     }
     #endregion
 

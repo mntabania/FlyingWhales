@@ -28,8 +28,7 @@ namespace Traits {
                 electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
             }
             if (sourcePOI.gridTileLocation != null) {
-                _audioObject = AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomZapAudio(),
-                    sourcePOI.gridTileLocation, 1, false);    
+                _audioObject = AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomZapAudio(), sourcePOI.gridTileLocation, 1, false, true);    
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;

@@ -13830,9 +13830,9 @@ PrefabInstance:
         type: 3}
       propertyPath: description
       value: "A single desert region with a burgeoning human town. Unknown to these
-        residents, the surrounding caves are filled with danger. \r\n\r\nFinally,
-        there is a strange artifact of unknown origin somewhere nearby - is it connected
-        to the dozens of various crystals scattered around the place?"
+        residents, the surrounding caves are filled with danger. \r\n\r\nThere is
+        a strange artifact of unknown origin somewhere nearby - is it connected to
+        the dozens of various crystals scattered around the place?"
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

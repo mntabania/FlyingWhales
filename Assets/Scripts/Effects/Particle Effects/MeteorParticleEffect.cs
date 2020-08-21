@@ -42,7 +42,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
     }
     private void OnMeteorFell() {
         hasMeteorFell = true;
-        AudioManager.Instance.CreateAudioObject(
+        AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance
                 .GetPlayerSkillData<MeteorSkillData>(SPELL_TYPE.METEOR).impactSounds),
             targetTile, 3, false

@@ -132,7 +132,7 @@ namespace Locations.Tile_Features {
         private void CreateEffect(HexTile hex) {
             LocationGridTile centerTile = hex.GetCenterLocationGridTile();
             GameObject go = GameManager.Instance.CreateParticleEffectAt(centerTile, PARTICLE_EFFECT.Rain);
-            _audioObject = AudioManager.Instance.CreateAudioObject(
+            _audioObject = AudioManager.Instance.TryCreateAudioObject(
                 PlayerSkillManager.Instance.GetPlayerSkillData<RainSkillData>(SPELL_TYPE.RAIN).rainSoundEffect, centerTile, 7,
                 true);
             _effect = go;

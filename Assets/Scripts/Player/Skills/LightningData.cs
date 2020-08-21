@@ -19,7 +19,7 @@ public class LightningData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        AudioManager.Instance.CreateAudioObject(
+        AudioManager.Instance.TryCreateAudioObject(
             CollectionUtilities.GetRandomElement(PlayerSkillManager.Instance.GetPlayerSkillData<LightningSkillData>(SPELL_TYPE.LIGHTNING).thunderAudioClips), 
             targetTile, 1, false
         );
