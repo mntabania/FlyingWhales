@@ -112,6 +112,7 @@ public abstract class InfoUIBase : MonoBehaviour {
                 //     actionItem.SetInteractable(false);
                 // } else {
                     actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);    
+                    actionItem.ForceUpdateCooldown();
                 // }
             }
         }

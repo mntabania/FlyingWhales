@@ -122,6 +122,7 @@ public class MonsterInfoUI : InfoUIBase {
                 //}
                 ActionItem actionItem = AddNewAction(action, target);
                 actionItem.SetInteractable(action.CanPerformAbilityTo(target) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+                actionItem.ForceUpdateCooldown();
             }
         }
     }
