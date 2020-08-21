@@ -28,11 +28,6 @@ public class ActionItem : PooledObject {
         UnToggleHighlight();
         actionImg.sprite = PlayerUI.Instance.playerActionsIconDictionary[playerAction.type];
         actionLbl.text = playerAction.GetLabelName(playerActionTarget);
-        if (playerAction.isInCooldown) {
-	        OnSpellCooldownStarted(playerAction);
-        } else {
-	        SetCooldownState(false);    
-        }
         gameObject.SetActive(true);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
@@ -91,8 +86,15 @@ public class ActionItem : PooledObject {
     #endregion
 
     #region Cooldown
+    public void ForceUpdateCooldown() {
+	    if (playerAction.isInCooldown) {
+		    OnSpellCooldownStarted(playerAction);
+	    } else {
+		    SetCooldownState(false);    
+	    }
+    }
     private void SetCooldownState(bool state) {
-	    SetInteractable(!state);
+	    SetInteractable(playerAction.CanPerformAbilityTo(playerActionTarget) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
 	    cooldownImage.gameObject.SetActive(state);
     }
     private void StartCooldownFill() {
