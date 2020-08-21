@@ -200,6 +200,7 @@ public class PlayerUI : MonoBehaviour {
         //currencies
         Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateKillCountCharacterItems();
+        InitializeIntel();
         // UpdateIntel();
         // CreateInitialSpells();
         // _buildListUI.Initialize();
@@ -463,6 +464,12 @@ public class PlayerUI : MonoBehaviour {
             if (intel != null) {
                 currItem.SetClickAction(PlayerManager.Instance.player.SetCurrentActiveIntel);
             }
+        }
+    }
+    private void InitializeIntel() {
+        for (int i = 0; i < intelItems.Length; i++) {
+            IntelItem currItem = intelItems[i];
+            currItem.SetIntel(null);
         }
     }
     public void SetIntelMenuState(bool state) {
