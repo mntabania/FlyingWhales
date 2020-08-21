@@ -188,6 +188,9 @@ namespace Factions {
                 }
             }
         }
+        public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
+            //NA
+        }
         public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
             if (!forcedCancelJobsOnTickEnded.Contains(job)) {
                 forcedCancelJobsOnTickEnded.Add(job);

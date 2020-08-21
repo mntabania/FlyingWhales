@@ -5320,6 +5320,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             forcedCancelJobsOnTickEnded.Clear();
         }
     }
+    public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
+        //NA
+    }
     #endregion
 
     #region Build Structure Component
