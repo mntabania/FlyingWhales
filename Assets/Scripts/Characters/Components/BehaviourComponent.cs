@@ -24,6 +24,7 @@ public class BehaviourComponent {
     public bool isAttackingDemonicStructure { get; private set; }
     public bool hasLayedAnEgg { get; private set; }
     public bool isAgitated { get; private set; }
+    public bool subterraneanJustExitedCombat { get; private set; }
     public string defaultBehaviourSetName { get; private set; }
     
     //douse fire
@@ -821,6 +822,12 @@ public class BehaviourComponent {
         if(isAgitated != state) {
             isAgitated = state;
         }
+    }
+    #endregion
+
+    #region Subterranean
+    public void SetSubterraneanJustExitedCombat(bool state) {
+        subterraneanJustExitedCombat = state;
     }
     #endregion
 }

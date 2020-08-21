@@ -23,10 +23,14 @@ public class Wurm : Summon {
         if (!traitContainer.HasTrait("Tower")) {
             reactionComponent.SetIsHidden(true);
         }
+        traitContainer.AddTrait(this, "Subterranean");
         movementComponent.SetIsStationary(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Wurm_Behaviour);
     }
     #endregion
+    public override void OnSummonAsPlayerMonster() {
+        traitContainer.RemoveTrait(this, "Subterranean");
+    }
 
     //Whenever the wurm has a job, it must not be hidden, but it doesn't have any jobs at all, return back to being hidden
     public override void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) {
@@ -43,7 +47,6 @@ public class Wurm : Summon {
             }
         }
     }
-
     public override void OnSetIsHidden() {
         base.OnSetIsHidden();
         for (int i = 1; i < 5; i++) {

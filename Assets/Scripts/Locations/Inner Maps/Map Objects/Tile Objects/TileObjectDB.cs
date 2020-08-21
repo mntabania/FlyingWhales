@@ -44,6 +44,9 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.METAL_PILE, new TileObjectData() {
             maxHP = 600,
         } },
+        { TILE_OBJECT_TYPE.WURM_HOLE, new TileObjectData() {
+            maxHP = 1,
+        } },
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,

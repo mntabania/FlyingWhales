@@ -183,6 +183,9 @@ public class CombatState : CharacterState {
             stateComponent.character.needsComponent.CheckExtremeNeeds();
         }
         stateComponent.character.combatComponent.ClearCombatData();
+        if (stateComponent.character.traitContainer.HasTrait("Subterranean")) {
+            stateComponent.character.behaviourComponent.SetSubterraneanJustExitedCombat(true);
+        }
     }
     #endregion
 

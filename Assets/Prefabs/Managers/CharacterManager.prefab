@@ -2256,6 +2256,7 @@ MonoBehaviour:
           animationSprites:
           - {fileID: 21300000, guid: 378199c957979bd4a99755f241f96d3d, type: 3}
           - {fileID: 21300000, guid: a19b5f90bc6be7947b9de927b1dcc222, type: 3}
+          - {fileID: 21300000, guid: a915920b5a7f4a5408cd01089d7164c2, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

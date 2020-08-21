@@ -60,8 +60,13 @@ public partial class InteractionManager {
             /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/) {
             Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
             if (criminalTrait == null || !criminalTrait.isImprisoned) {
-                return /*character.characterClass.CanDoJob(JOB_TYPE.APPREHEND) &&*/
-                   !character.relationshipContainer.IsFriendsWith(targetCharacter);
+                if (character.relationshipContainer.IsFriendsWith(targetCharacter)) {
+                    return false;
+                } else if ((character.relationshipContainer.IsFamilyMember(targetCharacter) || character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                && !character.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                    return false;
+                }
+                return true;
             }
         }
         return false;

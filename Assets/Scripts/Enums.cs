@@ -814,6 +814,7 @@ public enum TILE_OBJECT_TYPE {
     PLINTH = 153,
     SARCOPHAGUS = 154,
     TROLL_CAULDRON = 155,
+    WURM_HOLE = 156,
 }
 public enum POI_STATE {
     ACTIVE,

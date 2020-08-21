@@ -606,6 +606,16 @@ namespace Inner_Maps {
             }
             return resourcePile;
         }
+        public void CreateWurmHoles(LocationGridTile point1, LocationGridTile point2) {
+            WurmHole hole1 = CreateNewTileObject<WurmHole>(TILE_OBJECT_TYPE.WURM_HOLE);
+            WurmHole hole2 = CreateNewTileObject<WurmHole>(TILE_OBJECT_TYPE.WURM_HOLE);
+
+            hole1.SetWurmHoleConnection(hole2);
+            hole2.SetWurmHoleConnection(hole1);
+
+            point1.structure.AddPOI(hole1, point1);
+            point2.structure.AddPOI(hole2, point2);
+        }
         #endregion
 
         #region Structures

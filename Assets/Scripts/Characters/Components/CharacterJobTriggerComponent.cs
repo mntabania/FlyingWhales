@@ -1747,12 +1747,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         bool canReportToSettlementRuler = false;
         if (source.faction != null && source.faction.isMajorNonPlayer && source.faction.leader != null && source.faction.leader is Character characterLeader
             && !characterLeader.isDead && characterLeader != source && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
-            if(!crimeData.HasWitness(characterLeader)) {
+            if(!crimeData.IsWitness(characterLeader)) {
                 canReportToFactionLeader = true;
             }
         }
         if (source.homeSettlement != null && source.homeSettlement.ruler != null && !source.homeSettlement.ruler.isDead && source.homeSettlement.ruler != source && source.homeSettlement.ruler != crimeData.criminal && source.homeSettlement.ruler != crimeData.target) {
-            if (!crimeData.HasWitness(source.homeSettlement.ruler)) {
+            if (!crimeData.IsWitness(source.homeSettlement.ruler)) {
                 canReportToSettlementRuler = true;
             }
         }
