@@ -3,6 +3,7 @@ using UnityEngine;
 using Traits;
 using UnityEngine.EventSystems;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UtilityScripts;
@@ -770,6 +771,10 @@ public class CombatState : CharacterState {
                     }
                 }
                 _timesHitCurrentTarget++;
+
+                if (damageable.gridTileLocation != null && damageable.gridTileLocation.structure is DemonicStructure demonicStructure) {
+                    demonicStructure.AddAttacker(stateComponent.character);
+                }
             }
         }
         

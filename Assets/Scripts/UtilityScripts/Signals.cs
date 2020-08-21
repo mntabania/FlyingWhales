@@ -680,6 +680,10 @@ public static class Signals {
     /// </summary>
     public static string CHARACTERS_ATTACKING_DEMONIC_STRUCTURE = "CharactersAttackingDemonicStructure";
     /// <summary>
+    /// Parameters (Character, DemonicStructure)
+    /// </summary>
+    public static string CHARACTER_ATTACKED_DEMONIC_STRUCTURE = "OnCharacterAttackedDemonicStructure";
+    /// <summary>
     /// Parameters (LocationStructure, Character, GoapPlanJob)
     /// </summary>
     public static string DEMONIC_STRUCTURE_DISCOVERED = "DemonicStructureDiscovered";

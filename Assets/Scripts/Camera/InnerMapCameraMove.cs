@@ -5,6 +5,7 @@ using Ruinarch;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using DG.Tweening;
+using Inner_Maps.Location_Structures;
 
 public class InnerMapCameraMove : BaseCameraMove {
 
@@ -155,6 +156,14 @@ public class InnerMapCameraMove : BaseCameraMove {
     #region Bounds
     public bool CanSee(LocationGridTile gridTile) {
         Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(gridTile.centeredWorldLocation);
+        return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
+    }
+    public bool CanSee(DemonicStructure demonicStructure) {
+        if (demonicStructure.structureObj == null) {
+            //if ever demonic structures' object has been destroyed, then return false.
+            return false;
+        }
+        Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(demonicStructure.structureObj.transform.position);
         return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
     }
     #endregion
