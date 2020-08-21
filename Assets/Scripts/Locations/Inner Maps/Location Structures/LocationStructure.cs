@@ -99,7 +99,9 @@ namespace Inner_Maps.Location_Structures {
         /// </summary>
         public virtual void OnDoneLoadStructure() { }
         protected virtual void OnAddResident(Character newResident) { }
-        protected virtual void OnRemoveResident(Character newResident) { }
+        protected virtual void OnRemoveResident(Character newResident) {
+            newResident.UnownOrTransferOwnershipOfItemsIn(this);
+        }
         public virtual bool CanBeResidentHere(Character character) { return true; }
         #endregion
 

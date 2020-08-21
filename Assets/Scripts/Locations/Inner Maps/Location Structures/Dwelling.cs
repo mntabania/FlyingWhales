@@ -38,17 +38,19 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
-        protected override void OnRemoveResident(Character newResident) {
-            base.OnRemoveResident(newResident);
-            List<TileObject> objs = GetTileObjects();
-            for (int i = 0; i < objs.Count; i++) {
-                TileObject obj = objs[i];
-                if (obj.isPreplaced) {
-                    //only update owners of objects that were preplaced
-                    obj.UpdateOwners();
-                }
-            }
-        }
+
+        //Removed this because the unowning of items is in the virtual function now
+        //protected override void OnRemoveResident(Character newResident) {
+        //    base.OnRemoveResident(newResident);
+        //    List<TileObject> objs = GetTileObjects();
+        //    for (int i = 0; i < objs.Count; i++) {
+        //        TileObject obj = objs[i];
+        //        if (obj.isPreplaced) {
+        //            //only update owners of objects that were preplaced
+        //            obj.UpdateOwners();
+        //        }
+        //    }
+        //}
         public override bool CanBeResidentHere(Character character) {
             if (residents.Count == 0) {
                 return true;

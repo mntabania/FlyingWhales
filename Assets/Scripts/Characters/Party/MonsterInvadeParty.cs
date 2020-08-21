@@ -9,6 +9,8 @@ public class MonsterInvadeParty : Party {
     public LocationStructure targetStructure { get; private set; }
     public HexTile targetHex { get; private set; }
 
+    private HexTile _hexForJoining;
+
     private bool isInvading;
 
     #region getters
@@ -24,8 +26,8 @@ public class MonsterInvadeParty : Party {
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return character.race == leader.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && leader.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == leader.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        return character.race == leader.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && _hexForJoining != null
+            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == _hexForJoining;
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
@@ -43,6 +45,14 @@ public class MonsterInvadeParty : Party {
         base.OnDisbandParty();
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ENTERED_HEXTILE)) {
             Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        }
+    }
+    protected override void OnSetLeader() {
+        base.OnSetLeader();
+        if(leader != null) {
+            if (leader.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                _hexForJoining = leader.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            }
         }
     }
     #endregion

@@ -11,6 +11,7 @@ public class ExplorationParty : Party {
     private List<LocationStructure> alreadyExplored;
     private bool isExploring;
     private int currentChance;
+    private Region _regionRefForGettingNewStructure;
 
     #region getters
     public override IPartyTarget target => targetStructure;
@@ -58,6 +59,12 @@ public class ExplorationParty : Party {
             Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
     }
+    protected override void OnSetLeader() {
+        base.OnSetLeader();
+        if (leader != null) {
+            _regionRefForGettingNewStructure = leader.currentRegion;
+        }
+    }
     #endregion
 
     #region General
@@ -69,10 +76,10 @@ public class ExplorationParty : Party {
         }
     }
     private void ProcessSettingTargetStructure() {
-        List<Region> adjacentRegions = leader.currentRegion.AdjacentRegions();
+        List<Region> adjacentRegions = _regionRefForGettingNewStructure.AdjacentRegions();
         LocationStructure target = null;
         if (adjacentRegions != null) {
-            adjacentRegions.Add(leader.currentRegion);
+            adjacentRegions.Add(_regionRefForGettingNewStructure);
             while (target == null && adjacentRegions.Count > 0) {
                 Region chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
                 target = chosenRegion.GetRandomSpecialStructureExcept(alreadyExplored);
@@ -84,7 +91,7 @@ public class ExplorationParty : Party {
                 SetTargetStructure(target);
             }
         } else {
-            target = leader.currentRegion.GetRandomSpecialStructureExcept(alreadyExplored);
+            target = _regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
             if (target != null) {
                 SetTargetStructure(target);
             }
@@ -98,6 +105,7 @@ public class ExplorationParty : Party {
             targetStructure = structure;
             if (targetStructure != null) {
                 alreadyExplored.Add(targetStructure);
+                _regionRefForGettingNewStructure = targetStructure.location;
             }
         }
     }

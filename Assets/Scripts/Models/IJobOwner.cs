@@ -13,4 +13,5 @@ public interface IJobOwner {
     bool ForceCancelJob(JobQueueItem job);
     void AddForcedCancelJobsOnTickEnded(JobQueueItem job);
     void ProcessForcedCancelJobsOnTickEnded();
+    void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target);
 }

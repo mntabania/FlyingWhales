@@ -542,6 +542,7 @@ namespace Inner_Maps {
                        && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
                        && character.marker != null && character.carryComponent.IsNotBeingCarried()
                        && character.isAlliedWithPlayer == false
+                       && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue))
                        //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
                        && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
                         if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.HasActiveParty(PARTY_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
@@ -551,9 +552,10 @@ namespace Inner_Maps {
                     }
                     //If cannot report flee instead
                     //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
-                    if (!character.behaviourComponent.isAttackingDemonicStructure && (!character.partyComponent.hasParty ||
-                        character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack) && character.isAlliedWithPlayer == false &&
-                        character.necromancerTrait == null) {
+                    if (!character.behaviourComponent.isAttackingDemonicStructure 
+                        && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue)) 
+                        && character.isAlliedWithPlayer == false 
+                        && character.necromancerTrait == null) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
                             if (character.isNormalCharacter) {

@@ -590,6 +590,16 @@ public class JobQueue {
             }
         }
     }
+    public void CancelAllPartyJobs() {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            JobQueueItem job = jobsInQueue[i];
+            if (job.isThisAPartyJob) {
+                if (job.CancelJob()) {
+                    i--;
+                }
+            }
+        }
+    }
     public void CancelAllJobs(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             for (int j = 0; j < jobTypes.Length; j++) {

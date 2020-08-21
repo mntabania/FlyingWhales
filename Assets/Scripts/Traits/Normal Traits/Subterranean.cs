@@ -7,10 +7,9 @@ namespace Traits {
         public Subterranean() {
             name = "Subterranean";
             description = "Can travel underground.";
-            type = TRAIT_TYPE.NEUTRAL;
+            type = TRAIT_TYPE.BUFF;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            isHidden = true;
         }
 
         #region Overrides
