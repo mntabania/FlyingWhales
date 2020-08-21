@@ -533,8 +533,7 @@ public partial class LandmarkManager : MonoBehaviour {
     /// <param name="tileLocation">The hextile to place the structure object at</param>
     /// <param name="structureSetting">The settings that the structure should use.</param>
     public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
-        List<GameObject> choices =
-            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
+        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
