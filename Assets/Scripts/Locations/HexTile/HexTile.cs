@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using PathFind;
 using System.Linq;
+using System;
+using PathFind;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
@@ -124,7 +125,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         _structureAnimatorSpriteRenderer = structureAnimation.gameObject.GetComponent<SpriteRenderer>();
         _highlightGOSpriteRenderer = highlightGO.GetComponent<SpriteRenderer>();
         _hoverHighlightSpriteRenderer = _hoverHighlightGO.GetComponent<SpriteRenderer>();
-        Random.ColorHSV();
+        UnityEngine.Random.ColorHSV();
         ConstructDefaultActions();
     }
     public void Initialize(bool listenForGameLoad = true) {
@@ -411,6 +412,20 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             }
         }
         if(tiles != null && tiles.Count > 0) {
+            return UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
+        }
+        return null;
+    }
+    public LocationGridTile GetRandomTileThatMeetCriteria(Func<LocationGridTile, bool> checker) {
+        List<LocationGridTile> tiles = null;
+        for (int i = 0; i < locationGridTiles.Count; i++) {
+            LocationGridTile tile = locationGridTiles[i];
+            if (checker.Invoke(tile)) {
+                if (tiles == null) { tiles = new List<LocationGridTile>(); }
+                tiles.Add(tile);
+            }
+        }
+        if (tiles != null && tiles.Count > 0) {
             return UtilityScripts.CollectionUtilities.GetRandomElement(tiles);
         }
         return null;

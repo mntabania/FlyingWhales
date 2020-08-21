@@ -510,6 +510,19 @@ namespace Inner_Maps {
             if (hasLandmine) {
                 GameManager.Instance.StartCoroutine(TriggerLandmine(character));
             }
+
+            if (!character.movementComponent.cameFromWurmHole) {
+                if (objHere != null && objHere is WurmHole wurmHole) {
+                    if (wurmHole.wurmHoleConnection.gridTileLocation != null) {
+                        wurmHole.TravelThroughWurmHole(character);
+                        return;
+                    }
+                }
+            } else {
+                character.movementComponent.SetCameFromWurmHole(false);
+            }
+            
+
             if (hasFreezingTrap && (_freezingTrapChecker == null || _freezingTrapChecker.CanTrapAffectCharacter(character))) {
                 TriggerFreezingTrap(character);
             }

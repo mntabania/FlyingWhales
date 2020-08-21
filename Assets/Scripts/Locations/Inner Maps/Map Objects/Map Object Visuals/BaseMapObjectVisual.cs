@@ -154,7 +154,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public override void Reset() {
         base.Reset();
         if (objectVisual != null ) {
-            SetVisualAlpha(255f / 255f);    
+            SetVisualAlpha(1f);    
         }
         if (hpBarGO) {
             HideHPBar();

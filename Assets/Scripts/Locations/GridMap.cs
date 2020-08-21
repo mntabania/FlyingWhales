@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Serialization;
+using UtilityScripts;
 
 public class GridMap : MonoBehaviour {
 	public static GridMap Instance;
@@ -284,6 +285,25 @@ public class GridMap : MonoBehaviour {
         for (int i = 0; i < allRegions.Length; i++) {
             allRegions[i].UpdateAwareness();
         }
+    }
+    public Region GetRandomRegionWithFeature(string feature) {
+        List<Region> choices = new List<Region>();
+        for (int i = 0; i < allRegions.Length; i++) {
+            Region region = allRegions[i];
+            if (region.HasTileWithFeature(feature)) {
+                choices.Add(region);
+            }
+        }
+        if (choices.Count > 0) {
+            return CollectionUtilities.GetRandomElement(choices);
+        }
+        return null;
+    }
+    public Region GetRandomRegion() {
+        if (allRegions.Length > 0) {
+            return CollectionUtilities.GetRandomElement(allRegions);
+        }
+        return null;
     }
     #endregion
 }

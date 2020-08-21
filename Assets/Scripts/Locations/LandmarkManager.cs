@@ -554,19 +554,6 @@ public partial class LandmarkManager : MonoBehaviour {
         Assert.IsNotNull(type, $"type for {featureName} is null!");
         return System.Activator.CreateInstance(type) as T;
     }
-    public Region GetRandomRegionWithFeature(string feature) {
-        List<Region> choices = new List<Region>();
-        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            Region region = GridMap.Instance.allRegions[i];
-            if (region.HasTileWithFeature(feature)) {
-                choices.Add(region);
-            }
-        }
-        if (choices.Count > 0) {
-            return CollectionUtilities.GetRandomElement(choices);
-        }
-        return null;
-    }
     #endregion
 
     #region Region Features

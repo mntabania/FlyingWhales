@@ -85,7 +85,7 @@ public class CrimeManager : MonoBehaviour {
         }
 
 
-        if (!existingCrimeData.HasWitness(witness)) {
+        if (!existingCrimeData.IsWitness(witness)) {
             existingCrimeData.AddWitness(witness);
 
             bool willDecideWantedOrNot = false;
@@ -396,7 +396,6 @@ public class CrimeData {
     public Character judge { get; private set; }
     public List<Character> witnesses { get; }
     public List<Faction> factionsThatConsidersWanted { get; }
-    //public List<Character> authoritiesAlreadyDecided { get; }
 
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         this.crimeType = crimeType;
@@ -407,9 +406,34 @@ public class CrimeData {
         this.targetFaction = targetFaction;
         witnesses = new List<Character>();
         factionsThatConsidersWanted = new List<Faction>();
-        //authoritiesAlreadyDecided = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
+        SubscribeToListeners();
     }
+
+
+    #region Listeners
+    private void SubscribeToListeners() {
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    private void UnsubscribeFromListeners() {
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
+    private void OnCharacterDied(Character character) {
+        if (IsWitness(character)) {
+            if (!HasWanted()) {
+                if (AreAllWitnessesDead()) {
+                    criminalTrait.RemoveCrime(this);
+
+                    CrimeType crimeTypeObj = CrimeManager.Instance.GetCrimeType(crimeType);
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses");
+                    addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
+                    addLog.AddLogToInvolvedObjects();
+                }
+            }
+        }
+    }
+    #endregion
 
     #region General
     public void SetCrimeStatus(CRIME_STATUS status) {
@@ -463,15 +487,31 @@ public class CrimeData {
         }
         return text;
     }
+    public void OnCrimeAdded() { }
+    public void OnCrimeRemoved() {
+        UnsubscribeFromListeners();
+    }
     #endregion
 
     #region Witnesses
-    public bool HasWitness(Character character) {
+    public bool IsWitness(Character character) {
         return witnesses.Contains(character);
     }
     public void AddWitness(Character character) {
         witnesses.Add(character);
         character.crimeComponent.AddWitnessedCrime(this);
+    }
+    private bool AreAllWitnessesDead() {
+        if(witnesses.Count > 0) {
+            for (int i = 0; i < witnesses.Count; i++) {
+                if (!witnesses[i].isDead) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        //If there are no witnesses do not consider this true
+        return false;
     }
     #endregion
 
@@ -509,10 +549,4 @@ public class CrimeData {
         return factionsThatConsidersWanted.Count > 0;
     }
     #endregion
-
-    //#region Authority
-    //public void AddAuthorityAlreadyDecided(Character character) {
-    //    authoritiesAlreadyDecided.Add(character);
-    //}
-    //#endregion
 }

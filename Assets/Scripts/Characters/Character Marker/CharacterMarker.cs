@@ -870,6 +870,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
         SetCollidersState(true);
         tile.parentMap.region.AddPendingAwareness(character);
+        character.reactionComponent.UpdateHiddenState();
     }
     public void PlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
         Vector3 localPos = region.innerMap.grid.WorldToLocal(worldPosition);
@@ -888,6 +889,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
         SetCollidersState(true);
         tile.parentMap.region.AddPendingAwareness(character);
+        character.reactionComponent.UpdateHiddenState();
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.minion != null || character.destroyMarkerOnDeath) {

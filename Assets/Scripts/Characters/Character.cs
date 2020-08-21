@@ -610,7 +610,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Death by attacked
             if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction) {
                 //Killed by a character from another villager faction
-                if (IsInHomeSettlement()) {
+                if (IsInHomeSettlement() && !homeSettlement.HasAliveResident()) {
                     GameDate dueDate = GameManager.Instance.Today();
                     dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
                     LocationGridTile deathTile = gridTileLocation;

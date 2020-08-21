@@ -38,7 +38,7 @@ public class Raid : GoapAction {
     #region State Effects
     public void AfterRaidSuccess(ActualGoapNode goapNode) {
         object[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure targetStructure) {
+        if (otherData != null && otherData.Length == 2 && otherData[0] is LocationStructure targetStructure) {
             Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Raid, goapNode.actor);
             RaidParty raidParty = party as RaidParty;
             raidParty.SetTargetStructure(targetStructure);

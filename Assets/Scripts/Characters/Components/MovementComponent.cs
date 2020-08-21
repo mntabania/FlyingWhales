@@ -21,7 +21,7 @@ public class MovementComponent {
     public float runSpeedModifier { get; private set; }
     public bool hasMovedOnCorruption { get; private set; }
     public bool isStationary { get; private set; }
-    public ABPath currentDigPath { get; private set; }
+    public bool cameFromWurmHole { get; private set; }
 
     private int _enableDiggingCounter;
     private int _avoidSettlementsCounter;
@@ -139,6 +139,9 @@ public class MovementComponent {
         } else {
             _avoidSettlementsCounter--;
         }
+    }
+    public void SetCameFromWurmHole(bool state) {
+        cameFromWurmHole = state;
     }
 
     #region Go To

@@ -36,6 +36,7 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
             owner.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
+            RemoveAllActiveCrimes();
             base.OnRemoveTrait(sourcePOI, removedBy);
         }
         protected override string GetDescriptionInUI() {
@@ -83,13 +84,15 @@ namespace Traits {
             CrimeData newData = new CrimeData(crimeType, crimeSeverity, crime, criminal, target, targetFaction);
             newData.SetCriminalTrait(criminalTrait);
             activeCrimes.Add(newData);
+            newData.OnCrimeAdded();
             return newData;
         }
         public void RemoveAllCrimesWantedBy(Faction faction) {
             for (int i = 0; i < activeCrimes.Count; i++) {
                 CrimeData data = activeCrimes[i];
                 if (data.IsWantedBy(faction)) {
-                    previousCrimes.Add(activeCrimes[i]);
+                    data.OnCrimeRemoved();
+                    previousCrimes.Add(data);
                     activeCrimes.RemoveAt(i);
                     i--;
                 }
@@ -98,8 +101,17 @@ namespace Traits {
                 owner.traitContainer.RemoveTrait(owner, this);
             }
         }
+        private void RemoveAllActiveCrimes() {
+            while(activeCrimes.Count > 0) {
+                CrimeData data = activeCrimes[0];
+                data.OnCrimeRemoved();
+                previousCrimes.Add(data);
+                activeCrimes.RemoveAt(0);
+            }
+        }
         public void RemoveCrime(CrimeData crimeData) {
             if (activeCrimes.Remove(crimeData)) {
+                crimeData.OnCrimeRemoved();
                 previousCrimes.Add(crimeData);
                 if (activeCrimes.Count <= 0) {
                     owner.traitContainer.RemoveTrait(owner, this);
@@ -173,7 +185,7 @@ namespace Traits {
             for (int i = 0; i < activeCrimes.Count; i++) {
                 CrimeData data = activeCrimes[i];
                 if(data.crime == crime) {
-                    return data.HasWitness(character);
+                    return data.IsWitness(character);
                 }
             }
             return false;

@@ -24,10 +24,24 @@ public class SeizeObjectData : PlayerAction {
             if(targetTileObject is AnkhOfAnubis ankh && ankh.isActivated) {
                 return false;
             }
+            if(targetTileObject is WurmHole) {
+                return false;
+            }
             return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && targetTileObject.mapVisual != null && 
                    (targetTileObject.isBeingCarriedBy != null || targetTileObject.gridTileLocation != null);
         }
         return false;
+    }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(target is TileObject targetTileObject) {
+            if (targetTileObject is AnkhOfAnubis ankh && ankh.isActivated) {
+                return false;
+            }
+            if (targetTileObject is WurmHole) {
+                return false;
+            }
+        }
+        return base.IsValid(target);
     }
     #endregion
 }

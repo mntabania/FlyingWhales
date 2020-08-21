@@ -874,11 +874,23 @@ public class CharacterManager : MonoBehaviour {
         summon.OnPlaceSummon(locationTile);
     }
     public void Teleport(Character character, LocationGridTile tile) {
+        bool isCentered = character.marker && InnerMapCameraMove.Instance.target == character.marker.gameObject.transform;
+        if (isCentered) {
+            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        }
+        if (character.currentRegion != tile.structure.location) {
+            character.currentRegion?.RemoveCharacterFromLocation(character);
+        }
         if (!character.marker) {
             character.CreateMarker();
             character.marker.InitialPlaceMarkerAt(tile);
         } else {
             character.marker.PlaceMarkerAt(tile);
+        }
+        character.marker.pathfindingAI.ClearAllCurrentPathData();
+        character.marker.pathfindingAI.UpdateMe();
+        if (isCentered) {
+            character.CenterOnCharacter();
         }
     }
     public void SetCurrentDemonicStructureTargetOfAngels(DemonicStructure demonicStructure) {
