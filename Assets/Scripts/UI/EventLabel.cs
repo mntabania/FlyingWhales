@@ -22,7 +22,8 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     public System.Func<object, bool> shouldBeHighlightedChecker;
     public System.Action<object> onClickAction;
 
-    protected bool isHovering;
+    [SerializeField] protected bool isHovering;
+    [SerializeField] private bool wasHoveringPreviousFrame = false;
 
     protected Dictionary<string, object> objectDictionary;
 
@@ -33,12 +34,18 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         }
     }
     void Update() {
+        wasHoveringPreviousFrame = isHovering;
         if (isHovering) {
             HoveringAction();
+        } else {
+            if (wasHoveringPreviousFrame) {
+                OnPointerExit(null);
+            }
         }
     }
     void OnDisable() {
         ResetHighlightValues();
+        wasHoveringPreviousFrame = false;
     }
 
     public void ResetHighlightValues() {
@@ -214,9 +221,9 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         //    return;
         //}
         int linkIndex = TMP_TextUtilities.FindIntersectingLink(text, Input.mousePosition, null);
-        if (linkIndex == -1) {
+        // if (linkIndex == -1) {
             hoverOutAction?.Invoke();
-        }
+        // }
         ResetHighlightValues();
     }
     public void SetOnClickAction(System.Action<object> onClickAction) {

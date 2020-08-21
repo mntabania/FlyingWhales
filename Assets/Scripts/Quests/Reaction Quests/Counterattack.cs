@@ -14,15 +14,12 @@ namespace Quests {
             _targetStructure = targetStructure;
         }
         protected override void ConstructSteps() {
-            CharacterBehaviourComponent attackDemonicStructureBehaviour =
-                CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
+            CharacterBehaviourComponent attackDemonicStructureBehaviour = CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(AttackDemonicStructureBehaviour));
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new CharactersRemovedBehaviourStep($"Defend {_targetStructure.name}", 
-                            _attackers, attackDemonicStructureBehaviour)
+                    new CharactersRemovedBehaviourStep($"Defend {_targetStructure.name}", new List<Character>(_attackers), attackDemonicStructureBehaviour)
                         .SetObjectsToCenter(_targetStructure),
-                    new CharactersRemovedBehaviourStep(GetStopCharactersDescription, _attackers, 
-                            attackDemonicStructureBehaviour)
+                    new CharactersRemovedBehaviourStep(GetStopCharactersDescription, new List<Character>(_attackers), attackDemonicStructureBehaviour)
                         .SetHoverOverAction(OnHoverStopItem)
                         .SetHoverOutAction(() => UIManager.Instance.HideSmallInfo())
                         .SetObjectsToCenter(_attackers.Select(x => x as ISelectable).ToArray())    
