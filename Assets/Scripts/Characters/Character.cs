@@ -3515,6 +3515,35 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             i--;
         }
     }
+    public void UnownOrTransferOwnershipOfItemsIn(LocationStructure structure) {
+        //https://trello.com/c/LbfWIBBh/1866-item-ownership-dead
+        //All owned items of character must be unowned when he dies
+        //The items must either be unowned or transfered to another resident in his home structure, depending on where the item is currently
+        //If it is in home structure transfer it to another random resident, otherwise, unown only
+
+        List<Character> potentialOwners = null;
+        if (structure != null) {
+            for (int i = 0; i < structure.residents.Count; i++) {
+                Character resident = structure.residents[i];
+                if (resident != this) {
+                    if (potentialOwners == null) { potentialOwners = new List<Character>(); }
+                    potentialOwners.Add(resident);
+                }
+            }
+        }
+        for (int i = 0; i < ownedItems.Count; i++) {
+            TileObject item = ownedItems[i];
+            if (item.gridTileLocation != null && item.gridTileLocation.structure == structure) {
+                if (potentialOwners != null && potentialOwners.Count > 0) {
+                    Character newOwner = CollectionUtilities.GetRandomElement(potentialOwners);
+                    item.SetCharacterOwner(newOwner);
+                } else {
+                    item.SetCharacterOwner(null);
+                }
+                i--;
+            }
+        }
+    }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = false, bool setOwnership = true) {
         item.isBeingCarriedBy?.UnobtainItem(item);
         if (ObtainItem(item, changeCharacterOwnership, setOwnership)) {
@@ -5746,11 +5775,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             //RemoveAllNonPersistentTraits();
             if (partyComponent.hasParty) {
-                if (partyComponent.currentParty.IsLeader(this)) {
-                    partyComponent.currentParty.DisbandParty();
-                } else {
-                    partyComponent.currentParty.RemoveMember(this);
-                }
+                partyComponent.currentParty.RemoveMember(this);
+                //if (partyComponent.currentParty.IsLeader(this)) {
+                //    partyComponent.currentParty.DisbandParty();
+                //} else {
+                //    partyComponent.currentParty.RemoveMember(this);
+                //}
             }
 
             SetHP(0);

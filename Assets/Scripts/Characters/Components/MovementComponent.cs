@@ -295,11 +295,7 @@ public class MovementComponent {
             _enableDiggingCounter--;
         }
     }
-    public bool DigOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
-        //Vector3 lastPositionInPath = path.vectorPath.Last();
-
-        //no path to target tile
-        //create job to dig wall
+    public LocationGridTile GetBlockerTargetTileOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
         LocationGridTile targetTile;
 
         LocationGridTile tile = lastGridTileInPath;// owner.currentRegion.innerMap.GetTile(lastPositionInPath);
@@ -332,12 +328,20 @@ public class MovementComponent {
                 }
             }
         }
+        return targetTile;
+    }
+    public bool DigOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
+        //Vector3 lastPositionInPath = path.vectorPath.Last();
+
+        //no path to target tile
+        //create job to dig wall
+        LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath);
 
 
         //Debug.Log($"No Path found for {owner.name} towards {owner.behaviourComponent.currentAbductTarget?.name ?? "null"}! Last position in path is {lastPositionInPath.ToString()}. Wall to dig is at {targetTile}");
         //Assert.IsNotNull(targetTile.objHere, $"Object at {targetTile} is null, but {owner.name} wants to dig it.");
 
-        if(targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
+        if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.DIG_THROUGH)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DIG_THROUGH, INTERACTION_TYPE.DIG, targetTile.objHere, owner);
                 job.SetCannotBePushedBack(true);
@@ -347,6 +351,19 @@ public class MovementComponent {
         }
         return false;
         // character.behaviourComponent.SetDigForAbductionPath(null); //so behaviour can be run again after job has been added
+    }
+    public bool AttackBlockersOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
+        LocationGridTile targetTile = GetBlockerTargetTileOnReachEndPath(path, lastGridTileInPath);
+
+        if (targetTile != null && targetTile.objHere != null && targetTile.objHere is BlockWall) {
+            if (owner.combatComponent.hostilesInRange.Contains(targetTile.objHere)) {
+                owner.combatComponent.SetWillProcessCombat(true);
+            } else {
+                owner.combatComponent.Fight(targetTile.objHere, CombatManager.Dig);
+            }
+            return true;
+        }
+        return false;
     }
     #endregion
 }

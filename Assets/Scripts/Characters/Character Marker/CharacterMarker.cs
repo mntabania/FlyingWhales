@@ -471,37 +471,36 @@ public class CharacterMarker : MapObjectVisual<Character> {
         StartMovement();
     }
     public void ArrivedAtTarget() {
+        StopMovement();
+
         if (character.combatComponent.isInCombat) {
             CombatState combatState = character.stateComponent.currentState as CombatState;
             if (combatState.isAttacking){
-                if(combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
-                    character.combatComponent.RemoveHostileInRange(combatState.currentClosestHostile);
+                LocationGridTile destinationTile = null;
+                LocationGridTile attainedDestinationTile = null;
+                ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
+                if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
+                    //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                    if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
+                        targetPOI = null;
+                        return;
+                    }
+                }
+
+
+                if (combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
+                    if (character.combatComponent.RemoveHostileInRange(combatState.currentClosestHostile)) {
+                        targetPOI = null;
+                    }
                 }
                 return;
             }
         }
-        StopMovement();
 
         if (character.movementComponent.CanDig()) {
             LocationGridTile destinationTile = null;
-            if (targetPOI != null) {
-                destinationTile = targetPOI.gridTileLocation;
-            } else if (this.destinationTile != null) {
-                destinationTile = this.destinationTile;
-            }
             LocationGridTile attainedDestinationTile = null;
-            if (character.gridTileLocation == destinationTile || character.gridTileLocation.IsNeighbour(destinationTile)) {
-                attainedDestinationTile = destinationTile;
-            } else {
-                List<Vector3> vectorPath = pathfindingAI.currentPath.vectorPath;
-                if (vectorPath != null && vectorPath.Count > 0) {
-                    Vector3 lastPositionInPath = vectorPath.Last();
-                    //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
-                    attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
-                } else {
-                    attainedDestinationTile = character.gridTileLocation;
-                }
-            }
+            ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
             if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
                 //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
                 if (character.movementComponent.DigOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
@@ -517,6 +516,25 @@ public class CharacterMarker : MapObjectVisual<Character> {
         action?.Invoke();
 
         targetPOI = null;
+    }
+    private void ProcessDestinationAndAttainedDestinationTile(ref LocationGridTile destinationTile, ref LocationGridTile attainedDestinationTile) {
+        if (targetPOI != null) {
+            destinationTile = targetPOI.gridTileLocation;
+        } else if (this.destinationTile != null) {
+            destinationTile = this.destinationTile;
+        }
+        if (character.gridTileLocation == destinationTile || character.gridTileLocation.IsNeighbour(destinationTile)) {
+            attainedDestinationTile = destinationTile;
+        } else {
+            List<Vector3> vectorPath = pathfindingAI.currentPath.vectorPath;
+            if (vectorPath != null && vectorPath.Count > 0) {
+                Vector3 lastPositionInPath = vectorPath.Last();
+                //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
+                attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
+            } else {
+                attainedDestinationTile = character.gridTileLocation;
+            }
+        }
     }
     private void StartMovement() {
         if (character.movementComponent.isStationary) {

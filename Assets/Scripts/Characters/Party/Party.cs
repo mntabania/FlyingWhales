@@ -11,6 +11,7 @@ public class Party {
     public int minimumPartySize { get; protected set; }
     public System.Type relatedBehaviour { get; protected set; }
     public JOB_OWNER jobQueueOwnerType { get; protected set; }
+    public IJobOwner jobOwner { get; protected set; }
 
     public List<Character> members { get; protected set; } //includes the leader
     public bool isWaitTimeOver { get; protected set; }
@@ -53,6 +54,8 @@ public class Party {
         if (member == leader) {
             leader.RemoveAdvertisedAction(INTERACTION_TYPE.JOIN_PARTY);
         }
+        member.jobQueue.CancelAllPartyJobs();
+
     }
     protected virtual void OnDisbandParty() {
         Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband");
@@ -67,6 +70,15 @@ public class Party {
     protected virtual void OnBeforeDisbandParty() { }
     protected virtual void OnWaitTimeOver() { }
     protected virtual void OnWaitTimeOverButPartyIsDisbanded() { }
+    protected virtual void OnSetLeader() {
+        if(leader != null) {
+            if (jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
+                jobOwner = leader.homeSettlement;
+            } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
+                jobOwner = leader.faction;
+            }
+        }
+    }
     #endregion
 
     #region General
@@ -80,6 +92,7 @@ public class Party {
                 StartWaitTime();
                 AddMember(leader);
             }
+            OnSetLeader();
         }
     }
     public bool AddMember(Character character) {
@@ -160,16 +173,16 @@ public class Party {
 
     private void CreateJoinPartyJob() {
         if(jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
-            leader.homeSettlement.settlementJobTriggerComponent.TriggerJoinPartyJob(this);
+            (jobOwner as NPCSettlement).settlementJobTriggerComponent.TriggerJoinPartyJob(this);
         } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
-            leader.faction.factionJobTriggerComponent.TriggerJoinPartyJob(this);
+            (jobOwner as Faction).factionJobTriggerComponent.TriggerJoinPartyJob(this);
         }
     }
     private void CancelAllJoinPartyJobs() {
         if (jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
-            leader.homeSettlement?.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
+            jobOwner.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
         } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
-            leader.faction?.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
+            jobOwner.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
         }
     }
     #endregion
