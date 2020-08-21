@@ -1128,6 +1128,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     #endregion
 
+    #region Faction
+    public override void SetOwner(Faction owner) {
+        base.SetOwner(owner);
+        if (owner == null) {
+            //if owner of settlement becomes null, then set the settlement as no longer under siege
+            SetIsUnderSiege(false);
+        }
+    }
+    #endregion
+
     public override string ToString() {
         return name;
     }
