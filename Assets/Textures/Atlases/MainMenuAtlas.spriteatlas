@@ -43,21 +43,19 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 44f60a26149e35a49860f83d9e28b23c, type: 3}
-    totalSpriteSurfaceArea: 27660724
+    totalSpriteSurfaceArea: 27679453
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 373550004dae78d40a853eac3ee92801, type: 3}
   - {fileID: 21300000, guid: a5f1d6205798b4f46951792bbb7f335f, type: 3}
   - {fileID: 21300000, guid: c7513830e2eb521408c5d295524a5d88, type: 3}
-  - {fileID: 21300000, guid: 91c6624050669a641aeff522c8a15382, type: 3}
   - {fileID: 21300000, guid: 3c22d2408af182842891aca017fc9672, type: 3}
   - {fileID: 21300000, guid: 41f307609fb0c314c9c3d6096744660a, type: 3}
   - {fileID: 21300000, guid: 4e58d580888ba764c8cd48d2b592b223, type: 3}
   - {fileID: 21300000, guid: cf37ca90afacaf7458a15dccce82e5e0, type: 3}
   - {fileID: 21300000, guid: d2c4daa0d69897f42aeedbed1d879bc0, type: 3}
   - {fileID: 21300000, guid: 743696610e951284fa5e803e265fd28b, type: 3}
-  - {fileID: 21300000, guid: fc463ec1c15ee8e42b33c5680ace6a82, type: 3}
   - {fileID: 21300000, guid: e56da962dce94bb4f96d4fa7353b554f, type: 3}
   - {fileID: 21300000, guid: 3aee2d72992849e48995390626975de0, type: 3}
   - {fileID: 21300000, guid: 71569b928b116194e9cbcfa4d1799cfd, type: 3}
@@ -68,7 +66,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5b9340c36fa78b746af03eea0785c828, type: 3}
   - {fileID: 21300000, guid: b488fdd3b6db516449dce48c830901ec, type: 3}
   - {fileID: 21300000, guid: 2da070e321ea13240bdbf563da7ed53a, type: 3}
-  - {fileID: 21300000, guid: 9b17d5e362923be46a2f8c739750ff6e, type: 3}
   - {fileID: 21300000, guid: 44b0b504b0cc00b4789b446495270faf, type: 3}
   - {fileID: 21300000, guid: 08715c441c913db4eb6ca5f199ffd1ec, type: 3}
   - {fileID: 21300000, guid: b622fd449b4d38f45920d196466070b4, type: 3}
@@ -92,6 +89,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c7bbbee74bee8704fa2b45e11eadc95d, type: 3}
   - {fileID: 21300000, guid: 0d6970088338dcb47bc2ee92d2b2254b, type: 3}
   - {fileID: 21300000, guid: 52415368acbe6ee468a33aeba78e82db, type: 3}
+  - {fileID: 21300000, guid: 3733486858285e24cae07b0e0230abbf, type: 3}
   - {fileID: 21300000, guid: 93ba6098314cebf418c5510a663c08db, type: 3}
   - {fileID: 21300000, guid: 189752b89c81e9541b45c7ece9ed0a54, type: 3}
   - {fileID: 21300000, guid: 221e80b93e44c5e48be4d6d37c05dc4b, type: 3}
@@ -99,24 +97,25 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e86a48caa8eb8c644869e929bb47816e, type: 3}
   - {fileID: 21300000, guid: e4e190da22037af47af0ddac3ada8a25, type: 3}
   - {fileID: 21300000, guid: a5e9675bf4a18a14b8ac8c4157185575, type: 3}
+  - {fileID: 21300000, guid: 556344eba86fffb4f99f5ef9847c1e4f, type: 3}
+  - {fileID: 21300000, guid: 6cbf410c0d6f04542a4f29ca5c5592b4, type: 3}
   - {fileID: 21300000, guid: 8bdc1a1cf8a1c5842be972458dd90a72, type: 3}
   - {fileID: 21300000, guid: 688af52cfc1d07b42a817bbbf1ec1360, type: 3}
   - {fileID: 21300000, guid: c47636cc1e9265a4bb4c197415119c56, type: 3}
   - {fileID: 21300000, guid: 2da5d3ed1a211414782ee147aeab2947, type: 3}
+  - {fileID: 21300000, guid: 339db86ec535a1a46b934f167faf1ce8, type: 3}
   - {fileID: 21300000, guid: 26bdf82f546f30d4fbba39dc04c25213, type: 3}
   - {fileID: 21300000, guid: 32b11fdf4fe54a94390363d811b89a5a, type: 3}
   m_PackedSpriteNamesToIndex:
   - main_menu_logo
   - loading_bg
   - main_menu_newgame_btn_default
-  - main_menu_loadgame_btn_pressed
   - main_menu_loadgame_btn_default
   - main_menu_glow
   - main_menu_credits_btn_hover
   - main_menu_logo
   - main_menu_ui_container
   - main_menu_exit_btn_pressed
-  - main_menu_loadgame_btn_default
   - main_menu_continue_btn_default
   - main_menu_exit_btn_hover
   - main_menu_glow2
@@ -127,7 +126,6 @@ SpriteAtlas:
   - main_menu_newgame_btn_default
   - main_menu_fg
   - main_menu_exit_btn_hover
-  - main_menu_loadgame_btn_hover
   - main_menu_credits_btn_pressed
   - demo_start_btn_hover
   - main_menu_exit_btn_pressed
@@ -151,6 +149,7 @@ SpriteAtlas:
   - main_menu_newgame_btn_hover
   - Loading Screen
   - main_menu_settings_btn_pressed
+  - main_menu_discord_btn_hover
   - main_menu_credits_btn_default
   - main_menu_credits_btn_hover
   - main_menu_bg
@@ -158,10 +157,13 @@ SpriteAtlas:
   - main_menu_settings_btn_hover
   - b1 d
   - main_menu_settings_btn_default
+  - main_menu_discord_btn_clicked
+  - main_menu_discord_btn_default
   - main_menu_loadgame_btn_hover
   - main_menu_continue_btn_hover
   - puppetmaster
   - main_menu_settings_btn_pressed
+  - main_menu_continue_btn_disabled
   - lich
   - main_menu_continue_btn_default
   m_Tag: MainMenuAtlas

@@ -21,7 +21,7 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Image bg;
 
     [Header("Buttons")]
-    [SerializeField] private Button loadGameButton;
+    // [SerializeField] private Button loadGameButton;
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button invadeButton;
     [SerializeField] private Button researchButton;
@@ -90,14 +90,17 @@ public class MainMenuUI : MonoBehaviour {
     public void OnClickLoadGame() {
         SaveManager.Instance.useSaveData = true;
         newGameButton.interactable = false;
-        loadGameButton.interactable = false;
+        // loadGameButton.interactable = false;
         AudioManager.Instance.TransitionToLoading();
         MainMenuManager.Instance.LoadMainGameScene();
     }
     public void OnClickSettings() {
         SettingsManager.Instance.OpenSettings();
     }
-    public void UpdateLoadButton() {
-        loadGameButton.interactable = false; // SaveManager.Instance.hasSavedDataCurrentProgress;
+    public void OnClickDiscord() {
+        Application.OpenURL("http://discord.ruinarch.com/");
     }
+    // public void UpdateLoadButton() {
+    //     loadGameButton.interactable = false; // SaveManager.Instance.hasSavedDataCurrentProgress;
+    // }
 }

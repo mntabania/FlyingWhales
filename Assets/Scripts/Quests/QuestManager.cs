@@ -21,7 +21,10 @@ namespace Quests {
             Threat, Counterattack, Divine_Intervention, Special_Events, Pause_Reminder, 
             //Finished_Tutorial,
             //Wolf_Migration, Villager_Migration,
-            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon
+            Excalibur_Obtained, Disguised_Succubus, Activated_Ankh, Dragon_Left, Dragon_Awakened, Sleeping_Dragon,
+            The_Sword,
+            The_Crack,
+            The_Necronomicon,
         }
         
         private void Awake() {
@@ -31,6 +34,7 @@ namespace Quests {
             Messenger.RemoveListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.RemoveListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            Messenger.RemoveListener<Character, DemonicStructure>(Signals.CHARACTER_ATTACKED_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
         }
 
         #region Initialization
@@ -39,6 +43,7 @@ namespace Quests {
             Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
+            Messenger.AddListener<Character, DemonicStructure>(Signals.CHARACTER_ATTACKED_DEMONIC_STRUCTURE, OnSingleCharacterAttackedDemonicStructure);
             Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "CenterButton");
         }
         public void InitializeAfterLoadoutPicked(){
@@ -184,6 +189,15 @@ namespace Quests {
         #region Center Button
         public void OnClickCenterButton() {
             Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "CenterButton");
+        }
+        #endregion
+
+        #region Under Attack
+        private void OnSingleCharacterAttackedDemonicStructure(Character character, DemonicStructure demonicStructure) {
+            if (demonicStructure.currentAttackers.Count == 1 && !InnerMapCameraMove.Instance.CanSee(demonicStructure)) {
+                PlayerUI.Instance.ShowGeneralConfirmation("Under Attack", $"Your {demonicStructure.name} is under attack!", 
+                    onClickCenter: demonicStructure.CenterOnStructure);
+            }
         }
         #endregion
     }

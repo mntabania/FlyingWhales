@@ -6,12 +6,10 @@ using Random = UnityEngine.Random;
 
 public class VengefulGhost : Summon {
     public override string raceClassName => characterClass.className;
-    public VengefulGhost() : base(SUMMON_TYPE.Vengeful_Ghost, "Vengeful Ghost", RACE.GHOST,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public VengefulGhost() : base(SUMMON_TYPE.Vengeful_Ghost, "Vengeful Ghost", RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public VengefulGhost(string className) : base(SUMMON_TYPE.Vengeful_Ghost, className, RACE.GHOST,
-    UtilityScripts.Utilities.GetRandomGender()) {
+    public VengefulGhost(string className) : base(SUMMON_TYPE.Vengeful_Ghost, className, RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
     public VengefulGhost(SaveDataCharacter data) : base(data) {

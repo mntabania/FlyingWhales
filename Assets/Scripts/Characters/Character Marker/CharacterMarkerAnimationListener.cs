@@ -22,27 +22,27 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
                 combatState.isExecutingAttack = false;
                 combatState.OnAttackHit(combatState.currentClosestHostile);
                 if (parentMarker.character is Summon) {
-                    AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
+                    AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
                         parentMarker.character.gridTileLocation, 1, false);    
                 } else {
                     switch (parentMarker.character.characterClass.className) {
                         case "Craftsman":
                         case "Miner":
-                            AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomBluntWeaponAudio(),
+                            AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomBluntWeaponAudio(),
                                 parentMarker.character.gridTileLocation, 1, false);
                             break;
                         case "Noble":
                         case "Knight":
                         case "Barbarian":
                         case "Marauder":
-                            AudioManager.Instance.CreateAudioObject(
+                            AudioManager.Instance.TryCreateAudioObject(
                                 combatState.currentClosestHostile is Character
                                     ? AudioManager.Instance.GetRandomSwordAgainstFleshAudio()
                                     : AudioManager.Instance.GetRandomSwordAgainstObjectAudio(),
                                 parentMarker.character.gridTileLocation, 1, false);
                             break;
                         default:
-                            AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
+                            AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomPunchAudio(),
                                 parentMarker.character.gridTileLocation, 1, false);
                             break;
                     }
@@ -76,7 +76,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
             projectile.onHitAction = OnProjectileHit;    
         }
         
-        AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomBowAndArrowAudio(),
+        AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomBowAndArrowAudio(),
             parentMarker.character.gridTileLocation, 1, false);
     }
     /// <summary>
@@ -88,7 +88,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         //fromState.OnAttackHit(character);
         if (parentMarker.character != null) {
             if (target.gridTileLocation != null) {
-                AudioManager.Instance.CreateAudioObject(AudioManager.Instance.GetRandomArrowImpactAudio(),
+                AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomArrowImpactAudio(),
                     target.gridTileLocation, 1, false);    
             }
             if (parentMarker.character.stateComponent.currentState is CombatState combatState) {

@@ -7,12 +7,10 @@ using Random = UnityEngine.Random;
 
 public class Wurm : Summon {
     public override string raceClassName => characterClass.className;
-    public Wurm() : base(SUMMON_TYPE.Wurm, "Wurm", RACE.WURM,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public Wurm() : base(SUMMON_TYPE.Wurm, "Wurm", RACE.WURM, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public Wurm(string className) : base(SUMMON_TYPE.Wurm, className, RACE.WURM,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public Wurm(string className) : base(SUMMON_TYPE.Wurm, className, RACE.WURM, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
     public Wurm(SaveDataCharacter data) : base(data) {

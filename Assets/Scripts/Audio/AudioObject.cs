@@ -28,5 +28,6 @@ public class AudioObject : PooledObject {
     public override void Reset() {
         base.Reset();
         audioSource.Stop();
+        AudioManager.Instance.OnAudioObjectReset();
     }
 }

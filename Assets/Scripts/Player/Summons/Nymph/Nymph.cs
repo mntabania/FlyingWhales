@@ -3,13 +3,12 @@ using Interrupts;
 using UnityEngine;
 
 public abstract class Nymph : Summon {
-
-    public override string raceClassName => characterClass.className;
     
     private string _currentEffectSchedule;
-
-    protected Nymph(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.NYMPH,
-        UtilityScripts.Utilities.GetRandomGender()) {
+    public override string raceClassName => characterClass.className;
+    public override COMBAT_MODE defaultCombatMode => COMBAT_MODE.Defend;
+    
+    protected Nymph(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.NYMPH, UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
     protected Nymph(SaveDataCharacter data) : base(data) { }
