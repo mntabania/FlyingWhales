@@ -49,6 +49,7 @@ namespace Quests.Steps {
         }
         private void OnNewVillagerArrived(Character newVillager) {
             _targets.Add(newVillager);
+            objectsToCenter?.Add(newVillager);
             _initialCharactersToEliminate++;
             Messenger.Broadcast(Signals.UPDATE_QUEST_STEP_ITEM, this as QuestStep);
         }
