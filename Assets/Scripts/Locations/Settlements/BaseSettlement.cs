@@ -249,7 +249,7 @@ namespace Locations.Settlements {
         #endregion
 
         #region Faction
-        public void SetOwner(Faction owner) {
+        public virtual void SetOwner(Faction owner) {
             this.owner = owner;
         
             bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;
