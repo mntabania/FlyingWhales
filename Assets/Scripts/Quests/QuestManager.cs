@@ -195,7 +195,7 @@ namespace Quests {
         #region Under Attack
         private void OnSingleCharacterAttackedDemonicStructure(Character character, DemonicStructure demonicStructure) {
             if (demonicStructure.currentAttackers.Count == 1 && !InnerMapCameraMove.Instance.CanSee(demonicStructure)) {
-                PlayerUI.Instance.ShowGeneralConfirmation("Under Attack", $"Your {demonicStructure.nameWithoutID} is under attack!", 
+                PlayerUI.Instance.ShowGeneralConfirmation("Under Attack", $"Your {demonicStructure.name} is under attack!", 
                     onClickCenter: demonicStructure.CenterOnStructure);
             }
         }

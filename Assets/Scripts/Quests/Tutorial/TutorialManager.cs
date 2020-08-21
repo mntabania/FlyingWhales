@@ -33,7 +33,8 @@ namespace Tutorial {
             Zombie_Virus,
             Frame_Up,
             Faction_Info,
-            Create_A_Cultist
+            Create_A_Cultist,
+            World_Map
         }
 
         /// <summary>
@@ -62,7 +63,8 @@ namespace Tutorial {
             Tutorial.Zombie_Virus,
             Tutorial.Frame_Up,
             Tutorial.Faction_Info,
-            Tutorial.Create_A_Cultist
+            Tutorial.Create_A_Cultist,
+            Tutorial.World_Map
         };
 
         private List<ImportantTutorial> _activeImportantTutorials;

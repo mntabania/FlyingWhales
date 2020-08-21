@@ -9,7 +9,7 @@ namespace Inner_Maps.Location_Structures {
 
         public ThePortal(Region location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
             selectableSize = new Vector2(10f, 10f);
-            name = "The Portal";
+            name = "Portal";
             SetMaxHPAndReset(5000);
         }
         public ThePortal(Region location, SaveDataLocationStructure data) : base(location, data) {
