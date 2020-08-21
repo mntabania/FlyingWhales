@@ -102,11 +102,13 @@ public class Butcher : GoapAction {
                 int currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                 cost += currCost;
                 costLog += $" +{currCost}(Elf)";
-            } else if (deadCharacter.race == RACE.WOLF) {
-                int currCost = UtilityScripts.Utilities.Rng.Next(50, 61);
-                cost += currCost;
-                costLog += $" +{currCost}(Wolf)";
-            } else if (deadCharacter.race == RACE.DEMON) {
+            }
+            //else if (deadCharacter.race == RACE.WOLF) {
+            //    int currCost = UtilityScripts.Utilities.Rng.Next(50, 61);
+            //    cost += currCost;
+            //    costLog += $" +{currCost}(Wolf)";
+            //} 
+            else if (deadCharacter.race == RACE.DEMON) {
                 int currCost = UtilityScripts.Utilities.Rng.Next(90, 111);
                 cost += currCost;
                 costLog += $" +{currCost}(Demon)";
@@ -116,10 +118,31 @@ public class Butcher : GoapAction {
                 costLog += $" {cost}(Still Alive)";
             }
         }
-        if (target is Animal animal) {
-            cost += UtilityScripts.Utilities.Rng.Next(40, 51);
-            costLog += $" +{cost}(Animal)";
-            if (!animal.isDead) {
+        if (deadCharacter is Animal || deadCharacter.race == RACE.WOLF || deadCharacter.race == RACE.SPIDER) {
+            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(actor, actor, deadCharacter, CRIME_TYPE.Animal_Killing, null);
+            int currCost = 0;
+            if(severity == CRIME_SEVERITY.Infraction) {
+                currCost = UtilityScripts.Utilities.Rng.Next(80, 91);
+                costLog += $" +{currCost}(Animal/Infraction)";
+            } else if (severity == CRIME_SEVERITY.Misdemeanor || severity == CRIME_SEVERITY.Serious || severity == CRIME_SEVERITY.Heinous) {
+                if (actor.traitContainer.HasTrait("Malnourished")) {
+                    if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
+                        currCost = 200;
+                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished/Friend/Close Friend)";
+                    } else {
+                        currCost = UtilityScripts.Utilities.Rng.Next(100, 111);
+                        costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/Malnourished)";
+                    }
+                } else {
+                    currCost = 2000;
+                    costLog += $" +{currCost}(Animal/Misdemeanor/Serious/Heinous/not Malnourished)";
+                }
+            } else {
+                currCost = UtilityScripts.Utilities.Rng.Next(40, 51);
+                costLog += $" +{currCost}(Animal/No Severity)";
+            }
+            cost += currCost;
+            if (!deadCharacter.isDead) {
                 cost *= 2;
                 costLog += $" {cost}(Still Alive)";
             }

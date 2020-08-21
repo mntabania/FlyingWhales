@@ -167,6 +167,7 @@ public class RitualKilling : GoapAction {
             NPCSettlement settlementOfTarget = targetCharacter.homeSettlement;
             targetCharacter.Death(deathFromAction: goapNode, responsibleCharacter: goapNode.actor);
             goapNode.actor.jobComponent.TriggerBuryPsychopathVictim(targetCharacter, settlementOfTarget);
+            targetCharacter.reactionComponent.AddCharacterThatSawThisDead(goapNode.actor);
         }
     }
     #endregion

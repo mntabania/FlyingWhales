@@ -49,13 +49,30 @@ public class RescueBehaviour : CharacterBehaviourComponent {
             if(character.currentStructure == rescueParty.target.currentStructure) {
                 Character memberInCombat = rescueParty.GetMemberInCombatExcept(character);
                 if (memberInCombat != null && memberInCombat.currentStructure == rescueParty.target.currentStructure) {
-                    if (!character.marker.inVisionCharacters.Contains(memberInCombat)) {
-                        log += $"\n-There is a party member in combat inside explore structure, go to it";
-                        character.jobComponent.CreatePartyGoToJob(memberInCombat.gridTileLocation, out producedJob);
-                    } else {
-                        log += $"\n-Roam around";
-                        character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    log += $"\n-{memberInCombat.name} is in combat, will try to combat also";
+                    bool hasFought = false;
+                    CombatState combatState = memberInCombat.stateComponent.currentState as CombatState;
+                    if (combatState.currentClosestHostile != null) {
+                        CombatData combatData = memberInCombat.combatComponent.GetCombatData(combatState.currentClosestHostile);
+                        character.combatComponent.Fight(combatState.currentClosestHostile, combatData.reasonForCombat, combatData.connectedAction, combatData.isLethal);
+                        hasFought = true;
                     }
+                    //else {
+                    //    if (memberInCombat.combatComponent.avoidInRange.Count > 0) {
+                    //        for (int i = 0; i < memberInCombat.combatComponent.avoidInRange.Count; i++) {
+                    //            if (memberInCombat.combatComponent.avoidInRange[i] is Character targetCharacter) {
+                    //                character.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
+                    //                hasFought = true;
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    if (hasFought) {
+                        producedJob = null;
+                        return true;
+                    }
+                    log += $"\n-Roam around";
+                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     log += $"\n-Roam around";
                     character.jobComponent.TriggerRoamAroundStructure(out producedJob);

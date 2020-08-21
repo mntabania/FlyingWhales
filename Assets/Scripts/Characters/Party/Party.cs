@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Locations.Settlements;
 
 public class Party {
     public Character leader { get; protected set; }
@@ -77,6 +78,8 @@ public class Party {
             } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
                 jobOwner = leader.faction;
             }
+            StartWaitTime();
+            AddMember(leader);
         }
     }
     #endregion
@@ -88,10 +91,6 @@ public class Party {
                 RemoveMember(leader);
             }
             leader = newLeader;
-            if (leader != null) {
-                StartWaitTime();
-                AddMember(leader);
-            }
             OnSetLeader();
         }
     }

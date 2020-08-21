@@ -94,12 +94,52 @@ public class Assault : GoapAction {
                                 && opinionLabel != RelationshipManager.Rival) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                        } else {
+                        } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-                        }
+                        } else if (!targetCharacter.isNormalCharacter) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, witness, actor, status, node);
+                        } 
+                        //else {
+                        //    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                        //}
                     }
                     if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
                         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+                    }
+                } else if (target is TileObject targetTileObject) {
+                    if (node.associatedJobType != JOB_TYPE.APPREHEND) {
+                        if (targetTileObject.IsOwnedBy(witness)) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                        } else if (targetTileObject.tileObjectType == TILE_OBJECT_TYPE.TOMBSTONE) { //TODO: Human Meat, Elven Meat
+                            Character characterRef = null;
+                            if(targetTileObject is Tombstone tombstone) {
+                                characterRef = tombstone.character;
+                            }
+                            string refOpinionLabel = witness.relationshipContainer.GetOpinionLabel(characterRef);
+                            if (refOpinionLabel == RelationshipManager.Acquaintance) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                            } else if (refOpinionLabel == RelationshipManager.Friend || refOpinionLabel == RelationshipManager.Close_Friend) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                            } else if ((witness.relationshipContainer.IsFamilyMember(characterRef) || witness.relationshipContainer.HasRelationshipWith(characterRef, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                    && refOpinionLabel != RelationshipManager.Rival) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status, node);
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                            } else if (refOpinionLabel == RelationshipManager.Enemy || refOpinionLabel == RelationshipManager.Rival) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                            }
+                        } else {
+                            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
+                            if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
+                            } else if ((witness.relationshipContainer.IsFamilyMember(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                    && opinionLabel != RelationshipManager.Rival) {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
+                            } else {
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                            }
+                        }
                     }
                 }
             }

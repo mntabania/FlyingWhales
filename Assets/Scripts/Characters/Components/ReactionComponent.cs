@@ -828,6 +828,9 @@ public class ReactionComponent {
                                 debugLog += "\n-Target will Laugh At";
                                 actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                             }
+                        } else if (targetCharacter.isNormalCharacter) {
+                            debugLog += "\n-Otherwise, Shock";
+                            actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                         }
 
                         if (actor.marker && disguisedTarget.isNormalCharacter) {
@@ -1077,7 +1080,7 @@ public class ReactionComponent {
                         debugLog += "\n-Target will Laugh At";
                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                     }
-                } else {
+                } else if (targetCharacter.isNormalCharacter) {
                     debugLog += "\n-Otherwise, Shock";
                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                 }
