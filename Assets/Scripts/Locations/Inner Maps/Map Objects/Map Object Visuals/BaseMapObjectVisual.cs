@@ -162,6 +162,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (visionTrigger) {
             visionTrigger.Reset();    
         }
+        
     }
     void OnEnable() {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);

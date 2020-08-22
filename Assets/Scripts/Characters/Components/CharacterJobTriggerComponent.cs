@@ -1290,6 +1290,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
     }
+    public bool CreateDrinkBloodJob(IPointOfInterest target) {
+	    if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.DRINK_BLOOD, target, _owner);
+		    if (_owner.jobQueue.AddJobInQueue(job)) {
+			    _owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+		    }
+		    return true;
+	    }
+	    return false;
+    }
     #endregion
 
     #region Items

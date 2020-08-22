@@ -38,6 +38,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private string currentAnimation;
     [SerializeField] private RuntimeAnimatorController defaultController;
     [SerializeField] private RuntimeAnimatorController monsterController;
+    [SerializeField] private int _pauseAnimationCounter;
     
     [Header("Pathfinding")]
     public CharacterAIPath pathfindingAI;    
@@ -89,7 +90,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private HexTile _previousHexTileLocation;
     private CharacterMarkerNameplate _nameplate;
     private LocationGridTile _destinationTile;
-    private int _pauseAnimationCounter;
 
     public void SetCharacter(Character character) {
         base.Initialize(character);
@@ -118,6 +118,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         AddListeners();
         PathfindingManager.Instance.AddAgent(pathfindingAI);
+
+        if (GameManager.Instance.gameHasStarted) {
+            if (GameManager.Instance.isPaused) {
+                PauseAnimation();
+            }
+        }
         // UpdateNameplatePosition();
     }
 
@@ -360,6 +366,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // TryCancelExpiry();
         destinationTile = null;
         //onProcessCombat = null;
+        _pauseAnimationCounter = 0;
         character.combatComponent.SetOnProcessCombatAction(null);
         SetMarkerColor(Color.white);
         ObjectPoolManager.Instance.DestroyObject(_nameplate);
@@ -368,9 +375,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         RemoveListeners();
         HideHPBar();
         HideAdditionalEffect();
-
+        PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(particleEffectParent.gameObject);
+        for (int i = 0; i < pooledObjects.Length; i++) {
+            PooledObject pooledObject = pooledObjects[i];
+            ObjectPoolManager.Instance.DestroyObject(pooledObject);
+        }
         Messenger.Broadcast(Signals.CHARACTER_EXITED_HEXTILE, character, _previousHexTileLocation);
-        
         visionCollider.Reset();
         GameObject.Destroy(visionTrigger.gameObject);
         visionTrigger = null;

@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZObjectPools;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UtilityScripts;
 
 public class TileObjectGameObject : MapObjectVisual<TileObject> {
     
@@ -118,6 +120,17 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
         UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
+    #region Object Pool
+    public override void Reset() {
+        base.Reset();
+        PooledObject[] pooledObjects = GameUtilities.GetComponentsInDirectChildren<PooledObject>(gameObject);
+        for (int i = 0; i < pooledObjects.Length; i++) {
+            PooledObject pooledObject = pooledObjects[i];
+            ObjectPoolManager.Instance.DestroyObject(pooledObject);
+        }
     }
     #endregion
 

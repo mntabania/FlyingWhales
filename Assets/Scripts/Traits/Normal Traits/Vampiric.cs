@@ -21,6 +21,7 @@ namespace Traits {
             //_flatHPMod = 500;
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         //public void VamipiricLevel(int level) {
@@ -111,6 +112,16 @@ namespace Traits {
             if (action == INTERACTION_TYPE.DRINK_BLOOD) {
                 effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
             }
+        }
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Character targetCharacter && targetCharacter.advertisedActions.Contains(INTERACTION_TYPE.DRINK_BLOOD) && characterThatWillDoJob.needsComponent.isStarving) {
+                if (!characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter) &&
+                    !characterThatWillDoJob.relationshipContainer.IsFamilyMember(targetCharacter) && 
+                    !characterThatWillDoJob.relationshipContainer.HasSpecialPositiveRelationshipWith(targetCharacter)) {
+                    characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(targetCharacter);
+                }
+            }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
     }
