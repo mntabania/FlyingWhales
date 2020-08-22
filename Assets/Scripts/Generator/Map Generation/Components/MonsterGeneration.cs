@@ -37,9 +37,8 @@ public class MonsterGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Helpers
-	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair,
-		LocationStructure monsterLairStructure) {
-		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region, monsterLairStructure);
+	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair, LocationStructure monsterLairStructure, Faction faction = null) {
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.neutralFaction, settlementOnTile, monsterLair.tileLocation.region, monsterLairStructure);
 		LocationGridTile targetTile = CollectionUtilities.GetRandomElement(monsterLairStructure.unoccupiedTiles);
 		CharacterManager.Instance.PlaceSummon(summon, targetTile);
 		//summon.AddTerritory(monsterLair.tileLocation);
@@ -50,8 +49,7 @@ public class MonsterGeneration : MapGenerationComponent {
         //	summon.MigrateHomeStructureTo(homeStructure);	
         //}
     }
-    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, 
-	    LocationStructure homeStructure = null, string className = "", params HexTile[] territories) {
+    private Summon CreateMonster(SUMMON_TYPE summonType, List<LocationGridTile> locationChoices, LocationStructure homeStructure = null, string className = "", Faction faction = null, params HexTile[] territories) {
 		var chosenTile = homeStructure != null ? 
 			CollectionUtilities.GetRandomElement(homeStructure.unoccupiedTiles) : 
 			CollectionUtilities.GetRandomElement(locationChoices);
@@ -59,8 +57,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		Assert.IsNotNull(chosenTile, $"Chosen tile for {summonType.ToString()} is null!");
 		Assert.IsTrue(chosenTile.collectionOwner.isPartOfParentRegionMap, $"Chosen tile for {summonType.ToString()} is not part of the region map!");
 		
-		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, 
-			null, chosenTile.parentMap.region, className: className);
+		Summon summon = CharacterManager.Instance.CreateNewSummon(summonType, faction ?? FactionManager.Instance.neutralFaction, null, chosenTile.parentMap.region, className: className);
 		CharacterManager.Instance.PlaceSummon(summon, chosenTile);
 		if (homeStructure != null) {
 			summon.MigrateHomeStructureTo(homeStructure);	
@@ -239,7 +236,7 @@ public class MonsterGeneration : MapGenerationComponent {
 						List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
 						if (j == 0 || j == 1) {
 							//Trolls	
-							int randomTrolls = 1; //Random.Range(3, 6);
+							int randomTrolls = Random.Range(3, 6);
 							for (int k = 0; k < randomTrolls; k++) {
 								CreateMonster(SUMMON_TYPE.Troll, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());
 							}
@@ -411,7 +408,7 @@ public class MonsterGeneration : MapGenerationComponent {
 			int randomAmount = 8;
 			for (int k = 0; k < randomAmount; k++) {
 				if (locationChoices.Count == 0) { break; }
-				Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices);
+				Summon summon = CreateMonster(SUMMON_TYPE.Ghost, locationChoices, faction: FactionManager.Instance.undeadFaction);
 				locationChoices.Remove(summon.gridTileLocation);
 			}
 		}
@@ -424,19 +421,19 @@ public class MonsterGeneration : MapGenerationComponent {
 			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
 			int randomAmount = 3;
 			for (int k = 0; k < randomAmount; k++) {
-				CreateMonster(SUMMON_TYPE.Skeleton, landmark.tileLocation.settlementOnTile, landmark, structure);
+				CreateMonster(SUMMON_TYPE.Skeleton, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.undeadFaction);
 			}
 		}
-		//Wolves at Monster Lair
-		List<BaseLandmark> monsterLair = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-		for (int i = 0; i < monsterLair.Count; i++) {
-			BaseLandmark landmark = monsterLair[i];
-			LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-			int randomAmount = Random.Range(2, 5);
-			for (int k = 0; k < randomAmount; k++) {
-				CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);
-			}
-		}
+		// //Wolves at Monster Lair
+		// List<BaseLandmark> monsterLair = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+		// for (int i = 0; i < monsterLair.Count; i++) {
+		// 	BaseLandmark landmark = monsterLair[i];
+		// 	LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+		// 	int randomAmount = Random.Range(2, 5);
+		// 	for (int k = 0; k < randomAmount; k++) {
+		// 		CreateMonster(SUMMON_TYPE.Wolf, landmark.tileLocation.settlementOnTile, landmark, structure);
+		// 	}
+		// }
 	}
 	#endregion
 }

@@ -43,7 +43,7 @@ namespace Traits {
             TryListenForBiomeEffect();
             UpdateVisualsOnAdd(addedTo);
             if (addedTo is DesertRose desertRose) {
-                desertRose.DesertRoseEffect();
+                desertRose.DesertRoseWaterEffect();
             }
         }
         public override void OnStackStatus(ITraitable addedTo) {

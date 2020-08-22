@@ -50,5 +50,9 @@ public class Initializer : MonoBehaviour {
         }
         TutorialManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterLoadoutPicked();
+        if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
+            MapGenerationFinalization.ScenarioItemGenerationAfterPickingLoadout();    
+        }
     }
+    
 }

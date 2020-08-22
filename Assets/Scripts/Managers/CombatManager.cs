@@ -65,6 +65,8 @@ public class CombatManager : MonoBehaviour {
             WaterElementProcess(target);
         } else if (elementalType == ELEMENTAL_TYPE.Electric) {
             ElectricElementProcess(target);
+        } else if (elementalType == ELEMENTAL_TYPE.Normal) {
+            NormalElementProcess(target);
         }
     }
     public void DamageModifierByElements(ref int damage, ELEMENTAL_TYPE elementalType, ITraitable target) {
@@ -293,6 +295,9 @@ public class CombatManager : MonoBehaviour {
             string[] elementsArray = elements.Split(' ');
             target.traitContainer.RemoveTrait(target, elementsArray[UnityEngine.Random.Range(0, elementsArray.Length)]);
         }
+        if (target is DesertRose desertRose) {
+            desertRose.DesertRoseOtherDamageEffect();
+        }
     }
     private void WindElementProcess(ITraitable target, Character responsibleCharacter) {
         if (target.traitContainer.HasTrait("Poisoned")) {
@@ -315,17 +320,22 @@ public class CombatManager : MonoBehaviour {
                 Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
             }
         }
+        if (target is DesertRose desertRose) {
+            desertRose.DesertRoseOtherDamageEffect();
+        }
     }
     private void FireElementProcess(ITraitable target) {
         if (target is WinterRose winterRose) {
             winterRose.WinterRoseEffect();
         } else if (target is PoisonCloudTileObject poisonCloudTileObject) {
             poisonCloudTileObject.Explode();
+        } else if (target is DesertRose desertRose) {
+            desertRose.DesertRoseOtherDamageEffect();
         }
     }
     private void WaterElementProcess(ITraitable target) {
         if (target is DesertRose desertRose) {
-            desertRose.DesertRoseEffect();
+            desertRose.DesertRoseWaterEffect();
         }
     }
     private void ElectricElementProcess(ITraitable target) {
@@ -334,6 +344,13 @@ public class CombatManager : MonoBehaviour {
                 target.traitContainer.RemoveTrait(target, "Hibernating");
             }
             target.traitContainer.RemoveTrait(target, "Indestructible");
+        } else if (target is DesertRose desertRose) {
+            desertRose.DesertRoseOtherDamageEffect();
+        }
+    }
+    private void NormalElementProcess(ITraitable target) {
+        if (target is DesertRose desertRose) {
+            desertRose.DesertRoseOtherDamageEffect();
         }
     }
     private void GeneralElementProcess(ITraitable target, Character source) {
