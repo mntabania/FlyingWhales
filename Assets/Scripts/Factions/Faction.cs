@@ -848,6 +848,21 @@ public class Faction : IJobOwner {
         }
         return false;
     }
+    public bool HasActivePartywithTarget(PARTY_TYPE partyType, IPartyTarget target) {
+        return GetActivePartywithTarget(partyType, target) != null;
+    }
+    public Party GetActivePartywithTarget(PARTY_TYPE partyType, IPartyTarget target) {
+        for (int i = 0; i < characters.Count; i++) {
+            Character factionMember = characters[i];
+            if (factionMember.partyComponent.hasParty) {
+                Party party = factionMember.partyComponent.currentParty;
+                if (party.partyType == partyType && party.target == target) {
+                    return party;
+                }
+            }
+        }
+        return null;
+    }
     #endregion
 
     #region War Declaration

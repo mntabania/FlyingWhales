@@ -6,6 +6,5 @@ public interface ICrimeable : IReactable {
     //string name { get; }
     CRIME_TYPE crimeType { get; }
 
-
     //void SetCrimeType(Character actor, IPointOfInterest target, ICrimeable crime);
 }

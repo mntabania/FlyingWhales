@@ -9,6 +9,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine.Assertions;
 using UtilityScripts;
+using Crime_System;
 using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
@@ -1736,38 +1737,51 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
         return true;
     }
-    public bool CreateReportCrimeJob(Character source, CrimeData crimeData, ICrimeable crime) {
-        if(source.faction != null && source.faction.isMajorNonPlayer) {
-            if (crimeData.IsWantedBy(source.faction)) {
+    public bool TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
+        if(_owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
+            return CreateReportCrimeJob(crimeData, crime);
+        } else {
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_not_report");
+            addLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
+            addLog.AddLogToInvolvedObjects();
+            _owner.crimeComponent.AddReportedCrime(crimeData);
+        }
+        return false;
+    }
+    public bool CreateReportCrimeJob(CrimeData crimeData, ICrimeable crime) {
+        if(_owner.faction != null && _owner.faction.isMajorNonPlayer) {
+            if (crimeData.IsWantedBy(_owner.faction)) {
                 //Should no longer report if already wanted by the source's faction
                 return false;
             }
         }
         bool canReportToFactionLeader = false;
         bool canReportToSettlementRuler = false;
-        if (source.faction != null && source.faction.isMajorNonPlayer && source.faction.leader != null && source.faction.leader is Character characterLeader
-            && !characterLeader.isDead && characterLeader != source && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
+        if (_owner.faction != null && _owner.faction.isMajorNonPlayer && _owner.faction.leader != null && _owner.faction.leader is Character characterLeader
+            && !characterLeader.isDead && characterLeader != _owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
             if(!crimeData.IsWitness(characterLeader)) {
                 canReportToFactionLeader = true;
             }
         }
-        if (source.homeSettlement != null && source.homeSettlement.ruler != null && !source.homeSettlement.ruler.isDead && source.homeSettlement.ruler != source && source.homeSettlement.ruler != crimeData.criminal && source.homeSettlement.ruler != crimeData.target) {
-            if (!crimeData.IsWitness(source.homeSettlement.ruler)) {
+        if (_owner.homeSettlement != null && _owner.homeSettlement.ruler != null && !_owner.homeSettlement.ruler.isDead && _owner.homeSettlement.ruler != _owner && _owner.homeSettlement.ruler != crimeData.criminal && _owner.homeSettlement.ruler != crimeData.target) {
+            if (!crimeData.IsWitness(_owner.homeSettlement.ruler)) {
                 canReportToSettlementRuler = true;
             }
         }
         Character targetCharacter = null;
         if(canReportToFactionLeader && canReportToSettlementRuler) {
             if(UnityEngine.Random.Range(0, 2) == 0) {
-                targetCharacter = source.faction.leader as Character;
+                targetCharacter = _owner.faction.leader as Character;
             } else {
-                targetCharacter = source.homeSettlement.ruler;
+                targetCharacter = _owner.homeSettlement.ruler;
             }
         } else {
             if (canReportToFactionLeader) {
-                targetCharacter = source.faction.leader as Character;
+                targetCharacter = _owner.faction.leader as Character;
             } else if (canReportToSettlementRuler) {
-                targetCharacter = source.homeSettlement.ruler;
+                targetCharacter = _owner.homeSettlement.ruler;
             }
         }
         if(targetCharacter != null) {
@@ -2351,8 +2365,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
-            return true;
+            return _owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }

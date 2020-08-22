@@ -79,7 +79,7 @@ namespace Traits {
                 }
                 return successLogKey;
             } else {
-                return "fail";
+                return "no_spouse";
             }
         }
         #endregion

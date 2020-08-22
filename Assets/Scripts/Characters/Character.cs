@@ -544,6 +544,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
+    #region Virtuals
+    public virtual void OnSetIsHidden() { }
+    #endregion
+
     #region Listeners
     private void OnCharacterExitedArea(NPCSettlement npcSettlement, Character character) {
         if (character.id == id) {
@@ -1977,7 +1981,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool IsAtTerritory() {
         return territorries.Count > 0 && hexTileLocation != null && territorries.Contains(hexTileLocation);
     }
-    public virtual void OnSetIsHidden() { }
+    public bool IsInDanger() {
+        return traitContainer.HasTrait("Restrained") && !IsInHomeSettlement();
+    }
     #endregion    
 
     #region History/Logs
@@ -4918,6 +4924,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 marker.BerserkedMarker();
             }
         }
+        if (isNormalCharacter && !traitContainer.HasTrait("Burning")) {
+            if (tileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+                traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+            } else if (tileLocation.objHere != null && tileLocation.objHere.traitContainer.HasTrait("Burning")) {
+                traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+            }
+        }
         //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
         //if (traitOverrideFunctions != null) {
         //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
@@ -5676,6 +5689,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             DropAllItems(deathTile);
             UnownOrTransferOwnershipOfAllItems();
+
+            reactionComponent.SetIsHidden(false);
 
             //if (currentSettlement != null && isHoldingItem) {
             //    DropAllItems(deathTile);

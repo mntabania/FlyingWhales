@@ -80,6 +80,7 @@ public class CharacterInfoUI : InfoUIBase {
     private List<SpellData> afflictions;
     private List<string> combatModes;
     private List<string> triggerFlawPool;
+    private List<LogFiller> triggerFlawLogFillers;
 
     internal override void Initialize() {
         base.Initialize();
@@ -144,6 +145,7 @@ public class CharacterInfoUI : InfoUIBase {
 
         afflictions = new List<SpellData>();
         triggerFlawPool = new List<string>();
+        triggerFlawLogFillers = new List<LogFiller>();
         ConstructCombatModes();
     }
 
@@ -779,11 +781,23 @@ public class CharacterInfoUI : InfoUIBase {
         UIManager.Instance.HideObjectPicker();
         string result = trait.TriggerFlaw(activeCharacter);
         //When flaw is triggered, leave from party
-        if (result == "flaw_effect" && activeCharacter.partyComponent.hasParty) {
-            activeCharacter.partyComponent.currentParty.RemoveMember(activeCharacter);
+        if (result == "flaw_effect") {
+            if (activeCharacter.partyComponent.hasParty) {
+                activeCharacter.partyComponent.currentParty.RemoveMember(activeCharacter);
+            }
+            PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
+        } else {
+            string log = "Failed to trigger flaw. Some requirements might be unmet.";
+            if (LocalizationManager.Instance.HasLocalizedValue("Trigger Flaw", trait.name, result)) {
+                triggerFlawLogFillers.Clear();
+                triggerFlawLogFillers.Add(new LogFiller(activeCharacter, activeCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER));
+
+                string reason = LocalizationManager.Instance.GetLocalizedValue("Trigger Flaw", trait.name, result);
+                log = UtilityScripts.Utilities.StringReplacer(reason, triggerFlawLogFillers);
+            }
+            PlayerUI.Instance.ShowGeneralConfirmation("Trigger Flaw Failed", log);
         }
         Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
-        PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
     }
     private bool CanActivateTriggerFlaw(string traitName) {
         Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);

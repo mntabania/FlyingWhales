@@ -93,7 +93,7 @@ public class RestrainCharacter : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
         if (target is Character targetCharacter) {
-            if (targetCharacter.traitContainer.HasTrait("Criminal")) {
+            if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
@@ -114,12 +114,12 @@ public class RestrainCharacter : GoapAction {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Distraught, witness, targetCharacter, status, node);
                     }
                 } else if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) &&
                           opinionLabel != RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Distraught, witness, targetCharacter, status, node);
                     }
                 } else if(opinionLabel == RelationshipManager.Acquaintance) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
@@ -128,7 +128,7 @@ public class RestrainCharacter : GoapAction {
                 } else if (((witness.faction != null && witness.faction.leader == targetCharacter) || (witness.homeSettlement != null && witness.homeSettlement.ruler == targetCharacter))
                     && opinionLabel != RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Psychopath")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Distraught, witness, targetCharacter, status, node);
                     }
                 } else if (opinionLabel == RelationshipManager.Enemy || opinionLabel == RelationshipManager.Rival) {
                     if (!witness.traitContainer.HasTrait("Diplomatic")) {

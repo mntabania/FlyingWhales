@@ -21,7 +21,7 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
             hindersWitness = true;
             hindersSocials = true;
-            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             //AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);

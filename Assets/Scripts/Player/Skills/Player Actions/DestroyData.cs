@@ -36,5 +36,11 @@ public class DestroyData : PlayerAction {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        if(target is IPointOfInterest poi && poi.traitContainer.HasTrait("Indestructible")) {
+            return false;
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }

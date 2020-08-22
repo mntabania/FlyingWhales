@@ -68,7 +68,9 @@ public class Minion {
             //    character.DropAllItems(deathTile);
             //}
             character.DropAllItems(deathTile);
+            character.UnownOrTransferOwnershipOfAllItems();
 
+            character.reactionComponent.SetIsHidden(false);
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
