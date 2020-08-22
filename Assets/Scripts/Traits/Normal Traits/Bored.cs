@@ -21,8 +21,8 @@ namespace Traits {
 			base.OnAddTrait(addedTo);
 			owner = addedTo as Character;
 		}
-		public override void OnHourStarted() {
-			base.OnHourStarted();
+		public override void OnHourStarted(ITraitable traitable) {
+			base.OnHourStarted(traitable);
 			if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
 				if (UnityEngine.Random.Range(0, 100) < 15) {
 					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);

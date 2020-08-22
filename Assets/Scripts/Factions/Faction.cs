@@ -867,7 +867,7 @@ public class Faction : IJobOwner {
 
     #region War Declaration
     public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {
-        if (targetFaction != this) {
+        if (targetFaction != this && targetFaction != null) {
             string debugLog = $"Checking for war {name} against {targetFaction.name}";
             if (!factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
                 debugLog += $"\n{name} is not a peaceful faction.";

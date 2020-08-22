@@ -26,8 +26,8 @@ namespace Traits {
             deathDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             currentDeathDuration = 0;
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             CheckDeath();
         }
         #endregion

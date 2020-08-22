@@ -193,6 +193,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.THREAT_RESET, OnThreatReset);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
+        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
@@ -200,6 +201,7 @@ public class PlayerUI : MonoBehaviour {
         //currencies
         Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
         InitialUpdateKillCountCharacterItems();
+        InitializeIntel();
         // UpdateIntel();
         // CreateInitialSpells();
         // _buildListUI.Initialize();
@@ -465,6 +467,12 @@ public class PlayerUI : MonoBehaviour {
             }
         }
     }
+    private void InitializeIntel() {
+        for (int i = 0; i < intelItems.Length; i++) {
+            IntelItem currItem = intelItems[i];
+            currItem.SetIntel(null);
+        }
+    }
     public void SetIntelMenuState(bool state) {
         if (intelToggle.isOn == state) {
             return; //ignore change
@@ -696,7 +704,7 @@ public class PlayerUI : MonoBehaviour {
             item.SetObject(character);
             item.SetAsButton();
             item.ClearAllOnClickActions();
-            item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
+            item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
             item.gameObject.SetActive(true);
             allFilteredCharactersCount++;
             unusedKillCountCharacterItems--;
@@ -726,16 +734,11 @@ public class PlayerUI : MonoBehaviour {
             return;
         }
         allFilteredCharactersCount++;
-        CharacterNameplateItem item = null;
-        if (unusedKillCountCharacterItems > 0) {
-            item = GetUnusedCharacterNameplateItem();
-        } else {
-            item = CreateNewVillagerItem();
-        }
+        CharacterNameplateItem item = unusedKillCountCharacterItems > 0 ? GetUnusedCharacterNameplateItem() : CreateNewVillagerItem();
         item.SetObject(character);
         item.SetAsButton();
         item.ClearAllOnClickActions();
-        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
+        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.gameObject.SetActive(true);
         unusedKillCountCharacterItems--;
         if (!character.IsAble()) {
@@ -749,7 +752,6 @@ public class PlayerUI : MonoBehaviour {
             item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
             item.SetIsActive(true);
         }
-        UpdateKillCount();
     }
     private void TransferCharacterFromActiveToInactive(Character character) {
         if (!WillCharacterBeShownInKillCount(character)) {

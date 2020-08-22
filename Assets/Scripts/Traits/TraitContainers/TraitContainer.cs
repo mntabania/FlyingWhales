@@ -619,7 +619,7 @@ namespace Traits {
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
-                    trait.OnTickStarted();
+                    trait.OnTickStarted(owner);
                 }
             }
             //if (allTraitsAndStatuses != null) {
@@ -633,7 +633,7 @@ namespace Traits {
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
-                    trait.OnTickEnded();
+                    trait.OnTickEnded(owner);
                 }
             }
             //if (allTraitsAndStatuses != null) {
@@ -648,7 +648,7 @@ namespace Traits {
             if (traitOverrideFunctions != null) {
                 for (int i = 0; i < traitOverrideFunctions.Count; i++) {
                     Trait trait = traitOverrideFunctions[i];
-                    trait.OnHourStarted();
+                    trait.OnHourStarted(owner);
                 }
             }
             //if (allTraitsAndStatuses != null) {

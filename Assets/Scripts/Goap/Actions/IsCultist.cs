@@ -15,8 +15,7 @@
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character poiTarget = target as Character;
         if (witness.traitContainer.HasTrait("Cultist") == false) {

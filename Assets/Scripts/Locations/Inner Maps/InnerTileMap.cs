@@ -440,9 +440,7 @@ namespace Inner_Maps {
                 List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
                 structureObject.SetTilesInStructure(occupiedTiles.ToArray());
                 structureObject.ClearOutUnimportantObjectsBeforePlacement();
-                LocationStructure structure =
-                    LandmarkManager.Instance.CreateNewStructureAt(hexTile.region, structureObject.structureType,
-                        settlement);
+                LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(hexTile.region, structureObject.structureType, settlement);
                 for (int j = 0; j < occupiedTiles.Count; j++) {
                     LocationGridTile tile = occupiedTiles[j];
                     tile.SetStructure(structure);

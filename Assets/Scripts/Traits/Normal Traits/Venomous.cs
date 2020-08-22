@@ -26,8 +26,8 @@ namespace Traits {
                 poisoned.SetIsVenomous();
             }
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             ApplyPoisonToTile();
         }
         #endregion

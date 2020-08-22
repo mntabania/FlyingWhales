@@ -4024,6 +4024,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
             AddAdvertisedAction(INTERACTION_TYPE.RAID);
             AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
+            AddAdvertisedAction(INTERACTION_TYPE.EVANGELIZE);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);

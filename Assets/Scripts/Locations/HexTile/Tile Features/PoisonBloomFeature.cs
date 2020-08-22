@@ -12,7 +12,7 @@ namespace Locations.Tile_Features {
         public PoisonBloomFeature() {
             name = "Poison Emitting";
             description = "This location is naturally emitting poison clouds.";
-            expiryInTicks = GameManager.ticksPerDay;
+            expiryInTicks = GameManager.ticksPerHour;
         }
         public override void OnAddFeature(HexTile tile) {
             base.OnAddFeature(tile);

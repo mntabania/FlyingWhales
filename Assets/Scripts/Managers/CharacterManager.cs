@@ -650,7 +650,7 @@ public class CharacterManager : MonoBehaviour {
         }
         summon.InitialCharacterPlacement(tile, true);
         target.DestroyMarker();
-        //RemoveCharacter(target);
+        // RemoveCharacter(target);
     }
     public List<Character> GetAllNormalCharacters() {
         List<Character> characters = new List<Character>();

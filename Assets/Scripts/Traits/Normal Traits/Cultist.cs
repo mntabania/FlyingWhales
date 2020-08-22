@@ -28,7 +28,7 @@ namespace Traits {
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
-                character.traitContainer.AddTrait(character, "Nocturnal");
+                // character.traitContainer.AddTrait(character, "Nocturnal");
 
                 Messenger.Broadcast(Signals.CHECK_IF_PLAYER_WINS);
             }

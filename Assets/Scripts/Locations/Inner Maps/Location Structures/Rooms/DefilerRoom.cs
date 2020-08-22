@@ -45,6 +45,9 @@ namespace Inner_Maps.Location_Structures {
                 GetBrainwashSuccessAndFailWeights(actor, out successWeight, out failWeight);
             }
 
+            // successWeight = 100;
+            // failWeight = 0;
+            
             brainwashWeightedDictionary.AddElement(true, successWeight);
             brainwashWeightedDictionary.AddElement(false, failWeight);
 

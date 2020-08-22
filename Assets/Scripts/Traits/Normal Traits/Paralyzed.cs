@@ -40,8 +40,8 @@ namespace Traits {
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             CheckParalyzedTrait();
         }
         // public override void OnHourStarted() {

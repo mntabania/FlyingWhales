@@ -14,7 +14,7 @@ namespace Events.World_Events {
         #region Listeners
         private void OnHourStarted() {
             if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 9) {
-                if (GameUtilities.RollChance(7) && GameManager.GetCurrentTimeInWordsOfTick() == TIME_IN_WORDS.MORNING) { //7
+                if (GameUtilities.RollChance(7)) { //7
                     NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveVillageSettlement();
                     int unoccupiedDwellings = GetUnoccupiedDwellingCount(randomSettlement);
                     if (unoccupiedDwellings > 0) {

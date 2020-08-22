@@ -8,7 +8,6 @@ public class WoodPile : ResourcePile {
     public WoodPile() : base(RESOURCE.WOOD) {
         Initialize(TILE_OBJECT_TYPE.WOOD_PILE, false);
         //SetResourceInPile(50);
-        traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
     //public WoodPile(SaveDataTileObject data) : base(RESOURCE.WOOD) {

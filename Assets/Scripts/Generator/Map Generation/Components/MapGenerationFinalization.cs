@@ -120,6 +120,13 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							chosenTile.structure.AddPOI(tombstone, chosenTile);
 						}	
 					} else {
+						//spawn 4 water crystals in other region
+						for (int j = 0; j < 4; j++) {
+							if (locationChoices.Count == 0) { break; } //no more location choices
+							LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+							chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_CRYSTAL), chosenTile);
+							locationChoices.Remove(chosenTile);
+						}
 						RandomRegionalItemGeneration(region, ref locationChoices);
 					}
 				} else {

@@ -29,13 +29,16 @@ namespace Inner_Maps.Location_Structures {
         #region Overrides
         protected override void OnAddResident(Character newResident) {
             base.OnAddResident(newResident);
-            List<TileObject> objs = GetTileObjects();
-            for (int i = 0; i < objs.Count; i++) {
-                TileObject obj = objs[i];
-                if (obj.isPreplaced) {
-                    //only update owners of objects that were preplaced
-                    obj.UpdateOwners();    
-                }
+            if (GameManager.Instance.gameHasStarted) {
+                //only Update owners on add residency if resident is not from initial generation.
+                List<TileObject> objs = GetTileObjects();
+                for (int i = 0; i < objs.Count; i++) {
+                    TileObject obj = objs[i];
+                    if (obj.isPreplaced) {
+                        //only update owners of objects that were preplaced
+                        obj.UpdateOwners();    
+                    }
+                }    
             }
         }
 
