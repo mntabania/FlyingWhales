@@ -75,7 +75,7 @@ public class CrimeManager : MonoBehaviour {
         if (existingCrimeData == null) {
             existingCrimeData = criminalTrait.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
 
-            CrimeType crimeTypeObj = GetCrimeType(crimeType);
+            CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
             Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal");
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(crimeTypeObj.name), LOG_IDENTIFIER.STRING_1);
@@ -99,8 +99,11 @@ public class CrimeManager : MonoBehaviour {
                 }
             }
             if (!willDecideWantedOrNot) {
-                //TODO: Report Crime
-                witness.jobComponent.CreateReportCrimeJob(witness, existingCrimeData, crime);
+                if (!existingCrimeData.isRemoved) {
+                    if (!witness.crimeComponent.IsReported(existingCrimeData)) {
+                        witness.jobComponent.TryCreateReportCrimeJob(criminal, target, existingCrimeData, crime);
+                    }
+                }
             }
         }
     }
@@ -128,11 +131,10 @@ public class CrimeManager : MonoBehaviour {
         }
 
         if (key != string.Empty) {
-            CrimeType crimeTypeObj = GetCrimeType(crimeData.crimeType);
             Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", key);
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
+            addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToInvolvedObjects();
         }
         return key == "wanted";
@@ -396,6 +398,11 @@ public class CrimeData {
     public Character judge { get; private set; }
     public List<Character> witnesses { get; }
     public List<Faction> factionsThatConsidersWanted { get; }
+    public bool isRemoved { get; private set; }
+
+    #region getters
+    public CrimeType crimeTypeObj => CrimeManager.Instance.GetCrimeType(crimeType);
+    #endregion
 
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         this.crimeType = crimeType;
@@ -424,7 +431,6 @@ public class CrimeData {
                 if (AreAllWitnessesDead()) {
                     criminalTrait.RemoveCrime(this);
 
-                    CrimeType crimeTypeObj = CrimeManager.Instance.GetCrimeType(crimeType);
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses");
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
@@ -456,7 +462,7 @@ public class CrimeData {
         this.criminalTrait = criminalTrait;
     }
     public string GetCrimeDataDescription() {
-        string desc = CrimeManager.Instance.GetCrimeType(crimeType).name + " - " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(crimeStatus.ToString());
+        string desc = crimeTypeObj.name + " - " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(crimeStatus.ToString());
         desc += "\n     Wanted at: " + GetFactionsThatConsidersWantedAsText();
         desc += "\n     Witnesses: " + GetWitnessesAsText();
         return desc;
@@ -490,6 +496,13 @@ public class CrimeData {
     public void OnCrimeAdded() { }
     public void OnCrimeRemoved() {
         UnsubscribeFromListeners();
+        isRemoved = true;
+
+        //IMPORTANT NOTE: This has inconsistency since we are removing the crime in the witness list but the crime does not remove the witness from the list
+        //This is because we still need the list of witnesses in previous crimes but the witness should not report the witnessed crime
+        //for (int i = 0; i < witnesses.Count; i++) {
+        //    witnesses[i].crimeComponent.RemoveWitnessedCrime(this);
+        //}
     }
     #endregion
 

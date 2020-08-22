@@ -983,8 +983,7 @@ public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peac
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
-    Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage,
-    Plague_Hysteria
+    Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }
 public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, Tutorial, Second_World}
 public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric, Earth, Wind, }

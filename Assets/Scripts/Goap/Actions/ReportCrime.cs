@@ -36,7 +36,11 @@ public class ReportCrime : GoapAction {
             ICrimeable crime = otherData[0] as ICrimeable;
             //CrimeType crimeTypObj = CrimeManager.Instance.GetCrimeType(crime.crimeType);
             //log.AddToFillers(null, crimeTypObj.name, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(crime.actor, crime.actor.name, LOG_IDENTIFIER.CHARACTER_3);
+            Character criminal = crime.actor;
+            if (crime.disguisedActor != null) {
+                criminal = crime.disguisedActor;
+            }
+            log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
         }
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -133,6 +137,16 @@ public class ReportCrime : GoapAction {
             target = crime.disguisedTarget;
         }
 
+        if (actor.isDead) {
+            //Report crime is still a success but will recipient will not do anything since criminal is already dead
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", name, "dead_criminal");
+            log.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.CHARACTER_3);
+            log.AddLogToInvolvedObjects();
+            return;
+        }
+
         if (actor != recipient) {
             string weightLog = "Report crime of " + sharer.name + " to " + recipient.name + ": " + crime.name + " with actor " + actor.name + " and target " + target.name;
             weightLog += "\nBase Belief Weight: 50";
@@ -211,7 +225,7 @@ public class ReportCrime : GoapAction {
                 Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                believeLog.AddToFillers(null, crime.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
+                believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);
                 believeLog.AddLogToInvolvedObjects();
             }
         }

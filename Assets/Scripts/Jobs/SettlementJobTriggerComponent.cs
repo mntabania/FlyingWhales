@@ -428,14 +428,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateJudgePrisoner(Character target) {
 		if (target.traitContainer.HasTrait("Restrained") && target.traitContainer.HasTrait("Criminal")
 		    && target.currentStructure.settlementLocation is NPCSettlement
-		    && target.currentStructure.settlementLocation == _owner) {
+		    && target.currentStructure.settlementLocation == _owner
+            && _owner.owner != null) {
             NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
             if(npcSettlement.prison == target.currentStructure) {
                 if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-                    job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(target));
-                    _owner.AddToAvailableJobs(job);
+                    Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    if (criminalTrait.IsWantedBy(_owner.owner)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
+                        job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(target));
+                        _owner.AddToAvailableJobs(job);
+                    }
                 }
             }
 		}

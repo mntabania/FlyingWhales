@@ -105,6 +105,9 @@ namespace Traits {
                     this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
                     PlayerManager.Instance.player.ShowNotificationFrom(character.currentRegion, log);
                 }
+                if(targetVictim == null) {
+                    return "no_target";
+                }
             }
             if (targetVictim == null || !CreateHuntVictimJob()) {
                 return "fail";

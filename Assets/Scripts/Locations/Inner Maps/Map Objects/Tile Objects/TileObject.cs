@@ -572,6 +572,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void OnUnseizePOI(LocationGridTile tileLocation) {
         DestroyMapVisualGameObject();
         tileLocation.structure.AddPOI(this, tileLocation);
+        if (!traitContainer.HasTrait("Burning")) {
+            if (tileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+                traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+            }
+            //Commented out because this should not happen since you can only unseize a tile object on a tile that has no object
+            //else if (tileLocation.objHere != null && tileLocation.objHere.traitContainer.HasTrait("Burning")) {
+            //    traitContainer.AddTrait(this, "Burning", bypassElementalChance: true);
+            //}
+        }
     }
     public virtual bool CollectsLogs() {
         return true;

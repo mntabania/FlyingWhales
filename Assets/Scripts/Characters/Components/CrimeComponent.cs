@@ -18,6 +18,9 @@ public class CrimeComponent {
     public void AddWitnessedCrime(CrimeData data) {
         witnessedCrimes.Add(data);
     }
+    public void RemoveWitnessedCrime(CrimeData data) {
+        witnessedCrimes.Remove(data);
+    }
     public void AddReportedCrime(CrimeData data) {
         reportedCrimes.Add(data);
     }
@@ -32,6 +35,19 @@ public class CrimeComponent {
             }
         }
         return false;
+    }
+    public bool CanCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
+        string opinionLabel = owner.relationshipContainer.GetOpinionLabel(actor);
+        CRIME_SEVERITY severity = crimeData.crimeSeverity;
+        if(opinionLabel == RelationshipManager.Close_Friend && severity != CRIME_SEVERITY.Heinous) {
+            return false;
+        } else if (opinionLabel == RelationshipManager.Friend && severity != CRIME_SEVERITY.Heinous && severity != CRIME_SEVERITY.Serious) {
+            return false;
+        } else if ((owner.relationshipContainer.IsFamilyMember(actor) || owner.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+            && opinionLabel != RelationshipManager.Rival && severity != CRIME_SEVERITY.Heinous) {
+            return false;
+        }
+        return true;
     }
     #endregion
 }

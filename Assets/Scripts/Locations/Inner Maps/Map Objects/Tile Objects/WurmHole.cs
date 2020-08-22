@@ -6,10 +6,12 @@ public class WurmHole : TileObject{
     public WurmHole() {
         Initialize(TILE_OBJECT_TYPE.WURM_HOLE);
         traitContainer.AddTrait(this, "Indestructible");
+        traitContainer.AddTrait(this, "Fireproof");
     }
     public WurmHole(SaveDataTileObject data) {
         Initialize(data);
         traitContainer.AddTrait(this, "Indestructible");
+        traitContainer.AddTrait(this, "Fireproof");
     }
 
     public void SetWurmHoleConnection(WurmHole wurmHole) {
@@ -27,5 +29,7 @@ public class WurmHole : TileObject{
         CharacterManager.Instance.Teleport(character, wurmHoleConnection.gridTileLocation);
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "");
         character.jobQueue.CancelAllJobs();
+        character.combatComponent.ClearHostilesInRange();
+        character.combatComponent.ClearAvoidInRange();
     }
 }

@@ -114,12 +114,12 @@ namespace Traits {
         }
         #endregion
 
-        private void ApplyAgoraphobicEffect(Character character, JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME/*, bool processCombat*/) {
+        private bool ApplyAgoraphobicEffect(Character character, JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME/*, bool processCombat*/) {
             if (!character.canPerform || !character.canWitness) {
-                return;
+                return false;
             }
             if(!WillTriggerAgoraphobia(character)) {
-                return;
+                return false;
             }
             character.StopCurrentActionNode(false);
             character.jobQueue.CancelAllJobs();
@@ -131,6 +131,7 @@ namespace Traits {
             } else {
                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: "Agoraphobic");
             }
+            return true;
             //character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
             //character.needsComponent.AdjustHappiness(-50);
             //character.needsComponent.AdjustTiredness(-150);

@@ -14,7 +14,7 @@ namespace Traits {
 			effect = TRAIT_EFFECT.NEGATIVE;
 			hindersSocials = true;
 			ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
-            AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
         #region Overrides

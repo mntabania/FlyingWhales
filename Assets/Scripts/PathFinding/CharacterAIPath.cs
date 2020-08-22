@@ -358,7 +358,7 @@ public class CharacterAIPath : AILerp {
                     nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
                 }
                 if (nodeGridTile != null && nodeGridTile.IsPartOfHumanElvenSettlement()) {
-                    return 10000;
+                    return 100000;
                 }
             }     
         }

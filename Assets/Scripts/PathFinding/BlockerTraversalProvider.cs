@@ -23,18 +23,18 @@ public class BlockerTraversalProvider : ITraversalProvider {
     }
 
     public uint GetTraversalCost(Path path, GraphNode node) {
-        uint additionalPenalty = 0;
+        uint additionalPenalty = _marker.pathfindingAI.GetNodePenaltyForSettlements(path, (Vector3) node.position);
 
         //if (!_marker.pathfindingAI.IsNodeWalkable((Vector3) node.position)) {
         //    additionalPenalty = 5000000;
         //}
 
-        if (!_marker.useCanTraverse) {
-            //    _marker.pathfindingAI.GetNodePenalty((Vector3) node.position) 
-            //+_marker.pathfindingAI.GetNodePenaltyForStructures(path, (Vector3) node.position)
-            //+
-            additionalPenalty = _marker.pathfindingAI.GetNodePenaltyForSettlements(path, (Vector3) node.position);
-        }
+        //if (!_marker.useCanTraverse) {
+        //    //    _marker.pathfindingAI.GetNodePenalty((Vector3) node.position) 
+        //    //+_marker.pathfindingAI.GetNodePenaltyForStructures(path, (Vector3) node.position)
+        //    //+
+        //    additionalPenalty = _marker.pathfindingAI.GetNodePenaltyForSettlements(path, (Vector3) node.position);
+        //}
 
         // The traversal cost is the sum of the penalty of the node's tag and the node's penalty
         //return path.GetTagPenalty((int) node.Tag) + node.Penalty;

@@ -92,7 +92,9 @@ public class Summon : Character {
             //    DropAllItems(deathTile);
             //}
             DropAllItems(deathTile);
+            UnownOrTransferOwnershipOfAllItems();
 
+            reactionComponent.SetIsHidden(false);
             //if (ownParty.specificLocation != null && isHoldingItem) {
             //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
             //}

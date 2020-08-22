@@ -58,24 +58,36 @@ public class KnockoutCharacter : GoapAction {
             if (opinionLabel == RelationshipManager.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
             } else {
-                if(node.associatedJobType != JOB_TYPE.APPREHEND) {
-                    if (witness.homeSettlement == targetCharacter.homeSettlement || 
-                        witness.faction == targetCharacter.faction || 
-                        witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
-                        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
-                        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
-                    }
+                //if (node.associatedJobType != JOB_TYPE.APPREHEND) {
+                //    if (witness.homeSettlement == targetCharacter.homeSettlement ||
+                //        witness.faction == targetCharacter.faction ||
+                //        witness.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+                //        //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
+                //        CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+                //    }
+                //}
+                if ((witness.relationshipContainer.IsFamilyMember(targetCharacter) || witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                                && opinionLabel != RelationshipManager.Rival) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                } else if (opinionLabel == RelationshipManager.Acquaintance) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+                } else if (targetCharacter == witness) {
+                    CharacterManager.Instance.TriggerEmotion(
+                        GameUtilities.RollChance(50) ? EMOTION.Anger : EMOTION.Resentment, witness, actor, status, node);
                 }
             }
 
-            if (opinionLabel == RelationshipManager.Acquaintance) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-            } else if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-            } else if (targetCharacter == witness) {
-                CharacterManager.Instance.TriggerEmotion(
-                    GameUtilities.RollChance(50) ? EMOTION.Anger : EMOTION.Resentment, witness, actor, status, node);
+            if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
+                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                    //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
+                    CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+                }
             }
         }
         return response;
