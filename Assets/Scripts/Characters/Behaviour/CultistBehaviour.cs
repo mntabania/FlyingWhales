@@ -16,6 +16,8 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             chance = 12;
         }
 
+        // chance = 100;
+        
         int roll = UnityEngine.Random.Range(0, 100);
         log += $"\nWill try to do cultist action. Chance is {chance.ToString()}. Roll is {roll.ToString()}";
         
@@ -36,9 +38,13 @@ public class CultistBehaviour : CharacterBehaviourComponent {
             }
             return success;
         } else {
-            if (GameUtilities.RollChance(30) && character.jobComponent.TryGetValidSabotageNeighbourTarget(out var targetCharacter)) {
+            Character targetCharacter;
+            if (GameUtilities.RollChance(30) && character.jobComponent.TryGetValidSabotageNeighbourTarget(out targetCharacter)) {
                 log += $"\n{character.name} has cultist kit available. Will create sabotage neighbour job.";
                 return character.jobComponent.TryCreateSabotageNeighbourJob(targetCharacter, out producedJob);    
+            } else if (GameUtilities.RollChance(30) && character.jobComponent.TryGetValidEvangelizeTarget(out targetCharacter)) {//30
+                log += $"\n{character.name} has cultist kit available and could not sabotage neighbour. Will create evangelize job.";
+                return character.jobComponent.TryCreateEvangelizeJob(targetCharacter, out producedJob);    
             } else {
                 return character.jobComponent.TryCreateDarkRitualJob(out producedJob);
             }

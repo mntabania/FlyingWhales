@@ -2089,11 +2089,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    
 	    producedJob = job;
 	    return true;
-
     }
     private bool IsValidSabotageNeighbourTarget(Character character) {
 	    AWARENESS_STATE awarenessState = _owner.relationshipContainer.GetAwarenessState(character);
-	    return character.isNormalCharacter && character.traitContainer.HasTrait("Resting", "Unconscious") &&
+	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
+	           character.traitContainer.HasTrait("Resting", "Unconscious") &&
 	           character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) &&
 	           character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character) &&
 	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
@@ -2259,8 +2259,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    magicCircle = CollectionUtilities.GetRandomElement(magicCircles);
 		    } else {
 			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
-			    List<LocationGridTile> choices = _owner.currentRegion
-				    .GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
+			    List<LocationGridTile> choices = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
 			    if (choices.Count > 0) {
 				    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
 				    targetTile.structure.AddPOI(newCircle, targetTile);
@@ -2270,8 +2269,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    }
 
 		    if (magicCircle != null) {
-			    GoapPlanJob ritualJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DARK_RITUAL,
-				    INTERACTION_TYPE.DARK_RITUAL, magicCircle, _owner);
+			    GoapPlanJob ritualJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DARK_RITUAL, INTERACTION_TYPE.DARK_RITUAL, magicCircle, _owner);
 
 			    if (magicCircle.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
 				    //if provided magic circle is unbuilt, add a pre-made plan to draw that magic circle.
@@ -2664,6 +2662,72 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         producedJob = null;
         return false;
+    }
+    #endregion
+
+    #region Evangelize
+    private bool IsValidEvangelizeTarget(Character character) {
+	    AWARENESS_STATE awarenessState = _owner.relationshipContainer.GetAwarenessState(character);
+	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
+	           character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character) &&
+	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
+    }
+    public bool TryGetValidEvangelizeTarget(out Character targetCharacter) {
+	    List<Character> choices = null;
+	    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+		    Character character = CharacterManager.Instance.allCharacters[i];
+		    if (IsValidEvangelizeTarget(character)) {
+			    if (choices == null) { choices = new List<Character>(); }
+			    choices.Add(character);
+		    }
+	    }
+
+	    if (choices != null) {
+		    WeightedDictionary<Character> targetWeights = new WeightedDictionary<Character>();
+		    for (int i = 0; i < choices.Count; i++) {
+			    Character character = choices[i];
+			    int weight = 0;
+			    string opinionLabel = _owner.relationshipContainer.GetOpinionLabel(character);
+			    if (opinionLabel == RelationshipManager.Close_Friend) {
+				    weight += Random.Range(300, 451);
+			    } else if (opinionLabel == RelationshipManager.Friend) {
+				    weight += Random.Range(100, 251);
+			    } else if (opinionLabel == RelationshipManager.Acquaintance) {
+				    weight += Random.Range(10, 51);
+			    }
+			    targetWeights.AddElement(character, weight);
+		    }
+		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{_owner.name}'s Evangelize Weights:");
+		    if (targetWeights.GetTotalOfWeights() > 0) {
+			    targetCharacter = targetWeights.PickRandomElementGivenWeights();
+			    return true;
+		    }
+	    }
+	    targetCharacter = null;
+	    return false;
+    }
+    public bool TryCreateEvangelizeJob(Character target, out JobQueueItem producedJob) {
+	    //create predetermined plan and job
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, _owner);
+	    List<JobNode> jobNodes = new List<JobNode>();
+	    if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
+		    //Pick up cultist kit at home
+		    TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
+		    Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to evangelize but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
+		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
+		    jobNodes.Add(new SingleJobNode(pickupNode));
+	    }
+	    
+	    ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], _owner, target, null, 0);
+	    jobNodes.Add(new SingleJobNode(evangelizeNode));
+	    
+	    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+	    goapPlan.SetDoNotRecalculate(true);
+	    job.SetCannotBePushedBack(true);
+	    job.SetAssignedPlan(goapPlan);
+	    
+	    producedJob = job;
+	    return true;
     }
     #endregion
 }
