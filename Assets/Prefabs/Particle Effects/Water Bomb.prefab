@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8318792560579331852}
   - component: {fileID: 3422807305797465594}
   - component: {fileID: 9076464040960556385}
-  - component: {fileID: 8046327924278292535}
   - component: {fileID: 7299560312113504976}
   m_Layer: 14
   m_Name: Water Bomb
@@ -4629,22 +4628,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &8046327924278292535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5550109489288565055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af49abe683bd31f4a9c471199b4375bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ParentPool: {fileID: 0}
-  particleSystems:
-  - {fileID: 3422807305797465594}
-  pauseOnGamePaused: 0
 --- !u!114 &7299560312113504976
 MonoBehaviour:
   m_ObjectHideFlags: 0
