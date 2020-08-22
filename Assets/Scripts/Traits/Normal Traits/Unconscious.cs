@@ -87,12 +87,12 @@ namespace Traits {
         //    }
         //    return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         //}
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             _sourceCharacter.needsComponent.AdjustTiredness(1.4f);
         }
-        public override void OnHourStarted() {
-            base.OnHourStarted();
+        public override void OnHourStarted(ITraitable traitable) {
+            base.OnHourStarted(traitable);
             CheckForLycanthropy();
         }
         #endregion

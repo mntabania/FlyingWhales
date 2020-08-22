@@ -35,12 +35,12 @@ namespace Traits {
             _character = null;
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             RecoverHP();
         }
-        public override void OnHourStarted() {
-            base.OnHourStarted();
+        public override void OnHourStarted(ITraitable traitable) {
+            base.OnHourStarted(traitable);
             CheckForLycanthropy();
         }
         #endregion

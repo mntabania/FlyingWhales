@@ -31,8 +31,8 @@ namespace Traits {
             }
         }
         //The reason why there's OnTickStarted and TICK_STARTED listener is because OnTickStarted only works for characters that is if Melting is added to a tile object we add the listener
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable1) {
+            base.OnTickStarted(traitable);
             PerTick();
         }
         #endregion

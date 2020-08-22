@@ -184,9 +184,9 @@ namespace Traits {
             return reasons;
 
         }
-        public virtual void OnTickStarted() { }
-        public virtual void OnTickEnded() { }
-        public virtual void OnHourStarted() { }
+        public virtual void OnTickStarted(ITraitable traitable) { }
+        public virtual void OnTickEnded(ITraitable traitable) { }
+        public virtual void OnHourStarted(ITraitable traitable) { }
         public virtual string GetNameInUI(ITraitable traitable) {
             return name;
         }
