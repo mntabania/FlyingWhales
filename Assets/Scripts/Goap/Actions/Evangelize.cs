@@ -28,6 +28,39 @@ public class Evangelize : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
+        Character poiTarget = target as Character;
+        if (witness.traitContainer.HasTrait("Cultist") == false) {
+            //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Serious);
+            CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+            if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasOpinion(actor, RelationshipManager.Acquaintance)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor, status, node);    
+            }
+            if (witness.traitContainer.HasTrait("Coward")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
+            } else if (witness.traitContainer.HasTrait("Psychopath") == false) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
+            }
+
+            if (poiTarget != null && witness.relationshipContainer.IsEnemiesWith(poiTarget) == false) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+            }
+        }
+        else {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+            if (RelationshipManager.IsSexuallyCompatible(witness.sexuality, actor.sexuality, witness.gender,
+                actor.gender)) {
+                int chance = 10 * witness.relationshipContainer.GetCompatibility(actor);
+                int roll = UnityEngine.Random.Range(0, 100);
+                if (roll < chance) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);                    
+                }
+            }
+        }
+        return response;
+    }
     #endregion
     
     // #region Preconditions
@@ -126,17 +159,12 @@ public class Evangelize : GoapAction {
         if (goapNode.descriptionLog.key == "evangelize success_description") {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Cultist");
         } else if (goapNode.descriptionLog.key == "crime") {
-            CrimeManager.Instance.MakeCharacterACriminal(CRIME_TYPE.Demon_Worship, 
-                CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode), 
-                goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));
+            // CrimeManager.Instance.MakeCharacterACriminal(CRIME_TYPE.Demon_Worship, 
+            //     CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode), 
+            //     goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));
+            targetCharacter.assumptionComponent.CreateAndReactToNewAssumption(goapNode.actor, goapNode.actor, INTERACTION_TYPE.IS_CULTIST, REACTION_STATUS.WITNESSED);
         }
-        // List<Trait> buffs = goapNode.target.traitContainer.GetAllTraitsOf(TRAIT_TYPE.BUFF);
-        // Trait randomBuff = CollectionUtilities.GetRandomElement(buffs);
-        // goapNode.target.traitContainer.RemoveTrait(goapNode.target, randomBuff, goapNode.actor);
-        // goapNode.descriptionLog.AddToFillers(null, randomBuff.name, LOG_IDENTIFIER.STRING_1);
-        // goapNode.descriptionLog.UpdateLogInInvolvedObjects();
-        // goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
-        // Messenger.Broadcast(Signals.UPDATE_ALL_NOTIFICATION_LOGS, goapNode.descriptionLog);
+        
     }
     #endregion
 

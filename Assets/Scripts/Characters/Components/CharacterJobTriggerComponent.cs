@@ -1831,9 +1831,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return target.gridTileLocation != null && target.marker != null;
     }
     public void TriggerPersonalBuryJob(Character targetCharacter) {
-        if (_owner.gridTileLocation != null) {
-            LocationStructure targetStructure = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
-                                                _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        if (_owner.gridTileLocation != null && !_owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
+            LocationStructure targetStructure = null;
+            if (_owner.homeSettlement != null) {
+	            targetStructure = _owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            }
+            if (targetStructure == null) {
+	            targetStructure = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            }
             if (_owner.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomPassableTile())) {
                 GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, _owner);
                 buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { targetStructure });
@@ -2034,12 +2039,27 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Apprehend
     public bool TryCreateApprehend(Character target, ref bool canDoJob) {
-        NPCSettlement settlementToGoTo = target.currentSettlement as NPCSettlement;
-        if(settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
-            settlementToGoTo = _owner.homeSettlement;
-            if (settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
-                settlementToGoTo = null;
-            }
+        // NPCSettlement settlementToGoTo = target.currentSettlement as NPCSettlement;
+        // if(settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
+        //     settlementToGoTo = _owner.homeSettlement;
+        //     if (settlementToGoTo == null || (settlementToGoTo.locationType != LOCATION_TYPE.SETTLEMENT)) {
+        //         settlementToGoTo = null;
+        //     }
+        // }
+        NPCSettlement settlementToGoTo = null;
+        if (_owner.homeSettlement != null) {
+	        if (_owner.currentSettlement != null) {
+		        if (_owner.currentSettlement == _owner.homeSettlement) {
+			        //if current settlement is home settlement
+			        settlementToGoTo = _owner.homeSettlement;    
+		        } else if (_owner.currentSettlement is NPCSettlement npcSettlement && 
+		                   npcSettlement.owner != null && _owner.faction != null && npcSettlement.owner == _owner.faction) {
+			        //if current settlement is owned by same faction as this character
+			        settlementToGoTo = npcSettlement;
+		        } else {
+			        settlementToGoTo = _owner.homeSettlement;
+		        }
+	        }    
         }
         canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(_owner, target) && settlementToGoTo != null;
         if (target.traitContainer.HasTrait("Criminal") && canDoJob) {
@@ -2710,13 +2730,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    //create predetermined plan and job
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, _owner);
 	    List<JobNode> jobNodes = new List<JobNode>();
-	    if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
-		    //Pick up cultist kit at home
-		    TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
-		    Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to evangelize but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
-		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
-		    jobNodes.Add(new SingleJobNode(pickupNode));
-	    }
+	    // if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
+		   //  //Pick up cultist kit at home
+		   //  TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
+		   //  Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to evangelize but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
+		   //  ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
+		   //  jobNodes.Add(new SingleJobNode(pickupNode));
+	    // }
 	    
 	    ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], _owner, target, null, 0);
 	    jobNodes.Add(new SingleJobNode(evangelizeNode));

@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System.Collections.Generic;
+using Inner_Maps;
 
 public class CreateCultistKit : GoapAction {
     public CreateCultistKit() : base(INTERACTION_TYPE.CREATE_CULTIST_KIT) {
@@ -9,9 +10,18 @@ public class CreateCultistKit : GoapAction {
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
+        // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood);
+        // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Cultist Kit", false, GOAP_EFFECT_TARGET.ACTOR));
+    }
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        List<Precondition> p = new List<Precondition>();
+        if (actor.race == RACE.HUMANS) {
+            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasStone));
+        } else {
+            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasWood));
+        }
+        return p;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -36,15 +46,25 @@ public class CreateCultistKit : GoapAction {
     #region State Effects
     public void AfterCreateSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
-        WoodPile woodPile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as WoodPile;
-        StonePile stonePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as StonePile; 
-        if(woodPile != null && stonePile != null) {
-            actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT));
-            woodPile.AdjustResourceInPile(-10);
-            stonePile.AdjustResourceInPile(-10);
-        } else {
-            actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Healing Potion but lacks requirements");
+        if (actor.race == RACE.HUMANS) {
+            StonePile stonePile = actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) as StonePile; 
+            if(stonePile != null) {
+                actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT));
+                stonePile.AdjustResourceInPile(-10);
+            } else {
+                actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Cultist Kit but lacks requirements");
+            }    
         }
+        else {
+            WoodPile woodPile = actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) as WoodPile;
+            if(woodPile != null) {
+                actor.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT));
+                woodPile.AdjustResourceInPile(-10);
+            } else {
+                actor.logComponent.PrintLogErrorIfActive(actor.name + " is trying to create a Cultist Kit but lacks requirements");
+            }
+        }
+        
     }
     #endregion
 }
