@@ -26,8 +26,8 @@ namespace Traits {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(SubterraneanBehaviour));
             }
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
             CheckBecomeStone(_owner);
         }
         #endregion
