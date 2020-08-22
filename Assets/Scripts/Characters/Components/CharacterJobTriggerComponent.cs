@@ -401,8 +401,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (!_owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
 			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, _owner);
 			destroyJob.SetStillApplicableChecker(() => IsDestroyJobApplicable(target));
-			_owner.jobQueue.AddJobInQueue(destroyJob);
-			return true;
+            return _owner.jobQueue.AddJobInQueue(destroyJob);
 		}
 		return false;
 	}
@@ -1901,6 +1900,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    producedJob = null;
 	    return false;
+    }
+    public bool CreateFleeToJob(LocationGridTile tile, out JobQueueItem producedJob) {
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+            job.SetCannotBePushedBack(true);
+            producedJob = job;
+            return true;
+        }
+        producedJob = null;
+        return false;
     }
     public bool CreatePartyGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {

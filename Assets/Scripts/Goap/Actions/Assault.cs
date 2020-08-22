@@ -211,8 +211,11 @@ public class Assault : GoapAction {
         return false;
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {
-        if(crime.associatedJobType != JOB_TYPE.APPREHEND) {
+        if(crime.associatedJobType != JOB_TYPE.APPREHEND && target is Character targetCharacter && targetCharacter.isNormalCharacter) {
             return CRIME_TYPE.Assault;
+        }
+        if(target is TileObject targetTileObject && targetTileObject.characterOwner != null && !targetTileObject.IsOwnedBy(actor)) {
+            return CRIME_TYPE.Disturbances;
         }
         return base.GetCrimeType(actor, target, crime);
     }

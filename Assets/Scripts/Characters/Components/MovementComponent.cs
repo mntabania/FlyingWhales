@@ -223,8 +223,11 @@ public class MovementComponent {
             if (fromTile == null || toTile == null) { return false; }
             if (fromTile == toTile) { return true; }
 
-            //If digging is enabled, always return true, because the digging will handle the blocked path
-            return true;
+            if(toTile.groundType != LocationGridTile.Ground_Type.Water) {
+                //If digging is enabled, always return true, because the digging will handle the blocked path
+                return true;
+            }
+            return false;
         }
     }
     public bool HasPathTo(HexTile toTile) {
@@ -246,7 +249,10 @@ public class MovementComponent {
             if (fromTile == toTile) { return true; }
 
             //If digging is enabled, always return true, because the digging will handle the blocked path
-            return true;
+            if (toTile.groundType != LocationGridTile.Ground_Type.Water) {
+                return true;
+            }
+            return false;
         } else {
             return PathfindingManager.Instance.HasPathEvenDiffRegion(fromTile, toTile);
         }

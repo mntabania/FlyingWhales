@@ -23,7 +23,7 @@ public class CounterattackParty : Party {
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
+        return ((character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble") && !character.isAlliedWithPlayer;
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();

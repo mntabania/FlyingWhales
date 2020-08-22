@@ -72,10 +72,12 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                         return true;
                     }
                     log += $"\n-Roam around";
-                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    RoamAroundStructureOrHex(character, rescueParty.target, out producedJob);
+                    //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     log += $"\n-Roam around";
-                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    RoamAroundStructureOrHex(character, rescueParty.target, out producedJob);
                 }
             } else {
                 log += $"\n-Character is not in target structure, go to it";
@@ -87,5 +89,15 @@ public class RescueBehaviour : CharacterBehaviourComponent {
             producedJob.SetIsThisAPartyJob(true);
         }
         return true;
+    }
+
+    private bool RoamAroundStructureOrHex(Character actor, IPartyTarget target, out JobQueueItem producedJob) {
+        if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+            if(target is Character targetCharacter && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                return actor.jobComponent.TriggerRoamAroundTile(out producedJob, targetHex.GetRandomTile());
+            }
+        }
+        return actor.jobComponent.TriggerRoamAroundStructure(out producedJob);
     }
 }

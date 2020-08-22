@@ -85,6 +85,10 @@ public class CombatManager : MonoBehaviour {
                     if (target.traitContainer.HasTrait("Fire Prone")) {
                         damage *= 2;
                     }
+                } else if(elementalType == ELEMENTAL_TYPE.Electric) {
+                    if(target is TileObject || target is StructureWallObject) {
+                        damage = Mathf.RoundToInt(damage * 0.25f);
+                    }
                 }
             }
         }

@@ -14,6 +14,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             mutuallyExclusive = new string[] { "Music Lover" };
+            AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
         #region Overrides
@@ -50,6 +51,14 @@ namespace Traits {
             } else if (action == INTERACTION_TYPE.PLAY_GUITAR) {
                 cost += 2000;
             }
+        }
+        public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+            if (targetPOI is Guitar guitar) {
+                if (guitar.IsOwnedBy(characterThatWillDoJob)) {
+                    return characterThatWillDoJob.jobComponent.TriggerDestroy(targetPOI);
+                }
+            }
+            return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
 

@@ -54,6 +54,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private SpriteRenderer colorHighlight;
 
     private string _destroySchedule;
+    private List<HexTile> hexInWildernessForFlee;
 
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
@@ -115,6 +116,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         UpdateHairState();
+
+        if(hexInWildernessForFlee == null) {
+            hexInWildernessForFlee = new List<HexTile>();
+        }
 
         AddListeners();
         PathfindingManager.Instance.AddAgent(pathfindingAI);
@@ -389,6 +394,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character = null;
         // previousGridTile = null;
         _previousHexTileLocation = null;
+        hexInWildernessForFlee.Clear();
     }
     #endregion
 
@@ -486,19 +492,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.combatComponent.isInCombat) {
             CombatState combatState = character.stateComponent.currentState as CombatState;
             if (combatState.isAttacking){
-                LocationGridTile destinationTile = null;
-                LocationGridTile attainedDestinationTile = null;
-                ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
-                if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
-                    //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
-                    if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
-                        targetPOI = null;
-                        return;
-                    }
-                }
-
-
                 if (combatState.currentClosestHostile != null && !character.movementComponent.HasPathToEvenIfDiffRegion(combatState.currentClosestHostile.gridTileLocation)) {
+                    LocationGridTile destinationTile = null;
+                    LocationGridTile attainedDestinationTile = null;
+                    ProcessDestinationAndAttainedDestinationTile(ref destinationTile, ref attainedDestinationTile);
+                    if (attainedDestinationTile != null && character.gridTileLocation != null && destinationTile != null && destinationTile != attainedDestinationTile) {
+                        //When path is completed and the distance between the actor and the target is still more than 1 tile, we need to assume the the path is blocked
+                        if (character.movementComponent.AttackBlockersOnReachEndPath(pathfindingAI.currentPath, attainedDestinationTile)) {
+                            targetPOI = null;
+                            return;
+                        }
+                    }
+
                     if (character.combatComponent.RemoveHostileInRange(combatState.currentClosestHostile)) {
                         targetPOI = null;
                     }
@@ -1548,6 +1553,40 @@ public class CharacterMarker : MapObjectVisual<Character> {
             } else {
                 GoTo(chosenTile, OnFinishedTraversingFleePath);
             }
+        } else {
+            OnStartFlee();
+        }
+    }
+    public void OnStartFleeToOutside() {
+        if (character.combatComponent.avoidInRange.Count == 0) {
+            return;
+        }
+        pathfindingAI.ClearAllCurrentPathData();
+        SetHasFleePath(true);
+        LocationGridTile chosenTile = null;
+        if(character.currentStructure != null && character.currentStructure.structureType.IsSpecialStructure()) {
+            if (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                HexTile hex = character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                hexInWildernessForFlee.Clear();
+                for (int i = 0; i < hex.AllNeighbours.Count; i++) {
+                    HexTile neighbour = hex.AllNeighbours[i];
+                    LocationGridTile neighbourCenter = neighbour.GetCenterLocationGridTile();
+                    if (character.movementComponent.HasPathTo(neighbourCenter)) {
+                        if(neighbourCenter.structure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                            if(character.currentStructure.settlementLocation == null || neighbour.settlementOnTile == null || neighbour.settlementOnTile != character.currentStructure.settlementLocation) {
+                                hexInWildernessForFlee.Add(neighbour);
+                            }
+                        }
+                    }
+                }
+                if(hexInWildernessForFlee.Count > 0) {
+                    HexTile randomHex = CollectionUtilities.GetRandomElement(hexInWildernessForFlee);
+                    chosenTile = randomHex.GetCenterLocationGridTile();
+                }
+            }
+        }
+        if (chosenTile != null) {
+            GoTo(chosenTile, OnFinishedTraversingFleePath);
         } else {
             OnStartFlee();
         }

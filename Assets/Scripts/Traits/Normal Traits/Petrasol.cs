@@ -1,8 +1,8 @@
 ﻿using System;
 namespace Traits {
     public class Petrasol : Trait {
-        private Character _owner;
-        
+        public override bool isSingleton => true;
+
         public Petrasol() {
             name = "Petrasol";
             description = "Turns to stone when hit by sunlight.";
@@ -16,7 +16,6 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
-                _owner = character;
                 character.behaviourComponent.AddBehaviourComponent(typeof(SubterraneanBehaviour));
             }
         }
@@ -26,9 +25,11 @@ namespace Traits {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(SubterraneanBehaviour));
             }
         }
-        public override void OnTickStarted() {
-            base.OnTickStarted();
-            CheckBecomeStone(_owner);
+        public override void OnTickStarted(ITraitable traitable) {
+            base.OnTickStarted(traitable);
+            if(traitable is Character character) {
+                CheckBecomeStone(character);
+            }
         }
         #endregion
 

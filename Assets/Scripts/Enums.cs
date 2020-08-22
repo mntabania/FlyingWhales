@@ -494,7 +494,8 @@ public enum INTERACTION_TYPE {
     WARM_UP = 191,
     REPORT_CRIME = 192,
     TRESPASSING = 193,
-    EVANGELIZE
+    EVANGELIZE = 194,
+    FLEE_TO_TILE = 195,
 }
 public enum INTERRUPT {
     None,

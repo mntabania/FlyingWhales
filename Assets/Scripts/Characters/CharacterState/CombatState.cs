@@ -567,7 +567,11 @@ public class CombatState : CharacterState {
             //} else {
             //    stateComponent.character.marker.OnStartFlee();
             //}
-            stateComponent.character.marker.OnStartFlee();
+            if (stateComponent.character.currentStructure != null && stateComponent.character.currentStructure.structureType.IsSpecialStructure()) {
+                stateComponent.character.marker.OnStartFleeToOutside();
+            } else {
+                stateComponent.character.marker.OnStartFlee();
+            }
 
             Messenger.Broadcast(Signals.START_FLEE, stateComponent.character);
 

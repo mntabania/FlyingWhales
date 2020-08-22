@@ -521,8 +521,15 @@ namespace Inner_Maps {
             } else {
                 character.movementComponent.SetCameFromWurmHole(false);
             }
-            
 
+            if (objHere != null && objHere is Rug rug) {
+                //Booby trapped Rug should explode on contact
+                //https://trello.com/c/rveaE94E/1942-booby-trapped-rug-should-explode-on-contact
+                if(rug.traitContainer.HasTrait("Booby Trapped")) {
+                    BoobyTrapped boobyTrapped = rug.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                    boobyTrapped.DamageTargetByTrap(character);
+                }
+            }
             if (hasFreezingTrap && (_freezingTrapChecker == null || _freezingTrapChecker.CanTrapAffectCharacter(character))) {
                 TriggerFreezingTrap(character);
             }

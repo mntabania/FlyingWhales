@@ -31,22 +31,7 @@ namespace Traits {
         }
         public bool OnPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if (node.action.actionCategory == ACTION_CATEGORY.DIRECT || node.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                if (node.poiTarget.gridTileLocation != null) {
-                    Log log = new Log(GameManager.Instance.Today(), "Trait", this.name, "trap_activated");
-                    log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToInvolvedObjects();
-                    List<LocationGridTile> tiles = node.poiTarget.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                    for (int i = 0; i < tiles.Count; i++) {
-                        LocationGridTile currTile = tiles[i];
-                        List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
-                        for (int j = 0; j < pois.Count; j++) {
-                            IPointOfInterest currPOI = pois[j];
-                            currPOI.AdjustHP(-800, _element, true);
-                        }
-                    }
-                    willStillContinueAction = false;
-                    node.poiTarget.traitContainer.RemoveTrait(node.poiTarget, this);
+                if(ActivateTrap(node.actor, node.target, ref willStillContinueAction)) {
                     return true;
                 }
             }
@@ -77,6 +62,31 @@ namespace Traits {
             awareCharacters.Remove(character);
         }
         #endregion
+
+        private bool ActivateTrap(Character actor, IPointOfInterest target, ref bool willStillContinueAction) {
+            if (target.gridTileLocation != null) {
+                Log log = new Log(GameManager.Instance.Today(), "Trait", this.name, "trap_activated");
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToInvolvedObjects();
+                DamageTargetByTrap(target);
+                willStillContinueAction = false;
+                return true;
+            }
+            return false;
+        }
+        public void DamageTargetByTrap(IPointOfInterest target) {
+            List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile currTile = tiles[i];
+                List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
+                for (int j = 0; j < pois.Count; j++) {
+                    IPointOfInterest currPOI = pois[j];
+                    currPOI.AdjustHP(-800, _element, true);
+                }
+            }
+            target.traitContainer.RemoveTrait(target, this);
+        }
 
         public void SetElementType(ELEMENTAL_TYPE element) {
             _element = element;
