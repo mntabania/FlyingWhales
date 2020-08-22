@@ -5,7 +5,9 @@ using UnityEngine;
 namespace Traits {
     public class Venomous : Trait {
 
-        private ITraitable _traitable;
+        //private ITraitable _traitable;
+
+        public override bool isSingleton => true;
 
         public Venomous() {
             name = "Venomous";
@@ -20,7 +22,6 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            _traitable = addedTo;
             Poisoned poisoned = addedTo.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
             if(poisoned != null) {
                 poisoned.SetIsVenomous();
@@ -28,14 +29,14 @@ namespace Traits {
         }
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
-            ApplyPoisonToTile();
+            ApplyPoisonToTile(traitable);
         }
         #endregion
 
-        private void ApplyPoisonToTile() {
-            if(_traitable.gridTileLocation != null) {
+        private void ApplyPoisonToTile(ITraitable traitable) {
+            if(traitable.gridTileLocation != null) {
                 if (UnityEngine.Random.Range(0, 100) < 10) {
-                    _traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(_traitable.gridTileLocation.genericTileObject, "Poisoned");
+                    traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable.gridTileLocation.genericTileObject, "Poisoned");
                 }
             }
         }
