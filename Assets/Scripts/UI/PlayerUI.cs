@@ -627,6 +627,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region End Game Mechanics
     public void WinGameOver() {
+        SaveManager.Instance.currentSaveDataPlayer.OnWorldCompleted(WorldSettings.Instance.worldSettingsData.worldType);
         UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");
         // if (WorldConfigManager.Instance.isTutorialWorld) {
         //     UIManager.Instance.ShowEndDemoScreen("You managed to wipe out all Villagers. Congratulations!");

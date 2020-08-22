@@ -10958,6 +10958,14 @@ MonoBehaviour:
   hoverGO: {fileID: 1035131528441808496}
   hoverText: {fileID: 1051141547691287360}
   hoverTitle: {fileID: 5651743549493244524}
+  worldPickerItems:
+  - {fileID: 1307936177064343662}
+  - {fileID: 836583924083511358}
+  - {fileID: 1108991453496799278}
+  - {fileID: 6911108010467577613}
+  - {fileID: 8387193232896632932}
+  - {fileID: 6853414469538171111}
+  - {fileID: 3883553889160089245}
 --- !u!1 &9016050650650487234
 GameObject:
   m_ObjectHideFlags: 0
@@ -13377,7 +13385,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: worldType
-      value: 6
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13612,7 +13620,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: worldType
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14281,7 +14289,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: worldType
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14511,7 +14519,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: worldType
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14739,7 +14747,7 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: worldType
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5859624894791995543, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

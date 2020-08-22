@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -7,6 +8,7 @@ using Tutorial;
 
 [System.Serializable]
 public class SaveDataPlayer {
+    public string gameVersion;
     public int exp;
     //public List<PlayerSkillDataCopy> learnedSkills;
     public List<SPELL_TYPE> learnedSkills;
@@ -15,6 +17,7 @@ public class SaveDataPlayer {
     public List<SaveDataTileObject> cryptTileObjects;
     public List<TutorialManager.Tutorial> completedBonusTutorials;
     public List<QuestManager.Special_Popup> completedSpecialPopups;
+    public List<WorldSettingsData.World_Type> unlockedWorlds;
 
     //Loadouts
     public LoadoutSaveData ravagerLoadoutSaveData;
@@ -23,6 +26,7 @@ public class SaveDataPlayer {
     public LoadoutSaveData secondWorldSaveData;
 
     public void InitializeInitialData() {
+        gameVersion = Application.version;
         exp = 10000;
         //learnedSkills = new List<PlayerSkillDataCopy>();
         learnedSkills = new List<SPELL_TYPE>();
@@ -49,6 +53,7 @@ public class SaveDataPlayer {
         //learnedSkills.Add(breedMonster);
         InitializeTutorialData();
         completedSpecialPopups = new List<QuestManager.Special_Popup>();
+        InitializeUnlockedWorlds();
     }
 
     #region Exp
@@ -424,6 +429,47 @@ public class SaveDataPlayer {
             completedSpecialPopups = new List<QuestManager.Special_Popup>();
         } else {
             completedSpecialPopups.Clear();    
+        }
+    }
+    #endregion
+
+    #region Unlocked Worlds
+    private void InitializeUnlockedWorlds() {
+        unlockedWorlds = new List<WorldSettingsData.World_Type>() { WorldSettingsData.World_Type.Tutorial, WorldSettingsData.World_Type.Oona };
+    }
+    public void UnlockWorld(WorldSettingsData.World_Type worldType) {
+        if (!unlockedWorlds.Contains(worldType)) {
+            unlockedWorlds.Add(worldType);
+        }
+    }
+    public bool IsWorldUnlocked(WorldSettingsData.World_Type worldType) {
+        return unlockedWorlds.Contains(worldType);
+    }
+    public void OnWorldCompleted(WorldSettingsData.World_Type worldType) {
+        switch (worldType) {
+            case WorldSettingsData.World_Type.Oona:
+                UnlockWorld(WorldSettingsData.World_Type.Icalawa);
+                UnlockWorld(WorldSettingsData.World_Type.Pangat_Loo);
+                break;
+            case WorldSettingsData.World_Type.Icalawa:
+            case WorldSettingsData.World_Type.Pangat_Loo:
+                UnlockWorld(WorldSettingsData.World_Type.Icalawa);
+                UnlockWorld(WorldSettingsData.World_Type.Affatt);
+                break;
+            case WorldSettingsData.World_Type.Zenko:
+            case WorldSettingsData.World_Type.Affatt:
+                UnlockWorld(WorldSettingsData.World_Type.Custom);
+                break;
+        }
+        SaveManager.Instance.SavePlayerData();
+    }
+    #endregion
+
+    #region Loading
+    public void ProcessOnLoad() {
+        gameVersion = Application.version;
+        if (unlockedWorlds == null) {
+            InitializeUnlockedWorlds();
         }
     }
     #endregion
