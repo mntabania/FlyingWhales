@@ -102,9 +102,7 @@ public class StateAwarenessComponent {
     private void SetStartPresumedDeadTimer(bool state) {
         if (startPresumedDeadTimer != state) {
             startPresumedDeadTimer = state;
-            if (!startPresumedDeadTimer) {
-                ResetPresumedDeadTimer();
-            }
+            ResetPresumedDeadTimer();
         }
     }
     public void ResetMissingTimer() {
