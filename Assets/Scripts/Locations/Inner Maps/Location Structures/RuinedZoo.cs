@@ -57,11 +57,13 @@ namespace Inner_Maps.Location_Structures {
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
             if (structure == this && character is Summon && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is ZooCell) {
                 character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                character.movementComponent.SetEnableDigging(false);
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this && character is Summon summon) {
                 summon.combatComponent.SetCombatMode(summon.defaultCombatMode);
+                summon.movementComponent.SetEnableDigging(summon.defaultDigMode);
             }
         }
     }

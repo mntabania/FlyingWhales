@@ -12,6 +12,7 @@ public class Troll : Summon {
     public bool isAttackingPlayer { get; private set; }
     public bool willLeaveWorld { get; private set; }
     public LocationStructure targetStructure { get; private set; }
+    public override bool defaultDigMode => true;
 
     public Troll() : base(SUMMON_TYPE.Troll, "Troll", RACE.TROLL, UtilityScripts.Utilities.GetRandomGender()) {
     }

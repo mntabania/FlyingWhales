@@ -13,6 +13,7 @@ public class Summon : Character {
     private bool showNotificationOnDeath { get; set; }
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
     public virtual COMBAT_MODE defaultCombatMode => COMBAT_MODE.Aggressive;
+    public virtual bool defaultDigMode => false;
 
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;

@@ -12,6 +12,7 @@ public class Dragon : Summon {
     public bool isAttackingPlayer { get; private set; }
     public bool willLeaveWorld { get; private set; }
     public LocationStructure targetStructure { get; private set; }
+    public override bool defaultDigMode => true;
     private int _leaveWorldCounter;
     private readonly int _leaveWorldTimer;
 
