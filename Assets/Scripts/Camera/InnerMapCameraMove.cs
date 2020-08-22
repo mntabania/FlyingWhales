@@ -12,7 +12,6 @@ public class InnerMapCameraMove : BaseCameraMove {
 	public static InnerMapCameraMove Instance;
     
 	[SerializeField] private float zoomSensitivity;
-    [SerializeField] private float _zoomSpeed = 5f;
     [FormerlySerializedAs("areaMapsCamera")] public Camera innerMapsCamera;
     [SerializeField] private bool allowZoom = true;
 

@@ -495,10 +495,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? 
-                                                        CombatManager.Instance.DefaultElementalTraitProcessor;
-            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, 
-                responsibleCharacter, etp);
+            CombatManager.ElementalTraitProcessor etp = elementalTraitProcessor ?? CombatManager.Instance.DefaultElementalTraitProcessor;
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter, etp);
             //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
         }
         LocationGridTile tile = gridTileLocation;

@@ -30,6 +30,9 @@ public class IgniteData : PlayerAction {
         if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning", "Wet", "Fireproof")) {
             return false;
         }
+        if (!tileObject.traitContainer.HasTrait("Flammable")) {
+            return false;
+        }
         return base.CanPerformAbilityTowards(tileObject);
     }
     #endregion

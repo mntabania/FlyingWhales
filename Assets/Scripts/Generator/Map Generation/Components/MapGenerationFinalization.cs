@@ -42,6 +42,21 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public override IEnumerator LoadScenarioData(MapGenerationData data, ScenarioMapData scenarioMapData) {
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
 	}
+	public static void ScenarioItemGenerationAfterPickingLoadout() {
+		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			//spawn 1 desert rose
+			Region region = GridMap.Instance.allRegions[1];
+			LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
+				t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
+				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
+				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
+			LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
+			desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);
+			locationChoices.Remove(desertRoseLocation);
+			Debug.Log($"Placed desert rose at {desertRoseLocation.localPlace.ToString()}");	
+		}
+	}
 	#endregion
 	
 	#region Saved World
@@ -118,7 +133,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							character.Death();
 							tombstone.SetCharacter(character);
 							chosenTile.structure.AddPOI(tombstone, chosenTile);
-						}	
+						}
 					} else {
 						//spawn 4 water crystals in other region
 						for (int j = 0; j < 4; j++) {

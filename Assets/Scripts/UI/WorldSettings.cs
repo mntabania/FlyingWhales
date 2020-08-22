@@ -7,7 +7,6 @@ using TMPro;
 
 public class WorldSettings : MonoBehaviour {
     public static WorldSettings Instance;
-    public enum World { Tutorial, Oona, Icalawa, Pangat_Loo, Affatt, Zenko, Customize, }
 
     public WorldSettingsData worldSettingsData { get; private set; }
 
@@ -36,7 +35,9 @@ public class WorldSettings : MonoBehaviour {
     public GameObject hoverGO;
     public RuinarchText hoverText;
     public RuinarchText hoverTitle;
+    public WorldPickerItem[] worldPickerItems;
     private WorldPickerItem toggledWorldPicker;
+    
     
     //private List<RaceWorldOptionItem> raceWorldOptionItems;
     //private List<BiomeWorldOptionItem> biomeWorldOptionItems;
@@ -44,6 +45,7 @@ public class WorldSettings : MonoBehaviour {
 
     //private RACE[] races = { RACE.HUMANS, RACE.ELVES };
     //private BIOMES[] biomes = { BIOMES.GRASSLAND, BIOMES.FOREST, BIOMES.SNOW, BIOMES.DESERT };
+
 
     private void Awake() {
         if (Instance == null) {
@@ -53,14 +55,6 @@ public class WorldSettings : MonoBehaviour {
         } else {
             Destroy(this.gameObject);
         }
-    }
-    private void Start() {
-        // worldSettingsData = new WorldSettingsData();
-        //raceWorldOptionItems = new List<RaceWorldOptionItem>();
-        //biomeWorldOptionItems = new List<BiomeWorldOptionItem>();
-        //numOfRegions = new List<string>() { "1", "2", "3", "4", "6" };
-        //Messenger.AddListener<RACE, bool>(Signals.RACE_WORLD_OPTION_ITEM_CLICKED, OnRaceWorldOptionItemClicked);
-        //Messenger.AddListener<BIOMES, bool>(Signals.BIOME_WORLD_OPTION_ITEM_CLICKED, OnBiomeWorldOptionItemClicked);
     }
 
     #region Listeners
@@ -78,6 +72,7 @@ public class WorldSettings : MonoBehaviour {
         mainWindow.SetActive(true);
         customizeWorldWindow.SetActive(false);
         InitializeData();
+        UpdateAvailableWorldTypes();
     }
     public void Close() {
         settingsGO.SetActive(false);
@@ -271,6 +266,17 @@ public class WorldSettings : MonoBehaviour {
     #endregion
 
     #region World Picker
+    private void UpdateAvailableWorldTypes() {
+        for (int i = 0; i < worldPickerItems.Length; i++) {
+            WorldPickerItem worldPickerItem = worldPickerItems[i];
+            if (SaveManager.Instance.currentSaveDataPlayer.IsWorldUnlocked(worldPickerItem.worldType) ||
+                SaveManager.Instance.unlockAllWorlds) {
+                worldPickerItem.Enable();
+            } else {
+                worldPickerItem.Disable();
+            }
+        }
+    }
     public void OnHoverEnterWorldPicker(WorldPickerItem item) {
         ShowHover(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(item.worldType.ToString()), item.description);
     }
@@ -284,19 +290,19 @@ public class WorldSettings : MonoBehaviour {
     public void OnToggleWorldPicker(WorldPickerItem item, bool state) {
         if (state) {
             toggledWorldPicker = item;
-            if(item.worldType == World.Tutorial) {
+            if(item.worldType == WorldSettingsData.World_Type.Tutorial) {
                 worldSettingsData.SetTutorialWorldSettings();
-            } else if (item.worldType == World.Oona) {
+            } else if (item.worldType == WorldSettingsData.World_Type.Oona) {
                 worldSettingsData.SetSecondWorldSettings();
-            } else if (item.worldType == World.Icalawa) {
+            } else if (item.worldType == WorldSettingsData.World_Type.Icalawa) {
                 worldSettingsData.SetIcalawaWorldSettings();
-            } else if (item.worldType == World.Pangat_Loo) {
+            } else if (item.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
                 worldSettingsData.SetPangatLooWorldSettings();
-            } else if (item.worldType == World.Affatt) {
+            } else if (item.worldType == WorldSettingsData.World_Type.Affatt) {
                 worldSettingsData.SetAffattWorldSettings();
-            } else if (item.worldType == World.Zenko) {
+            } else if (item.worldType == WorldSettingsData.World_Type.Zenko) {
                 worldSettingsData.SetZenkoWorldSettings();
-            } else if (item.worldType == World.Customize) {
+            } else if (item.worldType == WorldSettingsData.World_Type.Custom) {
                 worldSettingsData.SetDefaultCustomWorldSettings();
             }
             ShowHover(item.worldType.ToString(), item.description);

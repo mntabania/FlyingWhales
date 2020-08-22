@@ -24,9 +24,17 @@ public class SaveManager : MonoBehaviour {
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
     [SerializeField] private bool alwaysResetBonusTutorialsOnStartup;
+    [SerializeField] private bool _unlockAllWorlds;
 
     public bool hasSavedDataCurrentProgress => currentSaveDataProgress != null;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    public bool unlockAllWorlds => _unlockAllWorlds;
+#else
+    public bool unlockAllWorlds => false;
+#endif
+    
+    
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -166,7 +174,9 @@ public class SaveManager : MonoBehaviour {
             currentSaveDataPlayer.InitializeInitialData();
         } else {
             if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
-                SetCurrentSaveDataPlayer(SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName));
+                SaveDataPlayer saveDataPlayer = SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName);
+                saveDataPlayer.ProcessOnLoad();
+                SetCurrentSaveDataPlayer(saveDataPlayer);
             }
             if (currentSaveDataPlayer == null) {
                 currentSaveDataPlayer = new SaveDataPlayer();
