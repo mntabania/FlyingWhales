@@ -1218,17 +1218,7 @@ public class UIManager : MonoBehaviour {
 
     #region Yes/No
     [Header("Yes or No Confirmation")]
-    public GameObject yesNoGO;
-    [SerializeField] private CanvasGroup yesNoCanvasGroup;
-    [SerializeField] private GameObject yesNoCover;
-    [SerializeField] private TextMeshProUGUI yesNoHeaderLbl;
-    [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
-    [SerializeField] private Button yesBtn;
-    [SerializeField] private Button noBtn;
-    [SerializeField] private Button closeBtn;
-    [SerializeField] private TextMeshProUGUI yesBtnLbl;
-    [SerializeField] private TextMeshProUGUI noBtnLbl;
-    [SerializeField] private HoverHandler yesBtnUnInteractableHoverHandler;
+    public YesNoConfirmation yesNoConfirmation;
     /// <summary>
     /// Show a yes/no pop up window
     /// </summary>
@@ -1262,63 +1252,11 @@ public class UIManager : MonoBehaviour {
             Pause();
             SetSpeedTogglesState(false);    
         }
-        // if (pauseAndResume) {
-        //     SetSpeedTogglesState(false);
-        //     Pause();
-        // }
-        yesNoHeaderLbl.text = header;
-        yesNoDescriptionLbl.text = question;
-
-        yesBtnLbl.text = yesBtnText;
-        noBtnLbl.text = noBtnText;
-
-        yesBtn.gameObject.SetActive(yesBtnActive);
-        noBtn.gameObject.SetActive(noBtnActive);
-
-        yesBtn.interactable = yesBtnInteractable;
-        noBtn.interactable = noBtnInteractable;
-
-        //clear all listeners
-        yesBtn.onClick.RemoveAllListeners();
-        noBtn.onClick.RemoveAllListeners();
-        closeBtn.onClick.RemoveAllListeners();
-
-        //hide confirmation menu on click
-        yesBtn.onClick.AddListener(HideYesNoConfirmation);
-        noBtn.onClick.AddListener(HideYesNoConfirmation);
-        closeBtn.onClick.AddListener(HideYesNoConfirmation);
-
-        // //resume last prog speed on click any btn
-        // if (pauseAndResume) {
-        //     yesBtn.onClick.AddListener(ResumeLastProgressionSpeed);
-        //     noBtn.onClick.AddListener(ResumeLastProgressionSpeed);
-        //     closeBtn.onClick.AddListener(ResumeLastProgressionSpeed);
-        // }
-
-        //specific actions
-        if (onClickYesAction != null) {
-            yesBtn.onClick.AddListener(onClickYesAction.Invoke);
-        }
-        if (onClickNoAction != null) {
-            noBtn.onClick.AddListener(onClickNoAction.Invoke);
-            //closeBtn.onClick.AddListener(onClickNoAction.Invoke);
-        }
-
-        yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);
-        if (yesBtnInactiveHoverAction != null) {
-            yesBtnUnInteractableHoverHandler.SetOnHoverAction(yesBtnInactiveHoverAction.Invoke);
-        }
-        if (yesBtnInactiveHoverExitAction != null) {
-            yesBtnUnInteractableHoverHandler.SetOnHoverOutAction(yesBtnInactiveHoverExitAction.Invoke);
-        }
-
-        yesNoGO.SetActive(true);
-        yesNoGO.transform.SetSiblingIndex(layer);
-        yesNoCover.SetActive(showCover);
-        TweenIn(yesNoCanvasGroup);
+        yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable,  pauseAndResume, 
+            yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction);
     }
     private void HideYesNoConfirmation() {
-        yesNoGO.SetActive(false);
+        yesNoConfirmation.HideYesNoConfirmation();
         if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen()) {
             ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }

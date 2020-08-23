@@ -748,10 +748,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         leftBorderGlow.GlowColor = color;
         rightBorderGlow.GlowColor = color;
     }
-    public void UpdateBuildSprites() {
-        emptyBuildingSpotGO.gameObject.SetActive(true);
-        currentlyBuildingSpotGO.gameObject.SetActive(false);
-    }
+    // public void UpdateBuildSprites() {
+    //     emptyBuildingSpotGO.gameObject.SetActive(true);
+    //     currentlyBuildingSpotGO.gameObject.SetActive(false);
+    // }
     #endregion
 
     #region Tile Functions

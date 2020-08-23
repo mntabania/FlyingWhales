@@ -84,7 +84,7 @@ public partial class LandmarkManager : MonoBehaviour {
         }
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        location.UpdateBuildSprites();
+        // location.UpdateBuildSprites();
         allLandmarks.Add(newLandmark);
         Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
@@ -95,7 +95,7 @@ public partial class LandmarkManager : MonoBehaviour {
             return;
         }
         landmarkOnTile.DestroyLandmark();
-        tile.UpdateBuildSprites();
+        // tile.UpdateBuildSprites();
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         allLandmarks.Remove(landmarkOnTile);

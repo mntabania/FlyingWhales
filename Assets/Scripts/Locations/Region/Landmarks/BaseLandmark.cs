@@ -61,7 +61,7 @@ public class BaseLandmark {
         }
         _specificLandmarkType = type;
         tileLocation.UpdateLandmarkVisuals();
-        tileLocation.UpdateBuildSprites();
+        // tileLocation.UpdateBuildSprites();
         //if (type == LANDMARK_TYPE.NONE) {
         //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         //}

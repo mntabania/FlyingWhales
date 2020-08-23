@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -218,6 +219,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -399,6 +401,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -516,6 +519,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -594,6 +598,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -679,6 +684,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -835,6 +841,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1011,6 +1018,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1128,6 +1136,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1234,7 +1243,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3345934888100056602}
   - component: {fileID: 3343501160054535002}
-  - component: {fileID: 3274600334673508053}
+  - component: {fileID: 6381006093296982643}
   m_Layer: 5
   m_Name: YesNoConfirmation
   m_TagString: Untagged
@@ -1271,7 +1280,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3276266618370622418}
   m_CullTransparentMesh: 0
---- !u!114 &3274600334673508053
+--- !u!114 &6381006093296982643
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1280,9 +1289,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 3276266618370622418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4147be7d9385b364db1816cab1060f10, type: 3}
+  m_Script: {fileID: 11500000, guid: 83642d2664bd42c69b0a404aaa09ffb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  yesNoGO: {fileID: 3276266618370622418}
+  yesNoCanvasGroup: {fileID: 5715006734047202500}
+  yesNoCover: {fileID: 3274600335787752770}
+  yesNoHeaderLbl: {fileID: 3235654836546198758}
+  yesNoDescriptionLbl: {fileID: 3235730209896921930}
+  yesBtn: {fileID: 3235602586426415612}
+  noBtn: {fileID: 1916690290342855559}
+  closeBtn: {fileID: 3274600335610779607}
+  yesBtnLbl: {fileID: 3235550966306531640}
+  noBtnLbl: {fileID: 4924999456839848063}
+  yesBtnUnInteractableHoverHandler: {fileID: 3274600336244422098}
 --- !u!1 &6588902912923346454
 GameObject:
   m_ObjectHideFlags: 0
@@ -1344,6 +1364,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

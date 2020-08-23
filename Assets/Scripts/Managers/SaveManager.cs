@@ -27,6 +27,7 @@ public class SaveManager : MonoBehaviour {
     [SerializeField] private bool _unlockAllWorlds;
 
     public bool hasSavedDataCurrentProgress => currentSaveDataProgress != null;
+    public bool hasSavedDataPlayer => currentSaveDataPlayer != null;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public bool unlockAllWorlds => _unlockAllWorlds;
@@ -169,26 +170,28 @@ public class SaveManager : MonoBehaviour {
         //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
         //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
         //}
-        if (WorldConfigManager.Instance.isTutorialWorld) {
-            currentSaveDataPlayer = new SaveDataPlayer();
-            currentSaveDataPlayer.InitializeInitialData();
-        } else {
-            if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
-                SaveDataPlayer saveDataPlayer = SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName);
-                saveDataPlayer.ProcessOnLoad();
-                SetCurrentSaveDataPlayer(saveDataPlayer);
-            }
-            if (currentSaveDataPlayer == null) {
-                currentSaveDataPlayer = new SaveDataPlayer();
-                currentSaveDataPlayer.InitializeInitialData();
-            }
+        
+        if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
+            SaveDataPlayer saveDataPlayer = SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName);
+            saveDataPlayer.ProcessOnLoad();
+            SetCurrentSaveDataPlayer(saveDataPlayer);
         }
+        // if (currentSaveDataPlayer == null) {
+        //     SaveDataPlayer saveDataPlayer = new SaveDataPlayer();
+        //     saveDataPlayer.InitializeInitialData();
+        //     SetCurrentSaveDataPlayer(saveDataPlayer);
+        // }
         if (alwaysResetBonusTutorialsOnStartup) {
-            currentSaveDataPlayer.ResetBonusTutorialProgress();
+            currentSaveDataPlayer?.ResetBonusTutorialProgress();
         }
         if (alwaysResetSpecialPopupsOnStartup) {
-            currentSaveDataPlayer.ResetSpecialPopupsProgress();
+            currentSaveDataPlayer?.ResetSpecialPopupsProgress();
         }
+    }
+    public void CreateNewSaveDataPlayer() {
+        SaveDataPlayer saveDataPlayer = new SaveDataPlayer();
+        saveDataPlayer.InitializeInitialData();
+        SetCurrentSaveDataPlayer(saveDataPlayer);
     }
     public void LoadSaveDataCurrentProgress() {
         currentSaveDataProgress = GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/SAVED_CURRENT_PROGRESS.sav");
