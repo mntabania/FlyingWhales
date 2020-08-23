@@ -33,5 +33,15 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeJoinPartyJob);
         _owner.AddToAvailableJobs(job);
     }
+    public bool TriggerHeirloomHuntJob(Region regionToSearch) { //bool forceDoAction = false
+        if (!_owner.HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_HEIRLOOM, INTERACTION_TYPE.HUNT_HEIRLOOM, null, _owner);
+            job.AddOtherData(INTERACTION_TYPE.HUNT_HEIRLOOM, new object[] { regionToSearch });
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeHuntHeirloomJob);
+            _owner.AddToAvailableJobs(job);
+            return true;
+        }
+        return false;
+    }
     #endregion
 }

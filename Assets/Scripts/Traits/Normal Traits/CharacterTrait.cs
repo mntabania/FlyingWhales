@@ -91,6 +91,13 @@ namespace Traits {
                             }
                         }
                     }
+                } else if (characterThatWillDoJob.partyComponent.hasParty) {
+                    if(characterThatWillDoJob.partyComponent.currentParty is HeirloomHuntParty heirloomParty) {
+                        if(heirloomParty.targetHeirloom == item) {
+                            heirloomParty.SetFoundHeirloom(true);
+                            characterThatWillDoJob.jobComponent.CreateDropItemJob(heirloomParty.targetHeirloom, heirloomParty.targetHeirloom.structureSpot, true);
+                        }
+                    }
                 }
             }
             if(targetPOI is Character targetCharacter) {

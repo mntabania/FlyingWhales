@@ -20,7 +20,7 @@ namespace Locations.Settlements {
 
         #region getters
         public LocationStructure currentStructure => null;
-        public BaseSettlement targetSettlement => this;
+        public BaseSettlement currentSettlement => this;
         #endregion
 
         protected BaseSettlement(LOCATION_TYPE locationType) {

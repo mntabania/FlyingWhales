@@ -6,5 +6,5 @@ using Locations.Settlements;
 
 public interface IPartyTarget {
     LocationStructure currentStructure { get; }
-    BaseSettlement targetSettlement { get; }
+    BaseSettlement currentSettlement { get; }
 }

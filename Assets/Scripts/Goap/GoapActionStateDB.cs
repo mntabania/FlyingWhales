@@ -594,6 +594,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.EVANGELIZE, new[]{
             new StateNameAndDuration(){ name = "Evangelize Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.HUNT_HEIRLOOM, new[]{
+            new StateNameAndDuration(){ name = "Hunt Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

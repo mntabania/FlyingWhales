@@ -11,8 +11,9 @@ using UnityEngine.Assertions;
 using UnityEngine.Experimental.U2D;
 using UtilityScripts;
 using UnityEngine.EventSystems;
+using Locations.Settlements;
 
-public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget {
+public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyTarget {
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
@@ -74,6 +75,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool canBeRepaired => repairCounter <= 0;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isHidden => false;
+    public LocationStructure currentStructure => gridTileLocation?.structure;
+    public BaseSettlement currentSettlement => gridTileLocation?.structure.settlementLocation;
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {

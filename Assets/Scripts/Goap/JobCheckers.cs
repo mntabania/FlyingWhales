@@ -109,6 +109,10 @@ public partial class InteractionManager {
         Party partyToJoin = character.partyComponent.currentParty;
         return !character.partyComponent.hasParty;
     }
+    public bool CanCharacterTakeHuntHeirloomJob(Character character) {
+        Party partyToJoin = character.partyComponent.currentParty;
+        return !character.partyComponent.hasParty;
+    }
     #region Job Applicability
     public bool IsJudgementJobStillApplicable(Character criminal) {
         if (criminal.isDead) {
