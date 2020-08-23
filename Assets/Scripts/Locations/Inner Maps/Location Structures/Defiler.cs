@@ -21,6 +21,25 @@ namespace Inner_Maps.Location_Structures {
                 }
             }
         }
+        
+        #region Listeners
+        protected override void SubscribeListeners() {
+            base.SubscribeListeners();
+            Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        }
+        protected override void UnsubscribeListeners() {
+            base.UnsubscribeListeners();
+            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        }
+        #endregion
+        
+        private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is DefilerRoom) {
+                DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+                door?.Close();
+            }
+        }
+
 
         #region Rooms
         protected override StructureRoom CreteNewRoomForStructure(List<LocationGridTile> tilesInRoom) {

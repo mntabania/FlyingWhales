@@ -181,8 +181,14 @@ public class Player : ILeader, IObjectManipulator {
             //else if(character is Summon summon) {
             //    AddSummon(summon);
             //}
-            if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
-                character.traitContainer.AddTrait(character, character.characterClass.traitNameOnTamedByPlayer);
+            string bredBehaviour;
+            if (character is Summon summon) {
+                bredBehaviour = summon.bredBehaviour;
+            } else {
+                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
+            }
+            if (!string.IsNullOrEmpty(bredBehaviour)) {
+                character.traitContainer.AddTrait(character, bredBehaviour);
             }
         }
     }
@@ -194,8 +200,14 @@ public class Player : ILeader, IObjectManipulator {
             //else if (character is Summon summon) {
             //    RemoveSummon(summon);
             //}
-            if (!string.IsNullOrEmpty(character.characterClass.traitNameOnTamedByPlayer)) {
-                character.traitContainer.RemoveTrait(character, character.characterClass.traitNameOnTamedByPlayer);
+            string bredBehaviour;
+            if (character is Summon summon) {
+                bredBehaviour = summon.bredBehaviour;
+            } else {
+                bredBehaviour = character.characterClass.traitNameOnTamedByPlayer;
+            }
+            if (!string.IsNullOrEmpty(bredBehaviour)) {
+                character.traitContainer.RemoveTrait(character, bredBehaviour);
             }
         }
     }

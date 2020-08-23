@@ -844,9 +844,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    producedJob = null;
 	    return false;
     }
-    public bool TriggerRoamAroundCorruption() {
+    public bool TriggerRoamAroundCorruption(HexTile chosenTerritory, out JobQueueItem producedJob) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_CORRUPTION)) {
-            HexTile chosenTerritory = PlayerManager.Instance.player.playerSettlement.tiles[UnityEngine.Random.Range(0, PlayerManager.Instance.player.playerSettlement.tiles.Count)];
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
             ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
@@ -854,9 +853,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            producedJob = job;
             return true;
         }
+        producedJob = null;
         return false;
     }
     public bool TriggerRoamAroundPortal() {
@@ -900,6 +900,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             return true;
         }
         return false;
+    }
+    public bool TriggerRoamAroundTile(JOB_TYPE jobType, out JobQueueItem producedJob, LocationGridTile tile = null) {
+	    if (!_owner.jobQueue.HasJob(jobType)) {
+		    LocationGridTile chosenTile = tile;
+		    if (chosenTile == null) {
+			    if (_owner.isAtHomeStructure) {
+				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+			    } else if (_owner.IsInHomeSettlement()) {
+				    chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+			    } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+				    HexTile chosenTerritory = _owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => _owner.movementComponent.HasPathTo(h));
+				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+			    } else {
+				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
+			    }
+		    }
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.ROAM, _owner, _owner);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetCannotBePushedBack(true);
+		    job.SetAssignedPlan(goapPlan);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
     }
     public bool TriggerRoamAroundTile(out JobQueueItem producedJob, LocationGridTile tile = null) {
 	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
@@ -2762,14 +2790,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    //create predetermined plan and job
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, _owner);
 	    List<JobNode> jobNodes = new List<JobNode>();
-	    // if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
-		   //  //Pick up cultist kit at home
-		   //  TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
-		   //  Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to evangelize but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
-		   //  ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
-		   //  jobNodes.Add(new SingleJobNode(pickupNode));
-	    // }
-	    
 	    ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], _owner, target, null, 0);
 	    jobNodes.Add(new SingleJobNode(evangelizeNode));
 	    
@@ -2780,6 +2800,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    
 	    producedJob = job;
 	    return true;
+    }
+    #endregion
+
+    #region Snatch
+    public void CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
+	    if (_owner.jobQueue.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
+		    _owner.behaviourComponent.SetIsSnatching(true);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP, targetCharacter, _owner);
+		    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure, targetLocation });
+		    
+		    COMBAT_MODE originalCombatMode = _owner.combatComponent.combatMode;
+		    if (originalCombatMode != COMBAT_MODE.Defend) {
+			    //while character is abducting it should be set as defend, so it will not enter combat with its target when he/she sees it.
+			    job.SetOnTakeJobAction((character, item) => character.combatComponent.SetCombatMode(COMBAT_MODE.Defend));
+			    job.SetOnUnassignJobAction((character, item) => character.combatComponent.SetCombatMode(originalCombatMode));    
+		    }
+		    
+		    _owner.jobQueue.AddJobInQueue(job);
+		    Debug.Log($"{_owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
+	    }
     }
     #endregion
 }

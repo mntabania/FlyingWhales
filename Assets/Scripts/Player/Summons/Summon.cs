@@ -14,6 +14,7 @@ public class Summon : Character {
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
     public virtual COMBAT_MODE defaultCombatMode => COMBAT_MODE.Aggressive;
     public virtual bool defaultDigMode => false;
+    public virtual string bredBehaviour => characterClass.traitNameOnTamedByPlayer;
 
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
@@ -244,6 +245,7 @@ public class Summon : Character {
         AddPlayerAction(SPELL_TYPE.SEIZE_MONSTER);
         AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
         AddPlayerAction(SPELL_TYPE.AGITATE);
+        AddPlayerAction(SPELL_TYPE.SNATCH);
     }
     #endregion
 

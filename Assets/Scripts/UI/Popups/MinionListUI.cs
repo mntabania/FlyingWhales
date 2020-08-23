@@ -42,6 +42,7 @@ public class MinionListUI : PopupMenuBase {
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         item.SetObject(minion.character);
         item.SetAsDefaultBehaviour();
+        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
 
         if (TraitManager.Instance.allTraits.ContainsKey(minion.character.characterClass.traitNameOnTamedByPlayer)) {

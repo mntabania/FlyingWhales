@@ -44,6 +44,10 @@ public class Dragon : Summon {
             CheckLeaveWorld();
         }
     }
+    public override void ConstructDefaultActions() {
+        base.ConstructDefaultActions();
+        RemovePlayerAction(SPELL_TYPE.SNATCH);
+    }
     #endregion
 
     public void Awaken() {

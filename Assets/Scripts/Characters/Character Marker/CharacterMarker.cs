@@ -856,7 +856,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
         anchoredPos = transform.localPosition;
 
-        if (previousGridTile != character.gridTileLocation) {
+        if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
             character.gridTileLocation.parentMap.region.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
             if(character != null) {
                 previousGridTile = character.gridTileLocation;

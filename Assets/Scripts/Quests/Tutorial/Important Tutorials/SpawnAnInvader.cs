@@ -44,8 +44,7 @@ namespace Tutorial {
         #region Step Helpers
         private bool IsChosenSpellValid(SpellData spellData) {
             if (spellData is MinionPlayerSkill minionPlayerSkill) {
-                CharacterClass characterClass =
-                    CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
+                CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(minionPlayerSkill.className);
                 return characterClass.traitNameOnTamedByPlayer == "Invader";
             }
             return false;
