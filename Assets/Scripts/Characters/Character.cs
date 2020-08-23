@@ -3857,7 +3857,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {

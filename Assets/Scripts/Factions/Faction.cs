@@ -284,6 +284,14 @@ public class Faction : IJobOwner {
                 log += "\nEither dead, missing, in limbo or seized, will not be part of candidates for faction leader";
                 continue;
             }
+
+            if (member.traitContainer.HasTrait("Criminal")) {
+                Criminal criminalTrait = member.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                if (criminalTrait.IsWantedBy(this)) {
+                    log += "\nMember is wanted by this faction, skipping...";
+                    continue;
+                }
+            }
             int weight = 50;
             log += "\n  -Base Weight: +50";
             if (member.isSettlementRuler) {

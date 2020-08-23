@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Paralysis
   m_EditorClassIdentifier: 
   skill: 15
-  manaCost: -1
+  manaCost: 10
   charges: 1
   cooldown: 288
   threat: 0

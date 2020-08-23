@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Cultist Transform
   m_EditorClassIdentifier: 
   skill: 141
-  manaCost: -1
-  charges: 3
+  manaCost: 10
+  charges: 1
   cooldown: 48
   threat: 0
   threatPerHour: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Zombie Virus
   m_EditorClassIdentifier: 
   skill: 16
-  manaCost: -1
+  manaCost: 10
   charges: 1
   cooldown: 1440
   threat: 0

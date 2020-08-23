@@ -14,7 +14,9 @@ namespace Interrupts {
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Character targetCharacter = interruptHolder.target as Character;
-            targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, interruptHolder.actor, "Base", -3);
+            if (targetCharacter != interruptHolder.actor) {
+                targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, interruptHolder.actor, "Base", -3);
+            }
             return true;
         }
         #endregion

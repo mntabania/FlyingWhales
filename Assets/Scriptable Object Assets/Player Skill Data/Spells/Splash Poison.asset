@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Splash Poison
   m_EditorClassIdentifier: 
   skill: 30
-  manaCost: -1
-  charges: 10
-  cooldown: 72
+  manaCost: 5
+  charges: 5
+  cooldown: 36
   threat: 2
   threatPerHour: 0
   expCost: 300

@@ -7,6 +7,7 @@ namespace Traits {
 
         private GameObject electricEffectGO;
         private AudioObject _audioObject;
+
         public Zapped() {
             name = "Zapped";
             description = "Jolted and temporarily paralyzed.";

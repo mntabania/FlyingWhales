@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Rain
   m_EditorClassIdentifier: 
   skill: 32
-  manaCost: -1
+  manaCost: 5
   charges: 3
   cooldown: 72
   threat: 0

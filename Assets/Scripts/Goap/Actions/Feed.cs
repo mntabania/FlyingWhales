@@ -119,7 +119,9 @@ public class Feed : GoapAction {
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
-        targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
+        if(goapNode.actor != targetCharacter) {
+            targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
+        }
     }
     #endregion
 

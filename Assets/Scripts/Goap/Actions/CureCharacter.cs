@@ -93,7 +93,9 @@ public class CureCharacter : GoapAction {
     //public void PreCureSuccess(ActualGoapNode goapNode) { }
     public void AfterCureSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
+        if(goapNode.actor != targetCharacter) {
+            targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
+        }
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Poisoned", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
