@@ -18,7 +18,7 @@ public class MonsterInvadeBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is not waiting";
             if(monsterInvadeParty.target != null) {
                 log += $"\n-Party has target structure";
-                if (character.currentStructure.settlementLocation == monsterInvadeParty.target.targetSettlement) {
+                if (character.currentStructure.settlementLocation == monsterInvadeParty.target.currentSettlement) {
                     log += $"\n-Character is already in target settlement";
                     Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlement();
                     if (target != null) {

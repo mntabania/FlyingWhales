@@ -43,7 +43,7 @@ namespace Inner_Maps.Location_Structures {
         public virtual Vector3 worldPosition { get; protected set; }
         public virtual Vector2 selectableSize => Vector2.zero;
         public LocationStructure currentStructure => this;
-        public BaseSettlement targetSettlement => settlementLocation;
+        public BaseSettlement currentSettlement => settlementLocation;
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         #endregion
 

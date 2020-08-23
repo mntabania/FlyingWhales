@@ -50,6 +50,8 @@ public class Faction : IJobOwner {
     public int newLeaderDesignationChance { get; private set; }
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
+    private Heirloom factionHeirloom;
+
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;
     public bool isMajorFriendlyNeutral => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
@@ -949,6 +951,35 @@ public class Faction : IJobOwner {
     #region Crime
     public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
         return factionType.GetCrimeSeverity(witness, actor, target, crimeType, crime);
+    }
+    #endregion
+
+    #region Heirloom
+    public void SetFactionHeirloom(TileObject heirloom) {
+        if(factionHeirloom != heirloom) {
+            factionHeirloom = heirloom as Heirloom;
+            if(factionHeirloom != null) {
+                factionHeirloom.SetStructureSpot(factionHeirloom.currentStructure);
+                StartHeirloomSearch();
+            }
+        }
+    }
+    private void StartHeirloomSearch() {
+        HeirloomSearch();
+    }
+    private void HeirloomSearch() {
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
+        SchedulingManager.Instance.AddEntry(dueDate, DoneHeirloomSearch, this);
+    }
+    private void DoneHeirloomSearch() {
+        if(factionHeirloom != null) {
+            if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && factionHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && factionHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT && !HasActiveParty(PARTY_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
+                factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.location);
+            }
+            HeirloomSearch();
+        }
     }
     #endregion
 }

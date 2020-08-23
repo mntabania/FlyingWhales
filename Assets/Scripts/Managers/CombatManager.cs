@@ -88,8 +88,11 @@ public class CombatManager : MonoBehaviour {
                         damage *= 2;
                     }
                 } else if(elementalType == ELEMENTAL_TYPE.Electric) {
-                    if(target is TileObject || target is StructureWallObject) {
+                    if((target is TileObject || target is StructureWallObject) && !(target is GenericTileObject)) {
                         damage = Mathf.RoundToInt(damage * 0.25f);
+                        if(damage >= 0) {
+                            damage = -1;
+                        }
                     }
                 }
             }

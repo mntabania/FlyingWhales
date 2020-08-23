@@ -8,6 +8,7 @@ public class RescueParty : Party {
 
     public Character targetCharacter { get; private set; }
     private bool isReleasing;
+    private bool isSearching;
 
     #region getters
     public override IPartyTarget target => targetCharacter;
@@ -70,11 +71,15 @@ public class RescueParty : Party {
 
     #region Extermination Timer
     private void StartSearchTimer() {
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
-        SchedulingManager.Instance.AddEntry(dueDate, DoneSearching, this);
+        if (!isSearching) {
+            isSearching = true;
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(3));
+            SchedulingManager.Instance.AddEntry(dueDate, DoneSearching, this);
+        }
     }
     private void DoneSearching() {
+        isSearching = false;
         ProcessDisbandment();
     }
     #endregion

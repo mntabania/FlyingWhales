@@ -30,7 +30,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
             }
         } else {
             log += $"\n-Party is not waiting";
-            if(character.currentStructure.settlementLocation == raidParty.target.targetSettlement) {
+            if(character.currentStructure.settlementLocation == raidParty.target.currentSettlement) {
                 log += $"\n-Character is already in target settlement";
                 Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlement();
                 if (target != null) {

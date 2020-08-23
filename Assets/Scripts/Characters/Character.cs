@@ -275,7 +275,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GameObject visualGO => marker.gameObject;
     public Character characterOwner => null;
     public bool isSettlementRuler => ruledSettlement != null;
-    public BaseSettlement targetSettlement => currentStructure.settlementLocation;
     public bool isHidden => reactionComponent.isHidden;
     #endregion
 
