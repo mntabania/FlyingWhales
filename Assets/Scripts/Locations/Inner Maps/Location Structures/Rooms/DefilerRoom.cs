@@ -137,8 +137,7 @@ namespace Inner_Maps.Location_Structures {
                 } else {
                     chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
                     //spawn skeleton to carry target
-                    _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton,
-                        FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
+                    _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
                     _skeleton.SetShowNotificationOnDeath(false);
                     _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     _skeleton.SetDestroyMarkerOnDeath(true);
@@ -148,8 +147,7 @@ namespace Inner_Maps.Location_Structures {
                         t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
                     
                     CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER,
-                        INTERACTION_TYPE.DROP, chosenTarget, _skeleton);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, _skeleton);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                         _skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
                         CollectionUtilities.GetRandomElement(dropChoices)
