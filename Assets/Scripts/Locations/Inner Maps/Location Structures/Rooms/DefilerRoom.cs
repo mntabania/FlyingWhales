@@ -110,6 +110,7 @@ namespace Inner_Maps.Location_Structures {
             door?.Close();
             Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(x => IsValidBrainwashTarget(x)));
             currentBrainwashTarget = chosenTarget;
+            currentBrainwashTarget.interruptComponent.ForceEndNonSimultaneousInterrupt();
             currentBrainwashTarget.interruptComponent.TriggerInterrupt(INTERRUPT.Being_Brainwashed, currentBrainwashTarget);
             Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);

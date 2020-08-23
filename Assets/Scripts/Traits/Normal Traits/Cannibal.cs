@@ -44,11 +44,15 @@ namespace Traits {
             string successLogKey = base.TriggerFlaw(character);
             IPointOfInterest poi = GetPOIToTransformToFood(character);
             if (poi != null) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.BUTCHER, poi, character);
-                character.jobQueue.AddJobInQueue(job);
-                return successLogKey;
+                if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.BUTCHER, poi, character);
+                    character.jobQueue.AddJobInQueue(job);
+                    return successLogKey;
+                } else {
+                    return "has_trigger_flaw";
+                }
             } else {
-                return "fail";
+                return "no_target";
             }
         }
         #endregion

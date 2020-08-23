@@ -28,7 +28,8 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
+            if (addedTo is Character character) {
+                owner = character;
                 //owner.AdjustMoodValue(-15, this);
                 // owner.needsComponent.AdjustDoNotGetBored(1);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);

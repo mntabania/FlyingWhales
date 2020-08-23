@@ -90,21 +90,31 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                if (character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
-                    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-                }
-                bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
-                if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
-                }
-                if (!triggerGrieving) {
-                    // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD, character, character);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
-                    character.jobQueue.AddJobInQueue(job);
+                //if (character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+                //    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+                //}
+
+                Character targetCharacter = GetDrinkBloodTarget(character);
+                if(targetCharacter != null) {
+                    bool triggerGrieving = false;
+                    Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+                    if (griefstricken != null) {
+                        triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
+                    }
+                    if (!triggerGrieving) {
+                        // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD, character, character);
+                        character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.TRIGGER_FLAW, targetCharacter);
+                        //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                        //character.jobQueue.AddJobInQueue(job);
+                    } else {
+                        griefstricken.TriggerGrieving();
+                    }
                 } else {
-                    griefstricken.TriggerGrieving();
+                    return "no_victim";
                 }
+                
+            } else {
+                return "has_trigger_flaw";
             }
             return base.TriggerFlaw(character);
         }
@@ -118,12 +128,31 @@ namespace Traits {
                 if (!characterThatWillDoJob.relationshipContainer.IsFriendsWith(targetCharacter) &&
                     !characterThatWillDoJob.relationshipContainer.IsFamilyMember(targetCharacter) && 
                     !characterThatWillDoJob.relationshipContainer.HasSpecialPositiveRelationshipWith(targetCharacter)) {
-                    characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(targetCharacter);
+                    characterThatWillDoJob.jobComponent.CreateDrinkBloodJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, targetCharacter);
                 }
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         #endregion
+
+        private Character GetDrinkBloodTarget(Character vampire) {
+            List<Character> targets = null;
+            if(vampire.currentRegion != null) {
+                for (int i = 0; i < vampire.currentRegion.charactersAtLocation.Count; i++) {
+                    Character character = vampire.currentRegion.charactersAtLocation[i];
+                    if(vampire != character) {
+                        if(!character.traitContainer.HasTrait("Vampiric") && !character.isDead && !vampire.relationshipContainer.IsFriendsWith(character)) {
+                            if(targets == null) { targets = new List<Character>(); }
+                            targets.Add(character);
+                        }
+                    }
+                }
+            }
+            if(targets != null && targets.Count > 0) {
+                return UtilityScripts.CollectionUtilities.GetRandomElement(targets);  
+            }
+            return null;
+        }
     }
 }
 
