@@ -28,6 +28,9 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
+            if (addedTo.gridTileLocation == null) {
+                return;
+            }
             if(addedTo is IPointOfInterest poi && poi is GenericTileObject == false) {
                 _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);
             }

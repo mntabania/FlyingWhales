@@ -119,7 +119,7 @@ public class FireBallMapObjectVisual : MovingMapObjectVisual<TileObject> {
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
-                    bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
+                    bs = new BurningSource();
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
             }

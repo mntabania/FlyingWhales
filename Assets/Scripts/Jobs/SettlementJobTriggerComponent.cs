@@ -209,9 +209,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnBurningSourceInactive(BurningSource burningSource) {
-		if (burningSource.location == _owner.region) {
+		// if (burningSource.location == _owner.region) {
 			CheckDouseFireJobsValidity();
-		}
+		// }
 	}
 	#endregion
 
@@ -888,9 +888,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Mining
 	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6) {
-			GoapPlanJob job =
-				JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6) { //6
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			job.SetCanTakeThisJobChecker(CanTakeMineJob);
 			_owner.AddToAvailableJobs(job);
 		}

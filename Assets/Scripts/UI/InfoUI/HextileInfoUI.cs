@@ -25,7 +25,7 @@ public class HextileInfoUI : InfoUIBase {
         currentlyShowingHexTile?.SetBordersState(false, false, Color.red);
         currentlyShowingHexTile = _data as HexTile;
         base.OpenMenu();
-        Selector.Instance.Select(currentlyShowingHexTile);
+        // Selector.Instance.Select(currentlyShowingHexTile);
         currentlyShowingHexTile.SetBordersState(true, true, Color.yellow);
         UpdateBasicInfo();
         UpdateHexTileInfo();
@@ -38,7 +38,7 @@ public class HextileInfoUI : InfoUIBase {
     }
     public override void CloseMenu() {
         currentlyShowingHexTile.SetBordersState(false, false, Color.red);
-        Selector.Instance.Deselect();
+        // Selector.Instance.Deselect();
         base.CloseMenu();
         currentlyShowingHexTile = null;
     }

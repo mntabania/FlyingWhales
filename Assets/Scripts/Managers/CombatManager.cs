@@ -190,7 +190,7 @@ public class CombatManager : MonoBehaviour {
         Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
         if (burningTrait != null && burningTrait.sourceOfBurning == null) {
             if (bs == null) {
-                bs = new BurningSource(traitable.gridTileLocation.parentMap.region);
+                bs = new BurningSource();
             }
             burningTrait.SetSourceOfBurning(bs, traitable);
             Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
@@ -368,7 +368,7 @@ public class CombatManager : MonoBehaviour {
     public void DefaultElementalTraitProcessor(ITraitable traitable, Trait trait) {
         if (trait is Burning burning) {
             //by default, will create new burning source for every burning trait.
-            BurningSource burningSource = new BurningSource(traitable.gridTileLocation.parentMap.region);
+            BurningSource burningSource = new BurningSource();
             burning.SetSourceOfBurning(burningSource, traitable);
         }
     }

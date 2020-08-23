@@ -28,16 +28,16 @@ public class DouseFireState : CharacterState {
     #region Overrides
     protected override void StartState() {
         //add initial objects on fire
-        for (int i = 0; i < stateComponent.character.currentRegion.innerMap.activeBurningSources.Count; i++) {
-            BurningSource burningSource = stateComponent.character.currentRegion.innerMap.activeBurningSources[i];
-            for (int j = 0; j < burningSource.objectsOnFire.Count; j++) {
-                ITraitable traitable = burningSource.objectsOnFire[j];
-                if (traitable is IPointOfInterest pointOfInterest && pointOfInterest.gridTileLocation != null && pointOfInterest.gridTileLocation.
-                    IsPartOfSettlement(stateComponent.character.homeSettlement)) {
-                    AddFire(pointOfInterest);
-                }
-            }
-        }
+        // for (int i = 0; i < stateComponent.character.currentRegion.innerMap.activeBurningSources.Count; i++) {
+        //     BurningSource burningSource = stateComponent.character.currentRegion.innerMap.activeBurningSources[i];
+        //     for (int j = 0; j < burningSource.objectsOnFire.Count; j++) {
+        //         ITraitable traitable = burningSource.objectsOnFire[j];
+        //         if (traitable is IPointOfInterest pointOfInterest && pointOfInterest.gridTileLocation != null && pointOfInterest.gridTileLocation.
+        //             IsPartOfSettlement(stateComponent.character.homeSettlement)) {
+        //             AddFire(pointOfInterest);
+        //         }
+        //     }
+        // }
         // for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
         //     IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
         //     AddFire(poi);
