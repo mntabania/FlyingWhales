@@ -219,6 +219,9 @@ public class CharacterAvatar : MonoBehaviour {
         
         Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
         _owner.SetPOIState(POI_STATE.ACTIVE);
+        if (_owner.carryComponent.isCarryingAnyPOI) {
+            _owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
+        }
         arriveLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
         if (_owner.carryComponent.isCarryingAnyPOI) {
             arriveLog.AddToFillers(_owner.carryComponent.carriedPOI, _owner.carryComponent.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);

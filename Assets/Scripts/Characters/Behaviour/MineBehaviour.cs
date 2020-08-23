@@ -22,8 +22,7 @@ public class MineBehaviour : CharacterBehaviourComponent {
         if (targetTile == null) {
             HexTile nearestCaveTile = GetNearestCaveTile(character);
             if (nearestCaveTile != null) {
-                List<LocationGridTile> tileChoices = nearestCaveTile.locationGridTiles
-                    .Where(x => x.isOccupied == false && x.structure.structureType == STRUCTURE_TYPE.CAVE).ToList();
+                List<LocationGridTile> tileChoices = nearestCaveTile.locationGridTiles.Where(x => x.isOccupied == false && x.structure.structureType == STRUCTURE_TYPE.CAVE).ToList();
                 targetTile = CollectionUtilities.GetRandomElement(tileChoices);
             } else {
                 Cave cave = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CAVE) as Cave;
