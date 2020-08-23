@@ -838,6 +838,12 @@ public class BehaviourComponent {
     #region Snatcher
     public void SetIsSnatching(bool state) {
         isCurrentlySnatching = state;
+        if (state) {
+            Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);    
+        } else {
+            Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
+        }
+        
     }
     // public void OnBecomeSnatcher() {
     //     Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnSnatcherFinishedJob);
@@ -852,31 +858,10 @@ public class BehaviourComponent {
     //         OnNoLongerSnatcher();
     //     }
     // }
-    // private void OnSnatcherFinishedJob(Character actor, GoapPlanJob job) {
-    //     if (actor == owner &&  job.jobType == JOB_TYPE.SNATCH && job.targetPOI is Character targetCharacter) {
-    //         HexTile hexTileLocation = targetCharacter.hexTileLocation;
-    //         LocationStructure structure = hexTileLocation.GetMostImportantStructureOnTile();
-    //         if (structure is DemonicStructure) {
-    //             if (structure is Kennel) {
-    //                 if (structure.passableTiles.Count > 0) {
-    //                     LocationGridTile randomTile = CollectionUtilities.GetRandomElement(structure.passableTiles);
-    //                     targetCharacter.marker.PlaceMarkerAt(randomTile);    
-    //                 } else {
-    //                     Debug.LogWarning($"{owner.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
-    //                 }
-    //             } else if (structure.rooms != null && structure.rooms.Length > 0) {
-    //                 //place target in a random room
-    //                 List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
-    //                 if (roomChoices.Count > 0) {
-    //                     StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
-    //                     LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(randomRoom.tilesInRoom);
-    //                     targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
-    //                 } else {
-    //                     Debug.LogWarning($"{owner.name} could not place {targetCharacter.name} in a room, because no valid rooms could be found.");
-    //                 }    
-    //             }
-    //         }
-    //     }
-    // }
+    private void OnSnatchJobRemoved(JobQueueItem job, Character character) {
+        if (character == owner &&  job.jobType == JOB_TYPE.SNATCH) {
+            SetIsSnatching(false);
+        }
+    }
     #endregion
 }

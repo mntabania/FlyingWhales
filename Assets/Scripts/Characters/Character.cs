@@ -903,6 +903,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (goapJob.targetPOI == target && this != target) {
+                    if (target is Character character && character.carryComponent.IsCurrentlyPartOf(this)) {
+                        //if target is character and is being carried by this do not cancel the job 
+                        continue; //skip
+                    }
                     if (goapJob.ForceCancelJob(false, reason)) {
                         i--;
                     }
