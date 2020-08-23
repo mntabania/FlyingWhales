@@ -666,10 +666,9 @@ public class CombatComponent {
             }
         }
         if (!bannedFromHostileList.Contains(poi)) {
-            
             bannedFromHostileList.Add(poi);
             GameDate dueDate = GameManager.Instance.Today();
-            dueDate.AddTicks(4);
+            dueDate.AddTicks(2);
             SchedulingManager.Instance.AddEntry(dueDate, () => RemovePOIToBannedFromHostile(poi), owner);
         }
     }

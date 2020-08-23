@@ -173,11 +173,19 @@ public class CharacterNeedsComponent {
         string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} will check his/her needs.";
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
             summary += $"\n{_owner.name} is starving. Planning fullness recovery actions...";
-            PlanFullnessRecoveryActions(_owner);
+            if (!_owner.traitContainer.HasTrait("Burning")) {
+                PlanFullnessRecoveryActions(_owner);
+            } else {
+                summary += $"\n{_owner.name} is poisoned or burning will not plan fullness recovery...";
+            }
         }
         if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
             summary += $"\n{_owner.name} is exhausted. Planning tiredness recovery actions...";
-            PlanTirednessRecoveryActions(_owner);
+            if (!_owner.traitContainer.HasTrait("Burning", "Poisoned")) {
+                PlanTirednessRecoveryActions(_owner);
+            } else {
+                summary += $"\n{_owner.name} is poisoned or burning will not plan tiredness recovery...";
+            }
         }
         if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
             summary += $"\n{_owner.name} is sulking. Planning happiness recovery actions...";

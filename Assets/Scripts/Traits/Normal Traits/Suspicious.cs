@@ -21,7 +21,7 @@ namespace Traits {
             if (characterThatWillDoJob.canPerform && characterThatWillDoJob.canMove && !characterThatWillDoJob.isDead && targetPOI is TileObject objectToBeInspected) {
                 if (objectToBeInspected.lastManipulatedBy is Player) {
                     //Must not destroy even if suspicious if the tile object is edible and character is starving
-                    if (!objectToBeInspected.traitContainer.HasTrait("Edible") || !characterThatWillDoJob.needsComponent.isStarving) {
+                    if ((!objectToBeInspected.traitContainer.HasTrait("Edible") || !characterThatWillDoJob.needsComponent.isStarving) && !(objectToBeInspected is Heirloom)) {
                         characterThatWillDoJob.jobComponent.TriggerDestroy(objectToBeInspected);
                     }
                 }

@@ -40,6 +40,8 @@ namespace Traits {
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                 //Will perform Fullness Recovery.
                 character.needsComponent.TriggerFlawFullnessRecovery(character);
+            } else {
+                return "has_trigger_flaw";
             }
             return base.TriggerFlaw(character);
         }

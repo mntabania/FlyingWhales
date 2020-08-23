@@ -50,6 +50,8 @@ namespace Traits {
                 } else {
                     heartbroken.TriggerBrokenhearted();
                 }
+            } else {
+                return "has_trigger_flaw";
             }
             return base.TriggerFlaw(character);
         }

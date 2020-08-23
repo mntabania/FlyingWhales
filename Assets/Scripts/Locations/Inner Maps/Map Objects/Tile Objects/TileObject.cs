@@ -256,7 +256,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 if(isBeingCarriedBy != null) {
                     tileLocation = isBeingCarriedBy.gridTileLocation;
                 }
-                if (actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
