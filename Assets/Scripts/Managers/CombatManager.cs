@@ -243,7 +243,7 @@ public class CombatManager : MonoBehaviour {
             Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);    
         }
         //List<ITraitable> traitables = new List<ITraitable>();
-        if (!traitable.traitContainer.HasTrait("Zapped")) {
+        //if (!traitable.traitContainer.HasTrait("Zapped")) {
             if (traitable.gridTileLocation != null) {
                 List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
                 //traitables.Clear();
@@ -259,7 +259,7 @@ public class CombatManager : MonoBehaviour {
                     StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible, origin));
                 }
             }
-        }
+        //}
 
     }
     private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible, ITraitable origin) {
