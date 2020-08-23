@@ -13,7 +13,7 @@ namespace Traits {
             description = "Jolted and temporarily paralyzed.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(15);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(25);
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
