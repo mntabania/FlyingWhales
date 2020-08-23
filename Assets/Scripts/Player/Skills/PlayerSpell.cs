@@ -287,7 +287,7 @@ public class SpellData : IPlayerSkill {
         return CanPerformAbility();
     }
     public bool CanPerformAbility() {
-        return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost) && (!hasCooldown || currentCooldownTick >= cooldown);
+        return (!hasCharges || charges > 0) && (!hasManaCost || PlayerManager.Instance.player.mana >= manaCost); // && (!hasCooldown || currentCooldownTick >= cooldown);
     }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
@@ -324,7 +324,7 @@ public class SpellData : IPlayerSkill {
     //}
     public void OnLoadSpell() {
         Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
-        if (hasCooldown && charges <= 0) {
+        if (hasCooldown) {
             Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
             Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
         }
@@ -332,16 +332,10 @@ public class SpellData : IPlayerSkill {
     public void OnExecuteSpellActionAffliction() {
         if (PlayerSkillManager.Instance.unlimitedCast == false) {
             if(hasCharges && charges > 0) {
-                charges--;
-                Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
+                AdjustCharges(-1);
             }
             if (hasManaCost) {
                 PlayerManager.Instance.player.AdjustMana(-manaCost);
-            }
-            if (hasCooldown && charges <= 0) {
-                currentCooldownTick = 0;
-                Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
-                Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
             }
         }
         // PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);
@@ -356,14 +350,28 @@ public class SpellData : IPlayerSkill {
             Messenger.Broadcast(Signals.ON_EXECUTE_SPELL, this);
         }
     }
+    private void StartCooldown() {
+        if (hasCooldown && currentCooldownTick == cooldown) {
+            SetCurrentCooldownTick(0);
+            Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
+            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+    }
     private void PerTickCooldown() {
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
         if(currentCooldownTick == cooldown) {
-            SetCharges(maxCharges);
+            //SetCharges(maxCharges);
+            if(hasCharges && charges < maxCharges) {
+                AdjustCharges(1);
+            }
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
             Messenger.Broadcast(Signals.SPELL_COOLDOWN_FINISHED, this);
             Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
+
+            if(hasCharges && charges < maxCharges) {
+                StartCooldown();
+            }
         }
     }
     public string GetManaCostChargesCooldownStr() {
@@ -384,6 +392,10 @@ public class SpellData : IPlayerSkill {
     public void AdjustCharges(int amount) {
         charges += amount;
         Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
+
+        if(charges < maxCharges) {
+            StartCooldown();
+        }
     }
     public void SetManaCost(int amount) {
         manaCost = amount;

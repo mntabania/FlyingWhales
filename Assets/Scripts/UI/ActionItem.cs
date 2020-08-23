@@ -14,7 +14,8 @@ public class ActionItem : PooledObject {
 
     [SerializeField] private Button button;
 	[SerializeField] private Image actionImg;
-	[SerializeField] private Image coverImg;
+    //[SerializeField] private Image coverImg;
+    [SerializeField] private Image cooldownCoverImg;
     [SerializeField] private Image highlightImg;
     [SerializeField] private TextMeshProUGUI actionLbl;
     [SerializeField] private UIHoverPosition _hoverPosition;
@@ -34,9 +35,12 @@ public class ActionItem : PooledObject {
 	}
 	public void SetInteractable(bool state) {
         button.interactable = state;
-        coverImg.gameObject.SetActive(!state);
-        if (coverImg.gameObject.activeSelf) {
-	        coverImg.fillAmount = 1;
+        UpdateCooldown();
+    }
+    private void UpdateCooldown() {
+        cooldownCoverImg.gameObject.SetActive(playerAction.isInCooldown);
+        if (cooldownCoverImg.gameObject.activeSelf) {
+            cooldownCoverImg.fillAmount = 0f;
         }
     }
     public void ToggleHighlight() {
@@ -95,15 +99,15 @@ public class ActionItem : PooledObject {
     }
     private void SetCooldownState(bool state) {
 	    SetInteractable(playerAction.CanPerformAbilityTo(playerActionTarget) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-	    cooldownImage.gameObject.SetActive(state);
+	    //cooldownImage.gameObject.SetActive(state);
     }
     private void StartCooldownFill() {
-	    coverImg.fillAmount = 1f - ((float)playerAction.currentCooldownTick / playerAction.cooldown);
+        cooldownCoverImg.fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
 	    Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
-	    float fillAmount = 1f - ((float)playerAction.currentCooldownTick / playerAction.cooldown);
-	    coverImg.DOFillAmount(fillAmount, 0.2f);
+	    float fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
+        cooldownCoverImg.DOFillAmount(fillAmount, 0.4f);
     }
     private void StopCooldownFill() {
 	    SetCooldownState(false);
@@ -120,7 +124,7 @@ public class ActionItem : PooledObject {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		}
 		DOTween.Kill(this);
-		coverImg.fillAmount = 1;
+        cooldownCoverImg.fillAmount = 0f;
 		expiryKey = string.Empty;
 		SetCooldownState(false);
 		SetInteractable(true);

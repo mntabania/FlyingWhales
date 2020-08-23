@@ -78,6 +78,9 @@ public class CombatManager : MonoBehaviour {
                     } else {
                         //Immunity - less 85% damage
                         damage = Mathf.RoundToInt(damage * 0.15f);
+                        if (damage >= 0) {
+                            damage = -1;
+                        }
                     }
                     return;
                 }
@@ -240,21 +243,24 @@ public class CombatManager : MonoBehaviour {
             Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);    
         }
         //List<ITraitable> traitables = new List<ITraitable>();
-        if (traitable.gridTileLocation != null) {
-            List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
-            //traitables.Clear();
-            List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile tile = tiles[i];
-                if (tile.genericTileObject.traitContainer.HasTrait("Wet")) {
-                    // traitables.AddRange(tile.GetTraitablesOnTile());
-                    affectedTiles.Add(tile);
+        //if (!traitable.traitContainer.HasTrait("Zapped")) {
+            if (traitable.gridTileLocation != null) {
+                List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+                //traitables.Clear();
+                List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
+                for (int i = 0; i < tiles.Count; i++) {
+                    LocationGridTile tile = tiles[i];
+                    if (tile.genericTileObject.traitContainer.HasTrait("Wet")) {
+                        // traitables.AddRange(tile.GetTraitablesOnTile());
+                        affectedTiles.Add(tile);
+                    }
+                }
+                if (affectedTiles.Count > 0) {
+                    StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible, origin));
                 }
             }
-            if (affectedTiles.Count > 0) {
-                StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible, origin));
-            }
-        }
+        //}
+
     }
     private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible, ITraitable origin) {
         //HashSet<ITraitable> completedTiles = new HashSet<ITraitable>();

@@ -10,12 +10,13 @@ using UnityEngine.UI;
 public class SpellItem : NameplateItem<SpellData> {
     [SerializeField] private Image lockedImage;
     [SerializeField] private Image cooldownImage;
+    //[SerializeField] private Image cooldownCoverImage;
     [SerializeField] private TextMeshProUGUI currencyLbl;
 
     public SpellData spellData { get; private set; }
 
     private Image _coverImg;
-    
+
     public override void SetObject(SpellData spellData) {
         base.SetObject(spellData);
         name = spellData.name;
@@ -32,7 +33,7 @@ public class SpellItem : NameplateItem<SpellData> {
 
         _coverImg = coverGO.GetComponent<Image>();
         _coverImg.type = Image.Type.Filled;
-        _coverImg.fillMethod = Image.FillMethod.Radial360;
+        _coverImg.fillMethod = Image.FillMethod.Horizontal;
     }
     public void UpdateData() {
         mainLbl.text = spellData.name;
@@ -117,7 +118,7 @@ public class SpellItem : NameplateItem<SpellData> {
         lockedImage.gameObject.SetActive(state);
     }
     private void SetCooldownState(bool state) {
-        cooldownImage.gameObject.SetActive(state);
+        //cooldownImage.gameObject.SetActive(state);
     }
     private void UpdateInteractableState() {
         SetInteractableState(spellData.CanPerformAbility());
@@ -130,24 +131,25 @@ public class SpellItem : NameplateItem<SpellData> {
     }
     public override void SetInteractableState(bool state) {
         base.SetInteractableState(state);
+        coverGO.SetActive(spellData.isInCooldown);
         if (coverGO.activeSelf) {
-            _coverImg.fillAmount = 1f;    
+            _coverImg.fillAmount = 0f;    
         }
     }
     #endregion
 
     #region Cooldown
     private void StartCooldownFill() {
-        _coverImg.fillAmount = 1f;
+        _coverImg.fillAmount = 0f;
         PerTickCooldown();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     private void PerTickCooldown() {
-        float fillAmount = 1f - ((float)spellData.currentCooldownTick / spellData.cooldown);
-        _coverImg.DOFillAmount(fillAmount, 0.2f);
+        float fillAmount = ((float)spellData.currentCooldownTick / spellData.cooldown);
+        _coverImg.DOFillAmount(fillAmount, 0.4f);
     }
     private void StopCooldownFill() {
-        _coverImg.DOFillAmount(0f, 0.2f).OnComplete(UpdateInteractableState);
+        _coverImg.DOFillAmount(0f, 0.4f).OnComplete(UpdateInteractableState);
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
     #endregion
@@ -159,6 +161,7 @@ public class SpellItem : NameplateItem<SpellData> {
         SetInteractableState(true);
         SetCooldownState(false);
         spellData = null;
+        _coverImg.fillAmount = 0f;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
         Messenger.RemoveListener<SpellData>(Signals.PLAYER_NO_ACTIVE_SPELL, OnPlayerNoActiveSpell);
         Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
