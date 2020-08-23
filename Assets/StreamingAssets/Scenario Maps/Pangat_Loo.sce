@@ -137,7 +137,7 @@
         "moistureNoise": 0.5743018,
         "temperature": 0.7272097,
         "biomeType": "GRASSLAND",
-        "elevationType": "MOUNTAIN",
+        "elevationType": "PLAIN",
         "tileFeatureSaveData": [],
         "landmarkType": "NONE"
       },
@@ -312,7 +312,7 @@
         "moistureNoise": 0.8190511,
         "temperature": 0.9974809,
         "biomeType": "GRASSLAND",
-        "elevationType": "MOUNTAIN",
+        "elevationType": "PLAIN",
         "tileFeatureSaveData": [
           {
             "tileFeatureName": "MetalSourceFeature"
