@@ -297,11 +297,11 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			LocationStructure targetStructure = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
 			targetStructure.AddPOI(artifact);
-			//excalibur
-			randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-			TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
-			randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
-			Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
+			// //excalibur
+			// randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
+			// TileObject excalibur = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.EXCALIBUR); 
+			// randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddPOI(excalibur);
+			// Debug.Log($"Placed Excalibur at {excalibur.gridTileLocation}");
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			//always spawn Necronomicon
 			Region randomRegion = GridMap.Instance.allRegions[1];

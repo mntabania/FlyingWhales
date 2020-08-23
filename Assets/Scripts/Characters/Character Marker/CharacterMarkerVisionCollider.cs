@@ -113,27 +113,36 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     /// <param name="poi">The POI to check.</param>
     /// <returns>Whether or not the poi was added to the character's normal vision.</returns>
     private bool TryAddPOIToVision(IPointOfInterest poi) {
-        if (parentMarker && poi.gridTileLocation != null && 
-            poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || 
-            //(parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState is CombatState && 
-            //parentMarker.character.movementComponent.HasPathTo(poi.gridTileLocation))|| 
-            (poi.mapObjectVisual.visionTrigger as POIVisionTrigger).IgnoresStructureDifference()) {
+        //(parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState is CombatState && 
+        //parentMarker.character.movementComponent.HasPathTo(poi.gridTileLocation))|| 
+        if (parentMarker && poi.gridTileLocation != null) {
             //if it is, just follow the normal procedure when a poi becomes in range
+            if (poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure ||
+                (poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {
+
+                bool shouldAddToVision = true;
+                if (poi.gridTileLocation.structure.IsTilePartOfARoom(poi.gridTileLocation, out var room)) {
+                    //if tile of seen object is part of a room, check that this character is also part of that room
+                    shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == room;
+                }
+
+                if (shouldAddToVision) {
+                    NormalEnterHandling(poi);
+                    return true;    
+                }
+            }
+        }
+        if (poi.gridTileLocation?.structure != null && 
+            parentMarker.character.gridTileLocation?.structure != null && 
+            poi.gridTileLocation.structure.structureType.IsOpenSpace() && 
+            parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
+            //if both the character that owns this and the object is part of a structure that is open space
+            //process as if normal
             NormalEnterHandling(poi);
             return true;
         } else {
-            if (poi.gridTileLocation?.structure != null && 
-                parentMarker.character.gridTileLocation?.structure != null && 
-                poi.gridTileLocation.structure.structureType.IsOpenSpace() && 
-                parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
-                //if both the character that owns this and the object is part of a structure that is open space
-                //process as if normal
-                NormalEnterHandling(poi);
-                return true;
-            } else {
-                parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
-                return false;
-            }
+            parentMarker.AddPOIAsInRangeButDifferentStructure(poi);
+            return false;
         }
     }
 
@@ -142,10 +151,21 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         //if (parentMarker.character.combatComponent.isInCombat) { return; } //if character is in combat, ignore this
         //if the character that arrived at the new structure is in this character different structure list
         //check if that character now has the same structure as this character,
-        if (parentMarker.inVisionPOIsButDiffStructure.Contains(character) && (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
+        if (parentMarker.inVisionPOIsButDiffStructure.Contains(character) && 
+            (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
             //if it does, add as normal
-            NormalEnterHandling(character);
-            parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
+            bool shouldAddToVision = true;
+            if (character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room)) {
+                //if tile of seen object is part of a room, check that this character is also part of that room
+                shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == room;
+            }
+            if (shouldAddToVision) {
+                NormalEnterHandling(character);
+                parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
+            }
+            
+            // NormalEnterHandling(character);
+            // parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
         }
         //else if the character that arrived at the new structure is in this character's vision list and the character no longer has the same structure as this character, 
         else if (parentMarker.inVisionCharacters.Contains(character) && structure != parentMarker.character.currentStructure) {
@@ -168,9 +188,16 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                     }
                 } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure
                     || (poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
-                    NormalEnterHandling(poi);
-                    if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
-                        i--;
+                    bool shouldAddToVision = true;
+                    if (poi.gridTileLocation.structure.IsTilePartOfARoom(poi.gridTileLocation, out var room)) {
+                        //if tile of seen object is part of a room, check that this character is also part of that room
+                        shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == room;
+                    }
+                    if (shouldAddToVision) {
+                        NormalEnterHandling(poi);
+                        if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
+                            i--;
+                        }
                     }
                 }
             }

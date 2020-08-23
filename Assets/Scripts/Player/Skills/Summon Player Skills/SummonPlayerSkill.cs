@@ -9,6 +9,7 @@ public class SummonPlayerSkill : SpellData {
     public RACE race { get; protected set; }
     public string className { get; protected set; }
     public SUMMON_TYPE summonType { get; protected set; }
+    public virtual string bredBehaviour => CharacterManager.Instance.GetCharacterClass(className).traitNameOnTamedByPlayer;
 
     public SummonPlayerSkill() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
@@ -56,8 +57,7 @@ public class SummonPlayerSkill : SpellData {
                 //only allow summoning on linked tiles
                 return false;
             }
-            CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(className);
-            if (characterClass.traitNameOnTamedByPlayer == "Defender") {
+            if (bredBehaviour == "Defender") {
                 //if minion is defender then do not allow it to be spawned on villages.
                 return !targetTile.IsPartOfActiveHumanElvenSettlement();
             }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
@@ -70,6 +71,9 @@ public class BehaviourComponent {
     
     //Abomination
     public HexTile abominationTarget { get; private set; }
+    
+    //snatcher
+    public bool isCurrentlySnatching;
     
     private COMBAT_MODE combatModeBeforeHarassRaidInvade;
     private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
@@ -829,5 +833,50 @@ public class BehaviourComponent {
     public void SetSubterraneanJustExitedCombat(bool state) {
         subterraneanJustExitedCombat = state;
     }
+    #endregion
+
+    #region Snatcher
+    public void SetIsSnatching(bool state) {
+        isCurrentlySnatching = state;
+    }
+    // public void OnBecomeSnatcher() {
+    //     Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnSnatcherFinishedJob);
+    //     Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnSnatcherDied);
+    // }
+    // public void OnNoLongerSnatcher() {
+    //     Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_ACTION, OnSnatcherFinishedJob);
+    //     Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnSnatcherDied);
+    // }
+    // private void OnSnatcherDied(Character character) {
+    //     if (character == owner) {
+    //         OnNoLongerSnatcher();
+    //     }
+    // }
+    // private void OnSnatcherFinishedJob(Character actor, GoapPlanJob job) {
+    //     if (actor == owner &&  job.jobType == JOB_TYPE.SNATCH && job.targetPOI is Character targetCharacter) {
+    //         HexTile hexTileLocation = targetCharacter.hexTileLocation;
+    //         LocationStructure structure = hexTileLocation.GetMostImportantStructureOnTile();
+    //         if (structure is DemonicStructure) {
+    //             if (structure is Kennel) {
+    //                 if (structure.passableTiles.Count > 0) {
+    //                     LocationGridTile randomTile = CollectionUtilities.GetRandomElement(structure.passableTiles);
+    //                     targetCharacter.marker.PlaceMarkerAt(randomTile);    
+    //                 } else {
+    //                     Debug.LogWarning($"{owner.name} could not place {targetCharacter.name} in a room in kennel, because no valid tiles could be found.");
+    //                 }
+    //             } else if (structure.rooms != null && structure.rooms.Length > 0) {
+    //                 //place target in a random room
+    //                 List<StructureRoom> roomChoices = structure.rooms.Where(r => r.CanUnseizeCharacterInRoom(targetCharacter)).ToList();
+    //                 if (roomChoices.Count > 0) {
+    //                     StructureRoom randomRoom = CollectionUtilities.GetRandomElement(roomChoices);
+    //                     LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(randomRoom.tilesInRoom);
+    //                     targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
+    //                 } else {
+    //                     Debug.LogWarning($"{owner.name} could not place {targetCharacter.name} in a room, because no valid rooms could be found.");
+    //                 }    
+    //             }
+    //         }
+    //     }
+    // }
     #endregion
 }

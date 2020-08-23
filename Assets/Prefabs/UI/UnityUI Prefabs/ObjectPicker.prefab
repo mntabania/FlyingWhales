@@ -203,6 +203,8 @@ MonoBehaviour:
     type: 3}
   objectPickerArtifactItemPrefab: {fileID: 1102394896454670, guid: b2b4cda8a7575964190e55ab7440b29b,
     type: 3}
+  objectPickerStructureItemPrefab: {fileID: 1846289913343100, guid: 4cc21a2beb97f4b4398df8071db2b2ea,
+    type: 3}
   titleLbl: {fileID: 4072576682895685185}
   cover: {fileID: 4072576683139638726}
   closeBtn: {fileID: 4072576682793357282}

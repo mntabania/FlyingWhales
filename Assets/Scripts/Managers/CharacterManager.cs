@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Characters.Behaviour;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -51,7 +52,8 @@ public class CharacterManager : MonoBehaviour {
         Mimic_Behaviour = "Mimic Behaviour",
         Succubus_Behaviour = "Succubus Behaviour",
         Dragon_Behaviour = "Dragon Behaviour",
-        Troll_Behaviour = "Troll Behaviour";
+        Troll_Behaviour = "Troll Behaviour",
+        Snatcher_Behaviour = "Snatcher Behaviour";
         
 
     public const int MAX_HISTORY_LOGS = 300;
@@ -309,6 +311,13 @@ public class CharacterManager : MonoBehaviour {
             new []{
                 typeof(MovementProcessing),
                 typeof(BabyInfestorBehaviour),
+                typeof(DefaultExtraCatcher),
+            }
+        },
+        { Snatcher_Behaviour,
+            new []{
+                typeof(MovementProcessing),
+                typeof(SnatcherBehaviour),
                 typeof(DefaultExtraCatcher),
             }
         },

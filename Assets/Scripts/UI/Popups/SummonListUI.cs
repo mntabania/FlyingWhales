@@ -52,10 +52,11 @@ public class SummonListUI : PopupMenuBase {
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         item.SetObject(summon);
         item.SetAsDefaultBehaviour();
+        item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.transform.SetSiblingIndex(reserveHeader.GetSiblingIndex());
 
-        if (!string.IsNullOrEmpty(summon.characterClass.traitNameOnTamedByPlayer) && TraitManager.Instance.allTraits.ContainsKey(summon.characterClass.traitNameOnTamedByPlayer)) {
-            Trait trait = TraitManager.Instance.allTraits[summon.characterClass.traitNameOnTamedByPlayer];
+        if (!string.IsNullOrEmpty(summon.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
+            Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
             item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }
@@ -66,9 +67,8 @@ public class SummonListUI : PopupMenuBase {
         SummonMinionPlayerSkillNameplateItem item = go.GetComponent<SummonMinionPlayerSkillNameplateItem>();
         item.SetObject(summonPlayerSkill);
         
-        CharacterClass characterClass = CharacterManager.Instance.GetCharacterClass(summonPlayerSkill.className);
-        if (!string.IsNullOrEmpty(characterClass.traitNameOnTamedByPlayer) && TraitManager.Instance.allTraits.ContainsKey(characterClass.traitNameOnTamedByPlayer)) {
-            Trait trait = TraitManager.Instance.allTraits[characterClass.traitNameOnTamedByPlayer];
+        if (!string.IsNullOrEmpty(summonPlayerSkill.bredBehaviour) && TraitManager.Instance.allTraits.ContainsKey(summonPlayerSkill.bredBehaviour)) {
+            Trait trait = TraitManager.Instance.allTraits[summonPlayerSkill.bredBehaviour];
             item.AddHoverEnterAction(data => UIManager.Instance.ShowSmallInfo(trait.descriptionInUI, _hoverPosition, trait.name));
             item.AddHoverExitAction(data => UIManager.Instance.HideSmallInfo());    
         }

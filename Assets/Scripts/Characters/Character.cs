@@ -1284,12 +1284,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Faction
-    public void SetFaction(Faction newFaction) {
-        if (_faction != null
-            && newFaction != null
-            && _faction.id == newFaction.id) {
+    public virtual bool SetFaction(Faction newFaction) {
+        if (_faction != null && newFaction != null && _faction.id == newFaction.id) {
             //ignore change, because character is already part of that faction
-            return;
+            return false;
         }
         prevFaction = _faction;
         _faction = newFaction;
@@ -1299,6 +1297,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_faction != null) {
             Messenger.Broadcast(Signals.FACTION_SET, this);
         }
+        return true;
     }
     public bool ChangeFactionTo(Faction newFaction, bool bypassIdeologyChecking = false) {
         if (faction == newFaction) {
@@ -5413,6 +5412,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 AddPlayerAction(SPELL_TYPE.TRIGGER_FLAW);
             }
             AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
+            AddPlayerAction(SPELL_TYPE.SNATCH);
         }
         // AddPlayerAction(shareIntelAction);
     }

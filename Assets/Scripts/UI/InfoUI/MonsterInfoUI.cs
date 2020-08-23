@@ -171,16 +171,18 @@ public class MonsterInfoUI : InfoUIBase {
 
     #region Stats
     private void UpdateStatInfo() {
-        hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
-        attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
-        speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
-        raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
-        elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
-        behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";
+        if (_activeMonster is Summon summon) {
+            hpLbl.text = $"{summon.currentHP.ToString()}/{summon.maxHP.ToString()}";
+            attackLbl.text = $"{summon.combatComponent.attack.ToString()}";
+            speedLbl.text = $"{summon.combatComponent.attackSpeed / 1000f}s";
+            raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(summon.race)}";
+            elementLbl.text = $"{summon.combatComponent.elementalDamage.type.ToString()}";
+            behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
+        }
     }
     public void OnHoverBehaviour(object obj) {
-        if (TraitManager.Instance.allTraits.ContainsKey(_activeMonster.characterClass.traitNameOnTamedByPlayer)) {
-            Trait trait = TraitManager.Instance.allTraits[_activeMonster.characterClass.traitNameOnTamedByPlayer];
+        if (_activeMonster is Summon summon && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
+            Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
             UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
         }
     }

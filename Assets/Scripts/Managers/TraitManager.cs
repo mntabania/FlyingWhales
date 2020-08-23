@@ -43,7 +43,8 @@ public class TraitManager : MonoBehaviour {
         "Fire Prone", "Electric", "Venomous", "Booby Trapped", "Betrayed", "Abomination Germ", "Ensnared", "Melting",
         "Fervor", "Tended", "Tending", "Cleansing", "Dousing", "Drying", "Patrolling", "Necromancer", "Mining", 
         "Webbed", "Cultist", "Stealthy", "Invisible", "Noxious Wanderer", "DeMooder", "Defender", "Invader", "Disabler", "Infestor",
-        "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol"
+        "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
+        "Snatcher"
     };
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;

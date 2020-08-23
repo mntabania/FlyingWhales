@@ -130,6 +130,8 @@ namespace Inner_Maps.Location_Structures {
                     GameDate dueDate = GameManager.Instance.Today();
                     dueDate.AddTicks(1);
                     SchedulingManager.Instance.AddEntry(dueDate, () => chosenTarget.jobComponent.PlanIdleReturnHome(), chosenTarget);
+                    chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Restrained");
+                    chosenTarget.traitContainer.RemoveTrait(chosenTarget, "Unconscious");
                     BrainwashDone();
                 } else {
                     chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
