@@ -142,6 +142,14 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_CRYSTAL), chosenTile);
 							locationChoices.Remove(chosenTile);
 						}
+						//spawn faction heirloom
+						LocationStructure barracks = region.GetRandomStructureOfType(STRUCTURE_TYPE.BARRACKS);
+						LocationGridTile heirloomTile = CollectionUtilities.GetRandomElement(barracks.unoccupiedTiles);
+						TileObject heirloom = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEIRLOOM);
+						heirloomTile.structure.AddPOI(heirloom, heirloomTile);
+						Faction faction = FactionManager.Instance.GetMajorFactionWithRace(RACE.HUMANS).First();
+						faction.SetFactionHeirloom(heirloom);
+						
 						RandomRegionalItemGeneration(region, ref locationChoices);
 					}
 				} else {

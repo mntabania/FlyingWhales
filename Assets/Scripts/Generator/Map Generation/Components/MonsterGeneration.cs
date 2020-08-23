@@ -173,6 +173,18 @@ public class MonsterGeneration : MapGenerationComponent {
 			OonaLandmarkMonsterGeneration();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			PangatLooLandmarkMonsterGeneration();
+		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
+			List<BaseLandmark> lairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+			for (int i = 0; i < lairs.Count; i++) {
+				if (i == 1) {
+					BaseLandmark landmark = lairs[i];
+					LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+					int randomAmount = 3;
+					for (int k = 0; k < randomAmount; k++) {
+						CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
+					}	
+				}
+			}
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
 			for (int i = 0; i < allLandmarks.Count; i++) {
@@ -357,14 +369,6 @@ public class MonsterGeneration : MapGenerationComponent {
 			for (int k = 0; k < randomAmount; k++) {
 				if (locationChoices.Count == 0) { break; }
 				Summon summon = CreateMonster(SUMMON_TYPE.Kobold, locationChoices);
-				locationChoices.Remove(summon.gridTileLocation);
-			}
-		} else if (regionIndex == 3) {
-			//spiders
-			int randomAmount = 8;
-			for (int k = 0; k < randomAmount; k++) {
-				if (locationChoices.Count == 0) { break; }
-				Summon summon = CreateMonster(SUMMON_TYPE.Giant_Spider, locationChoices);
 				locationChoices.Remove(summon.gridTileLocation);
 			}
 		}
