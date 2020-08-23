@@ -142,12 +142,11 @@ public class SeizeComponent {
         if(tileLocation == null) {
             return false;
         }
+        if (!tileLocation.IsPassable()) {
+            return false;
+        }
         if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             if (tileLocation.objHere != null) {
-                return false;
-            }
-        } else if (seizedPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            if (!tileLocation.IsPassable()) {
                 return false;
             }
         }
