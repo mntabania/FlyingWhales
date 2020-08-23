@@ -24,9 +24,7 @@ public class CombatManager : MonoBehaviour {
         Instance = this;
     }
 
-    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, 
-        Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null) { 
-        
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null) {
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         if (target != null) {
             CreateHitEffectAt(target, elementalType);

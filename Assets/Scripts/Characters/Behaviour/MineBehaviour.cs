@@ -116,6 +116,11 @@ public class MineBehaviour : CharacterBehaviourComponent {
             for (int i = 0; i < character.currentRegion.tiles.Count; i++) {
                 HexTile tile = character.currentRegion.tiles[i];
                 if (tile.elevationType == ELEVATION.MOUNTAIN) {
+                    LocationStructure structure = tile.GetMostImportantStructureOnTile();
+                    Assert.IsTrue(structure is Cave, $"Most important Structure at {tile} is not a cave");
+                    if (character.movementComponent.structuresToAvoid.Contains(structure)) {
+                        continue; //skip
+                    }
                     float distance = Vector2.Distance(originTile.transform.position, tile.transform.position);
                     if (nearestTile == null || distance < nearestDist) {
                         nearestDist = distance;

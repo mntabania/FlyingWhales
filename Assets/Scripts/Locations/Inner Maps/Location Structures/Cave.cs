@@ -8,6 +8,7 @@ namespace Inner_Maps.Location_Structures {
         public const string Yield_Metal = "Metal";
         public const string Yield_Diamond = "Diamond";
         public const string Yield_Gold = "Gold";
+        public const string Yield_Stone = "Stone";
 
         public WeightedDictionary<string> resourceYield { get; }
         /// <summary>
@@ -39,26 +40,31 @@ namespace Inner_Maps.Location_Structures {
             int chosen = chances.PickRandomElementGivenWeights();
             if (chosen == 0) {
                 randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Stone, 50);
                 randomYield.AddElement(Yield_Metal, 20);
                 randomYield.AddElement(Yield_Diamond, 2);
                 randomYield.AddElement(Yield_Gold, 0);
             } else if (chosen == 1) {
                 randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Stone, 50);
                 randomYield.AddElement(Yield_Metal, 0);
                 randomYield.AddElement(Yield_Diamond, 0);
                 randomYield.AddElement(Yield_Gold, 10);
             } else if (chosen == 2) {
                 randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Stone, 50);
                 randomYield.AddElement(Yield_Metal, 0);
                 randomYield.AddElement(Yield_Diamond, 10);
                 randomYield.AddElement(Yield_Gold, 0);
             } else if (chosen == 3) {
                 randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Stone, 50);
                 randomYield.AddElement(Yield_Metal, 30);
                 randomYield.AddElement(Yield_Diamond, 0);
                 randomYield.AddElement(Yield_Gold, 0);
             } else if (chosen == 4) {
                 randomYield.AddElement(Yield_Nothing, 100);
+                randomYield.AddElement(Yield_Stone, 50);
                 randomYield.AddElement(Yield_Metal, 20);
                 randomYield.AddElement(Yield_Diamond, 0);
                 randomYield.AddElement(Yield_Gold, 2);

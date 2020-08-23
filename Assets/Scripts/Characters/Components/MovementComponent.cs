@@ -22,6 +22,7 @@ public class MovementComponent {
     public bool hasMovedOnCorruption { get; private set; }
     public bool isStationary { get; private set; }
     public bool cameFromWurmHole { get; private set; }
+    public List<LocationStructure> structuresToAvoid { get; }
 
     private int _enableDiggingCounter;
     private int _avoidSettlementsCounter;
@@ -35,6 +36,7 @@ public class MovementComponent {
 
     public MovementComponent(Character owner) {
         this.owner = owner;
+        structuresToAvoid = new List<LocationStructure>();
     }
 
     public void UpdateSpeed() {
@@ -370,6 +372,32 @@ public class MovementComponent {
             return true;
         }
         return false;
+    }
+    #endregion
+
+    #region Avoid Structures
+    private bool AddStructureToAvoid(LocationStructure locationStructure) {
+        if (!structuresToAvoid.Contains(locationStructure)) {
+            structuresToAvoid.Add(locationStructure);
+            owner.logComponent.PrintLogIfActive($"{owner.name} has added {locationStructure} to its structure avoid list!");
+            return true;
+        }
+        return false;
+    }
+    private void RemoveStructureToAvoid(LocationStructure locationStructure) {
+        if (structuresToAvoid.Remove(locationStructure)) {
+            owner.logComponent.PrintLogIfActive($"{owner.name} has removed {locationStructure} from its structure avoid list!");
+        }
+    }
+    public void AddStructureToAvoidAndScheduleRemoval(LocationStructure locationStructure) {
+        if (AddStructureToAvoid(locationStructure)) {
+            GameDate expiryDate = GameManager.Instance.Today();
+            expiryDate.AddDays(1);
+            SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveStructureToAvoid(locationStructure), this);
+            if (owner.homeSettlement != null && GameUtilities.RollChance(25) && !owner.homeSettlement.HasJob(JOB_TYPE.EXTERMINATE) && !owner.homeSettlement.HasActiveParty(PARTY_TYPE.Extermination)) {
+                owner.homeSettlement.settlementJobTriggerComponent.TriggerExterminationJob(locationStructure);
+            }
+        }
     }
     #endregion
 }
