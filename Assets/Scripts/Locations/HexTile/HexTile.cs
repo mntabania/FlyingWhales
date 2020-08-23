@@ -1216,12 +1216,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in region.structures) {
             for (int i = 0; i < pair.Value.Count; i++) {
                 LocationStructure structure = pair.Value[i];
-                if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
-                    int value = pair.Key.StructurePriority(); 
-                    if (value > mostImportant.structureType.StructurePriority()) {
-                        mostImportant = structure;
-                    }    
+                if (structure is Cave cave) {
+                    if (cave.occupiedHexTile != null && cave.occupiedHexTiles.Contains(innerMapHexTile)) {
+                        int value = pair.Key.StructurePriority(); 
+                        if (value > mostImportant.structureType.StructurePriority()) {
+                            mostImportant = structure;
+                        }    
+                    }
+                } else {
+                    if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
+                        int value = pair.Key.StructurePriority(); 
+                        if (value > mostImportant.structureType.StructurePriority()) {
+                            mostImportant = structure;
+                        }    
+                    }
                 }
+                
             }
         }
         

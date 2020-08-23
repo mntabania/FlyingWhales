@@ -6,16 +6,13 @@ public class BurningSource {
 
     public int id { get; }
     public List<ITraitable> objectsOnFire { get; }
-    public Region location { get; }
 
     private int _poisOnFireCount; //Number of POI's currently on fire
     
-    public BurningSource(Region location) {
+    public BurningSource() {
         id = UtilityScripts.Utilities.SetID(this);
         objectsOnFire = new List<ITraitable>();
-        this.location = location;
         _poisOnFireCount = 0;
-        location.innerMap.AddActiveBurningSource(this);
         Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
     public void AddObjectOnFire(ITraitable traitable) {
@@ -29,7 +26,6 @@ public class BurningSource {
     private void RemoveObjectOnFire(ITraitable traitable) {
         if (objectsOnFire.Remove(traitable)) {
             if (objectsOnFire.Count == 0) {
-                location.innerMap.RemoveActiveBurningSources(this);
                 SetAsInactive();
             } else if (traitable is IPointOfInterest && _poisOnFireCount > 0){
                 //only execute this if there are still more than 0 pois on fire,

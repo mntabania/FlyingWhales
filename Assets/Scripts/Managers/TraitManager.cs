@@ -296,7 +296,7 @@ public class TraitManager : MonoBehaviour {
     public void ProcessBurningTrait(ITraitable traitable, Trait trait, ref BurningSource burningSource) {
         if (trait is Burning burning && traitable.gridTileLocation != null) {
             if (burningSource == null) {
-                burningSource = new BurningSource(traitable.gridTileLocation.parentMap.region);
+                burningSource = new BurningSource();
             }
             burning.SetSourceOfBurning(burningSource, traitable);
         }
