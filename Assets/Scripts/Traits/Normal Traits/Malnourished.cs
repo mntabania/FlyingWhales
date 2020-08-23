@@ -28,11 +28,11 @@ namespace Traits {
         }
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
-            CheckDeath();
+            CheckDeath(owner);
         }
         #endregion
 
-        private void CheckDeath() {
+        private void CheckDeath(Character owner) {
             currentDeathDuration++;
             if(currentDeathDuration >= deathDuration) {
                 owner.Death("starvation");

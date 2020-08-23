@@ -4,10 +4,12 @@ using UnityEngine;
 
 namespace Traits {
     public class Unconscious : Status {
-        private Character _sourceCharacter;
+        //private Character _sourceCharacter;
         //public override bool isRemovedOnSwitchAlterEgo {
         //    get { return true; }
         //}
+
+        public override bool isSingleton => true;
 
         public Unconscious() {
             name = "Unconscious";
@@ -34,16 +36,16 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
             if (sourceCharacter is Character character) {
-                _sourceCharacter = character;
-                _sourceCharacter.needsComponent.AdjustDoNotGetTired(1);
-                if (_sourceCharacter.currentHP <= 0) {
-                    _sourceCharacter.SetHP(1);
+                //_sourceCharacter = character;
+                character.needsComponent.AdjustDoNotGetTired(1);
+                if (character.currentHP <= 0) {
+                    character.SetHP(1);
                 }
                 //CheckToApplyRestrainJob();
                 //_sourceCharacter.CreateRemoveTraitJob(name);
-                _sourceCharacter.AddTraitNeededToBeRemoved(this);
+                character.AddTraitNeededToBeRemoved(this);
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
-                    _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
+                    character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } 
                 //else {
                     //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
@@ -60,12 +62,14 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            if (_sourceCharacter.isDead == false) {
-                _sourceCharacter.AdjustHP(1, ELEMENTAL_TYPE.Normal);
+            if(sourceCharacter is Character character) {
+                if (character.isDead == false) {
+                    character.AdjustHP(1, ELEMENTAL_TYPE.Normal);
+                }
+                character.needsComponent.AdjustDoNotGetTired(-1);
+                character.RemoveTraitNeededToBeRemoved(this);
+                character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             }
-            _sourceCharacter.needsComponent.AdjustDoNotGetTired(-1);
-            _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-            _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
         public override bool OnDeath(Character character) {
@@ -89,20 +93,24 @@ namespace Traits {
         //}
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
-            _sourceCharacter.needsComponent.AdjustTiredness(1.4f);
+            if (traitable is Character character) {
+                character.needsComponent.AdjustTiredness(1.4f);
+            }
         }
         public override void OnHourStarted(ITraitable traitable) {
             base.OnHourStarted(traitable);
-            CheckForLycanthropy();
+            if (traitable is Character character) {
+                CheckForLycanthropy(character);
+            }
         }
         #endregion
 
         #region Lycanthropy
-        private void CheckForLycanthropy() {
-            if(_sourceCharacter.isLycanthrope) {
+        private void CheckForLycanthropy(Character character) {
+            if(character.isLycanthrope) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) {
-                    _sourceCharacter.lycanData.Transform(_sourceCharacter);
+                    character.lycanData.Transform(character);
                 }
             }
         }

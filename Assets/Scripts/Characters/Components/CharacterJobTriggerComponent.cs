@@ -1795,7 +1795,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         if(targetCharacter != null) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, targetCharacter, _owner);
-            job.AddOtherData(INTERACTION_TYPE.REPORT_CRIME, new object[] { crime });
+            job.AddOtherData(INTERACTION_TYPE.REPORT_CRIME, new object[] { crime, crimeData });
             return _owner.jobQueue.AddJobInQueue(job);
         }
         return false;

@@ -29,7 +29,6 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
-                owner = addedTo as Character;
                 //owner.AdjustMoodValue(-15, this);
                 // owner.needsComponent.AdjustDoNotGetBored(1);
                 Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
@@ -37,7 +36,7 @@ namespace Traits {
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            if (owner != null) {
+            if (sourceCharacter is Character) {
                 // owner.needsComponent.AdjustDoNotGetBored(-1);
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRemovalChance);
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -46,12 +45,15 @@ namespace Traits {
         }
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
-            CheckTrait();
+            if (traitable is Character owner) {
+                CheckTrait(owner);
+            }
+
             //CheckForChaosOrb();
         }
         #endregion
 
-        private void CheckTrait() {
+        private void CheckTrait(Character owner) {
             if (!owner.CanPlanGoap()) {
                 return;
             }

@@ -8,7 +8,9 @@ namespace Traits {
             get { return true; }
         }
 
-        private Character _character;
+        public override bool isSingleton => true;
+
+        //private Character _character;
         public Resting() {
             name = "Resting";
             description = "Sleeping. May or may not be snoring.";
@@ -23,37 +25,41 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable sourceCharacter) {
-            if (sourceCharacter is Character) {
-                _character = sourceCharacter as Character;
-                //Messenger.AddListener(Signals.TICK_STARTED, RecoverHP);
-            }
-            base.OnAddTrait(sourceCharacter);
-        }
-        public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            //Messenger.RemoveListener(Signals.TICK_STARTED, RecoverHP);
-            _character = null;
-            base.OnRemoveTrait(sourceCharacter, removedBy);
-        }
+        //public override void OnAddTrait(ITraitable sourceCharacter) {
+        //    if (sourceCharacter is Character) {
+        //        _character = sourceCharacter as Character;
+        //        //Messenger.AddListener(Signals.TICK_STARTED, RecoverHP);
+        //    }
+        //    base.OnAddTrait(sourceCharacter);
+        //}
+        //public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
+        //    //Messenger.RemoveListener(Signals.TICK_STARTED, RecoverHP);
+        //    _character = null;
+        //    base.OnRemoveTrait(sourceCharacter, removedBy);
+        //}
         public override void OnTickStarted(ITraitable traitable) {
             base.OnTickStarted(traitable);
-            RecoverHP();
+            if (traitable is Character character) {
+                RecoverHP(character);
+            }
         }
         public override void OnHourStarted(ITraitable traitable) {
             base.OnHourStarted(traitable);
-            CheckForLycanthropy();
+            if(traitable is Character character) {
+                CheckForLycanthropy(character);
+            }
         }
         #endregion
 
-        private void RecoverHP() {
-            _character.HPRecovery(0.02f);
+        private void RecoverHP(Character character) {
+            character.HPRecovery(0.02f);
         }
 
-        private void CheckForLycanthropy() {
-            if(_character.isLycanthrope) {
+        private void CheckForLycanthropy(Character character) {
+            if(character.isLycanthrope) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) {
-                    _character.lycanData.Transform(_character);
+                    character.lycanData.Transform(character);
                 }
             }
             

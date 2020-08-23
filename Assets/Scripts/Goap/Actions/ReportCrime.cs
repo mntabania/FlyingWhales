@@ -32,7 +32,7 @@ public class ReportCrime : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         object[] otherData = node.otherData;
-        if (otherData.Length == 1 && otherData[0] is ICrimeable) {
+        if (otherData.Length == 2 && otherData[0] is ICrimeable) {
             ICrimeable crime = otherData[0] as ICrimeable;
             //CrimeType crimeTypObj = CrimeManager.Instance.GetCrimeType(crime.crimeType);
             //log.AddToFillers(null, crimeTypObj.name, LOG_IDENTIFIER.STRING_1);
@@ -123,8 +123,10 @@ public class ReportCrime : GoapAction {
     public void AfterReportSuccess(ActualGoapNode goapNode) {
         object[] otherData = goapNode.otherData;
         ICrimeable crime = otherData[0] as ICrimeable;
+        CrimeData crimeData = otherData[1] as CrimeData;
         Character sharer = goapNode.actor;
         Character recipient = goapNode.poiTarget as Character;
+        sharer.crimeComponent.AddReportedCrime(crimeData);
         ProcessInformation(sharer, recipient, crime, goapNode);
     }
     private void ProcessInformation(Character sharer, Character recipient, ICrimeable crime, ActualGoapNode shareActionItself) {
