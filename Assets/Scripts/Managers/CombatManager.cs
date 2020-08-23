@@ -78,6 +78,9 @@ public class CombatManager : MonoBehaviour {
                     } else {
                         //Immunity - less 85% damage
                         damage = Mathf.RoundToInt(damage * 0.15f);
+                        if (damage >= 0) {
+                            damage = -1;
+                        }
                     }
                     return;
                 }
