@@ -152,9 +152,11 @@ namespace Inner_Maps {
             if (GameManager.Instance.gameHasStarted && previousType == Ground_Type.Snow && newGroundType == Ground_Type.Tundra) {
                 GameDate dueDate = GameManager.Instance.Today();
                 dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
-                SchedulingManager.Instance.AddEntry(dueDate,
-                    () => SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile, true), this);
+                SchedulingManager.Instance.AddEntry(dueDate, RevertBackToSnow, this);
             }
+        }
+        private void RevertBackToSnow() {
+            SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile, true);
         }
         public void UpdateWorldLocation() {
             worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -536,22 +538,19 @@ namespace Inner_Maps {
             if (hasSnareTrap) {
                 TriggerSnareTrap(character);
             }
-            if (isCorrupted) {
+            if (isCorrupted && !character.isDead) {
                 //Reporting does not trigger until Tutorial is over
                 //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
 
                 LocationStructure mostImportantStructureOnTile =
                     collectionOwner.partOfHextile.hexTileOwner.GetMostImportantStructureOnTile();
                 if(mostImportantStructureOnTile is DemonicStructure demonicStructure) {
-                    if (!character.behaviourComponent.isAttackingDemonicStructure
-                       && character.homeSettlement != null
-                       && character.necromancerTrait == null
-                       && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
-                       && character.marker != null && character.carryComponent.IsNotBeingCarried()
-                       && character.isAlliedWithPlayer == false
-                       && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue))
-                       //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
-                       && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
+                    if (!character.behaviourComponent.isAttackingDemonicStructure 
+                        && character.homeSettlement != null && character.necromancerTrait == null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
+                        && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
+                        && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue)) 
+                        //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
+                        && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
                         if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.HasActiveParty(PARTY_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
                             character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                             return;

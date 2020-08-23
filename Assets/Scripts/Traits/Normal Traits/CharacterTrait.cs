@@ -68,8 +68,7 @@ namespace Traits {
                         //if character is non suspicious, create an open chest job.
                         characterThatWillDoJob.jobComponent.TriggerDestroy(item);
                     }
-                } else if (item is Excalibur excalibur && excalibur.lockedState == Excalibur.Locked_State.Locked && 
-                           characterThatWillDoJob.isNormalCharacter && !excalibur.HasInspectedThis(characterThatWillDoJob)) {
+                } else if (ShouldInspectItem(characterThatWillDoJob, item)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) && 
                         !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
@@ -245,6 +244,18 @@ namespace Traits {
             //    }
             //}
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
+        }
+        private bool ShouldInspectItem(Character characterThatWillDoJob, TileObject item) {
+            if (item is Excalibur excalibur) {
+                return excalibur.lockedState == Excalibur.Locked_State.Locked && characterThatWillDoJob.isNormalCharacter && !excalibur.HasInspectedThis(characterThatWillDoJob);    
+            } else if (item is BerserkOrb) {
+                return true;
+            } else if (item is GorgonEye) {
+                return true;
+            } else if (item is HeartOfTheWind) {
+                return true;
+            }
+            return false;
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
             if(node.action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
