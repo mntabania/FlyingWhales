@@ -30,19 +30,16 @@ public class Mine : GoapAction {
         string mineResult = cave.resourceYield.PickRandomElementGivenWeights();
         switch (mineResult) {
             case Cave.Yield_Diamond:
-                goapNode.actor.gridTileLocation.structure.AddPOI(
-                    InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DIAMOND),
-                    goapNode.actor.gridTileLocation);
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DIAMOND), goapNode.actor.gridTileLocation);
                 break;
             case Cave.Yield_Gold:
-                goapNode.actor.gridTileLocation.structure.AddPOI(
-                    InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.GOLD),
-                    goapNode.actor.gridTileLocation);
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.GOLD), goapNode.actor.gridTileLocation);
                 break;
             case Cave.Yield_Metal:
-                goapNode.actor.gridTileLocation.structure.AddPOI(
-                    InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.METAL_PILE),
-                    goapNode.actor.gridTileLocation);
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.METAL_PILE), goapNode.actor.gridTileLocation);
+                break;
+            case Cave.Yield_Stone:
+                goapNode.actor.gridTileLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.STONE_PILE), goapNode.actor.gridTileLocation);
                 break;
             case Cave.Yield_Nothing:
                 break;

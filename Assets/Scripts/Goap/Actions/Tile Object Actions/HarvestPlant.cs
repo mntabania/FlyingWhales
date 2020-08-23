@@ -25,6 +25,12 @@ public class HarvestPlant : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+        if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
+            //target is at structure that character is avoiding
+            costLog += $" +2000(Location of target is in avoid structure)";
+            actor.logComponent.AppendCostLog(costLog);
+            return 2000;
+        }
         int cost = UtilityScripts.Utilities.Rng.Next(40, 51);
         costLog += $" +{cost.ToString()}(Random Cost Between 40-50)";
         actor.logComponent.AppendCostLog(costLog);

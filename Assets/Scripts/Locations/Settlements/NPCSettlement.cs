@@ -1099,6 +1099,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             availableJobs[i].ClearBlacklist();
         }
     }
+    public bool HasActiveParty(PARTY_TYPE partyType) {
+        for (int i = 0; i < residents.Count; i++) {
+            Character character = residents[i];
+            if (character.partyComponent.currentParty != null && character.partyComponent.currentParty.partyType == partyType) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region IJobOwner

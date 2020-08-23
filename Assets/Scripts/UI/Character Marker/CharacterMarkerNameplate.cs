@@ -93,6 +93,7 @@ public class CharacterMarkerNameplate : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        HideThoughtsAndNameplate();
         _parentMarker = null;
         Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
         Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);

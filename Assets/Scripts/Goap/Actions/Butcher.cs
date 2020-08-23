@@ -25,7 +25,16 @@ public class Butcher : GoapAction {
         SetState("Transform Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}:";
+        string costLog = "";
+        if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
+            if (actor.partyComponent.currentParty == null) {
+                //target is at structure that character is avoiding
+                costLog += $" +2000(Location of target is in avoid structure)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
+            }
+        }
+        costLog = $"\n{name} {target.nameWithID}:";
         Character deadCharacter = GetDeadCharacter(target);
         int cost = 0;
         //int cost = GetFoodAmountTakenFromDead(deadCharacter);

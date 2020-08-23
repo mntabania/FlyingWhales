@@ -23,7 +23,7 @@ public class RainData : SpellData {
         bool canPerform = base.CanPerformAbilityTowards(targetHex);
         if (canPerform) {
             return targetHex != null
-                   && targetHex.biomeType != BIOMES.DESERT
+                   // && targetHex.biomeType != BIOMES.DESERT
                    && targetHex.featureComponent.HasFeature(TileFeatureDB.Rain_Feature) == false;
         }
         return false;

@@ -55,8 +55,7 @@ public class CharacterAIPath : AILerp {
             return;
         }
         if (newPath.CompleteState == PathCompleteState.Error) {
-            Debug.LogWarning(
-                $"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}. Destination is {destination.ToString()}");
+            Debug.LogWarning($"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}. Destination is {destination.ToString()}");
         }
         currentPath = newPath;
         if (newPath is FleeMultiplePath) {

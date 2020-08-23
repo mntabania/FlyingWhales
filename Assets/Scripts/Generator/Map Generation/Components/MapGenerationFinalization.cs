@@ -50,6 +50,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			List<LocationGridTile> locationChoices = wilderness.unoccupiedTiles.Where(t =>
 				t.collectionOwner.isPartOfParentRegionMap && !t.IsAtEdgeOfMap() &&
 				t.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == null &&
+				!t.collectionOwner.partOfHextile.hexTileOwner.IsAtEdgeOfMap() &&
 				t.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.PLAIN).ToList();
 			LocationGridTile desertRoseLocation = CollectionUtilities.GetRandomElement(locationChoices);
 			desertRoseLocation.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.DESERT_ROSE), desertRoseLocation);

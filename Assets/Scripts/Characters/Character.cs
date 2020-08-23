@@ -1507,7 +1507,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return null;
     }
     public LocationGridTile GetTargetTileToGoToRegion(Region region) {
-        return (gridTileLocation.parentMap as RegionInnerTileMap).GetTileToGoToRegion(region);
+        RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
+        Assert.IsNotNull(regionInnerTileMap, $"Inner map of {currentRegion.name} is not of type RegionInnerTileMap");
+        return regionInnerTileMap.GetTileToGoToRegion(region);
     }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;

@@ -21,7 +21,15 @@ public class CombatState : CharacterState {
     public List<Character> allCharactersThatDegradedRel { get; private set; }
     public List<Character> allCharactersThatReactedToThisCombat { get; private set; }
     public bool endedInternally { get; private set; } //was this combat ended from within this combat state?
-
+    /// <summary>
+    /// the last object that this character fled from
+    /// </summary>
+    public IPointOfInterest lastFledFrom { get; private set; }
+    /// <summary>
+    /// the structure location of the last object that this character fled from (NOTE: This is the location of the object when the character started fleeing)
+    /// </summary>
+    public LocationStructure lastFledFromStructure { get; private set; }
+    
     //Is this character fighting another character or has a character in hostile range list who is trying to apprehend him/her because he/she is a criminal?
     //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-npcSettlement-and-leave-faction
     public bool isBeingApprehended { get; private set; }
@@ -561,7 +569,9 @@ public class CombatState : CharacterState {
             stateComponent.character.logComponent.PrintLogIfActive(log);
 
             IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];
-
+            lastFledFrom = objToAvoid;
+            lastFledFromStructure = objToAvoid.gridTileLocation?.structure;
+            
             //if (isFleeToHome) {
             //    stateComponent.character.marker.OnStartFleeToHome();
             //} else {
@@ -827,6 +837,13 @@ public class CombatState : CharacterState {
         DetermineReaction(stateComponent.character);
         stateComponent.character.marker.UpdateAnimation();
         stateComponent.character.marker.UpdateActionIcon();
+        if (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+            //character has finished fleeing and is no longer in combat.
+            if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && character.homeStructure == lastFledFromStructure && 
+                lastFledFromStructure.structureType != STRUCTURE_TYPE.WILDERNESS && stateComponent.character.currentStructure != lastFledFromStructure) {
+                stateComponent.character.movementComponent.AddStructureToAvoidAndScheduleRemoval(lastFledFromStructure);
+            }
+        }
     }
     public void OnReachLowFleeSpeedThreshold() {
         string log = $"{stateComponent.character.name} has reached low flee speed threshold, determining action...";

@@ -406,17 +406,21 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		//isAtValidLocation == false && 
 		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
-
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
-				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, 
-					false, GOAP_EFFECT_TARGET.TARGET), 
-				target, _owner);
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
+				new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
 			if (chosenPileToDepositTo != null) {
 			    job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToDepositTo });
 			}
 			job.SetStillApplicableChecker(() => IsHaulResourcePileStillApplicable(target));
+			job.SetCanTakeThisJobChecker(CanTakeHaulJob);
 			_owner.AddToAvailableJobs(job);
 		}
+	}
+	private bool CanTakeHaulJob(Character character, JobQueueItem jobQueueItem) {
+		if (jobQueueItem is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI.gridTileLocation != null) {
+			return !character.movementComponent.structuresToAvoid.Contains(goapPlanJob.targetPOI.gridTileLocation.structure);
+		}
+		return false;
 	}
     private bool IsHaulResourcePileStillApplicable(ResourcePile resourcePile) {
 		return resourcePile.isBeingCarriedBy != null || (resourcePile.gridTileLocation != null
