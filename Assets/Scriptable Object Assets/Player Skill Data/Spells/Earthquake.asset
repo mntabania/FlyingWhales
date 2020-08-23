@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Earthquake
   m_EditorClassIdentifier: 
   skill: 24
-  manaCost: -1
+  manaCost: 5
   charges: 1
   cooldown: 72
   threat: 5

@@ -227,6 +227,11 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
+        if(owner != target) {
+            //Cannot adjust opinion to self
+            //Therefore, must not have a relationship with self
+            return;
+        }
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
             Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");

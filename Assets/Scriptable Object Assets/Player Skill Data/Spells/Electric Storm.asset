@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Electric Storm
   m_EditorClassIdentifier: 
   skill: 35
-  manaCost: -1
+  manaCost: 5
   charges: 2
   cooldown: 144
   threat: 5

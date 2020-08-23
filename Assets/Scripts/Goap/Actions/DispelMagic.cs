@@ -65,8 +65,7 @@ public class DispelMagic : GoapAction {
         //**After Effect 1**: Reduce all of target's Enchantment type traits
         //goapNode.poiTarget.traitContainer.RemoveAllTraitsByType(goapNode.poiTarget, TRAIT_TYPE.ENCHANTMENT);
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Cursed");
-        if(goapNode.poiTarget is Character) {
-            Character target = goapNode.poiTarget as Character;
+        if(goapNode.poiTarget is Character target && target != goapNode.actor) {
             target.relationshipContainer.AdjustOpinion(target, goapNode.actor, "Base", 3);
         }
     }

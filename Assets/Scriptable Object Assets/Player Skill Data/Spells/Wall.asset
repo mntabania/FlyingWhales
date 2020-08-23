@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Wall
   m_EditorClassIdentifier: 
   skill: 94
-  manaCost: -1
+  manaCost: 5
   charges: 10
-  cooldown: 288
+  cooldown: 72
   threat: 0
   threatPerHour: 0
   expCost: 300

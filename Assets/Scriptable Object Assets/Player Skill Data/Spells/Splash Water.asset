@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Splash Water
   m_EditorClassIdentifier: 
   skill: 93
-  manaCost: -1
-  charges: 10
-  cooldown: 72
+  manaCost: 5
+  charges: 5
+  cooldown: 36
   threat: 0
   threatPerHour: 0
   expCost: 300

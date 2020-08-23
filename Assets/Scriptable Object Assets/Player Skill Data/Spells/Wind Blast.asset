@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wind Blast
   m_EditorClassIdentifier: 
   skill: 44
-  manaCost: -1
+  manaCost: 20
   charges: 3
   cooldown: 72
   threat: 8

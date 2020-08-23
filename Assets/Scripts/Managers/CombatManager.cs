@@ -49,7 +49,7 @@ public class CombatManager : MonoBehaviour {
                 out Trait trait, characterResponsible); //, out trait
             if (hasSuccessfullyAdded) {
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
-                    ChainElectricDamage(target, damage, characterResponsible);
+                    ChainElectricDamage(target, damage, characterResponsible, target);
                 }
                 elementalTraitProcessor?.Invoke(target, trait);
             }
@@ -233,7 +233,7 @@ public class CombatManager : MonoBehaviour {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
     }
-    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible) {
+    public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
         damage = Mathf.RoundToInt(damage * 0.8f);
         if(damage >= 0) {
             damage = -1;
@@ -254,12 +254,12 @@ public class CombatManager : MonoBehaviour {
                 }
             }
             if (affectedTiles.Count > 0) {
-                StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible));
+                StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible, origin));
             }
         }
     }
-    private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible) {
-        HashSet<ITraitable> completedTiles = new HashSet<ITraitable>();
+    private IEnumerator ChainElectricDamageCoroutine(List<LocationGridTile> tiles, int damage, Character characterResponsible, ITraitable origin) {
+        //HashSet<ITraitable> completedTiles = new HashSet<ITraitable>();
         for (int i = 0; i < tiles.Count; i++) {
             while (GameManager.Instance.isPaused) {
                 //Pause coroutine while game is paused
@@ -268,13 +268,13 @@ public class CombatManager : MonoBehaviour {
             }
             yield return new WaitForSeconds(0.1f);
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage, characterResponsible, ref completedTiles));
+            tile.PerformActionOnTraitables((traitable) => ChainElectricEffect(traitable, damage, characterResponsible, origin)); //, ref completedTiles
         }
     }
-    private void ChainElectricEffect(ITraitable traitable, int damage, Character responsibleCharacter, ref HashSet<ITraitable> completedObjects) {
-        if (completedObjects.Contains(traitable) == false && !traitable.traitContainer.HasTrait("Zapped")) {
-            completedObjects.Add(traitable);
-            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, source:responsibleCharacter, showHPBar: true);
+    private void ChainElectricEffect(ITraitable traitable, int damage, Character responsibleCharacter, ITraitable origin) { //, ref HashSet<ITraitable> completedObjects
+        if (/*completedObjects.Contains(traitable) == false && */!traitable.traitContainer.HasTrait("Zapped") ) {
+            //completedObjects.Add(traitable);
+            traitable.AdjustHP(damage, ELEMENTAL_TYPE.Electric, true, source: responsibleCharacter, showHPBar: true);
         }
     }
     #endregion

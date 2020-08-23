@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cowardice
   m_EditorClassIdentifier: 
   skill: 67
-  manaCost: -1
+  manaCost: 10
   charges: 1
   cooldown: 144
   threat: 0

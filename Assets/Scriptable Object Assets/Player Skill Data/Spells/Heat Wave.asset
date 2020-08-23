@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Heat Wave
   m_EditorClassIdentifier: 
   skill: 46
-  manaCost: -1
+  manaCost: 5
   charges: 2
   cooldown: 144
   threat: 0

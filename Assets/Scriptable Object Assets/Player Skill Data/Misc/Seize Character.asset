@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Seize Character
   m_EditorClassIdentifier: 
   skill: 51
-  manaCost: 20
+  manaCost: 30
   charges: 1
   cooldown: 12
   threat: 10

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Cultist Booby Trap
   m_EditorClassIdentifier: 
   skill: 143
-  manaCost: -1
+  manaCost: 10
   charges: 1
   cooldown: 48
   threat: 0
