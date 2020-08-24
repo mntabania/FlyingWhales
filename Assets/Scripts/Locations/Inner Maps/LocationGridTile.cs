@@ -559,7 +559,7 @@ namespace Inner_Maps {
                     //If cannot report flee instead
                     //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
                     if (!character.behaviourComponent.isAttackingDemonicStructure 
-                        && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue)) 
+                        && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue && character.partyComponent.currentParty.partyType != PARTY_TYPE.Heirloom_Hunt)) 
                         && character.isAlliedWithPlayer == false 
                         && character.necromancerTrait == null) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
