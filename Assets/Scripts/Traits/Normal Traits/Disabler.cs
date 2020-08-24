@@ -18,6 +18,10 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
                 character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Disabler_Behaviour);
+                character.SetDestroyMarkerOnDeath(true);
+                if (character is Summon summon) {
+                    summon.SetShowNotificationOnDeath(false);
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

@@ -29,6 +29,17 @@ public class Sleep : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
+        if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
+            if (actor.partyComponent.currentParty == null) {
+                //target is at structure that character is avoiding
+                cost = 2000;
+                costLog += $" +{cost}(Location of target is in avoid structure)";
+                actor.logComponent.AppendCostLog(costLog);
+                return cost;
+            }
+        }
+        costLog = $"\n{name} {target.nameWithID}:";
+        cost = 0;
         if (target is Bed) {
             Bed targetBed = target as Bed;
             if (!targetBed.IsSlotAvailable()) {
