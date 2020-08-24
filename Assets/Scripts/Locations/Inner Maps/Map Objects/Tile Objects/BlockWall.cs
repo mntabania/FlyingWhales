@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 public class BlockWall : TileObject {
     
     public WALL_TYPE wallType { get; private set; }
+    private GameDate expiryDate { get; set; }
+    private string _expiryScheduleKey;
     
     public BlockWall() {
         Initialize(TILE_OBJECT_TYPE.BLOCK_WALL, false);
@@ -31,11 +33,13 @@ public class BlockWall : TileObject {
     public override bool CanBeAffectedByElementalStatus(string traitName) {
         return false;
     }
-    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
-        bool destroyTileSlots = true) {
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
         removedFrom.SetTileType(LocationGridTile.Tile_Type.Empty);
         mapVisual.DestroyExistingGUS();
+        if (!string.IsNullOrEmpty(_expiryScheduleKey)) {
+            SchedulingManager.Instance.RemoveSpecificEntry(_expiryScheduleKey);
+        }
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
@@ -60,6 +64,18 @@ public class BlockWall : TileObject {
     }
     #endregion
 
+    #region Expiry
+    public void SetExpiry(GameDate expiry) {
+        expiryDate = expiry;
+        _expiryScheduleKey = SchedulingManager.Instance.AddEntry(expiryDate, Expire, this);
+    }
+    private void Expire() {
+        if (gridTileLocation != null) {
+            gridTileLocation.structure.RemovePOI(this);    
+        }
+    }
+    #endregion
+    
     public void UpdateVisual(LocationGridTile tile) {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
     }

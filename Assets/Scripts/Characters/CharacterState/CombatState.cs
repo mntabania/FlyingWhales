@@ -837,7 +837,7 @@ public class CombatState : CharacterState {
         DetermineReaction(stateComponent.character);
         stateComponent.character.marker.UpdateAnimation();
         stateComponent.character.marker.UpdateActionIcon();
-        if (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+        if (stateComponent.character.isNormalCharacter && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             //character has finished fleeing and is no longer in combat.
             if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && character.homeStructure == lastFledFromStructure && 
                 lastFledFromStructure.structureType != STRUCTURE_TYPE.WILDERNESS && stateComponent.character.currentStructure != lastFledFromStructure) {
