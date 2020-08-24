@@ -123,11 +123,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             } else {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
                 if(exterminateTargetStructure != null) {
-                    if(UnityEngine.Random.Range(0, 100) < 20) {
-                        settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
-                    } else {
-                        SetExterminateTarget(null);
-                    }
+                    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
+                    //if (UnityEngine.Random.Range(0, 100) < 20) {
+                    //    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
+                    //} else {
+                    //    SetExterminateTarget(null);
+                    //}
                 }
             }
         }

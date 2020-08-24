@@ -693,6 +693,10 @@ public class ActualGoapNode : IRumorable, ICrimeable {
                     if (!cannotBeStoredAsIntel) {
                         PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
                     }
+                } else if (action.goapType == INTERACTION_TYPE.EXPLORE || action.goapType == INTERACTION_TYPE.COUNTERATTACK_ACTION 
+                    || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID 
+                    || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY) {
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(descriptionLog);
                 }
                 descriptionLog.AddLogToInvolvedObjects();
             }
