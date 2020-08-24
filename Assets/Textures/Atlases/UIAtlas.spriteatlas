@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8229079
+    totalSpriteSurfaceArea: 8273069
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -81,6 +81,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 76ddc3e00edfbf74a9dbeb3434d21a61, type: 3}
   - {fileID: 21300000, guid: 43776ce0165108742997204fe82cf9af, type: 3}
   - {fileID: 21300000, guid: a318b7f05096c1041851852644205e17, type: 3}
+  - {fileID: 21300000, guid: 8beebaf07d4d3ea4f95343b7293e9fda, type: 3}
   - {fileID: 21300000, guid: 76dfdbf00046cc94698761bfa509213b, type: 3}
   - {fileID: 21300000, guid: a90825012b56d254dae9e05078935c2d, type: 3}
   - {fileID: 21300000, guid: c57c4801b63d97b41bf0e70c501eadac, type: 3}
@@ -98,6 +99,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 8d131c81690168744afa20aa24e454e5, type: 3}
   - {fileID: 21300000, guid: 1a05b6915f3a9214694630a4e097233b, type: 3}
   - {fileID: 21300000, guid: 928068b129249a04f9badda171d03cfc, type: 3}
+  - {fileID: 21300000, guid: 4be17fb16f3e2ae409dbf5c91d5a6b9b, type: 3}
   - {fileID: 21300000, guid: 3e32c1c1f8e1f4e4f9b73c1c29fc5b0b, type: 3}
   - {fileID: 21300000, guid: 25d987c1792195a4381cd53746b577b9, type: 3}
   - {fileID: 21300000, guid: e6ff13d1afe244942b58c619f9dd0514, type: 3}
@@ -517,6 +519,7 @@ SpriteAtlas:
   - button_eye_clicked
   - tab_items_default
   - intel_button_clicked
+  - spell_list_button_charging
   - intel_tip_type_icon
   - button_profane_hover
   - button_minion_action_hover
@@ -534,6 +537,7 @@ SpriteAtlas:
   - button_minions_hover
   - traveller_default
   - spell_slot_empty
+  - spell_list_button_disabled
   - button_base_clicked
   - button_build_disabled
   - button_spells_clicked

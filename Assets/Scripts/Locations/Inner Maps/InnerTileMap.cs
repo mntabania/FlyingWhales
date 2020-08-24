@@ -394,8 +394,8 @@ namespace Inner_Maps {
             centerGo = Instantiate<GameObject>(centerGoPrefab, transform);
             Vector3 centerPosition = new Vector3(width/2f, height/2f); //new Vector3((cameraBounds.x + cameraBounds.z) * 0.5f, (cameraBounds.y + cameraBounds.w) * 0.5f);
             centerGo.transform.localPosition = centerPosition;
-            innerMapCenter = centerGo.GetComponent<InnerMapCenter>();
-            innerMapCenter.ResizeFogOfWarBasedOnTileMapSize(this);
+            //innerMapCenter = centerGo.GetComponent<InnerMapCenter>();
+            //innerMapCenter.ResizeFogOfWarBasedOnTileMapSize(this);
         }
         private void ShowPath(List<Vector3> points) {
             pathLineRenderer.gameObject.SetActive(true);

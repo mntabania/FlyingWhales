@@ -168,16 +168,16 @@ namespace Inner_Maps {
             // tile.SetOwnedBuildSpot(spots);
         }
         private void SetFogOfWar() {
-            int upperBoundX = locationGridTileCollections.GetUpperBound(0);
-            int upperBoundY = locationGridTileCollections.GetUpperBound(1);
-            for (int x = 0; x <= upperBoundX; x++) {
-                for (int y = 0; y <= upperBoundY; y++) {
-                    LocationGridTileCollection collection = locationGridTileCollections[x, y];
-                    if (!collection.isPartOfParentRegionMap) {
-                        GameManager.Instance.CreateParticleEffectAt(collection.locationGridTileCollectionItem.transform.position, this, PARTICLE_EFFECT.Fog_Of_War);
-                    }
-                }
-            }
+            //int upperBoundX = locationGridTileCollections.GetUpperBound(0);
+            //int upperBoundY = locationGridTileCollections.GetUpperBound(1);
+            //for (int x = 0; x <= upperBoundX; x++) {
+            //    for (int y = 0; y <= upperBoundY; y++) {
+            //        LocationGridTileCollection collection = locationGridTileCollections[x, y];
+            //        if (!collection.isPartOfParentRegionMap) {
+            //            GameManager.Instance.CreateParticleEffectAt(collection.locationGridTileCollectionItem.transform.position, this, PARTICLE_EFFECT.Fog_Of_War);
+            //        }
+            //    }
+            //}
         }
         #endregion
 
