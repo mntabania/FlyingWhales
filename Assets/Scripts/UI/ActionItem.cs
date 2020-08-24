@@ -14,7 +14,7 @@ public class ActionItem : PooledObject {
 
     [SerializeField] private Button button;
 	[SerializeField] private Image actionImg;
-    //[SerializeField] private Image coverImg;
+    [SerializeField] private Image coverImg;
     [SerializeField] private Image cooldownCoverImg;
     [SerializeField] private Image highlightImg;
     [SerializeField] private TextMeshProUGUI actionLbl;
@@ -35,7 +35,8 @@ public class ActionItem : PooledObject {
 	}
 	public void SetInteractable(bool state) {
         button.interactable = state;
-        UpdateCooldown();
+        coverImg.gameObject.SetActive(!state);
+        //UpdateCooldown();
     }
     private void UpdateCooldown() {
         cooldownCoverImg.gameObject.SetActive(playerAction.isInCooldown);
@@ -99,7 +100,8 @@ public class ActionItem : PooledObject {
     }
     private void SetCooldownState(bool state) {
 	    SetInteractable(playerAction.CanPerformAbilityTo(playerActionTarget) && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
-	    //cooldownImage.gameObject.SetActive(state);
+        cooldownCoverImg.gameObject.SetActive(state);
+        //cooldownImage.gameObject.SetActive(state);
     }
     private void StartCooldownFill() {
         cooldownCoverImg.fillAmount = ((float)playerAction.currentCooldownTick / playerAction.cooldown);
@@ -110,7 +112,7 @@ public class ActionItem : PooledObject {
         cooldownCoverImg.DOFillAmount(fillAmount, 0.4f);
     }
     private void StopCooldownFill() {
-	    SetCooldownState(false);
+        SetCooldownState(false);
 	    // coverImg.DOFillAmount(0f, 0.2f).OnComplete(() => SetCooldownState(false));
 	    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
