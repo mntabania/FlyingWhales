@@ -5,6 +5,7 @@ using EZObjectPools;
 using Inner_Maps;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class BedMarkerNameplate : PooledObject {
@@ -67,10 +68,12 @@ public class BedMarkerNameplate : PooledObject {
     public void UpdateMarkerNameplate(TileObject bedTileObject) {
         int userCount = bedTileObject.users.Length;
         bool showActionIcon = false;
-        if (userCount == 1) {
-            showActionIcon = true;
-        } else if (userCount == 2) {
-            showActionIcon = true;
+        if (bedGO.bedTileObject.currentRegion == InnerMapManager.Instance.currentlyShowingLocation) {
+            if (userCount == 1) {
+                showActionIcon = true;
+            } else if (userCount == 2) {
+                showActionIcon = true;
+            }    
         }
         if (showActionIcon) {
             ActualGoapNode actionNode = bedTileObject.users[0].currentActionNode;
@@ -85,6 +88,7 @@ public class BedMarkerNameplate : PooledObject {
         }
     }
     public void ShowMarkerNameplate() {
+        Assert.IsTrue(bedGO.bedTileObject.currentRegion == InnerMapManager.Instance.currentlyShowingLocation, $"Something is trying to activate action icon of {name} even though its region map is not active!");
         gameObject.SetActive(true);
     }
     public void HideMarkerNameplate() {

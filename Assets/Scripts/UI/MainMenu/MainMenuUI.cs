@@ -21,7 +21,7 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private Image bg;
 
     [Header("Buttons")]
-    // [SerializeField] private Button loadGameButton;
+    [SerializeField] private Button continueButton;
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button invadeButton;
     [SerializeField] private Button researchButton;
@@ -36,12 +36,19 @@ public class MainMenuUI : MonoBehaviour {
     [Header("Steam")]
     [SerializeField] private TextMeshProUGUI steamName;
     
+    [Header("Yes/No Confirmation")]
+    [SerializeField] private YesNoConfirmation yesNoConfirmation;
+    
     private void Awake() {
         Instance = this;
     }
     private void Start() {
         newGameButton.interactable = true;
         steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
+        UpdateContinueButton();
+    }
+    public void UpdateMainMenuOnBack() {
+        UpdateContinueButton();
     }
     public void ShowMenuButtons() {
         titleTween.OnValueChangedAnimation(true);
@@ -74,6 +81,19 @@ public class MainMenuUI : MonoBehaviour {
         glowTween.OnValueChangedAnimation(false);
     }
     public void OnClickPlayGame() {
+        if (SaveManager.Instance.hasSavedDataPlayer) { //&& !SaveManager.Instance.currentSaveDataPlayer.IsDefault()
+            yesNoConfirmation.ShowYesNoConfirmation("Reset progress", "Starting a new game will reset your current progress. Are you sure you want to start a new game?", 
+                OnConfirmNewGame, showCover: true);
+        } else {
+            SaveManager.Instance.CreateNewSaveDataPlayer();
+            WorldSettings.Instance.Open();    
+        }
+    }
+    private void OnConfirmNewGame() {
+        SaveManager.Instance.CreateNewSaveDataPlayer();
+        WorldSettings.Instance.Open();
+    }
+    public void OnClickContinue() {
         WorldSettings.Instance.Open();
     }
     private void OnCompleteBGTween() {
@@ -100,7 +120,7 @@ public class MainMenuUI : MonoBehaviour {
     public void OnClickDiscord() {
         Application.OpenURL("http://discord.ruinarch.com/");
     }
-    // public void UpdateLoadButton() {
-    //     loadGameButton.interactable = false; // SaveManager.Instance.hasSavedDataCurrentProgress;
-    // }
+    public void UpdateContinueButton() {
+        continueButton.interactable = SaveManager.Instance.hasSavedDataPlayer; // SaveManager.Instance.hasSavedDataCurrentProgress;
+    }
 }

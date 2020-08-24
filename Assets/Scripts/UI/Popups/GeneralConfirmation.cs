@@ -15,18 +15,19 @@ public class GeneralConfirmation : PopupMenuBase {
     [SerializeField] protected Button _centerButton;
     
     public virtual void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null, System.Action onClickCenter = null) {
-        if (PlayerUI.Instance.IsMajorUIShowing()) {
+        if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK, onClickCenter));
             return;
         }
 
-        if (!UIManager.Instance.IsObjectPickerOpen()) {
-            //if object picker is already being shown 
-            UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);    
+        if (UIManager.Instance != null) {
+            if (!UIManager.Instance.IsObjectPickerOpen()) {
+                //if object picker is already being shown 
+                UIManager.Instance.Pause();
+                UIManager.Instance.SetSpeedTogglesState(false);
+            }
+            UIManager.Instance.HideSmallInfo();    
         }
-
-        UIManager.Instance.HideSmallInfo();
         
         generalConfirmationTitleText.SetTextAndReplaceWithIcons(header.ToUpper());
         generalConfirmationBodyText.SetTextAndReplaceWithIcons(body);
@@ -67,7 +68,7 @@ public class GeneralConfirmation : PopupMenuBase {
     }
     public override void Close() {
         base.Close();
-        if (!PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+        if (PlayerUI.Instance != null && UIManager.Instance != null && !PlayerUI.Instance.TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }

@@ -55,6 +55,24 @@ public class SaveDataPlayer {
         completedSpecialPopups = new List<QuestManager.Special_Popup>();
         InitializeUnlockedWorlds();
     }
+    /// <summary>
+    /// Is this save data essentially empty. aka. everything is at default settings.
+    /// NOTE: This is used for checking if reset progress popup should be shown to player
+    /// when the new game button has been clicked.
+    /// </summary>
+    /// <returns>True or false.</returns>
+    public bool IsDefault() {
+        if (unlockedWorlds.Count > 2) {
+            return false;
+        }
+        if (completedBonusTutorials.Count > 0) {
+            return false;
+        }
+        if (completedSpecialPopups.Count > 0) {
+            return false;
+        }
+        return true;
+    }
 
     #region Exp
     public void SetExp(int amount) {

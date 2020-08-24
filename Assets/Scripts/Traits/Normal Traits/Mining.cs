@@ -20,6 +20,7 @@
                 character.behaviourComponent.AddBehaviourComponent(typeof(MineBehaviour));
                 Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
                 Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnMineJobRemoved);
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -40,6 +41,11 @@
         }
         private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
             if (character == _owner && job.jobType == JOB_TYPE.MINE && job.targetInteractionType == INTERACTION_TYPE.MINE) {
+                character.behaviourComponent.SetTargetMiningTile(null);
+            }
+        }
+        private void OnMineJobRemoved(JobQueueItem job, Character character) {
+            if (character == _owner && job.jobType == JOB_TYPE.MINE) {
                 character.behaviourComponent.SetTargetMiningTile(null);
             }
         }

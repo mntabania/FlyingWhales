@@ -446,7 +446,7 @@ public class PlayerUI : MonoBehaviour {
                newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || 
                _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
                UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing || 
-               UIManager.Instance.yesNoGO.activeInHierarchy;
+               UIManager.Instance.yesNoConfirmation.yesNoGO.activeInHierarchy;
     }
     #endregion
 

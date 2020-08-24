@@ -46,6 +46,8 @@ public class MineBehaviour : CharacterBehaviourComponent {
         // }
         if (character.behaviourComponent.targetMiningTile != null) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.MINE, character.behaviourComponent.targetMiningTile.genericTileObject, character);
+            job.SetDoNotRecalculate(true);
+            job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;    
         }

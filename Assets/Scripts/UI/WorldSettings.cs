@@ -76,6 +76,7 @@ public class WorldSettings : MonoBehaviour {
     }
     public void Close() {
         settingsGO.SetActive(false);
+        MainMenuUI.Instance.UpdateMainMenuOnBack();
     }
     private void InitializeData() {
         //if (raceWorldOptionItems.Count <= 0) {
