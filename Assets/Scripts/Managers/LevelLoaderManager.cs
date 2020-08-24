@@ -61,10 +61,10 @@ public class LevelLoaderManager : MonoBehaviour {
     }
     public void SetLoadingState(bool state) {
         loaderGO.SetActive(state);
-        if (WorldConfigManager.Instance.isDemoBuild) {
-            _additionalLoadingText.text = "This is a preview build. Only includes Tutorial.";
-        } else {
-            _additionalLoadingText.text = "This is a preview build. Scenarios still have some missing features that will be added prior to launch.";
-        }
+        // if (WorldConfigManager.Instance.isDemoBuild) {
+        //     _additionalLoadingText.text = "This is a preview build. Only includes Tutorial.";
+        // } else {
+        //     _additionalLoadingText.text = "This is a preview build. Scenarios still have some missing features that will be added prior to launch.";
+        // }
     }
 }

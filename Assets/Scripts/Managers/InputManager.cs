@@ -274,24 +274,27 @@ namespace Ruinarch {
             if (UIManager.Instance == null) {
                 return true;
             }
+            // if (PlayerManager.Instance == null) {
+            //     return true;
+            // }
             UIManager.Instance.SetTempDisableShowInfoUI(false);
             if (UIManager.Instance.IsOptionsMenuShowing()) {
                 //if options menu is showing, then close it, and nothing else
                 UIManager.Instance.CloseOptionsMenu();
                 return true;
             }
-            if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
+            if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 //cancel current spell
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
                 return true;
-            } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
+            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveIntel != null) {
                 //cancel current intel
                 PlayerManager.Instance.player.SetCurrentActiveIntel(null);
                 return true;
-            } else if (PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE) {
+            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE) {
                 PlayerManager.Instance.player.SetCurrentlyActiveItem(TILE_OBJECT_TYPE.NONE);
                 return true;
-            } else if (PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {
+            } else if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {
                 PlayerManager.Instance.player.SetCurrentlyActiveArtifact(ARTIFACT_TYPE.None);
                 return true;
             } else {
