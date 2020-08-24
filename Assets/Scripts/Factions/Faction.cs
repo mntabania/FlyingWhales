@@ -312,9 +312,14 @@ public class Faction : IJobOwner {
                 }
             }
             if (numberOfFriends > 0) {
-                weight += (numberOfFriends * 20);
-                log +=
-                    $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
+                int weightToAdd = 0;
+                if (member.traitContainer.HasTrait("Worker")) {
+                    weightToAdd = Mathf.FloorToInt((numberOfFriends * 20) * 0.2f);
+                } else {
+                    weightToAdd = (numberOfFriends * 20);    
+                }
+                weight += weightToAdd;
+                log += $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{weightToAdd}";
             }
             if (member.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
@@ -920,8 +925,8 @@ public class Faction : IJobOwner {
                     debugLog += $"\nTarget is not part of faction.";
                     //target is not part of faction
                     if (crimeSeverity == CRIME_SEVERITY.Heinous && (crimeCommitter.isFactionLeader || crimeCommitter.isSettlementRuler)) {
-                        debugLog += $"\nCrime severity is Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
-                        chance = 20f;
+                        debugLog += $"\nCrime severity   Heinous and {crimeCommitter.name} is Faction Leader or Settlement Ruler";
+                        chance = 50f;
                     }
                     if (factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
                         debugLog += $"\n{name} is a warmonger faction.";

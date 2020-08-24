@@ -304,11 +304,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     }
                 }
             }
-            if(numberOfFriends > 0) {
-                weight += (numberOfFriends * 20);
-                log +=
-                    $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
+            
+            if (numberOfFriends > 0) {
+                int weightToAdd = 0;
+                if (resident.traitContainer.HasTrait("Worker")) {
+                    weightToAdd = Mathf.FloorToInt((numberOfFriends * 20) * 0.2f);
+                } else {
+                    weightToAdd = (numberOfFriends * 20);    
+                }
+                weight += weightToAdd;
+                log += $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{weightToAdd}";
             }
+            
+            // if(numberOfFriends > 0) {
+            //     weight += (numberOfFriends * 20);
+            //     log +=
+            //         $"\n  -Num of Friend/Close Friend in the NPCSettlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
+            // }
             if (resident.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
                 log += "\n  -Inspiring: +25";
