@@ -149,8 +149,8 @@ namespace Settings {
                      graphicsQuality = 2,
                      resolution = $"{Screen.currentResolution.width.ToString()}x{Screen.currentResolution.height.ToString()}",
                      useEdgePanning = false,
-                     musicVolume = 0f,
-                     masterVolume = 0f,
+                     musicVolume = AudioManager.Maximum_Volume_Level,
+                     masterVolume = AudioManager.Maximum_Volume_Level,
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
