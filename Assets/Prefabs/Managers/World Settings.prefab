@@ -13612,10 +13612,13 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: A single snow region home to a small but powerful elven tribe. Somehow,
+      value: 'A single snow region home to a small but powerful elven tribe. Somehow,
         most of them are Blessed. Those who are not are unfortunately Robust. There
         is however one lone Evil elf among them that can be the key to shattering
         the peace.
+
+
+        Finishing this unlocks: <b>Affatt</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13840,7 +13843,8 @@ PrefabInstance:
       value: "A single desert region with a burgeoning human town. Unknown to these
         residents, the surrounding caves are filled with danger. \r\n\r\nThere is
         a strange artifact of unknown origin somewhere nearby - is it connected to
-        the dozens of various crystals scattered around the place?"
+        the dozens of various crystals scattered around the place?\n\nFinishing this
+        unlocks: <b>Icalawa</b> and <b>Pangat Loo</b>."
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14282,9 +14286,13 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: Another 2 region scenario. Both regions are claimed by a warmonger elven
-        kingdom. There is also a small human town on one region and they are fighting
-        for survival. For some strange reason, there are no monsters in this world.
+      value: 'Another 2 region scenario. Both regions are claimed by a warmonger
+        elven kingdom. There is also a small human town on one region and they are
+        fighting for survival. For some strange reason, there are no monsters in
+        this world.
+
+
+        Finishing this unlocks: <b>Zenko</b> and <b>Customize</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14511,10 +14519,14 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: "This is a 2 region scenario for our undead loving overlords. There
+      value: 'This is a 2 region scenario for our undead loving overlords. There
         is a huge strongly defended human town on one region, while the other region
         is a haunted desert full of elven tombstones, skeletons and ghosts. It might
-        require a large undead horde to breach the human town's defenses.\r"
+        require a large undead horde to breach the human town''s defenses.
+
+
+        Finishing
+        this unlocks: <b>Affatt</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

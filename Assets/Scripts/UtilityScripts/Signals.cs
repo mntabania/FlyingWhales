@@ -291,6 +291,10 @@ public static class Signals {
     public static string EVENT_LABEL_LINK_CLICKED = "OnEventLabelClicked";
     public static string UPDATE_FACTION_LOGS_UI = "UpdateFactionLogsUI";
     public static string UPDATE_POI_LOGS_UI = "UpdatePOILogsUI";
+    /// <summary>
+    /// Parameters: string buttonName
+    /// </summary>
+    public static string HOTKEY_CLICK = "OnHotKeyPressed";
     #endregion
 
     #region Quest Signals
@@ -782,7 +786,6 @@ public static class Signals {
             new SignalMethod() { methodName = "OnLoadoutSelected", objectType = typeof(StartupManager) },
         }},
     };
-    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

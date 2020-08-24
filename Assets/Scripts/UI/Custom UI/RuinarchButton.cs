@@ -23,6 +23,7 @@ namespace Ruinarch.Custom_UI {
             if (Application.isPlaying) {
                 Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
                 Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.AddListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 //Also added instance checker because there are buttons used in tools
                 if (InputManager.Instance != null && InputManager.Instance.ShouldBeHighlighted(this)) {
                     StartGlow();
@@ -34,6 +35,7 @@ namespace Ruinarch.Custom_UI {
             if (Application.isPlaying) {
                 Messenger.RemoveListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
                 Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
+                Messenger.RemoveListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 HideGlow();
             }
         }
@@ -71,6 +73,13 @@ namespace Ruinarch.Custom_UI {
         }
         #endregion
         
-        
+        private void OnReceiveHotKeyClick(string buttonName) {
+            if (name == buttonName) {
+                if (IsInteractable()) {
+                    onClick?.Invoke();
+                    Messenger.Broadcast(Signals.BUTTON_CLICKED, this); 
+                }
+            }
+        }
     }
 }

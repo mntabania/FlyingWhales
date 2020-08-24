@@ -22,7 +22,10 @@ namespace Inner_Maps.Location_Structures {
                 character.traitContainer.AddTrait(character, "Restrained");
                 if (character.partyComponent.hasParty) {
                     character.partyComponent.currentParty.RemoveMember(character);
-                }    
+                }
+                if (character.gridTileLocation != null && !character.gridTileLocation.charactersHere.Contains(character)) {
+                    character.gridTileLocation.AddCharacterHere(character);
+                }
             }
         }
         
