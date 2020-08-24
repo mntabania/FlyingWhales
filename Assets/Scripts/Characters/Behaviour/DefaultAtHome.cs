@@ -289,7 +289,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Roll: {roll.ToString()}";
                     if (roll < chance) {
                         log += $"\n  -Will create Drop Item job";
-                        character.jobComponent.CreateDropItemJob(character.GetRandomItem(), character.homeStructure);
+                        character.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM, character.GetRandomItem(), character.homeStructure);
                         return true;
                     } 
                 } else {

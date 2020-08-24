@@ -28,6 +28,7 @@ public class AgitateData : PlayerAction {
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             } else {
                 targetCharacter.movementComponent.SetEnableDigging(false);
+                PlayerUI.Instance.ShowGeneralConfirmation("AGITATE FAILED", "Cannot find a valid village target.");
             }
         }
         base.ActivateAbility(targetPOI);

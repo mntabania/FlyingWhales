@@ -29,6 +29,7 @@ public class Wurm : Summon {
     }
     #endregion
     public override void OnSummonAsPlayerMonster() {
+        base.OnSummonAsPlayerMonster();
         traitContainer.RemoveTrait(this, "Subterranean");
     }
 

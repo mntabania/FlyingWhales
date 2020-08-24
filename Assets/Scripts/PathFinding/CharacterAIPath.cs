@@ -346,7 +346,8 @@ public class CharacterAIPath : AILerp {
             if (customPath.region == null) {
                 return 0;
             }
-            if (customPath.avoidSettlements) {
+            if (marker && marker.character.faction != null) {
+                //customPath.avoidSettlements
                 Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
                 Vector3 localPos = customPath.region.innerMap.worldPos - newNodePos;
                 Vector3Int localPlace = new Vector3Int(localPos.x < 0f ? Mathf.FloorToInt(localPos.x) * -1 : Mathf.FloorToInt(localPos.x), localPos.y < 0f ? Mathf.FloorToInt(localPos.y) * -1 : Mathf.FloorToInt(localPos.y), 0);
@@ -357,7 +358,10 @@ public class CharacterAIPath : AILerp {
                     nodeGridTile = customPath.region.innerMap.map[localPlace.x, localPlace.y];
                 }
                 if (nodeGridTile != null && nodeGridTile.IsPartOfHumanElvenSettlement()) {
-                    return 100000;
+                    Faction owner = nodeGridTile.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner;
+                    if (owner != null && owner.IsHostileWith(marker.character.faction)) {
+                        return 100000;
+                    }
                 }
             }     
         }

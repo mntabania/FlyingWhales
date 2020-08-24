@@ -1373,9 +1373,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
 
     }
-    public void CreateDropItemJob(TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
-        if(!_owner.jobQueue.HasJob(JOB_TYPE.DROP_ITEM, target)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DROP_ITEM, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+    public void CreateDropItemJob(JOB_TYPE jobType, TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
+        if(!_owner.jobQueue.HasJob(jobType, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DROP_ITEM, target, _owner);
             job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
             job.SetDoNotRecalculate(doNotRecalculate);
             _owner.jobQueue.AddJobInQueue(job);

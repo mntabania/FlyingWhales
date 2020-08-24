@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8273069
+    totalSpriteSurfaceArea: 8301517
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -483,6 +483,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eaf292eff0f6c3d4690970a77fda06cb, type: 3}
   - {fileID: 21300000, guid: a1692aef8b188ad4dab5563c46cf5683, type: 3}
   - {fileID: 21300000, guid: 75da5defc5340a6438ce876a8abfc2ee, type: 3}
+  - {fileID: 21300000, guid: f7360fef095dd304eb1a955e31c6959b, type: 3}
   - {fileID: 21300000, guid: 7a9533ffeedeb3443924db0e8be0bf6f, type: 3}
   - {fileID: 21300000, guid: b1f635ffb61a0dd42819f237385eaadb, type: 3}
   - {fileID: 21300000, guid: 10af85ffde05ed64987c2f5abf99cc19, type: 3}
@@ -921,6 +922,7 @@ SpriteAtlas:
   - button_overview_clicked
   - button_eye_disabled
   - portrait_container_slot_invalid
+  - nameplate_charging
   - world_button_default
   - button_switch_default
   - button_cultists_default

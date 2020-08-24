@@ -29,6 +29,7 @@ public class Troll : Summon {
         traitContainer.AddTrait(this, "Petrasol");
     }
     public override void OnSummonAsPlayerMonster() {
+        base.OnSummonAsPlayerMonster();
         traitContainer.RemoveTrait(this, "Petrasol");
         movementComponent.SetAvoidSettlements(false);
     }

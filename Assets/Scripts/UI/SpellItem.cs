@@ -140,6 +140,14 @@ public class SpellItem : NameplateItem<SpellData> {
     #endregion
 
     #region Cooldown
+    public void UpdateCooldownFromLastState() {
+        SetCooldownState(spellData.isInCooldown);
+        if (cooldownCoverImage.gameObject.activeSelf) {
+            float fillAmount = ((float) spellData.currentCooldownTick / spellData.cooldown);
+            cooldownCoverImage.fillAmount = fillAmount;
+            //Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
+    }
     private void StartCooldownFill() {
         cooldownCoverImage.fillAmount = 0f;
         PerTickCooldown();
