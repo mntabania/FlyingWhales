@@ -872,7 +872,7 @@ public class ReactionComponent {
                                 _assumptionSuspects.Clear();
                                 for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
                                     Character inVision = actor.marker.inVisionCharacters[i];
-                                    if (inVision != targetCharacter && inVision.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
+                                    if (inVision != targetCharacter && !inVision.isDead && inVision.relationshipContainer.IsEnemiesWith(disguisedTarget)) {
                                         if(inVision.currentJob != null && inVision.currentJob.jobType == JOB_TYPE.BURY) {
                                             //If the in vision character is going to bury the dead, do not assume
                                             continue;

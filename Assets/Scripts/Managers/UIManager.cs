@@ -185,8 +185,8 @@ public class UIManager : MonoBehaviour {
 
         UpdateUI();
         
-        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial && 
-                                              WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona);
+        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
+        // && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {
@@ -1051,9 +1051,11 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
     private void OnInnerMapOpened(Region location) {
         worldUIRaycaster.enabled = false;
+        bottomNotification.HideMessage();
     }
     private void OnInnerMapClosed(Region location) {
         worldUIRaycaster.enabled = true;
+        bottomNotification.ShowMessage("Click on any tile to go there.");
     }
 
     public void ToggleBetweenMaps() {
@@ -1463,5 +1465,9 @@ public class UIManager : MonoBehaviour {
 
     #region Initial World Setup
     public InitialWorldSetupMenu initialWorldSetupMenu;
+    #endregion
+
+    #region Bottom Notification
+    public BottomNotification bottomNotification;
     #endregion
 }

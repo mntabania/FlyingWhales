@@ -250,15 +250,19 @@ public class MonsterInfoUI : InfoUIBase {
     public void OnHoverTrait(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
-            Trait trait = activeMonster.traitContainer.traits[index];
-            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
+            if (index < activeMonster.traitContainer.traits.Count) {
+                Trait trait = activeMonster.traitContainer.traits[index];
+                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
+            }
         }
     }
     public void OnHoverStatus(object obj) {
         if (obj is string text) {
             int index = int.Parse(text);
-            Trait trait = activeMonster.traitContainer.statuses[index];
-            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
+            if (index < activeMonster.traitContainer.statuses.Count) {
+                Trait trait = activeMonster.traitContainer.statuses[index];
+                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);
+            }
         }
     }
     public void OnHoverOutTrait() {

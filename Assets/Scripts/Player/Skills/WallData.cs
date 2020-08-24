@@ -5,7 +5,7 @@ using Traits;
 public class WallData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.WALL;
     public override string name => "Wall";
-    public override string description => "This Spell spawns a single tile of durable wall. Can be chained together to block someone's path. Wall slowly degrades and disappears after 5 hours.";
+    public override string description => "This Spell spawns a single tile of durable wall. Can be chained together to block someone's path. Wall degrades and disappears after 5 hours.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.SPELL;
 
     public WallData() : base() {
@@ -19,7 +19,7 @@ public class WallData : SpellData {
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
         wall.SetWallType(WALL_TYPE.Demon_Stone);
         GameDate expiryDate = GameManager.Instance.Today();
-        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1));
+        expiryDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
         wall.SetExpiry(expiryDate);
         targetTile.structure.AddPOI(wall, targetTile);
         //IncreaseThreatThatSeesTile(targetTile, 10);
