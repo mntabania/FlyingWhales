@@ -10,7 +10,7 @@ namespace Tutorial {
         protected override void ConstructCriteria() {
             _activationCriteria = new List<QuestCriteria>() {
                 new IsAtTime(new[] {
-                    GameManager.Instance.GetTicksBasedOnHour(3),
+                    GameManager.Instance.GetTicksBasedOnHour(3),//3
                     GameManager.Instance.GetTicksBasedOnHour(11)
                 }),
                 new PlayerIsInInnerMap()
@@ -31,7 +31,7 @@ namespace Tutorial {
                 new QuestStepCollection(
                     new ButtonClickedStep("ToggleMapBtn", "Click on World Map button")
                         .SetOnTopmostActions(OnTopMostWorldMap, OnNoLongerTopMostWorldMap),
-                    new DoubleClickHexTileStep("Double click on any tile")
+                    new LeftClickHexTileStep("Left click on any tile")
                 ),
             };
         }

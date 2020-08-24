@@ -213,7 +213,7 @@ public class GoapAction {
         //    Trait trait = target.traitContainer.allTraits[i];
         //    trait.ExecuteCostModification(goapType, actor, target, otherData, ref baseCost);
         //}
-        return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target);
+        return (baseCost * TimeOfDaysCostMultiplier(actor) * PreconditionCostMultiplier()) + GetDistanceCost(actor, target, job);
     }
     private bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
@@ -281,10 +281,13 @@ public class GoapAction {
             return racesThatCanDoAction.Contains(character.race);
         }
     }
-    private int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
+    private int GetDistanceCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job) {
         // if (actor.currentNpcSettlement == null) {
         //     return 1;
         // }
+        if (job.jobType == JOB_TYPE.SNATCH) {
+            return 1; //ignore distance cost if job is snatch, this is so that snatchers won't reach the maximum cost when trying to snatch someone from a different region. 
+        }
         LocationGridTile tile = poiTarget.gridTileLocation;
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));

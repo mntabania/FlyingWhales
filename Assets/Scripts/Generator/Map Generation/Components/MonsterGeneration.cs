@@ -174,17 +174,7 @@ public class MonsterGeneration : MapGenerationComponent {
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 			PangatLooLandmarkMonsterGeneration();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Zenko) {
-			List<BaseLandmark> lairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
-			for (int i = 0; i < lairs.Count; i++) {
-				if (i == 1) {
-					BaseLandmark landmark = lairs[i];
-					LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
-					int randomAmount = 3;
-					for (int k = 0; k < randomAmount; k++) {
-						CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
-					}	
-				}
-			}
+			ZenkoLandmarkMonsterGeneration();
 		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 			List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
 			for (int i = 0; i < allLandmarks.Count; i++) {
@@ -370,6 +360,26 @@ public class MonsterGeneration : MapGenerationComponent {
 				if (locationChoices.Count == 0) { break; }
 				Summon summon = CreateMonster(SUMMON_TYPE.Kobold, locationChoices);
 				locationChoices.Remove(summon.gridTileLocation);
+			}
+		}
+	}
+	private void ZenkoLandmarkMonsterGeneration() {
+		List<BaseLandmark> lairs = LandmarkManager.Instance.GetLandmarksOfType(LANDMARK_TYPE.MONSTER_LAIR);
+		for (int i = 0; i < lairs.Count; i++) {
+			BaseLandmark landmark = lairs[i];
+			if (i == 0) {
+				//Kobolds
+				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				int randomAmount = 4;
+				for (int k = 0; k < randomAmount; k++) {
+					CreateMonster(SUMMON_TYPE.Kobold, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
+				}
+			} else if (i == 1) {
+				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
+				int randomAmount = 3;
+				for (int k = 0; k < randomAmount; k++) {
+					CreateMonster(SUMMON_TYPE.Giant_Spider, landmark.tileLocation.settlementOnTile, landmark, structure, FactionManager.Instance.neutralFaction);
+				}
 			}
 		}
 	}

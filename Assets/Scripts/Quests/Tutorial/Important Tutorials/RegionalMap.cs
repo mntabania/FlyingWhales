@@ -37,7 +37,7 @@ namespace Tutorial {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(new HideRegionMapStep("Click on globe icon")),
                 new QuestStepCollection(new SelectRegionStep()),
-                new QuestStepCollection(new DoubleClickHexTileStep())
+                new QuestStepCollection(new LeftClickHexTileStep())
             };
         }
         #endregion

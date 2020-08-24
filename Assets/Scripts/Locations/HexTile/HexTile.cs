@@ -799,15 +799,22 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             return;
         }
         if (!UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
-            InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
-            if (baseToShow != null) {
-                if (baseToShow is RegionInfoUI) {
-                    Messenger.Broadcast(Signals.REGION_SELECTED, region);
-                    UIManager.Instance.ShowRegionInfo(region);
-                } else if (baseToShow is HextileInfoUI) {
-                    UIManager.Instance.ShowHexTileInfo(this);
-                }
-            }    
+            // InfoUIBase baseToShow = GetMenuToShowWhenTileIsClicked();
+            // if (baseToShow != null) {
+            //     if (baseToShow is RegionInfoUI) {
+            //         Messenger.Broadcast(Signals.REGION_SELECTED, region);
+            //         UIManager.Instance.ShowRegionInfo(region);
+            //     } else if (baseToShow is HextileInfoUI) {
+            //         UIManager.Instance.ShowHexTileInfo(this);
+            //     }
+            // }
+            // if (GameManager.Instance.gameHasStarted) {
+            //     UIManager.Instance.ShowHexTileInfo(this);    
+            // }
+            if (region != null) {
+                InnerMapManager.Instance.TryShowLocationMap(region);
+                InnerMapCameraMove.Instance.CenterCameraOnTile(this);
+            }
         }
         MouseOver();
         Messenger.Broadcast(Signals.TILE_LEFT_CLICKED, this);
@@ -822,17 +829,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void MouseOver() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
             if (CanBuildDemonicStructure()) {
-                SetBordersState(true, false, Color.green);
+                SetBordersState(true, true, Color.green);
             } else {
-                SetBordersState(true, false, Color.red);    
+                SetBordersState(true, true, Color.red);    
             }
         } else {
-            InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
-            if (baseToOpen is RegionInfoUI) {
-                region.ShowBorders(Color.red);
-            } else if (baseToOpen is HextileInfoUI) {
-                SetBordersState(true, false, Color.red);
-            }    
+            // InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+            // if (baseToOpen is RegionInfoUI) {
+            //     region.ShowBorders(Color.red);
+            // } else if (baseToOpen is HextileInfoUI) {
+            //     SetBordersState(true, false, Color.red);
+            // }    
+            region.ShowBorders(Color.red, true);
+            SetBordersState(true, true, Color.green);
         }
         if (GameManager.showAllTilesTooltip) {
             ShowTileInfo();    
@@ -841,14 +850,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     private void MouseExit() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
-            SetBordersState(false, false, Color.red);
+            SetBordersState(false, true, Color.red);
         } else {
-            InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
-            if (baseToOpen is RegionInfoUI) {
-                region.HideBorders();
-            } else if (baseToOpen is HextileInfoUI) {
-                SetBordersState(false, false, Color.red);
-            }
+            // InfoUIBase baseToOpen = GetMenuToShowWhenTileIsClicked();
+            // if (baseToOpen is RegionInfoUI) {
+            //     region.HideBorders();
+            // } else if (baseToOpen is HextileInfoUI) {
+            //     SetBordersState(false, false, Color.red);
+            // }
+            region.HideBorders();
+            SetBordersState(false, true, Color.red);
         }
         if (GameManager.showAllTilesTooltip) {
             UIManager.Instance.HideSmallInfo();    
@@ -860,10 +871,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             GameManager.Instance.gameHasStarted == false) {
             return;
         }
-        if (region != null) {
-            InnerMapManager.Instance.TryShowLocationMap(region);
-            InnerMapCameraMove.Instance.CenterCameraOnTile(this);
-        }
+        // if (region != null) {
+        //     InnerMapManager.Instance.TryShowLocationMap(region);
+        //     InnerMapCameraMove.Instance.CenterCameraOnTile(this);
+        // }
         Messenger.Broadcast(Signals.TILE_DOUBLE_CLICKED, this);
     }
     public void PointerClick(BaseEventData bed) {

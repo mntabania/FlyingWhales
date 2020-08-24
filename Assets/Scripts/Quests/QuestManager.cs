@@ -57,6 +57,9 @@ namespace Quests {
             InstantiatePendingSpecialPopups();    
         }
         private void InstantiatePendingSpecialPopups() {
+            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
+                return; //Tutorials shouldn't show up on Customize Worlds
+            }
             List<Special_Popup> completedSpecialPopups = SaveManager.Instance.currentSaveDataPlayer.completedSpecialPopups;
             Special_Popup[] specialPopups = CollectionUtilities.GetEnumValues<Special_Popup>();
             for (int i = 0; i < specialPopups.Length; i++) {

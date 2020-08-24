@@ -43,7 +43,7 @@ public class TileHighlighter : MonoBehaviour {
                 maxParticles = diameter * 80;
                 rateOverTime = diameter * 40;  
             } else {
-                maxParticles = diameter * 50;
+                maxParticles = diameter * 25;
                 rateOverTime = diameter * 10;
             }
             

@@ -156,8 +156,11 @@ namespace Tutorial {
             }
         }
         public void InstantiatePendingBonusTutorials() {
-            if (SettingsManager.Instance.settings.skipTutorials) {
-                return; //do not create tutorials if skip tutorials switch is on.
+            // if (SettingsManager.Instance.settings.skipTutorials) {
+            //     return; //do not create tutorials if skip tutorials switch is on.
+            // }
+            if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
+                return; //Tutorials shouldn't show up on Customize Worlds
             }
             //Create instances for all uncompleted tutorials.
             List<Tutorial> completedTutorials = SaveManager.Instance.currentSaveDataPlayer.completedBonusTutorials;
