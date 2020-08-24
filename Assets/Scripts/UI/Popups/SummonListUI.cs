@@ -13,12 +13,18 @@ public class SummonListUI : PopupMenuBase {
     [SerializeField] private RectTransform reserveHeader;
 
     [SerializeField] private UIHoverPosition _hoverPosition;
+    [SerializeField] private Toggle _mainToggle;
     
     private List<SummonMinionPlayerSkillNameplateItem> _summonPlayerSkillItems;
 
     public override void Open() {
         base.Open();
+        _mainToggle.SetIsOnWithoutNotify(true);
         UpdateSummonPlayerSkillItems();
+    }
+    public override void Close() {
+        base.Close();
+        _mainToggle.SetIsOnWithoutNotify(false);
     }
     public void Initialize() {
         _summonPlayerSkillItems = new List<SummonMinionPlayerSkillNameplateItem>();

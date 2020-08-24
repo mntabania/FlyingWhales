@@ -179,15 +179,18 @@ namespace Ruinarch {
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Alpha3);
             } else if (Input.GetKeyDown(KeyCode.Escape)) {
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
-                if (GameManager.Instance.gameHasStarted) {
-                    //if game has started then, check if options menu is not showing, if it is not, then
-                    //show options menu, then do not cancel any actions.
-                    if (!UIManager.Instance.IsOptionsMenuShowing()) {
-                        UIManager.Instance.OpenOptionsMenu();
-                        return;
+                if (UIManager.Instance != null) {
+                    if (!CancelActionsByPriority(true)) {
+                        //if no actions were cancelled then show options menu if itt is not yet showing.
+                        //if game has started then, check if options menu is not showing, if it is not, then
+                        //show options menu, then do not cancel any actions.
+                        if (!UIManager.Instance.IsOptionsMenuShowing()) {
+                            UIManager.Instance.OpenOptionsMenu();
+                            return;
+                        }    
                     }
                 }
-                CancelActionsByPriority();
+                // CancelActionsByPriority();
             } else if (Input.GetKeyDown(KeyCode.F1)) {
                 Messenger.Broadcast(Signals.HOTKEY_CLICK, "Spells Tab");
             } else if (Input.GetKeyDown(KeyCode.F2)) {
@@ -263,48 +266,55 @@ namespace Ruinarch {
         /// <summary>
         /// Cancel actions based on a hardcoded process
         /// </summary>
-        private void CancelActionsByPriority() {
+        private bool CancelActionsByPriority(bool ignoreCursor = false) {
             if (SettingsManager.Instance.IsShowing()) {
                 SettingsManager.Instance.CloseSettings();
-                return;
+                return true;
             }
-            if (GameManager.Instance.gameHasStarted == false) {
-                return;
+            if (UIManager.Instance == null) {
+                return true;
             }
             UIManager.Instance.SetTempDisableShowInfoUI(false);
             if (UIManager.Instance.IsOptionsMenuShowing()) {
                 //if options menu is showing, then close it, and nothing else
                 UIManager.Instance.CloseOptionsMenu();
-                return;
+                return true;
             }
             if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 //cancel current spell
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
+                return true;
             } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                 //cancel current intel
                 PlayerManager.Instance.player.SetCurrentActiveIntel(null);
+                return true;
             } else if (PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE) {
                 PlayerManager.Instance.player.SetCurrentlyActiveItem(TILE_OBJECT_TYPE.NONE);
+                return true;
             } else if (PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None) {
                 PlayerManager.Instance.player.SetCurrentlyActiveArtifact(ARTIFACT_TYPE.None);
+                return true;
             } else {
                 CustomStandaloneInputModule customModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
-                if (!EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
-                    if (UIManager.Instance.latestOpenedPopup != null) {
+                if (ignoreCursor || !EventSystem.current.IsPointerOverGameObject() || customModule.GetPointerData().pointerEnter.GetComponent<Button>() == null) {
+                    if (UIManager.Instance.openedPopups.Count > 0) {
                         //close latest popup
-                        UIManager.Instance.latestOpenedPopup.Close();
+                        UIManager.Instance.openedPopups.Last().Close();
+                        return true;
                     } else {
                         if (UIManager.Instance.poiTestingUI.gameObject.activeSelf ||
                             UIManager.Instance.minionCommandsUI.gameObject.activeSelf) {
-                            return;
+                            return true;
                         }
                         //close latest Info UI
                         if (UIManager.Instance.latestOpenedInfoUI != null) {
                             //close latest popup
                             UIManager.Instance.latestOpenedInfoUI.OnClickCloseMenu();
+                            return true;
                         }
                     }
                 }
+                return false;
                 //if (UIManager.Instance.openedPopups.Count > 0) {
                 //    //close latest popup
                 //    UIManager.Instance.openedPopups.Last().Close();

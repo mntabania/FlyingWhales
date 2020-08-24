@@ -81,6 +81,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject villagerItemPrefab;
     [FormerlySerializedAs("killCountScrollView")] [SerializeField] private ScrollRect villagersScrollView;
     [SerializeField] private RectTransform aliveHeader;
+    [SerializeField] private Toggle villagerTab;
     public RectTransform deadHeader;
     private List<CharacterNameplateItem> villagerItems;
     private int unusedKillCountCharacterItems;
@@ -676,6 +677,21 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Villagers
+    public void ToggleVillagersTab(bool isOn) {
+        if (isOn) {
+            OpenVillagersList();
+        } else {
+            CloseVillagersList();
+        }
+    }
+    public void OpenVillagersList() {
+        villagerGO.SetActive(true);
+        villagerTab.SetIsOnWithoutNotify(true);
+    }
+    public void CloseVillagersList() {
+        villagerGO.SetActive(false);
+        villagerTab.SetIsOnWithoutNotify(false);
+    }
     private void LoadVillagerItems(int itemsToCreate) {
         allFilteredCharactersCount = 0;
         unusedKillCountCharacterItems = 0;

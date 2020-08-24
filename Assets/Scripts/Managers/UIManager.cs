@@ -152,6 +152,7 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
         }
+        openedPopups = new List<PopupMenuBase>();
         questInfoUI.Initialize();
         questUI.Initialize();
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
@@ -580,6 +581,7 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region UI Utilities
+    public List<PopupMenuBase> openedPopups { get; private set; }
     private void OnUIMenuOpened(InfoUIBase menu) {
         latestOpenedInfoUI = menu;
     }
@@ -589,14 +591,16 @@ public class UIManager : MonoBehaviour {
         }
     }
     private void OnPopupMenuOpened(PopupMenuBase menu) {
-        //openedPopups.Add(menu);
-        latestOpenedPopup = menu;
+        if (!openedPopups.Contains(menu)) {
+            openedPopups.Add(menu);    
+        }
+        //latestOpenedPopup = menu;
     }
     private void OnPopupMenuClosed(PopupMenuBase menu) {
-        if(latestOpenedPopup == menu) {
-            latestOpenedPopup = null;
-        }
-        //openedPopups.Remove(menu);
+        // if(latestOpenedPopup == menu) {
+        //     latestOpenedPopup = null;
+        // }
+        openedPopups.Remove(menu);
     }
     /// <summary>
     /// Checker for if the mouse is currently over a UI Object. 
