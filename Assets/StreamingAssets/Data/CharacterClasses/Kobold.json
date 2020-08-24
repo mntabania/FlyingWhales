@@ -1,7 +1,7 @@
 {
   "_className": "Kobold",
   "_baseAttackPower": 56,
-  "_baseHP": 700,
+  "_baseHP": 570,
   "_baseAttackSpeed": 800,
   "_inventoryCapacity": 5,
   "_attackRange": 4.0,

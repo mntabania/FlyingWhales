@@ -21,7 +21,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool unlockAllSkills => _unlockAllSkills || WorldSettings.Instance.worldSettingsData.omnipotentMode;
 #else
     public bool unlimitedCast => false; //|| WorldSettings.Instance.worldSettingsData.omnipotentMode
-    public bool unlockAllSkills => false;
+    public bool unlockAllSkills => false || WorldSettings.Instance.worldSettingsData.omnipotentMode;
 #endif
 
     [SerializeField] private PlayerSkillDataDictionary _playerSkillDataDictionary;
