@@ -471,7 +471,6 @@ public class SaveDataPlayer {
                 break;
             case WorldSettingsData.World_Type.Icalawa:
             case WorldSettingsData.World_Type.Pangat_Loo:
-                UnlockWorld(WorldSettingsData.World_Type.Icalawa);
                 UnlockWorld(WorldSettingsData.World_Type.Affatt);
                 break;
             case WorldSettingsData.World_Type.Zenko:
