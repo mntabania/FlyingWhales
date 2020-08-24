@@ -285,12 +285,9 @@ public class Faction : IJobOwner {
                 continue;
             }
 
-            if (member.traitContainer.HasTrait("Criminal")) {
-                Criminal criminalTrait = member.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                if (criminalTrait.IsWantedBy(this)) {
-                    log += "\nMember is wanted by this faction, skipping...";
-                    continue;
-                }
+            if (member.IsWantedBy(this)) {
+                log += "\nMember is wanted by this faction, skipping...";
+                continue;
             }
             int weight = 50;
             log += "\n  -Base Weight: +50";
