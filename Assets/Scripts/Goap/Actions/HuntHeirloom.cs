@@ -10,7 +10,7 @@ public class HuntHeirloom : GoapAction {
     public HuntHeirloom() : base(INTERACTION_TYPE.HUNT_HEIRLOOM) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
     }
 
     #region Overrides
@@ -36,7 +36,7 @@ public class HuntHeirloom : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterRescueSuccess(ActualGoapNode goapNode) {
+    public void AfterHuntSuccess(ActualGoapNode goapNode) {
         Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Heirloom_Hunt, goapNode.actor);
         HeirloomHuntParty heirloomParty = party as HeirloomHuntParty;
         heirloomParty.SetTargetHeirloom(goapNode.poiTarget as Heirloom);
