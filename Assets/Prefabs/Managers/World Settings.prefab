@@ -13445,7 +13445,7 @@ PrefabInstance:
     - target: {fileID: 7346978856635274194, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7346978856635274194, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -13618,8 +13618,7 @@ PrefabInstance:
         the peace.
 
 
-        Finishing this unlocks: <b>Affatt</b>, <b>Zenko</b>
-        and <b>Custom</b>.'
+        Finishing this unlocks: <b>Affatt</b> and <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14287,9 +14286,13 @@ PrefabInstance:
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
       propertyPath: description
-      value: Another 2 region scenario. Both regions are claimed by a warmonger elven
-        kingdom. There is also a small human town on one region and they are fighting
-        for survival. For some strange reason, there are no monsters in this world.
+      value: 'Another 2 region scenario. Both regions are claimed by a warmonger
+        elven kingdom. There is also a small human town on one region and they are
+        fighting for survival. For some strange reason, there are no monsters in
+        this world.
+
+
+        Finishing this unlocks: <b>Zenko</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}
@@ -14523,7 +14526,7 @@ PrefabInstance:
 
 
         Finishing
-        this unlocks: <b>Affatt</b>, <b>Zenko</b> and <b>Custom</b>.'
+        this unlocks: <b>Affatt</b> and <b>Custom</b>.'
       objectReference: {fileID: 0}
     - target: {fileID: 2871544760435385677, guid: 43e32fd4ca008aa408a19e769e1013f7,
         type: 3}

@@ -852,6 +852,12 @@ public class UIManager : MonoBehaviour {
         if (monsterInfoUI.isShowing) {
             monsterInfoUI.OnClickCloseMenu();
         }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.OnClickCloseMenu();
+        }
+        if (structureInfoUI.isShowing) {
+            structureInfoUI.OnClickCloseMenu();
+        }
     }
     #endregion
 
