@@ -83,6 +83,7 @@ namespace Interrupts {
                                     log.AddToFillers(dislikeLog.fillers);
                                     log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(dislikeLog), LOG_IDENTIFIER.APPEND);
                                     log.AddLogToInvolvedObjects();    
+                                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                                 }
                             } else if (interruptHolder.actor.relationshipContainer.IsFriendsWith(otherFactionLeader)) {
                                 //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
@@ -97,6 +98,7 @@ namespace Interrupts {
                                     log.AddToFillers(likeLog.fillers);
                                     log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(likeLog), LOG_IDENTIFIER.APPEND);
                                     log.AddLogToInvolvedObjects();
+                                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                                 }
                             } 
                             // else {
