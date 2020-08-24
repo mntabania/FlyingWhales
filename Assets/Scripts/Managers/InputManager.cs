@@ -202,6 +202,10 @@ namespace Ruinarch {
                 Messenger.Broadcast(Signals.HOTKEY_CLICK, "Build Tab");
             } else if (Input.GetKeyDown(KeyCode.F7)) {
                 Messenger.Broadcast(Signals.HOTKEY_CLICK, "Cultist Tab");
+            } else if (Input.GetKeyDown(KeyCode.M)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "ToggleMapBtn");
+            } else if (Input.GetKeyDown(KeyCode.Tab)) {
+                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Tab);
             }
         }
         #endregion
