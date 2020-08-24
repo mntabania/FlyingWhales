@@ -98,10 +98,11 @@ namespace Interrupts {
                                     log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(likeLog), LOG_IDENTIFIER.APPEND);
                                     log.AddLogToInvolvedObjects();
                                 }
-                            } else {
-                                //The rest should be set as neutral
-                                factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
-                            }
+                            } 
+                            // else {
+                            //     //The rest should be set as neutral
+                            //     factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                            // }
                         }
                     }
                 }

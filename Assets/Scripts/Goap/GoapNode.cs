@@ -348,8 +348,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
     private bool MoveToDoAction(JobQueueItem job) {
         if (targetTile == null) {
             //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
-            Debug.LogWarning(
-                $"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
+            Debug.LogWarning($"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
             job.CancelJob(false);
             return false;
         }

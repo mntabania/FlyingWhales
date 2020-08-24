@@ -891,7 +891,7 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void RegenManaProcess() {
         if(mana < 20) {
-            AdjustMana(20);
+            AdjustMana(35);
         }
     }
     #endregion

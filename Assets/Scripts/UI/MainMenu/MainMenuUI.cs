@@ -81,13 +81,18 @@ public class MainMenuUI : MonoBehaviour {
         glowTween.OnValueChangedAnimation(false);
     }
     public void OnClickPlayGame() {
-        if (SaveManager.Instance.hasSavedDataPlayer) { //&& !SaveManager.Instance.currentSaveDataPlayer.IsDefault()
-            yesNoConfirmation.ShowYesNoConfirmation("Reset progress", "Starting a new game will reset your current progress. Are you sure you want to start a new game?", 
-                OnConfirmNewGame, showCover: true);
-        } else {
+        // if (SaveManager.Instance.hasSavedDataPlayer) { //&& !SaveManager.Instance.currentSaveDataPlayer.IsDefault()
+        //     yesNoConfirmation.ShowYesNoConfirmation("Reset progress", "Starting a new game will reset your current progress. Are you sure you want to start a new game?", 
+        //         OnConfirmNewGame, showCover: true);
+        // } 
+        // else {
+        //     SaveManager.Instance.CreateNewSaveDataPlayer();
+        //     WorldSettings.Instance.Open();    
+        // }
+        if (!SaveManager.Instance.hasSavedDataPlayer) {
             SaveManager.Instance.CreateNewSaveDataPlayer();
-            WorldSettings.Instance.Open();    
-        }
+        } 
+        WorldSettings.Instance.Open(); 
     }
     private void OnConfirmNewGame() {
         SaveManager.Instance.CreateNewSaveDataPlayer();
@@ -121,6 +126,6 @@ public class MainMenuUI : MonoBehaviour {
         Application.OpenURL("http://discord.ruinarch.com/");
     }
     public void UpdateContinueButton() {
-        continueButton.interactable = SaveManager.Instance.hasSavedDataPlayer; // SaveManager.Instance.hasSavedDataCurrentProgress;
+        continueButton.interactable = false; //SaveManager.Instance.hasSavedDataPlayer; // SaveManager.Instance.hasSavedDataCurrentProgress;
     }
 }

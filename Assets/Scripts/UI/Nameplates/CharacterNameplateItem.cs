@@ -42,7 +42,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         subLbl.text = character.raceClassName;
         UpdateLeaderIcon();
         portrait.GeneratePortrait(character);
-        UpdateStatusIcons();
+        // UpdateStatusIcons();
         UpdateText();
     }
     public override void UpdateObject(Character character) {
@@ -52,7 +52,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         subLbl.text = character.raceClassName;
         UpdateLeaderIcon();
         portrait.GeneratePortrait(character);
-        UpdateStatusIcons();
+        // UpdateStatusIcons();
         UpdateText();
     }
     public override void OnHoverEnter() {
@@ -99,22 +99,21 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         //     travellingIcon.SetActive(true);
         //     arrivedIcon.SetActive(false);
         //     restrainedIcon.SetActive(false);
-        // } else 
-        if (!character.isAtHomeRegion) {
-            //character is at another location other than his/her home region
-            travellingIcon.SetActive(false);
-            arrivedIcon.SetActive(true);
-            restrainedIcon.SetActive(false);
-        } else if (character.traitContainer.HasTrait("Restrained")) {
-            //character is restrained
-            travellingIcon.SetActive(false);
-            arrivedIcon.SetActive(false);
-            restrainedIcon.SetActive(true);
-        } else {
-            travellingIcon.SetActive(false);
-            arrivedIcon.SetActive(false);
-            restrainedIcon.SetActive(false);
-        }
+        // } else if (!character.isAtHomeRegion) {
+        //     //character is at another location other than his/her home region
+        //     travellingIcon.SetActive(false);
+        //     arrivedIcon.SetActive(true);
+        //     restrainedIcon.SetActive(false);
+        // } else if (character.traitContainer.HasTrait("Restrained")) {
+        //     //character is restrained
+        //     travellingIcon.SetActive(false);
+        //     arrivedIcon.SetActive(false);
+        //     restrainedIcon.SetActive(true);
+        // } else {
+        //     travellingIcon.SetActive(false);
+        //     arrivedIcon.SetActive(false);
+        //     restrainedIcon.SetActive(false);
+        // }
     }
 
     public void SetPortraitInteractableState(bool state) {
