@@ -839,8 +839,8 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.UpdateActionIcon();
         if (stateComponent.character.isNormalCharacter && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             //character has finished fleeing and is no longer in combat.
-            if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && character.homeStructure == lastFledFromStructure && 
-                lastFledFromStructure.structureType != STRUCTURE_TYPE.WILDERNESS && stateComponent.character.currentStructure != lastFledFromStructure) {
+            if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && !character.isNormalCharacter && 
+                character.homeStructure == lastFledFromStructure && lastFledFromStructure.structureType != STRUCTURE_TYPE.WILDERNESS && stateComponent.character.currentStructure != lastFledFromStructure) {
                 stateComponent.character.movementComponent.AddStructureToAvoidAndScheduleRemoval(lastFledFromStructure);
             }
         }

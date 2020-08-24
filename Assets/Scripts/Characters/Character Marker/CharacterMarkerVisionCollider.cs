@@ -115,7 +115,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     private bool TryAddPOIToVision(IPointOfInterest poi) {
         //(parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState is CombatState && 
         //parentMarker.character.movementComponent.HasPathTo(poi.gridTileLocation))|| 
-        if (parentMarker && poi.gridTileLocation != null) {
+        if (parentMarker && poi.gridTileLocation != null && parentMarker.character.gridTileLocation != null) {
             //if it is, just follow the normal procedure when a poi becomes in range
             if (poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure ||
                 (poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {

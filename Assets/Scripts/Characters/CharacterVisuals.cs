@@ -202,7 +202,7 @@ public class CharacterVisuals {
         }
 
         //Travelling
-        if (_owner.carryComponent.masterCharacter.avatar.isTravelling) {
+        if (_owner.carryComponent.masterCharacter.avatar != null && _owner.carryComponent.masterCharacter.avatar.isTravelling) {
             if (_owner.carryComponent.masterCharacter.marker.destinationTile != null) {
                 return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
             }

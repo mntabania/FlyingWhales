@@ -140,7 +140,7 @@ namespace Inner_Maps {
                         genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
                         break;
                     case Ground_Type.Snow:
-                        genericTileObject.traitContainer.AddTrait(genericTileObject, "Frozen", bypassElementalChance: true, overrideDuration: 0);
+                        // genericTileObject.traitContainer.AddTrait(genericTileObject, "Frozen", bypassElementalChance: true, overrideDuration: 0);
                         genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
                         break;
                     default:

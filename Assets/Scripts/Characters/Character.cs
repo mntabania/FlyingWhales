@@ -1511,9 +1511,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return null;
     }
     public LocationGridTile GetTargetTileToGoToRegion(Region region) {
-        RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
-        Assert.IsNotNull(regionInnerTileMap, $"Inner map of {currentRegion.name} is not of type RegionInnerTileMap");
-        return regionInnerTileMap.GetTileToGoToRegion(region);
+        if (currentRegion != null) {
+            RegionInnerTileMap regionInnerTileMap = currentRegion.innerMap as RegionInnerTileMap;
+            if (regionInnerTileMap != null) {
+                return regionInnerTileMap.GetTileToGoToRegion(region);    
+            }
+        } else if (gridTileLocation != null) {
+            RegionInnerTileMap regionInnerTileMap = gridTileLocation.parentMap.region.innerMap as RegionInnerTileMap;
+            if (regionInnerTileMap != null) {
+                return regionInnerTileMap.GetTileToGoToRegion(region);    
+            }
+        }
+        return null;
     }
     public LocationGridTile GetNearestUnoccupiedEdgeTileFromThis() {
         LocationGridTile currentGridTile = gridTileLocation;
