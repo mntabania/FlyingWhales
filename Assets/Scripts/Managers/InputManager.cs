@@ -188,6 +188,20 @@ namespace Ruinarch {
                     }
                 }
                 CancelActionsByPriority();
+            } else if (Input.GetKeyDown(KeyCode.F1)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Spells Tab");
+            } else if (Input.GetKeyDown(KeyCode.F2)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Demons Tab");
+            } else if (Input.GetKeyDown(KeyCode.F3)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Monsters Tab");
+            } else if (Input.GetKeyDown(KeyCode.F4)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Intel Tab");
+            } else if (Input.GetKeyDown(KeyCode.F5)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Villagers Tab");
+            } else if (Input.GetKeyDown(KeyCode.F6)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Build Tab");
+            } else if (Input.GetKeyDown(KeyCode.F7)) {
+                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Cultist Tab");
             }
         }
         #endregion

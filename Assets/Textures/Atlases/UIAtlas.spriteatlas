@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 8301517
+    totalSpriteSurfaceArea: 8314477
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -274,6 +274,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 46b8cfc737d17154193cf793e2409bb5, type: 3}
   - {fileID: 21300000, guid: 40f495e7989feca46a68da06a4d488b8, type: 3}
   - {fileID: 21300000, guid: 6a6b99e7fa779f3409e372bf90474cb3, type: 3}
+  - {fileID: 21300000, guid: 88210ae730203624b87057a3e35bbcf7, type: 3}
   - {fileID: 21300000, guid: 11c7a9f741958284ca786c3cda029185, type: 3}
   - {fileID: 21300000, guid: eb7f9b088605da7409706c272a845a87, type: 3}
   - {fileID: 21300000, guid: b052381870168734fb2dbe6740dba335, type: 3}
@@ -290,6 +291,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2b502178746396d478127ce7aaead443, type: 3}
   - {fileID: 21300000, guid: cade4378599559146b85acb8faea84d2, type: 3}
   - {fileID: 21300000, guid: e73b98880b3bac5428be2c89e7e93810, type: 3}
+  - {fileID: 21300000, guid: 5b1e7e88a307b3d4a8c5ac3c9915e850, type: 3}
   - {fileID: 21300000, guid: 5a12aaa8d51a3894284212ca40d1d654, type: 3}
   - {fileID: 21300000, guid: 3ef641b8f35b83b4aab9c86fdacbcc2a, type: 3}
   - {fileID: 21300000, guid: b6cbb6c8c7bf87c459e11a0c3d1b60fe, type: 3}
@@ -488,6 +490,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b1f635ffb61a0dd42819f237385eaadb, type: 3}
   - {fileID: 21300000, guid: 10af85ffde05ed64987c2f5abf99cc19, type: 3}
   - {fileID: 21300000, guid: f9c56cffd6570ee4aa91ddfe15f4831a, type: 3}
+  - {fileID: 21300000, guid: 8947dcff354178f448810bd6e8a25e23, type: 3}
+  - {fileID: 21300000, guid: 4b8d1dffc5017a54fb1390535f3b11c9, type: 3}
   m_PackedSpriteNamesToIndex:
   - button_build_default
   - assault_icon
@@ -713,6 +717,7 @@ SpriteAtlas:
   - button_psychopathdetail_hover
   - button_anvil_default
   - minion_tab_items_disabled
+  - button_base_clicked
   - minion_tab_traits_default
   - nameplate_visitors
   - loadout_button_optional
@@ -729,6 +734,7 @@ SpriteAtlas:
   - character_count_widget_hover
   - Icon-Lich-2
   - defense_icon
+  - button_base_hover
   - button_minions_disabled
   - intel_button_disabled
   - button_arrow2_left_clicked
@@ -927,5 +933,7 @@ SpriteAtlas:
   - button_switch_default
   - button_cultists_default
   - quest_fail_mark
+  - button_base_disabled
+  - button_base_default
   m_Tag: UIAtlas
   m_IsVariant: 0

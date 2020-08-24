@@ -1,5 +1,7 @@
-﻿using Coffee.UIExtensions;
+﻿using System;
+using Coffee.UIExtensions;
 using Quests.Steps;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 namespace Ruinarch.Custom_UI {
@@ -20,7 +22,7 @@ namespace Ruinarch.Custom_UI {
         }
         protected override void OnEnable() {
             base.OnEnable();
-            if (Application.isPlaying && shineEffect != null) {
+            if (Application.isPlaying) {
                 if (shineEffect != null) {
                     Messenger.AddListener<string>(Signals.SHOW_SELECTABLE_GLOW, OnReceiveShowGlowSignal);
                     Messenger.AddListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
@@ -28,11 +30,11 @@ namespace Ruinarch.Custom_UI {
                         StartGlow();
                     }
                 }
+                Messenger.AddListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 Messenger.AddListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
                 FireToggleShownSignal();
             }
         }
-        
         protected override void OnDisable() {
             base.OnDisable();
             if (Application.isPlaying) {
@@ -41,6 +43,7 @@ namespace Ruinarch.Custom_UI {
                     Messenger.RemoveListener<string>(Signals.HIDE_SELECTABLE_GLOW, OnReceiveHideGlowSignal);
                     HideGlow();    
                 }
+                Messenger.RemoveListener<string>(Signals.HOTKEY_CLICK, OnReceiveHotKeyClick);
                 Messenger.RemoveListener<QuestStep>(Signals.QUEST_STEP_ACTIVATED, OnQuestStepActivated);
             }
         }
@@ -70,6 +73,14 @@ namespace Ruinarch.Custom_UI {
         private void OnReceiveHideGlowSignal(string buttonName) {
             if (name == buttonName) {
                 HideGlow();
+            }
+        }
+        private void OnReceiveHotKeyClick(string buttonName) {
+            if (name == buttonName) {
+                if (interactable) {
+                    isOn = !isOn;    
+                    Messenger.Broadcast(Signals.TOGGLE_CLICKED, this); 
+                }
             }
         }
         #endregion

@@ -207,10 +207,12 @@ public class PlayerUI : MonoBehaviour {
         // _buildListUI.Initialize();
         // cultistsList.Initialize();
 #if UNITY_EDITOR
-        itemsToggle.gameObject.SetActive(true);
-        artifactsToggle.gameObject.SetActive(true);
-        CreateItemsForTesting();
-        CreateArtifactsForTesting();
+        itemsToggle.gameObject.SetActive(false);
+        artifactsToggle.gameObject.SetActive(false);    
+        // itemsToggle.gameObject.SetActive(true);
+        // artifactsToggle.gameObject.SetActive(true);
+        // CreateItemsForTesting();
+        // CreateArtifactsForTesting();
 #else
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);        
