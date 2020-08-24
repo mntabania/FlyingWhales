@@ -669,6 +669,7 @@ public class ObjectPicker : PopupMenuBase {
                 item.SetAsToggle();
             }
             item.SetInteractableState(false);
+            item.UpdateCooldownFromLastState();
             item.transform.SetAsLastSibling();
         }
         
@@ -697,6 +698,7 @@ public class ObjectPicker : PopupMenuBase {
                 item.SetAsToggle();
                 item.SetToggleGroup(toggleGroup);
             }
+            item.UpdateCooldownFromLastState();
             item.transform.SetAsFirstSibling();
         }
     }

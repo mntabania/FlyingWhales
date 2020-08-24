@@ -56,51 +56,56 @@ public class PickUp : GoapAction {
             }
         }
         if(target is TileObject targetTileObject) {
-            if(targetTileObject.characterOwner == null) {
-                if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {
-                    cost += 10;
-                    costLog = $"{costLog} +10(No personal owner, Take Item/Haul)";
-                } else if (job != null && job.jobType == JOB_TYPE.REMOVE_STATUS) {
-                    if (target.gridTileLocation != null && actor.homeSettlement != null &&
-                        actor.movementComponent.HasPathTo(targetTileObject.gridTileLocation) &&
-                         (targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) || 
-                          targetTileObject.gridTileLocation.IsNextToSettlementArea(actor.homeSettlement))) {
-                        int randomCost = UtilityScripts.Utilities.Rng.Next(40, 81);
+            if(targetTileObject is Heirloom && job != null && job.jobType == JOB_TYPE.DROP_ITEM_PARTY) { //|| job.jobType == JOB_TYPE.DROP_ITEM
+                cost += 10;
+                costLog = $"{costLog} +10(Heirloom)";
+            } else {
+                if (targetTileObject.characterOwner == null) {
+                    if (job != null && (job.jobType == JOB_TYPE.TAKE_ITEM || job.jobType == JOB_TYPE.HAUL)) {
+                        cost += 10;
+                        costLog = $"{costLog} +10(No personal owner, Take Item/Haul)";
+                    } else if (job != null && job.jobType == JOB_TYPE.REMOVE_STATUS) {
+                        if (target.gridTileLocation != null && actor.homeSettlement != null &&
+                            actor.movementComponent.HasPathTo(targetTileObject.gridTileLocation) &&
+                             (targetTileObject.gridTileLocation.IsPartOfSettlement(actor.homeSettlement) ||
+                              targetTileObject.gridTileLocation.IsNextToSettlementArea(actor.homeSettlement))) {
+                            int randomCost = UtilityScripts.Utilities.Rng.Next(40, 81);
+                            cost += randomCost;
+                            costLog = $"{costLog} +{randomCost.ToString()}(Job is remove status and object is reachable or is next to or part of actor's home settlement)";
+                        } else {
+                            cost += 2000;
+                            costLog = $"{costLog} +2000(Job is remove status and object is NOT reachable and is NOT next to or part of actor's home settlement)";
+                        }
+                    } else if (actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                               && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == actor.homeSettlement) {
+                        int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                         cost += randomCost;
-                        costLog = $"{costLog} +{randomCost.ToString()}(Job is remove status and object is reachable or is next to or part of actor's home settlement)";
+                        costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor home settlement)";
+                    } else if (!actor.isFactionless && !actor.isFriendlyFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                         && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null
+                         && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner == actor.faction) {
+                        int randomCost = UtilityScripts.Utilities.Rng.Next(100, 121);
+                        cost += randomCost;
+                        costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor's faction owned settlement)";
                     } else {
                         cost += 2000;
-                        costLog = $"{costLog} +2000(Job is remove status and object is NOT reachable and is NOT next to or part of actor's home settlement)";    
+                        costLog = $"{costLog} +2000(No personal owner)";
                     }
-                } else if (actor.homeSettlement != null && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                           && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile == actor.homeSettlement) {
-                    int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);
-                    cost += randomCost;
-                    costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor home settlement)";
-                } else if (!actor.isFactionless && !actor.isFriendlyFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                     && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null
-                     && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner == actor.faction) {
-                    int randomCost = UtilityScripts.Utilities.Rng.Next(100, 121);
-                    cost += randomCost;
-                    costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor's faction owned settlement)";
                 } else {
-                    cost += 2000;
-                    costLog = $"{costLog} +2000(No personal owner)";
-                }
-            } else {
-                if(targetTileObject.IsOwnedBy(actor)) {
-                    cost += UtilityScripts.Utilities.Rng.Next(20, 61);
-                    costLog = $"{costLog} +{cost}(Personal owner is actor)";
-                } else {
-                    cost += 2000;
-                    costLog = $"{costLog} +2000(Has owner)";
-                    //if (actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
-                    //    cost += UtilityScripts.Utilities.Rng.Next(80, 91);
-                    //    costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
-                    //} else {
-                    //    cost += 2000;
-                    //    costLog += " +2000(Not Kleptomaniac/Has rel with owner)";
-                    //}
+                    if (targetTileObject.IsOwnedBy(actor)) {
+                        cost += UtilityScripts.Utilities.Rng.Next(20, 61);
+                        costLog = $"{costLog} +{cost}(Personal owner is actor)";
+                    } else {
+                        cost += 2000;
+                        costLog = $"{costLog} +2000(Has owner)";
+                        //if (actor.traitContainer.HasTrait("Kleptomaniac") || !actor.relationshipContainer.HasRelationshipWith(targetTileObject.characterOwner) || (job != null && job.jobType == JOB_TYPE.HAUL)) {
+                        //    cost += UtilityScripts.Utilities.Rng.Next(80, 91);
+                        //    costLog += $" +{cost}(Kleptomaniac/No rel with owner)";
+                        //} else {
+                        //    cost += 2000;
+                        //    costLog += " +2000(Not Kleptomaniac/Has rel with owner)";
+                        //}
+                    }
                 }
             }
         }

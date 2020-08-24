@@ -56,8 +56,8 @@ public class HeirloomHuntParty : Party {
     }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {
-            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterEnteredHex);
+        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ENTERED_HEXTILE)) {
+            Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHex);
         }
     }
     #endregion

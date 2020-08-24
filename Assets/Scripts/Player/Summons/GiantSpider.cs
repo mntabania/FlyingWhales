@@ -27,6 +27,7 @@ public class GiantSpider : Summon {
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Giant_Spider_Behaviour);
     }
     public override void OnSummonAsPlayerMonster() {
+        base.OnSummonAsPlayerMonster();
         movementComponent.SetAvoidSettlements(false);
     }
     public override void SubscribeToSignals() {

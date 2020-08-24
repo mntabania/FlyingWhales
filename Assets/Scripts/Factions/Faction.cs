@@ -50,7 +50,7 @@ public class Faction : IJobOwner {
     public int newLeaderDesignationChance { get; private set; }
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
-    private Heirloom factionHeirloom;
+    public Heirloom factionHeirloom { get; private set; }
 
     #region getters/setters
     public bool isDestroyed => characters.Count <= 0;

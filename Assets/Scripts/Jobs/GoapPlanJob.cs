@@ -486,6 +486,7 @@ public class GoapPlanJob : JobQueueItem {
     #region Job Object Pool
     public override void Reset() {
         base.Reset();
+        goal.Reset();
         targetPOI = null;
         targetInteractionType = INTERACTION_TYPE.NONE;
         otherData.Clear();

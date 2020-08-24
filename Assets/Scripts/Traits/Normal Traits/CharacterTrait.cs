@@ -55,6 +55,9 @@ namespace Traits {
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is TileObject item) {
+                //if(item is Heirloom) {
+                //    Debug.Log("sdfsdf");
+                //}
                 if (item is TreasureChest) {
                     if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.OPEN_CHEST, item) == false 
                         && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
@@ -94,7 +97,7 @@ namespace Traits {
                     if(characterThatWillDoJob.partyComponent.currentParty is HeirloomHuntParty heirloomParty) {
                         if(heirloomParty.targetHeirloom == item) {
                             heirloomParty.SetFoundHeirloom(true);
-                            characterThatWillDoJob.jobComponent.CreateDropItemJob(heirloomParty.targetHeirloom, heirloomParty.targetHeirloom.structureSpot, true);
+                            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, heirloomParty.targetHeirloom, heirloomParty.targetHeirloom.structureSpot, true);
                         }
                     }
                 }

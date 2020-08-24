@@ -245,13 +245,12 @@ public class CombatManager : MonoBehaviour {
         //List<ITraitable> traitables = new List<ITraitable>();
         //if (!traitable.traitContainer.HasTrait("Zapped")) {
             if (traitable.gridTileLocation != null) {
-                List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+                List<LocationGridTile> tiles = traitable.gridTileLocation.neighbourList;
                 //traitables.Clear();
                 List<LocationGridTile> affectedTiles = new List<LocationGridTile>();
                 for (int i = 0; i < tiles.Count; i++) {
                     LocationGridTile tile = tiles[i];
                     if (tile.genericTileObject.traitContainer.HasTrait("Wet")) {
-                        // traitables.AddRange(tile.GetTraitablesOnTile());
                         affectedTiles.Add(tile);
                     }
                 }

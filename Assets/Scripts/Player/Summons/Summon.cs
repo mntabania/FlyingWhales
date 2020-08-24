@@ -227,7 +227,9 @@ public class Summon : Character {
         behaviourComponent.SetIsInvading(false, null);
         behaviourComponent.SetIsDefending(false, null);
     }
-    public virtual void OnSummonAsPlayerMonster() { }
+    public virtual void OnSummonAsPlayerMonster() {
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+    }
     #endregion
 
     #region Player Action Target

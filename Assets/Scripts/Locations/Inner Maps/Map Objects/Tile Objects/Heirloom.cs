@@ -7,11 +7,17 @@ public class Heirloom : TileObject{
 
     public Heirloom() {
         Initialize(TILE_OBJECT_TYPE.HEIRLOOM);
+        AddAdvertisedAction(INTERACTION_TYPE.HUNT_HEIRLOOM);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Fireproof");
     }
     public Heirloom(SaveDataTileObject data) {
         Initialize(data);
+        AddAdvertisedAction(INTERACTION_TYPE.HUNT_HEIRLOOM);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Fireproof");
     }

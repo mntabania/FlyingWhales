@@ -221,10 +221,10 @@ public class GoapAction {
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (actor.currentRegion != poiTarget.gridTileLocation.structure.location) {
+        if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.location) {
             return true;
         }
-        
+
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
@@ -285,7 +285,7 @@ public class GoapAction {
         // if (actor.currentNpcSettlement == null) {
         //     return 1;
         // }
-        if (job.jobType == JOB_TYPE.SNATCH) {
+        if (job.jobType == JOB_TYPE.SNATCH || job.jobType == JOB_TYPE.DROP_ITEM_PARTY) {
             return 1; //ignore distance cost if job is snatch, this is so that snatchers won't reach the maximum cost when trying to snatch someone from a different region. 
         }
         LocationGridTile tile = poiTarget.gridTileLocation;
@@ -456,6 +456,12 @@ public struct GoapEffect {
         this.conditionKey = conditionKey;
         this.isKeyANumber = isKeyANumber;
         this.target = target;
+    }
+    public void Reset() {
+        conditionType = GOAP_EFFECT_CONDITION.NONE;
+        conditionKey = string.Empty;
+        isKeyANumber = false;
+        target = GOAP_EFFECT_TARGET.ACTOR;
     }
 
     public override string ToString() {
