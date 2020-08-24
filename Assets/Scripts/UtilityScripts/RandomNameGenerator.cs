@@ -38,7 +38,7 @@ public static class RandomNameGenerator {
 		"Maven", "Niles", "Nigel", "Nestor", "Oakley", "Oliver", "Oswald", "Payton", "Parker", "Preston", "Quentin", "Ramsey", "Randall", "Rhett", "River", "Robert",
 		"Sawyer", "Shelton", "Silas", "Spencer", "Stewart", "Tanner", "Tim", "Terrence", "Ulmer", "Ulric", "Uther", "Wallace", "Wesley", "William", "Wolfe", "Yates",
 		"Donald", "Barrack", "Dante", "Illidan", "Legolas", "Ash", "Rasputin", "Dean", "Leoric", "Deckard", "Jubei", "Alucard", "Taki", "Marvin", "Mykel", "Ryan", "Neil",
-        "Tristan", "Michael", "Marnel",
+        "Tristan", "Michael", "Marnel", "Alden", "Victor", "Tolfu"
 	};
 
 	private static string[] humanFemaleFirstNames = new[]{

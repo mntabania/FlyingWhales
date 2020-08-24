@@ -40,6 +40,7 @@
                 case CRIME_TYPE.Disturbances:
                 case CRIME_TYPE.Assault:
                 case CRIME_TYPE.Arson:
+                case CRIME_TYPE.Trespassing:
                     return CRIME_SEVERITY.Misdemeanor;
                 case CRIME_TYPE.Murder:
                 case CRIME_TYPE.Animal_Killing:

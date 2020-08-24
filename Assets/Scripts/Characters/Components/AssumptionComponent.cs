@@ -12,6 +12,7 @@ public class AssumptionComponent {
     #region General
     public void CreateAndReactToNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType, REACTION_STATUS reactionStatus) {
         Assumption newAssumption = CreateNewAssumption(assumedCharacter, targetOfAssumedCharacter, assumedActionType);
+        newAssumption.assumedAction.SetCrimeType();
 
         Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction);
         assumptionLog.SetLogType(LOG_TYPE.Assumption);

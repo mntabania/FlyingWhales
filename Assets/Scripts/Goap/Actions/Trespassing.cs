@@ -31,13 +31,12 @@ public class Trespassing : GoapAction {
     //    }
     //    return goapActionInvalidity;
     //}
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
-        string response = base.ReactionToActor(actor, target, witness, node, status);
-
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
         if (!actor.isDead) {
+            Character targetCharacter = target as Character;
             LocationStructure trespassedStructure = actor.currentStructure;
-            if (trespassedStructure != null && trespassedStructure.settlementLocation != null && trespassedStructure.settlementLocation.owner != null && trespassedStructure.settlementLocation.owner == witness.faction) {
+            if (trespassedStructure != null && trespassedStructure.settlementLocation != null && trespassedStructure.settlementLocation.owner != null && trespassedStructure.settlementLocation.owner == targetCharacter.faction) {
                 bool willReact = true;
                 switch (trespassedStructure.structureType) {
                     case STRUCTURE_TYPE.TAVERN:
@@ -50,11 +49,18 @@ public class Trespassing : GoapAction {
                 }
 
                 if (willReact) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-                    CrimeManager.Instance.ReactToCrime(witness, actor, witness, witness.faction, node.crimeType, node, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, targetCharacter.faction, node.crimeType, node, status);
                 }
             }
         }
+        return response;
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
+        ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
+
+        
         return response;
     }
     public override CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, ActualGoapNode crime) {

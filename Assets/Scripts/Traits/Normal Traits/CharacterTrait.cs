@@ -163,8 +163,8 @@ namespace Traits {
                                 }
                                 if (willReact) {
                                     if (owner.marker) {
-                                        ActualGoapNode node = owner.assumptionComponent.CreateNewActionToReactTo(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING);
-                                        owner.marker.AddUnprocessedAction(node);
+                                        /*ActualGoapNode node = */owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                        //owner.marker.AddUnprocessedAction(node);
                                     }
                                 }
                             }
