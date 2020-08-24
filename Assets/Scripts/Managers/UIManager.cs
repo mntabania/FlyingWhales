@@ -185,8 +185,8 @@ public class UIManager : MonoBehaviour {
 
         UpdateUI();
         
-        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial && 
-                                              WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona);
+        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
+        // && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona
     }
     private void TryUpdateFactionLog(Faction faction) {
         if (factionInfoUI.isShowing && factionInfoUI.currentlyShowingFaction == faction) {

@@ -19,7 +19,8 @@ namespace Tutorial {
         protected override bool HasMetAllCriteria() {
             bool hasMetCriteria = base.HasMetAllCriteria();
             if (hasMetCriteria) {
-                return GridMap.Instance.allRegions.Length >= 2 && TutorialManager.Instance.GetAllActiveTutorialsCount() + QuestManager.Instance.GetActiveQuestsCount() <= 1;
+                return WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial && 
+                       TutorialManager.Instance.GetAllActiveTutorialsCount() + QuestManager.Instance.GetActiveQuestsCount() <= 1;
             }
             return false;
         }
