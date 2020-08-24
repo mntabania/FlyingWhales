@@ -335,7 +335,9 @@ public class SpellData : IPlayerSkill {
                 AdjustCharges(-1);
             }
             if (hasManaCost) {
-                PlayerManager.Instance.player.AdjustMana(-manaCost);
+                if (!WorldSettings.Instance.worldSettingsData.omnipotentMode) {
+                    PlayerManager.Instance.player.AdjustMana(-manaCost);
+                }
             }
         }
         // PlayerManager.Instance.player.threatComponent.AdjustThreatPerHour(threatPerHour);

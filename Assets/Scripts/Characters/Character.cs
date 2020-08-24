@@ -5887,4 +5887,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     #endregion
+
+    #region Crimes
+    public bool IsWantedBy(Faction faction) {
+        if (traitContainer.HasTrait("Criminal") && faction != null) {
+            Criminal criminalTrait = traitContainer.GetNormalTrait<Criminal>("Criminal");
+            return criminalTrait.IsWantedBy(faction);
+        }
+        return false;
+    }
+    #endregion
 }

@@ -888,7 +888,19 @@ public class ReactionComponent {
                                     actor.assumptionComponent.CreateAndReactToNewAssumption(chosenSuspect, disguisedTarget, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
                                 }
                             }
+                        }
+                    }
+                }
 
+                if (targetCharacter.marker) {
+                    if (targetCharacter.carryComponent.isCarryingAnyPOI && targetCharacter.carryComponent.carriedPOI is Character carriedCharacter) {
+                        debugLog += "\n-Target is carrying a character";
+                        if(carriedCharacter.traitContainer.HasTrait("Restrained", "Unconscious") && !carriedCharacter.isDead && carriedCharacter.IsWantedBy(actor.faction)) {
+                            debugLog += "\n-Will create Assault assumption on " + targetCharacter.name;
+                            actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.ASSAULT, REACTION_STATUS.WITNESSED);
+                        } else if (targetCharacter.currentJob != null && targetCharacter.currentJob.jobType == JOB_TYPE.BURY_SERIAL_KILLER_VICTIM) {
+                            debugLog += "\n-Will create Murder assumption on " + targetCharacter.name;
+                            actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
                         }
                     }
                 }

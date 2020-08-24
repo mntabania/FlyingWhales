@@ -123,11 +123,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             } else {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
                 if(exterminateTargetStructure != null) {
-                    if(UnityEngine.Random.Range(0, 100) < 20) {
-                        settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
-                    } else {
-                        SetExterminateTarget(null);
-                    }
+                    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
+                    //if (UnityEngine.Random.Range(0, 100) < 20) {
+                    //    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
+                    //} else {
+                    //    SetExterminateTarget(null);
+                    //}
                 }
             }
         }
@@ -276,12 +277,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 continue;
             }
 
-            if (owner != null && resident.traitContainer.HasTrait("Criminal")) {
-                Criminal criminalTrait = resident.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                if (criminalTrait.IsWantedBy(owner)) {
-                    log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
-                    continue;
-                }
+            if (owner != null && resident.IsWantedBy(owner)) {
+                log += "\nMember is wanted by the faction owner of this settlement " + owner.name + ", skipping...";
+                continue;
             }
 
             int weight = 50;
