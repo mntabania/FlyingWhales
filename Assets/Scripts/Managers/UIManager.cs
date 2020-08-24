@@ -1255,7 +1255,7 @@ public class UIManager : MonoBehaviour {
         yesNoConfirmation.ShowYesNoConfirmation(header, question, onClickYesAction, onClickNoAction, showCover, layer, yesBtnText, noBtnText, yesBtnInteractable, noBtnInteractable,  pauseAndResume, 
             yesBtnActive, noBtnActive, yesBtnInactiveHoverAction, yesBtnInactiveHoverExitAction);
     }
-    private void HideYesNoConfirmation() {
+    public void HideYesNoConfirmation() {
         yesNoConfirmation.HideYesNoConfirmation();
         if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen()) {
             ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game

@@ -55,9 +55,16 @@ public class YesNoConfirmation : PopupMenuBase{
         closeBtn.onClick.RemoveAllListeners();
 
         //hide confirmation menu on click
-        yesBtn.onClick.AddListener(HideYesNoConfirmation);
-        noBtn.onClick.AddListener(HideYesNoConfirmation);
-        closeBtn.onClick.AddListener(HideYesNoConfirmation);
+        if (UIManager.Instance != null) {
+            yesBtn.onClick.AddListener(UIManager.Instance.HideYesNoConfirmation);
+            noBtn.onClick.AddListener(UIManager.Instance.HideYesNoConfirmation);
+            closeBtn.onClick.AddListener(UIManager.Instance.HideYesNoConfirmation);    
+        } else {
+            yesBtn.onClick.AddListener(HideYesNoConfirmation);
+            noBtn.onClick.AddListener(HideYesNoConfirmation);
+            closeBtn.onClick.AddListener(HideYesNoConfirmation);
+        }
+        
 
         //specific actions
         if (onClickYesAction != null) {
