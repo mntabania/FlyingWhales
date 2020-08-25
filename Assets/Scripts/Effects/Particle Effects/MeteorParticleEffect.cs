@@ -62,7 +62,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         Messenger.Broadcast(Signals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
-        GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
+        //GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
         
     }
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
@@ -99,6 +99,18 @@ public class MeteorParticleEffect : BaseParticleEffect {
         if (!hasMeteorFell) {
             if (meteorParticle.isStopped) {
                 OnMeteorFell();
+            }
+        } else {
+            bool allInactive = true;
+            for (int i = 0; i < particleSystems.Length; i++) {
+                ParticleSystem currPS = particleSystems[i];
+                if (currPS.IsAlive()) { //!currPS.isStopped
+                    allInactive = false;
+                    break;
+                }
+            }
+            if (allInactive) {
+                ObjectPoolManager.Instance.DestroyObject(gameObject);
             }
         }
     }
