@@ -432,6 +432,12 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Miscellaneous
+    private Tweener _currentMonsterTabTween;
+    public void DoMonsterTabPunchEffect() {
+        if (_currentMonsterTabTween == null) {
+            _currentMonsterTabTween = monsterToggle.transform.DOPunchScale(new Vector3(2f, 2f, 1f), 0.2f).OnComplete(() => _currentMonsterTabTween = null);    
+        }
+    }
     public void AddPendingUI(System.Action pendingUIAction) {
         pendingUIToShow.Add(pendingUIAction);
     }

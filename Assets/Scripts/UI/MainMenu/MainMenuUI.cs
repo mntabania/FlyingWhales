@@ -36,6 +36,9 @@ public class MainMenuUI : MonoBehaviour {
     [Header("Steam")]
     [SerializeField] private TextMeshProUGUI steamName;
     
+    [Header("Version")]
+    [SerializeField] private TextMeshProUGUI version;
+    
     [Header("Yes/No Confirmation")]
     [SerializeField] private YesNoConfirmation yesNoConfirmation;
     
@@ -45,6 +48,7 @@ public class MainMenuUI : MonoBehaviour {
     private void Start() {
         newGameButton.interactable = true;
         steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
+        version.text = $"Version: {Application.version}";
         UpdateContinueButton();
     }
     public void UpdateMainMenuOnBack() {
