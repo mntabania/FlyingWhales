@@ -384,7 +384,7 @@ public class MovementComponent {
         }
         return false;
     }
-    private void RemoveStructureToAvoid(LocationStructure locationStructure) {
+    public void RemoveStructureToAvoid(LocationStructure locationStructure) {
         if (structuresToAvoid.Remove(locationStructure)) {
             owner.logComponent.PrintLogIfActive($"{owner.name} has removed {locationStructure} from its structure avoid list!");
         }
