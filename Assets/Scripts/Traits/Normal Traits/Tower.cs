@@ -8,7 +8,7 @@ namespace Traits {
 
         public Tower() {
             name = "Tower";
-            description = "This is a tower.";
+            description = "Stationary. This will not move.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;

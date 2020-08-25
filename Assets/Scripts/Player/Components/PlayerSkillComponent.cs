@@ -136,7 +136,8 @@ public class PlayerSkillComponent {
             //                      && data.skill != SPELL_TYPE.HARASS && data.skill != SPELL_TYPE.SKELETON_MARAUDER
             //                      && PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null;
             // } else {
-                shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null; // data.skill != SPELL_TYPE.RAIN && 
+                shouldAddSpell = PlayerSkillManager.Instance.GetPlayerSpellData(data.skill) != null 
+                && data.skill != SPELL_TYPE.OSTRACIZER && data.skill != SPELL_TYPE.MEDDLER && data.skill != SPELL_TYPE.CRYPT && data.skill != SPELL_TYPE.SKELETON_MARAUDER;
             // }
             if (shouldAddSpell) {
                 SetPlayerSkillData(data);

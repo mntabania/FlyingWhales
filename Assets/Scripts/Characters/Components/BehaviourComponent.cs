@@ -825,6 +825,11 @@ public class BehaviourComponent {
     public void SetIsAgitated(bool state) {
         if(isAgitated != state) {
             isAgitated = state;
+            if (isAgitated) {
+                owner.traitContainer.AddTrait(owner, "Agitated");
+            } else {
+                owner.traitContainer.RemoveTrait(owner, "Agitated");
+            }
         }
     }
     #endregion

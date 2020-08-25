@@ -3956,6 +3956,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     //Characters cannot be owned by other characters
     public bool IsOwnedBy(Character character) { return false; }
+    public bool Advertises(INTERACTION_TYPE type) {
+        return advertisedActions != null && advertisedActions.Contains(type);
+    }
     #endregion
 
     #region Goap
@@ -4142,7 +4145,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         planner.RecalculateJob(currentTopPrioJob);
                     }
                 } else {
-                    //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is Night time
+                    //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is not Night time
                     if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.MOVE_CHARACTER) {
                         bool shouldCancelJob = false;
                         if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {

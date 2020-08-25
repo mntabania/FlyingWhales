@@ -87,7 +87,26 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                         return true;
                     }
                 }
-            }
+            } 
+            //else {
+            //    log += $"\n-Already in home, 10% chance to butcher a character if there is one";
+            //    roll = UnityEngine.Random.Range(0, 100);
+            //    log += $"\n-Roll: {roll}";
+            //    if(roll < 10) {
+            //        Character chosenCharacter = null;
+            //        if (character.homeSettlement != null) {
+            //            chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+            //        } else if (character.homeStructure != null) {
+            //            chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+            //        }
+            //        if (chosenCharacter != null) {
+            //            log += $"\n-Chosen character: " + chosenCharacter.name;
+            //            if (character.jobComponent.CreateButcherJob(chosenCharacter, out producedJob)) {
+            //                return true;
+            //            }
+            //        }
+            //    }
+            //}
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         } else {
             log += $"\n-Not in home, go to home";

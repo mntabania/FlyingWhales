@@ -1310,6 +1310,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         return false;
     }
+    public bool CreateButcherJob(Character target, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, _owner);
+            producedJob = job;
+            return true;
+        }
+        return false;
+    }
     public void CreateEatJob(IPointOfInterest target) {
         if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, _owner);
