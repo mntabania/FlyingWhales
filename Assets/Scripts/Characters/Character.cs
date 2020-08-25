@@ -279,7 +279,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
-        _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : id;
+        _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : UtilityScripts.Utilities.SetID(this, id);
         _gender = gender;
         AssignClass(className, true);
         AssignRace(race, true);

@@ -170,11 +170,14 @@ public class SaveManager : MonoBehaviour {
         //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
         //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
         //}
-        
         if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
             SaveDataPlayer saveDataPlayer = SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName);
-            saveDataPlayer.ProcessOnLoad();
-            SetCurrentSaveDataPlayer(saveDataPlayer);
+            if (saveDataPlayer != null) {
+                saveDataPlayer.ProcessOnLoad();
+                SetCurrentSaveDataPlayer(saveDataPlayer);    
+            } else {
+                CreateNewSaveDataPlayer();
+            }
         }
         // if (currentSaveDataPlayer == null) {
         //     SaveDataPlayer saveDataPlayer = new SaveDataPlayer();
