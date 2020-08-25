@@ -126,6 +126,18 @@ public class CombatState : CharacterState {
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<Character>(Signals.UPDATE_MOVEMENT_STATE, OnUpdateMovementState);
         Messenger.RemoveListener<Character>(Signals.START_FLEE, OnCharacterStartFleeing);
+        
+        if (stateComponent.character.isNormalCharacter) {
+            List<LocationStructure> avoidStructures = new List<LocationStructure>(stateComponent.character.movementComponent.structuresToAvoid);
+            for (int i = 0; i < avoidStructures.Count; i++) {
+                LocationStructure avoid = avoidStructures[i];
+                if (stateComponent.character.currentStructure == avoid) {
+                    //remove avoid structure if structure is current one.
+                    stateComponent.character.movementComponent.RemoveStructureToAvoid(avoid);
+                }
+            }
+        }
+        
         base.EndState();
     }
     //public override void OnExitThisState() {
@@ -582,6 +594,14 @@ public class CombatState : CharacterState {
             } else {
                 stateComponent.character.marker.OnStartFlee();
             }
+            
+            if (stateComponent.character.isNormalCharacter) {
+                //character has finished fleeing and is no longer in combat.
+                if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && !character.isNormalCharacter && 
+                    character.homeStructure == lastFledFromStructure && lastFledFromStructure.structureType != STRUCTURE_TYPE.WILDERNESS) { //&& stateComponent.character.currentStructure != lastFledFromStructure
+                    stateComponent.character.movementComponent.AddStructureToAvoidAndScheduleRemoval(lastFledFromStructure);
+                }
+            }
 
             Messenger.Broadcast(Signals.START_FLEE, stateComponent.character);
 
@@ -837,13 +857,6 @@ public class CombatState : CharacterState {
         DetermineReaction(stateComponent.character);
         stateComponent.character.marker.UpdateAnimation();
         stateComponent.character.marker.UpdateActionIcon();
-        if (stateComponent.character.isNormalCharacter && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
-            //character has finished fleeing and is no longer in combat.
-            if (lastFledFrom != null && lastFledFromStructure != null && lastFledFrom is Character character && !character.isNormalCharacter && 
-                character.homeStructure == lastFledFromStructure && lastFledFromStructure.structureType != STRUCTURE_TYPE.WILDERNESS && stateComponent.character.currentStructure != lastFledFromStructure) {
-                stateComponent.character.movementComponent.AddStructureToAvoidAndScheduleRemoval(lastFledFromStructure);
-            }
-        }
     }
     public void OnReachLowFleeSpeedThreshold() {
         string log = $"{stateComponent.character.name} has reached low flee speed threshold, determining action...";

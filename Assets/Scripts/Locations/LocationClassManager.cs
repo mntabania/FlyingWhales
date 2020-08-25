@@ -94,7 +94,7 @@ public class LocationClassManager {
             "Craftsman",
             "Peasant",
             "Combatant",
-            "Peasant",
+            //"Peasant",
 
             "Civilian",
             "Combatant",
