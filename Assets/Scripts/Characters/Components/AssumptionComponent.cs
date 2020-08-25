@@ -13,6 +13,13 @@ public class AssumptionComponent {
     public void CreateAndReactToNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType, REACTION_STATUS reactionStatus) {
         Assumption newAssumption = CreateNewAssumption(assumedCharacter, targetOfAssumedCharacter, assumedActionType);
         newAssumption.assumedAction.SetCrimeType();
+        if(assumedActionType == INTERACTION_TYPE.ASSAULT) {
+            //When assuming assault, always assume that the reason for assault is to abduct
+            if (LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", "Abduct")) {
+                string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", "Abduct");
+                newAssumption.assumedAction.descriptionLog.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
+            }
+        }
 
         Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction);
         assumptionLog.SetLogType(LOG_TYPE.Assumption);

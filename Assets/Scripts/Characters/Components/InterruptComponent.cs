@@ -6,6 +6,7 @@ using UnityEngine;
 using Interrupts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine.Assertions;
 
 public class InterruptComponent {
@@ -16,7 +17,7 @@ public class InterruptComponent {
     //public string simultaneousIdentifier { get; private set; }
     public InterruptHolder triggeredSimultaneousInterrupt { get; private set; }
     public int currentSimultaneousInterruptDuration { get; private set; }
-    public LocationStructure raidTargetStructure { get; private set; }
+    public BaseSettlement raidTargetSettlement { get; private set; }
 
     public Log thoughtBubbleLog { get; private set; }
 
@@ -282,8 +283,9 @@ public class InterruptComponent {
     #endregion
 
     #region Miscellaneous
-    public void SetRaidTargetStructure(LocationStructure structure) {
-        raidTargetStructure = structure;
+    public void SetRaidTargetSettlement(BaseSettlement settlement) {
+        raidTargetSettlement = settlement;
+
     }
     #endregion
 

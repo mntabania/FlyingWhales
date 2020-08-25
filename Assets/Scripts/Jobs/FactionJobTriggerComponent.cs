@@ -1,4 +1,5 @@
 ﻿using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class FactionJobTriggerComponent : JobTriggerComponent {
     private readonly Faction _owner;
@@ -18,10 +19,10 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
         // }
         // return false;
     }
-    public bool TriggerRaidJob(LocationStructure targetStructure) { //bool forceDoAction = false
+    public bool TriggerRaidJob(BaseSettlement targetSettlement) { //bool forceDoAction = false
         if (!_owner.HasJob(JOB_TYPE.RAID)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAID, INTERACTION_TYPE.RAID, null, _owner);
-            job.AddOtherData(INTERACTION_TYPE.RAID, new object[] { targetStructure, _owner });
+            job.AddOtherData(INTERACTION_TYPE.RAID, new object[] { targetSettlement, _owner });
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRaidJob);
             _owner.AddToAvailableJobs(job);
             return true;

@@ -53,7 +53,7 @@ public class Assault : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        if (status == REACTION_STATUS.INFORMED) {
+        if (status == REACTION_STATUS.INFORMED || node.isAssumption) {
             if (actor.faction != null && actor.faction.isMajorNonPlayer && !actor.IsHostileWith(witness)) {
                 if (target is Character targetCharacter) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -149,7 +149,7 @@ public class Assault : GoapAction {
     public override string ReactionToTarget(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToTarget(actor, target, witness, node, status);
-        if(status == REACTION_STATUS.INFORMED) {
+        if(status == REACTION_STATUS.INFORMED || node.isAssumption) {
             if (target is Character targetCharacter && targetCharacter.faction != null && targetCharacter.faction.isMajorNonPlayer && !witness.IsHostileWith(targetCharacter)) {
                 if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);

@@ -141,7 +141,8 @@ namespace Traits {
                 for (int i = 0; i < vampire.currentRegion.charactersAtLocation.Count; i++) {
                     Character character = vampire.currentRegion.charactersAtLocation[i];
                     if(vampire != character) {
-                        if(!character.traitContainer.HasTrait("Vampiric") && !character.isDead && !vampire.relationshipContainer.IsFriendsWith(character)) {
+                        if(!character.traitContainer.HasTrait("Vampiric") && !character.isDead && !vampire.relationshipContainer.IsFriendsWith(character)
+                            && vampire.movementComponent.HasPathToEvenIfDiffRegion(character.gridTileLocation)) {
                             if(targets == null) { targets = new List<Character>(); }
                             targets.Add(character);
                         }

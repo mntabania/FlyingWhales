@@ -31,7 +31,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                             if (targetSettlement is NPCSettlement npcSettlement && npcSettlement.cityCenter != null) {
                                 targetStructure = npcSettlement.cityCenter;
                             }
-                            character.interruptComponent.SetRaidTargetStructure(targetStructure);
+                            character.interruptComponent.SetRaidTargetSettlement(targetSettlement);
                             if (character.interruptComponent.TriggerInterrupt(INTERRUPT.Declare_Raid, character)) {
                                 producedJob = null;
                                 return true;

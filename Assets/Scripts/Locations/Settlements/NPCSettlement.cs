@@ -1144,6 +1144,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public void AddForcedCancelJobsOnTickEnded(JobQueueItem job) {
         if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+            Debug.Log(GameManager.Instance.TodayLogString() + " " + name + " added to forced cancel job " + job.name);
             forcedCancelJobsOnTickEnded.Add(job);
         }
     }

@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class RaidParty : Party {
 
-    public LocationStructure targetStructure { get; private set; }
+    public BaseSettlement targetSettlement { get; private set; }
+    //public LocationStructure targetStructure { get; private set; }
     public HexTile waitingArea { get; private set; }
     private bool isRaiding;
 
     #region getters
-    public override IPartyTarget target => targetStructure;
+    public override IPartyTarget target => targetSettlement;
     public override HexTile waitingHexArea => waitingArea;
     #endregion
 
@@ -55,22 +57,22 @@ public class RaidParty : Party {
 
     #region General
     private void ProcessRaidOrDisbandment() {
-        if (!targetStructure.settlementLocation.HasAliveResidentInsideSettlement()) {
+        if (!targetSettlement.HasAliveResidentInsideSettlement()) {
             DisbandParty();
         } else {
             StartRaidTimer();
         }
     }
-    public void SetTargetStructure(LocationStructure structure) {
-        if(targetStructure != structure) {
-            targetStructure = structure;
-            if (targetStructure != null) {
+    public void SetTargetSettlement(BaseSettlement settlement) {
+        if(targetSettlement != settlement) {
+            targetSettlement = settlement;
+            if (targetSettlement != null) {
                 SetWaitingArea();
             }
         }
     }
     private void SetWaitingArea() {
-        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+        waitingArea = targetSettlement.GetAPlainAdjacentHextile();
     }
     #endregion
 

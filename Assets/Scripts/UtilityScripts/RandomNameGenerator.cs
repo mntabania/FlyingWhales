@@ -47,7 +47,7 @@ public static class RandomNameGenerator {
 		"Hazel", "Hannah", "Holly", "Ingrid", "Ivy", "Kenley", "Kelby", "Karen", "Kate", "Laila", "Letha", "Lily", "Lindsey", "Madison", "Maggie", "Mildred", "Misty",
 		"Norma", "Nyx", "Nana", "Nerissa", "Olga", "Oletha", "Posy", "Patsy", "Piper", "Precious", "Raissa", "Rhiannon", "Rose", "Roxanne", "Sable", "Shea", "Shelby",
 		"Susan", "Suzette", "Tanya", "Tatiana", "Taylor", "Velma", "Vanessa", "Violet", "Whitney", "Willow", "Windy", "Hillary", "Arya", "Leia", "Buffy", "Light",
-		"Prue", "Marica",
+		"Prue", "Marica", "Shannelle"
 	};
 
 	private static string[] baseElvenKingdomNames = new[]{

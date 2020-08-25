@@ -2,6 +2,7 @@
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class RaidBehaviour : CharacterBehaviourComponent {
     public RaidBehaviour() {
@@ -9,8 +10,21 @@ public class RaidBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        log += $"\n-Character is exterminating";
+        log += $"\n-Character is raiding";
         Party raidParty = character.partyComponent.currentParty;
+        if(raidParty.target == null) {
+            raidParty.RemoveMember(character);
+            log += $"\n-No target settlement, leave party";
+            return true;
+        } else {
+            if (raidParty.target is BaseSettlement targetSettlement) {
+                if (targetSettlement.owner == null || character.faction == null || !character.faction.IsHostileWith(targetSettlement.owner)) {
+                    raidParty.RemoveMember(character);
+                    log += $"\n-No settlement/character faction or factions are no longer hostile, leave party";
+                    return true;
+                }
+            }
+        }
         if (!raidParty.isWaitTimeOver) {
             log += $"\n-Party is waiting";
             if(raidParty.waitingHexArea != null) {
@@ -30,7 +44,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
             }
         } else {
             log += $"\n-Party is not waiting";
-            if(character.currentStructure.settlementLocation == raidParty.target.currentSettlement) {
+            if(character.currentStructure.settlementLocation == raidParty.target) {
                 log += $"\n-Character is already in target settlement";
                 Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlement();
                 if (target != null) {
@@ -42,7 +56,8 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 }
             } else {
                 log += $"\n-Character is not in target structure, go to it";
-                if (raidParty.target is LocationStructure targetStructure) {
+                if (raidParty.target is BaseSettlement targetSettlement) {
+                    LocationStructure targetStructure = UtilityScripts.CollectionUtilities.GetRandomElement(targetSettlement.allStructures);
                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
                     character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                 }
