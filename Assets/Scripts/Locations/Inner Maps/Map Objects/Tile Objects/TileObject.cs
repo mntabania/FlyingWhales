@@ -509,7 +509,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character character) {
                 removed = character;
             }
-            tile.structure.RemovePOI(this, removed);
+            if (tile != null && tile.structure != null) {
+                tile.structure.RemovePOI(this, removed);    
+            }
         }
         if (amount < 0) {
             Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest, amount);
