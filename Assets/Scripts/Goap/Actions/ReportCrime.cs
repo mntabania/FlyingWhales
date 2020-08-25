@@ -32,14 +32,14 @@ public class ReportCrime : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         object[] otherData = node.otherData;
-        if (otherData.Length == 2 && otherData[0] is ICrimeable) {
-            ICrimeable crime = otherData[0] as ICrimeable;
+        if (otherData.Length == 2 && otherData[0] is ICrimeable crime) {
             //CrimeType crimeTypObj = CrimeManager.Instance.GetCrimeType(crime.crimeType);
             //log.AddToFillers(null, crimeTypObj.name, LOG_IDENTIFIER.STRING_1);
             Character criminal = crime.actor;
             if (crime.disguisedActor != null) {
                 criminal = crime.disguisedActor;
             }
+            Assert.IsNotNull(criminal, $"{GameManager.Instance.TodayLogString()} Report crime of {crime.name} by {actor.name} to {poiTarget.name} has null criminal.");
             log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.CHARACTER_3);
         }
     }

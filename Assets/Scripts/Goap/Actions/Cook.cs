@@ -52,12 +52,23 @@ public class Cook : GoapAction {
         }
         return base.GetTargetToGoTo(goapNode);
     }
-    //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-    //    string stateName = "Target Missing";
-    //    GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName);
-    //    //bury cannot be invalid because all cases are handled by the requirements of the action
-    //    return goapActionInvalidity;
-    //}
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName);
+        IPointOfInterest poiTarget = node.poiTarget;
+        if (goapActionInvalidity.isInvalid == false) {
+            if (poiTarget is Character targetCharacter) {
+                if (!targetCharacter.isDead) {
+                    goapActionInvalidity.isInvalid = true;
+                } else if (!node.actor.carryComponent.IsPOICarried(targetCharacter)) {
+                    goapActionInvalidity.isInvalid = true;
+                }
+            } else {
+                goapActionInvalidity.isInvalid = true;
+            }
+        }
+        return goapActionInvalidity;
+    }
     #endregion
 
     #region State Effects
@@ -69,7 +80,7 @@ public class Cook : GoapAction {
         }
     }
     public void AfterCookSuccess(ActualGoapNode goapNode) {
-        FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(goapNode.poiTarget, goapNode.actor.gridTileLocation);
+        CharacterManager.Instance.CreateFoodPileForPOI(goapNode.poiTarget, goapNode.actor.gridTileLocation);
     }
     #endregion
 

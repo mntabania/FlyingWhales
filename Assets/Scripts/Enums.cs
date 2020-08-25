@@ -1468,11 +1468,11 @@ public static class Extensions {
             case JOB_TYPE.DEMON_KILL:
                 priority = 930;
                 break;
+            case JOB_TYPE.MOVE_CHARACTER:
+                priority = 926;
+                break;
             case JOB_TYPE.GO_TO:
                 priority = 925;
-                break;
-            case JOB_TYPE.MOVE_CHARACTER:
-                priority = 920;
                 break;
             case JOB_TYPE.ZOMBIE_STROLL:
                 priority = 915;

@@ -129,6 +129,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 PauseAnimation();
             }
         }
+
+        List<Trait> traitOverrideFunctions = character.traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                trait.OnInitiateMapObjectVisual(character);
+            }
+        }
         // UpdateNameplatePosition();
     }
 

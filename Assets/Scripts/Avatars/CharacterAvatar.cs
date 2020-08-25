@@ -15,7 +15,7 @@ public class CharacterAvatar : MonoBehaviour {
 
     private PathFindingThread _currPathfindingRequest; //the current pathfinding request this avatar is waiting for
 
-	[SerializeField] protected SmoothMovement smoothMovement;
+	//[SerializeField] protected SmoothMovement smoothMovement;
 	[SerializeField] protected DIRECTION direction;
     [SerializeField] protected GameObject _avatarHighlight;
     [SerializeField] protected GameObject _avatarVisual;
@@ -77,8 +77,8 @@ public class CharacterAvatar : MonoBehaviour {
     public virtual void Init(Character owner) {
         _owner = owner;
         //SetPosition(_party.specificLocation.tileLocation.transform.position);
-        smoothMovement.avatarGO = gameObject;
-        smoothMovement.onMoveFinished += OnMoveFinished;
+        //smoothMovement.avatarGO = gameObject;
+        //smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
         _hasArrived = true;
         SetVisualState(true);
@@ -196,7 +196,6 @@ public class CharacterAvatar : MonoBehaviour {
     }
     private void ArriveAtLocation() {
         SetIsTravelling(false);
-        SetIsTravellingOutside(false);
         _travelLine.travelLineParent.RemoveChild(_travelLine);
         Destroy(_travelLine.gameObject);
         _travelLine = null;
@@ -247,6 +246,7 @@ public class CharacterAvatar : MonoBehaviour {
                 SetOnPathFinished(null);
             }
         }
+        SetIsTravellingOutside(false);
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {
@@ -293,72 +293,72 @@ public class CharacterAvatar : MonoBehaviour {
      This is called each time the avatar traverses a node in the
      saved path.
          */
-    public virtual void OnMoveFinished() {
-		if(path == null){
-			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
-			Debug.LogError ($"Location: {_owner.currentRegion.name}");
-		}
-        //if (_trackTarget != null) {
-        //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {
-        //        _party.GoToLocation(_trackTarget.currentParty.specificLocation.coreTile, _pathfindingMode, onPathFinished, _trackTarget, onPathReceived);
-        //        return;
-        //    }
-        //}
-        if (path.Count > 0) {
-            //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
-            //    RemoveCharactersFromLocation(_party.specificLocation);
-            //}
-            //AddCharactersToLocation(this.path[0]);
-            path.RemoveAt(0);
-        }
-        HasArrivedAtTargetLocation();
-    }
-    public virtual void HasArrivedAtTargetLocation() {
-		if (_owner.currentRegion == targetLocation) {
-            if (!_hasArrived) {
-                SetIsTravelling(false);
-                //_trackTarget = null;
-                SetHasArrivedState(true);
-                targetLocation.AddCharacterToLocation(_owner);
-                //Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
-                ////Every time the party arrives at home, check if it still not ruined
-                //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
-                //    //Check if the location the character arrived at is the character's home landmark
-                //    if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
-                //        //Check if the current landmark in the location is a camp and it is not yet ruined
-                //        if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
-                //            Character character = _party.mainCharacter;
-                //            if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
-                //                //Make it the character's new home landmark
-                //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-                //                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
-                //            } else {
-                //                //Create new camp
-                //                BaseLandmark newCamp = targetLocation.tileLocation.settlementOfTile.CreateCampOnTile(targetLocation.tileLocation);
-                //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
-                //                newCamp.AddCharacterHomeOnLandmark(character);
-                //            }
-                //        }
-                //    }
-                //}
-                onPathFinished?.Invoke();
-            }
-			if(queuedAction != null){
-				queuedAction ();
-				queuedAction = null;
-				return;
-			}
-		}else{
-			if(queuedAction != null){
-				queuedAction ();
-				queuedAction = null;
-				return;
-			}
-            if (!_isMovementPaused) {
-                NewMove();
-            }
-		}
-    }
+  //  public virtual void OnMoveFinished() {
+		//if(path == null){
+		//	Debug.LogError (GameManager.Instance.Today ().ToStringDate());
+		//	Debug.LogError ($"Location: {_owner.currentRegion.name}");
+		//}
+  //      //if (_trackTarget != null) {
+  //      //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {
+  //      //        _party.GoToLocation(_trackTarget.currentParty.specificLocation.coreTile, _pathfindingMode, onPathFinished, _trackTarget, onPathReceived);
+  //      //        return;
+  //      //    }
+  //      //}
+  //      if (path.Count > 0) {
+  //          //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
+  //          //    RemoveCharactersFromLocation(_party.specificLocation);
+  //          //}
+  //          //AddCharactersToLocation(this.path[0]);
+  //          path.RemoveAt(0);
+  //      }
+  //      HasArrivedAtTargetLocation();
+  //  }
+  //  public virtual void HasArrivedAtTargetLocation() {
+		//if (_owner.currentRegion == targetLocation) {
+  //          if (!_hasArrived) {
+  //              SetIsTravelling(false);
+  //              //_trackTarget = null;
+  //              SetHasArrivedState(true);
+  //              targetLocation.AddCharacterToLocation(_owner);
+  //              //Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
+  //              ////Every time the party arrives at home, check if it still not ruined
+  //              //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+  //              //    //Check if the location the character arrived at is the character's home landmark
+  //              //    if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
+  //              //        //Check if the current landmark in the location is a camp and it is not yet ruined
+  //              //        if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+  //              //            Character character = _party.mainCharacter;
+  //              //            if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
+  //              //                //Make it the character's new home landmark
+  //              //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+  //              //                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
+  //              //            } else {
+  //              //                //Create new camp
+  //              //                BaseLandmark newCamp = targetLocation.tileLocation.settlementOfTile.CreateCampOnTile(targetLocation.tileLocation);
+  //              //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+  //              //                newCamp.AddCharacterHomeOnLandmark(character);
+  //              //            }
+  //              //        }
+  //              //    }
+  //              //}
+  //              onPathFinished?.Invoke();
+  //          }
+		//	if(queuedAction != null){
+		//		queuedAction ();
+		//		queuedAction = null;
+		//		return;
+		//	}
+		//}else{
+		//	if(queuedAction != null){
+		//		queuedAction ();
+		//		queuedAction = null;
+		//		return;
+		//	}
+  //          if (!_isMovementPaused) {
+  //              NewMove();
+  //          }
+		//}
+  //  }
     public void SetHasArrivedState(bool state) {
         _hasArrived = state;
     }
@@ -397,7 +397,7 @@ public class CharacterAvatar : MonoBehaviour {
     #region overrides
     public void Reset() {
         //base.Reset();
-        smoothMovement.Reset();
+        //smoothMovement.Reset();
         SetOnPathFinished(null);
         onPathStarted = null;
         direction = DIRECTION.LEFT;

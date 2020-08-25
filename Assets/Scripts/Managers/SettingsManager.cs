@@ -28,6 +28,7 @@ namespace Settings {
         [Header("Gameplay Settings UI")] 
         [SerializeField] private Toggle edgePanningToggle;
         [SerializeField] private Toggle skipTutorialsToggle;
+        [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private GameObject miscParentGO;
         
         [Header("Audio Settings UI")]
@@ -46,8 +47,6 @@ namespace Settings {
             if (Instance == null) {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
-                // Turn off v-sync
-                QualitySettings.vSyncCount = 0;
                 Application.targetFrameRate = targetFrameRate;
 #if UNITY_EDITOR
                 EditorApplication.quitting += OnEditorQuit;
@@ -129,6 +128,8 @@ namespace Settings {
 
             masterVolumeSlider.value = settings.masterVolume;
             musicVolumeSlider.value = settings.musicVolume;
+
+            vsyncToggle.isOn = settings.isVsyncOn;
         }
         public void OnToggleEdgePanning(bool isOn) {
             _settings.useEdgePanning = isOn;
@@ -151,10 +152,12 @@ namespace Settings {
                      useEdgePanning = false,
                      musicVolume = AudioManager.Maximum_Volume_Level,
                      masterVolume = AudioManager.Maximum_Volume_Level,
+                     isVsyncOn = false,
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
             }
+            SetVsync(_settings.isVsyncOn);
         }
         #endregion
 
@@ -166,7 +169,8 @@ namespace Settings {
 
             _settings.useEdgePanning = edgePanningToggle.isOn;
             _settings.skipTutorials = skipTutorialsToggle.isOn;
-            
+            _settings.isVsyncOn = vsyncToggle.isOn;
+
             //resolution
             Screen.fullScreen = settings.fullscreen;
             string[] dimensionsStr = settings.resolution.Split('x');
@@ -177,6 +181,9 @@ namespace Settings {
             
             //quality
             QualitySettings.SetQualityLevel(settings.graphicsQuality);
+
+            //VSync
+            SetVsync(_settings.isVsyncOn);
             
             //save file
             SaveSettingsFile();
@@ -213,6 +220,22 @@ namespace Settings {
         public void OnToggleSkipTutorials(bool state) {
             _settings.skipTutorials = state;
             Messenger.Broadcast(Signals.ON_SKIP_TUTORIALS_CHANGED, state);
+        }
+        #endregion
+
+        #region Vsync
+        //public void OnToggleVsync(bool state) {
+        //    _settings.isVsyncOn = state;
+        //    SetVsync(_settings.isVsyncOn);
+        //}
+        public void SetVsync(bool state) {
+            if (state) {
+                // Turn on v-sync
+                QualitySettings.vSyncCount = 1;
+            } else {
+                // Turn on v-sync
+                QualitySettings.vSyncCount = 0;
+            }
         }
         #endregion
     }

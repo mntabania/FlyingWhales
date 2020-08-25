@@ -322,7 +322,7 @@ public class Butcher : GoapAction {
         }
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation);
-        if (goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
+        if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
             goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
             goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
         }

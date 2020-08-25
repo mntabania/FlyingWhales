@@ -170,8 +170,9 @@ public class RestrainCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (actor != poiTarget) {
-                //Character target = poiTarget as Character;
-                return !poiTarget.traitContainer.HasTrait("Restrained");
+                if(poiTarget is Character target) {
+                    return !target.isDead && !target.traitContainer.HasTrait("Restrained");
+                }
             }
             return false;
         }
