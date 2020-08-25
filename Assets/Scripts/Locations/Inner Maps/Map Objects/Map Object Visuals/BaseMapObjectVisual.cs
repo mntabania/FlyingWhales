@@ -256,4 +256,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         graphUpdateScene.Apply();
     }
     #endregion
+
+    private void OnDestroy() {
+        objectVisual = null;
+        hoverObject = null;
+    }
 }

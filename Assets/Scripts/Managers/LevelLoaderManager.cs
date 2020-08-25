@@ -37,6 +37,11 @@ public class LevelLoaderManager : MonoBehaviour {
     private IEnumerator LoadLevelAsynchronously(string sceneName, bool updateSceneProgress) {
         SetLoadingState(true);
         // UpdateLoadingInfo($"Loading {sceneName}...");
+        var unloader = Resources.UnloadUnusedAssets();
+        while (!unloader.isDone) {
+            yield return null;
+        }
+        GC.Collect();
         yield return null;
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         asyncOperation.allowSceneActivation = false;

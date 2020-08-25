@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 
-public class CharacterClassManager : MonoBehaviour {
+public class CharacterClassManager : BaseMonoBehaviour {
 
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, List<CharacterClass>> identifierClasses { get; private set; }

@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tutorial;
+using UnityEditor;
 using UnityEngine;
 
 public class WorldConfigManager : MonoBehaviour {
@@ -44,4 +46,12 @@ public class WorldConfigManager : MonoBehaviour {
         }
         DontDestroyOnLoad(gameObject);
     }
+
+#if UNITY_EDITOR
+    [MenuItem("Tools/Force Garbage Collection")]
+    static void GarbageCollect() {
+        EditorUtility.UnloadUnusedAssetsImmediate();
+        GC.Collect();
+    }
+#endif
 }

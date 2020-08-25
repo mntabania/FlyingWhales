@@ -35,4 +35,18 @@ public class CharacterDatabase {
         return limboCharactersList.Remove(character);
     }
 
+    public void OnDestroy() {
+        if (allCharactersList != null) {
+            List<Character> allCharacterTemp = new List<Character>(allCharactersList);
+            for (int i = 0; i < allCharacterTemp.Count; i++) {
+                Character character = allCharacterTemp[i];
+                character.CleanUp();
+            }
+            allCharactersList.Clear();
+            allCharacterTemp.Clear();
+        }
+        limboCharacters?.Clear();
+        allCharacters?.Clear();
+        limboCharactersList?.Clear();
+    }
 }
