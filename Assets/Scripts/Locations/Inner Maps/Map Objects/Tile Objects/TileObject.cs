@@ -837,6 +837,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <param name="characterOwner">The character that should own this item.</param>
     public virtual void SetCharacterOwner(Character characterOwner) {
         if(this.characterOwner != characterOwner) {
+            if(characterOwner != null && this is Heirloom) {
+                //Cannot own heirlooms
+                return;
+            }
             Character prevOwner = this.characterOwner;
             this.characterOwner = characterOwner;
             if (prevOwner != null) {

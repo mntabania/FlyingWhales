@@ -44,7 +44,9 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 if (character.marker) {
-                    character.marker.UnberserkedMarker();
+                    if (!character.traitContainer.HasTrait("Agitated")) {
+                        character.marker.UnberserkedMarker();
+                    }
                     character.marker.visionCollider.VoteToFilterVision();
                 }
                 //check hostiles in range, remove any poi's that are not hostile with the character 
@@ -82,7 +84,9 @@ namespace Traits {
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {
             if (_owner != null) {
                 if (_owner.marker) {
-                    _owner.marker.UnberserkedMarker();
+                    if (!_owner.traitContainer.HasTrait("Agitated")) {
+                        _owner.marker.UnberserkedMarker();
+                    }
                     _owner.marker.visionCollider.VoteToFilterVision();
                 }
             }

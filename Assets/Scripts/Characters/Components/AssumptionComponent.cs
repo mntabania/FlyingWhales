@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class AssumptionComponent {
     public Character owner { get; private set; }
@@ -20,6 +21,7 @@ public class AssumptionComponent {
         assumptionData.Add(new AssumptionData(assumedActionType, assumedCharacter, targetOfAssumedCharacter));
         Assumption newAssumption = CreateNewAssumption(assumedCharacter, targetOfAssumedCharacter, assumedActionType);
         newAssumption.assumedAction.SetCrimeType();
+
         if(assumedActionType == INTERACTION_TYPE.ASSAULT) {
             //When assuming assault, always assume that the reason for assault is to abduct
             if (LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", "Abduct")) {
@@ -55,10 +57,19 @@ public class AssumptionComponent {
         assumedAction.SetCrimeType();
         return assumedAction;
     }
-    public bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
+    private bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
+        if (actor.traitContainer.HasTrait("Criminal")) {
+            Criminal criminalTrait = actor.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            if (criminalTrait.IsCrimeAlreadyWitnessedBy(actor, crimeType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
         for (int i = 0; i < assumptionData.Count; i++) {
             AssumptionData data = assumptionData[i];
-            if(data.assumedActionType == actionType && data.actorID == actor.id && data.targetID == target.id && data.targetPOIType == target.poiType) {
+            if (data.assumedActionType == actionType && data.actorID == actor.id && data.targetID == target.id && data.targetPOIType == target.poiType) {
                 return true;
             }
         }

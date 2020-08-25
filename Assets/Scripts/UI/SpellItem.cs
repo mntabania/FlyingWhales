@@ -29,6 +29,7 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.AddListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
         Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
         SetAsDefault();
 
         //_coverImg = coverGO.GetComponent<Image>();
@@ -100,6 +101,10 @@ public class SpellItem : NameplateItem<SpellData> {
             UpdateData();
             UpdateInteractableState();
         }
+    }
+    private void OnPlayerAdjustedMana(int adjusted) {
+        UpdateData();
+        UpdateInteractableState();
     }
     #endregion
 
@@ -177,5 +182,6 @@ public class SpellItem : NameplateItem<SpellData> {
         Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
         Messenger.RemoveListener<SpellData>(Signals.ON_EXECUTE_SPELL, OnExecuteSpell);
         Messenger.RemoveListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
+        Messenger.RemoveListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
     }
 }

@@ -32,11 +32,15 @@ public class ActionItem : PooledObject {
         gameObject.SetActive(true);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
         Messenger.AddListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-	}
-	public void SetInteractable(bool state) {
+        Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+    }
+    public void SetInteractable(bool state) {
         button.interactable = state;
         coverImg.gameObject.SetActive(!state);
         //UpdateCooldown();
+    }
+    private void UpdateInteractableState() {
+        SetInteractable(playerAction.CanPerformAbility());
     }
     private void UpdateCooldown() {
         cooldownCoverImg.gameObject.SetActive(playerAction.isInCooldown);
@@ -116,6 +120,9 @@ public class ActionItem : PooledObject {
 	    // coverImg.DOFillAmount(0f, 0.2f).OnComplete(() => SetCooldownState(false));
 	    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
     }
+    private void OnPlayerAdjustedMana(int adjusted) {
+        UpdateInteractableState();
+    }
     #endregion
 
     public override void Reset() {
@@ -133,5 +140,6 @@ public class ActionItem : PooledObject {
 		Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
 		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_STARTED, OnSpellCooldownStarted);
 		Messenger.RemoveListener<SpellData>(Signals.SPELL_COOLDOWN_FINISHED, OnSpellCooldownFinished);
-	}
+        Messenger.RemoveListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnPlayerAdjustedMana);
+    }
 }
