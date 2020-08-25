@@ -138,7 +138,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                 if (activePOI is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
                         if (activeCharacter.traitContainer.HasTrait("Blessed")) {
-                            additionalText.text += $"<color=\"red\">Blessed Villagers are protected from your powers.</color>\n";
+                            additionalText.text += $"<color=#FE3E83>Blessed Villagers are protected from your powers.</color>\n";
                         }
                         string wholeReason = spellData
                             .GetReasonsWhyCannotPerformAbilityTowards(activeCharacter);
@@ -146,13 +146,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                             string[] reasons = wholeReason.Split(',');
                             for (int i = 0; i < reasons.Length; i++) {
                                 string reason = reasons[i];
-                                additionalText.text += $"<color=\"red\">{reason}</color>\n";
+                                additionalText.text += $"<color=#FE3E83>{reason}</color>\n";
                             }
                         }
                     }
                 } else if (activePOI is TileObject activeTileObject) {
                     if (activeTileObject is AnkhOfAnubis ankh && ankh.isActivated && spellData.type == SPELL_TYPE.SEIZE_OBJECT) {
-                        additionalText.text += "<color=\"red\">Activated Ankh can no longer be seized.</color>\n";
+                        additionalText.text += "<color=#FE3E83>Activated Ankh can no longer be seized.</color>\n";
                     }
                 }
             }
@@ -168,13 +168,13 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         descriptionText.SetTextAndReplaceWithIcons(fullDescription);
         
         if(HasEnoughMana(spellData) == false) {
-            additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
+            additionalText.text += "<color=#FE3E83>Not enough mana.</color>\n";
         }
         if(HasEnoughCharges(spellData) == false) {
             if (spellData.hasCooldown) {
-                additionalText.text += "<color=\"red\">Recharging.</color>\n";
+                additionalText.text += "<color=#FE3E83>Recharging.</color>\n";
             } else {
-                additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+                additionalText.text += "<color=#FE3E83>Not enough charges.</color>\n";
             }
         }
     }
@@ -200,16 +200,16 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
 
         if (manaCost != -1) {
             if(HasEnoughMana(manaCost) == false) {
-                additionalText.text += "<color=\"red\">Not enough mana.</color>\n";
+                additionalText.text += "<color=#FE3E83>Not enough mana.</color>\n";
             }    
         }
 
         if (charges != -1) {
             if(HasEnoughCharges(charges) == false) {
                 if (cooldown != -1) {
-                    additionalText.text += "<color=\"red\">Recharging.</color>\n";
+                    additionalText.text += "<color=#FE3E83>Recharging.</color>\n";
                 } else {
-                    additionalText.text += "<color=\"red\">Not enough charges.</color>\n";
+                    additionalText.text += "<color=#FE3E83>Not enough charges.</color>\n";
                 }
             }    
         }
