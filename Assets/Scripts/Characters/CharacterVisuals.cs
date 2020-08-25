@@ -233,4 +233,18 @@ public class CharacterVisuals {
         return UtilityScripts.Utilities.VillagerIcon();
     }
     #endregion
+
+    public void CleanUp() {
+        if (hairMaterial != null) {
+            Object.Destroy(hairMaterial);    
+        }
+        if (hairUIMaterial != null) {
+            Object.Destroy(hairUIMaterial);    
+        }
+        if (wholeImageMaterial != null) {
+            Object.Destroy(wholeImageMaterial);    
+        }
+        markerAnimations?.Clear();
+        defaultSprite = null;
+    }
 }

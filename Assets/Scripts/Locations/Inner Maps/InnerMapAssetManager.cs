@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Inner_Maps {
-    public class InnerMapAssetManager : MonoBehaviour {
+    public class InnerMapAssetManager : BaseMonoBehaviour {
 
         [Header("Grassland Tiles")]
         public TileBase outsideTile;
@@ -165,6 +165,13 @@ namespace Inner_Maps {
                 return tileAssetDB[assetName];    
             }
             throw new Exception($"Could not find asset with name {assetName}");
+        }
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            tileObjectTiles?.Clear();
+            corruptedTileObjectAssets?.Clear();
+            burntMaterial = null;
+            defaultObjectMaterial = null;
         }
     }
 }

@@ -105,7 +105,7 @@ public class CharacterAvatar : MonoBehaviour {
         if (_isTravelling) {
             CancelledDeparture();
         }
-        CharacterManager.Instance.RemoveCharacterAvatar(this);
+        CharacterManager.Instance?.RemoveCharacterAvatar(this);
     }
     #endregion
 

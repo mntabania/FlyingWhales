@@ -20,7 +20,7 @@ public class AudioManager : MonoBehaviour {
     private const string MusicVolume = "musicMasterVolume";
     private const string MasterVolume = "masterVolume";
     private const string ThreatMusicVolume = "threatMusicVolume";
-    private const int MaxAudioObjects = 100;
+    private const int MaxAudioObjects = 30;
     
     public static float Minimum_Volume_Level = -30f;
     public static float Maximum_Volume_Level = -10f;

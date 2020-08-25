@@ -12,7 +12,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class CharacterManager : MonoBehaviour {
+public class CharacterManager : BaseMonoBehaviour {
 
     public static CharacterManager Instance;
 
@@ -541,7 +541,7 @@ public class CharacterManager : MonoBehaviour {
         _allCharacterAvatars.Add(characterAvatar);
     }
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
-        _allCharacterAvatars.Remove(characterAvatar);
+        _allCharacterAvatars?.Remove(characterAvatar);
     }
     public void PlaceInitialCharacters(List<Character> characters, NPCSettlement npcSettlement) {
         for (int i = 0; i < characters.Count; i++) {
@@ -1445,6 +1445,14 @@ public class CharacterManager : MonoBehaviour {
         return minion;
     }
     private void InitializeMinion(Minion minion) { }
+    #endregion
+
+    #region Monobehaviours
+    protected override void OnDestroy() {
+        characterDatabase?.OnDestroy();
+        base.OnDestroy();
+        Instance = null;
+    }
     #endregion
 
 }

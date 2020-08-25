@@ -4,7 +4,7 @@ using UnityEngine;
 namespace EZObjectPools
 {
     [AddComponentMenu("EZ Object Pools/Pooled Object")]
-    public class PooledObject : MonoBehaviour {
+    public class PooledObject : BaseMonoBehaviour {
         /// <summary>
         /// The object pool this object originated from.
         /// </summary>

@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
-    public abstract class InnerTileMap : MonoBehaviour {
+    public abstract class InnerTileMap : BaseMonoBehaviour {
         
         public static int WestEdge = 0;
         public static int NorthEdge = 0;

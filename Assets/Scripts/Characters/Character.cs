@@ -5909,4 +5909,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     #endregion
+
+    public void CleanUp() {
+        visuals.CleanUp();
+    }
 }

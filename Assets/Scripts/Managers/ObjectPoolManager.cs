@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using Interrupts;
 
-public class ObjectPoolManager : MonoBehaviour {
+public class ObjectPoolManager : BaseMonoBehaviour {
 
     public static ObjectPoolManager Instance = null;
 
@@ -231,4 +231,14 @@ public class ObjectPoolManager : MonoBehaviour {
         return new InterruptHolder();
     }
     #endregion
+
+    protected override void OnDestroy() {
+        if (allObjectPools != null) {
+            // foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
+            //     pool.Value.DeletePool(true);
+            // }
+            allObjectPools.Clear();    
+        }
+        base.OnDestroy();
+    }
 }

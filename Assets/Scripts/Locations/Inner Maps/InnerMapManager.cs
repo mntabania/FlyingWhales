@@ -14,8 +14,8 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
-    [ExecuteInEditMode]
-    public class InnerMapManager : MonoBehaviour {
+    // [ExecuteInEditMode]
+    public class InnerMapManager : BaseMonoBehaviour {
 
         public static InnerMapManager Instance;
         
@@ -840,5 +840,15 @@ namespace Inner_Maps {
 		    }
 	    }
         #endregion
+
+        protected override void OnDestroy() {
+            allTileObjects?.Clear();
+            Destroy(pathfinder);
+            structurePrefabs?.Clear();
+            tileObjectSlotSettings?.Clear();
+            wallResourceAssets?.Clear();
+            base.OnDestroy();
+            Instance = null;
+        }
     }
 }
