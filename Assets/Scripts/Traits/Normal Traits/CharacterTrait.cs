@@ -163,8 +163,9 @@ namespace Traits {
                                 }
                                 if (willReact) {
                                     if (owner.marker) {
-                                        /*ActualGoapNode node = */owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
-                                        //owner.marker.AddUnprocessedAction(node);
+                                        if (!targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
+                                            owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                        }
                                     }
                                 }
                             }

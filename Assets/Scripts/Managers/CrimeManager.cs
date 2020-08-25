@@ -74,12 +74,12 @@ public class CrimeManager : MonoBehaviour {
         CrimeData existingCrimeData = criminalTrait.GetCrimeDataOf(crime);
         if (existingCrimeData == null) {
             existingCrimeData = criminalTrait.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
-
             CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
+
             Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal");
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            addLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(crimeTypeObj.name), LOG_IDENTIFIER.STRING_1);
-            addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
+            addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
+            //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
             addLog.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
         }

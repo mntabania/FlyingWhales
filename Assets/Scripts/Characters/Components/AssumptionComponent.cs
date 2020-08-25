@@ -5,12 +5,19 @@ using UnityEngine;
 public class AssumptionComponent {
     public Character owner { get; private set; }
 
+    public List<AssumptionData> assumptionData { get; private set; }
+
     public AssumptionComponent(Character owner) {
         this.owner = owner;
+        assumptionData = new List<AssumptionData>();
     }
 
     #region General
     public void CreateAndReactToNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType, REACTION_STATUS reactionStatus) {
+        if(HasAlreadyAssumedTo(assumedActionType, assumedCharacter, targetOfAssumedCharacter)) {
+            return;
+        }
+        assumptionData.Add(new AssumptionData(assumedActionType, assumedCharacter, targetOfAssumedCharacter));
         Assumption newAssumption = CreateNewAssumption(assumedCharacter, targetOfAssumedCharacter, assumedActionType);
         newAssumption.assumedAction.SetCrimeType();
         if(assumedActionType == INTERACTION_TYPE.ASSAULT) {
@@ -38,7 +45,7 @@ public class AssumptionComponent {
 
         Messenger.Broadcast(Signals.CHARACTER_ASSUMED, owner, assumedCharacter, targetOfAssumedCharacter);
     }
-    public Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
+    private Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
         ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
         return new Assumption(owner, assumedAction);
     }
@@ -48,5 +55,28 @@ public class AssumptionComponent {
         assumedAction.SetCrimeType();
         return assumedAction;
     }
+    public bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
+        for (int i = 0; i < assumptionData.Count; i++) {
+            AssumptionData data = assumptionData[i];
+            if(data.assumedActionType == actionType && data.actorID == actor.id && data.targetID == target.id && data.targetPOIType == target.poiType) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
+}
+
+public struct AssumptionData {
+    public INTERACTION_TYPE assumedActionType;
+    public int actorID;
+    public int targetID;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+
+    public AssumptionData(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
+        assumedActionType = actionType;
+        actorID = actor.id;
+        targetID = target.id;
+        targetPOIType = target.poiType;
+    }
 }

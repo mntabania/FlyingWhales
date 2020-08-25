@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Crime_System {
     public class Vampire : CrimeType {
+
+        #region getters
+        public override string accuseText => "being a Vampire";
+        #endregion
+
         public Vampire() : base(CRIME_TYPE.Vampire) { }
 
         #region Overrides

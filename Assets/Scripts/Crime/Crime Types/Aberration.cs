@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Crime_System {
     public class Aberration : CrimeType {
+
+        #region getters
+        public override string accuseText => "being an Aberration";
+        #endregion
+
         public Aberration() : base(CRIME_TYPE.Aberration) { }
 
         #region Overrides

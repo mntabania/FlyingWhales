@@ -7,6 +7,10 @@ namespace Crime_System {
         public CRIME_TYPE type { get; private set; }
         public string name { get; private set; }
 
+        #region getters
+        public virtual string accuseText => name;
+        #endregion
+
         public CrimeType(CRIME_TYPE type) {
             this.type = type;
             name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(type.ToString());

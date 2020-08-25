@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Crime_System {
     public class DivineWorship : CrimeType {
+
+        #region getters
+        public override string accuseText => "being a Divine Worshiper";
+        #endregion
+
         public DivineWorship() : base(CRIME_TYPE.Divine_Worship) { }
 
         #region Overrides

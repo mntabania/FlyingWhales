@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Crime_System {
     public class Cannibalism : CrimeType {
+
         public Cannibalism() : base(CRIME_TYPE.Cannibalism) { }
 
         #region Overrides
