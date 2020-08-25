@@ -946,6 +946,7 @@ public class Faction : IJobOwner {
                         log.AddToFillers(crime.descriptionLog.fillers);
                         log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(crime.descriptionLog), LOG_IDENTIFIER.APPEND);
                         log.AddLogToInvolvedObjects();    
+                        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                     } else {
                         debugLog += $"\nCould not set {name} and {targetFaction.name} as Hostile.";
                     }

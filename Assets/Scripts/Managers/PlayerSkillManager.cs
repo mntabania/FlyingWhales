@@ -20,7 +20,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public bool unlimitedCast => _unlimitedCast;
     public bool unlockAllSkills => _unlockAllSkills || WorldSettings.Instance.worldSettingsData.omnipotentMode;
 #else
-    public bool unlimitedCast => false;
+    public bool unlimitedCast => false; //|| WorldSettings.Instance.worldSettingsData.omnipotentMode
     public bool unlockAllSkills => false || WorldSettings.Instance.worldSettingsData.omnipotentMode;
 #endif
 

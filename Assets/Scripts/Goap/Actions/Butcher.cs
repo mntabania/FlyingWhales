@@ -328,8 +328,8 @@ public class Butcher : GoapAction {
         }
         
         //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
-        if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) && 
-           !goapNode.actor.traitContainer.HasTrait("Cannibal")) {
+        if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) 
+           && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized");
         }
     }
