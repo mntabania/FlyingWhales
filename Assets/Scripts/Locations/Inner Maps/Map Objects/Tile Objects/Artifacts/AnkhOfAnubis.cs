@@ -11,6 +11,7 @@ public class AnkhOfAnubis : Artifact {
         maxHP = 700;
         currentHP = maxHP;
         traitContainer.AddTrait(this, "Treasure");
+        traitContainer.AddTrait(this, "Indestructible");
     }
     //public AnkhOfAnubis(SaveDataArtifact data) : base(data) {
     //}

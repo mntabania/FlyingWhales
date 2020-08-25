@@ -101,7 +101,7 @@ public class BaseParticleEffect : PooledObject {
             }
         } else {
             for (int i = 0; i < particleSystems.Length; i++) {
-                if (particleSystems[i].isPaused || !particleSystems[i].isPlaying) {
+                if (particleSystems[i].isPaused) {
                     particleSystems[i].Play();
                 }
             }
