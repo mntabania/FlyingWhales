@@ -3033,19 +3033,19 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //try to take settlement job that this character can see the target of.
             string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
             if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
-                debugLog += $"\n{name} Can take settlement job in vision.";
+                debugLog = $"{debugLog}\n{name} Can take settlement job in vision.";
                 JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVisionExcept(this, JOB_TYPE.CRAFT_OBJECT);
-                debugLog += $"\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
+                debugLog = $"{debugLog}\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
                 if (jobToAssign != null && 
                     ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
                      (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
                     jobQueue.AddJobInQueue(jobToAssign);
-                    debugLog += $"\nJob was added to queue!";
+                    debugLog = $"{debugLog}\nJob was added to queue!";
                 } else {
-                    debugLog += $"\nCouldn't assign job!";
+                    debugLog = $"{debugLog}\nCouldn't assign job!";
                 }    
             } else {
-                debugLog += $"\n{name} Cannot take settlement job in vision because \n{invalidReason}";
+                debugLog = $"{debugLog}\n{name} Cannot take settlement job in vision because \n{invalidReason}";
             }
             logComponent.PrintLogIfActive(debugLog);
         }
@@ -3205,12 +3205,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private string OtherIdlePlans() {
         string log = $" IDLE PLAN FOR {name}";
         if (isDead) {
-            log += $"{name} is already dead not planning other idle plans.";
+            log = $"{log}{name} is already dead not planning other idle plans.";
             return log;
         }
         //if (!isFactionless) { }
         string classIdlePlanLog = behaviourComponent.RunBehaviour();
-        log += $"\n{classIdlePlanLog}";
+        log = $"{log}\n{classIdlePlanLog}";
         return log;
 
         //if (homeStructure != null) {
@@ -5912,5 +5912,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     public void CleanUp() {
         visuals.CleanUp();
+        traitContainer.CleanUp();
     }
 }

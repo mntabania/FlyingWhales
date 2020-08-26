@@ -28,6 +28,11 @@ public class WorldMapCameraMove : BaseCameraMove {
         _mainCameraTransform = mainCamera.transform;
         defaultMask = mainCamera.cullingMask;
     }
+    protected override void OnDestroy() {
+        RemoveListeners();
+        base.OnDestroy();
+        Instance = null;
+    }
     private void Update() {
         if (!cameraControlEnabled) {
             return;
@@ -38,9 +43,6 @@ public class WorldMapCameraMove : BaseCameraMove {
         Zooming();
         Targeting(mainCamera);
         ConstrainCameraBounds(mainCamera);
-    }
-    private void OnDestroy() {
-        RemoveListeners();
     }
 
     public override void Initialize() {

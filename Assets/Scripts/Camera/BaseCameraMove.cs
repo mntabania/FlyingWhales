@@ -4,7 +4,7 @@ using Settings;
 using UnityEngine;
 using DG.Tweening;
 
-public abstract class BaseCameraMove : MonoBehaviour{
+public abstract class BaseCameraMove : BaseMonoBehaviour{
 
     [Header("Bounds")]
     private const float MIN_Z = -10f;
@@ -294,4 +294,5 @@ public abstract class BaseCameraMove : MonoBehaviour{
         Messenger.Broadcast(Signals.CAMERA_ZOOM_CHANGED, camera, amount);
     }
     #endregion
+    
 }

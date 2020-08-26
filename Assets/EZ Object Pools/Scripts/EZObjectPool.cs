@@ -272,11 +272,13 @@ namespace EZObjectPools
         /// <summary>
         /// Destroys all objects that are a part of this pool.
         /// </summary>
-        public void ClearPool()
-        {
-            for (int i = 0; i < ObjectList.Count; i++)
-            {
-                Destroy(ObjectList[i]);
+        public void ClearPool() {
+            for (int i = 0; i < ObjectList.Count; i++) {
+                GameObject objectInList = ObjectList[i];
+                if (objectInList == null) {
+                    continue;
+                }
+                Destroy(objectInList);
             }
 
             ObjectList.Clear();
@@ -287,12 +289,14 @@ namespace EZObjectPools
         /// Destroys this pool.
         /// </summary>
         /// <param name="deleteActiveObjects">Should it delete any active GameObjects that are part of this pool?</param>
-        public void DeletePool(bool deleteActiveObjects)
-        {
-            for (int i = 0; i < ObjectList.Count; i++)
-            {
-                if (!ObjectList[i].activeInHierarchy || (ObjectList[i].activeInHierarchy && deleteActiveObjects))
-                    Destroy(ObjectList[i]);
+        public void DeletePool(bool deleteActiveObjects) {
+            for (int i = 0; i < ObjectList.Count; i++) {
+                GameObject objectInList = ObjectList[i];
+                if (objectInList == null) {
+                    continue;
+                }
+                if (!objectInList.activeInHierarchy || (objectInList.activeInHierarchy && deleteActiveObjects))
+                    Destroy(objectInList);
             }
         }
 

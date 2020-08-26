@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
 namespace Tutorial {
-    public class TutorialManager : MonoBehaviour {
+    public class TutorialManager : BaseMonoBehaviour {
 
         public static TutorialManager Instance;
         private const int MaxActiveTutorials = 1;
@@ -118,6 +118,10 @@ namespace Tutorial {
         #region Monobehaviours
         private void Awake() {
             Instance = this;
+        }
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            Instance = null;
         }
         private void LateUpdate() {
             if (GameManager.Instance.gameHasStarted) {

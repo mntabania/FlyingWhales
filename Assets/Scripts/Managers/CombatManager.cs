@@ -7,7 +7,7 @@ using Traits;
 using Inner_Maps;
 using UnityEngine.Assertions;
 
-public class CombatManager : MonoBehaviour {
+public class CombatManager : BaseMonoBehaviour {
     public static CombatManager Instance;
 
     public const int pursueDuration = 4;
@@ -22,6 +22,10 @@ public class CombatManager : MonoBehaviour {
     
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
 
     public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character characterResponsible = null, ElementalTraitProcessor elementalTraitProcessor = null) {

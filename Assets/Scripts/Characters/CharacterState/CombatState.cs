@@ -219,92 +219,92 @@ public class CombatState : CharacterState {
             DetermineIsBeingApprehended();
             string summary = $"{character.name} will determine a combat reaction";
             if (character.marker.hasFleePath) {
-                summary += "\n-Has flee path";
+                summary = $"{summary}\n-Has flee path";
                 //Character is already fleeing
                 CheckFlee(ref summary);
             } else {
-                summary += "\n-Has no flee path";
+                summary = $"{summary}\n-Has no flee path";
                 if (HasStillAvoidPOIThatIsInRange()) {
                     string avoidReason = GetAvoidReason(stateComponent.character.combatComponent.avoidInRange[0]);
-                    summary += "\n-Has avoid that is still in range";
+                    summary = $"{summary}\n-Has avoid that is still in range";
                     if (character.homeStructure != null) {
-                        summary += "\n-Has home dwelling";
+                        summary = $"{summary}\n-Has home dwelling";
                         if (character.homeStructure == character.currentStructure) {
-                            summary += "\n-Is in Home Dwelling";
+                            summary = $"{summary}\n-Is in Home Dwelling";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
-                                summary += "\n-Triggered Cowering";
+                                summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             } else {
-                                summary += "\n-Triggered Flee";
+                                summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             }
                         } else {
-                            summary += "\n-Is not in Home Dwelling, 40%: Flee to Home, 40%: Flee, 20%: Cowering";
+                            summary = $"{summary}\n-Is not in Home Dwelling, 40%: Flee to Home, 40%: Flee, 20%: Cowering";
                             int roll = UnityEngine.Random.Range(0, 100);
-                            summary += $"\n-Roll: {roll}";
+                            summary = $"{summary}\n-Roll: {roll}";
                             if (roll < 40) {
-                                summary += "\n-Triggered Flee to Home";
+                                summary = $"{summary}\n-Triggered Flee to Home";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
                             } else if (roll >= 40 && roll < 80) {
-                                summary += "\n-Triggered Flee";
+                                summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             } else {
-                                summary += "\n-Triggered Cowering";
+                                summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             }
                         }
                     } else if (character is Summon && (character as Summon).HasTerritory()) {
-                        summary += "\n-Has territory";
+                        summary = $"{summary}\n-Has territory";
                         Summon summon = character as Summon;
                         if (summon.IsInTerritory()) {
-                            summary += "\n-Is in territory";
+                            summary = $"{summary}\n-Is in territory";
                             if (UnityEngine.Random.Range(0, 2) == 0) {
-                                summary += "\n-Triggered Cowering";
+                                summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             } else {
-                                summary += "\n-Triggered Flee";
+                                summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             }
                         } else {
-                            summary += "\n-Is not in territory, 40%: Flee to territory, 40%: Flee, 20%: Cowering";
+                            summary = $"{summary}\n-Is not in territory, 40%: Flee to territory, 40%: Flee, 20%: Cowering";
                             int roll = UnityEngine.Random.Range(0, 100);
-                            summary += $"\n-Roll: {roll}";
+                            summary = $"{summary}\n-Roll: {roll}";
                             if (roll < 40) {
-                                summary += "\n-Triggered Flee to territory";
+                                summary = $"{summary}\n-Triggered Flee to territory";
                                 SetIsFleeToHome(true);
                                 SetIsAttacking(false);
                             } else if (roll >= 40 && roll < 80) {
-                                summary += "\n-Triggered Flee";
+                                summary = $"{summary}\n-Triggered Flee";
                                 SetIsFleeToHome(false);
                                 SetIsAttacking(false);
                             } else {
-                                summary += "\n-Triggered Cowering";
+                                summary = $"{summary}\n-Triggered Cowering";
                                 character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                             }
                         }
                     } else {
-                        summary += "\n-Has no home dwelling nor territory";
+                        summary = $"{summary}\n-Has no home dwelling nor territory";
                         if (UnityEngine.Random.Range(0, 2) == 0) {
-                            summary += "\n-Triggered Cowering";
+                            summary = $"{summary}\n-Triggered Cowering";
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, character, reason: avoidReason);
                         } else {
-                            summary += "\n-Triggered Flee";
+                            summary = $"{summary}\n-Triggered Flee";
                             SetIsFleeToHome(false);
                             SetIsAttacking(false);
                         }
                     }
                 } else if (character.combatComponent.hostilesInRange.Count > 0) {
-                    summary += "\n-Has hostile in list";
-                    summary += "\n-Attack nereast one";
+                    summary = $"{summary}\n-Has hostile in list";
+                    summary = $"{summary}\n-Attack nereast one";
                     //SetClosestHostile(null);
                     SetIsAttacking(true);
                 } else {
-                    summary += "\n-Has no hostile or avoid in list";
-                    summary += "\n-Exiting combat state";
+                    summary = $"{summary}\n-Has no hostile or avoid in list";
+                    summary = $"{summary}\n-Exiting combat state";
                     character.combatComponent.ClearAvoidInRange(false);
                     endedInternally = true;
                     character.stateComponent.ExitCurrentState();
@@ -380,23 +380,23 @@ public class CombatState : CharacterState {
     }
     public void CheckFlee(ref string debugLog) {
         if (!HasStillAvoidPOIThatIsInRange()) {
-            debugLog += "\n-Has no avoid that is still in range";
+            debugLog = $"{debugLog}\n-Has no avoid that is still in range";
             if (HasStillHostilePOIThatIsInRange()) {
-                debugLog += "\n-Has hostile that is still in range";
-                debugLog += "\n-Attack nearest one";
+                debugLog = $"{debugLog}\n-Has hostile that is still in range";
+                debugLog = $"{debugLog}\n-Attack nearest one";
                 //SetClosestHostile(null);
                 SetIsAttacking(true);
             } else {
-                debugLog += "\n-Has no hostile that is still in range";
-                debugLog += $"\n-{fleeChance}% chance to flee";
+                debugLog = $"{debugLog}\n-Has no hostile that is still in range";
+                debugLog = $"{debugLog}\n-{fleeChance.ToString()}% chance to flee";
                 int roll = UnityEngine.Random.Range(0, 100);
-                debugLog += $"\n-Roll: {roll}"; 
+                debugLog = $"{debugLog}\n-Roll: {roll.ToString()}"; 
                 if (roll < fleeChance) {
-                    debugLog += "\n-Stop fleeing";
+                    debugLog = $"{debugLog}\n-Stop fleeing";
                     FinishedTravellingFleePath();
                 } else {
                     fleeChance += 10;
-                    debugLog += $"\n-Flee chance increased by 10%, new flee chance is {fleeChance}";
+                    debugLog = $"{debugLog}\n-Flee chance increased by 10%, new flee chance is {fleeChance.ToString()}";
                 }
             }
         }
@@ -486,74 +486,68 @@ public class CombatState : CharacterState {
         string log = $"Reevaluating combat behavior of {stateComponent.character.name}";
         if (isAttacking) {
             //stateComponent.character.marker.StopPerTickFlee();
-            log += $"\n{stateComponent.character.name} is attacking!";
+            log = $"{log}\n{stateComponent.character.name} is attacking!";
             if (stateComponent.character.marker && stateComponent.character.marker.hasFleePath) {
-                log += $"\n-Still has flee path, force finish flee path";
+                log = $"{log}\n-Still has flee path, force finish flee path";
                 stateComponent.character.marker.SetHasFleePath(false);
                 fleeChance = 10;
             } else if (!stateComponent.character.marker) {
-                log += $"\n-Has no marker!";
+                log = $"{log}\n-Has no marker!";
             }
             Trait taunted = stateComponent.character.traitContainer.GetNormalTrait<Trait>("Taunted");
             if (forcedTarget != null) {
-                log += $"\n{stateComponent.character.name} has a forced target. Setting {forcedTarget.name} as target.";
+                log = $"{log}\n{stateComponent.character.name} has a forced target. Setting {forcedTarget.name} as target.";
                 SetClosestHostile(forcedTarget);
                 SetForcedTarget(null);
             } else if (taunted != null) {
-                log +=
-                    $"\n{stateComponent.character.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
+                log = $"{log}\n{stateComponent.character.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
                 SetClosestHostile(taunted.responsibleCharacter);
             } else if (currentClosestHostile != null && !stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
-                log +=
-                    $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             } else if (currentClosestHostile != null && currentClosestHostile.isDead) {
-                log +=
-                    $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
+                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
             } else if (currentClosestHostile != null && (!currentClosestHostile.mapObjectVisual || !currentClosestHostile.mapObjectVisual.gameObject)) {
-                log +=
-                    $"\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
+                log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} no longer has a map object visual, setting another closest hostile...";
                 stateComponent.character.combatComponent.RemoveHostileInRange(currentClosestHostile, false);
                 SetClosestHostile();
             } else if (currentClosestHostile != null && currentClosestHostile is Character targetCharacter && targetCharacter.combatComponent.isInCombat &&
                     (targetCharacter.stateComponent.currentState as CombatState).isAttacking == false) {
                 if (stateComponent.character.behaviourComponent.HasBehaviour(typeof(DefendBehaviour))) {
-                    log +=
-                        $"\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
+                    log = $"{log}\nCurrent closest hostile: {targetCharacter.name} is already fleeing, and character is defending, remove character from hostile range, and set new target";
                     stateComponent.character.combatComponent.RemoveHostileInRange(targetCharacter, false);
                     SetClosestHostile();
                 } else {
-                    log +=
-                        $"\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
+                    log = $"{log}\nCurrent closest hostile: {currentClosestHostile.name} is already fleeing, will try to set another hostile character that is not fleeing...";
                     SetClosestHostilePriorityNotFleeing();
                 }
             } else if (currentClosestHostile == null) {
-                log += "\nNo current closest hostile, setting one...";
+                log = $"{log}\nNo current closest hostile, setting one...";
                 SetClosestHostile();
             } else {
-                log += "\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
+                log = $"{log}\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
                 IPointOfInterest newClosestHostile = stateComponent.character.combatComponent.GetNearestValidHostile();
                 if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
                     SetClosestHostile(newClosestHostile);
                 } else if (currentClosestHostile != null && stateComponent.character.carryComponent.masterCharacter.avatar.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
-                    log += $"\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
+                    log = $"{log}\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
                     stateComponent.character.logComponent.PrintLogIfActive(log);
                     return;
                 }
             }
             if (currentClosestHostile == null) {
-                log += "\nNo more hostile characters, exiting combat state...";
+                log = $"{log}\nNo more hostile characters, exiting combat state...";
                 endedInternally = true;
                 stateComponent.ExitCurrentState();
             } else {
                 float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 if (distance > stateComponent.character.characterClass.attackRange || !stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
-                    log += $"\nPursuing closest hostile target: {currentClosestHostile.name}";
+                    log = $"{log}\nPursuing closest hostile target: {currentClosestHostile.name}";
                     PursueClosestHostile();
                 } else {
-                    log += $"\nAlready within range of: {currentClosestHostile.name}. Skipping pursuit...";
+                    log = $"{log}\nAlready within range of: {currentClosestHostile.name}. Skipping pursuit...";
                 }
             }
             //stateComponent.character.PrintLogIfActive(log);
@@ -561,23 +555,23 @@ public class CombatState : CharacterState {
             //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
             List<IPointOfInterest> avoidInRange = stateComponent.character.combatComponent.avoidInRange;
             if (avoidInRange.Count <= 0) {
-                log += "\nNo more avoid characters, exiting combat state...";
+                log = $"{log}\nNo more avoid characters, exiting combat state...";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
                 endedInternally = true;
                 stateComponent.ExitCurrentState();
                 return;
             }
             if (stateComponent.character.marker.hasFleePath) {
-                log += "\nAlready in flee mode";
+                log = $"{log}\nAlready in flee mode";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
                 return;
             }
             if (stateComponent.character.canMove == false) {
-                log += "\nCannot move, not fleeing";
+                log = $"{log}\nCannot move, not fleeing";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
                 return;
             }
-            log += $"\n{stateComponent.character.name} is fleeing!";
+            log = $"{log}\n{stateComponent.character.name} is fleeing!";
             stateComponent.character.logComponent.PrintLogIfActive(log);
 
             IPointOfInterest objToAvoid = avoidInRange[avoidInRange.Count - 1];

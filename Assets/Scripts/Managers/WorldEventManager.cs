@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Events.World_Events;
 using UnityEngine;
 namespace Managers {
-    public class WorldEventManager : MonoBehaviour {
+    public class WorldEventManager : BaseMonoBehaviour {
 
         public static WorldEventManager Instance;
 
@@ -11,6 +11,10 @@ namespace Managers {
         
         private void Awake() {
             Instance = this;
+        }
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            Instance = null;
         }
         
         public void Initialize() {

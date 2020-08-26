@@ -765,6 +765,25 @@ namespace Traits {
             return false;
         }
         #endregion
+
+        #region Clean Up
+        public void CleanUp() {
+            allTraitsAndStatuses.Clear();
+            allTraitsAndStatuses = null;
+            traits.Clear();
+            traits = null;
+            statuses.Clear();
+            statuses = null;
+            traitOverrideFunctions.Clear();
+            traitOverrideFunctions = null;
+            stacks.Clear();
+            stacks = null;
+            scheduleTickets.Clear();
+            scheduleTickets = null;
+            traitSwitches.Clear();
+            traitSwitches = null;
+        }
+        #endregion
     }
 }
 

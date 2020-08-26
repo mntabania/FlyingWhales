@@ -8,7 +8,7 @@ using Interrupts;
 using Crime_System;
 using UtilityScripts;
 
-public class CrimeManager : MonoBehaviour {
+public class CrimeManager : BaseMonoBehaviour {
     public static CrimeManager Instance;
 
     private Dictionary<CRIME_SEVERITY, CrimeSeverity> _crimeSeverities;
@@ -18,6 +18,10 @@ public class CrimeManager : MonoBehaviour {
     void Awake () {
         Instance = this;
 	}
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
+    }
 
     #region General
     public void Initialize() {

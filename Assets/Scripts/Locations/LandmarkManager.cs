@@ -13,7 +13,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public partial class LandmarkManager : MonoBehaviour {
+public partial class LandmarkManager : BaseMonoBehaviour {
 
     public static LandmarkManager Instance = null;
     public static readonly int Max_Connections = 3;
@@ -55,6 +55,10 @@ public partial class LandmarkManager : MonoBehaviour {
     #region Monobehaviours
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     #endregion
 

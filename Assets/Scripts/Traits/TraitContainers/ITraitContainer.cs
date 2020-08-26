@@ -80,5 +80,9 @@ namespace Traits {
         #region Inquiry
         bool HasTangibleTrait();
         #endregion
+
+        #region Clean Up
+        void CleanUp();
+        #endregion
     }
 }

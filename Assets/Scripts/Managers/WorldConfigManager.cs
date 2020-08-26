@@ -51,6 +51,7 @@ public class WorldConfigManager : MonoBehaviour {
     [MenuItem("Tools/Force Garbage Collection")]
     static void GarbageCollect() {
         EditorUtility.UnloadUnusedAssetsImmediate();
+        Resources.UnloadUnusedAssets();
         GC.Collect();
     }
 #endif

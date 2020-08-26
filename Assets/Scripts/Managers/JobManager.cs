@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JobManager : MonoBehaviour {
+public class JobManager : BaseMonoBehaviour {
     public static JobManager Instance;
 
     private List<GoapPlanJob> goapJobPool;
@@ -10,6 +10,10 @@ public class JobManager : MonoBehaviour {
 
     void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
 
     public void Initialize() {

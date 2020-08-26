@@ -16,7 +16,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 
-public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable {
+public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable {
 
     public HexTileData data;
     private NPCSettlement _npcSettlementOfTile;

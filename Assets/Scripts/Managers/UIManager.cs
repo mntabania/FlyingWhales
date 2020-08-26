@@ -19,7 +19,7 @@ using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UtilityScripts;
 
-public class UIManager : MonoBehaviour {
+public class UIManager : BaseMonoBehaviour {
 
     public static UIManager Instance = null;
 
@@ -127,7 +127,6 @@ public class UIManager : MonoBehaviour {
     
     public bool tempDisableShowInfoUI { get; private set; }
     
-
     #region Monobehaviours
     private void Awake() {
         Instance = this;
@@ -144,7 +143,11 @@ public class UIManager : MonoBehaviour {
         }
     }
     #endregion
-    
+
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
+    }
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
         _raycastResults = new List<RaycastResult>();

@@ -5,7 +5,7 @@ using Inner_Maps;
 using TMPro;
 using UnityEngine;
 
-public class LocationGridTileCollectionItem : MonoBehaviour {
+public class LocationGridTileCollectionItem : BaseMonoBehaviour {
 
     [SerializeField] private Collider2D boundsCollider;
     

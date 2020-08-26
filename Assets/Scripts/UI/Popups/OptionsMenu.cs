@@ -46,8 +46,8 @@ public class OptionsMenu : PopupMenuBase {
     private void Abandon() {
         DOTween.Clear(true);
         SaveManager.Instance.SavePlayerData();
+        Messenger.Cleanup();
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);
-        Messenger.Cleanup();
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 
-public class RaceManager : MonoBehaviour {
+public class RaceManager : BaseMonoBehaviour {
     public static RaceManager Instance;
 
     private Dictionary<string, RaceSetting> _racesDictionary;
@@ -18,6 +18,10 @@ public class RaceManager : MonoBehaviour {
 
     void Awake() {
         Instance = this;    
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
 
     public void Initialize() {

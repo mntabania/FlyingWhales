@@ -31,6 +31,10 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         OnDisable();
     }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        parentMarker = null;
+    }
 
     #region Triggers
     protected override void OnTriggerEnter2D(Collider2D collision) {

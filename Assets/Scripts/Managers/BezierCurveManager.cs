@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 
-public class BezierCurveManager : MonoBehaviour {
+public class BezierCurveManager : BaseMonoBehaviour {
     public static BezierCurveManager Instance;
 
     public int numOfInterpolations;
@@ -20,6 +20,10 @@ public class BezierCurveManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     private void Start() {
         _curveParents = new List<BezierCurveParent>();

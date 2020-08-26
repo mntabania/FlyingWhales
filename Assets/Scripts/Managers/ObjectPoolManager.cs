@@ -234,11 +234,23 @@ public class ObjectPoolManager : BaseMonoBehaviour {
 
     protected override void OnDestroy() {
         if (allObjectPools != null) {
-            // foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
-            //     pool.Value.DeletePool(true);
-            // }
-            allObjectPools.Clear();    
+            foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
+                pool.Value.ClearPool();
+            }
+            allObjectPools.Clear();
+            allObjectPools = null;
         }
+        goapNodesPool.Clear();
+        goapNodesPool = null;
+        opinionDataPool.Clear();
+        opinionDataPool = null;
+        traitRemoveSchedulePool.Clear();
+        traitRemoveSchedulePool = null;
+        combatDataPool.Clear();
+        combatDataPool = null;
+        interruptPool.Clear();
+        interruptPool = null;
         base.OnDestroy();
+        Instance = null;
     }
 }

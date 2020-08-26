@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: c56691e3000aa5f46b6b0f833f973a16, type: 3}
-    totalSpriteSurfaceArea: 4784180
+    totalSpriteSurfaceArea: 2133200
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -103,10 +103,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b5af82f9062e720469b0526f008f3975, type: 3}
   - {fileID: 21300000, guid: 78df04f980016dc4fb71ef2a8938c2ed, type: 3}
   - {fileID: 21300000, guid: 29ab2b5a1c49b0f4688c41105652d7d0, type: 3}
-  - {fileID: 4487587328139191825, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
-  - {fileID: 3329742001649244855, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
-  - {fileID: -3537241893320760627, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
-  - {fileID: 5182779116082219118, guid: 06241baa476e1d34da9eb48d6badce14, type: 3}
   - {fileID: 21300000, guid: 90d1774b56485e5428bf67ee5d0bf242, type: 3}
   - {fileID: 21300000, guid: c099473cb16b29a4d96ce06fbd23c8e2, type: 3}
   - {fileID: 21300000, guid: f08502bc437f53e4d91122f1690a779a, type: 3}
@@ -194,10 +190,6 @@ SpriteAtlas:
   - iceblock00
   - landmine
   - windBlastLarge00
-  - Poison_Cloud_Spritesheet_1
-  - Poison_Cloud_Spritesheet_0
-  - Poison_Cloud_Spritesheet_3
-  - Poison_Cloud_Spritesheet_2
   - iceblock02
   - snowMound00
   - Frozen_Particle_Spritesheet

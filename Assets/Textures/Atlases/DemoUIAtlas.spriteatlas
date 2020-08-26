@@ -43,16 +43,12 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: a71bd99509def6041b8dda3a94f44a2c, type: 3}
-    totalSpriteSurfaceArea: 1126254
+    totalSpriteSurfaceArea: 333630
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 49685f365c0c3c84b945b6ddfba6c3ab, type: 3}
   - {fileID: 21300000, guid: 0cd30f561b3128d449985000a76e7260, type: 3}
-  - {fileID: 21300000, guid: 03e8540e6ed44704abd21d6230c79a17, type: 3}
   m_PackedSpriteNamesToIndex:
-  - demo_start_popup
   - scenario_popup_container
-  - demo_end_popup
   m_Tag: DemoUIAtlas
   m_IsVariant: 0
