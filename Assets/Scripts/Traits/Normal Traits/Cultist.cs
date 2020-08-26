@@ -30,6 +30,11 @@ namespace Traits {
                 character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
                 character.traitContainer.AddTrait(character, "Nocturnal");
 
+                //if necromancer is a cultist then make the undead faction friendly towards the player.
+                if (character.traitContainer.HasTrait("Necromancer")) {
+                    FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
+                }
+                
                 Messenger.Broadcast(Signals.CHECK_IF_PLAYER_WINS);
             }
         }

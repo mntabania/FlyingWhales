@@ -172,8 +172,8 @@ namespace Inner_Maps.Location_Structures {
         public void DoCleanup() {
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i);
-                if (poi is TileObject) {
-                    (poi as TileObject).DoCleanup();
+                if (poi is TileObject tileObject) {
+                    tileObject.DoCleanup();
                 }
             }
         }

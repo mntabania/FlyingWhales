@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 using UtilityScripts;
 
-public class TraitManager : MonoBehaviour {
+public class TraitManager : BaseMonoBehaviour {
     public static TraitManager Instance;
 
     private Dictionary<string, Trait> _allTraits;
@@ -55,12 +55,6 @@ public class TraitManager : MonoBehaviour {
     public static TraitProcessor tileObjectTraitProcessor;
     public static TraitProcessor defaultTraitProcessor;
     
-    // //list of traits that a character can gain on their own
-    // private readonly string[] traitPool = new string[] { "Vigilant", "Diplomatic",
-    //     "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Music Lover", "Music Hater", "Unattractive", "Nocturnal",
-    //     "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-    //     "Narcoleptic", "Hothead", "Evil", "Treacherous", "Ambitious", "Authoritative", "Fire Prone", "Blessed", "Persuasive", //, "Electric", "Venomous"
-    // };
     public List<string> buffTraitPool { get; private set; }
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }
@@ -300,6 +294,29 @@ public class TraitManager : MonoBehaviour {
             }
             burning.SetSourceOfBurning(burningSource, traitable);
         }
+    }
+    #endregion
+
+    #region Clean Up
+    protected override void OnDestroy() {
+        characterTraitProcessor = null;
+        tileObjectTraitProcessor = null;
+        defaultTraitProcessor = null;
+        _allTraits?.Clear();
+        traitPortraitDictionary?.Clear();
+        traitIconDictionary?.Clear();
+        buffTraitPool?.Clear();
+        buffTraitPool = null;
+        flawTraitPool?.Clear();
+        flawTraitPool = null;
+        neutralTraitPool?.Clear();
+        neutralTraitPool = null;
+        removeStatusTraits?.Clear();
+        removeStatusTraits = null;
+        specialIllnessTraits?.Clear();
+        specialIllnessTraits = null;
+        base.OnDestroy();
+        Instance = null;
     }
     #endregion
 }

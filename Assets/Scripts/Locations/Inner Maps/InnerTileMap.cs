@@ -73,7 +73,6 @@ namespace Inner_Maps {
         public GameObject centerGo { get; private set; }
         public List<BurningSource> activeBurningSources { get; private set; }
         public LocationGridTileCollection[,] locationGridTileCollections { get; protected set; }
-        public InnerMapCenter innerMapCenter { get; private set; }
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
 
         #region Generation
@@ -364,9 +363,6 @@ namespace Inner_Maps {
         // #endregion
 
         #region Utilities
-        public void CleanUp() {
-            UtilityScripts.Utilities.DestroyChildren(objectsParent);
-        }
         public void Open() { }
         public void Close() { }
         public virtual void OnMapGenerationFinished() {
@@ -671,6 +667,36 @@ namespace Inner_Maps {
             } else {
                 HidePath();
             }
+        }
+        #endregion
+
+        #region Cleanup
+        public void CleanUp() {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    LocationGridTile locationGridTile = map[x, y];
+                    locationGridTile.CleanUp();
+                }    
+            }
+            map = null;
+            allTiles.Clear();
+            allTiles = null;
+            allEdgeTiles.Clear();
+            allEdgeTiles = null;
+            pathfindingGraph = null;
+            Destroy(centerGo);
+            centerGo = null;
+            activeBurningSources.Clear();
+            activeBurningSources = null;
+            for (int i = 0; i < locationGridTileCollections.GetUpperBound(0); i++) {
+                for (int j = 0; j < locationGridTileCollections.GetUpperBound(1); j++) {
+                    LocationGridTileCollection collection = locationGridTileCollections[i, j];
+                    collection.CleanUp();
+                }
+            }
+            locationGridTileCollections = null;
+            
+            // UtilityScripts.Utilities.DestroyChildren(objectsParent);
         }
         #endregion
         

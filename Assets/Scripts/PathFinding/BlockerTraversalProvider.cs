@@ -41,7 +41,9 @@ public class BlockerTraversalProvider : ITraversalProvider {
         // alternatively:
         return DefaultITraversalProvider.GetTraversalCost(path, node) + additionalPenalty;
     }
-
+    public void CleanUp() {
+        _marker = null;
+    }
 
 
 

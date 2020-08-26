@@ -7,7 +7,7 @@ using UtilityScripts;
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
-public abstract class BaseVisionCollider : MonoBehaviour {
+public abstract class BaseVisionCollider : BaseMonoBehaviour {
 
     private int _filterVisionVotes;
     public int filterVotes => _filterVisionVotes;

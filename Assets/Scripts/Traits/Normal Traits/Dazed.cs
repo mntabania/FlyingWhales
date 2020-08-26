@@ -9,35 +9,26 @@ namespace Traits {
 
         public Dazed() {
             name = "Dazed";
-            description = "This character will attack anyone at random and may destroy objects.";
-            thoughtText = "This character is Dazed.";
+            description = "Listlessly going back home.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
+            ticksDuration = 0;
             hindersWitness = true;
+            hindersSocials = true;
             // hindersPerform = true;
         }
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
-                character.jobQueue.CancelAllJobs();
-                // _behaviourComponentsBeforeDazed = new List<CharacterBehaviourComponent>(character.behaviourComponent.currentBehaviourComponents);
-                // character.behaviourComponent.ReplaceBehaviourComponent(new List<CharacterBehaviourComponent>()
-                //     {CharacterManager.Instance.GetCharacterBehaviourComponent(typeof(DazedBehaviour))});
+            if (addedTo is Character character) {
                 character.behaviourComponent.AddBehaviourComponent(typeof(DazedBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character) {
-                Character character = removedFrom as Character;
-                // character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeDazed);
-                // _behaviourComponentsBeforeDazed.Clear();
+            if (removedFrom is Character character) {
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(DazedBehaviour));
-                character.needsComponent.CheckExtremeNeeds();
             }
         }
         #endregion

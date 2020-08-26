@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -9,8 +10,10 @@ using Traits;
 public class CharacterMarkerVisionCollider : BaseVisionCollider {
 
     public CharacterMarker parentMarker;
-
+    private bool isApplicationQuitting = false;
+    
     private void OnDisable() {
+        if (isApplicationQuitting) { return; }
         if (parentMarker.inVisionPOIs != null) {
             parentMarker.ClearPOIsInVisionRange();
         }
@@ -21,7 +24,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
             parentMarker.character.combatComponent.ClearAvoidInRange();
         }
     }
-
+    private void OnApplicationQuit() {
+        isApplicationQuitting = true;
+    }
     public void Initialize() {
         VoteToFilterVision();
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
@@ -30,6 +35,10 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         base.Reset();
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         OnDisable();
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        parentMarker = null;
     }
 
     #region Triggers

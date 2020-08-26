@@ -15,23 +15,22 @@ public class Region {
     public int id { get; }
     public string name { get; private set; }
     public string description => GetDescription();
-    public List<HexTile> tiles { get; }
-    public List<HexTile> shuffledNonMountainWaterTiles { get; }
+    public List<HexTile> tiles { get; private set; }
+    public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color regionColor { get; }
-    public List<Faction> factionsHere { get; }
-    public List<Character> residents { get; }
-    public GameObject eventIconGo { get; private set; }
-    public List<Character> charactersAtLocation { get; }
+    public List<Faction> factionsHere { get; private set; }
+    public List<Character> residents { get; private set; }
+    public List<Character> charactersAtLocation { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
     public bool canShowNotifications { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
-    public List<IPointOfInterest> pendingAddAwareness { get; }
-    public List<IPointOfInterest> pendingRemoveAwareness { get; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
+    public List<IPointOfInterest> pendingAddAwareness { get; private set; }
+    public List<IPointOfInterest> pendingRemoveAwareness { get; private set; }
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
     public List<LocationStructure> allStructures { get; private set; }
     public RegionFeatureComponent regionFeatureComponent { get; }
-    public List<BaseSettlement> settlementsInRegion { get; }
+    public List<BaseSettlement> settlementsInRegion { get; private set; }
     public RegionTemplate regionTemplate { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an npcSettlement. 
@@ -1081,6 +1080,31 @@ public class Region {
         return settlements;
     }
     #endregion
+
+    public void CleanUp() {
+        awareness.Clear();
+        awareness = null;
+        tiles.Clear();
+        tiles = null;
+        shuffledNonMountainWaterTiles.Clear();
+        shuffledNonMountainWaterTiles = null;
+        coreTile = null;
+        factionsHere.Clear();
+        factionsHere = null;
+        residents.Clear();
+        residents = null;
+        charactersAtLocation.Clear();
+        charactersAtLocation = null;
+        hexTileMap = null;
+        pendingAddAwareness.Clear();
+        pendingAddAwareness = null;
+        pendingRemoveAwareness.Clear();
+        pendingRemoveAwareness = null;
+        structures.Clear();
+        structures = null;
+        settlementsInRegion.Clear();
+        settlementsInRegion = null;
+    }
 }
 
 public class Border {

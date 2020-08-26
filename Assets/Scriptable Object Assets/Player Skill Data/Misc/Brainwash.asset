@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Brainwash
   m_EditorClassIdentifier: 
   skill: 138
-  manaCost: 10
-  charges: -1
-  cooldown: -1
+  manaCost: 5
+  charges: 1
+  cooldown: 48
   threat: 0
   threatPerHour: 0
   expCost: 0

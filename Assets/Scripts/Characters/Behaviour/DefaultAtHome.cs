@@ -49,9 +49,10 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     if (character.characterClass.className == "Archer" || character.characterClass.className == "Marauder" || character.characterClass.className == "Shaman") {
                         log += "\n-15% chance to Create Exploration Party if there are no Exploration Party whose leader lives in the same settlement";
                         if (!character.homeSettlement.HasAResidentThatIsAPartyLeader(PARTY_TYPE.Exploration)) {
-                            int chance = Random.Range(0, 100);
-                            log += $"\nRoll: {chance}";
-                            if (chance < 15) {
+                            int chance = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa ? 5 : 15;
+                            int roll = Random.Range(0, 100);
+                            log += $"\nRoll: {roll}";
+                            if (roll < chance) {
                                 character.jobComponent.TriggerExploreJob(out producedJob);
                                 return true;
                             }

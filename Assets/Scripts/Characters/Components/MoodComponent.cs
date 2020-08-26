@@ -341,18 +341,18 @@ public class MoodComponent {
 	#endregion
 
 	#region Minor Mental Break
-	private void CheckForMinorMentalBreak() {
-		IncreaseMinorMentalBreakChance();
-		if (_owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
-			float roll = Random.Range(0f, 100f);
-			Debug.Log(
-				$"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
-			if (roll <= currentLowMoodEffectChance) {
-				//Trigger Minor Mental Break.
-				TriggerMinorMentalBreak();
-			}	
-		}
-	}
+	// private void CheckForMinorMentalBreak() {
+	// 	IncreaseMinorMentalBreakChance();
+	// 	if (_owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
+	// 		float roll = Random.Range(0f, 100f);
+	// 		Debug.Log(
+	// 			$"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
+	// 		if (roll <= currentLowMoodEffectChance) {
+	// 			//Trigger Minor Mental Break.
+	// 			TriggerMinorMentalBreak();
+	// 		}	
+	// 	}
+	// }
 	private void AdjustMinorMentalBreakChance(float amount) {
 		_currentLowMoodEffectChance = currentLowMoodEffectChance + amount;
 		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
@@ -360,79 +360,79 @@ public class MoodComponent {
 			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
 		}
 	}
-	private void SetMinorMentalBreakChance(float amount) {
-		_currentLowMoodEffectChance = amount;
-		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
-		if (currentLowMoodEffectChance <= 0f) {
-			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-		}
-	}
-	private void IncreaseMinorMentalBreakChance() {
-		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceIncrease());
-	}
+	// private void SetMinorMentalBreakChance(float amount) {
+	// 	_currentLowMoodEffectChance = amount;
+	// 	_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
+	// 	if (currentLowMoodEffectChance <= 0f) {
+	// 		Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
+	// 	}
+	// }
+	// private void IncreaseMinorMentalBreakChance() {
+	// 	AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceIncrease());
+	// }
 	private void DecreaseMinorMentalBreakChance() {
 		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceDecrease());
 	}
-	private float GetMinorMentalBreakChanceIncrease() {
-		return 100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f); //because there are 24 hours in a day
-	}
+	// private float GetMinorMentalBreakChanceIncrease() {
+	// 	return 100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f); //because there are 24 hours in a day
+	// }
 	private float GetMinorMentalBreakChanceDecrease() {
 		return (100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f)) * -1f; //because there are 24 hours in a day
 	}
-	private void ResetMinorMentalBreakChance() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} reset minor mental break chance.</color>");
-		SetMinorMentalBreakChance(0f);
-	}
-	private void TriggerMinorMentalBreak() {
-		if (_isInMinorMentalBreak) {
-			throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a minor mental break, but is trying to trigger another one!");
-		}
-		int roll = Random.Range(0, 2);
-		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered minor mental break.";
-		_isInMinorMentalBreak = true;
-		if (roll == 0) {
-			summary += "Chosen break is <b>Hide at Home</b>";
-			TriggerHideAtHome();	
-		} else if (roll == 1) {
-			summary += "Chosen break is <b>dazed</b>";
-			TriggerDazed();
-		}
-		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
-		Debug.Log($"<color=red>{summary}</color>");
-		//StopCheckingForMinorMentalBreak();
-	}
-	private void TriggerHideAtHome() {
-		if (_owner.traitContainer.AddTrait(_owner, "Hiding")) {
-			mentalBreakName = "Desires Isolation";
-			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);	
-		} else {
-			Debug.LogWarning($"{_owner.name} triggered hide at home mental break but could not add hiding trait to its traits!");
-		}
-	}
-	private void CheckIfHidingLost(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner && trait is Hiding) {
-			//gain catharsis
-			_owner.traitContainer.AddTrait(_owner, "Catharsis");
-			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);
-			OnMentalBreakDone();
-		}
-	}
-	private void TriggerDazed() {
-		if (_owner.traitContainer.AddTrait(_owner, "Dazed")) {
-			mentalBreakName = "Dazed";
-			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);	
-		} else {
-			Debug.LogWarning($"{_owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
-		}
-	}
-	private void CheckIfDazedLost(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner && trait is Dazed) {
-			//gain catharsis
-			_owner.traitContainer.AddTrait(_owner, "Catharsis");
-			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);
-			OnMentalBreakDone();
-		}
-	}
+	// private void ResetMinorMentalBreakChance() {
+	// 	Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} reset minor mental break chance.</color>");
+	// 	SetMinorMentalBreakChance(0f);
+	// }
+	// private void TriggerMinorMentalBreak() {
+	// 	if (_isInMinorMentalBreak) {
+	// 		throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a minor mental break, but is trying to trigger another one!");
+	// 	}
+	// 	int roll = Random.Range(0, 2);
+	// 	string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered minor mental break.";
+	// 	_isInMinorMentalBreak = true;
+	// 	if (roll == 0) {
+	// 		summary += "Chosen break is <b>Hide at Home</b>";
+	// 		TriggerHideAtHome();	
+	// 	} else if (roll == 1) {
+	// 		summary += "Chosen break is <b>dazed</b>";
+	// 		TriggerDazed();
+	// 	}
+	// 	_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+	// 	Debug.Log($"<color=red>{summary}</color>");
+	// 	//StopCheckingForMinorMentalBreak();
+	// }
+	// private void TriggerHideAtHome() {
+	// 	if (_owner.traitContainer.AddTrait(_owner, "Hiding")) {
+	// 		mentalBreakName = "Desires Isolation";
+	// 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);	
+	// 	} else {
+	// 		Debug.LogWarning($"{_owner.name} triggered hide at home mental break but could not add hiding trait to its traits!");
+	// 	}
+	// }
+	// private void CheckIfHidingLost(ITraitable traitable, Trait trait, Character removedBy) {
+	// 	if (traitable == _owner && trait is Hiding) {
+	// 		//gain catharsis
+	// 		_owner.traitContainer.AddTrait(_owner, "Catharsis");
+	// 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);
+	// 		OnMentalBreakDone();
+	// 	}
+	// }
+	// private void TriggerDazed() {
+	// 	if (_owner.traitContainer.AddTrait(_owner, "Dazed")) {
+	// 		mentalBreakName = "Dazed";
+	// 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);	
+	// 	} else {
+	// 		Debug.LogWarning($"{_owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
+	// 	}
+	// }
+	// private void CheckIfDazedLost(ITraitable traitable, Trait trait, Character removedBy) {
+	// 	if (traitable == _owner && trait is Dazed) {
+	// 		//gain catharsis
+	// 		_owner.traitContainer.AddTrait(_owner, "Catharsis");
+	// 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);
+	// 		OnMentalBreakDone();
+	// 	}
+	// }
 	#endregion
 
 	#region Mental Break Shared

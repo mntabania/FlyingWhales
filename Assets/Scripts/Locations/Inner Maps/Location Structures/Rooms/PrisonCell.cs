@@ -86,8 +86,7 @@ namespace Inner_Maps.Location_Structures {
                          t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList(); //&& t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile
                 
                 CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER,
-                    INTERACTION_TYPE.DROP, character, _skeleton);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, _skeleton);
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
                     _skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
                     CollectionUtilities.GetRandomElement(dropChoices)
@@ -108,8 +107,12 @@ namespace Inner_Maps.Location_Structures {
                 // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
                 _skeleton.Death();
                 currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
-                
                 currentTortureTarget.jobComponent.DisableReportStructure();
+                if (!currentTortureTarget.traitContainer.HasTrait("Paralyzed")) {
+                    //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
+                    currentTortureTarget.traitContainer.AddTrait(currentTortureTarget, "Dazed");    
+                }
+                
                 
                 _skeleton = null;
                 StopTorture();

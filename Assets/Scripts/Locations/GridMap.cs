@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine.Serialization;
 using UtilityScripts;
 
-public class GridMap : MonoBehaviour {
+public class GridMap : BaseMonoBehaviour {
 	public static GridMap Instance;
 
 	public GameObject goHex;
@@ -306,6 +306,25 @@ public class GridMap : MonoBehaviour {
         return null;
     }
     #endregion
+
+    protected override void OnDestroy() {
+        if (allRegions != null) {
+            for (int i = 0; i < allRegions.Length; i++) {
+                Region region = allRegions[i];
+                region.CleanUp();
+            }    
+        }
+        allRegions = null;
+        map = null;
+        normalHexTiles?.Clear();
+        normalHexTiles = null;
+        outerGridList?.Clear();
+        outerGridList = null;
+        allTiles?.Clear();
+        allTiles = null;
+        base.OnDestroy();
+        Instance = null;
+    }
 }
 
 

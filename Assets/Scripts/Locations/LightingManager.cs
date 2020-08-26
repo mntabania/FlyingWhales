@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 
-public class LightingManager : MonoBehaviour {
+public class LightingManager : BaseMonoBehaviour {
     public static LightingManager Instance;
 
     [Header("Lights")] 
@@ -35,6 +35,10 @@ public class LightingManager : MonoBehaviour {
     
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
 
     public void Initialize() {

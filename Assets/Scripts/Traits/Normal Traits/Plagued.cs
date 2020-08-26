@@ -121,12 +121,12 @@ namespace Traits {
                         return true;
                     }
                     if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT || goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                        chance = 20;
+                        chance = 25;
                         return true;
                     }
                 } else if (owner.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     if (goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
-                        chance = 15;
+                        chance = 20;
                     } else if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
                         chance = 100;
                     }
@@ -136,12 +136,12 @@ namespace Traits {
         }
 
         public void ChatInfection(Character target) {
-            if(UnityEngine.Random.Range(0, 100) < 12) {
+            if(UnityEngine.Random.Range(0, 100) < 16) {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
             }
         }
         public int GetCarryInfectChance() {
-            return 20;
+            return 25;
         }
 
         //private int GetInfectChanceForAction(INTERACTION_TYPE type) {

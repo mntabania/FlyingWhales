@@ -227,7 +227,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             //Minions or Summons cannot have opinions
             return;
         }
-        if(owner != target) {
+        if(owner == target) {
             //Cannot adjust opinion to self
             //Therefore, must not have a relationship with self
             return;

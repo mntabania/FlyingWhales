@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading;
 
-public class MultiThreadPool : MonoBehaviour {
+public class MultiThreadPool : BaseMonoBehaviour {
     public static MultiThreadPool Instance;
 
     private static readonly object THREAD_LOCKER = new object();
@@ -26,6 +26,11 @@ public class MultiThreadPool : MonoBehaviour {
         newThread = new Thread(RunThread);
         newThread.IsBackground = true;
         newThread.Start();
+    }
+    protected override void OnDestroy() {
+        this.isRunning = false;
+        base.OnDestroy();
+        Instance = null;
     }
 
     void LateUpdate() {
@@ -60,8 +65,8 @@ public class MultiThreadPool : MonoBehaviour {
         //exitHandle = null;
         newThread.Join();
     }
-    void OnDestroy() {
-        this.isRunning = false;
-        //Stop();
-    }
+    // void OnDestroy() {
+    //     this.isRunning = false;
+    //     //Stop();
+    // }
 }

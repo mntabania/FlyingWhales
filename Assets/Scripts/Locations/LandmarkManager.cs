@@ -13,7 +13,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public partial class LandmarkManager : MonoBehaviour {
+public partial class LandmarkManager : BaseMonoBehaviour {
 
     public static LandmarkManager Instance = null;
     public static readonly int Max_Connections = 3;
@@ -55,6 +55,10 @@ public partial class LandmarkManager : MonoBehaviour {
     #region Monobehaviours
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     #endregion
 
@@ -519,8 +523,7 @@ public partial class LandmarkManager : MonoBehaviour {
     /// <param name="structureType">The structure type to create</param>
     /// <param name="structureResource">The resource the structure should be made of.</param>
     public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, STRUCTURE_TYPE structureType, RESOURCE structureResource) {
-        List<GameObject> choices =
-            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType, structureResource);
+        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType, structureResource);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }

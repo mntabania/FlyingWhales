@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScriptableObjectsManager : MonoBehaviour {
+public class ScriptableObjectsManager : BaseMonoBehaviour {
     public static ScriptableObjectsManager Instance;
     
     [Header("Artifacts")]
@@ -13,6 +13,10 @@ public class ScriptableObjectsManager : MonoBehaviour {
 
     void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     public ArtifactData GetArtifactData(ARTIFACT_TYPE type) {
         if (artifactDataDictionary.ContainsKey(type)) {

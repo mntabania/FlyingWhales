@@ -24,8 +24,8 @@ namespace Inner_Maps {
             Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh, Structure_Stone,
             Ruined_Stone
         }
-        public InnerTileMap parentMap { get; }
-        public Tilemap parentTileMap { get; }
+        public InnerTileMap parentMap { get; private set; }
+        public Tilemap parentTileMap { get; private set; }
         public Vector3Int localPlace { get; }
         public Vector3 worldLocation { get; private set; }
         public Vector3 centeredWorldLocation { get; private set; }
@@ -39,10 +39,10 @@ namespace Inner_Maps {
         private Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours { get; set; }
         public List<LocationGridTile> neighbourList { get; private set; }
         public IPointOfInterest objHere { get; private set; }
-        public List<Character> charactersHere { get; }
+        public List<Character> charactersHere { get; private set; }
         public bool hasBlueprint { get; private set; }
         public GenericTileObject genericTileObject { get; private set; }
-        public List<StructureWallObject> walls { get; }
+        public List<StructureWallObject> walls { get; private set; }
         public LocationGridTileCollection collectionOwner { get; private set; }
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
         public bool hasLandmine { get; private set; }
@@ -1250,6 +1250,9 @@ namespace Inner_Maps {
                     blockWall.SetWallType(WALL_TYPE.Demon_Stone);
                     blockWall.UpdateVisual(this);
                 } else {
+                    if (objHere is Tombstone tombstone) {
+                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    }
                     structure.RemovePOI(objHere);
                 }
             }
@@ -1414,6 +1417,27 @@ namespace Inner_Maps {
         public GraphNode graphNode { get; private set; }
         public void PredetermineGraphNode() {
             graphNode = AstarPath.active.GetNearest(centeredWorldLocation).node;
+        }
+        #endregion
+
+        #region Clean Up
+        public void CleanUp() {
+            parentMap = null;
+            parentTileMap = null;
+            structure = null;
+            neighbours.Clear();
+            neighbours = null;
+            fourNeighbours.Clear();
+            fourNeighbours = null;
+            neighbourList.Clear();
+            neighbourList = null;
+            objHere = null;
+            charactersHere.Clear();
+            charactersHere = null;
+            genericTileObject = null;
+            walls.Clear();
+            walls = null;
+            graphNode = null;
         }
         #endregion
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
-public class RelationshipManager : MonoBehaviour {
+public class RelationshipManager : BaseMonoBehaviour {
 
     public static RelationshipManager Instance;
 
@@ -28,6 +28,10 @@ public class RelationshipManager : MonoBehaviour {
         _characterRelationshipValidator = new CharacterRelationshipValidator();
         //processors
         _characterRelationshipProcessor = new CharacterRelationshipProcessor();
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
 
     #region Containers

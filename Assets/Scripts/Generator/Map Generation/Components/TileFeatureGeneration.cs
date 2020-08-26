@@ -471,10 +471,10 @@ public class TileFeatureGeneration : MapGenerationComponent {
 	}
 	private void DetermineSettlementsForIcalawa() {
 		List<HexTile> chosenTiles = new List<HexTile> {
-			GridMap.Instance.map[8, 2],
-			GridMap.Instance.map[7, 2],
-			GridMap.Instance.map[8, 3],
-			GridMap.Instance.map[8, 1],
+			GridMap.Instance.map[11, 1],
+			GridMap.Instance.map[11, 2],
+			GridMap.Instance.map[11, 3],
+			GridMap.Instance.map[10, 2],
 		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {

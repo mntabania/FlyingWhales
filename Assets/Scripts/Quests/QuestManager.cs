@@ -8,7 +8,7 @@ using UnityEngine;
 using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
 namespace Quests {
-    public class QuestManager : MonoBehaviour {
+    public class QuestManager : BaseMonoBehaviour {
 
         public static QuestManager Instance;
 
@@ -30,7 +30,9 @@ namespace Quests {
         private void Awake() {
             Instance = this;
         }
-        private void OnDestroy() {
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            Instance = null;
             Messenger.RemoveListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.RemoveListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.RemoveListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);

@@ -34,6 +34,10 @@ public class InnerMapCameraMove : BaseCameraMove {
     private void Awake(){
 		Instance = this;
 	}
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
+    }
     private void Update() {
         if (!cameraControlEnabled) {
             return;

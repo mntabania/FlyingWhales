@@ -315,6 +315,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.10487723, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -470,6 +471,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -580,6 +582,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0, b: 0.030630589, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -672,6 +675,7 @@ MonoBehaviour:
   currentAnimation: 
   defaultController: {fileID: 9100000, guid: ffe6e2853385f4440abc8c2b55a9068f, type: 2}
   monsterController: {fileID: 22100000, guid: 3540b1e5362ee6a4ab77e360bc0c8108, type: 2}
+  _pauseAnimationCounter: 0
   pathfindingAI: {fileID: 114720397635659402}
   destinationSetter: {fileID: 114167030245026914}
   seeker: {fileID: 114578536136533292}
@@ -919,6 +923,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -6301,7 +6306,7 @@ PrefabInstance:
     - target: {fileID: 8344555944224439899, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: _brightestIntensity
-      value: 0.7
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1f23643fbdff744db95ec146ba780e4, type: 3}

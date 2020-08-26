@@ -16,8 +16,7 @@ namespace Interrupts {
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            if (interruptHolder.actor.gridTileLocation.structure.IsTilePartOfARoom(interruptHolder.actor.gridTileLocation,
-                out var room) && room is DefilerRoom defilerRoom) {
+            if (interruptHolder.actor.gridTileLocation.structure.IsTilePartOfARoom(interruptHolder.actor.gridTileLocation, out var room) && room is DefilerRoom defilerRoom) {
                 Log log;
                 if (defilerRoom.WasBrainwashSuccessful(interruptHolder.actor)) {
                     //successfully converted

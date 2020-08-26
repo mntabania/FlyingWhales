@@ -10,7 +10,7 @@ using Archetype;
 using Locations.Settlements;
 using UnityEngine.Assertions;
 
-public class PlayerManager : MonoBehaviour {
+public class PlayerManager : BaseMonoBehaviour {
     public static PlayerManager Instance;
     public Player player;
 
@@ -32,6 +32,10 @@ public class PlayerManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     public void Initialize() {
         availableChaosOrbs = new List<ChaosOrb>();

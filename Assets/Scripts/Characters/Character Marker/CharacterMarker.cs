@@ -149,7 +149,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             UIManager.Instance.monsterInfoUI.CloseMenu();
         }
         if (character != null) {
-            if(InnerMapCameraMove.Instance.target == this.transform) {
+            if (character != null && InnerMapCameraMove.Instance != null && InnerMapCameraMove.Instance.target == this.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
         }
@@ -389,7 +389,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _pauseAnimationCounter = 0;
         character.combatComponent.SetOnProcessCombatAction(null);
         SetMarkerColor(Color.white);
-        ObjectPoolManager.Instance.DestroyObject(_nameplate);
+        if (_nameplate != null) {
+            ObjectPoolManager.Instance.DestroyObject(_nameplate);    
+        }
         _nameplate = null;
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         RemoveListeners();
@@ -410,6 +412,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // previousGridTile = null;
         _previousHexTileLocation = null;
         hexInWildernessForFlee.Clear();
+    }
+    protected override void OnDestroy() {
+        pathfindingAI = null;    
+        destinationSetter = null;
+        seeker = null;
+        colliders = null;
+        character = null;
+        base.OnDestroy();
     }
     #endregion
 

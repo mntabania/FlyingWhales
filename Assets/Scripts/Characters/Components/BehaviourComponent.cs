@@ -869,4 +869,43 @@ public class BehaviourComponent {
         }
     }
     #endregion
+
+    #region Dazed
+    public void OnBecomeDazed() {
+        Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+    }
+    private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
+        if (character == owner) {
+            if (character.homeSettlement != null && character.homeSettlement.tiles.Contains(tile)) {
+                character.traitContainer.RemoveTrait(character, "Dazed");
+            } else if (character.territorries != null && character.territorries.Contains(tile)) {
+                character.traitContainer.RemoveTrait(character, "Dazed");    
+            }
+        }
+    }
+    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+        if (character == owner && character.homeStructure != null && character.homeStructure == structure) {
+            character.traitContainer.RemoveTrait(character, "Dazed");
+        }
+    }
+    private void OnDazedCharacterCanNoLongerPerform(Character character) {
+        if (character == owner) {
+            character.traitContainer.RemoveTrait(character, "Dazed");
+        }
+    }
+    private void OnDazedCharacterStartedState(Character character, CharacterState state) {
+        if (character == owner && state is CombatState) {
+            character.traitContainer.RemoveTrait(character, "Dazed");
+        }
+    }
+    public void OnNoLongerDazed() {
+        Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+        Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+    }
+    #endregion
 }

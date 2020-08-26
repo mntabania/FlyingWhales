@@ -13,6 +13,7 @@ public class Tombstone : TileObject {
             return pos;
         }
     }
+    private bool _respawnCorpseOnDestroy; 
     public override Character[] users {
         get { return new[] { character }; }
     }
@@ -22,12 +23,14 @@ public class Tombstone : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         // AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
         AddAdvertisedAction(INTERACTION_TYPE.RAISE_CORPSE);
+        _respawnCorpseOnDestroy = true;
     }
     public Tombstone(SaveDataTileObject data) {
         AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         // AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
         AddAdvertisedAction(INTERACTION_TYPE.RAISE_CORPSE);
+        _respawnCorpseOnDestroy = true;
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -43,16 +46,24 @@ public class Tombstone : TileObject {
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
-        character.EnableMarker();
-        // character.marker.ScheduleExpiry();
-        LocationGridTile tile = previousTile;
-        if (tile.isOccupied) {
-            tile = previousTile.GetRandomUnoccupiedNeighbor();
+        if (_respawnCorpseOnDestroy) {
+            character.EnableMarker();
+            // character.marker.ScheduleExpiry();
+            LocationGridTile tile = previousTile;
+            if (tile.isOccupied) {
+                tile = previousTile.GetRandomUnoccupiedNeighbor();
+            }
+            character.marker.PlaceMarkerAt(tile, false);
+            character.SetGrave(null);
+            character.jobComponent.TriggerBuryMe();    
+        } else {
+            character.SetGrave(null);
+            character.DestroyMarker();
         }
-        character.marker.PlaceMarkerAt(tile, false);
-        character.SetGrave(null);
-        character.jobComponent.TriggerBuryMe();
         Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, character as IPlayerActionTarget);
+    }
+    public void SetRespawnCorpseOnDestroy(bool state) {
+        _respawnCorpseOnDestroy = state;
     }
     public override string ToString() {
         return $"Tombstone of {character.name}";

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
@@ -29,6 +30,15 @@ public class CharacterAIPath : AILerp {
         //_originalRepathRate = repathRate;
         Default_End_Reached_Distance = endReachDistance;
         blockerTraversalProvider = new BlockerTraversalProvider(marker);
+    }
+    private void OnDestroy() {
+        marker = null;
+        onlyAllowedStructures = null;
+        notAllowedStructures = null;
+        blockerTraversalProvider?.CleanUp();
+        blockerTraversalProvider = null;
+        currentPath = null;
+        marker = null;
     }
     #endregion
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 
-public class PathfindingManager : MonoBehaviour {
+public class PathfindingManager : BaseMonoBehaviour {
 
     public static PathfindingManager Instance = null;
     private const float nodeSize = 0.3f; //0.3
@@ -17,9 +17,7 @@ public class PathfindingManager : MonoBehaviour {
     public NNConstraint onlyWalkableConstraint;
 
     #region getters/setters
-    public List<CharacterAIPath> allAgents {
-        get { return _allAgents; }
-    }
+    public List<CharacterAIPath> allAgents => _allAgents;
     #endregion
 
     private void Awake() {
@@ -138,14 +136,19 @@ public class PathfindingManager : MonoBehaviour {
     }
     
     #region Monobehaviours
-#if !WORLD_CREATION_TOOL
     private void Update() {
         for (int i = 0; i < _allAgents.Count; i++) {
             CharacterAIPath currentAI = _allAgents[i];
             currentAI.marker.ManualUpdate();
         }
     }
-#endif
+    protected override void OnDestroy() {
+        _allAgents.Clear();
+        _allAgents = null;
+        aStarPath = null;
+        base.OnDestroy();
+        Instance = null;
+    }
     #endregion
 
     #region Graph Updates

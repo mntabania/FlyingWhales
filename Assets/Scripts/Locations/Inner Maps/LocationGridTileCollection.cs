@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Object = UnityEngine.Object;
 namespace Inner_Maps {
     public class LocationGridTileCollection {
         
@@ -10,7 +10,7 @@ namespace Inner_Maps {
         public Vector2Int locationInGrid { get; }
         public LocationGridTile[] tilesInTerritory { get; private set; }
         public InnerMapHexTile partOfHextile { get; private set; }
-        public LocationGridTileCollectionItem locationGridTileCollectionItem { get; }
+        public LocationGridTileCollectionItem locationGridTileCollectionItem { get; private set; }
         public Region region { get; private set; }
 
         public bool isPartOfParentRegionMap => partOfHextile != null;
@@ -162,6 +162,18 @@ namespace Inner_Maps {
         #region Pathfinding Updates
         public void UpdatePathfindingGraph() {
             locationGridTileCollectionItem.UpdatePathfindingGraph();
+        }
+        #endregion
+
+        #region Clean Up
+        public void CleanUp() {
+            neighbours.Clear();
+            neighbours = null;
+            tilesInTerritory = null;
+            partOfHextile = null;
+            Object.Destroy(locationGridTileCollectionItem);
+            locationGridTileCollectionItem = null;
+            region = null;
         }
         #endregion
         

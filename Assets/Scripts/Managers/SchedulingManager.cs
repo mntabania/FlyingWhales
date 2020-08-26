@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine.Assertions;
 
-public class SchedulingManager : MonoBehaviour {
+public class SchedulingManager : BaseMonoBehaviour {
 	public static SchedulingManager Instance;
 
 	private Dictionary<GameDate, List<ScheduledAction>> schedules = new Dictionary<GameDate, List<ScheduledAction>> (new GameDateComparer());
@@ -16,7 +16,15 @@ public class SchedulingManager : MonoBehaviour {
 		Instance = this;
         _actionsToDo = new List<ScheduledAction>();
 	}
-	public void StartScheduleCalls() {
+    protected override void OnDestroy() {
+        schedules.Clear();
+        schedules = null;
+        _actionsToDo.Clear();
+        _actionsToDo = null;
+        base.OnDestroy();
+        Instance = null;
+    }
+    public void StartScheduleCalls() {
         checkGameDate = GameManager.Instance.Today();
 		Messenger.AddListener(Signals.TICK_ENDED, CheckSchedule);
     }

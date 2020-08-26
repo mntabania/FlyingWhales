@@ -6,7 +6,7 @@ using System.Linq;
 using Factions.Faction_Types;
 using UnityEngine.UI;
 
-public class FactionManager : MonoBehaviour {
+public class FactionManager : BaseMonoBehaviour {
 
     public static FactionManager Instance = null;
 
@@ -47,6 +47,16 @@ public class FactionManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        allFactions.Clear();
+        allFactions = null;
+        neutralFaction = null;
+        vagrantFaction = null;
+        disguisedFaction = null;
+        _undeadFaction = null;
+        base.OnDestroy();
+        Instance = null;
     }
 
     #region Faction Generation

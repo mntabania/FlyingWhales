@@ -17,7 +17,7 @@ using UnityEngine.Serialization;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class PlayerUI : MonoBehaviour {
+public class PlayerUI : BaseMonoBehaviour {
     public static PlayerUI Instance;
 
     [Header("Top Menu")]
@@ -148,6 +148,10 @@ public class PlayerUI : MonoBehaviour {
 
     void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     public void UpdateUI() {
         if (PlayerManager.Instance.player == null) {
@@ -669,16 +673,6 @@ public class PlayerUI : MonoBehaviour {
             CharacterNameplateItem item = items[i];
             item.transform.SetParent(killSummaryScrollView.content);
         }
-    }
-    public void BackToWorld() {
-        UtilityScripts.Utilities.DestroyChildren(killSummaryScrollView.content);
-        Region closedArea = InnerMapManager.Instance.HideAreaMap();
-        successfulAreaCorruptionGO.SetActive(false);
-        InnerMapManager.Instance.DestroyInnerMap(closedArea);
-
-        //if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
-        //    GameOver("You have conquered all settlements! This world is now yours! Congratulations!");
-        //}
     }
     #endregion
 

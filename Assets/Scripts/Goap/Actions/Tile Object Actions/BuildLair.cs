@@ -56,6 +56,11 @@ public class BuildLair : GoapAction {
         actor.ChangeFactionTo(FactionManager.Instance.undeadFaction);
         FactionManager.Instance.undeadFaction.OnlySetLeader(actor);
 
+        //if necromancer is a cultist then make the undead faction friendly towards the player.
+        if (actor.traitContainer.HasTrait("Cultist")) {
+            FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
+        }
+        
         LocationGridTile targetTile = otherData[0] as LocationGridTile;
         HexTile targetHex = targetTile.collectionOwner.partOfHextile.hexTileOwner;
         LandmarkManager.Instance.CreateNewLandmarkOnTile(targetHex, LANDMARK_TYPE.MONSTER_LAIR);

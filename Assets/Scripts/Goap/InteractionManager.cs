@@ -9,7 +9,7 @@ using Inner_Maps;
 using Interrupts;
 using UtilityScripts;
 
-public partial class InteractionManager : MonoBehaviour {
+public partial class InteractionManager : BaseMonoBehaviour {
     public static InteractionManager Instance = null;
 
     public const string Goap_State_Success = "Success";
@@ -35,6 +35,10 @@ public partial class InteractionManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
+    }
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        Instance = null;
     }
     public void Initialize() {
         ConstructGoapActionData();
