@@ -690,16 +690,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void CreateMarker() {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
         CharacterMarker _marker = portraitGO.GetComponent<CharacterMarker>();
-        _marker.SetCharacter(this);
         SetCharacterMarker(_marker);
+        _marker.SetCharacter(this);
         
-        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
-        if (traitOverrideFunctions != null) {
-            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
-                Trait trait = traitOverrideFunctions[i];
-                trait.OnInitiateMapObjectVisual(this);
-            }
-        }
+        //List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Initiate_Map_Visual_Trait);
+        //if (traitOverrideFunctions != null) {
+        //    for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+        //        Trait trait = traitOverrideFunctions[i];
+        //        trait.OnInitiateMapObjectVisual(this);
+        //    }
+        //}
     }
     public void DestroyMarker(LocationGridTile destroyedAt = null) {
         if (destroyedAt == null) {

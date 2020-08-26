@@ -10,6 +10,7 @@
         public string resolution;
         public int graphicsQuality;
         public bool fullscreen;
+        public bool isVsyncOn;
 
         //Audio
         public float musicVolume;

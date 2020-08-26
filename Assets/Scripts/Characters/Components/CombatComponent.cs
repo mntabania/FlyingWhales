@@ -769,6 +769,7 @@ public class CombatComponent {
                         key = "Restrain";
                         break;
                     case JOB_TYPE.PRODUCE_FOOD:
+                    case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:   
                         key = "Butcher";
                         break;
                     case JOB_TYPE.APPREHEND:

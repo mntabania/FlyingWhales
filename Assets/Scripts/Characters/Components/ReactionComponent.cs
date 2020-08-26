@@ -537,13 +537,40 @@ public class ReactionComponent {
         
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
-            if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null) {
+            if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
                 debugLog = $"{debugLog}\n-Actor is a Troll and target is a Villager and actor has a home structure";
                 if (targetCharacter.currentStructure != disguisedActor.homeStructure) {
-                    debugLog = $"{debugLog}\n-Will engage in combat and move it to its home";
-                    if (!actor.jobQueue.HasJob(JOB_TYPE.MOVE_CHARACTER)) {
-                        actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, actor.homeStructure, true);
+                    if(!targetCharacter.canPerform || !targetCharacter.canMove) {
+                        debugLog += "\n-Target cannot perform/move";
+                        if (!actor.combatComponent.isInCombat) {
+                            debugLog += "\n-Actor is not in combat, will try to bring target back to home";
+                            if (!actor.jobQueue.HasJob(JOB_TYPE.MOVE_CHARACTER)) {
+                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedActor.homeStructure, true);
+                            } else {
+                                debugLog += "\n-Actor already has a move character job, will ignore this target";
+                            }
+                        } else {
+                            debugLog += "\n-Actor is in combat, will ignore this target";
+                        }
+                    } else {
+                        debugLog += "\n-Will engage in combat and move it to its home";
+                        //Determine whether to fight or flight.
+                        //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
+                        CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
+                        if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                            //if flight was decided
+                            //if target is restrained or resting, do nothing
+                            if (!targetCharacter.traitContainer.HasTrait("Restrained", "Resting")) {
+                                actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
+                            }
+                            //else {
+                            //    actor.combatComponent.Fight(targetCharacter, combatReaction.reason, isLethal: false);
+                            //}
+                        } else {
+                            actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: false);
+                        }
                     }
+                    
                 } else {
                     if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
                         debugLog = $"{debugLog}\n-Will engage in combat and restrain it";
@@ -564,7 +591,7 @@ public class ReactionComponent {
                     debugLog = $"{debugLog}\n-{actor.name} triggered pray.";
                     actor.jobComponent.TriggerPray();
                 }
-            } else if (!disguisedTarget.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
+            } else if (!targetCharacter.isDead && disguisedTarget.combatComponent.combatMode != COMBAT_MODE.Passive && !targetCharacter.traitContainer.HasTrait("Hibernating")) {
                 debugLog = $"{debugLog}\n-If Target is alive and not in Passive State and not Hibernating:";
                 debugLog = $"{debugLog}\n-Fight or Flight response";
                 //Fight or Flight

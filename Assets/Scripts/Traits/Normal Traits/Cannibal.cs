@@ -61,7 +61,7 @@ namespace Traits {
             IPointOfInterest chosenPOI = null;
             for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
                 Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                if (characterThatWillDoJob != character && character.isDead) {
+                if (characterThatWillDoJob != character && character.isDead && character.isNormalCharacter) {
                     if (character.grave != null) {
                         chosenPOI = character.grave;
                     } else {

@@ -4,6 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Traits;
 
 public class TrollBehaviour : CharacterBehaviourComponent {
 	public TrollBehaviour() {
@@ -30,6 +31,41 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                 }
             }
         }
+
+        if(character.homeStructure != null) {
+            if (!character.isAtHomeStructure && !character.jobQueue.HasJob(JOB_TYPE.MOVE_CHARACTER)) {
+                if (character.marker) {
+                    Character chosenCharacter = null;
+                    Character characterThatCanBeKidnapped = null;
+                    for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                        Character potentialCharacter = character.marker.inVisionCharacters[i];
+                        if (potentialCharacter.isNormalCharacter) {
+                            if (!potentialCharacter.canPerform || !potentialCharacter.canMove) {
+                                if (characterThatCanBeKidnapped == null) {
+                                    characterThatCanBeKidnapped = potentialCharacter;
+                                }
+                                if (potentialCharacter.traitContainer.HasTrait("Unconscious")) {
+                                    Unconscious unconsciousTrait = potentialCharacter.traitContainer.GetNormalTrait<Unconscious>("Unconscious");
+                                    if (unconsciousTrait.responsibleCharacter == character) {
+                                        chosenCharacter = potentialCharacter;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (chosenCharacter == null) {
+                        chosenCharacter = characterThatCanBeKidnapped;
+                    }
+                    if (chosenCharacter != null) {
+                        if (character.jobComponent.TryTriggerMoveCharacter(chosenCharacter, character.homeStructure, out producedJob, true)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         TIME_IN_WORDS timeInWords = GameManager.GetCurrentTimeInWordsOfTick(null);
         if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT || timeInWords == TIME_IN_WORDS.LATE_NIGHT /*|| timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT*/) {
             log += $"\n-Night time, will try to visit adjacent hextiles";
@@ -87,26 +123,24 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                         return true;
                     }
                 }
-            } 
-            //else {
-            //    log += $"\n-Already in home, 10% chance to butcher a character if there is one";
-            //    roll = UnityEngine.Random.Range(0, 100);
-            //    log += $"\n-Roll: {roll}";
-            //    if(roll < 10) {
-            //        Character chosenCharacter = null;
-            //        if (character.homeSettlement != null) {
-            //            chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
-            //        } else if (character.homeStructure != null) {
-            //            chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
-            //        }
-            //        if (chosenCharacter != null) {
-            //            log += $"\n-Chosen character: " + chosenCharacter.name;
-            //            if (character.jobComponent.CreateButcherJob(chosenCharacter, out producedJob)) {
-            //                return true;
-            //            }
-            //        }
-            //    }
-            //}
+            }
+            log += $"\n-Already in home, 10% chance to butcher a character if there is one";
+            roll = UnityEngine.Random.Range(0, 100);
+            log += $"\n-Roll: {roll}";
+            if (roll < 50) {
+                Character chosenCharacter = null;
+                if (character.homeSettlement != null) {
+                    chosenCharacter = character.homeSettlement.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                } else if (character.homeStructure != null) {
+                    chosenCharacter = character.homeStructure.GetRandomCharacterThatMeetCriteria(x => x.isNormalCharacter && x.isBeingCarriedBy == null && !x.isDead && !x.HasJobTargetingThis(JOB_TYPE.PRODUCE_FOOD) && x.traitContainer.HasTrait("Restrained"));
+                }
+                if (chosenCharacter != null) {
+                    log += $"\n-Chosen character: " + chosenCharacter.name;
+                    if (character.jobComponent.CreateButcherJob(chosenCharacter, out producedJob)) {
+                        return true;
+                    }
+                }
+            }
             return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         } else {
             log += $"\n-Not in home, go to home";
