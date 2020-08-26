@@ -163,6 +163,7 @@ namespace Traits {
             }
         }
         public void InfectTarget(Character target) {
+            if (target.race == RACE.SKELETON) { return; } //Prevent skeletons from getting infected
             if (target.traitContainer.AddTrait(target, "Infected", out var infectedTrait, characterResponsible: owner)) {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
