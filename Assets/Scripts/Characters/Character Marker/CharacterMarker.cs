@@ -946,7 +946,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdatePosition();
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.parentMap.region.AddPendingAwareness(character);
+        tile.structure.location.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
@@ -1229,6 +1229,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (poi.isHidden) {
                         log += $"\n-{poi.nameWithID} is hidden. Skipping...";
                         continue;
+                    }
+                    if(poi is Character target) {
+                        if(target.carryComponent.justGotCarriedBy != null && target.carryComponent.justGotCarriedBy == character) {
+                            log += $"\n-{poi.nameWithID} is jost got dropped. Skipping...";
+                            target.carryComponent.SetJustGotCarriedBy(null);
+                            continue;
+                        }
                     }
                     log += $"\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;

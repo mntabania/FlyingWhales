@@ -778,7 +778,9 @@ public class ReactionComponent {
                                         if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog = $"{debugLog}\n-Target has a home and an available bed, will trigger Move Character job to bed";
                                             if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
-                                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
+                                                if(targetCharacter.currentActionNode == null) {
+                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure, bed.gridTileLocation);
+                                                }
                                             } else {
                                                 debugLog = $"{debugLog}\n-Already has a move character job targeting character";
                                             }
@@ -795,7 +797,9 @@ public class ReactionComponent {
                                         if (targetCharacter.currentStructure != disguisedTarget.homeStructure) {
                                             debugLog = $"{debugLog}\n-Target chose Pray and is not inside his/her house, will trigger Move Character job";
                                             if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
-                                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
+                                                if (targetCharacter.currentActionNode == null) {
+                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedTarget.homeStructure);
+                                                }
                                             } else {
                                                 debugLog = $"{debugLog}\n-Already has a move character job targeting character";
                                             }
@@ -807,7 +811,9 @@ public class ReactionComponent {
                                         if (!targetCharacter.currentStructure.structureType.IsOpenSpace()) {
                                             debugLog = $"{debugLog}\n-Target chose Daydream and is not in an open space structure, will trigger Move Character job";
                                             if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.MOVE_CHARACTER, targetCharacter)) {
-                                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                                if (targetCharacter.currentActionNode == null) {
+                                                    actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                                                }
                                             } else {
                                                 debugLog = $"{debugLog}\n-Already has a move character job targeting character";
                                             }

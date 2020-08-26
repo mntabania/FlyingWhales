@@ -253,8 +253,12 @@ public class Summon : Character {
 
     #region Selecatble
     public override bool IsCurrentlySelected() {
+        Character characterToSelect = this;
+        if (lycanData != null) {
+            characterToSelect = lycanData.activeForm;
+        }
         return UIManager.Instance.monsterInfoUI.isShowing &&
-               UIManager.Instance.monsterInfoUI.activeMonster == this;
+               UIManager.Instance.monsterInfoUI.activeMonster == characterToSelect;
     }
     #endregion
 

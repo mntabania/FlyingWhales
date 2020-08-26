@@ -9,6 +9,7 @@ public class CarryComponent {
     public Character owner { get; private set; }
     public IPointOfInterest carriedPOI { get; private set; }
     public Character isBeingCarriedBy { get; private set; }
+    public Character justGotCarriedBy { get; private set; }
 
     #region getters
     public bool isCarryingAnyPOI => carriedPOI != null;
@@ -22,6 +23,7 @@ public class CarryComponent {
     #region General
     public void SetIsBeingCarriedBy(Character carrier) {
         if(isBeingCarriedBy != carrier) {
+            justGotCarriedBy = isBeingCarriedBy;
             isBeingCarriedBy = carrier;
             if (owner.marker) {
                 if (isBeingCarriedBy != null) {
@@ -189,6 +191,9 @@ public class CarryComponent {
     }
     public bool IsCurrentlyPartOf(Character character) {
         return character != null && (owner == character || isBeingCarriedBy == character);
+    }
+    public void SetJustGotCarriedBy(Character character) {
+        justGotCarriedBy = character;
     }
     #endregion
 }

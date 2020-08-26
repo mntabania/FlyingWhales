@@ -227,7 +227,6 @@ namespace Traits {
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }
-
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
@@ -267,7 +266,6 @@ namespace Traits {
                         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure });
                         job.AddOtherData(INTERACTION_TYPE.RITUAL_KILLING, new object[] { structure });
                     }
-
                 }
             } else {
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });

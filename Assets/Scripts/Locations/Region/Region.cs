@@ -495,15 +495,17 @@ public class Region {
         }
     }
     public bool HasAwareness(IPointOfInterest poi) {
-        if (awareness.ContainsKey(poi.poiType)) {
-            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IPointOfInterest currPOI = awarenesses[i];
-                if (currPOI == poi) {
-                    return true;
+        if(poi != null) {
+            if (awareness.ContainsKey(poi.poiType)) {
+                List<IPointOfInterest> awarenesses = awareness[poi.poiType];
+                for (int i = 0; i < awarenesses.Count; i++) {
+                    IPointOfInterest currPOI = awarenesses[i];
+                    if (currPOI == poi) {
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
         }
         return false;
     }

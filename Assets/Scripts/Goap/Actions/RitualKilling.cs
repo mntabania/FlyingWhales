@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Inner_Maps.Location_Structures;
+using Inner_Maps;
 
 public class RitualKilling : GoapAction {
 
@@ -146,6 +147,8 @@ public class RitualKilling : GoapAction {
                     isSatisfied = targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex;
                 } else if (otherData[0] is LocationStructure structure) {
                     isSatisfied = targetCharacter.currentStructure == structure;
+                } else if (otherData[0] is LocationGridTile gridTile) {
+                    isSatisfied = targetCharacter.gridTileLocation == gridTile;
                 }
             }
             return targetCharacter.carryComponent.IsNotBeingCarried() && targetCharacter.traitContainer.HasTrait("Restrained") && isSatisfied; //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 

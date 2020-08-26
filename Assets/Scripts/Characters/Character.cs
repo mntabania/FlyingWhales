@@ -5450,12 +5450,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     
     #region Selectable
     public virtual bool IsCurrentlySelected() {
-        if (isNormalCharacter) {
+        Character characterToSelect = this;
+        if(lycanData != null) {
+            characterToSelect = lycanData.activeForm;
+        }
+        if (characterToSelect.isNormalCharacter) {
             return UIManager.Instance.characterInfoUI.isShowing &&
-                   UIManager.Instance.characterInfoUI.activeCharacter == this;    
+                   UIManager.Instance.characterInfoUI.activeCharacter == characterToSelect;    
         } else {
             return UIManager.Instance.monsterInfoUI.isShowing &&
-                   UIManager.Instance.monsterInfoUI.activeMonster == this;
+                   UIManager.Instance.monsterInfoUI.activeMonster == characterToSelect;
         }
         
     }
