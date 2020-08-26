@@ -17,6 +17,8 @@ public class LevelLoaderManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI loaderInfoText;
     [SerializeField] private Slider _progressBar;
     [SerializeField] private TextMeshProUGUI _additionalLoadingText;
+
+    public bool isLoadingNewScene;
     
     private void Awake() {
         if (Instance == null) {
@@ -31,6 +33,7 @@ public class LevelLoaderManager : MonoBehaviour {
         _progressBar.value = 0f;
         Messenger.Broadcast(Signals.STARTED_LOADING_SCENE, sceneName);
         InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
+        isLoadingNewScene = true;
         StartCoroutine(LoadLevelAsynchronously(sceneName, updateSceneProgress));
     }
 
@@ -54,6 +57,7 @@ public class LevelLoaderManager : MonoBehaviour {
             
         }
         asyncOperation.allowSceneActivation = true;
+        isLoadingNewScene = false;
     }
 
     public void UpdateLoadingBar(float value, float duration) {

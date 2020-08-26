@@ -29,6 +29,8 @@ public class MultiThreadPool : BaseMonoBehaviour {
     }
     protected override void OnDestroy() {
         this.isRunning = false;
+        functionsToBeRunInThread.Clear();
+        functionsToBeResolved.Clear();
         base.OnDestroy();
         Instance = null;
     }

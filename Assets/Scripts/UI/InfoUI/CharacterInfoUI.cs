@@ -156,7 +156,7 @@ public class CharacterInfoUI : InfoUIBase {
         Character character = _activeCharacter;
         _activeCharacter = null;
         if (character != null && ReferenceEquals(character.marker, null) == false) {
-            if (InnerMapCameraMove.Instance.target == character.marker.gameObject.transform) {
+            if (InnerMapCameraMove.Instance != null && InnerMapCameraMove.Instance.target == character.marker.gameObject.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
             character.marker.UpdateNameplateElementsState();

@@ -14,6 +14,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     
     private void OnDisable() {
         if (isApplicationQuitting) { return; }
+        if (LevelLoaderManager.Instance.isLoadingNewScene) { return; }
         if (parentMarker.inVisionPOIs != null) {
             parentMarker.ClearPOIsInVisionRange();
         }
