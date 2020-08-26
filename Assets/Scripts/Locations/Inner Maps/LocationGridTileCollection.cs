@@ -167,7 +167,7 @@ namespace Inner_Maps {
 
         #region Clean Up
         public void CleanUp() {
-            neighbours.Clear();
+            neighbours?.Clear();
             neighbours = null;
             tilesInTerritory = null;
             partOfHextile = null;

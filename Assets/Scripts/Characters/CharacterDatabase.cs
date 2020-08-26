@@ -40,10 +40,10 @@ public class CharacterDatabase {
             List<Character> allCharacterTemp = new List<Character>(allCharactersList);
             for (int i = 0; i < allCharacterTemp.Count; i++) {
                 Character character = allCharacterTemp[i];
-                character.CleanUp();
+                character?.CleanUp();
             }
-            allCharactersList.Clear();
-            allCharacterTemp.Clear();
+            allCharactersList?.Clear();
+            allCharacterTemp?.Clear();
         }
         limboCharacters?.Clear();
         allCharacters?.Clear();

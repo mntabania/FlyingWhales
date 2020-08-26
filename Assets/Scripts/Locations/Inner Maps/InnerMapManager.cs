@@ -847,9 +847,9 @@ namespace Inner_Maps {
                 for (int i = 0; i < innerMaps.Count; i++) {
                     InnerTileMap innerTileMap = innerMaps[i];
                     pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
-                    innerTileMap.CleanUp();
+                    innerTileMap?.CleanUp();
                 }
-                innerMaps.Clear();    
+                innerMaps?.Clear();    
             }
             allTileObjects?.Clear();
             Destroy(pathfinder);

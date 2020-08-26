@@ -495,17 +495,15 @@ public class Region {
         }
     }
     public bool HasAwareness(IPointOfInterest poi) {
-        if(poi != null) {
-            if (awareness.ContainsKey(poi.poiType)) {
-                List<IPointOfInterest> awarenesses = awareness[poi.poiType];
-                for (int i = 0; i < awarenesses.Count; i++) {
-                    IPointOfInterest currPOI = awarenesses[i];
-                    if (currPOI == poi) {
-                        return true;
-                    }
+        if (awareness.ContainsKey(poi.poiType)) {
+            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
+            for (int i = 0; i < awarenesses.Count; i++) {
+                IPointOfInterest currPOI = awarenesses[i];
+                if (currPOI == poi) {
+                    return true;
                 }
-                return false;
             }
+            return false;
         }
         return false;
     }
@@ -1084,27 +1082,27 @@ public class Region {
     #endregion
 
     public void CleanUp() {
-        awareness.Clear();
+        awareness?.Clear();
         awareness = null;
-        tiles.Clear();
+        tiles?.Clear();
         tiles = null;
-        shuffledNonMountainWaterTiles.Clear();
+        shuffledNonMountainWaterTiles?.Clear();
         shuffledNonMountainWaterTiles = null;
         coreTile = null;
-        factionsHere.Clear();
+        factionsHere?.Clear();
         factionsHere = null;
-        residents.Clear();
+        residents?.Clear();
         residents = null;
-        charactersAtLocation.Clear();
+        charactersAtLocation?.Clear();
         charactersAtLocation = null;
         hexTileMap = null;
-        pendingAddAwareness.Clear();
+        pendingAddAwareness?.Clear();
         pendingAddAwareness = null;
-        pendingRemoveAwareness.Clear();
+        pendingRemoveAwareness?.Clear();
         pendingRemoveAwareness = null;
-        structures.Clear();
+        structures?.Clear();
         structures = null;
-        settlementsInRegion.Clear();
+        settlementsInRegion?.Clear();
         settlementsInRegion = null;
     }
 }

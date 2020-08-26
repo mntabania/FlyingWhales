@@ -311,7 +311,7 @@ public class GridMap : BaseMonoBehaviour {
         if (allRegions != null) {
             for (int i = 0; i < allRegions.Length; i++) {
                 Region region = allRegions[i];
-                region.CleanUp();
+                region?.CleanUp();
             }    
         }
         allRegions = null;

@@ -786,7 +786,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Utilities
     public void DoCleanup() {
-        traitContainer.RemoveAllTraitsAndStatuses(this);
+        traitContainer?.RemoveAllTraitsAndStatuses(this);
     }
     public void UpdateOwners() {
         if (gridTileLocation.structure is Dwelling dwelling) {

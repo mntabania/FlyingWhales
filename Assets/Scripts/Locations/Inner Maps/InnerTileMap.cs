@@ -675,26 +675,29 @@ namespace Inner_Maps {
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     LocationGridTile locationGridTile = map[x, y];
-                    locationGridTile.CleanUp();
+                    locationGridTile?.CleanUp();
                 }    
             }
             map = null;
-            allTiles.Clear();
+            allTiles?.Clear();
             allTiles = null;
-            allEdgeTiles.Clear();
+            allEdgeTiles?.Clear();
             allEdgeTiles = null;
             pathfindingGraph = null;
             Destroy(centerGo);
             centerGo = null;
             activeBurningSources.Clear();
             activeBurningSources = null;
-            for (int i = 0; i < locationGridTileCollections.GetUpperBound(0); i++) {
-                for (int j = 0; j < locationGridTileCollections.GetUpperBound(1); j++) {
-                    LocationGridTileCollection collection = locationGridTileCollections[i, j];
-                    collection.CleanUp();
+            if (locationGridTileCollections != null) {
+                for (int i = 0; i < locationGridTileCollections.GetUpperBound(0); i++) {
+                    for (int j = 0; j < locationGridTileCollections.GetUpperBound(1); j++) {
+                        LocationGridTileCollection collection = locationGridTileCollections[i, j];
+                        collection?.CleanUp();
+                    }
                 }
+                locationGridTileCollections = null;    
             }
-            locationGridTileCollections = null;
+            
             
             // UtilityScripts.Utilities.DestroyChildren(objectsParent);
         }

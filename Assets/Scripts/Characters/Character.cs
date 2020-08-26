@@ -5914,7 +5914,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     public void CleanUp() {
-        visuals.CleanUp();
-        traitContainer.CleanUp();
+        visuals?.CleanUp();
+        traitContainer?.CleanUp();
     }
 }

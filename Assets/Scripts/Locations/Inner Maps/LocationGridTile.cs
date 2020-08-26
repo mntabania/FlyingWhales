@@ -1425,17 +1425,17 @@ namespace Inner_Maps {
             parentMap = null;
             parentTileMap = null;
             structure = null;
-            neighbours.Clear();
+            neighbours?.Clear();
             neighbours = null;
-            fourNeighbours.Clear();
+            fourNeighbours?.Clear();
             fourNeighbours = null;
-            neighbourList.Clear();
+            neighbourList?.Clear();
             neighbourList = null;
             objHere = null;
-            charactersHere.Clear();
+            charactersHere?.Clear();
             charactersHere = null;
             genericTileObject = null;
-            walls.Clear();
+            walls?.Clear();
             walls = null;
             graphNode = null;
         }
