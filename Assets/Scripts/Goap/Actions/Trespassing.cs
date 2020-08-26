@@ -37,7 +37,7 @@ public class Trespassing : GoapAction {
         if (!actor.isDead) {
             Character targetCharacter = target as Character;
             LocationStructure trespassedStructure = actor.currentStructure;
-            if (trespassedStructure != null && trespassedStructure.settlementLocation != null && trespassedStructure.settlementLocation.owner != null && trespassedStructure.settlementLocation.owner == targetCharacter.faction) {
+            if (trespassedStructure != null && trespassedStructure.settlementLocation != null && trespassedStructure.settlementLocation.owner != null && trespassedStructure.settlementLocation.owner == witness.faction) {
                 bool willReact = true;
                 switch (trespassedStructure.structureType) {
                     case STRUCTURE_TYPE.TAVERN:
@@ -50,9 +50,9 @@ public class Trespassing : GoapAction {
                 }
                 if (willReact) {
                     if (!witness.traitContainer.HasTrait("Cultist")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
                     }
-                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, targetCharacter.faction, node.crimeType, node, status);
+                    CrimeManager.Instance.ReactToCrime(witness, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
                 }
             }
         }
@@ -76,8 +76,10 @@ public class Trespassing : GoapAction {
                 }
 
                 if (willReact) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
-                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, targetCharacter.faction, node.crimeType, node, status);
+                    if (!targetCharacter.traitContainer.HasTrait("Cultist")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                    }
+                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, trespassedStructure.settlementLocation.owner, node.crimeType, node, status);
                 }
             }
         }
