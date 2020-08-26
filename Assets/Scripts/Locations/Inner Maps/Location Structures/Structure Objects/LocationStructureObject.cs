@@ -164,9 +164,13 @@ public class LocationStructureObject : PooledObject {
         }
     }
     public void ClearOutUnimportantObjectsBeforePlacement() {
+        bool isDemonicStructure = structureType.GetLandmarkType().IsPlayerLandmark();
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             if (tile.objHere != null && (tile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+                    tombstone.SetRespawnCorpseOnDestroy(false);
+                }
                 tile.structure.RemovePOI(tile.objHere);
             }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
@@ -217,12 +221,16 @@ public class LocationStructureObject : PooledObject {
     /// <param name="innerMap">The map where the structure was placed.</param>
     /// <param name="structure">The structure that was placed.</param>
     public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
+        bool isDemonicStructure = structure is DemonicStructure;
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             //set the ground asset of the parent npcSettlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
             if (tile.objHere != null) {
+                if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+                    tombstone.SetRespawnCorpseOnDestroy(false);
+                }
                 tile.structure.RemovePOI(tile.objHere);
             }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);

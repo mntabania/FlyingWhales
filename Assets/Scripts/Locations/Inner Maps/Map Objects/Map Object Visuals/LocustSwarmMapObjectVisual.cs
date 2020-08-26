@@ -62,8 +62,16 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         base.Reset();
         isSpawned = false;
         _expiryKey = string.Empty;
+        if (string.IsNullOrEmpty(_movementKey) == false) {
+            SchedulingManager.Instance.RemoveSpecificEntry(_movementKey);    
+        }
         _movementKey = string.Empty;
-        _movement = null;
+        if (_movement != null) {
+            DOTween.Kill(_movement);
+            _movement = null;    
+        }
+        DOTween.Kill(this);
+        DOTween.Kill(transform);
         _objsInRange.Clear();
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -82,14 +90,13 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
     }
     private void RandomizeDirection() {
+        Vector3 position = transform.position;
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0f)).normalized * 50f;
-        direction += transform.position;
+        direction += position;
         _movement = transform.DOMove(direction, 0.3f).SetSpeedBased(true);
         OnGamePaused(GameManager.Instance.isPaused);
         //schedule change direction after 1 hour
-        _movementKey =
-            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour),
-                RandomizeDirection, this);
+        _movementKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour), RandomizeDirection, this);
     }
     #endregion
 

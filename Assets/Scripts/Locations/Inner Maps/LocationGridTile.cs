@@ -1250,6 +1250,9 @@ namespace Inner_Maps {
                     blockWall.SetWallType(WALL_TYPE.Demon_Stone);
                     blockWall.UpdateVisual(this);
                 } else {
+                    if (objHere is Tombstone tombstone) {
+                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    }
                     structure.RemovePOI(objHere);
                 }
             }

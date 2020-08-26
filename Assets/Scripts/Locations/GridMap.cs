@@ -316,11 +316,11 @@ public class GridMap : BaseMonoBehaviour {
         }
         allRegions = null;
         map = null;
-        normalHexTiles.Clear();
+        normalHexTiles?.Clear();
         normalHexTiles = null;
-        outerGridList.Clear();
+        outerGridList?.Clear();
         outerGridList = null;
-        allTiles.Clear();
+        allTiles?.Clear();
         allTiles = null;
         base.OnDestroy();
         Instance = null;

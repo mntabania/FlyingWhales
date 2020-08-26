@@ -523,8 +523,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     /// <param name="structureType">The structure type to create</param>
     /// <param name="structureResource">The resource the structure should be made of.</param>
     public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, STRUCTURE_TYPE structureType, RESOURCE structureResource) {
-        List<GameObject> choices =
-            InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType, structureResource);
+        List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureType, structureResource);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }

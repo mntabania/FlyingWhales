@@ -9,7 +9,7 @@ namespace Inner_Maps.Location_Structures {
                 Character character = CharacterManager.Instance.CreateNewCharacter(
                     CollectionUtilities.GetRandomElement(_classChoices), 
                     GameUtilities.RollChance(50) ? RACE.HUMANS : RACE.ELVES, 
-                    GameUtilities.RollChance(50) ? GENDER.MALE : GENDER.FEMALE, homeRegion: structure.location);
+                    GameUtilities.RollChance(50) ? GENDER.MALE : GENDER.FEMALE, homeRegion: structure.location, faction: FactionManager.Instance.vagrantFaction);
                 character.CreateMarker();
                 character.InitialCharacterPlacement(tile, false);
                 character.marker.UpdatePosition();

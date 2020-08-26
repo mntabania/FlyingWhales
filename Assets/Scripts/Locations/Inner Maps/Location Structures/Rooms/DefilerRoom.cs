@@ -59,7 +59,14 @@ namespace Inner_Maps.Location_Structures {
             failWeight = 100;
             successWeight = 20;
 
-            if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
+            if (actor.moodComponent.moodState == MOOD_STATE.Normal) {
+                if (actor.traitContainer.HasTrait("Evil")) {
+                    successWeight += 100;
+                }
+                if (actor.traitContainer.HasTrait("Treacherous")) {
+                    successWeight += 100;
+                }
+            } else if (actor.moodComponent.moodState == MOOD_STATE.Bad || actor.moodComponent.moodState == MOOD_STATE.Critical) {
                 if (actor.moodComponent.moodState == MOOD_STATE.Bad) {
                     successWeight += 100;
                 } else if (actor.moodComponent.moodState == MOOD_STATE.Critical) {
@@ -136,6 +143,7 @@ namespace Inner_Maps.Location_Structures {
                     BrainwashDone();
                 } else {
                     chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
+
                     //spawn skeleton to carry target
                     _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
                     _skeleton.SetShowNotificationOnDeath(false);
@@ -169,8 +177,11 @@ namespace Inner_Maps.Location_Structures {
                 //kill skeleton
                 _skeleton.Death();
                 currentBrainwashTarget.traitContainer.RemoveTrait(currentBrainwashTarget, "Restrained");
-                
                 currentBrainwashTarget.jobComponent.DisableReportStructure();
+                if (!currentBrainwashTarget.traitContainer.HasTrait("Paralyzed")) {
+                    //No need to daze paralyzed characters, because we expect that characters than cannot perform should not be dazed.
+                    currentBrainwashTarget.traitContainer.AddTrait(currentBrainwashTarget, "Dazed");    
+                }
                 
                 _skeleton = null;
                 BrainwashDone();

@@ -215,12 +215,12 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
 				chosenTemplate = new WorldMapTemplate() {
 					regionCount = 1,
-					worldMapWidth = 10,
+					worldMapWidth = 13,
 					worldMapHeight = 6,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{
 							0, new[] {
-								new RegionTemplate(10, 6),
+								new RegionTemplate(13, 6),
 							}
 						},
 					}

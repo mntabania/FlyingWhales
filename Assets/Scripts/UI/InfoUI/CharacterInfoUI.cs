@@ -486,22 +486,20 @@ public class CharacterInfoUI : InfoUIBase {
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary}{$"\nTerritories: {activeCharacter.territorries?.Count.ToString() ?? "None"}"}";
-        summary = $"{summary}{$"\nCurrent structure: {activeCharacter.currentStructure}" ?? "None"}";
-        summary = $"{summary}{"\nPOI State: " + activeCharacter.state.ToString()}";
-        summary = $"{summary}{"\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString()}";
-        summary = $"{summary}{"\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString()}";
-        summary = $"{summary}{"\nDo Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString()}";
-        summary = $"{summary}{"\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString()}";
-        summary = $"{summary}{"\nCan Move: " + activeCharacter.canMove.ToString()}";
-        summary = $"{summary}{"\nCan Witness: " + activeCharacter.canWitness.ToString()}";
-        summary = $"{summary}{"\nCan Be Attacked: " + activeCharacter.canBeAttacked.ToString()}";
-        summary = $"{summary}{"\nCan Perform: " + activeCharacter.canPerform.ToString()}";
-        summary = $"{summary}{"\nIs Sociable: " + activeCharacter.isSociable.ToString()}";
-        //summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
-        summary = $"{summary}{"\nIs Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
-        summary = $"{summary}{"\nPOI State: " + activeCharacter.state.ToString()}";
-        summary = $"{summary}{"\n" + activeCharacter.needsComponent.GetNeedsSummary()}";
+        summary = $"{summary} {$"Territories: {activeCharacter.territorries?.Count.ToString() ?? "None"}"}";
+        summary = $"{summary} {$"Current structure: {activeCharacter.currentStructure}" ?? "None"}";
+        summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
+        summary = $"{summary} {"Do Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString()}";
+        summary = $"{summary} {"Do Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString()}";
+        summary = $"{summary} {"Do Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString()}";
+        summary = $"{summary} {"Do Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString()}";
+        summary = $"{summary} {"Can Move: " + activeCharacter.canMove.ToString()}";
+        summary = $"{summary} {"Can Witness: " + activeCharacter.canWitness.ToString()}";
+        summary = $"{summary} {"Can Be Attacked: " + activeCharacter.canBeAttacked.ToString()}";
+        summary = $"{summary} {"Can Perform: " + activeCharacter.canPerform.ToString()}";
+        summary = $"{summary} {"Is Sociable: " + activeCharacter.isSociable.ToString()}";
+        summary = $"{summary} {"Is Running: " + activeCharacter.movementComponent.isRunning.ToString()}";
+        summary = $"{summary} {"POI State: " + activeCharacter.state.ToString()}";
         summary = $"{summary}{"\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick))}";
         summary = $"{summary}{"\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick))}";
         summary = $"{summary}{"\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString()}";

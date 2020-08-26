@@ -534,6 +534,10 @@ public class ReactionComponent {
             debugLog = $"{debugLog}\n-actor is vengeful ghost, do not react!";
             return;
         }
+        if (actor.traitContainer.HasTrait("Dazed")) {
+            debugLog = $"{debugLog}\n-Is dazed do not react!";
+            return;
+        }
         
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
@@ -607,6 +611,11 @@ public class ReactionComponent {
                     //NOTE: Added checking for webbed so that spiders won't attack characters that they've webbed up
                     if (disguisedActor.race == RACE.SPIDER && targetCharacter.traitContainer.HasTrait("Webbed")) {
                         debugLog = $"{debugLog}\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
+                        return;
+                    }
+                    //NOTE: Added checking for minions/skeletons owned by the player so that they won't attack characters that have just been tortured/brainwashed (aka. Dazed)
+                    if (disguisedActor.faction.isPlayerFaction && targetCharacter.traitContainer.HasTrait("Dazed")) {
+                        debugLog = $"{debugLog}\nActor is part of player faction and target character is dazed, do not combat!.";
                         return;
                     }
                     

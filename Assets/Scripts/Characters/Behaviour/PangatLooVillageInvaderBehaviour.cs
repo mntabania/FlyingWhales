@@ -11,29 +11,35 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n{character.name} is a Pangat Loo Invader";
 
-        NPCSettlement targetSettlement = LandmarkManager.Instance.GetRandomActiveVillageSettlement(); //this is guaranteed to be the main village in Pangat Loo map
-        if (character.currentSettlement == targetSettlement) {
-            log += $"\n-Already at village target, will find character to attack";
-            //character is already at target village
-            List<Character> targets = GetTargetChoices(targetSettlement.tiles);
-            if (targets != null) {
-                //Fight a random target
-                Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
-                log += $"\n-Chosen target is {chosenTarget.name}";
-                character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
+        NPCSettlement targetSettlement = GetMainVillageSettlement(); //this is guaranteed to be the main village in Pangat Loo map
+        if (targetSettlement != null) {
+            if (character.currentSettlement == targetSettlement) {
+                log += $"\n-Already at village target, will find character to attack";
+                //character is already at target village
+                List<Character> targets = GetTargetChoices(targetSettlement.tiles);
+                if (targets != null) {
+                    //Fight a random target
+                    Character chosenTarget = CollectionUtilities.GetRandomElement(targets);
+                    log += $"\n-Chosen target is {chosenTarget.name}";
+                    character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
+                } else {
+                    log += $"\n-No more valid targets, go home";
+                    return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                }
+                producedJob = null;
+                return true;
             } else {
-                log += $"\n-No more valid targets, go home";
-                return character.jobComponent.PlanIdleReturnHome(out producedJob);
-            }
-            producedJob = null;
-            return true;
+                log += $"\n-character is not yet at village target, will go there now...";
+                //character is not yet at target village
+                HexTile targetHextile = CollectionUtilities.GetRandomElement(targetSettlement.tiles);
+                LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
+                return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+            }    
         } else {
-            log += $"\n-character is not yet at village target, will go there now...";
-            //character is not yet at target village
-            HexTile targetHextile = CollectionUtilities.GetRandomElement(targetSettlement.tiles);
-            LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetHextile.locationGridTiles);
-            return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+            //character could not find a valid target settlement
+            return character.jobComponent.PlanIdleReturnHome(out producedJob);
         }
+        
         
     }
     private List<Character> GetTargetChoices(List<HexTile> tiles) {
@@ -51,6 +57,15 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
             }
         }
         return characters;
+    }
+    public NPCSettlement GetMainVillageSettlement() {
+        for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
+            NPCSettlement settlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
+            if(settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                return settlement;
+            }
+        }
+        return null;
     }
     // public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
     //     producedJob = null;
