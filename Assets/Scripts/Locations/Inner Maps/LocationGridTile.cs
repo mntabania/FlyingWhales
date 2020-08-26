@@ -1046,6 +1046,10 @@ namespace Inner_Maps {
             }
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
+                if (objHere is Tombstone tombstone && tombstone.character == character) {
+                    //NOTE: Skip characters in tombstone when damaging character's here. //TODO: This is a quick fix
+                    continue;
+                }
                 callback.Invoke(character);
             }
             if (objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
