@@ -308,9 +308,11 @@ public class GridMap : BaseMonoBehaviour {
     #endregion
 
     protected override void OnDestroy() {
-        for (int i = 0; i < allRegions.Length; i++) {
-            Region region = allRegions[i];
-            region.CleanUp();
+        if (allRegions != null) {
+            for (int i = 0; i < allRegions.Length; i++) {
+                Region region = allRegions[i];
+                region.CleanUp();
+            }    
         }
         allRegions = null;
         map = null;

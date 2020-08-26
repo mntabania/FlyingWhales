@@ -240,15 +240,15 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             allObjectPools.Clear();
             allObjectPools = null;
         }
-        goapNodesPool.Clear();
+        goapNodesPool?.Clear();
         goapNodesPool = null;
-        opinionDataPool.Clear();
+        opinionDataPool?.Clear();
         opinionDataPool = null;
-        traitRemoveSchedulePool.Clear();
+        traitRemoveSchedulePool?.Clear();
         traitRemoveSchedulePool = null;
-        combatDataPool.Clear();
+        combatDataPool?.Clear();
         combatDataPool = null;
-        interruptPool.Clear();
+        interruptPool?.Clear();
         interruptPool = null;
         base.OnDestroy();
         Instance = null;

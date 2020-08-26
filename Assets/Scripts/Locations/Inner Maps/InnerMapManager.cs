@@ -843,12 +843,14 @@ namespace Inner_Maps {
 
         protected override void OnDestroy() {
             Debug.Log("Cleaning up inner maps...");
-            for (int i = 0; i < innerMaps.Count; i++) {
-                InnerTileMap innerTileMap = innerMaps[i];
-                pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
-                innerTileMap.CleanUp();
+            if (innerMaps != null) {
+                for (int i = 0; i < innerMaps.Count; i++) {
+                    InnerTileMap innerTileMap = innerMaps[i];
+                    pathfinder.data.RemoveGraph(innerTileMap.pathfindingGraph);    
+                    innerTileMap.CleanUp();
+                }
+                innerMaps.Clear();    
             }
-            innerMaps.Clear();
             allTileObjects?.Clear();
             Destroy(pathfinder);
             structurePrefabs?.Clear();
