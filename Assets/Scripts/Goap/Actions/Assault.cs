@@ -54,7 +54,15 @@ public class Assault : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         if (status == REACTION_STATUS.INFORMED || node.isAssumption) {
-            if (actor.faction != null && actor.faction.isMajorNonPlayer && !actor.IsHostileWith(witness)) {
+            if (actor.traitContainer.HasTrait("Cultist") && witness.traitContainer.HasTrait("Cultist")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                if (RelationshipManager.IsSexuallyCompatibleOneSided(witness.sexuality, actor.sexuality, witness.gender, actor.gender)) {
+                    int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(witness, actor);
+                    if (UtilityScripts.GameUtilities.RollChance(compatibility * 10)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                    }
+                }
+            } else if (actor.faction != null && actor.faction.isMajorNonPlayer && !actor.IsHostileWith(witness)) {
                 if (target is Character targetCharacter) {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     if (node.associatedJobType == JOB_TYPE.APPREHEND) {

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Pyrophobia
   m_EditorClassIdentifier: 
   skill: 68
-  manaCost: 10
+  manaCost: 4
   charges: 1
-  cooldown: 288
+  cooldown: 72
   threat: 0
   threatPerHour: 0
   expCost: 0

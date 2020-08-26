@@ -433,7 +433,11 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowSmallInfo(string info, [NotNull]VideoClip videoClip, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(videoClip, "Small info with visual was called but no video clip was provided");
-        _smallInfoWithVisual.ShowSmallInfo(info, videoClip, header, pos);
+        if (Settings.SettingsManager.Instance.settings.doNotShowVideos) {
+            ShowSmallInfo(info, pos, header);
+        } else {
+            _smallInfoWithVisual.ShowSmallInfo(info, videoClip, header, pos);
+        }
     }
     public void ShowSmallInfo(string info, Texture visual, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(visual, "Small info with visual was called but no visual was provided");
@@ -816,18 +820,22 @@ public class UIManager : MonoBehaviour {
         if (GameManager.Instance.gameHasStarted == false) {
             return;
         }
-        if(character.isNormalCharacter) {
+        Character characterToShow = character;
+        if(character.lycanData != null) {
+            characterToShow = character.lycanData.activeForm;
+        }
+        if(characterToShow.isNormalCharacter) {
             if (tempDisableShowInfoUI) {
                 SetTempDisableShowInfoUI(false);
                 return;
             }
-            characterInfoUI.SetData(character);
+            characterInfoUI.SetData(characterToShow);
             characterInfoUI.OpenMenu();
             if (centerOnCharacter) {
-                character.CenterOnCharacter();
+                characterToShow.CenterOnCharacter();
             }
         } else {
-            ShowMonsterInfo(character, centerOnCharacter);
+            ShowMonsterInfo(characterToShow, centerOnCharacter);
         }
     }
     public void UpdateCharacterInfo() {

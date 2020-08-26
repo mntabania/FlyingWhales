@@ -1288,7 +1288,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Faction
     public virtual bool SetFaction(Faction newFaction) {
-        if (_faction != null && newFaction != null && _faction.id == newFaction.id) {
+        if (_faction == newFaction) {
             //ignore change, because character is already part of that faction
             return false;
         }
@@ -2609,9 +2609,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                         CombatManager.Instance.DefaultElementalTraitProcessor;
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this,
                 responsibleCharacter, etp);
-            //CancelRemoveStatusFeedAndRepairJobsTargetingThis();
-        }
-        else {
+        } else {
             //hp was increased
             Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RECOVER_HP, this as IPointOfInterest);
         }
@@ -3060,6 +3058,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return !isDead && numOfActionsBeingPerformedOnThis <= 0 && canPerform
             && currentActionNode == null && planner.status == GOAP_PLANNING_STATUS.NONE  
             && (jobQueue.jobsInQueue.Count <= 0 || behaviourComponent.GetHighestBehaviourPriority() > jobQueue.jobsInQueue[0].priority)
+            && (carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside == false)
             && (marker && !marker.hasFleePath) && stateComponent.currentState == null && carryComponent.IsNotBeingCarried() && !interruptComponent.isInterrupted;
     }
     private bool CanTryToTakeSettlementJobInVision(out string invalidReason) {
@@ -5518,7 +5517,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return territorries.Count > 0;
     }
     public bool IsInTerritory() {
-        if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+        if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             return territorries.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
         }
         return false;

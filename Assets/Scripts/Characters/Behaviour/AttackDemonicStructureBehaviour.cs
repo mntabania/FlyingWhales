@@ -86,12 +86,14 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                             return true;
                         }
                     } else {
-                        LocationGridTile targetTile = CollectionUtilities.GetRandomElement(targetStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)));
-                        bool hasJob = character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
-                        if (producedJob != null) {
-                            producedJob.SetIsThisAPartyJob(true);
+                        LocationGridTile targetTile = targetStructure.occupiedHexTile.hexTileOwner.GetRandomTileThatMeetCriteria(x => character.movementComponent.HasPathToEvenIfDiffRegion(x));
+                        if(targetTile != null) {
+                            bool hasJob = character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                            if (producedJob != null) {
+                                producedJob.SetIsThisAPartyJob(true);
+                            }
+                            return hasJob;
                         }
-                        return hasJob;
                     }
                 }
 

@@ -191,13 +191,15 @@ public class CombatManager : MonoBehaviour {
     private void PoisonExplosionEffect(ITraitable traitable, float damagePercentage, Character characterResponsible, ref BurningSource bs) {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true);
-        Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
-        if (burningTrait != null && burningTrait.sourceOfBurning == null) {
-            if (bs == null) {
-                bs = new BurningSource();
+        if (traitable.traitContainer.HasTrait("Burning")) {
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+            if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+                if (bs == null) {
+                    bs = new BurningSource();
+                }
+                burningTrait.SetSourceOfBurning(bs, traitable);
+                Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
             }
-            burningTrait.SetSourceOfBurning(bs, traitable);
-            Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
         }
     }
     public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {

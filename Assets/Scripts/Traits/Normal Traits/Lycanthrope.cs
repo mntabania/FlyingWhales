@@ -308,6 +308,13 @@ namespace Traits {
         }
 
         public void TurnToWolf() {
+            if(UIManager.Instance.characterInfoUI.activeCharacter == activeForm) {
+                UIManager.Instance.characterInfoUI.CloseMenu();
+            }
+            if (UIManager.Instance.monsterInfoUI.activeMonster == activeForm) {
+                UIManager.Instance.monsterInfoUI.CloseMenu();
+            }
+
             activeForm.traitContainer.RemoveTrait(activeForm, "Transforming");
             activeForm = lycanthropeForm;
             limboForm = originalForm;
@@ -323,8 +330,14 @@ namespace Traits {
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, originalForm, lycanthropeForm);
         }
 
-
         public void RevertToNormal() {
+            if (UIManager.Instance.characterInfoUI.activeCharacter == activeForm) {
+                UIManager.Instance.characterInfoUI.CloseMenu();
+            }
+            if (UIManager.Instance.monsterInfoUI.activeMonster == activeForm) {
+                UIManager.Instance.monsterInfoUI.CloseMenu();
+            }
+
             activeForm.traitContainer.RemoveTrait(activeForm, "Transforming");
             activeForm = originalForm;
             limboForm = lycanthropeForm;
@@ -334,8 +347,6 @@ namespace Traits {
             ReleaseFromLimbo(originalForm, tile, homeRegion);
             Messenger.Broadcast(Signals.ON_SWITCH_FROM_LIMBO, lycanthropeForm, originalForm);
         }
-
-
 
         private void PutToLimbo(Character form) {
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == form) {
@@ -349,6 +360,9 @@ namespace Traits {
                 form.trapStructure.SetForcedStructure(null);
             }
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            if (form.carryComponent.isBeingCarriedBy != null) {
+                form.carryComponent.masterCharacter.UncarryPOI(form);
+            }
             //ForceCancelAllJobsTargettingThisCharacter();
             //form.marker.ClearTerrifyingObjects();
             form.needsComponent.OnCharacterLeftLocation(form.currentRegion);

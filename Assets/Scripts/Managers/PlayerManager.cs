@@ -388,7 +388,7 @@ public class PlayerManager : MonoBehaviour {
     private bool DoesPlayerWin() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if(character.faction.isMajorNonPlayerFriendlyNeutral && character.isNormalCharacter && !character.isAlliedWithPlayer) {
+            if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
                 if(!character.isDead) {
                     return false;
                 }
@@ -397,7 +397,7 @@ public class PlayerManager : MonoBehaviour {
         //check limbo characters
         for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
             Character character = CharacterManager.Instance.limboCharacters[i];
-            if(character.faction.isMajorNonPlayerFriendlyNeutral && character.isNormalCharacter && !character.isAlliedWithPlayer) {
+            if(character.isNormalCharacter && !character.isAlliedWithPlayer) {
                 if(!character.isDead) {
                     return false;
                 }

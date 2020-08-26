@@ -9,6 +9,9 @@ namespace Crime_System {
 
         #region Overrides
         public override CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, ICrimeable crime) {
+            if (witness.traitContainer.HasTrait("Cultist") && actor.traitContainer.HasTrait("Cultist")) {
+                return CRIME_SEVERITY.None;
+            }
             if (witness.traitContainer.HasTrait("Cannibal")) {
                 return CRIME_SEVERITY.None;
             }

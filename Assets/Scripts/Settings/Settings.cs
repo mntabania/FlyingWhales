@@ -11,6 +11,7 @@
         public int graphicsQuality;
         public bool fullscreen;
         public bool isVsyncOn;
+        public bool doNotShowVideos;
 
         //Audio
         public float musicVolume;

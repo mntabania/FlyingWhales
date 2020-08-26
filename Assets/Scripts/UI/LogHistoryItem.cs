@@ -52,7 +52,11 @@ public class LogHistoryItem : LogItem {
             if (index >= 0 && index < log.fillers.Count) {
                 LogFiller logFiller = log.fillers[index];
                 if (logFiller.obj is Character character && _hoverPosition != null) {
-                    UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
+                    Character characterToShow = character;
+                    if(character.lycanData != null) {
+                        characterToShow = character.lycanData.activeForm;
+                    }
+                    UIManager.Instance.ShowCharacterNameplateTooltip(characterToShow, _hoverPosition);
                 }    
             }
         }

@@ -29,6 +29,7 @@ namespace Settings {
         [SerializeField] private Toggle edgePanningToggle;
         [SerializeField] private Toggle skipTutorialsToggle;
         [SerializeField] private Toggle vsyncToggle;
+        [SerializeField] private Toggle showVideosToggle;
         [SerializeField] private GameObject miscParentGO;
         
         [Header("Audio Settings UI")]
@@ -130,6 +131,7 @@ namespace Settings {
             musicVolumeSlider.value = settings.musicVolume;
 
             vsyncToggle.isOn = settings.isVsyncOn;
+            showVideosToggle.isOn = !settings.doNotShowVideos;
         }
         public void OnToggleEdgePanning(bool isOn) {
             _settings.useEdgePanning = isOn;
@@ -153,6 +155,7 @@ namespace Settings {
                      musicVolume = AudioManager.Maximum_Volume_Level,
                      masterVolume = AudioManager.Maximum_Volume_Level,
                      isVsyncOn = false,
+                     doNotShowVideos = false,
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
@@ -170,6 +173,7 @@ namespace Settings {
             _settings.useEdgePanning = edgePanningToggle.isOn;
             _settings.skipTutorials = skipTutorialsToggle.isOn;
             _settings.isVsyncOn = vsyncToggle.isOn;
+            _settings.doNotShowVideos = !showVideosToggle.isOn;
 
             //resolution
             Screen.fullScreen = settings.fullscreen;

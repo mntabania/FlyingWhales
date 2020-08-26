@@ -149,6 +149,10 @@ public class CarryComponent {
         if (owner == character) {
             return;
         }
+        if(character == null) {
+            //Cannot remove a null character
+            return;
+        }
         //LocationGridTile gridTile = owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
         //owner.specificLocation.AddCharacterToLocation(character);
         carriedPOI = null;
@@ -175,7 +179,7 @@ public class CarryComponent {
         Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     public bool IsPOICarried(IPointOfInterest poi) {
-        return carriedPOI == poi;
+        return carriedPOI != null && carriedPOI == poi;
     }
     public bool IsPOICarried(string name) {
         return carriedPOI != null && carriedPOI.name == name;

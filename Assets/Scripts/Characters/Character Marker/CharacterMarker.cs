@@ -142,9 +142,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Monobehavior
     private void OnDisable() {
-        if (character != null && 
-            InnerMapCameraMove.Instance.target == this.transform) {
-            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == character) {
+            UIManager.Instance.characterInfoUI.CloseMenu();
+        }
+        if (UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == character) {
+            UIManager.Instance.monsterInfoUI.CloseMenu();
+        }
+        if (character != null) {
+            if(InnerMapCameraMove.Instance.target == this.transform) {
+                InnerMapCameraMove.Instance.CenterCameraOn(null);
+            }
         }
     }
     private void OnEnable() {
@@ -897,7 +904,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         _nameplate.UpdateActiveState();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
-        this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
+        gameObject.transform.SetParent(tile.parentMap.objectsParent);
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
         }
@@ -910,7 +917,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.parentMap.region.AddPendingAwareness(character);
+        tile.structure.location.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
     }
     public void PlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {

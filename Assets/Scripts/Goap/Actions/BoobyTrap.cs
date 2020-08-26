@@ -47,6 +47,14 @@ public class BoobyTrap : GoapAction {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
                 }
+            } else if (actor.traitContainer.HasTrait("Cultist") && witness.traitContainer.HasTrait("Cultist")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                if(RelationshipManager.IsSexuallyCompatibleOneSided(witness.sexuality, actor.sexuality, witness.gender, actor.gender)) {
+                    int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(witness, actor);
+                    if(UtilityScripts.GameUtilities.RollChance(compatibility * 10)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                    }
+                }
             } else if (tileObject.characterOwner != null) {
                 Character owner = tileObject.characterOwner;
                 if (witness.relationshipContainer.HasRelationshipWith(owner, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
@@ -61,6 +69,14 @@ public class BoobyTrap : GoapAction {
                             || witness.relationshipContainer.IsFriendsWith(actor)) {
                             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
                         }
+                    }
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+
+                    if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
+                        || witness.relationshipContainer.IsFriendsWith(actor)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
                     }
                 }
             } else {

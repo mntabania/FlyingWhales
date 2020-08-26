@@ -92,13 +92,14 @@ public class Steal : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
 
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-        if (witness.relationshipContainer.IsFriendsWith(actor)) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
-            if (witness == target || (target is TileObject tileObject && tileObject.IsOwnedBy(witness))) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
+        if (!witness.traitContainer.HasTrait("Cultist")) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+            if (witness.relationshipContainer.IsFriendsWith(actor)) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             }
+        } else if (witness == target || (target is TileObject tileObject && tileObject.IsOwnedBy(witness))) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
         }
         //CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Misdemeanor);
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);

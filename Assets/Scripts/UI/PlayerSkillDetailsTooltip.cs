@@ -64,7 +64,7 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
                     tooltipImage.texture = data.tooltipImage;
                     thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, 503f);
                     tooltipImage.gameObject.SetActive(true);
-                } else if (data.tooltipVideoClip != null) {
+                } else if (data.tooltipVideoClip != null && !Settings.SettingsManager.Instance.settings.doNotShowVideos) {
                     tooltipVideoPlayer.clip = data.tooltipVideoClip;
                     tooltipImage.texture = tooltipVideoRenderTexture;
                     tooltipVideoPlayer.Play();

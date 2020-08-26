@@ -33,7 +33,7 @@ public class CharacterAvatar : MonoBehaviour {
 
     [SerializeField] protected List<HexTile> path;
 
-	[SerializeField] private bool _hasArrived = false;
+	//[SerializeField] private bool _hasArrived = false;
     [SerializeField] private bool _isInitialized = false;
     [SerializeField] private bool _isMovementPaused = false;
     [SerializeField] private bool _isTravelling = false;
@@ -80,7 +80,7 @@ public class CharacterAvatar : MonoBehaviour {
         //smoothMovement.avatarGO = gameObject;
         //smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
-        _hasArrived = true;
+        //_hasArrived = true;
         SetVisualState(true);
         // SetSprite(_party.owner.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
@@ -146,20 +146,22 @@ public class CharacterAvatar : MonoBehaviour {
         }
         
         Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
-        arriveLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        if (_owner.carryComponent.isCarryingAnyPOI) {
-            arriveLog.AddToFillers(_owner.carryComponent.carriedPOI, _owner.carryComponent.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        }
+        //if (_owner.carryComponent.isCarryingAnyPOI) {
+        //    arriveLog.AddToFillers(_owner.carryComponent.carriedPOI, _owner.carryComponent.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        //}
+        arriveLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(_owner.currentRegion, _owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
         
-        _distanceToTarget = 1;
-        Debug.Log($"{_owner.name} is travelling from {_owner.currentRegion.name} to {targetLocation.name}. Travel time in ticks is: {_distanceToTarget.ToString()}");
-        _travelLine = _owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _owner);
-        _travelLine.SetActiveMeter(isVisualShowing);
+        //_distanceToTarget = 1;
+        //Debug.Log($"{_owner.name} is travelling from {_owner.currentRegion.name} to {targetLocation.name}. Travel time in ticks is: {_distanceToTarget.ToString()}");
+        //_travelLine = _owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _owner);
+        //_travelLine.SetActiveMeter(isVisualShowing);
         _owner.marker.gameObject.SetActive(false);
-        Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
+        //Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, _owner);
+
+        ArriveAtLocation();
     }
     private void TraverseCurveLine() {
         if (_travelLine == null) {
@@ -196,10 +198,10 @@ public class CharacterAvatar : MonoBehaviour {
     }
     private void ArriveAtLocation() {
         SetIsTravelling(false);
-        _travelLine.travelLineParent.RemoveChild(_travelLine);
-        Destroy(_travelLine.gameObject);
-        _travelLine = null;
-        SetHasArrivedState(true);
+        //_travelLine.travelLineParent.RemoveChild(_travelLine);
+        //Destroy(_travelLine.gameObject);
+        //_travelLine = null;
+        //SetHasArrivedState(true);
         
         Region fromRegion = _owner.currentRegion; 
         
@@ -216,15 +218,12 @@ public class CharacterAvatar : MonoBehaviour {
 
         _owner.marker.pathfindingAI.SetIsStopMovement(true);
         
-        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
         _owner.SetPOIState(POI_STATE.ACTIVE);
         if (_owner.carryComponent.isCarryingAnyPOI) {
             _owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
         }
-        arriveLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        if (_owner.carryComponent.isCarryingAnyPOI) {
-            arriveLog.AddToFillers(_owner.carryComponent.carriedPOI, _owner.carryComponent.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        }
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+        arriveLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
 
@@ -359,9 +358,9 @@ public class CharacterAvatar : MonoBehaviour {
   //          }
 		//}
   //  }
-    public void SetHasArrivedState(bool state) {
-        _hasArrived = state;
-    }
+    //public void SetHasArrivedState(bool state) {
+    //    _hasArrived = state;
+    //}
     public void SetIsTravelling(bool state) {
         _isTravelling = state;
     }
@@ -404,7 +403,7 @@ public class CharacterAvatar : MonoBehaviour {
         //targetLocation = null;
         path = null;
         _isMovementPaused = false;
-        _hasArrived = false;
+        //_hasArrived = false;
         _isTravelCancelled = false;
         //_trackTarget = null;
         //_isInitialized = false;

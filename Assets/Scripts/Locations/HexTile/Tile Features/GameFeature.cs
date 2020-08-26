@@ -94,14 +94,16 @@ namespace Locations.Tile_Features {
         }
 
         private void SpawnNewAnimal() {
-            List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false && x.structure.structureType.IsOpenSpace()).ToList();
-            Assert.IsTrue(choices.Count > 0, $"{owner} is trying to spawn an {animalTypeBeingSpawned.ToString()} but no valid tiles were found!");
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
-            Animal newAnimal = CharacterManager.Instance.CreateNewSummon(animalTypeBeingSpawned, FactionManager.Instance.neutralFaction, homeRegion: owner.region) as Animal;
-            Assert.IsNotNull(newAnimal, $"No new animal was spawned at {owner} when spawn animal was called!");
-            CharacterManager.Instance.PlaceSummon(newAnimal, chosenTile);
-            newAnimal.AddTerritory(owner, GameManager.Instance.gameHasStarted); //only plan return home if game has started.
-            AddOwnedAnimal(newAnimal);
+            LocationGridTile chosenTile = owner.GetRandomTileThatMeetCriteria(x => x.IsPassable() && x.structure.structureType.IsOpenSpace());
+            //Assert.IsTrue(choices.Count > 0, $"{owner} is trying to spawn an {animalTypeBeingSpawned.ToString()} but no valid tiles were found!");
+            if(chosenTile != null) {
+                Animal newAnimal = CharacterManager.Instance.CreateNewSummon(animalTypeBeingSpawned, FactionManager.Instance.neutralFaction, homeRegion: owner.region) as Animal;
+                Assert.IsNotNull(newAnimal, $"No new animal was spawned at {owner} when spawn animal was called!");
+                CharacterManager.Instance.PlaceSummon(newAnimal, chosenTile);
+                newAnimal.AddTerritory(owner, GameManager.Instance.gameHasStarted); //only plan return home if game has started.
+                AddOwnedAnimal(newAnimal);
+            }
+
         }
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Snatch
   m_EditorClassIdentifier: 
   skill: 148
-  manaCost: 20
+  manaCost: 5
   charges: 3
   cooldown: 96
   threat: 0

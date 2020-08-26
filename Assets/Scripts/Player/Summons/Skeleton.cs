@@ -18,16 +18,16 @@ public class Skeleton : Summon {
     }
     public Skeleton(SaveDataCharacter data) : base(data) { }
 
-    #region Overrides
-    public override bool SetFaction(Faction newFaction) {
-        if (base.SetFaction(newFaction)) {
-            if (newFaction.isPlayerFaction) {
-                //if skeleton became part of player faction, add bre 
-            }
-            return true;
-        }
-        return false;
-    }
-    #endregion
+    //#region Overrides
+    //public override bool SetFaction(Faction newFaction) {
+    //    if (base.SetFaction(newFaction)) {
+    //        if (newFaction.isPlayerFaction) {
+    //            //if skeleton became part of player faction, add bre 
+    //        }
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //#endregion
 }
 

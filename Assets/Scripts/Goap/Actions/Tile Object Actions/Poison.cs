@@ -56,7 +56,15 @@ public class Poison : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             }
         } else {
-            if (targetObjectOwner != null && (witness.relationshipContainer.IsFriendsWith(targetObjectOwner) || witness.relationshipContainer.HasRelationshipWith(targetObjectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE))) {
+            if (actor.traitContainer.HasTrait("Cultist") && witness.traitContainer.HasTrait("Cultist")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                if (RelationshipManager.IsSexuallyCompatibleOneSided(witness.sexuality, actor.sexuality, witness.gender, actor.gender)) {
+                    int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(witness, actor);
+                    if (UtilityScripts.GameUtilities.RollChance(compatibility * 10)) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status, node);
+                    }
+                }
+            } else if (targetObjectOwner != null && (witness.relationshipContainer.IsFriendsWith(targetObjectOwner) || witness.relationshipContainer.HasRelationshipWith(targetObjectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE))) {
                 if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status, node);
                 } else {

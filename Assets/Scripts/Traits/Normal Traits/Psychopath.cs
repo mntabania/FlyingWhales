@@ -65,7 +65,6 @@ namespace Traits {
                     CheckTargetVictimIfStillAvailable();
                     if (targetVictim == null) {
                         SetTargetVictim(potentialVictim);
-
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);

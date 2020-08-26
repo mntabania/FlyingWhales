@@ -158,10 +158,10 @@ public class MovementComponent {
             return true;
         } else {
             //_icon.SetActionOnTargetReached(doneAction);
-            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation.coreTile.region);
+            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation);
             if (exitTile != null && owner.movementComponent.HasPathTo(exitTile)) {
                 //check first if character has path toward the exit tile.
-                owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation.coreTile.region, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+                owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
                 return true;
             } else {
                 return false;
@@ -204,7 +204,6 @@ public class MovementComponent {
                 //if destination tile is not null, got there, regardless of target poi
                 owner.marker.GoTo(destinationTile, arrivalAction);
             }
-
         }
     }
     #endregion

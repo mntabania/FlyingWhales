@@ -48,9 +48,10 @@ public class Trespassing : GoapAction {
                         willReact = false;
                         break;
                 }
-
                 if (willReact) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                    if (!witness.traitContainer.HasTrait("Cultist")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status, node);
+                    }
                     CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, targetCharacter.faction, node.crimeType, node, status);
                 }
             }

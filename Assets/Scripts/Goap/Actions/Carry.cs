@@ -64,14 +64,15 @@ public class Carry : GoapAction {
             //     TileObject tileObj = poiTarget as TileObject;
             //     return tileObj.isBeingCarriedBy == null && tileObj.gridTileLocation != null;
             // }
-            if (poiTarget is Character character) {
-                return actor != poiTarget && poiTarget.mapObjectVisual &&
-                       poiTarget.numOfActionsBeingPerformedOnThis <= 0 && character.carryComponent.IsNotBeingCarried();    
-            } else {
-                return actor != poiTarget && poiTarget.mapObjectVisual &&
-                       poiTarget.numOfActionsBeingPerformedOnThis <= 0;  
+            if(actor.gridTileLocation != null && poiTarget.gridTileLocation != null) {
+                if (poiTarget is Character character) {
+                    return actor != poiTarget && poiTarget.mapObjectVisual &&
+                           poiTarget.numOfActionsBeingPerformedOnThis <= 0 && character.carryComponent.IsNotBeingCarried();
+                } else {
+                    return actor != poiTarget && poiTarget.mapObjectVisual &&
+                           poiTarget.numOfActionsBeingPerformedOnThis <= 0;
+                }
             }
-            
         }
         return false;
     }
