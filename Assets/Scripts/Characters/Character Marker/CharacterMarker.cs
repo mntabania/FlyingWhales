@@ -142,6 +142,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Monobehavior
     private void OnDisable() {
+        if (LevelLoaderManager.Instance.isLoadingNewScene) { return; }
+        if (UIManager.Instance == null) { return; }
         if(UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == character) {
             UIManager.Instance.characterInfoUI.CloseMenu();
         }

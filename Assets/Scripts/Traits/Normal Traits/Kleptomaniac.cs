@@ -183,12 +183,12 @@ namespace Traits {
                 return false;
             }
             if (item.isBeingCarriedBy != null) {
-                if (item.isBeingCarriedBy == this.traitOwner || item.isBeingCarriedBy.relationshipContainer.IsFriendsWith(this.traitOwner)) {
+                if (item.isBeingCarriedBy == traitOwner || item.isBeingCarriedBy.relationshipContainer.IsFriendsWith(traitOwner)) {
                     return false;
                 }
                 return true;
             } else {
-                return item.characterOwner != null && !item.IsOwnedBy(traitOwner) && item.characterOwner.relationshipContainer.IsEnemiesWith(this.traitOwner);
+                return item.characterOwner != null && !item.IsOwnedBy(traitOwner) && !traitOwner.relationshipContainer.IsFriendsWith(item.isBeingCarriedBy);
             }
         }
     }
