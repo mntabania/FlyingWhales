@@ -24,7 +24,11 @@ namespace Events.World_Events {
                         List<PreCharacterData> unspawnedCharacters = WorldConfigManager.Instance.mapGenerationData.familyTreeDatabase.ForceGetAllUnspawnedCharacters(randomSettlement.owner.race);
                         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(randomSettlement.region.innerMap.allEdgeTiles);
                         for (int i = 0; i < randomAmount; i++) {
+                            if (unspawnedCharacters.Count == 0) { break; }
                             PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);
+                            characterToSpawn.hasBeenSpawned = true;
+                            unspawnedCharacters.Remove(characterToSpawn);
+                            
                             Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, randomSettlement.classManager.GetCurrentClassToCreate(), randomSettlement.owner, randomSettlement);
                             RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
                             newCharacter.CreateMarker();

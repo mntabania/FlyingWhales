@@ -84,14 +84,14 @@ public class JudgeCharacter : GoapAction {
                 if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
                     absolve = Mathf.RoundToInt(absolve * 0.5f);
                     whip = Mathf.RoundToInt(whip * 0.5f);
-                    kill = Mathf.RoundToInt(kill * 1.5f);
+                    kill = Mathf.RoundToInt(kill * 2f);
                     exile *= 2;
                     debugLog += "\n-Cold War Faction: absolve = x0.5, whip = x0.5, kill = x1.5, exile = x2";
                 } else if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
                     absolve = Mathf.RoundToInt(absolve * 0.2f);
                     whip = Mathf.RoundToInt(whip * 0.5f);
-                    kill *= 2;
-                    exile = Mathf.RoundToInt(exile * 1.5f);
+                    kill *= 3;
+                    exile *= 0;
                     debugLog += "\n-Hostile Faction: absolve = x0.2, whip = x0.5, kill = x2, exile = x1.5";
                 }
             }
@@ -100,7 +100,7 @@ public class JudgeCharacter : GoapAction {
                 absolve *= 3;
                 whip *= 2;
                 kill *= 0;
-                exile = Mathf.RoundToInt(exile * 0.2f);
+                exile = Mathf.RoundToInt(exile * 0.5f);
                 debugLog += "\n-Close Friend: absolve = x3, whip = x2, kill = x0, exile = x0.2";
             } else if (opinionLabel == RelationshipManager.Friend) {
                 absolve *= 2;
