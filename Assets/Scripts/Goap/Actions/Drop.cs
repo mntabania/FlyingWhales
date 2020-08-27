@@ -170,7 +170,9 @@ public class Drop : GoapAction {
                             List<LocationGridTile> choices = randomRoom.tilesInRoom.Where(t => t.objHere == null || t.IsPassable()).ToList();
                             if (choices.Count > 0) {
                                 LocationGridTile randomTileInRoom = CollectionUtilities.GetRandomElement(choices);
-                                targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);    
+                                targetCharacter.marker.PlaceMarkerAt(randomTileInRoom);
+                                DoorTileObject door = randomRoom.GetTileObjectInRoom<DoorTileObject>(); //close door in room
+                                door?.Close();
                             } else {
                                 Debug.LogWarning($"{goapNode.actor.name} could not place {targetCharacter.name} in a room, because no valid tiles in room could be found.");
                             }
