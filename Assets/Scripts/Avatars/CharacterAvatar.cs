@@ -203,11 +203,15 @@ public class CharacterAvatar : BaseMonoBehaviour {
         //_travelLine = null;
         //SetHasArrivedState(true);
         
-        Region fromRegion = _owner.currentRegion; 
-        
+        Region fromRegion = _owner.currentRegion;
         fromRegion.RemoveCharacterFromLocation(_owner);
         targetLocation.AddCharacterToLocation(_owner);
-
+        
+        if (_owner.carryComponent.isCarryingAnyPOI && _owner.carryComponent.carriedPOI is Character characterCarry) {
+            fromRegion.RemoveCharacterFromLocation(characterCarry);    
+            targetLocation.AddCharacterToLocation(characterCarry);
+        }
+        
         _owner.combatComponent.ClearHostilesInRange();
         _owner.combatComponent.ClearAvoidInRange();
         _owner.marker.ClearPOIsInVisionRange();
