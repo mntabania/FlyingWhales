@@ -56,8 +56,9 @@ namespace Interrupts {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, originalForm, status);
                 }
 
-                //CrimeManager.Instance.ReactToCrime(witness, originalForm, this, CRIME_SEVERITY.Heinous);
-                CrimeManager.Instance.ReactToCrime(witness, originalForm, target, target.factionOwner, interrupt.crimeType, interrupt, status);
+                //Remove this temporarily because interrupt holders are object pooled, so when you report a crime that is an interrupt and that interrupt is already claimed by the object pool
+                //it will create null exceptions since the data inside is already cleared out
+                //CrimeManager.Instance.ReactToCrime(witness, originalForm, target, target.factionOwner, interrupt.crimeType, interrupt, status);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, originalForm, status);
             }

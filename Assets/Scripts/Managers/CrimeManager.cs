@@ -88,7 +88,6 @@ public class CrimeManager : BaseMonoBehaviour {
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
         }
 
-
         if (!existingCrimeData.IsWitness(witness)) {
             existingCrimeData.AddWitness(witness);
 
@@ -105,7 +104,7 @@ public class CrimeManager : BaseMonoBehaviour {
             if (!willDecideWantedOrNot) {
                 if (!existingCrimeData.isRemoved) {
                     if (!witness.crimeComponent.IsReported(existingCrimeData)) {
-                        witness.jobComponent.TryCreateReportCrimeJob(criminal, target, existingCrimeData, crime);
+                        witness.jobComponent.TryCreateReportCrimeJob(criminal, target, existingCrimeData, existingCrimeData.crime);
                     }
                 }
             }
@@ -393,7 +392,7 @@ public class CrimeData {
     public CRIME_SEVERITY crimeSeverity { get; }
     public CRIME_TYPE crimeType { get; }
     public CRIME_STATUS crimeStatus { get; private set; }
-    public ICrimeable crime { get; }
+    public ICrimeable crime { get; private set; }
 
     public Character criminal { get; }
     public Criminal criminalTrait { get; private set; }
@@ -411,14 +410,32 @@ public class CrimeData {
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
         this.crimeType = crimeType;
         this.crimeSeverity = crimeSeverity;
-        this.crime = crime;
+        SetCrime(crime);
         this.criminal = criminal;
         this.target = target;
         this.targetFaction = targetFaction;
         witnesses = new List<Character>();
         factionsThatConsidersWanted = new List<Faction>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
+
+
         SubscribeToListeners();
+    }
+
+    private void SetCrime(ICrimeable crime) {
+        this.crime = crime;
+
+        //if (crime is InterruptHolder interrupt) {
+        //    //If a crime being stored is an interrupt, we need to clone it and store the clone instead of the original crime
+        //    //The reason for this is that the original crime will be object pooled after being done,
+        //    //So we need more something permanent
+        //    InterruptHolder clonedInterrupt = ObjectPoolManager.Instance.CreateNewInterrupt();
+        //    clonedInterrupt.Initialize(interrupt.interrupt, interrupt.actor, interrupt.target, interrupt.identifier, interrupt.reason);
+        //    clonedInterrupt.SetEffectLog(interrupt.effectLog);
+        //    this.crime = crime;
+        //} else {
+        //    this.crime = crime;
+        //}
     }
 
 

@@ -441,11 +441,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         this.failedToComputePathAction = failedToComputePathAction;
         this.targetPOI = null;
         if (destinationTile == character.gridTileLocation) {
-            //if (this.arrivalAction != null) {
-            //    Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action " + this.arrivalAction.Method.Name);
-            //} else {
-            //    Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action null.");
-            //}
             Action action = this.arrivalAction;
             ClearArrivalAction();
             action?.Invoke();
@@ -884,7 +879,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         anchoredPos = transform.localPosition;
 
         if (previousGridTile != character.gridTileLocation && character.gridTileLocation != null) {
-            character.gridTileLocation.parentMap.region.innerMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
+            character.gridTileLocation.parentMap.OnCharacterMovedTo(character, character.gridTileLocation, previousGridTile);
             if(character != null) {
                 previousGridTile = character.gridTileLocation;
                 if (_previousHexTileLocation == null || (character.gridTileLocation.collectionOwner.isPartOfParentRegionMap &&
