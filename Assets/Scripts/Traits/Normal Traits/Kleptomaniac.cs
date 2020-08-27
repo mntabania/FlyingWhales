@@ -188,7 +188,7 @@ namespace Traits {
                 }
                 return true;
             } else {
-                return item.characterOwner != null && !item.IsOwnedBy(traitOwner) && !traitOwner.relationshipContainer.IsFriendsWith(item.isBeingCarriedBy);
+                return item.characterOwner != null && !item.IsOwnedBy(traitOwner) && !traitOwner.relationshipContainer.IsFriendsWith(item.characterOwner);
             }
         }
     }

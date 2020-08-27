@@ -740,7 +740,7 @@ public class BehaviourComponent {
         return false;
     }
     public bool IsNestBlocked(out IPointOfInterest blocker) {
-        if (nest.isOccupied) {
+        if (nest.objHere != null) {
             blocker = nest.objHere;
             return true;
         }

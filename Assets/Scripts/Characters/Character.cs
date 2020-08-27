@@ -709,6 +709,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
+        Debug.Log($"{name}'s marker has been destroyed!");
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
     public void DisableMarker() {
@@ -718,6 +719,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void EnableMarker() {
         // marker.SetVisualState(true);
+        Assert.IsNotNull(marker, $"Marker of {name} is trying to be enabled, but is null!");
         marker.gameObject.SetActive(true);
     }
     private void SetCharacterMarker(CharacterMarker marker) {
@@ -1611,6 +1613,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetRegionLocation(Region region) {
         _currentRegion = region;
+        Debug.Log($"Set region location of {name} to {_currentRegion?.name ?? "Null"}");
     }
     public bool IsInHomeSettlement() {
         if (isAtHomeRegion) {
