@@ -102,7 +102,10 @@ public class SnatchData : PlayerAction {
                 }
                 if (targetCharacter.isAlliedWithPlayer) {
                     return false;
-                }    
+                }
+                if (targetCharacter.isDead) {
+                    return false;
+                }
             }
             return true;
         }

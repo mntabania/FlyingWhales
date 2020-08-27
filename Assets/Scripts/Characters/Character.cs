@@ -1272,7 +1272,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //If a party has no path to do action and the job that has no path is a party job, leave party
             partyComponent.currentParty.RemoveMember(this);
         }
-        if(job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
+        if (job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
             //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);
             jobComponent.TriggerRoamAroundTile(JOB_TYPE.NO_PATH_IDLE);
         } else if (job.jobType == JOB_TYPE.ROAM_AROUND_TERRITORY 
@@ -3158,9 +3158,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    return;
         //}
         //SetHasAlreadyAskedForPlan(true);
-        if(carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
-            return;
-        }
+        //if(carryComponent.masterCharacter.avatar && carryComponent.masterCharacter.avatar.isTravellingOutside) {
+        //    return;
+        //}
         if (interruptComponent.NecromanticTranform()) {
             return;
         }
@@ -3168,7 +3168,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         logComponent.PrintLogIfActive(idleLog);
 
         //perform created jobs if any.
-        EndTickPerformJobs();
+        //EndTickPerformJobs();
+
         //if (!PlanJobQueueFirst()) {
         //    if (!PlanFullnessRecoveryActions()) {
         //        if (!PlanTirednessRecoveryActions()) {

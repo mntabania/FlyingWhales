@@ -47,15 +47,17 @@ public class Tombstone : TileObject {
         base.OnDestroyPOI();
         RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
         if (_respawnCorpseOnDestroy) {
-            character.EnableMarker();
-            // character.marker.ScheduleExpiry();
-            LocationGridTile tile = previousTile;
-            if (tile.isOccupied) {
-                tile = previousTile.GetRandomUnoccupiedNeighbor();
+            if(previousTile != null) {
+                character.EnableMarker();
+                character.marker.PlaceMarkerAt(previousTile, false);
+                character.SetGrave(null);
+                character.jobComponent.TriggerBuryMe();
+            } else {
+                if (character.marker) {
+                    character.DestroyMarker();
+                }
+                character.SetGrave(null);
             }
-            character.marker.PlaceMarkerAt(tile, false);
-            character.SetGrave(null);
-            character.jobComponent.TriggerBuryMe();    
         } else {
             character.SetGrave(null);
             character.DestroyMarker();
