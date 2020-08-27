@@ -73,6 +73,8 @@ public class MonsterInfoUI : InfoUIBase {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
+        if (InnerMapCameraMove.Instance == null) { return; }
+        if (Selector.Instance == null) { return; }
         Selector.Instance.Deselect();
         if (_activeMonster != null && ReferenceEquals(_activeMonster.marker, null) == false) {
             if (InnerMapCameraMove.Instance.target == _activeMonster.marker.gameObject.transform) {

@@ -1613,6 +1613,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetRegionLocation(Region region) {
         _currentRegion = region;
+        Debug.Log($"Set region location of {name} to {_currentRegion?.name ?? "Null"}");
     }
     public bool IsInHomeSettlement() {
         if (isAtHomeRegion) {

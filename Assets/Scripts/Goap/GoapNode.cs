@@ -352,6 +352,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
             job.CancelJob(false);
             return false;
         }
+        Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.location) { //different core locations
             if (actor.carryComponent.masterCharacter.movementComponent.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job)) == false) {
