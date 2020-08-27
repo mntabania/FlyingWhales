@@ -185,6 +185,9 @@ public class LocationStructureObject : PooledObject {
             for (int j = 0; j < differentStructureTiles.Count; j++) {
                 LocationGridTile diffTile = differentStructureTiles[j];
                 if (diffTile.objHere != null && (diffTile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+                    if (isDemonicStructure && diffTile.objHere is Tombstone tombstone) {
+                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    }
                     diffTile.structure.RemovePOI(diffTile.objHere);
                 }
                 diffTile.parentMap.detailsTilemap.SetTile(diffTile.localPlace, null);

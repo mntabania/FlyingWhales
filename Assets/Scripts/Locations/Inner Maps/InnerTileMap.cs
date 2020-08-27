@@ -421,8 +421,7 @@ namespace Inner_Maps {
 
         #region Structures
         public void PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
-            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(
-                structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation,
+            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation, 
                 Quaternion.identity, structureParent);
         
             StructureTemplate structureTemplate = structureTemplateGO.GetComponent<StructureTemplate>();
