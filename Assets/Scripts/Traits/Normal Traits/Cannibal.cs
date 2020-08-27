@@ -63,11 +63,11 @@ namespace Traits {
                 Character otherCharacter = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
                 if (characterThatWillDoJob != otherCharacter && otherCharacter.isDead && otherCharacter.isNormalCharacter &&
                     otherCharacter.gridTileLocation != null && characterThatWillDoJob.movementComponent.HasPathTo(otherCharacter.gridTileLocation)) {
-                    if (otherCharacter.grave != null) {
-                        chosenPOI = otherCharacter.grave;
-                    } else {
+                    // if (otherCharacter.grave != null) {
+                    //     chosenPOI = otherCharacter.grave;
+                    // } else {
                         chosenPOI = otherCharacter;
-                    }
+                    // }
                     break;
                 }
             }
