@@ -248,6 +248,7 @@ public class Summon : Character {
         AddPlayerAction(SPELL_TYPE.BREED_MONSTER);
         AddPlayerAction(SPELL_TYPE.AGITATE);
         AddPlayerAction(SPELL_TYPE.SNATCH);
+        AddPlayerAction(SPELL_TYPE.SACRIFICE);
     }
     #endregion
 

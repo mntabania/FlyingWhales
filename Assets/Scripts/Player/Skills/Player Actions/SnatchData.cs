@@ -62,7 +62,7 @@ public class SnatchData : PlayerAction {
         }
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
+        bool canPerform = CanPerformAbility(); //NOTE: Did not use base since this action can be used on blessed characters
         if (canPerform) {
             if (!PlayerManager.Instance.player.playerFaction.characters.Any(CanDoSnatch)) {
                 return false;
