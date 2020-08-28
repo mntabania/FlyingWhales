@@ -146,15 +146,15 @@ public class CharacterAIPath : AILerp {
         //seeker.StartPath(start, end);
     }
     public override void UpdateMe() {
-        if (!marker.gameObject.activeSelf || marker.character.isDead) {
+        if (!marker.gameObject.activeSelf || marker.character == null) {
             return;
         }
         marker.UpdatePosition();
         if (marker.character.canMove == false || isStopMovement || GameManager.Instance.isPaused) { return; }
         UpdateRotation();
         base.UpdateMe();
-        Vector3 markerPos = marker.transform.position; 
-        marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
+        //Vector3 markerPos = marker.transform.position; 
+        //marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
     }
     private void UpdateRotation() {
         if (marker.isMoving && marker.character.carryComponent.IsNotBeingCarried() && currentPath != null) { //only rotate if character is travelling //marker.character.carryComponent.masterCharacter.avatar.isTravelling && 
