@@ -199,6 +199,15 @@ namespace Traits {
             }
             return false;
         }
+        public bool IsWitnessOfAnyActiveCrime(Character character) {
+            for (int i = 0; i < activeCrimes.Count; i++) {
+                CrimeData data = activeCrimes[i];
+                if (data.IsWitness(character)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         private void CharacterApprehension() {
             bool hasCreatedPersonalApprehend = false;
             if (owner.marker) {

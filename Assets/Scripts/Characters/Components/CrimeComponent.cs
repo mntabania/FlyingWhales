@@ -36,6 +36,17 @@ public class CrimeComponent {
         }
         return false;
     }
+    public bool HasUnreportedCrimeOf(Character criminal) {
+        for (int i = 0; i < witnessedCrimes.Count; i++) {
+            CrimeData data = witnessedCrimes[i];
+            if (data.criminal == criminal) {
+                if (!reportedCrimes.Contains(data)) {
+                    return true;
+                }    
+            }
+        }
+        return false;
+    }
     public bool CanCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
         string opinionLabel = owner.relationshipContainer.GetOpinionLabel(actor);
         CRIME_SEVERITY severity = crimeData.crimeSeverity;

@@ -691,8 +691,10 @@ public class ReactionComponent {
                             }
                         }
                     }
-
-                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedTarget.traitContainer.HasTrait("Criminal")
+                    Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    
+                    //Wanted Criminal Reaction Code:
+                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && targetCriminalTrait.IsWantedBy(disguisedActor.faction)
                         && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentSettlement != null && disguisedTarget.currentSettlement is NPCSettlement npcSettlement && disguisedTarget.currentStructure == npcSettlement.prison))) {
                         debugLog = $"{debugLog}\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
@@ -702,16 +704,14 @@ public class ReactionComponent {
                         }
                         if (!cannotReactToCriminal) {
                             string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
-                            if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend)
-                                || ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) || 
-                                     disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) && 
-                                    opinionLabel != RelationshipManager.Rival)) {
+                            if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) || 
+                                disguisedActor.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(disguisedTarget)) {
                                 debugLog = $"{debugLog}\n-Character is friends/close friend/family member/lover/affair/not rival with target";
-                                Criminal criminalTrait = disguisedTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                                if (!criminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
+                                
+                                if (!targetCriminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
                                     !disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
                                     debugLog = $"{debugLog}\n-Character will worry";
-                                    criminalTrait.AddCharacterThatIsAlreadyWorried(disguisedActor);
+                                    targetCriminalTrait.AddCharacterThatIsAlreadyWorried(disguisedActor);
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
                                 } else {
                                     debugLog = $"{debugLog}\n-Character already worried about this target or has reacted to it.";
@@ -724,12 +724,46 @@ public class ReactionComponent {
                                     actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
                                 }
                                 if (!canDoJob) {
-                                    //debuglog = log +"\n-Character cannot do apprehend, will flee instead";
-                                    //actor.combatComponent.Flight(targetCharacter, "saw criminal " + targetCharacter.name);
                                     if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
                                         debugLog = $"{debugLog}\n-Character cannot do apprehend and has not yet reacted to the target, will become wary instead";
                                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);    
                                     }
+                                }
+                            }
+                        }
+                    }
+                    
+                    //Accused Criminal Code:
+                    if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && 
+                        !targetCriminalTrait.IsWantedBy(disguisedActor.faction) && targetCriminalTrait.IsWitnessOfAnyActiveCrime(disguisedActor)) {
+                        
+                        string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
+                        if ((opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) || 
+                            disguisedActor.relationshipContainer.IsRelativeLoverOrAffairAndNotRival(disguisedTarget)) {
+                            debugLog = $"{debugLog}\n-Character is friends/close friend/family member/lover/affair/not rival with target";
+                            
+                            if (!targetCriminalTrait.HasCharacterThatIsAlreadyWorried(disguisedActor) && 
+                                !disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                debugLog = $"{debugLog}\n-Character will worry";
+                                targetCriminalTrait.AddCharacterThatIsAlreadyWorried(disguisedActor);
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);
+                            } else {
+                                debugLog = $"{debugLog}\n-Character already worried about this target or has reacted to it.";
+                            }
+                        } else {
+                            debugLog = $"{debugLog}\n-Character is not friends with target";
+                            if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                debugLog = $"{debugLog}\n-Has not yet reacted to target, will Wary";
+                                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, targetCharacter);
+                            }
+                            if (GameUtilities.RollChance(30) && disguisedActor.crimeComponent.HasUnreportedCrimeOf(disguisedTarget)) {
+                                debugLog = $"{debugLog}\n-Character has unreported crime towards target, will try to apprehend.";
+                                if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.APPREHEND)) {
+                                    debugLog = $"{debugLog}\n-No active apprehend jobs yet, will create personal apprehend.";
+                                    bool canDoJob = false;
+                                    actor.jobComponent.TryCreateApprehend(targetCharacter, ref canDoJob);
+                                } else {
+                                    debugLog = $"{debugLog}\n-Already has active apprehend job. Do nothing";  
                                 }
                             }
                         }
