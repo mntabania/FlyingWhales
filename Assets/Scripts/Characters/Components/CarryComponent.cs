@@ -160,18 +160,19 @@ public class CarryComponent {
         carriedPOI = null;
         character.carryComponent.SetIsBeingCarriedBy(null);
         if (dropLocation == null) {
-            if (owner.gridTileLocation.isOccupied) {
-                LocationGridTile chosenTile = owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-                if (chosenTile != null) {
-                    character.marker.PlaceMarkerAt(chosenTile);
-                } else {
-                    Debug.LogWarning(
-                        $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                    character.marker.PlaceMarkerAt(owner.gridTileLocation);
-                }
-            } else {
-                character.marker.PlaceMarkerAt(owner.gridTileLocation);
-            }
+            character.marker.PlaceMarkerAt(owner.gridTileLocation);
+            //if (owner.gridTileLocation.isOccupied) {
+            //    LocationGridTile chosenTile = owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+            //    if (chosenTile != null) {
+            //        character.marker.PlaceMarkerAt(chosenTile);
+            //    } else {
+            //        Debug.LogWarning(
+            //            $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+            //        character.marker.PlaceMarkerAt(owner.gridTileLocation);
+            //    }
+            //} else {
+            //    character.marker.PlaceMarkerAt(owner.gridTileLocation);
+            //}
         } else {
             character.marker.PlaceMarkerAt(dropLocation);
         }

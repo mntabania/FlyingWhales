@@ -74,7 +74,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public LocationGridTile destinationTile { get; private set; }
     public float progressionSpeedMultiplier { get; private set; }
     public bool isMoving { get; private set; }
-    private LocationGridTile previousGridTile {
+    public LocationGridTile previousGridTile {
         get => _previousGridTile;
         set {
             _previousGridTile = value;
@@ -916,7 +916,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetActiveState(true);
         UpdateAnimation();
         pathfindingAI.Teleport(tile.centeredWorldLocation);
-        UpdatePosition();
+        pathfindingAI.UpdateMe();
         Assert.IsTrue(character.currentStructure == tile.structure,
                 $"{character.name} updated its position but the structure is not the same as the tile's structure. Current structure: { character.currentStructure?.name }, Tile structure: { tile.structure.name }");
         //Removed this because character will be added already in the structure characters at location list in UpdatePosition

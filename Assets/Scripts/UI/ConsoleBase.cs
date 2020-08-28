@@ -151,6 +151,8 @@ public class ConsoleBase : InfoUIBase {
         text += $"\n\t<b>Region Location:</b> {character.currentRegion?.name}" ?? "None";
         text += $"\n\t<b>Structure Location:</b> {character.currentStructure}" ?? "None";
         text += $"\n\t<b>Grid Location:</b> {character.gridTileLocation?.localPlace}" ?? "None";
+        text += $"\n\t<b>Previous Grid Location:</b> {character.marker?.previousGridTile.localPlace}" ?? "None";
+
 
         text += $"\n<b>Faction:</b> {character.faction?.name}" ?? "None";
         text += $"\n<b>Current Action:</b> {character.currentActionNode?.goapName}" ?? "None";

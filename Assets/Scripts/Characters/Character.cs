@@ -1470,10 +1470,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Location
     public void SetCurrentStructureLocation(LocationStructure newStructure, bool broadcast = true) {
-        if (newStructure == currentStructure) {
+        if (newStructure == _currentStructure) {
             return; //ignore change;
         }
-        LocationStructure previousStructure = currentStructure;
+        LocationStructure previousStructure = _currentStructure;
         _currentStructure = newStructure;
         //if (marker && currentStructure != null) {
         //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
