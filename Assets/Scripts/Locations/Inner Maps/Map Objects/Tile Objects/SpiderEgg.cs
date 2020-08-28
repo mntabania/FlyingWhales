@@ -18,7 +18,7 @@ public class SpiderEgg : MonsterEgg {
                 monster.traitContainer.AddTrait(monster, "Baby Infestor");
             }
             monster.CreateMarker();
-            monster.InitialCharacterPlacement(gridTileLocation, true);
+            monster.InitialCharacterPlacement(gridTileLocation);
             monster.OnPlaceSummon(gridTileLocation);
 
             BaseSettlement settlement;

@@ -74,7 +74,7 @@ public class SuccubusBehaviour : CharacterBehaviourComponent {
 
     private bool CanTargetCharacterForMakeLove(Character source, Character c) {
         if(c.gender == GENDER.MALE && !c.isDead && (source.tileObjectComponent.primaryBed != null || c.tileObjectComponent.primaryBed != null) && c.homeSettlement != null) {
-            if(c.canPerform && !c.combatComponent.isInCombat && !c.returnedToLife && !c.carryComponent.masterCharacter.avatar.isTravellingOutside && c.currentRegion == source.currentRegion) {
+            if(c.canPerform && !c.combatComponent.isInCombat && !c.returnedToLife && !c.carryComponent.masterCharacter.movementComponent.isTravellingInWorld && c.currentRegion == source.currentRegion) {
                 return c.homeSettlement.GetFirstTileObjectOfTypeThatMeetCriteria<Bed>(b => b.mapObjectState == MAP_OBJECT_STATE.BUILT && b.IsAvailable() && b.GetActiveUserCount() == 0) != null;
             }
         }

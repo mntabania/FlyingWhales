@@ -29,7 +29,7 @@ namespace Traits {
                     Character adult = CharacterManager.Instance.CreateNewSummon(summon.adultSummonType, summon.faction, summon.homeSettlement, summon.homeRegion, summon.homeStructure);
                     adult.SetName(summon.name);
                     adult.CreateMarker();
-                    adult.InitialCharacterPlacement(summon.gridTileLocation, true);
+                    adult.InitialCharacterPlacement(summon.gridTileLocation);
                     adult.ClearTerritory();
                     
                     Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider");
@@ -38,7 +38,6 @@ namespace Traits {
                     
                     for (int i = 0; i < summon.territorries.Count; i++) {
                         adult.AddTerritory(summon.territorries[i]);
-
                     }
                 }
                 summon.SetDestroyMarkerOnDeath(true);

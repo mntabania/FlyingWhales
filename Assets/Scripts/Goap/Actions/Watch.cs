@@ -85,8 +85,7 @@ public class Watch : GoapAction {
         Character _targetCharacter = goapNode.poiTarget as Character;
         if (_targetCharacter.isDead) {
             //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
-            if (goapNode.actor.carryComponent.masterCharacter.avatar.isTravelling) {
-                //Stop moving
+            if (goapNode.actor.marker && goapNode.actor.marker.isMoving) {
                 goapNode.actor.marker.StopMovement();
             }
             goapNode.EndPerTickEffect();
@@ -97,8 +96,7 @@ public class Watch : GoapAction {
         if (actionBeingWatched != null) {
             if (actionBeingWatched.actionStatus == ACTION_STATUS.SUCCESS || actionBeingWatched.actionStatus == ACTION_STATUS.FAIL || actionBeingWatched.actor.currentActionNode != actionBeingWatched) {
                 //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
-                if (goapNode.actor.carryComponent.masterCharacter.avatar.isTravelling) {
-                    //Stop moving
+                if(goapNode.actor.marker && goapNode.actor.marker.isMoving) {
                     goapNode.actor.marker.StopMovement();
                 }
                 goapNode.EndPerTickEffect();
@@ -107,8 +105,7 @@ public class Watch : GoapAction {
         } else if (stateBeingWatched != null) {
             if (stateBeingWatched.isDone || (stateBeingWatched.stateComponent.currentState != stateBeingWatched && !stateBeingWatched.isPaused)) { //only end watch state if the state is done or if the watched state is no longer active and not paused
                 //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
-                if (goapNode.actor.carryComponent.masterCharacter.avatar.isTravelling) {
-                    //Stop moving
+                if (goapNode.actor.marker && goapNode.actor.marker.isMoving) {
                     goapNode.actor.marker.StopMovement();
                 }
                 goapNode.EndPerTickEffect();
@@ -122,7 +119,7 @@ public class Watch : GoapAction {
         }
 
         //Always face target when not travelling
-        if (!goapNode.actor.carryComponent.masterCharacter.avatar.isTravelling) {
+        if (goapNode.actor.carryComponent.masterCharacter.marker && goapNode.actor.carryComponent.masterCharacter.marker.isMoving) {
             InnerMapManager.Instance.FaceTarget(goapNode.actor, goapNode.poiTarget);
         }
     }

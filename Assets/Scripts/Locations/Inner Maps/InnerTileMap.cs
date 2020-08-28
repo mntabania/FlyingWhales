@@ -658,7 +658,7 @@ namespace Inner_Maps {
                         && activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))*/
                 
                 ) {
-                if (activeCharacter.marker.pathfindingAI.currentPath != null && activeCharacter.carryComponent.masterCharacter.avatar.isTravelling) {
+                if (activeCharacter.marker.pathfindingAI.currentPath != null && activeCharacter.marker.isMoving) {
                     ShowPath(activeCharacter);
                 } else {
                     HidePath();

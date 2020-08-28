@@ -129,7 +129,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							Character character = CharacterManager.Instance.CreateNewCharacter(CollectionUtilities.GetRandomElement(_classChoices), RACE.ELVES, 
 								GameUtilities.RollChance(50) ? GENDER.MALE : GENDER.FEMALE, homeRegion: chosenTile.structure.location);
 							character.CreateMarker();
-							character.InitialCharacterPlacement(chosenTile, false);
+							character.InitialCharacterPlacement(chosenTile);
 							character.marker.UpdatePosition();
 							character.Death();
 							tombstone.SetCharacter(character);

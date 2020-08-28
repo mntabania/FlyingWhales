@@ -157,11 +157,7 @@ public class ConsoleBase : InfoUIBase {
         //if (character.currentActionNode != null) {
         //    text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
         //}
-        if (character.carryComponent.masterCharacter.avatar != null) {
-            text += $"\n<b>Is Travelling:</b> {character.carryComponent.masterCharacter.avatar.isTravelling}";
-            text += $"\n<b>Target Location:</b> {character.carryComponent.masterCharacter.avatar.targetLocation?.name}" ?? "None";
-            text += $"\n<b>Target Structure:</b> {character.carryComponent.masterCharacter.avatar.targetStructure}" ?? "None";
-        }
+        text += $"\n<b>Is Travelling In World:</b> {character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld}";
 
         if (character.marker) {
             text += "\n<b>MARKER DETAILS:</b>";

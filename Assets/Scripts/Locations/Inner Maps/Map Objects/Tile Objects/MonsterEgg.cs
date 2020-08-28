@@ -55,7 +55,7 @@ public abstract class MonsterEgg : TileObject {
     protected virtual void Hatch() {
         Character monster = CharacterManager.Instance.CreateNewSummon(summonType, PlayerManager.Instance.player.playerFaction, homeRegion: gridTileLocation.parentMap.region);
         monster.CreateMarker();
-        monster.InitialCharacterPlacement(gridTileLocation, true);
+        monster.InitialCharacterPlacement(gridTileLocation);
         if (gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             monster.ClearTerritory();
             monster.AddTerritory(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);

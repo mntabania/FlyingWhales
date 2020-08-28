@@ -14,6 +14,7 @@ using Traits;
 using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
+using UnityEngine.Assertions;
 
 public class CharacterMarker : MapObjectVisual<Character> {
     public Character character { get; private set; }
@@ -65,7 +66,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<TileObject> inVisionTileObjects { get; private set; } //POI's in this characters vision collider
     public Action arrivalAction { get; private set; }
-    private Action failedToComputePathAction { get; set; }
+    //private Action failedToComputePathAction { get; set; }
 
     //movement
     public IPointOfInterest targetPOI { get; private set; }
@@ -235,7 +236,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
+        Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
             OnTileObjectRemovedFromTile);
@@ -246,7 +247,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
@@ -274,21 +275,21 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// <param name="travellingCharacter">The travelling party.</param>
     private void OnCharacterAreaTravelling(Character travellingCharacter) {
         if (travellingCharacter.carryComponent.isCarryingAnyPOI) {
-            if (travellingCharacter.carryComponent.IsPOICarried(targetPOI)) {
-                //If the travelling party is travelling outside and is carrying a poi that is being targetted by this marker, this marker should fail to compute path
-                Action action = failedToComputePathAction;
-                if (action != null) {
-                    if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
-                        character.carryComponent.masterCharacter.avatar.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                    } else {
-                        StopMovement();
-                    }
-                }
-                //set arrival action to null, because some arrival actions set it when executed
-                failedToComputePathAction = null;
-                action?.Invoke();
-            }
-            if(travellingCharacter.carryComponent.carriedPOI is Character carriedCharacter) {
+            //if (travellingCharacter.carryComponent.IsPOICarried(targetPOI)) {
+            //    //If the travelling party is travelling outside and is carrying a poi that is being targetted by this marker, this marker should fail to compute path
+            //    Action action = failedToComputePathAction;
+            //    if (action != null) {
+            //        if (character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
+            //            character.carryComponent.masterCharacter.avatar.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+            //        } else {
+            //            StopMovement();
+            //        }
+            //    }
+            //    //set arrival action to null, because some arrival actions set it when executed
+            //    failedToComputePathAction = null;
+            //    action?.Invoke();
+            //}
+            if(travellingCharacter.carryComponent.carriedPOI is Character carriedCharacter && character != carriedCharacter) {
                 character.combatComponent.RemoveHostileInRange(carriedCharacter); //removed hostile because he/she left the npcSettlement.
                 character.combatComponent.RemoveAvoidInRange(carriedCharacter);
                 RemovePOIFromInVisionRange(carriedCharacter);
@@ -426,7 +427,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Pathfinding Movement
-    public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null, Action failedToComputePathAction = null, STRUCTURE_TYPE[] notAllowedStructures = null) {
+    public void GoTo(LocationGridTile destinationTile, Action arrivalAction = null) {
         if (character.movementComponent.isStationary) {
             return;
         }
@@ -435,10 +436,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.trapStructure.SetStructureAndDuration(null, 0);
         }
         pathfindingAI.ClearAllCurrentPathData();
-        pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
+        //pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.destinationTile = destinationTile;
         this.arrivalAction = arrivalAction;
-        this.failedToComputePathAction = failedToComputePathAction;
+        //this.failedToComputePathAction = failedToComputePathAction;
         this.targetPOI = null;
         if (destinationTile == character.gridTileLocation) {
             Action action = this.arrivalAction;
@@ -456,20 +457,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
         pathfindingAI.ClearAllCurrentPathData();
         pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
         this.arrivalAction = arrivalAction;
-        this.failedToComputePathAction = failedToComputePathAction;
+        //this.failedToComputePathAction = failedToComputePathAction;
         this.targetPOI = targetPOI;
         switch (targetPOI.poiType) {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
-                if (!targetCharacter.marker) {
-                    this.failedToComputePathAction?.Invoke(); //target character is already dead.
-                    this.failedToComputePathAction = null;
-                    return;
+                if (targetCharacter.marker && !targetCharacter.carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
+                    SetTargetTransform(targetCharacter.marker.transform);
                 }
-                SetTargetTransform(targetCharacter.marker.transform);
-                if (targetCharacter.carryComponent.masterCharacter.avatar && targetCharacter.carryComponent.masterCharacter.avatar.isTravellingOutside) {
-                    OnCharacterAreaTravelling(targetCharacter);
-                } 
                 break;
             default:
                 if(targetPOI is MovingTileObject) {
@@ -580,17 +575,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
         isMoving = true;
         character.movementComponent.UpdateSpeed();
         pathfindingAI.SetIsStopMovement(false);
-        character.carryComponent.masterCharacter.avatar.SetIsTravelling(true);
         UpdateAnimation();
         // Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
     public void StopMovement() {
+        //if (!isMoving) {
+        //    return;
+        //}
         isMoving = false;
         string log = $"{character.name} StopMovement function is called!";
         character.logComponent.PrintLogIfActive(log);
-        if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false) {
-            character.carryComponent.masterCharacter.avatar.SetIsTravelling(false);
-        }
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
         // Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
@@ -751,7 +745,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 }
             } else if ((character.canMove == false || (!character.canPerform && !character.canWitness)) && (!character.traitContainer.HasTrait("Hibernating", "Stoned") || (!(character is Golem) && !(character is Troll)))) {
                 PlaySleepGround();
-            } else if (ReferenceEquals(character.carryComponent.masterCharacter.avatar, null) == false && character.carryComponent.masterCharacter.avatar.isTravelling) {
+            } else if (isMoving) {
                 //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                 PlayWalkingAnimation();
             } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
@@ -902,26 +896,33 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// </summary>
     /// <param name="tile">The tile the character should be placed at.</param>
     /// <param name="addToLocation">If the character should be added to the location or not?</param>
-    public void InitialPlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
-        PlaceMarkerAt(tile, addToLocation);
+    public void InitialPlaceMarkerAt(LocationGridTile tile) {
+        PlaceMarkerAt(tile);
         pathfindingAI.UpdateMe();
-        SetCollidersState(true);
+        //SetCollidersState(true); //Removed this, already called in PlaceMarkerAt
         visionCollider.Initialize();
         character.movementComponent.UpdateSpeed();
         _nameplate.UpdateActiveState();
     }
-    public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
+    public void PlaceMarkerAt(LocationGridTile tile) { //, bool addToLocation = true
         gameObject.transform.SetParent(tile.parentMap.objectsParent);
-        if (addToLocation) {
-            tile.structure.location.AddCharacterToLocation(character);
-        }
+        //Always add to region characters now because in UpdatePosition, the character will be added to the structure characters at location list
+        //It will be inconsistent if the character is added to that list but will not be added to the region's characters at location list
+        tile.structure.location.AddCharacterToLocation(character);
+
+        //if (addToLocation) {
+        //    tile.structure.location.AddCharacterToLocation(character);
+        //}
         SetActiveState(true);
         UpdateAnimation();
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         UpdatePosition();
-        if (addToLocation) {
-            tile.structure.AddCharacterAtLocation(character, tile);
-        }
+        Assert.IsTrue(character.currentStructure == tile.structure,
+                $"{character.name} updated its position but the structure is not the same as the tile's structure. Current structure: { character.currentStructure?.name }, Tile structure: { tile.structure.name }");
+        //Removed this because character will be added already in the structure characters at location list in UpdatePosition
+        //if (addToLocation) {
+        //    tile.structure.AddCharacterAtLocation(character, tile);
+        //}
         UpdateActionIcon();
         SetCollidersState(true);
         tile.structure.location.AddPendingAwareness(character);
@@ -1139,6 +1140,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public bool RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
         return inVisionPOIsButDiffStructure.Remove(poi);
+    }
+    public void ClearPOIsInVisionRangeButDiffStructure() {
+        inVisionPOIsButDiffStructure.Clear();
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
@@ -1576,7 +1580,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         if (chosenTile != null) {
             if (character.currentRegion != chosenTile.structure.location) {
-                if (character.carryComponent.masterCharacter.movementComponent.GoToLocation(chosenTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
+                if (character.movementComponent.MoveToAnotherRegion(chosenTile.structure.location, () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
                     OnStartFlee();
                 }
             } else {

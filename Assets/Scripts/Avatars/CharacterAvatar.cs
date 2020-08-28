@@ -92,7 +92,7 @@ public class CharacterAvatar : BaseMonoBehaviour {
         characterPortrait.GeneratePortrait(_owner);
         portraitGO.SetActive(false);
 
-        CharacterManager.Instance.AddCharacterAvatar(this);
+        //CharacterManager.Instance.AddCharacterAvatar(this);
     }
 
     #region Monobehaviour
@@ -105,7 +105,7 @@ public class CharacterAvatar : BaseMonoBehaviour {
         if (_isTravelling) {
             CancelledDeparture();
         }
-        CharacterManager.Instance?.RemoveCharacterAvatar(this);
+        //CharacterManager.Instance?.RemoveCharacterAvatar(this);
     }
     #endregion
 
@@ -159,7 +159,7 @@ public class CharacterAvatar : BaseMonoBehaviour {
         //_travelLine.SetActiveMeter(isVisualShowing);
         _owner.marker.gameObject.SetActive(false);
         //Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
-        Messenger.Broadcast(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, _owner);
+        Messenger.Broadcast(Signals.STARTED_TRAVELLING_IN_WORLD, _owner);
 
         ArriveAtLocation();
     }
@@ -232,19 +232,19 @@ public class CharacterAvatar : BaseMonoBehaviour {
             PlayerManager.Instance.player.ShowNotificationFrom(_owner, arriveLog);    
         }
 
-        Messenger.Broadcast(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, _owner);
+        Messenger.Broadcast(Signals.FINISHED_TRAVELLING_IN_WORLD, _owner);
         if(onArriveAction != null) {
             onArriveAction();
             SetOnArriveAction(null);
         }
-        if (targetStructure != null) {
-            _owner.movementComponent.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
-        } else {
+        //if (targetStructure != null) {
+        //    _owner.movementComponent.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+        //} else {
             if(onPathFinished != null) {
                 onPathFinished();
                 SetOnPathFinished(null);
             }
-        }
+        //}
         SetIsTravellingOutside(false);
     }
     public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {

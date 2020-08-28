@@ -110,7 +110,6 @@ public class Summon : Character {
                 carrier.UncarryPOI(this);
             }
             //ownParty.PartyDeath();
-            avatar.gameObject.SetActive(false);
 
             //No longer remove from region list even if character died to prevent inconsistency in data because if a dead character is picked up and dropped, he will be added in the structure location list again but wont be in region list
             //https://trello.com/c/WTiGxjrK/1786-inconsistent-characters-at-location-list-in-region-with-characters-at-structure

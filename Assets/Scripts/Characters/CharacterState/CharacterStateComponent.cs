@@ -65,13 +65,11 @@ public class CharacterStateComponent {
         }
 
         //Stop the movement of character because the new state probably has different movement behavior
-        if(character.avatar.isTravelling) {
-            if (character.avatar.travelLine == null) {
-                character.marker.StopMovement();
-            }
+        if (character.marker && character.marker.isMoving) {
+            character.marker.StopMovement();
         }
 
-        if(currentState != null) {
+        if (currentState != null) {
             ExitCurrentState();
         }
         //Create the new state
@@ -140,13 +138,9 @@ public class CharacterStateComponent {
             throw new System.Exception($"{character.name} is trying to exit his/her current state but it is null");
         }
 
-        //if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?
-            if (character.avatar.isTravelling) {
-                if (character.avatar.travelLine == null) {
-                    character.marker.StopMovement();
-                }
-            }
-        //}
+        if (character.marker && character.marker.isMoving) {
+            character.marker.StopMovement();
+        }
 
         CharacterStateJob stateJob = currentState.job;
         CharacterState currState = currentState;

@@ -159,7 +159,7 @@ namespace Traits {
                 && character.canPerform
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
                 && !character.traitContainer.HasTrait("Blessed")
-                && !character.carryComponent.masterCharacter.avatar.isTravellingOutside; //characters travelling outside cannot be triggered
+                && !character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld; //characters travelling outside cannot be triggered
         }
         public virtual string GetRequirementDescription(Character character) {
             return "Mana cost of triggering this flaw's negative effect depends on the character's mood. The darker the mood, the cheaper the cost.";

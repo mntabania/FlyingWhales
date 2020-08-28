@@ -103,13 +103,13 @@ public class TravelLine : MonoBehaviour {
 
     #region Listeners
     private void OnMenuOpened(InfoUIBase @base) {
-        if(@base is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
-            iconImg.sprite = clickedSprite;
-            if(UIManager.Instance.characterInfoUI.previousCharacter != null && !UIManager.Instance.characterInfoUI.previousCharacter.isDead && UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.isTravelling 
-                && UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.travelLine != null) {
-                UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.travelLine.iconImg.sprite = UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.travelLine.defaultSprite;
-            }
-        }
+        //if(@base is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {
+        //    iconImg.sprite = clickedSprite;
+        //    if(UIManager.Instance.characterInfoUI.previousCharacter != null && !UIManager.Instance.characterInfoUI.previousCharacter.isDead && UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.isTravelling 
+        //        && UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.travelLine != null) {
+        //        UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.travelLine.iconImg.sprite = UIManager.Instance.characterInfoUI.previousCharacter.carryComponent.masterCharacter.avatar.travelLine.defaultSprite;
+        //    }
+        //}
     }
     private void OnMenuClosed(InfoUIBase @base) {
         if (@base is CharacterInfoUI && UIManager.Instance.characterInfoUI.activeCharacter.id == _character.id) {

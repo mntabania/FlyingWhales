@@ -355,24 +355,11 @@ public class ActualGoapNode : IRumorable, ICrimeable {
         Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.location) { //different core locations
-            if (actor.carryComponent.masterCharacter.movementComponent.GoToLocation(targetTile.structure.location, PATHFINDING_MODE.NORMAL, doneAction: () => CheckAndMoveToDoAction(job)) == false) {
+            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.location, () => CheckAndMoveToDoAction(job)) == false) {
                 //character cannot exit region.
                 return false;
             }
         } else {
-            // LocationGridTile tileToGoTo = targetTile;
-            // if (targetPOIToGoTo != null) {
-            //     tileToGoTo = targetPOIToGoTo.gridTileLocation;
-            // }
-            // if (tileToGoTo == actor.gridTileLocation) {
-            //     actor.marker.StopMovement();
-            //     actor.PerformGoapAction();
-            // } else {
-            //     if (!PathfindingManager.Instance.HasPath(actor.gridTileLocation, tileToGoTo)) {
-            //         return false;
-            //     }
-            //     actor.marker.GoTo(tileToGoTo, OnArriveAtTargetLocation);
-            // }
             if (targetPOIToGoTo == null) {
                 if (targetTile == actor.gridTileLocation) {
                     actor.marker.StopMovement();

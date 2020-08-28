@@ -107,7 +107,7 @@ public class CarryComponent {
     public void UncarryPOI(IPointOfInterest poi, bool addToLocation = true, LocationGridTile dropLocation = null) {
         if (IsPOICarried(poi)) {
             if (poi is Character) {
-                RemoveCharacter(poi as Character, addToLocation, dropLocation);
+                RemoveCharacter(poi as Character, dropLocation);
             } else if (poi is TileObject) {
                 RemoveTileObject(poi as TileObject, addToLocation, dropLocation);
             }
@@ -147,7 +147,7 @@ public class CarryComponent {
         //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
         //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
-    private void RemoveCharacter(Character character, bool addToLocation, LocationGridTile dropLocation) {
+    private void RemoveCharacter(Character character, LocationGridTile dropLocation) {
         if (owner == character) {
             return;
         }
@@ -163,20 +163,19 @@ public class CarryComponent {
             if (owner.gridTileLocation.isOccupied) {
                 LocationGridTile chosenTile = owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
                 if (chosenTile != null) {
-                    character.marker.PlaceMarkerAt(chosenTile, addToLocation);
+                    character.marker.PlaceMarkerAt(chosenTile);
                 } else {
                     Debug.LogWarning(
                         $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                    character.marker.PlaceMarkerAt(owner.gridTileLocation, addToLocation);
+                    character.marker.PlaceMarkerAt(owner.gridTileLocation);
                 }
             } else {
-                character.marker.PlaceMarkerAt(owner.gridTileLocation, addToLocation);
+                character.marker.PlaceMarkerAt(owner.gridTileLocation);
             }
         } else {
-            character.marker.PlaceMarkerAt(dropLocation, addToLocation);
+            character.marker.PlaceMarkerAt(dropLocation);
         }
         character.marker.transform.eulerAngles = Vector3.zero;
-        character.avatar.transform.position = owner.currentRegion.coreTile.transform.position;
         // character.marker.SetNameState(true);
         Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }

@@ -601,7 +601,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Debug.Log(summary);
 	}
 	private void TryCreateRestrainJobs(Character target) {
-		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.canPerform && target.canMove) {
+		if (CanCreateRestrainJob() && target.faction.IsHostileWith(_owner.owner) && target.canPerform && target.canMove && !target.traitContainer.HasTrait("Restrained")) {
 			int combatantResidents = 
 				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.RESTRAIN);
@@ -641,7 +641,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	// 	job.ForceCancelJob(false); //automatically cancel job if assigned character drops the job
 	// }
 	private bool IsRestrainJobStillApplicable(Character target, GoapPlanJob job) {
-		bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != _owner.prison;
+        bool isApplicable = !target.traitContainer.HasTrait("Restrained"); //|| target.currentStructure != _owner.prison; //Removed check for structure must be in prison because restrain job only puts restrains on the target they dont actually carry them to the prison
 		if (target.gridTileLocation != null && isApplicable) {
 			if (target.gridTileLocation.IsPartOfSettlement(_owner)) {
 				//if target is within settlement job is always valid

@@ -11,7 +11,7 @@ namespace Inner_Maps.Location_Structures {
                     GameUtilities.RollChance(50) ? RACE.HUMANS : RACE.ELVES, 
                     GameUtilities.RollChance(50) ? GENDER.MALE : GENDER.FEMALE, homeRegion: structure.location, faction: FactionManager.Instance.vagrantFaction);
                 character.CreateMarker();
-                character.InitialCharacterPlacement(tile, false);
+                character.InitialCharacterPlacement(tile);
                 character.marker.UpdatePosition();
                 character.Death();
                 tombstone.SetCharacter(character);

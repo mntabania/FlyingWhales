@@ -116,7 +116,7 @@ public class Invite : GoapAction {
             if (target.returnedToLife) { //do not woo characters that have been raised from the dead
                 return false;
             }
-            if (target.carryComponent.masterCharacter.avatar.isTravellingOutside || target.currentRegion != actor.currentRegion) {
+            if (target.carryComponent.masterCharacter.movementComponent.isTravellingInWorld || target.currentRegion != actor.currentRegion) {
                 return false; //target is outside the map
             }
             return target.carryComponent.IsNotBeingCarried();

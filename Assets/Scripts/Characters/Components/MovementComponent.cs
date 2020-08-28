@@ -22,6 +22,8 @@ public class MovementComponent {
     public bool hasMovedOnCorruption { get; private set; }
     public bool isStationary { get; private set; }
     public bool cameFromWurmHole { get; private set; }
+    public bool isTravellingInWorld { get; private set; }
+    public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
 
     private int _enableDiggingCounter;
@@ -147,64 +149,100 @@ public class MovementComponent {
     }
 
     #region Go To
-    public bool GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
-        Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
-        if (owner.avatar.isTravelling && owner.avatar.travelLine != null) {
-            return true;
-        }
-        if (owner.currentRegion == targetLocation) {
+    public bool MoveToAnotherRegion(Region targetRegion, Action doneAction = null) {
+        if (owner.currentRegion == targetRegion) {
             //action doer is already at the target location
             doneAction?.Invoke();
             return true;
         } else {
-            //_icon.SetActionOnTargetReached(doneAction);
-            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetLocation);
+            LocationGridTile exitTile = owner.GetTargetTileToGoToRegion(targetRegion);
             if (exitTile != null && owner.movementComponent.HasPathTo(exitTile)) {
                 //check first if character has path toward the exit tile.
-                owner.marker.GoTo(exitTile, () => MoveToAnotherLocation(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
+                owner.marker.GoTo(exitTile, () => TravelToAnotherRegion(targetRegion, doneAction));
                 return true;
-            } else {
-                return false;
             }
         }
+        return false;
     }
-    private void MoveToAnotherLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
-        Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
-        owner.avatar.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
-        owner.avatar.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);
-    }
-    /// <summary>
-    /// Move this character to another structure in the same npcSettlement.
-    /// </summary>
-    /// <param name="newStructure">New structure the character is going to.</param>
-    /// <param name="destinationTile">LocationGridTile where the character will go to (Must be inside the new structure).</param>
-    /// <param name="targetPOI">The Point of Interest this character will interact with</param>
-    /// <param name="arrivalAction">What should this character do when it reaches its target tile?</param>
-    public void MoveToAnotherStructure(LocationStructure newStructure, LocationGridTile destinationTile, IPointOfInterest targetPOI = null, Action arrivalAction = null) {
-        if (isStationary) {
+    private void TravelToAnotherRegion(Region targetRegion, Action doneAction = null) {
+        if(!owner.canPerform || !owner.canMove || owner.isDead) {
             return;
         }
-        //if the character is already at the destination tile, just do the specified arrival action, if any.
-        if (owner.gridTileLocation == destinationTile) {
-            if (arrivalAction != null) {
-                arrivalAction();
-            }
-            //marker.PlayIdle();
-        } else {
-            if (destinationTile == null) {
-                if (targetPOI != null) {
-                    //if destination tile is null, make the charater marker use target poi logic (Usually used for moving targets)
-                    owner.marker.GoToPOI(targetPOI, arrivalAction);
-                } else {
-                    if (arrivalAction != null) {
-                        arrivalAction();
-                    }
-                }
-            } else {
-                //if destination tile is not null, got there, regardless of target poi
-                owner.marker.GoTo(destinationTile, arrivalAction);
-            }
+        StartTravellingToRegion(targetRegion, doneAction);
+    }
+    private void StartTravellingToRegion(Region targetRegion, Action doneAction = null) {
+        if (isTravellingInWorld) {
+            owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot travel to " + targetRegion.name + " because it is already travelling in the world");
+            return;
         }
+        isTravellingInWorld = true;
+        SetTargetRegionToTravelInWorld(targetRegion);
+        owner.SetPOIState(POI_STATE.INACTIVE);
+        if (owner.carryComponent.isCarryingAnyPOI) {
+            owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
+        }
+
+        Log leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
+        leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
+        leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+        leftLog.AddLogToInvolvedObjects();
+        owner.DisableMarker();
+
+        owner.combatComponent.ClearHostilesInRange();
+        owner.combatComponent.ClearAvoidInRange();
+
+        if (owner.marker) {
+            owner.marker.ClearPOIsInVisionRange();
+            owner.marker.ClearPOIsInVisionRangeButDiffStructure();
+            owner.marker.pathfindingAI.ClearAllCurrentPathData();
+        }
+
+        Messenger.Broadcast(Signals.STARTED_TRAVELLING_IN_WORLD, owner);
+
+        FinishTravellingToRegion(doneAction);
+    }
+    private void FinishTravellingToRegion(Action doneAction = null) {
+        if (!isTravellingInWorld) {
+            owner.logComponent.PrintLogErrorIfActive(owner.name + " cannot finish travel to " + targetRegionToTravelInWorld?.name + " because it is already not travelling in the world");
+            return;
+        }
+        isTravellingInWorld = false;
+
+        if (!owner.marker) {
+            owner.CreateMarker();
+        }
+
+        Region fromRegion = owner.currentRegion;
+        fromRegion.RemoveCharacterFromLocation(owner);
+
+        //character must arrive at the direction that it came from.
+        LocationGridTile entrance = (targetRegionToTravelInWorld.innerMap as RegionInnerTileMap).GetTileToGoToRegion(fromRegion);//targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
+        owner.marker.PlaceMarkerAt(entrance);
+
+        owner.SetPOIState(POI_STATE.ACTIVE);
+        if (owner.carryComponent.isCarryingAnyPOI) {
+            owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
+        }
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+        arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
+        arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
+        arriveLog.AddLogToInvolvedObjects();
+
+        if (owner.isNormalCharacter) {
+            PlayerManager.Instance.player.ShowNotificationFrom(targetRegionToTravelInWorld, arriveLog);
+        }
+
+        owner.EnableMarker();
+        SetTargetRegionToTravelInWorld(null);
+
+        Messenger.Broadcast(Signals.FINISHED_TRAVELLING_IN_WORLD, owner);
+
+        if (doneAction != null) {
+            doneAction();
+        }
+    }
+    public void SetTargetRegionToTravelInWorld(Region region) {
+        targetRegionToTravelInWorld = region;
     }
     #endregion
 

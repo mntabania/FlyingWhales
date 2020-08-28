@@ -59,7 +59,7 @@ public class LandmarkCharacterItem : PooledObject {
                 restrainedIcon.SetActive(false);
                 unrestrainedGO.SetActive(true);
             }
-            if ((character.carryComponent.masterCharacter.avatar.isTravelling && character.carryComponent.masterCharacter.avatar.travelLine != null) || character.carryComponent.masterCharacter.avatar.isTravellingOutside) {
+            if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
@@ -76,7 +76,7 @@ public class LandmarkCharacterItem : PooledObject {
                 restrainedIcon.SetActive(false);
                 unrestrainedGO.SetActive(true);
             }
-            if (character.carryComponent.masterCharacter.avatar.isTravelling && character.carryComponent.masterCharacter.avatar.travelLine != null) {
+            if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld) {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
@@ -95,26 +95,28 @@ public class LandmarkCharacterItem : PooledObject {
     public void ShowTravellingTooltip() {
         //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.settlementOfTile.name);
         //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.settlementOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
-        if (character.carryComponent.masterCharacter.avatar.targetLocation == null) {
+        if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false) {
             return;
         }
         Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        if (showingRegion == null || showingRegion.id != character.carryComponent.masterCharacter.avatar.targetLocation.id) {
+        Region targetRegion = character.carryComponent.masterCharacter.movementComponent.targetRegionToTravelInWorld;
+        if (showingRegion == null || showingRegion != targetRegion) {
             
             float x = UIManager.Instance.locationSmallInfoRT.position.x;
             //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-            UIManager.Instance.ShowSmallLocationInfo(character.carryComponent.masterCharacter.avatar.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
+            UIManager.Instance.ShowSmallLocationInfo(targetRegion, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");
         }
     }
     public void ShowArrivedTooltip() {
         //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.name);
+        if (character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld == false) {
+            return;
+        }
         Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        if (showingRegion == null || showingRegion.id != character.carryComponent.masterCharacter.avatar.targetLocation.id) {
-            if (character.carryComponent.masterCharacter.avatar.targetLocation == null) {
-                return;
-            }
+        Region targetRegion = character.carryComponent.masterCharacter.movementComponent.targetRegionToTravelInWorld;
+        if (showingRegion == null || showingRegion != targetRegion) {
             float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
-            UIManager.Instance.ShowSmallLocationInfo(character.carryComponent.masterCharacter.avatar.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
+            UIManager.Instance.ShowSmallLocationInfo(targetRegion, new Vector3(x, thisTrans.position.y - 15f, 0f), "Arrived at:");
         }
     }
     public void ShowRestrainedTooltip() {
@@ -182,19 +184,19 @@ public class LandmarkCharacterItem : PooledObject {
     }
 
     private void OnEnable() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterStartedTravellingOutside);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnCharacterDoneTravellingOutside);
+        Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterStartedTravellingOutside);
+        Messenger.AddListener<Character>(Signals.FINISHED_TRAVELLING_IN_WORLD, OnCharacterDoneTravellingOutside);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, OnTraitAdded);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnTraitRemoved);
     }
 
     private void OnDisable() {
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterStartedTravellingOutside);
+        if (Messenger.eventTable.ContainsKey(Signals.STARTED_TRAVELLING_IN_WORLD)) {
+            Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterStartedTravellingOutside);
         }
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_DONE_TRAVELLING_OUTSIDE, OnCharacterDoneTravellingOutside);
+        if (Messenger.eventTable.ContainsKey(Signals.FINISHED_TRAVELLING_IN_WORLD)) {
+            Messenger.RemoveListener<Character>(Signals.FINISHED_TRAVELLING_IN_WORLD, OnCharacterDoneTravellingOutside);
         }
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);

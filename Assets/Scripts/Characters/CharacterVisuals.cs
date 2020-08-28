@@ -202,10 +202,9 @@ public class CharacterVisuals {
         }
 
         //Travelling
-        if (_owner.carryComponent.masterCharacter.avatar != null && _owner.carryComponent.masterCharacter.avatar.isTravelling) {
-            if (_owner.carryComponent.masterCharacter.marker.destinationTile != null) {
-                return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
-            }
+        Character masterCharacter = _owner.carryComponent.masterCharacter;
+        if (masterCharacter.marker && masterCharacter.marker.destinationTile != null && masterCharacter.marker.isMoving && masterCharacter.marker.pathfindingAI.currentPath != null) {
+            return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> is going to {_owner.carryComponent.masterCharacter.marker.destinationTile.structure.GetNameRelativeTo(_owner)}.";
         }
 
         //Default - Do nothing/Idle
