@@ -228,7 +228,7 @@ namespace Inner_Maps.Location_Structures {
             int count = 0;
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
-                if (character.gridTileLocation != null && character is Summon) {
+                if (character.gridTileLocation != null && character is Summon && !character.isDead) {
                     count++;
                 }
             }

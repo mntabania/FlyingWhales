@@ -13,7 +13,7 @@ namespace Traits {
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            canBeTriggered = true;
+            canBeTriggered = false;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CULTIST_TRANSFORM };
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
@@ -53,17 +53,17 @@ namespace Traits {
             character.traitContainer.RemoveTrait(character, this);
             return base.OnDeath(character);
         }
-        public override string TriggerFlaw(Character character) {
-            CultistBehaviour cultistBehaviour =
-                CharacterManager.Instance.GetCharacterBehaviourComponent<CultistBehaviour>(typeof(CultistBehaviour));
-            string log = string.Empty;
-            if (cultistBehaviour.TryCreateCultistJob(character, ref log, out var producedJob)) {
-                character.jobQueue.AddJobInQueue(producedJob);
-                return base.TriggerFlaw(character);
-            } else {
-                return "no_job";
-            }
-        }
+        //Disabled Trigger flaw in cultist because cultists already have the Cultist Transform, Poison and Booby Trap actions
+        // public override string TriggerFlaw(Character character) {
+        //     CultistBehaviour cultistBehaviour = CharacterManager.Instance.GetCharacterBehaviourComponent<CultistBehaviour>(typeof(CultistBehaviour));
+        //     string log = string.Empty;
+        //     if (cultistBehaviour.TryCreateCultistJob(character, ref log, out var producedJob)) {
+        //         character.jobQueue.AddJobInQueue(producedJob);
+        //         return base.TriggerFlaw(character);
+        //     } else {
+        //         return "no_job";
+        //     }
+        // }
         #endregion
     }
 }

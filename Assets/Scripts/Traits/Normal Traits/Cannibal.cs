@@ -60,22 +60,25 @@ namespace Traits {
         private IPointOfInterest GetPOIToTransformToFood(Character characterThatWillDoJob) {
             IPointOfInterest chosenPOI = null;
             for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
-                Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                if (characterThatWillDoJob != character && character.isDead && character.isNormalCharacter) {
-                    if (character.grave != null) {
-                        chosenPOI = character.grave;
-                    } else {
-                        chosenPOI = character;
-                    }
+                Character otherCharacter = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
+                if (characterThatWillDoJob != otherCharacter && otherCharacter.isDead && otherCharacter.isNormalCharacter &&
+                    otherCharacter.gridTileLocation != null && characterThatWillDoJob.movementComponent.HasPathTo(otherCharacter.gridTileLocation)) {
+                    // if (otherCharacter.grave != null) {
+                    //     chosenPOI = otherCharacter.grave;
+                    // } else {
+                        chosenPOI = otherCharacter;
+                    // }
                     break;
                 }
             }
 
+            //if no dead characters were found then target enemies
             if (chosenPOI == null) {
                 for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
-                    Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                    if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                        chosenPOI = character;
+                    Character otherCharacter = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
+                    if (characterThatWillDoJob != otherCharacter && otherCharacter.isNormalCharacter && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(otherCharacter) &&
+                        otherCharacter.gridTileLocation != null && characterThatWillDoJob.movementComponent.HasPathTo(otherCharacter.gridTileLocation)) {
+                        chosenPOI = otherCharacter;
                         break;
                     }
                 }
@@ -83,9 +86,11 @@ namespace Traits {
 
             if (chosenPOI == null) {
                 for (int i = 0; i < characterThatWillDoJob.currentRegion.charactersAtLocation.Count; i++) {
-                    Character character = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
-                    if (characterThatWillDoJob != character && characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.NONE) {
-                        chosenPOI = character;
+                    Character otherCharacter = characterThatWillDoJob.currentRegion.charactersAtLocation[i];
+                    string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(otherCharacter);
+                    if (characterThatWillDoJob != otherCharacter && otherCharacter.isNormalCharacter && (opinionLabel == RelationshipManager.Acquaintance || string.IsNullOrEmpty(opinionLabel)) &&
+                        otherCharacter.gridTileLocation != null && characterThatWillDoJob.movementComponent.HasPathTo(otherCharacter.gridTileLocation)) {
+                        chosenPOI = otherCharacter;
                         break;
                     }
                 }
