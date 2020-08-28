@@ -236,19 +236,19 @@ public class PlayerManager : BaseMonoBehaviour {
         }
     }
     private void OnMenuOpened(InfoUIBase @base) {
-        if (@base is CharacterInfoUI) {
-            DeselectAllUnits();
-            CharacterInfoUI infoUi = @base as CharacterInfoUI;
-            SelectUnit(infoUi.activeCharacter);
-            //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
-            //    SelectUnit(infoUI.activeCharacter);
-            //}
-        }
+        // if (@base is CharacterInfoUI) {
+        //     DeselectAllUnits();
+        //     CharacterInfoUI infoUi = @base as CharacterInfoUI;
+        //     SelectUnit(infoUi.activeCharacter);
+        //     //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
+        //     //    SelectUnit(infoUI.activeCharacter);
+        //     //}
+        // }
     }
     private void OnMenuClosed(InfoUIBase @base) {
-        if (@base is CharacterInfoUI) {
-            DeselectAllUnits();
-        }
+        // if (@base is CharacterInfoUI) {
+        //     DeselectAllUnits();
+        // }
     }
     // private void OnKeyPressedDown(KeyCode keyCode) {
     //     if (selectedUnits.Count > 0) {
