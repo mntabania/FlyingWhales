@@ -916,7 +916,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         SetActiveState(true);
         UpdateAnimation();
         pathfindingAI.Teleport(tile.centeredWorldLocation);
-        pathfindingAI.UpdateMe();
+        UpdatePosition();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         Assert.IsTrue(character.currentStructure == tile.structure,
             $"{character.name} updated its position but the structure is not the same as the tile's structure. Current structure: { character.currentStructure?.name }, Tile structure: { tile.structure.name }");
