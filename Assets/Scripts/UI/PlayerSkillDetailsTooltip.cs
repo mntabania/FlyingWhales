@@ -137,7 +137,8 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
             if (activePOI != null) {
                 if (activePOI is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        if (activeCharacter.traitContainer.HasTrait("Blessed")) {
+                        //TODO: Move Snatched checking somewhere better, since snatch can be performed on blessed characters
+                        if (spellData.type != SPELL_TYPE.SNATCH && activeCharacter.traitContainer.HasTrait("Blessed")) {
                             additionalText.text += $"<color=#FE3E83>Blessed Villagers are protected from your powers.</color>\n";
                         }
                         string wholeReason = spellData

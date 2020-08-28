@@ -63,7 +63,14 @@ public class SkillTreeSelector : MonoBehaviour {
 
     public void OnClickContinue() {
         continueBtn.interactable = false;
-        PlayerSkillManager.Instance.SetSelectedArchetype(GetSelectedArchetype());
+        PLAYER_ARCHETYPE selectedArchetype = GetSelectedArchetype();
+        PlayerSkillManager.Instance.SetSelectedArchetype(selectedArchetype);
+        if (selectedArchetype == PLAYER_ARCHETYPE.Lich) {
+            //add 1 charge of skeleton marauder to lich
+            SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(RACE.SKELETON, "Marauder");
+            PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkill.type, 1);
+        }
+        
         Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();

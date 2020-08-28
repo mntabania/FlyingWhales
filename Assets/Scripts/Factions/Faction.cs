@@ -88,7 +88,7 @@ public class Faction : IJobOwner {
 
         SetName(data.name);
         SetDescription(data.description);
-        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
+        //TODO:UNCOMMENT THIS// SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemName));
         SetFactionColor(data.factionColor);
         SetFactionActiveState(data.isActive);
         SetIsMajorFaction(data.isMajorFaction);
@@ -143,6 +143,9 @@ public class Faction : IJobOwner {
         if (!characters.Contains(character)) {
             characters.Add(character);
             character.SetFaction(this);
+            if (isPlayerFaction && character is Summon summon) {
+                Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+            }
             return true;
         }
         return false;

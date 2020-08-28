@@ -83,8 +83,7 @@ public class ShareInformation : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
         object[] otherData = node.otherData;
         IReactable reactable = otherData[0] as IReactable;
@@ -186,6 +185,9 @@ public class ShareInformation : GoapAction {
             if ((reactable is Rumor || reactable is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
                 disbeliefWeight += 2000;
                 weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
+            } else if (reactable is ActualGoapNode || reactable is InterruptHolder) {
+                beliefWeight += 100;
+                weightLog += "\nIf information is a real Action or Interrupt: Believe Weight +100";
             }
             if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
                 beliefWeight += 100;

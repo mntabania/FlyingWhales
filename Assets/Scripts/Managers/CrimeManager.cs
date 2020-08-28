@@ -97,7 +97,7 @@ public class CrimeManager : BaseMonoBehaviour {
                     if (!existingCrimeData.IsWantedBy(witness.faction)) {
                         //Decide whether to switch to wanted by the faction or not
                         willDecideWantedOrNot = true;
-                        WantedOrNotDecisionMaking(witness, criminal, witness.faction, existingCrimeData);
+                        WantedOrNotDecisionMaking(witness, criminal, witness.faction, existingCrimeData, crimeSeverity);
                     }
                 }
             }
@@ -111,14 +111,24 @@ public class CrimeManager : BaseMonoBehaviour {
         }
     }
     //Returns true if wanted, false if not
-    public bool WantedOrNotDecisionMaking(Character authority, Character criminal, Faction authorityFaction, CrimeData crimeData) {
+    public bool WantedOrNotDecisionMaking(Character authority, Character criminal, Faction authorityFaction, CrimeData crimeData, CRIME_SEVERITY crimeSeverity) {
         string opinionLabel = authority.relationshipContainer.GetOpinionLabel(criminal);
         string key = string.Empty;
-        if(opinionLabel == RelationshipManager.Close_Friend) {
-            key = "not_wanted";
-        } else if ((authority.relationshipContainer.IsFamilyMember(criminal) || authority.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
-            && opinionLabel != RelationshipManager.Rival) {
+        if (crimeSeverity == CRIME_SEVERITY.Heinous) {
             key = "wanted";
+        } else if (opinionLabel == RelationshipManager.Close_Friend) {
+            if (crimeSeverity == CRIME_SEVERITY.Serious) {
+                key = GameUtilities.RollChance(75) ? "wanted" : "not_wanted";
+            } else {
+                key = "not_wanted";    
+            }
+        } else if ((authority.relationshipContainer.IsFamilyMember(criminal) || authority.relationshipContainer.HasRelationshipWith(criminal, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR))
+                   && !authority.relationshipContainer.IsEnemiesWith(criminal)) {
+            if (crimeSeverity == CRIME_SEVERITY.Serious) {
+                key = GameUtilities.RollChance(75) ? "wanted" : "not_wanted";
+            } else {
+                key = "not_wanted";    
+            }
         } else if (opinionLabel == RelationshipManager.Friend) {
             if(UnityEngine.Random.Range(0, 100) < authority.relationshipContainer.GetTotalOpinion(criminal)) {
                 key = "not_wanted";

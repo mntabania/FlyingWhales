@@ -56,59 +56,31 @@ public class ReportCrime : GoapAction {
         }
         return goapActionInvalidity;
     }
-    //public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness,
-    //    ActualGoapNode node, REACTION_STATUS status) {
-    //    string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
-    //    object[] otherData = node.otherData;
-    //    IReactable reactable = otherData[0] as IReactable;
+    public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
+        object[] otherData = node.otherData;
 
-    //    REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(witness);
-    //    if (reactableEffect == REACTABLE_EFFECT.Negative) {
-    //        if (witness == reactable.actor) {
-    //            if(reactable is ActualGoapNode) {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status, node);
-    //            } else {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-    //            }
-    //            if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
-    //                || witness.relationshipContainer.IsFriendsWith(actor)) {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
-    //            }
-    //        } else {
-    //            if (witness.relationshipContainer.HasRelationshipWith(reactable.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
-    //                || witness.relationshipContainer.IsFriendsWith(reactable.actor)) {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-    //            } else if (reactable.target is Character rumorTarget) {
-    //                if (witness.relationshipContainer.HasRelationshipWith(rumorTarget, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.RELATIVE)
-    //                || witness.relationshipContainer.IsFriendsWith(rumorTarget)) {
-    //                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
-    //                }
-    //            }
-    //        }
-    //        CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_SEVERITY.Infraction);
-    //    } else {
-    //        if (witness == reactable.actor) {
-    //            if (reactable is ActualGoapNode) {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
-    //            } else {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status, node);
-    //            }
-    //        } else {
-    //            if (witness.relationshipContainer.IsEnemiesWith(reactable.actor)) {
-    //                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-    //            } else if (reactable.target is Character rumorTarget) {
-    //                if (witness.relationshipContainer.IsEnemiesWith(rumorTarget)) {
-    //                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
-    //                }
-    //            }
-    //        }
-    //    }
-    //    //SPECIAL CASE: After reacting to the Share Info Action itself, witness should also react to the rumor itself
-    //    if(reactable.name != "Share Information") {
-    //        ProcessInformation(node.actor, witness, reactable, node);
-    //    }
-    //    return response;
-    //}
+        if (otherData[0] is ICrimeable reactable) {
+            if (witness == reactable.actor) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+                if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || witness.relationshipContainer.IsFriendsWith(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status, node);
+                }
+            } else if (witness.relationshipContainer.GetOpinionLabel(reactable.actor) == RelationshipManager.Close_Friend || 
+                       witness.relationshipContainer.HasRelationshipWith(reactable.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER)){
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
+            } else {
+                if (!witness.relationshipContainer.IsEnemiesWith(node.actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);    
+                }
+            }
+            //SPECIAL CASE: After reacting to the Report Crime, witness should also react to the rumor itself
+            if(status == REACTION_STATUS.INFORMED && reactable.name != "Report Crime") {
+                ProcessInformation(node.actor, witness, reactable, node);
+            }
+        }
+        return response;
+    }
     //public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
     //    IReactable reactable = node.otherData[0] as IReactable;
     //    Assert.IsNotNull(reactable, $"{witness.name} is trying to get reactable effect of {node}, but reactable is null!");
@@ -155,7 +127,7 @@ public class ReportCrime : GoapAction {
             weightLog += "\nBase Disbelief Weight: 50";
 
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
-            int beliefWeight = 50;
+            int beliefWeight = 150;
             int disbeliefWeight = 50;
             string opinionLabelOfRecipientToSharer = recipient.relationshipContainer.GetOpinionLabel(sharer);
             string opinionLabelOfRecipientToActor = recipient.relationshipContainer.GetOpinionLabel(actor);
@@ -164,10 +136,10 @@ public class ReportCrime : GoapAction {
                 beliefWeight += 500;
             }
 
-            if ((crime is Rumor || crime is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
-                disbeliefWeight += 2000;
-                weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
-            }
+            // if ((crime is Rumor || crime is Assumption) && recipient.traitContainer.HasTrait("Suspicious")) {
+            //     disbeliefWeight += 2000;
+            //     weightLog += "\nRecipient is Suspicious: Disbelief + 2000";
+            // }
             if (opinionLabelOfRecipientToSharer == RelationshipManager.Friend) {
                 beliefWeight += 100;
                 weightLog += "\nSource is Friend: Belief + 100";

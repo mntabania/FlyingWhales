@@ -15,6 +15,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     private void OnDisable() {
         if (isApplicationQuitting) { return; }
         if (LevelLoaderManager.Instance.isLoadingNewScene) { return; }
+        if (SchedulingManager.Instance == null) { return; }
         if (parentMarker.inVisionPOIs != null) {
             parentMarker.ClearPOIsInVisionRange();
         }
@@ -129,14 +130,8 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
             //if it is, just follow the normal procedure when a poi becomes in range
             if (poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure ||
                 (poi.mapObjectVisual.visionTrigger is POIVisionTrigger poiVisionTrigger && poiVisionTrigger.IgnoresStructureDifference())) {
-
-                bool shouldAddToVision = true;
-                if (poi.gridTileLocation.structure.IsTilePartOfARoom(poi.gridTileLocation, out var room)) {
-                    //if tile of seen object is part of a room, check that this character is also part of that room
-                    shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == room;
-                }
-
-                if (shouldAddToVision) {
+                bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
+                if (shouldAddToVisionBasedOnRoom) {
                     NormalEnterHandling(poi);
                     return true;    
                 }
@@ -155,6 +150,19 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
             return false;
         }
     }
+    private bool ShouldAddToVisionBasedOnRoom(IPointOfInterest seenObject) {
+        bool shouldAddToVision = true;
+        if (seenObject.gridTileLocation.structure.IsTilePartOfARoom(seenObject.gridTileLocation, out var firstRoom)) {
+            //if tile of seen object is part of a room, check that this character is also part of that room
+            shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == firstRoom;
+        }
+        else if (parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out firstRoom)) {
+            //if seen object is not part of a room, then check if this character is part of a room, if it is then immediately set shouldAddToVision as false since this character is in a room
+            //and the seen object is not.
+            shouldAddToVision = false;
+        }
+        return shouldAddToVision;
+    }
 
     #region Different Structure Handling
     private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
@@ -164,12 +172,8 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         if (parentMarker.inVisionPOIsButDiffStructure.Contains(character) && 
             (structure == parentMarker.character.currentStructure || (structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace()))) {
             //if it does, add as normal
-            bool shouldAddToVision = true;
-            if (character.gridTileLocation.structure.IsTilePartOfARoom(character.gridTileLocation, out var room)) {
-                //if tile of seen object is part of a room, check that this character is also part of that room
-                shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == room;
-            }
-            if (shouldAddToVision) {
+            bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(character);
+            if (shouldAddToVisionBasedOnRoom) {
                 NormalEnterHandling(character);
                 parentMarker.RemovePOIAsInRangeButDifferentStructure(character);
             }
@@ -196,14 +200,10 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
                     if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
                         i--;
                     }
-                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure
-                    || (poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
-                    bool shouldAddToVision = true;
-                    if (poi.gridTileLocation.structure.IsTilePartOfARoom(poi.gridTileLocation, out var room)) {
-                        //if tile of seen object is part of a room, check that this character is also part of that room
-                        shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == room;
-                    }
-                    if (shouldAddToVision) {
+                } else if (poi.gridTileLocation.structure == parentMarker.character.currentStructure || 
+                           (poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
+                    bool shouldAddToVisionBasedOnRoom = ShouldAddToVisionBasedOnRoom(poi);
+                    if (shouldAddToVisionBasedOnRoom) {
                         NormalEnterHandling(poi);
                         if (parentMarker.RemovePOIAsInRangeButDifferentStructure(poi)) {
                             i--;
