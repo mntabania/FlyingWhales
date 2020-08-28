@@ -84,6 +84,9 @@ public partial class InteractionManager {
         return targetTileObject.canBeRepaired /*&& character.characterClass.CanDoJob(JOB_TYPE.REPAIR)*/;
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter) {
+        if (targetCharacter.traitContainer.HasTrait("Restrained")) {
+            return false;
+        }
         if (targetCharacter.isAlliedWithPlayer) {
             //if target character is allied with player, only take restrain job if character is not allied with player
             return character.isAlliedWithPlayer == false;  

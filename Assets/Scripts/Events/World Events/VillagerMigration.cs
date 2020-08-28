@@ -32,7 +32,7 @@ namespace Events.World_Events {
                             Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, randomSettlement.classManager.GetCurrentClassToCreate(), randomSettlement.owner, randomSettlement);
                             RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
                             newCharacter.CreateMarker();
-                            newCharacter.InitialCharacterPlacement(edgeTile, false);
+                            newCharacter.InitialCharacterPlacement(edgeTile);
                             newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);
                             Debug.Log($"Spawned new villager {newCharacter.name} at {edgeTile}");
                             newCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);

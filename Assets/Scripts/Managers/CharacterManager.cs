@@ -61,7 +61,7 @@ public class CharacterManager : BaseMonoBehaviour {
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
     public bool lessenCharacterLogs;
-    private List<CharacterAvatar> _allCharacterAvatars;
+    //private List<CharacterAvatar> _allCharacterAvatars;
     
     [Header("Character Portrait Assets")]
     [SerializeField] private GameObject _characterPortraitPrefab;
@@ -332,7 +332,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        _allCharacterAvatars = new List<CharacterAvatar>();
+        //_allCharacterAvatars = new List<CharacterAvatar>();
     }
 
     public void Initialize() {
@@ -363,7 +363,6 @@ public class CharacterManager : BaseMonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter, false);
         }
-        newCharacter.CreateAvatar();
         if(homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -388,7 +387,6 @@ public class CharacterManager : BaseMonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.CreateAvatar();
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -420,7 +418,6 @@ public class CharacterManager : BaseMonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.CreateAvatar();
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -448,7 +445,6 @@ public class CharacterManager : BaseMonoBehaviour {
         //        faction.OnlySetLeader(newCharacter);
         //    }
         //}
-        newCharacter.CreateAvatar();
         
         //Region currRegion = null;
         //if (data.currentLocationID != -1) {
@@ -496,7 +492,6 @@ public class CharacterManager : BaseMonoBehaviour {
         } else {
             FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
-        newCharacter.CreateAvatar();
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
             homeStructure.location.AddCharacterToLocation(newCharacter);
@@ -533,16 +528,16 @@ public class CharacterManager : BaseMonoBehaviour {
             character.SetIsInLimbo(false);
         }
     }
-    public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
-        int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
-        int frameOrderLayer = centerOrderLayer + 1;
-        characterAvatar.SetFrameOrderLayer(frameOrderLayer);
-        characterAvatar.SetCenterOrderLayer(centerOrderLayer);
-        _allCharacterAvatars.Add(characterAvatar);
-    }
-    public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
-        _allCharacterAvatars?.Remove(characterAvatar);
-    }
+    //public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
+    //    int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
+    //    int frameOrderLayer = centerOrderLayer + 1;
+    //    characterAvatar.SetFrameOrderLayer(frameOrderLayer);
+    //    characterAvatar.SetCenterOrderLayer(centerOrderLayer);
+    //    _allCharacterAvatars.Add(characterAvatar);
+    //}
+    //public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
+    //    _allCharacterAvatars?.Remove(characterAvatar);
+    //}
     public void PlaceInitialCharacters(List<Character> characters, NPCSettlement npcSettlement) {
         for (int i = 0; i < characters.Count; i++) {
             Character character = characters[i];
@@ -553,13 +548,13 @@ public class CharacterManager : BaseMonoBehaviour {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                character.InitialCharacterPlacement(chosenTile, false);
+                character.InitialCharacterPlacement(chosenTile);
             } else {
                 //place the character at a random unoccupied tile in the npcSettlement's wilderness
                 LocationStructure wilderness = npcSettlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                character.InitialCharacterPlacement(chosenTile, false);
+                character.InitialCharacterPlacement(chosenTile);
             }
         }
     }
@@ -662,7 +657,7 @@ public class CharacterManager : BaseMonoBehaviour {
             target.grave.gridTileLocation.structure.RemovePOI(target.grave);
             target.SetGrave(null);
         }
-        summon.InitialCharacterPlacement(tile, true);
+        summon.InitialCharacterPlacement(tile);
         target.DestroyMarker();
         // RemoveCharacter(target);
     }
@@ -744,7 +739,6 @@ public class CharacterManager : BaseMonoBehaviour {
     public Summon CreateNewLimboSummon(SUMMON_TYPE summonType, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
-        newCharacter.CreateAvatar();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {
@@ -774,7 +768,6 @@ public class CharacterManager : BaseMonoBehaviour {
         Region homeRegion = null, LocationStructure homeStructure = null, string className = "") {
         Summon newCharacter = CreateNewSummonClassFromType(summonType, className);
         newCharacter.Initialize();
-        newCharacter.CreateAvatar();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {
@@ -815,7 +808,6 @@ public class CharacterManager : BaseMonoBehaviour {
         newCharacter.AssignRace(data.race);
         newCharacter.SetFirstAndLastName(data.firstName, data.surName);
         newCharacter.Initialize();
-        newCharacter.CreateAvatar();
         if (faction != null) {
             faction.JoinFaction(newCharacter);
         } else {

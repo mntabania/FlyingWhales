@@ -157,7 +157,7 @@ public class CharacterAIPath : AILerp {
         marker.transform.position = new Vector3(markerPos.x, markerPos.y, 0f);
     }
     private void UpdateRotation() {
-        if (marker.character.carryComponent.masterCharacter.avatar.isTravelling && marker.character.carryComponent.IsNotBeingCarried() && currentPath != null) { //only rotate if character is travelling
+        if (marker.isMoving && marker.character.carryComponent.IsNotBeingCarried() && currentPath != null) { //only rotate if character is travelling //marker.character.carryComponent.masterCharacter.avatar.isTravelling && 
             Vector3 direction;
             if (!interpolator.valid) {
                 direction = Vector3.zero;

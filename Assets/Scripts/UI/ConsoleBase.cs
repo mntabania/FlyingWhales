@@ -151,17 +151,15 @@ public class ConsoleBase : InfoUIBase {
         text += $"\n\t<b>Region Location:</b> {character.currentRegion?.name}" ?? "None";
         text += $"\n\t<b>Structure Location:</b> {character.currentStructure}" ?? "None";
         text += $"\n\t<b>Grid Location:</b> {character.gridTileLocation?.localPlace}" ?? "None";
+        text += $"\n\t<b>Previous Grid Location:</b> {character.marker?.previousGridTile.localPlace}" ?? "None";
+
 
         text += $"\n<b>Faction:</b> {character.faction?.name}" ?? "None";
         text += $"\n<b>Current Action:</b> {character.currentActionNode?.goapName}" ?? "None";
         //if (character.currentActionNode != null) {
         //    text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
         //}
-        if (character.carryComponent.masterCharacter.avatar != null) {
-            text += $"\n<b>Is Travelling:</b> {character.carryComponent.masterCharacter.avatar.isTravelling}";
-            text += $"\n<b>Target Location:</b> {character.carryComponent.masterCharacter.avatar.targetLocation?.name}" ?? "None";
-            text += $"\n<b>Target Structure:</b> {character.carryComponent.masterCharacter.avatar.targetStructure}" ?? "None";
-        }
+        text += $"\n<b>Is Travelling In World:</b> {character.carryComponent.masterCharacter.movementComponent.isTravellingInWorld}";
 
         if (character.marker) {
             text += "\n<b>MARKER DETAILS:</b>";

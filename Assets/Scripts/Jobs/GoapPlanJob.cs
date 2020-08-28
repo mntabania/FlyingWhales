@@ -406,12 +406,6 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-
-    private void OnArriveAtLocationStopMovement() {
-        if (assignedCharacter != null) {
-            assignedCharacter.OnArriveAtAreaStopMovement();
-        }
-    }
     //public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
     //    willImmediatelyBeDoneAfterReceivingPlan = state;
     //}

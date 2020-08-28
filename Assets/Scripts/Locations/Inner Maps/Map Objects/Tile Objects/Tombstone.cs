@@ -49,7 +49,7 @@ public class Tombstone : TileObject {
         if (_respawnCorpseOnDestroy) {
             if(previousTile != null) {
                 character.EnableMarker();
-                character.marker.PlaceMarkerAt(previousTile, false);
+                character.marker.PlaceMarkerAt(previousTile);
                 character.SetGrave(null);
                 character.jobComponent.TriggerBuryMe();
             } else {

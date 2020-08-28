@@ -29,7 +29,7 @@ public class Projectile : PooledObject {
     #region Monobehaviours
     private void OnDestroy() {
         // Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
@@ -57,7 +57,7 @@ public class Projectile : PooledObject {
             projectileParticles.Play();    
         }
         if (targetObject is Character) {
-            Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
+            Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         } else if (targetObject is TileObject) {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
@@ -95,7 +95,7 @@ public class Projectile : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_TRAVELLING_OUTSIDE, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         // Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
