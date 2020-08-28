@@ -419,6 +419,8 @@ public class BehaviourComponent {
                 //Do not check path towards produce food target, since target isn't really used for the job,
                 //and can produce problems if that object has been destroyed.
                 return true;
+            }else if (character.behaviourComponent.HasBehaviour(typeof(PangatLooVillageInvaderBehaviour)) && job.jobType == JOB_TYPE.GO_TO) {
+                return true; //do not check path for go to job of pangat loo village invader
             }
             
             if (character == goapPlanJob.targetPOI || goapPlanJob.targetPOI == null || (goapPlanJob.targetPOI is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT)) {

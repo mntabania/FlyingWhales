@@ -36,11 +36,10 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }    
         } else {
+            log += $"\n-character does not have an invade village target, will go home";
             //character could not find a valid target settlement
-            return character.jobComponent.PlanIdleReturnHome(out producedJob);
+            return character.jobComponent.TriggerReturnTerritory(out producedJob);
         }
-        
-        
     }
     private List<Character> GetTargetChoices(List<HexTile> tiles) {
         List<Character> characters = null;

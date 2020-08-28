@@ -80,9 +80,9 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         }
     }
     protected override void OnTriggerExit2D(Collider2D collision) {
+        if (SchedulingManager.Instance == null) { return; } //need to check this for cleanup. Since SchedulingManager may have been already cleaned up, but actions in this function may try to access it. NOTE: Might be a better way to do this.
         POIVisionTrigger collidedWith = collision.gameObject.GetComponent<POIVisionTrigger>();
-        if (collidedWith != null && collidedWith.poi != null
-            && collidedWith.poi != parentMarker.character) {
+        if (collidedWith != null && collidedWith.poi != null && collidedWith.poi != parentMarker.character) {
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
             parentMarker.RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
         }

@@ -899,7 +899,7 @@ public class ReactionComponent {
                                     debugLog = $"{debugLog}\n-Target will Laugh At";
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                                 }
-                            } else if (targetCharacter.isNormalCharacter) {
+                            } else if (targetCharacter.isNormalCharacter && actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                                 debugLog = $"{debugLog}\n-Otherwise, Shock";
                                 actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                             }
@@ -1193,7 +1193,7 @@ public class ReactionComponent {
                             debugLog = $"{debugLog}\n-Target will Laugh At";
                             actor.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
                         }
-                    } else if (targetCharacter.isNormalCharacter) {
+                    } else if (targetCharacter.isNormalCharacter && actor.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                         debugLog = $"{debugLog}\n-Otherwise, Shock";
                         actor.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, targetCharacter);
                     }

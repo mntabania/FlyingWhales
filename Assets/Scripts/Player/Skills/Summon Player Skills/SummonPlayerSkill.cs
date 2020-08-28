@@ -26,7 +26,7 @@ public class SummonPlayerSkill : SpellData {
         }
         summon.jobQueue.CancelAllJobs();
         Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
-        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+        // Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
         base.ActivateAbility(targetTile);
     }
     public override void ActivateAbility(LocationGridTile targetTile, ref Character spawnedCharacter) {
