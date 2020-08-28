@@ -152,11 +152,11 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
     }
     private bool ShouldAddToVisionBasedOnRoom(IPointOfInterest seenObject) {
         bool shouldAddToVision = true;
-        if (seenObject.gridTileLocation.structure.IsTilePartOfARoom(seenObject.gridTileLocation, out var firstRoom)) {
+        if (seenObject.gridTileLocation != null && seenObject.gridTileLocation.structure.IsTilePartOfARoom(seenObject.gridTileLocation, out var firstRoom)) {
             //if tile of seen object is part of a room, check that this character is also part of that room
             shouldAddToVision = parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out var otherRoom) && otherRoom == firstRoom;
         }
-        else if (parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out firstRoom)) {
+        else if (parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure.IsTilePartOfARoom(parentMarker.character.gridTileLocation, out firstRoom)) {
             //if seen object is not part of a room, then check if this character is part of a room, if it is then immediately set shouldAddToVision as false since this character is in a room
             //and the seen object is not.
             shouldAddToVision = false;
