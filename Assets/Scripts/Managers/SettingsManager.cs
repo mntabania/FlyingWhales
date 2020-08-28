@@ -155,7 +155,7 @@ namespace Settings {
                      musicVolume = AudioManager.Maximum_Volume_Level,
                      masterVolume = AudioManager.Maximum_Volume_Level,
                      isVsyncOn = false,
-                     doNotShowVideos = false,
+                     doNotShowVideos = true,
                  };
                  Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, settings.fullscreen);
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
