@@ -30,6 +30,7 @@ public class Initializer : MonoBehaviour {
         PlayerUI.Instance.Initialize();
         RandomNameGenerator.Initialize();
         WorldEventManager.Instance.Initialize();
+        DatabaseManager.Instance.Initialize();
         yield return null;
     }
 
