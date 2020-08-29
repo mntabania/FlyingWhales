@@ -167,9 +167,9 @@ public class CharacterVisuals {
         // if (_owner.minion != null) {
         //     return string.Empty;
         // }
-        if (_owner.overrideThoughts.Count > 0) {
-            return _owner.overrideThoughts[0];
-        }
+        //if (_owner.overrideThoughts.Count > 0) {
+        //    return _owner.overrideThoughts[0];
+        //}
         if (_owner.isDead) {
             if (_owner.deathLog != null) {
                 log = _owner.deathLog;

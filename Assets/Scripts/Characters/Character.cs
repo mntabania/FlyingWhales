@@ -16,10 +16,10 @@ using JetBrains.Annotations;
 using Random = UnityEngine.Random;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyTarget {
+    private int _id;
     private string _name;
     private string _firstName;
     private string _surName;
-    private int _id;
     protected bool _isDead;
     private GENDER _gender;
     private CharacterClass _characterClass;
@@ -92,7 +92,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
 
-    private List<Action> onLeaveAreaActions;
     private POI_STATE _state;
 
     //limiters
@@ -103,22 +102,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private int canTakeJobsValue; //if this is >= 0 then character can take jobs
     private int _sociableValue; //if this is >= 0 then character wants to socialize
 
-    public bool canWitness => _canWitnessValue >= 0;
-    public bool canMove => _canMoveValue >= 0;
-    public bool canBeAttacked => _canBeAttackedValue >= 0;
-    public bool canPerform => _canPerformValue >= 0;
-    public bool canTakeJobs => canTakeJobsValue >= 0;
-    public bool isSociable => _sociableValue >= 0;
-
-    //alter egos
-    private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
-
     //misc
-    public bool isFollowingPlayerInstruction { get; private set; } //is this character moving/attacking because of the players instruction
     public bool returnedToLife { get; private set; }
     public Tombstone grave { get; private set; }
-    private WeightedDictionary<string> combatResultWeights;
-    private readonly List<string> _overrideThoughts;
+    //private readonly List<string> _overrideThoughts;
 
     //For Testing
     public List<string> locationHistory { get; }
@@ -146,16 +133,62 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public TileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
 
-
     #region getters / setters
-    public override string relatableName => _firstName;
     public virtual string name => _firstName;
+    public virtual string raceClassName => GetDefaultRaceClassName();
+    public override string relatableName => _firstName;
+    public override int id => _id;
+    public override GENDER gender => _gender;
+
     public string fullname => $"{_firstName} {_surName}";
     public string firstName => _firstName;
     public string surName => _surName;
     public string nameWithID => name;
-    public virtual string raceClassName => GetDefaultRaceClassName();
-    public override int id => _id;
+    public bool isDead => _isDead;
+    public bool isFactionLeader => faction != null && faction.leader == this;
+    public bool isHoldingItem => items.Count > 0;
+    public bool isAtHomeRegion => currentRegion == homeRegion && !carryComponent.masterCharacter.movementComponent.isTravellingInWorld;
+    public bool isAtHomeStructure => currentStructure == homeStructure && homeStructure != null;
+    public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home npcSettlement
+    public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
+    public bool isSettlementRuler => ruledSettlement != null;
+    public bool isHidden => reactionComponent.isHidden;
+    public bool canWitness => _canWitnessValue >= 0;
+    public bool canMove => _canMoveValue >= 0;
+    public bool canBeAttacked => _canBeAttackedValue >= 0;
+    public bool canPerform => _canPerformValue >= 0;
+    public bool canTakeJobs => canTakeJobsValue >= 0;
+    public bool isSociable => _sociableValue >= 0;
+    public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
+    public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
+    public bool isLycanthrope => lycanData != null;
+    /// <summary>
+    /// Is this character a normal character?
+    /// Characters that are not monsters or minions.
+    /// </summary>
+    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
+
+    public int maxHP => combatComponent.maxHP;
+    public Vector3 worldPosition => marker.transform.position;
+    public Vector2 selectableSize => visuals.selectableSize;
+    public Transform worldObject => marker.transform;
+
+    public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
+    public RACE race => _raceSetting.race;
+    public POI_STATE state => _state;
+    public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
+
+    public CharacterClass characterClass => _characterClass;
+    public RaceSetting raceSetting => _raceSetting;
+    public Faction faction => _faction;
+    public Faction factionOwner => _faction;
+    public Minion minion => _minion;
+    public BaseSettlement currentSettlement => gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
+    public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
+    public Character isBeingCarriedBy => carryComponent.isBeingCarriedBy;
+    public JobTriggerComponent jobTriggerComponent => jobComponent;
+    public GameObject visualGO => marker.gameObject;
+    public Character characterOwner => null;
     /// <summary>
     /// Is this character allied with the player? Whether secretly (not part of player faction)
     /// or openly (part of player faction).
@@ -168,11 +201,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _isAlliedWithPlayer;
         }
     }
-    public bool isDead => _isDead;
     /// <summary>
     /// Is the character part of the neutral faction? or no faction?
     /// </summary>
-    public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
     public bool isFriendlyFactionless { //is the character part of the friendly neutral faction? or no faction?
         get {
             if (faction == null || FactionManager.Instance.vagrantFaction == faction) {
@@ -182,20 +213,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public bool isFactionLeader => faction != null && faction.leader == this;
-    public bool isHoldingItem => items.Count > 0;
-    public bool isAtHomeRegion => currentRegion == homeRegion && !carryComponent.masterCharacter.movementComponent.isTravellingInWorld;
-    public bool isAtHomeStructure => currentStructure == homeStructure && homeStructure != null;
-    public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home npcSettlement
-    //public bool isFlirting => _isFlirting;
-    public override GENDER gender => _gender;
-    public RACE race => _raceSetting.race;
-    public CharacterClass characterClass => _characterClass;
-    public RaceSetting raceSetting => _raceSetting;
-    // public CharacterRole role => _role;
-    public Faction faction => _faction;
-    public Faction factionOwner => _faction;
-    //public NPCSettlement currentArea => currentNpcSettlement;
     public Region currentRegion {
         get {
             if (!carryComponent.IsNotBeingCarried()) {
@@ -204,11 +221,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentRegion;
         }
     }
-    public BaseSettlement currentSettlement => gridTileLocation != null 
-        && gridTileLocation.collectionOwner.isPartOfParentRegionMap ? 
-        gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile : null;
-    public Minion minion => _minion;
-    public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public LocationGridTile gridTileLocation {
         get {
             if (ReferenceEquals(marker, null)) {
@@ -236,16 +248,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return new Vector2Int(Mathf.FloorToInt(marker.anchoredPos.x), Mathf.FloorToInt(marker.anchoredPos.y));
         }
     }
-    public POI_STATE state => _state;
-    //public AlterEgoData currentAlterEgo {
-    //    get {
-    //        if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
-    //            Debug.LogWarning(this.name + " Alter Ego Relationship Problem! Current alter ego is: " + currentAlterEgoName);
-    //            return null;
-    //        }
-    //        return alterEgos[currentAlterEgoName];
-    //    }
-    //}
     public LocationStructure currentStructure {
         get {
             if (!carryComponent.IsNotBeingCarried()) {
@@ -254,28 +256,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
-    public int maxHP => combatComponent.maxHP;
-    public Vector3 worldPosition => marker.transform.position;
-    public Vector2 selectableSize => visuals.selectableSize;
-    public ProjectileReceiver projectileReceiver => marker.visionTrigger.projectileReceiver;
-    public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
-    public Transform worldObject => marker.transform;
-    public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
-    public Character isBeingCarriedBy => carryComponent.isBeingCarriedBy;
-    public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
-    public bool isLycanthrope => lycanData != null;
-    /// <summary>
-    /// Is this character a normal character?
-    /// Characters that are not monsters or minions.
-    /// </summary>
-    /// <returns></returns>
-    public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
-    //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
-    public JobTriggerComponent jobTriggerComponent => jobComponent;
-    public GameObject visualGO => marker.gameObject;
-    public Character characterOwner => null;
-    public bool isSettlementRuler => ruledSettlement != null;
-    public bool isHidden => reactionComponent.isHidden;
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
@@ -302,7 +282,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private Character() {
         SetIsDead(false);
-        _overrideThoughts = new List<string>();
+        //_overrideThoughts = new List<string>();
         _isAlliedWithPlayer = false;
 
         //Traits
@@ -313,8 +293,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ownedItems = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
-        onLeaveAreaActions = new List<Action>();
-        pendingActionsAfterMultiThread = new List<Action>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         territorries = new List<HexTile>();
         interestedItemNames = new List<string>();
@@ -361,7 +339,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         
         //numOfActionsBeingPerformedOnThis = data.isStoppedByOtherCharacter;
 
-        _overrideThoughts = new List<string>();
+        //_overrideThoughts = new List<string>();
         advertisedActions = new List<INTERACTION_TYPE>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<TileObject>();
@@ -369,8 +347,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobQueue = new JobQueue(this);
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
-        onLeaveAreaActions = new List<Action>();
-        pendingActionsAfterMultiThread = new List<Action>();
         trapStructure = new TrapStructure();
         //for testing
         locationHistory = new List<string>();
@@ -1569,7 +1545,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI_EXCEPT_SELF, this as IPointOfInterest, "");
             CancelAllJobsExceptForCurrent(false);
             //marker.ClearTerrifyingObjects();
-            ExecuteLeaveAreaActions();
             needsComponent.OnCharacterLeftLocation(currentRegion);
         } else {
             //if (marker.terrifyingObjects.Count > 0) {
@@ -1595,15 +1570,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
             needsComponent.OnCharacterArrivedAtLocation(currentRegion);
         }
-    }
-    public void AddOnLeaveAreaAction(Action onLeaveAreaAction) {
-        onLeaveAreaActions.Add(onLeaveAreaAction);
-    }
-    private void ExecuteLeaveAreaActions() {
-        for (int i = 0; i < onLeaveAreaActions.Count; i++) {
-            onLeaveAreaActions[i].Invoke();
-        }
-        onLeaveAreaActions.Clear();
     }
     public void SetRegionLocation(Region region) {
         _currentRegion = region;
@@ -1903,9 +1869,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool IsAble() {
         return currentHP > 0 && !isDead && canPerform && !isDead && characterClass.className != "Zombie"; //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
-    public void SetIsFollowingPlayerInstruction(bool state) {
-        isFollowingPlayerInstruction = state;
-    }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
     }
@@ -1919,12 +1882,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual bool IsValidCombatTargetFor(IPointOfInterest source) {
         return isDead == false /*&& (canPerform || canMove)*/ && marker != null 
                 && gridTileLocation != null && source.gridTileLocation != null && (source is Character character && character.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)); //traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) == false
-    }
-    public void ExecutePendingActionsAfterMultithread() {
-        for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
-            pendingActionsAfterMultiThread[i].Invoke();
-        }
-        pendingActionsAfterMultiThread.Clear();
     }
     public void SetHasUnresolvedCrime(bool state) {
         hasUnresolvedCrime = state;
@@ -2057,12 +2014,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
         }
     }
-    public void AddOverrideThought(string log) {
-        _overrideThoughts.Add(log);
-    }
-    public void RemoveOverrideThought(string log) {
-        _overrideThoughts.Remove(log);
-    }
+    //public void AddOverrideThought(string log) {
+    //    _overrideThoughts.Add(log);
+    //}
+    //public void RemoveOverrideThought(string log) {
+    //    _overrideThoughts.Remove(log);
+    //}
     //Returns the list of goap actions to be witnessed by this character
     public void ThisCharacterSaw(IPointOfInterest target, bool reactToActionOnly = false) {
         //if (isDead) {
@@ -5370,9 +5327,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Player Action Target
     public List<SPELL_TYPE> actions { get; protected set; }
-    public List<string> overrideThoughts {
-        get { return _overrideThoughts; }
-    }
+    //public List<string> overrideThoughts {
+    //    get { return _overrideThoughts; }
+    //}
     public virtual void ConstructDefaultActions() {
         if (actions == null) {
             actions = new List<SPELL_TYPE>();
@@ -5756,7 +5713,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //if (this.race != RACE.SKELETON) {
             //    deathLocation.AddCorpse(this, deathStructure, deathTile);
             //}
-
 
             //if (faction != null) {
             //    faction.LeaveFaction(this); //remove this character from it's factions list of characters

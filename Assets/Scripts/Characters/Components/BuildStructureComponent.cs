@@ -162,7 +162,8 @@ public class BuildStructureComponent {
     #endregion
 }
 
-//public struct BuildStructureRequirementNumberGuide {
-//    public int supposedNumber;
-//    public int currentNumber;
-//}
+[System.Serializable]
+public class SaveDataBuildStructureComponent : SaveData<BuildStructureComponent> {
+    public int currentIndex;
+    public int startLoopIndex;
+}

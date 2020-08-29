@@ -181,4 +181,19 @@ namespace Interrupts {
         }
         #endregion
     }
+
+    public class SaveDataInterruptHolder : SaveData<InterruptHolder> {
+        public INTERRUPT interruptType;
+        public int actorID;
+        public int targetID;
+        public POINT_OF_INTEREST_TYPE targetPOIType;
+        public int disguisedActor;
+        public int disguisedTarget;
+        public Log effectLog;
+        public string identifier;
+        public Rumor rumor;
+        public List<int> awareCharacters;
+        public string reason;
+        public CRIME_TYPE crimeType;
+    }
 }

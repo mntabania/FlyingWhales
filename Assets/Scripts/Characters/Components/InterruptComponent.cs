@@ -22,7 +22,6 @@ public class InterruptComponent {
     public Log thoughtBubbleLog { get; private set; }
 
     private List<System.Action> _pendingSimultaneousInterrupts;
-    //private Log _currentEffectLog;
 
     #region getters
     public bool isInterrupted => currentInterrupt != null;
@@ -285,7 +284,6 @@ public class InterruptComponent {
     #region Miscellaneous
     public void SetRaidTargetSettlement(BaseSettlement settlement) {
         raidTargetSettlement = settlement;
-
     }
     #endregion
 
@@ -305,4 +303,11 @@ public class InterruptComponent {
         return false; 
     }
     #endregion
+}
+
+public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
+    public InterruptHolder currentInterrupt;
+    public int currentDuration;
+    public InterruptHolder triggeredSimultaneousInterrupt;
+    public int currentSimultaneousInterruptDuration;
 }

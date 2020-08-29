@@ -104,7 +104,7 @@ public class GoapPlanner {
         //status = GOAP_PLANNING_STATUS.PROCESSING_RESULT;
         status = GOAP_PLANNING_STATUS.NONE;
 
-        owner.ExecutePendingActionsAfterMultithread();
+        //owner.ExecutePendingActionsAfterMultithread();
         string additionalLog = string.Empty;
         if (goapThread.job.originalOwner == null) {
             //This means that the job is already in the object pool, meaning that the received plan for the job is no longer applicable since the job is already deleted/cancelled

@@ -36,7 +36,7 @@ namespace UtilityScripts {
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
-        
+
         private static readonly Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
             { "man", "men" },
             { "woman", "women" },
@@ -55,11 +55,11 @@ namespace UtilityScripts {
                 _lastLandmarkID += 1;
                 return _lastLandmarkID;
             }
-            if (obj is Faction) {
+            if (obj is Faction || obj is SampleSaveFaction) {
                 _lastFactionID += 1;
                 return _lastFactionID;
             }
-            if (obj is Character || obj is PreCharacterData) {
+            if (obj is Character || obj is PreCharacterData || obj is SampleSaveCharacter) {
                 _lastCharacterID += 1;
                 return _lastCharacterID;
             }

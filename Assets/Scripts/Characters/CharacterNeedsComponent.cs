@@ -1317,3 +1317,56 @@ public class CharacterNeedsComponent {
     }
     #endregion
 }
+
+[System.Serializable]
+public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent> {
+    //Needs Component
+    public int doNotGetHungry;
+    public int doNotGetTired;
+    public int doNotGetBored;
+    public int doNotGetDrained;
+    public int doNotGetDiscouraged;
+
+    //Tiredness
+    public float tiredness;
+    public float tirednessDecreaseRate;
+    public int tirednessForcedTick;
+    public int currentSleepTicks;
+    public int sleepScheduleJobID;
+    public bool hasCancelledSleepSchedule;
+
+    //Fullness
+    public float fullness;
+    public float fullnessDecreaseRate;
+    public int fullnessForcedTick;
+
+    //Happiness
+    public float happiness;
+    public float happinessDecreaseRate;
+
+    //Stamina
+    public float stamina;
+    public float staminaDecreaseRate;
+    public float baseStaminaDecreaseRate;
+
+    //Hope
+    public float hope;
+
+    public bool hasForcedFullness;
+    public bool hasForcedTiredness;
+    public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
+    public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
+
+    #region Overrides
+    public override void Save(CharacterNeedsComponent data) {
+        doNotGetHungry = data.doNotGetHungry;
+        doNotGetTired = data.doNotGetTired;
+        doNotGetBored = data.doNotGetBored;
+        doNotGetDrained = data.doNotGetDrained;
+        doNotGetDiscouraged = data.doNotGetDiscouraged;
+
+        tiredness = data.tiredness;
+
+    }
+    #endregion
+}

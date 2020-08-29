@@ -50,165 +50,34 @@ public class SaveDataCharacter : SaveData<Character> {
     public int prevFactionID;
     public Dictionary<RESOURCE, int> storedResources;
     public bool hasUnresolvedCrime;
-    public bool isConversing;
     public bool isInLimbo;
     public bool isLimboCharacter;
-    public bool hasSeenFire;
-    public bool hasSeenWet;
-    public bool hasSeenPoisoned;
     public bool destroyMarkerOnDeath;
     public bool isWanderer;
     public bool hasRisen;
-    public bool hasSubscribedToSignals;
-    public Log deathLog;
+    public int deathLogID;
     public List<string> interestedItemNames;
 
+    public List<int> territoryIDs;
+    public NPCSettlement ruledSettlement;
 
-    //public int id;
-    //public string name;
-    //public string characterColorCode;
-    ////public int doNotDisturb;
-    ////public int doNotGetHungry;
-    ////public int doNotGetTired;
-    ////public int doNotGetLonely;
-    //public int factionID;
-    //public int homeID;
-    //public int homeStructureID;
-    //public int homeStructureAreaID;
-    //public STRUCTURE_TYPE homeStructureType;
-    //public int currentLocationID;
-    //public bool isDead;
-    //public GENDER gender;
-    //public SEXUALITY sexuality;
-    //public string className;
-    //public RACE race;
-    //public CHARACTER_ROLE roleType;
-    //public PortraitSettings portraitSettings;
-    //public ColorSave characterColor;
-    //public List<SaveDataTrait> normalTraits;
+    public POI_STATE state;
+    public int canWitnessValue;
+    public int canMoveValue;
+    public int canBeAttackedValue;
+    public int canPerformValue;
+    public int canTakeJobsValue;
+    public int sociableValue;
 
-    ////Stats
-    //public int currentHP;
-    //public int maxHP;
-    //public int level;
-    //public int experience;
-    //public int maxExperience;
-    //public int attackPowerMod;
-    //public int speedMod;
-    //public int maxHPMod;
-    //public int attackPowerPercentMod;
-    //public int speedPercentMod;
-    //public int maxHPPercentMod;
+    public bool returnedToLife;
 
-    //public MORALITY morality;
-
-    ////public Dictionary<AlterEgoData, CharacterRelationshipData> relationships {
-    ////    get {
-    ////        return currentAlterEgo?.relationships ?? null;
-    ////    }
-    ////}
-    ////public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness {
-    ////    get {
-    ////        return currentAlterEgo.awareness;
-    ////    }
-    ////}
-
-    ////public List<INTERACTION_TYPE> currentInteractionTypes;
-    //public int supply;
-    //// public List<SaveDataItem> items;
-    //public int moodValue;
-    //public bool isCombatant;
-    //public bool isDisabledByPlayer;
-    //public float speedModifier;
-    //public string deathStr;
-    //public int isStoppedByOtherCharacter;
-
-    //public POI_STATE state;
-
-    ////Needs
-    //public float tiredness;
-    //public float fullness;
-    //public float happiness;
-    //public float fullnessDecreaseRate;
-    //public float tirednessDecreaseRate;
-    //public float happinessDecreaseRate;
-
-    ////portrait
-    //public float hSkinColor;
-    //public float hHairColor;
-    //public float demonColor;
-
-    ////hostility
-    //public int ignoreHostility;
-
-    ////alter egos
-    //public string currentAlterEgoName;
-    ////public List<SaveDataAlterEgo> alterEgos;
-
-    //public string originalClassName;
-    //public bool isMinion;
-    //public bool isSummon;
-    //public bool isFactionLeader;
-
-    //public int fullnessForcedTick;
-    //public int tirednessForcedTick;
-    //public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
-    //public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
-
-    //public bool returnedToLife;
-
-    ////For Summons Only
-    //public SUMMON_TYPE summonType;
-
-    //public Vector3Save gridTileLocation;
-    //public int gridTileLocationAreaID;
-
-    //public List<int> lethalHostilesInRangeIDs;
-    //public List<int> nonLethalHostilesInRangeIDs;
-    //public List<int> avoidInRangeIDs;
-
-    //public SaveDataCharacterState currentState;
-    //public bool hasCurrentState;
-
-    //public List<SaveDataJobQueueItem> jobs;
-
-    //public int currentSleepTicks;
-    //public int sleepScheduleJobID;
-    //public bool hasCancelledSleepSchedule;
+    public SaveDataLycanthropeData lycanData;
 
     public List<SaveDataLog> history;
 
     public override void Save(Character character) {
         id = character.id;
         name = character.name;
-        //characterColorCode = character.characterColorCode;
-        //doNotDisturb = character.doNotDisturb;
-        //doNotGetHungry = character.doNotGetHungry;
-        //doNotGetLonely = character.doNotGetLonely;
-        //doNotGetTired = character.doNotGetTired;
-        //if (character.faction != null) {
-        //    factionID = character.faction.id;
-        //    isFactionLeader = character.isFactionLeader;
-        //} else {
-        //    factionID = -1;
-        //}
-        //if (character.homeRegion != null) {
-        //    homeID = character.homeRegion.id;
-        //} else {
-        //    homeID = -1;
-        //}
-        //if (character.currentRegion != null) {
-        //    currentLocationID = character.currentRegion.id;
-        //} else {
-        //    currentLocationID = -1;
-        //}
-        //if (character.homeStructure != null) {
-        //    homeStructureID = character.homeStructure.id;
-        //    homeStructureType = character.homeStructure.structureType;
-        //    homeStructureAreaID = character.homeStructure.location.id; //TODO: Refactor this, because structure location is no longer guaranteed to be an npcSettlement.
-        //} else {
-        //    homeStructureID = -1;
-        //}
 
         isDead = character.isDead;
         gender = character.gender;

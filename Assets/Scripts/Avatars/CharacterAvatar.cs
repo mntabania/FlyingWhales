@@ -146,19 +146,11 @@ public class CharacterAvatar : BaseMonoBehaviour {
         }
         
         Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
-        //if (_owner.carryComponent.isCarryingAnyPOI) {
-        //    arriveLog.AddToFillers(_owner.carryComponent.carriedPOI, _owner.carryComponent.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        //}
         arriveLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(_owner.currentRegion, _owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
-        
-        //_distanceToTarget = 1;
-        //Debug.Log($"{_owner.name} is travelling from {_owner.currentRegion.name} to {targetLocation.name}. Travel time in ticks is: {_distanceToTarget.ToString()}");
-        //_travelLine = _owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _owner);
-        //_travelLine.SetActiveMeter(isVisualShowing);
+
         _owner.marker.gameObject.SetActive(false);
-        //Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
         Messenger.Broadcast(Signals.STARTED_TRAVELLING_IN_WORLD, _owner);
 
         ArriveAtLocation();

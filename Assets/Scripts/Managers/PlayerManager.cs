@@ -291,9 +291,9 @@ public class PlayerManager : BaseMonoBehaviour {
     //         }
     //     }
     // }
-    private void OnFinishInstructionFromPlayer(Character character) {
-        character.SetIsFollowingPlayerInstruction(false);
-    }
+    //private void OnFinishInstructionFromPlayer(Character character) {
+    //    character.SetIsFollowingPlayerInstruction(false);
+    //}
     #endregion
 
     #region Chaos Orbs

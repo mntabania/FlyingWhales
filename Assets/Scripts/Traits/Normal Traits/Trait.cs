@@ -62,9 +62,9 @@ namespace Traits {
             if(addedTo is Character) {
                 Character character = addedTo as Character;
                 character.moodComponent.AddMoodEffect(moodEffect, this);
-                if (string.IsNullOrEmpty(thoughtText) == false) {
-                    character.AddOverrideThought(thoughtText);
-                }
+                //if (string.IsNullOrEmpty(thoughtText) == false) {
+                //    character.AddOverrideThought(thoughtText);
+                //}
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
                     character.combatComponent.SetElementalType(elementalType);
                 }
@@ -83,9 +83,9 @@ namespace Traits {
                 //        character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
                 //    }
                 //}
-                if (string.IsNullOrEmpty(thoughtText) == false) {
-                    character.RemoveOverrideThought(thoughtText);
-                }
+                //if (string.IsNullOrEmpty(thoughtText) == false) {
+                //    character.RemoveOverrideThought(thoughtText);
+                //}
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
                     character.combatComponent.UpdateElementalType();
                     //bool hasSetElementalTrait = false;

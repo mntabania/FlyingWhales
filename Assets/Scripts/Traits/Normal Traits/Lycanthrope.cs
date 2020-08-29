@@ -290,6 +290,12 @@ namespace Traits {
             originalForm.SetLycanthropeData(this);
             lycanthropeForm.SetLycanthropeData(this);
         }
+        public LycanthropeData(Character originalForm, Character lycanthropeForm, Character activeForm, Character limboForm) {
+            this.originalForm = originalForm;
+            this.lycanthropeForm = lycanthropeForm;
+            this.activeForm = activeForm;
+            this.limboForm = limboForm;
+        }
 
         private void CreateLycanthropeForm() {
             lycanthropeForm = CharacterManager.Instance.CreateNewLimboSummon(SUMMON_TYPE.Wolf, faction: FactionManager.Instance.neutralFaction);
@@ -449,5 +455,39 @@ namespace Traits {
             //    originalForm.traitContainer.RemoveTrait(originalForm, "Lycanthrope");
             //}
         }
+    }
+
+    [System.Serializable]
+    public class SaveDataLycanthropeData : SaveData<LycanthropeData> {
+        public int activeFormID;
+        public int limboFormID;
+
+        public int lycanthropeFormID;
+        public int originalFormID;
+
+        #region Overrides
+        public override void Save(LycanthropeData data) {
+            activeFormID = data.activeForm.id;
+            limboFormID = data.limboForm.id;
+
+            lycanthropeFormID = data.lycanthropeForm.id;
+            originalFormID = data.originalForm.id;
+        }
+        public override LycanthropeData Load() {
+            Character origForm = CharacterManager.Instance.GetCharacterByID(originalFormID);
+            Character lycanForm = CharacterManager.Instance.GetCharacterByID(lycanthropeFormID);
+            Character activeForm = origForm;
+            Character limboForm = lycanForm;
+            if (activeFormID == lycanthropeFormID) {
+                activeForm = lycanForm;
+                limboForm = origForm;
+            } else {
+                activeForm = origForm;
+                limboForm = lycanForm;
+            }
+            LycanthropeData data = new LycanthropeData(origForm, lycanForm, activeForm, limboForm);
+            return data;
+        }
+        #endregion
     }
 }

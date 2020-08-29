@@ -496,3 +496,7 @@ public class NonActionEventsComponent {
     }
     #endregion
 }
+
+public class SaveDataNonActionEventsComponent : SaveData<NonActionEventsComponent> {
+    public GameDate lastConversationDate;
+}
