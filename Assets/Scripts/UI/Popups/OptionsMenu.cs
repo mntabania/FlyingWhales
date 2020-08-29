@@ -19,15 +19,15 @@ public class OptionsMenu : PopupMenuBase {
         SettingsManager.Instance.OpenSettings();
     }
     public void SaveGame() {
-        SaveManager.Instance.SavePlayerData();
+        SaveManager.Instance.savePlayerManager.SavePlayerData();
         SaveCurrentProgress();
     }
     public void ExitGame() {
         Application.Quit();
     }
     private void SaveCurrentProgress() {
-        if (SaveManager.Instance.CanSaveCurrentProgress()) {
-            SaveManager.Instance.SaveCurrentProgress();
+        if (SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {
+            SaveManager.Instance.saveCurrentProgressManager.SaveCurrentProgress();
         } else {
             PlayerUI.Instance.ShowGeneralConfirmation("Save Progress", "Cannot save while seizing.");
         }
@@ -45,7 +45,7 @@ public class OptionsMenu : PopupMenuBase {
     }
     private void Abandon() {
         DOTween.Clear(true);
-        SaveManager.Instance.SavePlayerData();
+        SaveManager.Instance.savePlayerManager.SavePlayerData();
         Messenger.Cleanup();
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);

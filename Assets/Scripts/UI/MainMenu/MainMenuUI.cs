@@ -93,13 +93,13 @@ public class MainMenuUI : MonoBehaviour {
         //     SaveManager.Instance.CreateNewSaveDataPlayer();
         //     WorldSettings.Instance.Open();    
         // }
-        if (!SaveManager.Instance.hasSavedDataPlayer) {
-            SaveManager.Instance.CreateNewSaveDataPlayer();
+        if (!SaveManager.Instance.savePlayerManager.hasSavedDataPlayer) {
+            SaveManager.Instance.savePlayerManager.CreateNewSaveDataPlayer();
         } 
         WorldSettings.Instance.Open(); 
     }
     private void OnConfirmNewGame() {
-        SaveManager.Instance.CreateNewSaveDataPlayer();
+        SaveManager.Instance.savePlayerManager.CreateNewSaveDataPlayer();
         WorldSettings.Instance.Open();
     }
     public void OnClickContinue() {

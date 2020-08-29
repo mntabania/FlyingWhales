@@ -131,6 +131,10 @@ namespace UtilityScripts {
             return idToUse;
         }
 
+        public static string GetNewUniqueID() {
+            return Guid.NewGuid().ToString();
+        }
+
         #region Pathfinding
         public static List<Point> EvenNeighbours {
             get {

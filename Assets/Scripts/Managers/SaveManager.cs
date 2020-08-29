@@ -14,27 +14,29 @@ using UnityEditor;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
-    private const string savedPlayerDataFileName = "SAVED_PLAYER_DATA_2";
-    private const string savedCurrentProgressFileName = "SAVED_CURRENT_PROGRESS";
     public bool useSaveData;
+    public SavePlayerManager savePlayerManager;
+    public SaveCurrentProgressManager saveCurrentProgressManager;
 
-    public SaveDataPlayer currentSaveDataPlayer { get; private set; }
-    public SaveDataCurrentProgress currentSaveDataProgress { get; private set; }
 
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
     [SerializeField] private bool alwaysResetBonusTutorialsOnStartup;
     [SerializeField] private bool _unlockAllWorlds;
 
-    public bool hasSavedDataCurrentProgress => currentSaveDataProgress != null;
-    public bool hasSavedDataPlayer => currentSaveDataPlayer != null;
+
+    #region getters
+    public SaveDataPlayer currentSaveDataPlayer => savePlayerManager.currentSaveDataPlayer;
+    public SaveDataCurrentProgress currentSaveDataProgress => saveCurrentProgressManager.currentSaveDataProgress;
+
+    #endregion
+
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public bool unlockAllWorlds => _unlockAllWorlds;
 #else
     public bool unlockAllWorlds => false;
 #endif
-    
     
     private void Awake() {
         if (Instance == null) {
@@ -48,16 +50,13 @@ public class SaveManager : MonoBehaviour {
         }
     }
     private void OnApplicationQuit() {
-        SavePlayerData();
+        savePlayerManager.SavePlayerData();
     }
     private void OnEditorQuit() {
-        SavePlayerData();
+        savePlayerManager.SavePlayerData();
     }
 
     #region General
-    public void SetCurrentSaveDataPlayer(SaveDataPlayer save) {
-        currentSaveDataPlayer = save;
-    }
     public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {
         if (trait.isNotSavable) {
             return null;
@@ -74,47 +73,6 @@ public class SaveManager : MonoBehaviour {
     #endregion
 
     #region Saving
-    public bool CanSaveCurrentProgress() {
-        return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI;
-    }
-    public void SaveCurrentProgress() {
-        SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
-        saveData.SaveDate();
-        saveData.SavePlayer();
-        // saveData.SaveFactions();
-        
-        //save world map
-        WorldMapSave worldMapSave = new WorldMapSave();
-        worldMapSave.SaveWorld(
-            WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles,
-            GridMap.Instance.allRegions
-        );
-        saveData.worldMapSave = worldMapSave;
-        
-        saveData.SaveSettlements(LandmarkManager.Instance.allSettlements);
-        //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
-        //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
-        //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
-        //        save.SaveRegions(GridMap.Instance.allRegions);
-        //        // save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
-        //        save.SaveNonPlayerAreas();
-        //        save.SaveFactions(FactionManager.Instance.allFactions);
-        //        save.SaveCharacters(CharacterManager.Instance.allCharacters);
-        //        save.SavePlayer(PlayerManager.Instance.player);
-        //        save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
-        //        // save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
-        ////        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
-        //        save.SaveCurrentDate();
-        //        save.SaveNotifications();
-
-        //SaveGame.Encode = true;
-        SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", saveData);
-    }
-    public void SavePlayerData() {
-        SaveDataPlayer save = currentSaveDataPlayer;
-        SaveGame.Save(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName, save);
-    }
     public void DoManualSave(string fileName = "") {
         SaveDataCurrentProgress completeSave = new SaveDataCurrentProgress();
         
@@ -133,7 +91,7 @@ public class SaveManager : MonoBehaviour {
         completeSave.SaveSettlements(LandmarkManager.Instance.allSettlements);
 
         if (string.IsNullOrEmpty(fileName)) {
-            fileName = savedCurrentProgressFileName;
+            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
         }
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
         SaveGame.Save(path, completeSave);
@@ -156,7 +114,7 @@ public class SaveManager : MonoBehaviour {
         scenarioSave.SaveVillageSettlements(LandmarkManager.Instance.allNonPlayerSettlements.Where(x => x.locationType == LOCATION_TYPE.SETTLEMENT).ToList());
         
         if (string.IsNullOrEmpty(fileName)) {
-            fileName = savedCurrentProgressFileName;
+            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
         }
         string path = $"{Application.streamingAssetsPath}/Scenario Maps/{fileName}.sce";
         SaveGame.Save(path, scenarioSave);
@@ -167,40 +125,13 @@ public class SaveManager : MonoBehaviour {
 
     #region Loading
     public void LoadSaveDataPlayer() {
-        //if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
-        //    SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
-        //}
-        if (UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName)) {
-            SaveDataPlayer saveDataPlayer = SaveGame.Load<SaveDataPlayer>(UtilityScripts.Utilities.gameSavePath + savedPlayerDataFileName);
-            if (saveDataPlayer != null) {
-                saveDataPlayer.ProcessOnLoad();
-                SetCurrentSaveDataPlayer(saveDataPlayer);    
-            } else {
-                CreateNewSaveDataPlayer();
-            }
-        }
-        // if (currentSaveDataPlayer == null) {
-        //     SaveDataPlayer saveDataPlayer = new SaveDataPlayer();
-        //     saveDataPlayer.InitializeInitialData();
-        //     SetCurrentSaveDataPlayer(saveDataPlayer);
-        // }
+        savePlayerManager.LoadSaveDataPlayer();
         if (alwaysResetBonusTutorialsOnStartup) {
-            currentSaveDataPlayer?.ResetBonusTutorialProgress();
+            savePlayerManager.currentSaveDataPlayer?.ResetBonusTutorialProgress();
         }
         if (alwaysResetSpecialPopupsOnStartup) {
-            currentSaveDataPlayer?.ResetSpecialPopupsProgress();
+            savePlayerManager.currentSaveDataPlayer?.ResetSpecialPopupsProgress();
         }
-    }
-    public void CreateNewSaveDataPlayer() {
-        SaveDataPlayer saveDataPlayer = new SaveDataPlayer();
-        saveDataPlayer.InitializeInitialData();
-        SetCurrentSaveDataPlayer(saveDataPlayer);
-    }
-    public void LoadSaveDataCurrentProgress() {
-        currentSaveDataProgress = GetSaveFileData($"{UtilityScripts.Utilities.gameSavePath}/SAVED_CURRENT_PROGRESS.sav");
-    }
-    private SaveDataCurrentProgress GetSaveFileData(string path) {
-        return SaveGame.Load<SaveDataCurrentProgress>(path);
     }
     #endregion
 

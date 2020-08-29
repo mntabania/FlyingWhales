@@ -478,7 +478,7 @@ public class SaveDataPlayer {
                 UnlockWorld(WorldSettingsData.World_Type.Zenko);
                 break;
         }
-        SaveManager.Instance.SavePlayerData();
+        SaveManager.Instance.savePlayerManager.SavePlayerData();
     }
     #endregion
 

@@ -34,7 +34,7 @@ public class WinGameOverItem : MonoBehaviour {
 
         killsText.text = "x" + killCount;
         experienceText.text = "+" + experienceGained;
-        SaveManager.Instance.SavePlayerData();
+        SaveManager.Instance.savePlayerManager.SavePlayerData();
     }
 
     public void BackToMainMenu() {
