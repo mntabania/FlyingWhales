@@ -35,14 +35,13 @@ public class SaveDataCurrentProgress {
     public SaveDataPlayerGame playerSave;
 
     public List<SaveDataBaseSettlement> settlementSaves;
-    //public List<SaveDataFaction> factionSaves;
 
     //Pool of all saved objects
     public Dictionary<OBJECT_TYPE, BaseSaveDataHub> objectHub;
 
     public SaveDataCurrentProgress() {
         if(objectHub == null) {
-            objectHub = new Dictionary<OBJECT_TYPE, BaseSaveDataHub>();
+            ConstructObjectHub();
         }
     }
 
@@ -69,7 +68,7 @@ public class SaveDataCurrentProgress {
     }
     private T GetFromSaveHub<T>(OBJECT_TYPE objectType, string persistenID) {
         if (objectHub.ContainsKey(objectType)) {
-            return objectHub[objectType].GetData<T>(persistenID);
+            return (T) objectHub[objectType].GetData(persistenID);
         }
         return default;
     }

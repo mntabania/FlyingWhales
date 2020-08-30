@@ -4,14 +4,13 @@ using UnityEngine;
 
 [System.Serializable]
 public class BaseSaveDataHub {
-
     public virtual bool AddToSave<T>(T data) {
         return false;
     }
     public virtual bool RemoveFromSave<T>(T data) {
         return false;
     }
-    public virtual T GetData<T>(string persistendID) {
+    public virtual ISavableCounterpart GetData(string persistendID) {
         return default;
     }
 }
@@ -44,7 +43,10 @@ public class SaveDataFactionHub : BaseSaveDataHub {
         }
         return false;
     }
-    public override T GetData<T>(string persistendID) {
+    public override ISavableCounterpart GetData(string persistendID) {
+        if (_hub.ContainsKey(persistendID)) {
+            return _hub[persistendID];
+        }
         return default;
     }
 }
