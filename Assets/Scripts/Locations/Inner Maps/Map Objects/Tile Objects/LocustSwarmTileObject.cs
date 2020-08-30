@@ -13,6 +13,7 @@ public class LocustSwarmTileObject : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
+    public LocustSwarmTileObject(SaveDataTileObject data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _locustSwarmMapObjectVisual = mapVisual as LocustSwarmMapObjectVisual;

@@ -158,18 +158,6 @@ public class SeizeComponent {
                 }
             }
             return false;
-        } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.CRYPT) {
-            if(seizedPOI is Tombstone) {
-                //Temporarily disabled unseizing tombstones in crypt because we still do not have a save data for characters, hence, we cannot save tombstones
-                return false;
-            }
-            if (seizedPOI is TileObject tileObject) {
-                int numOfTileOjects = tileLocation.structure.GetNumberOfNonPreplacedTileObjectsHere();
-                if (numOfTileOjects < 3) {
-                    return true;
-                }
-            }
-            return false;
         } else if (tileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS || 
                    tileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
             if (tileLocation.structure.IsTilePartOfARoom(tileLocation, out var room)) {

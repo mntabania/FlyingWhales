@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class VaporVent : TileObject {
 
     private readonly int _activityCycle;
     private string _currentActivitySchedule;
     
+    #region Getters
+    public int activityCycle => _activityCycle;
+    #endregion
+    
     public VaporVent() {
         Initialize(TILE_OBJECT_TYPE.VAPOR_VENT);
         _activityCycle = Random.Range(12, 61);
     }
     public VaporVent(SaveDataTileObject data) {
-        Initialize(data);
-        _activityCycle = Random.Range(12, 61);
+        SaveDataVaporVent saveDataVaporVent = data as SaveDataVaporVent;
+        Assert.IsNotNull(saveDataVaporVent);
+        _activityCycle = saveDataVaporVent.activityCycle;
     }
 
     #region Overrides
@@ -33,8 +39,7 @@ public class VaporVent : TileObject {
         ProduceVapor();
     }
     #endregion
-    
-    
+
     #region Activity Cycle
     private void ScheduleActivity() {
         GameDate dueDate = GameManager.Instance.Today().AddTicks(_activityCycle);
@@ -54,6 +59,18 @@ public class VaporVent : TileObject {
         vaporTileObject.SetStacks(Random.Range(2, 9));
     }
     #endregion
-
-   
 }
+
+#region Save Data
+public class SaveDataVaporVent : SaveDataTileObject {
+    
+    public int activityCycle;
+    
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        VaporVent vaporVent = tileObject as VaporVent;
+        Assert.IsNotNull(vaporVent);
+        activityCycle = vaporVent.activityCycle;
+    }
+}
+#endregion

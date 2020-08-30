@@ -5,9 +5,8 @@ using UtilityScripts;
 
 public abstract class ResourcePile : TileObject {
 
-	public RESOURCE providedResource { get; protected set; }
-    public int resourceInPile { get { return storedResources[providedResource]; } }
-
+	public RESOURCE providedResource { get; private set; }
+    public int resourceInPile => storedResources[providedResource];
     public ResourcePile(RESOURCE providedResource) {
         AddAdvertisedAction(INTERACTION_TYPE.TAKE_RESOURCE);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
@@ -18,7 +17,9 @@ public abstract class ResourcePile : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TAKE_RESOURCE, INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, INTERACTION_TYPE.DROP, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT/*, INTERACTION_TYPE.DROP_RESOURCE*/ };
+        this.providedResource = providedResource;
+    }
+    public ResourcePile(SaveDataTileObject data, RESOURCE providedResource) {
         this.providedResource = providedResource;
     }
 
@@ -56,14 +57,8 @@ public abstract class ResourcePile : TileObject {
     #endregion
 
     #region Overrides
-    // public override void OnPlacePOI() {
-    //     base.OnPlacePOI();
-    //     // Messenger.AddListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);
-    // }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
-        // Messenger.RemoveListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);
-        // Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.HAUL, this as IPointOfInterest);
         Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.DESTROY, this as IPointOfInterest);
     }
     protected override void OnSetObjectAsUnbuilt() {

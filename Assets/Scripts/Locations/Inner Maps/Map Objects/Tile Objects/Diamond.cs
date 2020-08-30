@@ -3,6 +3,6 @@
         Initialize(TILE_OBJECT_TYPE.DIAMOND);
     }
     public Diamond(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

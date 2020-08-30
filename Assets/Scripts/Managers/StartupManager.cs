@@ -24,6 +24,7 @@ public class StartupManager : MonoBehaviour {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
 
         if (SaveManager.Instance.useSaveData) {
+            SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgress();
             SaveDataCurrentProgress saveData = SaveManager.Instance.currentSaveDataProgress;
             yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
         } else {
@@ -58,8 +59,7 @@ public class StartupManager : MonoBehaviour {
                     Debug.Log("Generating random world...");
                     yield return StartCoroutine(mapGenerator.InitializeWorld());    
                 }
-            }
-            else {
+            } else {
                 Debug.Log("Generating random world...");
                 yield return StartCoroutine(mapGenerator.InitializeWorld());
             }

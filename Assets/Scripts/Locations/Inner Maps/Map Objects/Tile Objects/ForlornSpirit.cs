@@ -4,6 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class ForlornSpirit : TileObject {
 
@@ -11,41 +12,32 @@ public class ForlornSpirit : TileObject {
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
-    // private LocationGridTile _originalGridTile;
     
     #region getters
-    public override LocationGridTile gridTileLocation => base.gridTileLocation;
-    // (mapVisual == null ? null : GetLocationGridTileByXy(
-    //     Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
+    public int currentDuration => _currentDuration;
     #endregion
     
     public ForlornSpirit() {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
     public ForlornSpirit(SaveDataTileObject data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ASSAULT };
-        Initialize(data, false);
-        traitContainer.AddTrait(this, "Forlorn");
+        SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
+        Assert.IsNotNull(saveDataForlornSpirit);
+        _currentDuration = saveDataForlornSpirit.currentDuration;
     }
-
-
+    
     #region Overrides
     public override string ToString() {
-        return $"Forlorn Spirit {id}";
+        return $"Forlorn Spirit {id.ToString()}";
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        // _originalGridTile = gridTileLocation;
-        // _region = gridTileLocation.structure.location as Region;
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-
-        // Messenger.AddListener<SpiritGameObject>(Signals.SPIRIT_OBJECT_NO_DESTINATION, OnSpiritObjectNoDestination);
         UpdateSpeed();
         _spiritGO.SetIsRoaming(true);
         GoToRandomTileInRadius();
@@ -55,7 +47,6 @@ public class ForlornSpirit : TileObject {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        // Messenger.RemoveListener<SpiritGameObject>(Signals.SPIRIT_OBJECT_NO_DESTINATION, OnSpiritObjectNoDestination);
     }
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
@@ -76,11 +67,6 @@ public class ForlornSpirit : TileObject {
             if (!paused) {
                 _spiritGO.RecalculatePathingValues();
             }
-        }
-    }
-    private void OnSpiritObjectNoDestination(SpiritGameObject go) {
-        if (_spiritGO == go) {
-            GoToRandomTileInRadius();
         }
     }
     #endregion
@@ -106,13 +92,9 @@ public class ForlornSpirit : TileObject {
                     iTween.Stop(mapVisual.gameObject);
                     break;
                 }
-            } 
-            //else {
-            //    iTween.Stop(mapVisual.gameObject);
-            //}
+            }
         }
         if (possessionTarget != null) {
-            // SetGridTileLocation(_spiritGO.GetLocationGridTileByXy(Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
             ForlornEffect();
             DonePossession();
         } else {
@@ -159,8 +141,18 @@ public class ForlornSpirit : TileObject {
         iTween.Stop(mapVisual.gameObject);
         SetGridTileLocation(null);
         OnDestroyPOI();
-        // SetGridTileLocation(_originalGridTile);
-        // _originalGridTile.structure.RemovePOI(this);
         possessionTarget = null;
     }
 }
+
+#region Save Data
+public class SaveDataForlornSpirit : SaveDataTileObject {
+    public int currentDuration;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        ForlornSpirit forlornSpirit = tileObject as ForlornSpirit;
+        Assert.IsNotNull(forlornSpirit);
+        currentDuration = forlornSpirit.currentDuration;
+    }
+}
+#endregion

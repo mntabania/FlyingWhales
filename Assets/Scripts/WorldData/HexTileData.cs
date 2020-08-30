@@ -6,6 +6,7 @@ using UnityEngine;
 public class HexTileData {
     [Header("General Tile Details")]
     public int id;
+    public string persistentID;
     public int xCoordinate;
     public int yCoordinate;
     public string tileName;

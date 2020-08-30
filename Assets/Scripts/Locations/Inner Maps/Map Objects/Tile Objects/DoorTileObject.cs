@@ -8,7 +8,7 @@ public class DoorTileObject : TileObject {
         traitContainer.AddTrait(this, "Immovable");
     }
     public DoorTileObject(SaveDataTileObject data) {
-        Initialize(data);
+        
         traitContainer.AddTrait(this, "Immovable");
     }
     

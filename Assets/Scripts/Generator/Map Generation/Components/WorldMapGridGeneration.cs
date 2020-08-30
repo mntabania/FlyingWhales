@@ -243,7 +243,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
 		HexTile[,] map = new HexTile[data.width, data.height];
 		List<HexTile> normalHexTiles = new List<HexTile>();
-		List<HexTile> allTiles = new List<HexTile>();
 		int id = 0;
 
 		int batchCount = 0;
@@ -262,11 +261,11 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				hex.name = $"{x},{y}";
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
+				currHex.data.persistentID = System.Guid.NewGuid().ToString();
 				currHex.data.id = id;
 				currHex.data.tileName = RandomNameGenerator.GetTileName();
 				currHex.data.xCoordinate = x;
 				currHex.data.yCoordinate = y;
-				allTiles.Add(currHex);
 				normalHexTiles.Add(currHex);
 				map[x, y] = currHex;
 				id++;
@@ -279,7 +278,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		}
 		
-		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
+		GridMap.Instance.SetMap(map, normalHexTiles);
 		//Find Neighbours for each hextile
 		for (int i = 0; i < normalHexTiles.Count; i++) {
 			HexTile hexTile = normalHexTiles[i];
@@ -303,7 +302,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
 		HexTile[,] map = new HexTile[data.width, data.height];
 		List<HexTile> normalHexTiles = new List<HexTile>();
-		List<HexTile> allTiles = new List<HexTile>();
 
 		SaveDataHextile[,] savedMap = scenarioMapData.worldMapSave.GetSaveDataMap();
 		
@@ -326,7 +324,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
 				savedHexTile.Load(currHex);
-				allTiles.Add(currHex);
 				normalHexTiles.Add(currHex);
 				map[x, y] = currHex;
 
@@ -338,7 +335,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		}
 		
-		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
+		GridMap.Instance.SetMap(map, normalHexTiles);
 		//Find Neighbours for each hextile
 		for (int i = 0; i < normalHexTiles.Count; i++) {
 			HexTile hexTile = normalHexTiles[i];
@@ -349,11 +346,11 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	#endregion
 	
 	#region Saved World
-	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress scenarioMapData) {
+	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
-		data.chosenWorldMapTemplate = scenarioMapData.worldMapSave.worldMapTemplate;
+		data.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
-		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, scenarioMapData));
+		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, saveData));
 	}
 	private IEnumerator GenerateGrid(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		GridMap.Instance.SetupInitialData(data.width, data.height);
@@ -362,7 +359,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 		GridMap.Instance.transform.localPosition = new Vector2(-newX, -newY);
 		HexTile[,] map = new HexTile[data.width, data.height];
 		List<HexTile> normalHexTiles = new List<HexTile>();
-		List<HexTile> allTiles = new List<HexTile>();
 
 		SaveDataHextile[,] savedMap = saveData.worldMapSave.GetSaveDataMap();
 		
@@ -385,7 +381,6 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
 				savedHexTile.Load(currHex);
-				allTiles.Add(currHex);
 				normalHexTiles.Add(currHex);
 				map[x, y] = currHex;
 
@@ -397,7 +392,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 			}
 		}
 		
-		GridMap.Instance.SetMap(map, normalHexTiles, allTiles);
+		GridMap.Instance.SetMap(map, normalHexTiles);
 		//Find Neighbours for each hextile
 		for (int i = 0; i < normalHexTiles.Count; i++) {
 			HexTile hexTile = normalHexTiles[i];

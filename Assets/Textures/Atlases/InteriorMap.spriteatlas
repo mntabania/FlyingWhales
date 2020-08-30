@@ -815,7 +815,7 @@ SpriteAtlas:
   - spirits_gray_idle
   - corruptedBones03
   - CAMPFIRE
-  - corner_1
+  - metal_corner_1
   - poison11011111-00
   - caveWallA-11111110-00
   - laidWallA11101110-00
@@ -832,7 +832,7 @@ SpriteAtlas:
   - desertGrass01
   - corruptedGround06
   - shore01010101-00
-  - corner_1
+  - wood_corner_1
   - templeColumn00
   - laidWallA10001010-00
   - demonWallA-10111010-00
@@ -863,7 +863,7 @@ SpriteAtlas:
   - shore00010111-00
   - demonEyeballGiant
   - OBELISK
-  - horizontal_1
+  - d_stone_horizontal_1
   - corruptedTendrils01
   - demonCircleLarge00
   - demonSigilSquare00
@@ -879,7 +879,7 @@ SpriteAtlas:
   - stone_h01
   - laidWallA00000010-00
   - caveWallA-11100000-00
-  - horizontal_1
+  - metal_horizontal_1
   - boneGround_decor03
   - vent_poison
   - corruptedGround05
@@ -922,7 +922,7 @@ SpriteAtlas:
   - dirtSnow01
   - water_crystal
   - demonRackEmpty00
-  - PLANT#3
+  - PLANT#7
   - excalibur2
   - BRAZIER#1_LIT
   - shore11110101-00
@@ -964,7 +964,7 @@ SpriteAtlas:
   - winter_rose
   - dirt00
   - GRAVE#1
-  - vertical_1
+  - d_wood_vertical_1
   - shelf_swords
   - laidWallA10001000-01
   - PondWall
@@ -976,7 +976,7 @@ SpriteAtlas:
   - fireplace01
   - demonTortureWheel00
   - TOMBSTONE#1
-  - horizontal_1
+  - d_wood_horizontal_1
   - demonStone_v00
   - grass00
   - tundraDirt_v00
@@ -1003,7 +1003,7 @@ SpriteAtlas:
   - demonWallA-Filled
   - demonManaRunes01
   - shore00000001-00
-  - BIG_TREE_OBJECT#1
+  - BIG_TREE_OBJECT#3
   - TRAINING_DUMMY#1
   - demonCultCarpet00
   - templeStatueGoddess00
@@ -1017,7 +1017,7 @@ SpriteAtlas:
   - poison01000000-00
   - grass02
   - shore00000101-00
-  - TREE_OBJECT#2
+  - TREE_OBJECT#4
   - desertRock_h00
   - demonWallA-11100000-00
   - BANDAGES
@@ -1058,7 +1058,7 @@ SpriteAtlas:
   - laidWallA10001011-00
   - shore01110000-00
   - snow_h01
-  - PLANT#2
+  - PLANT#6
   - shore01111101-00
   - desertRocks00
   - water00
@@ -1071,14 +1071,14 @@ SpriteAtlas:
   - demonScryingPool00
   - poison00000111-00
   - demonCultAltar00
-  - horizontal_1
+  - stone_horizontal_1
   - demonWallA-10111011-00
   - GRAVE#2
   - laidWallA10111010-00
   - TREE_OBJECT#1
   - demonStone_v01
   - demonWallA-10001111-00
-  - FLOWER#2
+  - FLOWER#5
   - corruptedGround_h00
   - fish_low
   - FLOWER#3
@@ -1138,7 +1138,7 @@ SpriteAtlas:
   - floorStone01
   - grass_h01
   - caveWallA-1010-00
-  - PLANT#1
+  - PLANT#5
   - demonWallA-10101000-00
   - TEMPLE_ALTAR
   - demonDoorwayVert00_closed
@@ -1150,7 +1150,7 @@ SpriteAtlas:
   - poison00010100-00
   - floorStone02
   - corruptedGround04
-  - corner_1
+  - stone_corner_1
   - treasureChest00
   - laidWallA00001110-00
   - demonWallA-10101111-00
@@ -1177,7 +1177,7 @@ SpriteAtlas:
   - corruptedTreeSmall00
   - stone_pile
   - demonBarsHorz00
-  - vertical_1
+  - wood_vertical_1
   - shelfDecor01
   - TREE_OBJECT#2
   - demonCage00
@@ -1187,7 +1187,7 @@ SpriteAtlas:
   - BARREL#1
   - boneGround_v00
   - poison00011101-00
-  - vertical_1
+  - metal_vertical_1
   - RUG#1
   - poison01011111-00
   - TRASH#2
@@ -1226,7 +1226,7 @@ SpriteAtlas:
   - fireplace00
   - BotLeft
   - boneBarrier00
-  - TREE_OBJECT#1
+  - TREE_OBJECT#3
   - lairWallA00100010-01
   - table_metalworking_tools
   - fleshGround03
@@ -1250,7 +1250,7 @@ SpriteAtlas:
   - MAGIC_CIRCLE#2
   - shore00011111-00
   - snow_v01
-  - horizontal_1
+  - d_metal_horizontal_1
   - shore01110001-00
   - BIG_TREE_OBJECT#2
   - demonBrazier00
@@ -1259,7 +1259,7 @@ SpriteAtlas:
   - TRASH#5
   - fire_crystal
   - demonPewLongLeft00
-  - FLOWER#1
+  - FLOWER#4
   - ROCK#4
   - wood_floorA01
   - laidWallA11101011-00
@@ -1281,7 +1281,7 @@ SpriteAtlas:
   - skulls_line01
   - corruptedTreeSmall02
   - smithing_forge
-  - corner_1
+  - d_stone_corner_1
   - floorRuins02
   - dirt02
   - water01
@@ -1326,7 +1326,7 @@ SpriteAtlas:
   - shore01111111-00
   - floorStone03
   - poison01010101-00
-  - corner_1
+  - d_metal_corner_1
   - Ember
   - bartop_right_empty
   - demonWallA-00001110-00
@@ -1397,7 +1397,7 @@ SpriteAtlas:
   - TORCH#4
   - spirits_red_idle
   - shore01011111-00
-  - corner_1
+  - d_wood_corner_1
   - shore01011101-00
   - TORCH#3
   - water03
@@ -1422,9 +1422,9 @@ SpriteAtlas:
   - corruptedGround01
   - water02
   - fleshGround00
-  - ROCK#2
+  - ROCK#7
   - demonSpawningPit00
-  - vertical_1
+  - d_stone_vertical_1
   - dirtSnow_h00
   - caveWallA-11101110-00
   - CaveGround
@@ -1458,7 +1458,7 @@ SpriteAtlas:
   - poison11111101-00
   - TRASH#3
   - ore00
-  - vertical_1
+  - stone_vertical_1
   - shore01110100-00
   - laidWallA10101110-00
   - demonWallA-11100010-00
@@ -1486,7 +1486,7 @@ SpriteAtlas:
   - demonBarsVertical00
   - BIG_TREE_OBJECT#2
   - TRAINING_DUMMY#2
-  - horizontal_1
+  - wood_horizontal_1
   - table4Slots
   - snow_mound
   - heirloom
@@ -1496,7 +1496,7 @@ SpriteAtlas:
   - laidWallA00111000-00
   - dirtSnow_h01
   - Water Flask
-  - ROCK#3
+  - ROCK#8
   - spirits_green_idle
   - shelf_books
   - desertSand00
@@ -1504,7 +1504,7 @@ SpriteAtlas:
   - well
   - laidWallA11111110-00
   - poison00000101-00
-  - ROCK#1
+  - ROCK#6
   - poison01111111-00
   - desertRocks02
   - laidWallA10101010-00
@@ -1512,7 +1512,7 @@ SpriteAtlas:
   - laidEmpty
   - PLANT#4
   - demonWallA-11101011-00
-  - vertical_1
+  - d_metal_vertical_1
   - demonWallA-10001010-00
   - TRASH#2
   - poison11110101-00

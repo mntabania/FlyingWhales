@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 
 public class BlockWall : TileObject {
     
     public WALL_TYPE wallType { get; private set; }
-    private GameDate expiryDate { get; set; }
+    public GameDate expiryDate { get; private set; }
     private string _expiryScheduleKey;
+
+    #region Getters
+    public string expiryScheduleKey => _expiryScheduleKey;
+    #endregion
     
     public BlockWall() {
         Initialize(TILE_OBJECT_TYPE.BLOCK_WALL, false);
@@ -17,14 +22,7 @@ public class BlockWall : TileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
     }
-    public BlockWall(SaveDataTileObject data) {
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        AddAdvertisedAction(INTERACTION_TYPE.DIG);
-        traitContainer.RemoveTrait(this, "Flammable");
-        traitContainer.AddTrait(this, "Immovable");
-    }
+    public BlockWall(SaveDataTileObject data) { }
     public void SetWallType(WALL_TYPE _wallType) {
         wallType = _wallType;
     }
@@ -80,3 +78,31 @@ public class BlockWall : TileObject {
         tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
     }
 }
+
+#region Save Data
+public class SaveDataBlockWall : SaveDataTileObject {
+
+    public WALL_TYPE wallType;
+    public bool hasExpiry;
+    public GameDate expiryDate;
+    
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        BlockWall blockWall = tileObject as BlockWall;
+        Assert.IsNotNull(blockWall);
+        wallType = blockWall.wallType;
+        hasExpiry = !string.IsNullOrEmpty(blockWall.expiryScheduleKey);
+        expiryDate = blockWall.expiryDate;
+    }
+    public override TileObject Load() {
+        TileObject tileObject = base.Load();
+        BlockWall blockWall = tileObject as BlockWall;
+        Assert.IsNotNull(blockWall);
+        blockWall.SetWallType(wallType);
+        if (hasExpiry) {
+            blockWall.SetExpiry(expiryDate);
+        }
+        return tileObject;
+    }
+}
+#endregion

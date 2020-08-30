@@ -49,22 +49,17 @@ namespace Inner_Maps {
         //NPCSettlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
         
-        //this specifies what light intensity is to be used while inside the specific range in ticks
-        private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() {
-            { 228, 0.3f }, { 61, 0.8f }
-        };
         private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
-        public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }
         public Region currentlyShowingLocation { get; private set; }
         public List<InnerTileMap> innerMaps { get; private set; }
-        public bool isAnInnerMapShowing => currentlyShowingMap != null;
-
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
-        private LocationGridTile lastClickedTile;
         public List<LocationStructure> worldKnownDemonicStructures { get; private set; }
-
+        
+        public bool isAnInnerMapShowing => currentlyShowingMap != null;
+        private LocationGridTile lastClickedTile;
+        
         #region Monobehaviours
         private void Awake() {
             Instance = this;
@@ -231,7 +226,6 @@ namespace Inner_Maps {
 
         #region Main
         public void Initialize() {
-            allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             innerMaps = new List<InnerTileMap>();
             worldKnownDemonicStructures = new List<LocationStructure>();
             mapObjectFactory = new MapVisualFactory();
@@ -506,48 +500,19 @@ namespace Inner_Maps {
             return tileObjectSlotSettings[asset];
         }
         public void AddTileObject(TileObject to) {
-            if (!allTileObjects.ContainsKey(to.tileObjectType)) {
-                allTileObjects.Add(to.tileObjectType, new List<TileObject>());
-            }
-            if (!allTileObjects[to.tileObjectType].Contains(to)) {
-                allTileObjects[to.tileObjectType].Add(to);
-            }
+            DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(to);
         }
         public void RemoveTileObject(TileObject to) {
-            if (allTileObjects.ContainsKey(to.tileObjectType)) {
-                allTileObjects[to.tileObjectType].Remove(to);
-            }
+            DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(to);
         }
         public TileObject GetTileObject(TILE_OBJECT_TYPE type, int id) {
-            if (allTileObjects.ContainsKey(type)) {
-                for (int i = 0; i < allTileObjects[type].Count; i++) {
-                    TileObject to = allTileObjects[type][i];
-                    if(to.id == id) {
-                        return to;
-                    }
-                }
-            }
-            return null;
+            return DatabaseManager.Instance.tileObjectDatabase.GetTileObject(type, id);
         }
         public TileObject GetFirstTileObject(TILE_OBJECT_TYPE type) {
-            if (allTileObjects.ContainsKey(type)) {
-                for (int i = 0; i < allTileObjects[type].Count; i++) {
-                    TileObject to = allTileObjects[type][i];
-                    return to;
-                }
-            }
-            return null;
+            return DatabaseManager.Instance.tileObjectDatabase.GetFirstTileObject(type);
         }
         public TileObject GetFirstArtifact(ARTIFACT_TYPE artifactType) {
-            if (allTileObjects.ContainsKey(TILE_OBJECT_TYPE.ARTIFACT)) {
-                for (int i = 0; i < allTileObjects[TILE_OBJECT_TYPE.ARTIFACT].Count; i++) {
-                    TileObject to = allTileObjects[TILE_OBJECT_TYPE.ARTIFACT][i];
-                    if (to is Artifact artifact && artifact.type == artifactType) {
-                        return to;
-                    }
-                }
-            }
-            return null;
+            return DatabaseManager.Instance.tileObjectDatabase.GetFirstArtifact(artifactType);
         }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
             var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
@@ -557,6 +522,15 @@ namespace Inner_Maps {
                 return obj;
             }
             throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType}");
+        }
+        public T LoadTileObject<T>(SaveDataTileObject saveDataTileObject) where T : TileObject {
+            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(saveDataTileObject.tileObjectType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            System.Type type = System.Type.GetType(typeName);
+            if (type != null) {
+                T obj = System.Activator.CreateInstance(type, saveDataTileObject) as T;
+                return obj;
+            }
+            throw new System.Exception($"Could not create new instance of tile object of type {saveDataTileObject.tileObjectType}");
         }
         public TILE_OBJECT_TYPE GetTileObjectTypeFromTileAsset(Sprite sprite) {
             int index = sprite.name.IndexOf("#", StringComparison.Ordinal);
@@ -851,7 +825,6 @@ namespace Inner_Maps {
                 }
                 innerMaps?.Clear();    
             }
-            allTileObjects?.Clear();
             Destroy(pathfinder);
             structurePrefabs?.Clear();
             tileObjectSlotSettings?.Clear();

@@ -8,9 +8,7 @@ public class BerryShrub : Crops {
     public BerryShrub() : base() {
         Initialize(TILE_OBJECT_TYPE.BERRY_SHRUB);
     }
-    public BerryShrub(SaveDataTileObject data) {
-        Initialize(data);
-    }
+    public BerryShrub(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override void ConstructDefaultActions() {
@@ -28,6 +26,8 @@ public class BerryShrub : Crops {
     public override string ToString() {
         return $"Berry Shrub {id.ToString()}";
     }
-
-    
 }
+
+#region Save Data
+public class SaveDataBerryShrub : SaveDataCrops { }
+#endregion

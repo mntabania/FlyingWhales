@@ -3,6 +3,6 @@
         Initialize(TILE_OBJECT_TYPE.PLINTH_ORB);
     }
     public PlinthOrb(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

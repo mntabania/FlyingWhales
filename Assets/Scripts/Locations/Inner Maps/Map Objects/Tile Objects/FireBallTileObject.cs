@@ -14,6 +14,7 @@ public class FireBallTileObject : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
+    public FireBallTileObject(SaveDataTileObject data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _fireBallMapVisual = mapVisual as FireBallMapObjectVisual;

@@ -5,6 +5,6 @@ public class Skulls : TileObject{
         Initialize(TILE_OBJECT_TYPE.SKULLS);
     }
     public Skulls(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

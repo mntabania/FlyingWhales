@@ -8,6 +8,7 @@ using Traits;
 
 [System.Serializable]
 public class SaveDataCharacter : SaveData<Character> {
+    public string persistentID;
     public int id;
     public string name;
     public string firstName;
@@ -76,6 +77,7 @@ public class SaveDataCharacter : SaveData<Character> {
     public List<SaveDataLog> history;
 
     public override void Save(Character character) {
+        persistentID = character.persistentID;
         id = character.id;
         name = character.name;
 

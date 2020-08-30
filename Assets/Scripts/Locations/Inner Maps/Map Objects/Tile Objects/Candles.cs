@@ -5,6 +5,6 @@ public class Candles : TileObject{
         Initialize(TILE_OBJECT_TYPE.CANDLES);
     }
     public Candles(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

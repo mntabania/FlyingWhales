@@ -12,7 +12,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public string name;
     public string description;
     public bool isMajorFaction;
-    public int emblemIndex;
+    public string emblemName;
     public bool isLeaderPlayer;
     public int leaderID;
     public bool isActive;
@@ -41,7 +41,7 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         name = faction.name;
         description = faction.description;
         isMajorFaction = faction.isMajorFaction;
-        emblemIndex = FactionManager.Instance.GetFactionEmblemIndex(faction.emblem);
+        emblemName = faction.emblem.name;
         factionColor = faction.factionColor;
         isActive = faction.isActive;
 

@@ -78,6 +78,8 @@ public class SaveManager : MonoBehaviour {
         
         //date
         completeSave.SaveDate();
+        completeSave.SavePlayer();
+        completeSave.SaveFactions();
         
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
@@ -102,12 +104,10 @@ public class SaveManager : MonoBehaviour {
         ScenarioMapData scenarioSave = new ScenarioMapData();
 
         //save world map
-        WorldMapSave worldMapSave = new WorldMapSave();
+        ScenarioWorldMapSave worldMapSave = new ScenarioWorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles,
-            GridMap.Instance.allRegions, 
-            false
+            GridMap.Instance.normalHexTiles
         );
         scenarioSave.worldMapSave = worldMapSave;
 

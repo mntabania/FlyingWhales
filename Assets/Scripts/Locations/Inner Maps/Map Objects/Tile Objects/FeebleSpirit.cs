@@ -4,6 +4,7 @@ using DG.Tweening;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 
 public class FeebleSpirit : TileObject {
 
@@ -11,12 +12,9 @@ public class FeebleSpirit : TileObject {
     private SpiritGameObject _spiritGO;
     private int _duration;
     private int _currentDuration;
-    // private LocationGridTile _originalGridTile;
 
     #region getters
-    public override LocationGridTile gridTileLocation => base.gridTileLocation;
-    // (mapVisual == null ? null : GetLocationGridTileByXy(
-    //     Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
+    public int currentDuration => _currentDuration;
     #endregion
     
     public FeebleSpirit() {
@@ -26,23 +24,20 @@ public class FeebleSpirit : TileObject {
     }
     public FeebleSpirit(SaveDataTileObject data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        Initialize(data, false);
-        traitContainer.AddTrait(this, "Feeble");
+        SaveDataFeebleSpirit saveDataFeebleSpirit = data as SaveDataFeebleSpirit;
+        Assert.IsNotNull(saveDataFeebleSpirit);
+        _currentDuration = saveDataFeebleSpirit.currentDuration;
     }
 
     #region Overrides
     public override string ToString() {
-        return $"Feeble Spirit {id}";
+        return $"Feeble Spirit {id.ToString()}";
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        // _originalGridTile = gridTileLocation;
-        // _region = gridTileLocation.structure.location as Region;
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
-
-        // Messenger.AddListener<SpiritGameObject>(Signals.SPIRIT_OBJECT_NO_DESTINATION, OnSpiritObjectNoDestination);
         UpdateSpeed();
         _spiritGO.SetIsRoaming(true);
         GoToRandomTileInRadius();
@@ -52,7 +47,6 @@ public class FeebleSpirit : TileObject {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
-        // Messenger.RemoveListener<SpiritGameObject>(Signals.SPIRIT_OBJECT_NO_DESTINATION, OnSpiritObjectNoDestination);
     }
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
@@ -75,18 +69,12 @@ public class FeebleSpirit : TileObject {
             }
         }
     }
-    private void OnSpiritObjectNoDestination(SpiritGameObject go) {
-        if (_spiritGO == go) {
-            GoToRandomTileInRadius();
-        }
-    }
     #endregion
 
     public void StartSpiritPossession(Character target) {
         if (possessionTarget == null) {
             _spiritGO.SetIsRoaming(false);
             possessionTarget = target;
-            // mapVisual.transform.do
             GameManager.Instance.StartCoroutine(CommencePossession());
         }
     }
@@ -103,13 +91,9 @@ public class FeebleSpirit : TileObject {
                     iTween.Stop(mapVisual.gameObject);
                     break;
                 }
-            } 
-            //else {
-            //    iTween.Pause(mapVisual.gameObject);
-            //}
+            }
         }
         if (possessionTarget != null) {
-            // SetGridTileLocation(_spiritGO.GetLocationGridTileByXy(Mathf.FloorToInt(mapVisual.transform.localPosition.x), Mathf.FloorToInt(mapVisual.transform.localPosition.y)));
             FeebleEffect();
             DonePossession();
         } else {
@@ -130,7 +114,6 @@ public class FeebleSpirit : TileObject {
             _spiritGO.SetSpeed(_spiritGO.speed * 2f);
         }
     }
-
     private void OnTickEnded() {
         if (_spiritGO != null && _spiritGO.isRoaming) {
             _currentDuration++;
@@ -140,11 +123,9 @@ public class FeebleSpirit : TileObject {
             }
         }
     }
-
     private void FeebleEffect() {
         possessionTarget.needsComponent.AdjustTiredness(-35);
     }
-
     private void DonePossession() {
         GameManager.Instance.CreateParticleEffectAt(possessionTarget.gridTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
         DestroySpirit();
@@ -157,8 +138,18 @@ public class FeebleSpirit : TileObject {
         iTween.Stop(mapVisual.gameObject);
         SetGridTileLocation(null);
         OnDestroyPOI();
-        // SetGridTileLocation(_originalGridTile);
-        // _originalGridTile.structure.RemovePOI(this);
         possessionTarget = null;
     }
 }
+
+#region Save Data
+public class SaveDataFeebleSpirit : SaveDataTileObject {
+    public int currentDuration;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        FeebleSpirit feebleSpirit = tileObject as FeebleSpirit;
+        Assert.IsNotNull(feebleSpirit);
+        currentDuration = feebleSpirit.currentDuration;
+    }
+}
+#endregion

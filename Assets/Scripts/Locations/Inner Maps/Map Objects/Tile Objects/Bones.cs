@@ -3,6 +3,6 @@
         Initialize(TILE_OBJECT_TYPE.BONES);
     }
     public Bones(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

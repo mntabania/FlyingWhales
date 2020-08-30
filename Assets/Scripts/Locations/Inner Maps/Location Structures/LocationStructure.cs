@@ -234,18 +234,6 @@ namespace Inner_Maps.Location_Structures {
             }
             return count;
         }
-        public int GetNumberOfNonPreplacedTileObjectsHere() {
-            int count = 0;
-            foreach (TileObjectsAndCount tileObjAndCount in groupedTileObjects.Values) {
-                for (int i = 0; i < tileObjAndCount.tileObjects.Count; i++) {
-                    TileObject obj = tileObjAndCount.tileObjects[i];
-                    if (obj.tileObjectType != TILE_OBJECT_TYPE.BLOCK_WALL && obj.preplacedLocationStructure != this) {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
         public List<Character> GetCharactersThatMeetCriteria(System.Func<Character, bool> criteria) {
             List<Character> characters = null;
             for (int i = 0; i < charactersHere.Count; i++) {

@@ -50,8 +50,8 @@ public class WorldMapBiomeGeneration : MapGenerationComponent {
 	}
 	private IEnumerator ElevationBiomeRefinement() {
 		int batchCount = 0;
-		for (int i = 0; i < GridMap.Instance.allTiles.Count; i++) {
-			HexTile tile = GridMap.Instance.allTiles[i];
+		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
+			HexTile tile = GridMap.Instance.normalHexTiles[i];
 			if (tile.biomeType == BIOMES.FOREST && tile.elevationType == ELEVATION.PLAIN && GameUtilities.RollChance(75)) {
 				tile.SetElevation(ELEVATION.TREES);
 			} else if (tile.biomeType == BIOMES.DESERT) {

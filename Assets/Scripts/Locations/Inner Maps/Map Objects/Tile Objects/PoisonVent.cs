@@ -1,18 +1,24 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class PoisonVent : TileObject {
 
     private readonly int _activityCycle;
     private string _currentActivitySchedule;
+
+    #region Getters
+    public int activityCycle => _activityCycle;
+    #endregion
     
     public PoisonVent() {
         Initialize(TILE_OBJECT_TYPE.POISON_VENT);
         _activityCycle = Random.Range(12, 61);
     }
     public PoisonVent(SaveDataTileObject data) {
-        Initialize(data);
-        _activityCycle = Random.Range(12, 61);
+        SaveDataPoisonVent saveDataPoisonVent = data as SaveDataPoisonVent;
+        Assert.IsNotNull(saveDataPoisonVent);
+        _activityCycle = saveDataPoisonVent.activityCycle;
     }
 
     #region Overrides
@@ -54,3 +60,17 @@ public class PoisonVent : TileObject {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataPoisonVent : SaveDataTileObject {
+    
+    public int activityCycle;
+    
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        PoisonVent poisonVent = tileObject as PoisonVent;
+        Assert.IsNotNull(poisonVent);
+        activityCycle = poisonVent.activityCycle;
+    }
+}
+#endregion

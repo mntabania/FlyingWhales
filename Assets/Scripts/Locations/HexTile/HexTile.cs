@@ -16,7 +16,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 
-public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable {
+public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable, ISavable {
 
     public HexTileData data;
     private NPCSettlement _npcSettlementOfTile;
@@ -94,6 +94,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     public HexTileSpellsComponent spellsComponent { get; private set; }
 
     #region getters/setters
+    public string persistentID => data.persistentID;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Hextile;
+    public Type serializedData => typeof(SaveDataHextile);
     public int id => data.id;
     public int xCoordinate => data.xCoordinate;
     public int yCoordinate => data.yCoordinate;

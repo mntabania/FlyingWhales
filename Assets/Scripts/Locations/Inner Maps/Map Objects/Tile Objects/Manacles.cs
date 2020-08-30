@@ -5,6 +5,6 @@ public class Manacles : TileObject{
         Initialize(TILE_OBJECT_TYPE.MANACLES);
     }
     public Manacles(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

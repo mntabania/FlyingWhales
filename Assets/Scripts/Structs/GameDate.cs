@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 
+[System.Serializable]
 public struct GameDate {
 	public int month;
 	public int day;

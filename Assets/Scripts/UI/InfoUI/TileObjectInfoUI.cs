@@ -127,14 +127,6 @@ public class TileObjectInfoUI : InfoUIBase {
     }
     private void UpdateBasicInfo() {
         nameLbl.text = activeTileObject.name;
-        //if(activeTileObject is ResourcePile) {
-        //    nameLbl.text += $" (x{(activeTileObject as ResourcePile).resourceInPile})";
-        //}else if (activeTileObject is Table) {
-        //    nameLbl.text += $" (x{(activeTileObject as Table).food})";
-        //}
-        if (activeTileObject.isDisabledByPlayer) {
-            nameLbl.text += " (Disabled)";
-        }
     }
     private void UpdateInfo() {
         hpLbl.text = $"{activeTileObject.currentHP}/{activeTileObject.maxHP}";

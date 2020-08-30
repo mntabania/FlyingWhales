@@ -9,7 +9,7 @@ public class WurmHole : TileObject{
         traitContainer.AddTrait(this, "Fireproof");
     }
     public WurmHole(SaveDataTileObject data) {
-        Initialize(data);
+        
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Fireproof");
     }

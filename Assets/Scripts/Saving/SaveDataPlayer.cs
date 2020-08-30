@@ -157,7 +157,9 @@ public class SaveDataPlayer {
             cryptTileObjects = new List<SaveDataTileObject>();
         }
         for (int i = 0; i < tileObjects.Count; i++) {
-            cryptTileObjects.Add(new SaveDataTileObject(tileObjects[i]));
+            SaveDataTileObject saveDataTileObject = new SaveDataTileObject();
+            saveDataTileObject.Save(tileObjects[i]);
+            cryptTileObjects.Add(saveDataTileObject);
         }
     }
     #endregion

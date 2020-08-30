@@ -16,7 +16,7 @@ using UnityEngine.Tilemaps;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 namespace Inner_Maps {
-    public class LocationGridTile : IHasNeighbours<LocationGridTile> {
+    public class LocationGridTile : IHasNeighbours<LocationGridTile>, ISavable {
 
         public enum Tile_Type { Empty, Wall }
         public enum Tile_State { Empty, Occupied }
@@ -24,6 +24,8 @@ namespace Inner_Maps {
             Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh, Structure_Stone,
             Ruined_Stone
         }
+
+        public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
         public Vector3Int localPlace { get; }
@@ -60,6 +62,8 @@ namespace Inner_Maps {
         private TrapChecker _freezingTrapChecker;
 
         #region getters
+        public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
+        public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
         public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
         #endregion
@@ -80,6 +84,7 @@ namespace Inner_Maps {
         #endregion
         
         public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
+            persistentID = System.Guid.NewGuid().ToString();
             this.parentMap = parentMap;
             parentTileMap = tilemap;
             localPlace = new Vector3Int(x, y, 0);
@@ -91,8 +96,10 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
+            DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
+            persistentID = data.persistentID;
             this.parentMap = parentMap;
             parentTileMap = tilemap;
             localPlace = new Vector3Int((int)data.localPlace.x, (int)data.localPlace.y, 0);
@@ -104,6 +111,7 @@ namespace Inner_Maps {
             tileState = data.tileState;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
+            DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
         #region Other Data

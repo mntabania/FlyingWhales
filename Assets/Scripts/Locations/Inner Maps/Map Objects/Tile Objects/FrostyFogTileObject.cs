@@ -18,6 +18,7 @@ public class FrostyFogTileObject : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         maxSize = 6;
     }
+    public FrostyFogTileObject(SaveDataTileObject data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _frostyFogMapVisual = mapVisual as FrostyFogMapObjectVisual;

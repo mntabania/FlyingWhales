@@ -12,6 +12,7 @@ public class Quicksand : TileObject {
     public Quicksand() {
         Initialize(TILE_OBJECT_TYPE.QUICKSAND, false);
     }
+    public Quicksand(SaveDataTileObject data) { }
     protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
         _quicksandMapVisual = obj.GetComponent<QuicksandMapObjectVisual>();

@@ -7,8 +7,7 @@ public class CornCrop : Crops {
         Initialize(TILE_OBJECT_TYPE.CORN_CROP);
         AddAdvertisedAction(INTERACTION_TYPE.TEND);
     }
-    public CornCrop(SaveDataTileObject data) {
-        Initialize(data);
+    public CornCrop(SaveDataTileObject data) : base(data) {
         AddAdvertisedAction(INTERACTION_TYPE.TEND);
     }
 
@@ -27,3 +26,7 @@ public class CornCrop : Crops {
     #endregion
 
 }
+
+#region Save Data
+public class SaveDataCornCrop : SaveDataCrops { }
+#endregion

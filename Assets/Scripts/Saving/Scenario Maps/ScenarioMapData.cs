@@ -8,7 +8,7 @@ namespace Scenario_Maps {
     /// </summary>
     [System.Serializable]
     public class ScenarioMapData {
-        public WorldMapSave worldMapSave;
+        public ScenarioWorldMapSave worldMapSave;
         public SettlementTemplate[] villageSettlementTemplates;
 
         public void SaveVillageSettlements(List<NPCSettlement> villageSettlements) {

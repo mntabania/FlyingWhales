@@ -5,6 +5,6 @@ public class Plinth : TileObject{
         Initialize(TILE_OBJECT_TYPE.PLINTH);
     }
     public Plinth(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

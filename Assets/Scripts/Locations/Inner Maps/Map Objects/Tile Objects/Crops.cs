@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using UnityEngine.Assertions;
 
 public abstract class Crops : TileObject {
     public enum Growth_State { Growing, Ripe }
@@ -6,30 +7,49 @@ public abstract class Crops : TileObject {
     
     private int _remainingRipeningTicks;
     private int _growthRate; //how fast does this crop grow? (aka how many ticks are subtracted from the remaining ripening ticks per tick)
-
+    private bool hasStartedGrowth;
+    
     #region getters
     public int remainingRipeningTicks => _remainingRipeningTicks;
     #endregion
     
-    protected Crops() {
+    protected Crops() { }
+    protected Crops(SaveDataTileObject data) { }
+
+    #region Initialization
+    protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+        base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
         SetGrowthRate(1);
+        SetGrowthState(Growth_State.Growing);
     }
-    
+    #endregion
+
     #region Growth
     public virtual void SetGrowthState(Growth_State growthState) {
         currentGrowthState = growthState;
         if (growthState == Growth_State.Growing) {
-            _remainingRipeningTicks = GetRipeningTicks();
-            Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
+            _remainingRipeningTicks = -1;
+            StartPerTickGrowth();
             RemoveAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
             traitContainer.RemoveTrait(this, "Edible");
         } else if (growthState == Growth_State.Ripe) {
             _remainingRipeningTicks = 0;
-            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+            StopPerTickGrowth();
             AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
             traitContainer.AddTrait(this, "Edible");
         }
-        mapVisual.UpdateTileObjectVisual(this);
+        if (mapVisual != null) {
+            mapVisual.UpdateTileObjectVisual(this);    
+        }
+    }
+    private void StartPerTickGrowth() {
+        if (hasStartedGrowth) { return; }
+        hasStartedGrowth = true;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
+    }
+    private void StopPerTickGrowth() {
+        hasStartedGrowth = false;
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     
     /// <summary>
@@ -38,6 +58,10 @@ public abstract class Crops : TileObject {
     /// <returns></returns>
     public abstract int GetRipeningTicks();
     private void PerTickGrowth() {
+        if (remainingRipeningTicks == -1) {
+            //if value is set to -1 then it means that this crop has just started growing, set its remaining ripening ticks here
+            _remainingRipeningTicks = GetRipeningTicks();
+        }
         if (remainingRipeningTicks <= 0) {
             SetGrowthState(Growth_State.Ripe);
         }
@@ -46,6 +70,9 @@ public abstract class Crops : TileObject {
     }
     public void SetGrowthRate(int growthRate) {
         _growthRate = growthRate;
+    }
+    public void SetRemainingRipeningTicks(int value) {
+        _remainingRipeningTicks = value;
     }
     #endregion
     
@@ -56,11 +83,7 @@ public abstract class Crops : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if (GameManager.Instance.gameHasStarted == false) { //set crop as growing on its initial placement
-            SetGrowthState(Growth_State.Growing);    
-        } else {
-            Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);    
-        }
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
     }
     
     #region Testing
@@ -74,3 +97,27 @@ public abstract class Crops : TileObject {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataCrops : SaveDataTileObject {
+
+    public Crops.Growth_State growthState;
+    public int remainingRipeningTicks;
+    
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Crops crop = tileObject as Crops;
+        Assert.IsNotNull(crop);
+        growthState = crop.currentGrowthState;
+        remainingRipeningTicks = crop.remainingRipeningTicks;
+    }
+    public override TileObject Load() {
+        TileObject tileObject = base.Load();
+        Crops crops = tileObject as Crops;
+        Assert.IsNotNull(crops);
+        crops.SetGrowthState(growthState);
+        crops.SetRemainingRipeningTicks(remainingRipeningTicks);
+        return tileObject;
+    }
+} 
+#endregion

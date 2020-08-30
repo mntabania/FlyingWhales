@@ -17,6 +17,7 @@ public abstract class MonsterEgg : TileObject {
         this.summonType = summonType;
         this.hatchTime = hatchTime;
     }
+    public MonsterEgg(SaveDataTileObject data) { }
     public void SetCharacterThatLay(Character character) {
         characterThatLay = character;
     }

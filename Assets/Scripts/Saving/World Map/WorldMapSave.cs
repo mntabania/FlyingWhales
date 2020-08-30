@@ -7,10 +7,10 @@ public class WorldMapSave {
     public List<SaveDataHextile> hextileSaves;
     public List<SaveDataRegion> regionSaves;
     
-    public void SaveWorld(WorldMapTemplate _worldMapTemplate, List<HexTile> normalHexTiles, Region[] regions, bool saveInnerMaps = true) {
+    public void SaveWorld(WorldMapTemplate _worldMapTemplate, List<HexTile> normalHexTiles, Region[] regions) {
         worldMapTemplate = _worldMapTemplate;
         SaveHexTiles(normalHexTiles);
-        SaveRegions(regions, saveInnerMaps);
+        SaveRegions(regions);
     }
 
     #region Hex Tiles
@@ -53,12 +53,12 @@ public class WorldMapSave {
     #endregion
 
     #region Regions
-    private void SaveRegions(Region[] regions, bool saveInnerMaps) {
+    private void SaveRegions(Region[] regions) {
         regionSaves = new List<SaveDataRegion>();
         for (int i = 0; i < regions.Length; i++) {
             Region region = regions[i];
             SaveDataRegion saveDataRegion = new SaveDataRegion();
-            saveDataRegion.Save(region, saveInnerMaps);
+            saveDataRegion.Save(region);
             regionSaves.Add(saveDataRegion);
         }
     }

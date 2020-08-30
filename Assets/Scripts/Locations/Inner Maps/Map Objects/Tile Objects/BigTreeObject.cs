@@ -15,14 +15,7 @@ public class BigTreeObject : TreeObject {
         SetYield(InnerMapManager.Big_Tree_Yield);
 		traitContainer.AddTrait(this, "Immovable");
 	}
-	public BigTreeObject(SaveDataTileObject data) {
-		//advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
-		Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        traitContainer.AddTrait(this, "Immovable");
-	}
+	public BigTreeObject(SaveDataTileObject data) { }
 
 	public override string ToString() {
 		return $"Big Tree {id.ToString()}";

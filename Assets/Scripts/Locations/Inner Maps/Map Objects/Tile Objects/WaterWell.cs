@@ -9,7 +9,7 @@ public class WaterWell : TileObject {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
     }
     public WaterWell(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();

@@ -3,6 +3,6 @@
         Initialize(TILE_OBJECT_TYPE.CRYPT_CHEST);
     }
     public CryptChest(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

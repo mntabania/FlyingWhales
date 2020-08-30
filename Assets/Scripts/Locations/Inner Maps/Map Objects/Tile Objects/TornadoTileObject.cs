@@ -12,11 +12,11 @@ public class TornadoTileObject : MovingTileObject {
     public override string neutralizer => "Wind Master";
     protected override int affectedRange => 2;
     public TornadoTileObject() {
-        //advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.NEUTRALIZE };
         Initialize(TILE_OBJECT_TYPE.TORNADO, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
+    public TornadoTileObject(SaveDataTileObject data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _tornadoMapObjectVisual = mapVisual as TornadoMapObjectVisual;

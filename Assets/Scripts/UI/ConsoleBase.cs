@@ -368,8 +368,8 @@ public class ConsoleBase : InfoUIBase {
         string faction2ParameterString = parameters[1];
         string newRelStatusString = parameters[2];
 
-        Faction faction1;
-        Faction faction2;
+        Faction faction1 = null;
+        Faction faction2 = null;
 
         int faction1ID = -1;
         int faction2ID = -1;
@@ -384,14 +384,10 @@ public class ConsoleBase : InfoUIBase {
 
         if (isFaction1Numeric) {
             faction1 = FactionManager.Instance.GetFactionBasedOnID(faction1ID);
-        } else {
-            faction1 = FactionManager.Instance.GetFactionBasedOnName(faction1Name);
         }
 
         if (isFaction2Numeric) {
             faction2 = FactionManager.Instance.GetFactionBasedOnID(faction2ID);
-        } else {
-            faction2 = FactionManager.Instance.GetFactionBasedOnName(faction2Name);
         }
 
         try {

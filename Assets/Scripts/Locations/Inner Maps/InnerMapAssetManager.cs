@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -72,7 +73,8 @@ namespace Inner_Maps {
         [Header("Tile Objects")]
         public TileObjectAssetDictionary tileObjectTiles;
         public TileObjectAssetDictionary corruptedTileObjectAssets;
-
+        public StringSpriteDictionary allTileObjectSprites;
+        
         [Header("Materials")] 
         public Material burntMaterial;
         public Material defaultObjectMaterial;
@@ -173,5 +175,27 @@ namespace Inner_Maps {
             burntMaterial = null;
             defaultObjectMaterial = null;
         }
+
+        #region Tile Objects
+#if UNITY_EDITOR
+        [ContextMenu("Load Tile Object Assets")]
+        public void LoadAllTileObjectAssets() {
+            allTileObjectSprites = new StringSpriteDictionary();
+            string assetPath = "Assets/Textures/Interior Map/Objects/";
+            string[] allFiles = Directory.GetFiles(assetPath, "*.png", SearchOption.AllDirectories);
+
+            foreach (var file in allFiles) {
+                FileInfo fileInfo = new FileInfo(file);
+                string fullFilePath = fileInfo.FullName;
+                fullFilePath = fullFilePath.Replace(@"D:\Repositories\FlyingWhales\", "");
+                Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
+                if (loadedSprite != null) {
+                    allTileObjectSprites.Add(loadedSprite.name, loadedSprite);
+                }
+                Debug.Log("Loaded all tile object assets");
+            }
+        }
+#endif
+        #endregion
     }
 }

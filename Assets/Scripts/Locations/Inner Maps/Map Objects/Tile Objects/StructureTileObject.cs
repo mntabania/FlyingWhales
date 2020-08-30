@@ -13,11 +13,7 @@ public class StructureTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
         traitContainer.RemoveTrait(this, "Flammable");
     }
-    public StructureTileObject(SaveDataTileObject data) {
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
-        traitContainer.RemoveTrait(this, "Flammable");
-    }
+    public StructureTileObject(SaveDataTileObject data) { }
 
     #region Overrides
     public override string ToString() {
