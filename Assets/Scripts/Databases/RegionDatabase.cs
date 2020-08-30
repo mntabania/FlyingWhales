@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class RegionDatabase {
     public Dictionary<string, Region> regionByGUID { get; }
@@ -18,5 +19,11 @@ public class RegionDatabase {
     }
     private void RegisterRegion(Region region) {
         regionByGUID.Add(region.persistentID, region);
+    }
+    public Region GetRegionByPersistentID(string id) {
+        if (regionByGUID.ContainsKey(id)) {
+            return regionByGUID[id];    
+        }
+        throw new Exception($"There is no region with persistent id {id}");
     }
 }

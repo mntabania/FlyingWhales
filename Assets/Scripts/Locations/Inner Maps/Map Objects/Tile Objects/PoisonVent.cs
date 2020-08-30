@@ -53,10 +53,10 @@ public class PoisonVent : TileObject {
 
     #region Production
     private void ProducePoisonCloud() {
-        PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
-        poisonCloudTileObject.SetGridTileLocation(gridTileLocation);
-        poisonCloudTileObject.OnPlacePOI();
-        poisonCloudTileObject.SetStacks(Random.Range(2, 9));
+        PoisonCloud poisonCloud = new PoisonCloud();
+        poisonCloud.SetGridTileLocation(gridTileLocation);
+        poisonCloud.OnPlacePOI();
+        poisonCloud.SetStacks(Random.Range(2, 9));
     }
     #endregion
 }

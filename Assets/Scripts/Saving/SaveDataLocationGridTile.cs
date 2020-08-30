@@ -5,6 +5,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public string persistentID;
@@ -15,7 +16,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public Vector3Save centeredLocalLocation;
     public LocationGridTile.Tile_Type tileType;
     public LocationGridTile.Tile_State tileState;
-    public SaveDataTileObject genericTileObjectSave; //TODO:
+    public SaveDataTileObject genericTileObjectSave;
 
     //tilemap assets
     public string groundTileMapAssetName;
@@ -32,6 +33,9 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         tileType = gridTile.tileType;
         tileState = gridTile.tileState;
 
+
+        genericTileObjectSave = WorldMapSave.CreateNewSaveDataForTileObject("GenericTileObject");
+        genericTileObjectSave.Save(gridTile.genericTileObject);
         // traits = new List<SaveDataTrait>();
         // for (int i = 0; i < gridTile.normalTraits.Count; i++) {
         //     SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(gridTile.normalTraits[i]);
@@ -50,8 +54,13 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
 
     public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap) {
         LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
-        tile.CreateGenericTileObject();
-        tile.genericTileObject.ManualInitialize(tile);
+        tile.SetFloorSample(floorSample);
+        TileObject loadedObject = genericTileObjectSave.Load();
+        GenericTileObject genericTileObject = loadedObject as GenericTileObject;
+        Assert.IsNotNull(genericTileObject);
+        genericTileObject.SetTileOwner(tile);
+        genericTileObject.ManualInitialize(tile);
+        tile.LoadGenericTileObject(genericTileObject);
         return tile;
     }
 

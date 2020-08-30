@@ -4,26 +4,29 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public sealed class PoisonCloudTileObject : MovingTileObject {
+public sealed class PoisonCloud : MovingTileObject {
 
     private PoisonCloudMapObjectVisual _poisonCloudVisual;
-    public int durationInTicks { get; private set; }
+    public GameDate expiryDate { get; private set; }
     public int size { get; private set; }
     public int stacks { get; private set; }
-    public int maxSize { get; private set; }
+    public int maxSize => 6;
     public bool doExpireEffect { get; private set; }
     public override string neutralizer => "Poison Expert";
     protected override int affectedRange => size;
     
-    public PoisonCloudTileObject() {
+    public PoisonCloud() {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(2));
+        SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)));
         SetDoExpireEffect(true);
-        maxSize = 6;
     }
-    public PoisonCloudTileObject(SaveDataTileObject data) { }
+    public PoisonCloud(SaveDataTileObject data) {
+        SaveDataPoisonCloud saveDataPoisonCloud = data as SaveDataPoisonCloud;
+        Assert.IsNotNull(saveDataPoisonCloud);
+        expiryDate = saveDataPoisonCloud.expiryDate;
+    }
 
     public void SetStacks(int stacks) {
         this.stacks = stacks;
@@ -74,15 +77,17 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     #endregion
 
     #region Duration
-    public void SetDurationInTicks(int duration) {
-        durationInTicks = duration;
+    public void SetExpiryDate(GameDate expiryDate) {
+        this.expiryDate = expiryDate;
     }
     #endregion
 
     #region Size
     private void SetSize(int size) {
         this.size = size;
-        _poisonCloudVisual.SetSize(size);
+        if (_poisonCloudVisual != null) {
+            _poisonCloudVisual.SetSize(size);    
+        }
     }
     private void UpdateSizeBasedOnPoisonedStacks() {
         if (UtilityScripts.Utilities.IsInRange(stacks, 1, 3)) {
@@ -126,3 +131,23 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
     }
     #endregion
 }
+#region Save Data
+public class SaveDataPoisonCloud : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public int stacks;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        PoisonCloud poisonCloud = tileObject as PoisonCloud;
+        Assert.IsNotNull(poisonCloud);
+        expiryDate = poisonCloud.expiryDate;
+        stacks = poisonCloud.stacks;
+    }
+    public override TileObject Load() {
+        TileObject tileObject = base.Load();
+        PoisonCloud poisonCloud = tileObject as PoisonCloud;
+        Assert.IsNotNull(poisonCloud);
+        poisonCloud.SetStacks(stacks);
+        return tileObject;
+    }
+}
+#endregion

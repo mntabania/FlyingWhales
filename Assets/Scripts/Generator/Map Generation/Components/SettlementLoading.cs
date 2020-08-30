@@ -6,8 +6,8 @@ namespace Generator.Map_Generation.Components {
         public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
             LevelLoaderManager.Instance.UpdateLoadingInfo("Loading settlements...");
             AddLog($"Loading settlements");
-            for (int i = 0; i < saveData.settlementSaves.Count; i++) {
-                SaveDataBaseSettlement saveDataBaseSettlement = saveData.settlementSaves[i];
+            for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
+                SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
                 BaseSettlement settlement = saveDataBaseSettlement.Load();
                 AddLog($" - Loaded settlement {settlement.name} with {settlement.tiles.Count} tiles.");
                 yield return null;

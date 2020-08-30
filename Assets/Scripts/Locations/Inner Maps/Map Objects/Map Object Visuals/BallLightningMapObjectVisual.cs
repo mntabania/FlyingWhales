@@ -13,13 +13,9 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
-    private BallLightningTileObject owner;
+    private BallLightning owner;
     
     #region Abstract Members Implementation
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        return true;
-    }
     public override void UpdateTileObjectVisual(TileObject obj) { }
     #endregion
 
@@ -39,13 +35,12 @@ public class BallLightningMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _objsInRange = new List<ITraitable>();
-        owner = obj as BallLightningTileObject;
+        owner = obj as BallLightning;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
         MoveToRandomDirection();
-        //OnGamePaused(GameManager.Instance.isPaused);
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(owner.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);

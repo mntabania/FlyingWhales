@@ -70,6 +70,12 @@ public class Artifact : TileObject {
 #region Save Data
 public class SaveDataArtifact : SaveDataTileObject {
     public ARTIFACT_TYPE artifactType;
+    public override TileObject Load() {
+        TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);
+        tileObject.Initialize(this);
+        return tileObject;
+    }
+    
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Artifact artifact = tileObject as Artifact;

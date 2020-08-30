@@ -18,7 +18,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private float _speed;
     private int _radius;
     private List<IDamageable> _damagablesInTornado;
-    private TornadoTileObject _tornado;
+    private Tornado _tornado;
     private string _expiryKey;
 
     #region getters/setters
@@ -33,7 +33,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         name = tileObject.ToString();
         transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         selectable = tileObject;
-        _tornado = tileObject as TornadoTileObject;
+        _tornado = tileObject as Tornado;
         _radius = _tornado.radius;
         //PlayTornadoParticle();
         if(_damagablesInTornado == null) {
@@ -85,18 +85,13 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
 
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        // Vector3 worldPos = tile.centeredWorldLocation;
-        // var thisTransform = transform;
-        // thisTransform.SetParent(tile.parentMap.objectsParent);
-        // thisTransform.position = worldPos;
-
+        
         GoToRandomTileInRadius();
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(_tornado.durationInTicks), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(_tornado.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        // Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         isSpawned = true;
 
         if (GameManager.Instance.isPaused) {

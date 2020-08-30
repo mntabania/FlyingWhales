@@ -10,9 +10,6 @@ public class GoddessStatue : TileObject {
         traitContainer.RemoveTrait(this, "Flammable");
     }
     public GoddessStatue(SaveDataTileObject data) {
-        
-        AddAdvertisedAction(INTERACTION_TYPE.PRAY_TILE_OBJECT);
-        traitContainer.RemoveTrait(this, "Flammable");
     }
 
     public override void SetPOIState(POI_STATE state) {

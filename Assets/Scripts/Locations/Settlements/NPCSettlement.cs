@@ -39,6 +39,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private string _plaguedExpiryKey;
 
     #region getters
+    public override Type serializedData => typeof(SaveDataNPCSettlement);
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public bool isBeingHarassed => _isBeingHarassedCount > 0;

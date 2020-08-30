@@ -4,17 +4,23 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class FireBallTileObject : MovingTileObject {
+public class FireBall : MovingTileObject {
 
     private FireBallMapObjectVisual _fireBallMapVisual;
     public override string neutralizer => "Fire Master";
+    public GameDate expiryDate { get; }
     
-    public FireBallTileObject() {
+    public FireBall() {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public FireBallTileObject(SaveDataTileObject data) { }
+    public FireBall(SaveDataTileObject data) {
+        SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
+        Assert.IsNotNull(saveDataFireBall);
+        expiryDate = saveDataFireBall.expiryDate;
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _fireBallMapVisual = mapVisual as FireBallMapObjectVisual;
@@ -43,8 +49,7 @@ public class FireBallTileObject : MovingTileObject {
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (amount < 0) { //&& source != null
-            //CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+        if (amount < 0) { 
             Character responsibleCharacter = null;
             if (source is Character character) {
                 responsibleCharacter = character;
@@ -57,20 +62,15 @@ public class FireBallTileObject : MovingTileObject {
         if (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Water) {
             //2 Vapors
             for (int i = 0; i < 2; i++) {
-                VaporTileObject vaporTileObject = new VaporTileObject();
-                vaporTileObject.SetStacks(2);
-                vaporTileObject.SetGridTileLocation(tileLocation);
-                vaporTileObject.OnPlacePOI();
+                Vapor vapor = new Vapor();
+                vapor.SetStacks(2);
+                vapor.SetGridTileLocation(tileLocation);
+                vapor.OnPlacePOI();
             }
         } else if (currentHP == 0 || (amount < 0 && elementalDamageType == ELEMENTAL_TYPE.Ice)) {
             //object has been destroyed
             _fireBallMapVisual.Expire();
         }
-        //if (amount < 0) {
-        //    Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);
-        //} else if (currentHP == maxHP) {
-        //    Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
-        //}
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
     }
 
@@ -87,3 +87,14 @@ public class FireBallTileObject : MovingTileObject {
     }
     #endregion
 }
+#region Save Data
+public class SaveDataFireBall : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        FireBall fireBall = tileObject as FireBall;
+        Assert.IsNotNull(fireBall);
+        expiryDate = fireBall.expiryDate;
+    }
+}
+#endregion

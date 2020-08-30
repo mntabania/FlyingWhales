@@ -186,8 +186,8 @@ public class PlayerManager : BaseMonoBehaviour {
                 return new ZombieVirus();
             case SPELL_TYPE.PSYCHOPATHY:
                 return new Psychopathy();
-            case SPELL_TYPE.TORNADO:
-                return new Tornado();
+            // case SPELL_TYPE.TORNADO:
+            //     return new Tornado();
         }
         return null;
     }

@@ -3,17 +3,23 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class LocustSwarmTileObject : MovingTileObject {
+public class LocustSwarm : MovingTileObject {
 
     private LocustSwarmMapObjectVisual _locustSwarmMapObjectVisual;
     public override string neutralizer => "Beastmaster";
+    public GameDate expiryDate { get; }
     
-    public LocustSwarmTileObject() {
+    public LocustSwarm() {
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
     }
-    public LocustSwarmTileObject(SaveDataTileObject data) { }
+    public LocustSwarm(SaveDataTileObject data) {
+        SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
+        Assert.IsNotNull(saveDataLocustSwarm);
+        expiryDate = saveDataLocustSwarm.expiryDate;
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _locustSwarmMapObjectVisual = mapVisual as LocustSwarmMapObjectVisual;
@@ -61,3 +67,15 @@ public class LocustSwarmTileObject : MovingTileObject {
         _locustSwarmMapObjectVisual.Expire();
     }
 }
+
+#region Save Data
+public class SaveDataLocustSwarm : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        LocustSwarm locustSwarm = tileObject as LocustSwarm;
+        Assert.IsNotNull(locustSwarm);
+        expiryDate = locustSwarm.expiryDate;
+    }
+}
+#endregion

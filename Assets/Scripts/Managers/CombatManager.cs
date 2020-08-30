@@ -78,7 +78,7 @@ public class CombatManager : BaseMonoBehaviour {
                 damage = 0;
             } else {
                 if (IsImmuneToElement(target, elementalType)) {
-                    if (target is VaporTileObject) {
+                    if (target is Vapor) {
                         damage = 0;
                     } else {
                         //Immunity - less 85% damage
@@ -105,7 +105,7 @@ public class CombatManager : BaseMonoBehaviour {
         }
     }
     public bool IsImmuneToElement(ITraitable target, ELEMENTAL_TYPE elementalType) {
-        if(target is VaporTileObject && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
+        if(target is Vapor && elementalType != ELEMENTAL_TYPE.Ice && elementalType != ELEMENTAL_TYPE.Poison && elementalType != ELEMENTAL_TYPE.Fire) {
             //Vapors are immune to all other damage types except Ice
             return true;
         }
@@ -384,19 +384,19 @@ public class CombatManager : BaseMonoBehaviour {
         if (target.traitContainer.HasTrait("Poisoned")) {
             int stacks = target.traitContainer.stacks["Poisoned"];
             target.traitContainer.RemoveStatusAndStacks(target, "Poisoned");
-            PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
-            poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(UnityEngine.Random.Range(2, 6)));
-            poisonCloudTileObject.SetGridTileLocation(target.gridTileLocation);
-            poisonCloudTileObject.OnPlacePOI();
-            poisonCloudTileObject.SetStacks(stacks);
+            PoisonCloud poisonCloud = new PoisonCloud();
+            poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(UnityEngine.Random.Range(2, 6))));
+            poisonCloud.SetGridTileLocation(target.gridTileLocation);
+            poisonCloud.OnPlacePOI();
+            poisonCloud.SetStacks(stacks);
         }
         if (target.traitContainer.HasTrait("Wet")) {
             int stacks = target.traitContainer.stacks["Wet"];
             target.traitContainer.RemoveStatusAndStacks(target, "Wet");
-            VaporTileObject vaporTileObject = new VaporTileObject();
-            vaporTileObject.SetGridTileLocation(target.gridTileLocation);
-            vaporTileObject.OnPlacePOI();
-            vaporTileObject.SetStacks(stacks);
+            Vapor vapor = new Vapor();
+            vapor.SetGridTileLocation(target.gridTileLocation);
+            vapor.OnPlacePOI();
+            vapor.SetStacks(stacks);
             if (responsibleCharacter == null) {
                 Messenger.Broadcast(Signals.VAPOR_FROM_WIND_TRIGGERED_BY_PLAYER);    
             }
@@ -408,7 +408,7 @@ public class CombatManager : BaseMonoBehaviour {
     private void FireElementProcess(ITraitable target) {
         if (target is WinterRose winterRose) {
             winterRose.WinterRoseEffect();
-        } else if (target is PoisonCloudTileObject poisonCloudTileObject) {
+        } else if (target is PoisonCloud poisonCloudTileObject) {
             poisonCloudTileObject.Explode();
         } else if (target is DesertRose desertRose) {
             desertRose.DesertRoseOtherDamageEffect();

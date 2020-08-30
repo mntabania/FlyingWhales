@@ -4,19 +4,25 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class TornadoTileObject : MovingTileObject {
+public class Tornado : MovingTileObject {
 
     public int radius { get; private set; }
-    public int durationInTicks { get; private set; }
+    public GameDate expiryDate { get; private set; }
     private TornadoMapObjectVisual _tornadoMapObjectVisual;
     public override string neutralizer => "Wind Master";
     protected override int affectedRange => 2;
-    public TornadoTileObject() {
+    public Tornado() {
         Initialize(TILE_OBJECT_TYPE.TORNADO, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
+        SetRadius(2);
     }
-    public TornadoTileObject(SaveDataTileObject data) { }
+    public Tornado(SaveDataTileObject data) {
+        SaveDataTornado saveDataTornado = data as SaveDataTornado;
+        Assert.IsNotNull(saveDataTornado);
+        expiryDate = saveDataTornado.expiryDate;
+        SetRadius(saveDataTornado.radius);
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _tornadoMapObjectVisual = mapVisual as TornadoMapObjectVisual;
@@ -28,8 +34,8 @@ public class TornadoTileObject : MovingTileObject {
     public void SetRadius(int radius) {
         this.radius = radius;
     }
-    public void SetDuration(int duration) {
-        this.durationInTicks = duration;
+    public void SetExpiryDate(GameDate expiry) {
+        expiryDate = expiry;
     }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
@@ -57,3 +63,16 @@ public class TornadoTileObject : MovingTileObject {
     }
     #endregion
 }
+#region Save Data
+public class SaveDataTornado : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public int radius;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Tornado tornado = tileObject as Tornado;
+        Assert.IsNotNull(tornado);
+        expiryDate = tornado.expiryDate;
+        radius = tornado.radius;
+    }
+}
+#endregion

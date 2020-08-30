@@ -109,7 +109,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         isPreplaced = data.isPreplaced;
         SetPOIState(data.poiState);
         CreateTraitContainer();
-        traitContainer.AddTrait(this, "Flammable");
+        // traitContainer.AddTrait(this, "Flammable");
         LoadResources(data);
         for (int i = 0; i < data.advertisedActions.Length; i++) {
             INTERACTION_TYPE interactionType = data.advertisedActions[i];

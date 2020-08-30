@@ -837,7 +837,7 @@
       ],
       "structureSettings": [
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "CITY_CENTER"
         },
         {
@@ -857,11 +857,11 @@
           "structureType": "CEMETERY"
         },
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "FARM"
         },
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "FARM"
         },
         {

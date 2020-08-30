@@ -193,6 +193,21 @@ public class FactionManager : BaseMonoBehaviour {
         //throw new System.Exception("There is no emblem bg with id " + emblemID);
     }
     public Sprite GetFactionEmblem(string name) {
+        if (wildMonsterFactionEmblem.name == name) {
+            return wildMonsterFactionEmblem;
+        }
+        if (vagrantFactionEmblem.name == name) {
+            return vagrantFactionEmblem;
+        }
+        if (disguisedFactionEmblem.name == name) {
+            return disguisedFactionEmblem;
+        }
+        if (undeadFactionEmblem.name == name) {
+            return undeadFactionEmblem;
+        }
+        if (playerFactionEmblem.name == name) {
+            return playerFactionEmblem;
+        }
         for (int i = 0; i < _factionEmblems.Count; i++) {
             Sprite emblem = _factionEmblems[i];
             if (emblem.name == name) {

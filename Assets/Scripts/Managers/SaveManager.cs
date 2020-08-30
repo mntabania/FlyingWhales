@@ -85,12 +85,13 @@ public class SaveManager : MonoBehaviour {
         WorldMapSave worldMapSave = new WorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            GridMap.Instance.normalHexTiles,
-            GridMap.Instance.allRegions
+            DatabaseManager.Instance.hexTileDatabase,
+            DatabaseManager.Instance.regionDatabase,
+            DatabaseManager.Instance.settlementDatabase,
+            DatabaseManager.Instance.structureDatabase,
+            DatabaseManager.Instance.tileObjectDatabase
         );
         completeSave.worldMapSave = worldMapSave;
-        
-        completeSave.SaveSettlements(LandmarkManager.Instance.allSettlements);
 
         if (string.IsNullOrEmpty(fileName)) {
             fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;

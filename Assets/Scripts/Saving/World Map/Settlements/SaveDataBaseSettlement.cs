@@ -8,14 +8,14 @@ using UnityEngine.Serialization;
 
 [System.Serializable]
 public abstract class SaveDataBaseSettlement : SaveData<BaseSettlement> {
+    public string persistentID;
     public int id;
     public LOCATION_TYPE locationType;
     public string name;
     public List<Point> tileCoordinates;
 
-    public List<SaveDataLocationStructure> structures;
-    
     public virtual void Save(BaseSettlement baseSettlement) {
+        persistentID = baseSettlement.persistentID;
         id = baseSettlement.id;
         locationType = baseSettlement.locationType;
         name = baseSettlement.name;
@@ -25,14 +25,5 @@ public abstract class SaveDataBaseSettlement : SaveData<BaseSettlement> {
             HexTile tile = baseSettlement.tiles[i];
             tileCoordinates.Add(new Point(tile.xCoordinate, tile.yCoordinate));
         }
-
-        // structures = new List<SaveDataLocationStructure>();
-        // foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in baseSettlement.structures) {
-        //     for (int i = 0; i < kvp.Value.Count; i++) {
-        //         SaveDataLocationStructure data = new SaveDataLocationStructure();
-        //         data.Save(kvp.Value[i]);
-        //         structures.Add(data);
-        //     }
-        // }
     }
 }

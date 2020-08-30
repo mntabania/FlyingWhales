@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Inner_Maps;
 
 public class LocationGridTileDatabase {
@@ -14,6 +15,12 @@ public class LocationGridTileDatabase {
     public void RegisterTile(LocationGridTile tile) {
         tileByGUID.Add(tile.persistentID, tile);
         LocationGridTiles.Add(tile);
+    }
+    public LocationGridTile GetTileByPersistentID(string id) {
+        if (tileByGUID.ContainsKey(id)) {
+            return tileByGUID[id];
+        }
+        throw new Exception($"There is no Location Grid Tile with id {id}");
     }
     
 }

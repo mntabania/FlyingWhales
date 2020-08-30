@@ -18,24 +18,24 @@ public class HexTileSpellsComponent {
     public bool hasEarthquake { get; private set; }
     public List<IPointOfInterest> earthquakeTileObjects { get; private set; }
     public List<IPointOfInterest> pendingEarthquakeTileObjects { get; private set; }
-    private int _currentEarthquakeDuration;
+    public int currentEarthquakeDuration { get; private set; }
     private LocationGridTile _centerEarthquakeTile;
     private bool _hasEarthquakeStarted;
     #endregion
     
     #region Brimstones Variables
     public bool hasBrimstones { get; private set; }
-    private int _currentBrimstonesDuration;
+    public int currentBrimstonesDuration  { get; private set; }
     #endregion
 
     #region Electric Storm Variables
     public bool hasElectricStorm { get; private set; }
-    private int _currentElectricStormDuration;
+    public int currentElectricStormDuration { get; private set; }
     #endregion
     
     #region Iceteroid Variables
     public bool hasIceteroids { get; private set; }
-    private int _currentIceteroidsDuration;
+    public int currentIceteroidsDuration  { get; private set; }
     #endregion
 
     public HexTileSpellsComponent(HexTile owner) {
@@ -44,6 +44,27 @@ public class HexTileSpellsComponent {
         pendingEarthquakeTileObjects = new List<IPointOfInterest>();
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
+
+    #region Loading
+    public void Load(SaveDataHexTileSpellsComponent saveData) {
+        if (saveData.hasEarthquake) {
+            StartEarthquake();
+            currentEarthquakeDuration = saveData.remainingEarthquakeDuration;
+        }
+        if (saveData.hasBrimstones) {
+            StartBrimstones();
+            currentBrimstonesDuration = saveData.remainingBrimstoneDuration;
+        }
+        if (saveData.hasElectricStorm) {
+            StartElectricStorm();
+            currentElectricStormDuration = saveData.remainingElectricStormDuration;
+        }
+        if (saveData.hasIceteroids) {
+            StartIceteroids();
+            currentIceteroidsDuration = saveData.remainingIceteroidsDuration;
+        }
+    }
+    #endregion
     
     #region Listeners
     private void OnGamePaused(bool state) {
@@ -104,7 +125,7 @@ public class HexTileSpellsComponent {
         }
     }
     private void StartEarthquake() {
-        _currentEarthquakeDuration = 0;
+        currentEarthquakeDuration = 0;
         _centerEarthquakeTile = owner.GetCenterLocationGridTile();
         earthquakeTileObjects.Clear();
         for (int i = 0; i < owner.locationGridTiles.Count; i++) {
@@ -243,7 +264,7 @@ public class HexTileSpellsComponent {
             StopCameraShake();
         }
         
-        _currentEarthquakeDuration++;
+        currentEarthquakeDuration++;
         for (int i = 0; i < earthquakeTileObjects.Count; i++) {
             IPointOfInterest poi = earthquakeTileObjects[i];
             if (poi.gridTileLocation == null) {
@@ -273,7 +294,7 @@ public class HexTileSpellsComponent {
             }
             pendingEarthquakeTileObjects.Clear();
         }
-        if (_currentEarthquakeDuration >= 3) {
+        if (currentEarthquakeDuration >= 3) {
             SetHasEarthquake(false);
         }
     }
@@ -291,7 +312,7 @@ public class HexTileSpellsComponent {
         }
     }
     private void StartBrimstones() {
-        _currentBrimstonesDuration = 0;
+        currentBrimstonesDuration = 0;
         owner.StartCoroutine(CommenceFallingBrimstones());
         Messenger.AddListener(Signals.TICK_STARTED, PerTickBrimstones);
     }
@@ -348,13 +369,13 @@ public class HexTileSpellsComponent {
     //    }
     //}
     private void PerTickBrimstones() {
-        _currentBrimstonesDuration++;
-        if (_currentBrimstonesDuration >= 12) {
+        currentBrimstonesDuration++;
+        if (currentBrimstonesDuration >= 12) {
             SetHasBrimstones(false);
         }
     }
     public void ResetBrimstoneDuration() {
-        _currentBrimstonesDuration = 0;
+        currentBrimstonesDuration = 0;
     }
     #endregion
 
@@ -370,7 +391,7 @@ public class HexTileSpellsComponent {
         }
     }
     private void StartElectricStorm() {
-        _currentElectricStormDuration = 0;
+        currentElectricStormDuration = 0;
         owner.StartCoroutine(CommenceElectricStorm());
         Messenger.AddListener(Signals.TICK_STARTED, PerTickElectricStorm);
     }
@@ -400,13 +421,13 @@ public class HexTileSpellsComponent {
         }
     }
     private void PerTickElectricStorm() {
-        _currentElectricStormDuration++;
-        if (_currentElectricStormDuration >= 12) {
+        currentElectricStormDuration++;
+        if (currentElectricStormDuration >= 12) {
             SetHasElectricStorm(false);
         }
     }
     public void ResetElectricStormDuration() {
-        _currentElectricStormDuration = 0;
+        currentElectricStormDuration = 0;
     }
     #endregion
     
@@ -422,7 +443,7 @@ public class HexTileSpellsComponent {
         }
     }
     private void StartIceteroids() {
-        _currentIceteroidsDuration = 0;
+        currentIceteroidsDuration = 0;
         owner.StartCoroutine(CommenceFallingIceteroids());
         Messenger.AddListener(Signals.TICK_STARTED, PerTickIceteroids);
     }
@@ -445,13 +466,45 @@ public class HexTileSpellsComponent {
         }
     }
     private void PerTickIceteroids() {
-        _currentIceteroidsDuration++;
-        if (_currentIceteroidsDuration >= GameManager.ticksPerHour) {
+        currentIceteroidsDuration++;
+        if (currentIceteroidsDuration >= GameManager.ticksPerHour) {
             SetHasIceteroids(false);
         }
     }
     public void ResetIceteroidDuration() {
-        _currentIceteroidsDuration = 0;
+        currentIceteroidsDuration = 0;
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataHexTileSpellsComponent : SaveData<HexTileSpellsComponent> {
+    //earthquake
+    public bool hasEarthquake;
+    public int remainingEarthquakeDuration;
+    //brimstones
+    public bool hasBrimstones;
+    public int remainingBrimstoneDuration;
+    //electric storm
+    public bool hasElectricStorm;
+    public int remainingElectricStormDuration;
+    //iceteroids
+    public bool hasIceteroids;
+    public int remainingIceteroidsDuration;
+    
+    public override void Save(HexTileSpellsComponent data) {
+        base.Save(data);
+        hasEarthquake = data.hasEarthquake;
+        remainingEarthquakeDuration = data.currentEarthquakeDuration;
+        
+        hasBrimstones = data.hasBrimstones;
+        remainingBrimstoneDuration = data.currentBrimstonesDuration;
+            
+        hasElectricStorm = data.hasElectricStorm;
+        remainingElectricStormDuration = data.currentElectricStormDuration;
+        
+        hasIceteroids = data.hasIceteroids;
+        remainingIceteroidsDuration = data.currentIceteroidsDuration;
+    }
+}
+#endregion

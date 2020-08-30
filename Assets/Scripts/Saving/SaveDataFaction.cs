@@ -6,6 +6,7 @@ using Factions;
 
 [System.Serializable]
 public class SaveDataFaction : SaveData<Faction> {
+    public string persistentID;
     public int id;
     public string name;
     public string description;
@@ -28,6 +29,7 @@ public class SaveDataFaction : SaveData<Faction> {
 
     #region Overrides
     public override void Save(Faction faction) {
+        persistentID = faction.persistentID;
         id = faction.id;
         name = faction.name;
         description = faction.description;

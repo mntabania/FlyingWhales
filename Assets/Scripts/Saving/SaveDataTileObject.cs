@@ -12,7 +12,7 @@ public class SaveDataTileObject : SaveData<TileObject> {
     public TILE_OBJECT_TYPE tileObjectType;
     public int characterOwnerID;
     public int regionLocationID;
-    public Point tileLocation;
+    public string tileLocationID;
     public bool isPreplaced;
     public int[] resourceValues; //food, wood, stone, metal
     public POI_STATE poiState;
@@ -31,8 +31,14 @@ public class SaveDataTileObject : SaveData<TileObject> {
         name = tileObject.name;
         tileObjectType = tileObject.tileObjectType;
         characterOwnerID = tileObject.characterOwner?.id ?? -1;
-        regionLocationID = tileObject.gridTileLocation.parentMap.region.id;
-        tileLocation = new Point(tileObject.gridTileLocation.localPlace.x, tileObject.gridTileLocation.localPlace.y);
+        if (tileObject.gridTileLocation != null) {
+            regionLocationID = tileObject.gridTileLocation.parentMap.region.id;
+            tileLocationID = tileObject.gridTileLocation.persistentID;    
+        } else {
+            regionLocationID = -1;
+            tileLocationID = string.Empty;
+        }
+        
         isPreplaced = tileObject.isPreplaced;
         poiState = tileObject.state;
         
@@ -46,11 +52,12 @@ public class SaveDataTileObject : SaveData<TileObject> {
 
         if (tileObject.mapObjectVisual == null || tileObject.mapObjectVisual.usedSprite == null) {
             spriteName = string.Empty;
-            Debug.Log($"Tile Object {tileObject} has no map object or visual.");
+            rotation = Quaternion.identity;
+            // Debug.Log($"Tile Object {tileObject} has no map object or visual.");
         } else {
             spriteName = tileObject.mapObjectVisual.usedSprite.name;
+            rotation = tileObject.mapObjectVisual.rotation;
         }
-        rotation = tileObject.mapObjectVisual.rotation;
 
         resourceValues = new int[tileObject.storedResources.Count];
         int index = 0;

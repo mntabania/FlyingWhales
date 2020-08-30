@@ -33,8 +33,6 @@ public class SaveDataCurrentProgress {
 
     //Player
     public SaveDataPlayerGame playerSave;
-
-    public List<SaveDataBaseSettlement> settlementSaves;
     public List<SaveDataFaction> factionSaves;
 
     #region Saving
@@ -99,25 +97,7 @@ public class SaveDataCurrentProgress {
         }
     }
     #endregion
-
-    #region Settlements
-    public void SaveSettlements(List<BaseSettlement> allSettlements) {
-        settlementSaves = new List<SaveDataBaseSettlement>();
-        for (int i = 0; i < allSettlements.Count; i++) {
-            BaseSettlement settlement = allSettlements[i];
-            SaveDataBaseSettlement saveDataBaseSettlement = CreateNewSettlementSaveData(settlement);
-            saveDataBaseSettlement.Save(settlement);
-            settlementSaves.Add(saveDataBaseSettlement);
-        }
-    }
-    private SaveDataBaseSettlement CreateNewSettlementSaveData(BaseSettlement settlement) {
-        if (settlement is PlayerSettlement) {
-            return new SaveDataPlayerSettlement();
-        } else {
-            return new SaveDataNPCSettlement();    
-        }
-    }
-    #endregion
+    
     //public void SaveHextiles(List<HexTile> tiles) {
     //    hextileSaves = new List<SaveDataHextile>();
     //    for (int i = 0; i < tiles.Count; i++) {

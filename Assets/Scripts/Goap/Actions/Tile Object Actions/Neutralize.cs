@@ -42,7 +42,7 @@
     #region State Effects
     public void AfterNeutralizeSuccess(ActualGoapNode goapNode) {
         TileObject dangerousTileObject = goapNode.poiTarget as TileObject;
-        if (dangerousTileObject is PoisonCloudTileObject poisonCloud) {
+        if (dangerousTileObject is PoisonCloud poisonCloud) {
             poisonCloud.SetDoExpireEffect(false);
         }
         dangerousTileObject.Neutralize();

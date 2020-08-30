@@ -38,10 +38,10 @@ namespace Locations.Tile_Features {
         private void EmitPoisonCloudsPerTick() {
             if (UnityEngine.Random.Range(0, 100) < 60 && owner != null) {
                 LocationGridTile chosenTile = UtilityScripts.CollectionUtilities.GetRandomElement(owner.locationGridTiles);
-                PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
-                poisonCloudTileObject.SetGridTileLocation(chosenTile);
-                poisonCloudTileObject.OnPlacePOI();
-                poisonCloudTileObject.SetStacks(3);
+                PoisonCloud poisonCloud = new PoisonCloud();
+                poisonCloud.SetGridTileLocation(chosenTile);
+                poisonCloud.OnPlacePOI();
+                poisonCloud.SetStacks(3);
             }
         }
         

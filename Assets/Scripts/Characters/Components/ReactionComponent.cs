@@ -992,7 +992,7 @@ public class ReactionComponent {
     private void ReactTo(Character actor, TileObject targetTileObject, ref string debugLog) {
         //TODO: USE DISGUISED ACTOR AND TARGET FOR CHECKING
         if(actor is Troll) {
-            if(targetTileObject is BallLightningTileObject || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
+            if(targetTileObject is BallLightning || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
                 actor.combatComponent.Flight(targetTileObject, "saw something frightening");
             } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is MetalPile || targetTileObject is Gold || targetTileObject is Diamond) {
                 if (targetTileObject.gridTileLocation.structure != actor.homeStructure && !actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
@@ -1084,7 +1084,7 @@ public class ReactionComponent {
             }
         }
         if (targetTileObject.traitContainer.HasTrait("Dangerous") && targetTileObject.gridTileLocation != null) {
-            if (targetTileObject is TornadoTileObject || actor.currentStructure == targetTileObject.gridTileLocation.structure || (!actor.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
+            if (targetTileObject is Tornado || actor.currentStructure == targetTileObject.gridTileLocation.structure || (!actor.currentStructure.isInterior && !targetTileObject.gridTileLocation.structure.isInterior)) {
                 if (actor.traitContainer.HasTrait("Berserked")) {
                     actor.combatComponent.FightOrFlight(targetTileObject, CombatManager.Berserked);
                 } else if (actor.stateComponent.currentState == null || actor.stateComponent.currentState.characterState != CHARACTER_STATE.FOLLOW) {

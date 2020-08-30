@@ -22,16 +22,14 @@ public class HeartOfTheWind : Artifact {
         if (gridTileLocation != null) {
             base.ActivateTileObject();
             SpawnTornado();
-
-            //gridTileLocation.structure.RemovePOI(this);
         }
     }
     private void SpawnTornado() {
-        TornadoTileObject tornadoTileObject = new TornadoTileObject();
-        tornadoTileObject.SetRadius(1);
-        tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
-        tornadoTileObject.SetGridTileLocation(gridTileLocation);
-        tornadoTileObject.OnPlacePOI();
+        Tornado tornado = new Tornado();
+        tornado.SetRadius(1);
+        tornado.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4))));
+        tornado.SetGridTileLocation(gridTileLocation);
+        tornado.OnPlacePOI();
     }
     public override void OnInspect(Character inspector) {
         base.OnInspect(inspector);

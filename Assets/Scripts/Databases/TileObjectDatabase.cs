@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class TileObjectDatabase {
     public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
@@ -17,6 +18,7 @@ public class TileObjectDatabase {
             allTileObjects.Add(tileObject.tileObjectType, new List<TileObject>());
         }
         allTileObjects[tileObject.tileObjectType].Add(tileObject);
+        // Debug.Log($"Added new tile object {tileObject} to database with id {tileObject.persistentID}");
         tileObjectsByGUID.Add(tileObject.persistentID, tileObject);
         allTileObjectsList.Add(tileObject);
     }

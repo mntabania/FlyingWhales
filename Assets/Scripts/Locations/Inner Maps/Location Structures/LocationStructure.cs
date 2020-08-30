@@ -8,7 +8,8 @@ using UnityEngine.Assertions;
 
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyTarget {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyTarget, ISavable {
+        public string persistentID { get; }
         public int id { get; private set; }
         public string name { get; protected set; }
         public string nameWithoutID { get; protected set; }
@@ -45,9 +46,12 @@ namespace Inner_Maps.Location_Structures {
         public LocationStructure currentStructure => this;
         public BaseSettlement currentSettlement => settlementLocation;
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
+        public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
+        public Type serializedData => typeof(SaveDataLocationStructure);
         #endregion
 
         protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {
+            persistentID = Guid.NewGuid().ToString();
             id = UtilityScripts.Utilities.SetID(this);
             this.structureType = structureType;
             nameWithoutID = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
@@ -68,6 +72,7 @@ namespace Inner_Maps.Location_Structures {
             maxResidentCapacity = 5;
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
+            persistentID = data.persistentID;
             this.location = location;
             id = UtilityScripts.Utilities.SetID(this, data.id);
             structureType = data.structureType;
@@ -1003,7 +1008,6 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public virtual void OnCharacterUnSeizedHere(Character character) { }
-        
     }
 }
 

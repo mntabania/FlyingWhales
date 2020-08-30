@@ -34,6 +34,7 @@ public abstract class MovingTileObject : TileObject {
     public virtual void Expire() {
         hasExpired = true;
         Messenger.RemoveListener<LocationGridTile, TraitableCallback>(Signals.ACTION_PERFORMED_ON_TILE_TRAITABLES, OnActionPerformedOnTile);
+        DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(this);
     } 
     #endregion
 
@@ -54,3 +55,15 @@ public abstract class MovingTileObject : TileObject {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataMovingTileObject : SaveDataTileObject {
+    public Vector3 mapVisualWorldPosition;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        if (tileObject.mapObjectVisual != null) {
+            mapVisualWorldPosition = tileObject.mapObjectVisual.transform.position;
+        }
+    }
+}
+#endregion

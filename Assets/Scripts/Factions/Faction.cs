@@ -84,6 +84,7 @@ public class Faction : IJobOwner, ISavable {
         AddListeners();
     }
     public Faction(SaveDataFaction data) {
+        persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         ideologyComponent = new FactionIdeologyComponent(this);
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
@@ -91,7 +92,7 @@ public class Faction : IJobOwner, ISavable {
 
         SetName(data.name);
         SetDescription(data.description);
-        //TODO:UNCOMMENT THIS// SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemName));
+        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemName));
         SetFactionColor(data.factionColor);
         SetFactionActiveState(data.isActive);
         SetIsMajorFaction(data.isMajorFaction);

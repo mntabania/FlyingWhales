@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 namespace Locations.Settlements {
     public class PlayerSettlement : BaseSettlement{
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataPlayerSettlement);
+        #endregion
         
         public PlayerSettlement() : base(LOCATION_TYPE.DEMONIC_INTRUSION) { }
         public PlayerSettlement(SaveDataPlayerSettlement saveDataBaseSettlement) : base(saveDataBaseSettlement) { }

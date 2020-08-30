@@ -1673,7 +1673,7 @@
       ],
       "structureSettings": [
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "CITY_CENTER"
         },
         {
