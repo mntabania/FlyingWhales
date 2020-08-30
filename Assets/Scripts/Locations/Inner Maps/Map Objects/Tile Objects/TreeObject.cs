@@ -26,12 +26,7 @@ public class TreeObject : TileObject {
         SetYield(100);
         _occupiedState = Occupied_State.Undecided;
     }
-    public TreeObject(SaveDataTileObject data) {
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-    }
+    public TreeObject(SaveDataTileObject data) { }
 
     #region Overrides
     public override string ToString() {
@@ -78,12 +73,10 @@ public class TreeObject : TileObject {
         yield += amount;
         yield = Mathf.Max(0, yield);
         if (yield == 0 && gridTileLocation != null) {
-            LocationGridTile loc = gridTileLocation;
             structureLocation.RemovePOI(this);
-            SetGridTileLocation(loc); //so that it can still be targeted by aware characters.
         }
     }
-    protected void SetYield(int amount) {
+    public void SetYield(int amount) {
         yield = amount;
     }
     #endregion
@@ -146,18 +139,24 @@ public class TreeObject : TileObject {
     #endregion
 }
 
-//public class SaveDataTreeObject: SaveDataTileObject {
-//    public int yield;
-
-//    public override void Save(TileObject tileObject) {
-//        base.Save(tileObject);
-//        TreeObject obj = tileObject as TreeObject;
-//        yield = obj.yield;
-//    }
-
-//    public override TileObject Load() {
-//        TreeObject obj = base.Load() as TreeObject;
-//        obj.SetYield(yield);
-//        return obj;
-//    }
-//}
+#region Save Data
+public class SaveDataTreeObject : SaveDataTileObject {
+    
+    //TODO: Add save data for occupying Ent if any.
+    public int yield;
+    
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        TreeObject treeObject = tileObject as TreeObject;
+        Assert.IsNotNull(treeObject);
+        yield = treeObject.yield;
+    }
+    public override TileObject Load() {
+        TileObject tileObject = base.Load();
+        TreeObject treeObject = tileObject as TreeObject;
+        Assert.IsNotNull(treeObject);
+        treeObject.SetYield(yield);
+        return tileObject;
+    }
+}
+#endregion

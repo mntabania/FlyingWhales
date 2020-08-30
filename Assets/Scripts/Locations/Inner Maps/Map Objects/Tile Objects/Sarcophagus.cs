@@ -5,6 +5,6 @@ public class Sarcophagus : TileObject{
         Initialize(TILE_OBJECT_TYPE.SARCOPHAGUS);
     }
     public Sarcophagus(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

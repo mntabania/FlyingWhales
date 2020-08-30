@@ -7,6 +7,6 @@ public class Kindling : TileObject{
 		Initialize(TILE_OBJECT_TYPE.KINDLING);
 	}
 	public Kindling(SaveDataTileObject data) {
-		Initialize(data);
+		
 	}
 }

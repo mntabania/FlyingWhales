@@ -12,7 +12,7 @@ public class GenericTileObject : TileObject {
         _owner = locationGridTile;
     }
     public GenericTileObject(SaveDataTileObject data) {
-        Initialize(data, false);
+        
     }
 
     #region Override

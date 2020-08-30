@@ -10,7 +10,6 @@ public class FactionManager : BaseMonoBehaviour {
 
     public static FactionManager Instance = null;
 
-    public List<Faction> allFactions = new List<Faction>();
     public Faction neutralFaction { get; private set; }
     public Faction vagrantFaction { get; private set; }
     public Faction disguisedFaction { get; private set; }
@@ -43,14 +42,13 @@ public class FactionManager : BaseMonoBehaviour {
             return _undeadFaction;
         }
     }
+    public List<Faction> allFactions => DatabaseManager.Instance.factionDatabase.allFactionsList;
     #endregion
 
     private void Awake() {
         Instance = this;
     }
     protected override void OnDestroy() {
-        allFactions.Clear();
-        allFactions = null;
         neutralFaction = null;
         vagrantFaction = null;
         disguisedFaction = null;
@@ -66,7 +64,7 @@ public class FactionManager : BaseMonoBehaviour {
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(wildMonsterFactionEmblem);
         newFaction.factionType.SetAsDefault();
-        allFactions.Add(newFaction);
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetNeutralFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
@@ -77,7 +75,7 @@ public class FactionManager : BaseMonoBehaviour {
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(vagrantFactionEmblem);
         newFaction.factionType.SetAsDefault();
-        allFactions.Add(newFaction);
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetVagrantFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
@@ -88,7 +86,7 @@ public class FactionManager : BaseMonoBehaviour {
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(disguisedFactionEmblem);
         newFaction.factionType.SetAsDefault();
-        allFactions.Add(newFaction);
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         SetDisguisedFaction(newFaction);
         CreateRelationshipsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
@@ -107,7 +105,7 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
         Faction newFaction = new Faction(factionType);
-        allFactions.Add(newFaction);
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (factionType == FACTION_TYPE.Demons) {
             newFaction.SetEmblem(playerFactionEmblem);
         } else if (factionType == FACTION_TYPE.Undead) {
@@ -144,7 +142,7 @@ public class FactionManager : BaseMonoBehaviour {
         } else if (data.factionType.type == FACTION_TYPE.Vagrants) {
             SetVagrantFaction(newFaction);
         }
-        allFactions.Add(newFaction);
+        DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
@@ -160,18 +158,7 @@ public class FactionManager : BaseMonoBehaviour {
         //allFactions.Remove(faction);
     }
     public Faction GetRandomMajorNonPlayerFaction() {
-        List<Faction> factions = null;
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction faction = allFactions[i];
-            if (faction.isMajorNonPlayer) {
-                if(factions == null) { factions = new List<Faction>(); }
-                factions.Add(faction);
-            }
-        }
-        if(factions != null && factions.Count > 0) {
-            return factions[UnityEngine.Random.Range(0, factions.Count)];
-        }
-        return null;
+        return DatabaseManager.Instance.factionDatabase.GetRandomMajorNonPlayerFaction();
     }
     #endregion
 
@@ -205,6 +192,15 @@ public class FactionManager : BaseMonoBehaviour {
         //}
         //throw new System.Exception("There is no emblem bg with id " + emblemID);
     }
+    public Sprite GetFactionEmblem(string name) {
+        for (int i = 0; i < _factionEmblems.Count; i++) {
+            Sprite emblem = _factionEmblems[i];
+            if (emblem.name == name) {
+                return emblem;
+            }
+        }
+        return null;
+    }
     public int GetFactionEmblemIndex(Sprite emblem) {
         for (int i = 0; i < _factionEmblems.Count; i++) {
             Sprite currSetting = _factionEmblems[i];
@@ -223,48 +219,28 @@ public class FactionManager : BaseMonoBehaviour {
 
     #region Utilities
     public Faction GetFactionBasedOnID(int id) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            if (allFactions[i].id == id) {
-                return allFactions[i];
-            }
-        }
-        return null;
+        return DatabaseManager.Instance.factionDatabase.GetFactionBasedOnID(id);
     }
     public Faction GetFactionBasedOnName(string name) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            if (allFactions[i].name.ToLower() == name.ToLower()) {
-                return allFactions[i];
-            }
-        }
-        return null;
+        return DatabaseManager.Instance.factionDatabase.GetFactionBasedOnName(name);
     }
     public List<Faction> GetMajorFactionWithRace(RACE race) {
-        List<Faction> factions = null;
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction faction = allFactions[i];
-            if (faction.race == race && faction.isMajorFaction) {
-                if (factions == null) {
-                    factions = new List<Faction>();
-                }
-                factions.Add(faction);
-            }
-        }
-        return factions;
+        return DatabaseManager.Instance.factionDatabase.GetMajorFactionWithRace(race);
     }
     #endregion
 
     #region Relationships
     private void CreateRelationshipsForFaction(Faction faction) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction otherFaction = allFactions[i];
+        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
+            Faction otherFaction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if(otherFaction.id != faction.id) {
                 CreateNewRelationshipBetween(otherFaction, faction);
             }
         }
     }
     public void RemoveRelationshipsWith(Faction faction) {
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction otherFaction = allFactions[i];
+        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
+            Faction otherFaction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if (otherFaction.id != faction.id) {
                 otherFaction.RemoveRelationshipWith(faction);
             }
@@ -304,13 +280,13 @@ public class FactionManager : BaseMonoBehaviour {
         }
         return newRel;
     }
-    /*
-     Utility Function for getting the relationship between 2 factions,
-     this just adds a checking for data consistency if, the 2 factions have the
-     same reference to their relationship.
-     NOTE: This is probably more performance intensive because of the additional checking.
-     User can opt to use each factions GetRelationshipWith() instead.
-         */
+    /// <summary>
+    /// Utility Function for getting the relationship between 2 factions,
+    /// this just adds a checking for data consistency if, the 2 factions have the
+    /// same reference to their relationship.
+    /// NOTE: This is probably more performance intensive because of the additional checking.
+    /// User can opt to use each factions GetRelationshipWith() instead.
+    /// </summary>
     public FactionRelationship GetRelationshipBetween(Faction faction1, Faction faction2) {
         FactionRelationship faction1Rel = faction1.GetRelationshipWith(faction2);
         FactionRelationship faction2Rel = faction2.GetRelationshipWith(faction1);
@@ -366,8 +342,8 @@ public class FactionManager : BaseMonoBehaviour {
     }
     public int GetActiveVillagerFactionCount() {
         int count = 0;
-        for (int i = 0; i < allFactions.Count; i++) {
-            Faction faction = allFactions[i];
+        for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
+            Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
             if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || 
                 faction.factionType.type == FACTION_TYPE.Human_Empire) {
                 count++;

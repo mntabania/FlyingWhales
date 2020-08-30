@@ -6,7 +6,6 @@ public class Torch : TileObject{
         traitContainer.AddTrait(this, "Immovable");
     }
     public Torch(SaveDataTileObject data) {
-        Initialize(data);
-        traitContainer.AddTrait(this, "Immovable");
+        
     }
 }

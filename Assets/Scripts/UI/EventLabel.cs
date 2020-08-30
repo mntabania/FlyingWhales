@@ -81,7 +81,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
                     obj = character;
                 } else if (linkText.Contains("_hextile")) {
-                    HexTile tile = GridMap.Instance.allTiles[idToUse];
+                    HexTile tile = GridMap.Instance.normalHexTiles[idToUse];
                     obj = tile;
                 }
                 else {
@@ -167,7 +167,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     } else if (linkText.Contains("_character")) {
                         obj = CharacterManager.Instance.GetCharacterByID(idToUse);
                     } else if (linkText.Contains("_hextile")) {
-                        obj = GridMap.Instance.allTiles[idToUse];
+                        obj = GridMap.Instance.normalHexTiles[idToUse];
                     } else {
                         obj = linkText;
                     }

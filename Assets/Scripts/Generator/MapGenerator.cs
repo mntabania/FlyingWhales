@@ -311,14 +311,15 @@ public class MapGenerator : MonoBehaviour {
             // }
             WorldSettings.Instance.worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom); //Always use Custom world type for Loading Save Data
             WorldConfigManager.Instance.mapGenerationData = data;
-            WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
+            // WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
-            UIManager.Instance.initialWorldSetupMenu.Show();
+            // UIManager.Instance.initialWorldSetupMenu.Show();
 
             Messenger.Broadcast(Signals.GAME_LOADED);
             UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(saveData.playerSave.archetype);
+            // UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(PLAYER_ARCHETYPE.Ravager);
             LevelLoaderManager.Instance.SetLoadingState(false);
             yield return new WaitForSeconds(1f);
         }

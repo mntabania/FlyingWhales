@@ -383,8 +383,6 @@ public class PlayerManager : BaseMonoBehaviour {
     }
     private void FinalCheckWinCondition() {
         if (DoesPlayerWin()) {
-            //player.SaveSummons();
-            player.SaveTileObjects();
             PlayerUI.Instance.WinGameOver();
         }
         _hasWinCheckTimer = false;

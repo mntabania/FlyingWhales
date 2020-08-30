@@ -103,7 +103,7 @@ namespace Traits {
                 }
             }
             if(traitable.advertisedActions != null && traitable.advertisedActions.Count > 0 && traitable is GenericTileObject genericObj) {
-                traitable.gridTileLocation.structure.location.AddPendingAwareness(genericObj);
+                traitable.gridTileLocation.parentMap.region.AddPendingAwareness(genericObj);
             }
         }
         private void UnapplyPOITraitInteractions(ITraitable traitable, Trait trait) {
@@ -114,7 +114,7 @@ namespace Traits {
                 }
             }
             if ((traitable.advertisedActions == null || traitable.advertisedActions.Count <= 0) && traitable is GenericTileObject genericObj) {
-                traitable.gridTileLocation.structure.location.RemovePendingAwareness(genericObj);
+                traitable.gridTileLocation.parentMap.region.RemovePendingAwareness(genericObj);
             }
         }
     }

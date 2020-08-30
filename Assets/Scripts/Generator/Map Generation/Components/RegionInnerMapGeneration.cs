@@ -34,6 +34,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.LoadRegionMap(location, this, saveDataRegion.innerMapSave, tileAssetDB));
             yield return MapGenerator.Instance.StartCoroutine(AssignTilesToStructures(saveDataRegion.structureSaveData, location));
             yield return MapGenerator.Instance.StartCoroutine(LoadStructureObjects(saveDataRegion.structureSaveData, location));
+            yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveDataRegion, location));
         }
     }
     private IEnumerator AssignTilesToStructures(SaveDataLocationStructure[] structureSaves, Region region) {
@@ -87,7 +88,6 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                         structureWallObject.LoadDataFromSave(saveDataStructureWallObject);
                     }    
                 }
-
                 yield return null;
             } else if (structure is DemonicStructure demonicStructure && saveDataLocationStructure is SaveDataDemonicStructure saveDataDemonicStructure) {
                 //Demonic Structure
@@ -110,6 +110,28 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 structure.OnDoneLoadStructure();
 
                 yield return null;
+            }
+        }
+    }
+    private IEnumerator LoadTileObjects(SaveDataRegion saveDataRegion, Region region) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading objects...");
+        int batchCount = 0;
+        for (int i = 0; i < saveDataRegion.tileObjectSaves.Count; i++) {
+            SaveDataTileObject saveDataTileObject = saveDataRegion.tileObjectSaves[i];
+            TileObject tileObject = saveDataTileObject.Load();
+            LocationGridTile gridTileLocation = region.innerMap.map[saveDataTileObject.tileLocation.X, saveDataTileObject.tileLocation.Y];
+            gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
+            if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
+                tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);    
+            } else {
+                tileObject.mapObjectVisual.SetVisual(null);
+                // Debug.Log($"Could not find asset with name {saveDataTileObject.spriteName}");
+            }
+            tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);
+            batchCount++;
+            if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
+                batchCount = 0;
+                yield return null;    
             }
         }
     }

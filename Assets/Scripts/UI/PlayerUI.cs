@@ -208,9 +208,6 @@ public class PlayerUI : BaseMonoBehaviour {
         InitialUpdateKillCountCharacterItems();
         InitializeIntel();
         // UpdateIntel();
-        // CreateInitialSpells();
-        // _buildListUI.Initialize();
-        // cultistsList.Initialize();
 #if UNITY_EDITOR
         itemsToggle.gameObject.SetActive(false);
         artifactsToggle.gameObject.SetActive(false);    

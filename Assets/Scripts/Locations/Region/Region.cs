@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -11,7 +12,8 @@ using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class Region {
+public class Region : ISavable {
+    public string persistentID { get; }
     public int id { get; }
     public string name { get; private set; }
     public string description => GetDescription();
@@ -40,6 +42,8 @@ public class Region {
     #region getter/setter
     public BaseLandmark mainLandmark => coreTile.landmarkOnTile;
     public InnerTileMap innerMap => _regionInnerTileMap;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Region;
+    public Type serializedData => typeof(SaveDataRegion);
     #endregion
 
     private Region() {
@@ -53,6 +57,7 @@ public class Region {
         settlementsInRegion = new List<BaseSettlement>();
     }
     public Region(HexTile coreTile, RegionTemplate regionTemplate) : this() {
+        persistentID = System.Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID(this);
         name = RandomNameGenerator.GetRegionName();
         this.coreTile = coreTile;
@@ -64,6 +69,7 @@ public class Region {
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
+        persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
@@ -284,16 +290,6 @@ public class Region {
             }
         }
         return areas;
-    }
-    #endregion
-
-    #region Corruption/Invasion
-    public void InvadeActions() {
-        mainLandmark?.ChangeLandmarkType(LANDMARK_TYPE.NONE);
-        // ActivateRegionFeatures();
-        // RemoveFeaturesAfterInvade();
-        // ExecuteEventAfterInvasion();
-        // ExecuteOtherAfterInvasionActions();
     }
     #endregion
 

@@ -10,11 +10,7 @@ public class DesertRose : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
     }
-    public DesertRose(SaveDataTileObject data) {
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-    }
+    public DesertRose(SaveDataTileObject data) { }
 
     public void DesertRoseWaterEffect() {
         if(gridTileLocation != null) {

@@ -5,6 +5,6 @@ public class DemonAltar : TileObject{
         Initialize(TILE_OBJECT_TYPE.DEMON_ALTAR);
     }
     public DemonAltar(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

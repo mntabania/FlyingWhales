@@ -3,4 +3,5 @@
     public ElectricCrystal() : base(ELEMENTAL_TYPE.Electric) {
         Initialize(TILE_OBJECT_TYPE.ELECTRIC_CRYSTAL);
     }
+    public ElectricCrystal(SaveDataTileObject saveDataTileObject) : base(ELEMENTAL_TYPE.Electric) { }
 }

@@ -20,7 +20,8 @@ public class MapGenerationData {
 	public static int InnerMapTileGenerationBatches = 500;
 	public static int InnerMapSeamlessEdgeBatches = 200;
 	public static int InnerMapDetailBatches = 200;
-	public static int InnerMapElevationBatches = 200; 
+	public static int InnerMapElevationBatches = 200;
+	public static int TileObjectLoadingBatches = 200; 
 	
 	//world map
 	public WorldMapTemplate chosenWorldMapTemplate;

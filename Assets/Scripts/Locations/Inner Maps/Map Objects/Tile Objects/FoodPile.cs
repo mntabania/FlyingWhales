@@ -11,6 +11,7 @@ public abstract class FoodPile : ResourcePile {
         traitContainer.AddTrait(this, "Edible");
         SetResourceInPile(20);
     }
+    protected FoodPile(SaveDataTileObject saveDataTileObject) : base(saveDataTileObject, RESOURCE.FOOD) { }
     
     #region Overrides
     public override string ToString() {

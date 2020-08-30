@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,9 @@ public class WallResouceAssets {
     [SerializeField] private WallAssetDictionary wallAssets;
 
     public WallAsset GetWallAsset(string assetName) {
-        return wallAssets[assetName];
+        if (wallAssets.ContainsKey(assetName)) {
+            return wallAssets[assetName];    
+        }
+        throw new Exception($"Wall with asset name: {assetName} could not be found.");
     }
 }

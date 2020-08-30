@@ -1,19 +1,19 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
-using Pathfinding;
 using Traits;
 using UnityEngine.Assertions;
-using UnityEngine.Experimental.U2D;
 using UtilityScripts;
 using UnityEngine.EventSystems;
 using Locations.Settlements;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
-public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyTarget {
+public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyTarget, ISavable {
+    public string persistentID { get; private set; }
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
@@ -21,22 +21,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
     public LocationStructure structureLocation => gridTileLocation.structure;
-    public bool isDisabledByPlayer { get; private set; }
-    public bool isSummonedByPlayer { get; private set; }
     public bool isPreplaced { get; private set; }
-    public LocationStructure preplacedLocationStructure { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
-    //private List<Character> owners { get; set; }
     public List<Character> charactersThatAlreadyAssumed { get; private set; }
     public Character isBeingCarriedBy { get; private set; }
-    public virtual Character[] users { //array of characters, currently using the tile object
-        get {
-            return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
-        }
-    }
-    private Character removedBy { get; set; }
-    public BaseMapObjectVisual mapObjectVisual => mapVisual;
-    public virtual string neutralizer => string.Empty;
 
     //hp
     public int maxHP { get; protected set; }
@@ -54,7 +42,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
     public List<SPELL_TYPE> actions { get; protected set; }
     public int repairCounter { get; protected set; } //If greater than zero, this tile object cannot be repaired
-    public bool isSaved { get; private set; }
     public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
 
     private bool hasSubscribedToListeners;
@@ -62,6 +49,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public LogComponent logComponent { get; protected set; }
     
     #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
+    public Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
     public virtual Vector3 worldPosition => mapVisual.transform.position;
     public virtual Vector2 selectableSize => Vector2Int.one;
@@ -77,15 +66,22 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isHidden => false;
     public LocationStructure currentStructure => gridTileLocation?.structure;
     public BaseSettlement currentSettlement => gridTileLocation?.structure.settlementLocation;
+    public BaseMapObjectVisual mapObjectVisual => mapVisual;
+    public virtual string neutralizer => string.Empty;
+    public virtual Character[] users { //array of characters, currently using the tile object
+        get {
+            return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
+        }
+    }
     #endregion
-
-    protected void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+    
+    protected virtual void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+        persistentID = System.Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
         name = GenerateName();
         allJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
-        //owners = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
         currentHP = maxHP;
@@ -100,46 +96,41 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
-    protected void Initialize(SaveDataTileObject data, bool shouldAddCommonAdvertisements = true) {
-        //id = UtilityScripts.Utilities.SetID(this, data.id);
-        //tileObjectType = data.tileObjectType;
-        //new List<string>();
-        //allJobsTargetingThis = new List<JobQueueItem>();
-        //owners = new List<Character>();
-        //hasCreatedSlots = false;
-        //CreateTraitContainer();
-        //if (shouldAddCommonAdvertisements) {
-        //    AddCommonAdvertisements();
-        //}
-        //ConstructResources();
-        //ConstructDefaultActions();
-        //logComponent = new LogComponent(this);
-        //InnerMapManager.Instance.AddTileObject(this);
-        //SubscribeListeners();
+    public void Initialize(SaveDataTileObject data) {
+        persistentID = data.persistentID;
+        id = UtilityScripts.Utilities.SetID(this, data.id);
+        tileObjectType = data.tileObjectType;
+        name = data.name;
+        allJobsTargetingThis = new List<JobQueueItem>();
+        charactersThatAlreadyAssumed = new List<Character>();
+        hasCreatedSlots = false;
+        maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
+        currentHP = data.currentHP;
+        isPreplaced = data.isPreplaced;
+        SetPOIState(data.poiState);
+        CreateTraitContainer();
+        traitContainer.AddTrait(this, "Flammable");
+        LoadResources(data);
+        for (int i = 0; i < data.advertisedActions.Length; i++) {
+            INTERACTION_TYPE interactionType = data.advertisedActions[i];
+            AddAdvertisedAction(interactionType);
+        }
+        ConstructDefaultActions();
+        logComponent = new LogComponent(this);
+        InnerMapManager.Instance.AddTileObject(this);
+        SubscribeListeners();
     }
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        //AddAdvertisedAction(INTERACTION_TYPE.POISON);
-        //AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        //AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
-        //AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        //AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
-        // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         RemoveAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        //RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
-        //RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
         RemoveAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
-        //RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
-        //RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        //RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);
-        // RemoveAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 
     #region Listeners
@@ -330,7 +321,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// </summary>
     public virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         // Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
-        this.removedBy = removedBy;
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
             //if object is unbuilt, and it was removed, stop checking for invalidity.
@@ -376,22 +366,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
             return;
         }
-        //PlayerAction destroyAction = new PlayerAction(PlayerDB.Destroy_Action,
-        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
-        //    null,
-        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
-        //PlayerAction igniteAction = new PlayerAction(PlayerDB.Ignite_Action,
-        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this),
-        //    null,
-        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
-        //PlayerAction poisonAction = new PlayerAction(PlayerDB.Poison_Action,
-        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.POISON].CanPerformAbilityTowards(this),
-        //    null,
-        //    () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.POISON].ActivateAbility(this));
-        //PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Object_Action,
-        //    () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null),
-        //    null,
-        //    () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
 
         AddPlayerAction(SPELL_TYPE.DESTROY);
         AddPlayerAction(SPELL_TYPE.IGNITE);
@@ -408,16 +382,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region IPointOfInterest
     public bool IsAvailable() {
-        return state != POI_STATE.INACTIVE && !isDisabledByPlayer;
-    }
-    public void SetIsDisabledByPlayer(bool state) {
-        if(isDisabledByPlayer != state) {
-            isDisabledByPlayer = state;
-            if (isDisabledByPlayer) {
-                Character character = null;
-                Messenger.Broadcast(Signals.TILE_OBJECT_DISABLED, this, character);
-            }
-        }
+        return state != POI_STATE.INACTIVE;
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
         if (advertisedActions == null) {
@@ -644,7 +609,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Tile Object Slots
     protected virtual void OnPlaceTileObjectAtTile(LocationGridTile tile) {
-        removedBy = null;
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {
@@ -917,15 +881,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected TileObject GetBase() {
         return this;
     }
-    public void SetIsPreplaced(bool state, LocationStructure structure) {
+    public void SetIsPreplaced(bool state) {
         isPreplaced = state;
-        preplacedLocationStructure = structure;
     }
     public void AdjustRepairCounter(int amount) {
         repairCounter += amount;
-    }
-    public void SetIsSaved(bool state) {
-        isSaved = state;
     }
     public void AddCharacterThatAlreadyAssumed(Character character) {
         charactersThatAlreadyAssumed.Add(character);
@@ -1044,6 +1004,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         };
         ConstructMaxResources();
     }
+    public void LoadResources(SaveDataTileObject saveDataTileObject) {
+        Assert.IsTrue(saveDataTileObject.resourceValues.Length == 4, $"Resource values in {this} save data is inconsistent with actual resource dictionary");
+        storedResources = new Dictionary<RESOURCE, int>() {
+            { RESOURCE.FOOD, saveDataTileObject.resourceValues[0] },
+            { RESOURCE.WOOD, saveDataTileObject.resourceValues[1] },
+            { RESOURCE.STONE, saveDataTileObject.resourceValues[2] },
+            { RESOURCE.METAL, saveDataTileObject.resourceValues[3] },
+        };
+        ConstructMaxResources();
+    }
     protected virtual void ConstructMaxResources() {
         maxResourceValues = new Dictionary<RESOURCE, int>();
         RESOURCE[] resourceTypes = CollectionUtilities.GetEnumValues<RESOURCE>();
@@ -1131,51 +1101,4 @@ public struct TileObjectSlotSetting {
 public struct TileObjectSerializableData {
     public int id;
     public TILE_OBJECT_TYPE type;
-}
-
-[System.Serializable]
-public class SaveDataTileObject {
-    public TILE_OBJECT_TYPE tileObjectType;
-    public string[] traitNames;
-    //public string[] statusNames;
-    //public int[] statusStacks;
-    public RESOURCE[] storedResourcesTypes;
-    public int[] storedResourcesAmount;
-    public bool isArtifact;
-    public ARTIFACT_TYPE artifactType;
-
-    public SaveDataTileObject(TileObject tileObject) {
-        tileObjectType = tileObject.tileObjectType;
-        if(tileObject is Artifact artifact) {
-            isArtifact = true;
-            artifactType = artifact.type;
-        }
-
-        List<Trait> traits = tileObject.traitContainer.traits;
-        List<Status> statuses = tileObject.traitContainer.statuses;
-        Dictionary<RESOURCE, int> storedResources = tileObject.storedResources;
-        if (traits != null && traits.Count > 0) {
-            traitNames = new string[tileObject.traitContainer.traits.Count];
-            for (int i = 0; i < traits.Count; i++) {
-                traitNames[i] = traits[i].name;
-            }
-        }
-        //if (statuses != null && statuses.Count > 0) {
-        //    statusNames = new string[tileObject.traitContainer.statuses.Count];
-        //    statusStacks = new int[tileObject.traitContainer.statuses.Count];
-        //    for (int i = 0; i < statuses.Count; i++) {
-        //        statusNames[i] = statuses[i].name;
-        //        statusStacks[i] = tileObject.traitContainer.stacks[statusNames[i]];
-        //    }
-        //}
-        if(storedResources != null && storedResources.Count > 0) {
-            storedResourcesTypes = new RESOURCE[storedResources.Count];
-            storedResourcesAmount = new int[storedResources.Count];
-            int i = 0;
-            foreach (KeyValuePair<RESOURCE, int> item in storedResources) {
-                storedResourcesTypes[i] = item.Key;
-                storedResourcesAmount[i] = item.Value;
-            }
-        }
-    }
 }

@@ -30,6 +30,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     protected System.Action onRightClickAction;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
+    public Quaternion rotation => objectVisual.transform.localRotation;
     public ISelectable selectable { get; protected set; }
     public SpriteRenderer objectSpriteRenderer => objectVisual;
     public BaseVisionTrigger visionTrigger { get; protected set; }
@@ -55,6 +56,12 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         objectVisual.transform.localRotation = quaternion;
         if (hoverObject != null) {
             hoverObject.transform.localRotation = quaternion;    
+        }
+    }
+    public void SetRotation(Quaternion rotation) {
+        objectVisual.transform.localRotation = rotation;
+        if (hoverObject != null) {
+            hoverObject.transform.localRotation = rotation;    
         }
     }
     public void SetVisual(Sprite sprite) {

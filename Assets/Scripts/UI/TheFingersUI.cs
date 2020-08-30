@@ -292,14 +292,14 @@ public class TheFingersUI : MonoBehaviour {
 
     #region Action: Force Leave Faction
     public void OnClickForceLeaveFaction() {
-        List<Faction> viableFactions = new List<Faction>();
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            Faction faction = FactionManager.Instance.allFactions[i];
-            if (faction.isMajorNonPlayer) {
-                viableFactions.Add(faction);
-            }
-        }
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(viableFactions, "Choose Faction", CanChooseFactionToLeave, null, null, OnPickFaction, ConfirmLeave, "Leave Faction");
+        // List<Faction> viableFactions = new List<Faction>();
+        // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+        //     Faction faction = FactionManager.Instance.allFactions[i];
+        //     if (faction.isMajorNonPlayer) {
+        //         viableFactions.Add(faction);
+        //     }
+        // }
+        // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(viableFactions, "Choose Faction", CanChooseFactionToLeave, null, null, OnPickFaction, ConfirmLeave, "Leave Faction");
     }
     private bool CanChooseFactionToLeave(Faction faction) {
         //return faction.isMajorNonPlayer;

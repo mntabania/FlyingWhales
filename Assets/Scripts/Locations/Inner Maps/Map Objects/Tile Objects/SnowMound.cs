@@ -9,13 +9,7 @@ public class SnowMound : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.EXTRACT_ITEM);
     }
-    public SnowMound(SaveDataTileObject data) {
-        Initialize(data, false);
-        traitContainer.RemoveTrait(this, "Flammable");
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        AddAdvertisedAction(INTERACTION_TYPE.EXTRACT_ITEM);
-    }
+    public SnowMound(SaveDataTileObject data) { }
 
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

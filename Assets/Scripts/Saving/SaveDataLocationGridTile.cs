@@ -7,6 +7,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
+    public string persistentID;
     public Vector3Save localPlace; //this is the id
     public Vector3Save worldLocation;
     public Vector3Save centeredWorldLocation;
@@ -22,6 +23,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public float floorSample;
 
     public override void Save(LocationGridTile gridTile) {
+        persistentID = gridTile.persistentID;
         localPlace = new Vector3Save(gridTile.localPlace);
         worldLocation = gridTile.worldLocation;
         centeredWorldLocation = gridTile.centeredWorldLocation;

@@ -8,10 +8,11 @@ using Traits;
 using Inner_Maps.Location_Structures;
 using Random = UnityEngine.Random;
 
-public class Faction : IJobOwner {
+public class Faction : IJobOwner, ISavable {
     
     public const int MAX_HISTORY_LOGS = 60;
     
+    public string persistentID { get; }
     public int id { get; }
     public string name { get; private set; }
     public string description { get; private set; }
@@ -46,13 +47,14 @@ public class Faction : IJobOwner {
     public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
-    
     public int newLeaderDesignationChance { get; private set; }
+    public Heirloom factionHeirloom { get; private set; }
+    
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
-    public Heirloom factionHeirloom { get; private set; }
-
     #region getters/setters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
+    public Type serializedData => typeof(SaveDataFaction);
     public bool isDestroyed => characters.Count <= 0;
     public bool isMajorFriendlyNeutral => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
     public bool isMajorNonPlayerFriendlyNeutral => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
@@ -61,6 +63,7 @@ public class Faction : IJobOwner {
     #endregion
 
     public Faction(FACTION_TYPE _factionType) {
+        persistentID = Guid.NewGuid().ToString();
         id = UtilityScripts.Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.GenerateKingdomName());
         // SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));

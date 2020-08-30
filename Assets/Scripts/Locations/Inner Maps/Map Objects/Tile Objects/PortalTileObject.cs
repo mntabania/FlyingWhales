@@ -16,8 +16,7 @@ public class PortalTileObject : TileObject {
         traitContainer.AddTrait(this, "Immovable");
     }
     public PortalTileObject(SaveDataTileObject data) {
-        Initialize(data);
-        traitContainer.AddTrait(this, "Immovable");
+        
     }
     
     public override void ConstructDefaultActions() {

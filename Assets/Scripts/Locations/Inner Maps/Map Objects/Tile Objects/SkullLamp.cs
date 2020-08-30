@@ -3,6 +3,6 @@
         Initialize(TILE_OBJECT_TYPE.SKULL_LAMP);
     }
     public SkullLamp(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

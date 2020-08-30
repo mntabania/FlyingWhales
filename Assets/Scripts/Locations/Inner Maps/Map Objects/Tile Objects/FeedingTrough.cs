@@ -5,6 +5,6 @@ public class FeedingTrough : TileObject{
         Initialize(TILE_OBJECT_TYPE.FEEDING_TROUGH);
     }
     public FeedingTrough(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

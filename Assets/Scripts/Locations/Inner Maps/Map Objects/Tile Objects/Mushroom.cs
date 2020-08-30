@@ -9,21 +9,20 @@ public class Mushroom : Crops {
     public Mushroom() : base() {
         Initialize(TILE_OBJECT_TYPE.MUSHROOM);
     }
-    public Mushroom(SaveDataTileObject data) {
-        Initialize(data);
-    }
+    public Mushroom(SaveDataTileObject data) : base(data) { }
 
+    #region Initialization
+    protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
+        base.Initialize(tileObjectType, shouldAddCommonAdvertisements);
+        SetGrowthState(Growth_State.Ripe);
+    }
+    #endregion
+    
     #region Override
     public override void SetGrowthState(Growth_State growthState) {
         base.SetGrowthState(growthState);
         if (growthState == Growth_State.Ripe && GameUtilities.RollChance(3)) {
             traitContainer.AddTrait(this, "Abomination Germ");
-        }
-    }
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        if (GameManager.Instance.gameHasStarted == false) { //set mushroom as ripe on its initial placement
-            SetGrowthState(Growth_State.Ripe);    
         }
     }
     #endregion
@@ -38,3 +37,6 @@ public class Mushroom : Crops {
         return $"Mushroom {id.ToString()}";
     }
 }
+#region Save Data
+public class SaveDataMushroom : SaveDataCrops { }
+#endregion

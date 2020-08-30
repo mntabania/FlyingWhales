@@ -34,12 +34,7 @@ public class TreasureChest : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.OPEN);
     }
-    public TreasureChest(SaveDataTileObject data) {
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        AddAdvertisedAction(INTERACTION_TYPE.OPEN);
-    }
+    public TreasureChest(SaveDataTileObject data) { }
     protected override string GenerateName() { return "Treasure Chest"; }
     public override void OnDoActionToObject(ActualGoapNode action) {
         if (action.goapType == INTERACTION_TYPE.OPEN) {
@@ -66,9 +61,7 @@ public class TreasureChest : TileObject {
                 summon.SetIsTreasureChest(false);
                 location.structure.RemovePOI(this);
                 TraitManager.Instance.CopyStatuses(this, summon);
-            } 
-            
-            
+            }
         }
     }
     public override void OnPlacePOI() {
@@ -103,3 +96,9 @@ public class TreasureChest : TileObject {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataTreasureChest : SaveDataTileObject {
+    //TODO: Add save data for object inside.
+}
+#endregion

@@ -8,7 +8,6 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     new string name { get; }
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     string nameWithID { get; }
-    bool isDisabledByPlayer { get; }
     //Vector3 worldPosition { get; }
     bool isDead { get; }
     bool isHidden { get; }
@@ -32,7 +31,6 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     bool RemoveJobTargetingThis(JobQueueItem job);
     bool HasJobTargetingThis(params JOB_TYPE[] jobType);
     void SetPOIState(POI_STATE state);
-    void SetIsDisabledByPlayer(bool state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,

@@ -324,10 +324,9 @@ public class CharacterManager : BaseMonoBehaviour {
     };
 
     #region getters/setters
-    public List<Character> allCharacters => characterDatabase.allCharactersList;
-    public List<Character> limboCharacters => characterDatabase.limboCharactersList;
+    public List<Character> allCharacters => DatabaseManager.Instance.characterDatabase.allCharactersList;
+    public List<Character> limboCharacters => DatabaseManager.Instance.characterDatabase.limboCharactersList;
     public GameObject characterPortraitPrefab => _characterPortraitPrefab;
-    private CharacterDatabase characterDatabase { get; set; }
     #endregion
 
     private void Awake() {
@@ -344,7 +343,6 @@ public class CharacterManager : BaseMonoBehaviour {
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
         combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
         rumorWorthyActions = new List<string>() { Make_Love, Steal, Poison_Food, Place_Trap, Flirt, Transform_To_Wolf, Drink_Blood, Destroy_Action };
-        characterDatabase = new CharacterDatabase();
         ConstructEmotionData();
         ConstructCharacterBehaviours();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -507,24 +505,24 @@ public class CharacterManager : BaseMonoBehaviour {
         return newCharacter;
     }
     public void AddNewCharacter(Character character, bool broadcastSignal = true) {
-        characterDatabase.AddCharacter(character);
+        DatabaseManager.Instance.characterDatabase.AddCharacter(character);
         if (broadcastSignal) {
             Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
         }
     }
     public void RemoveCharacter(Character character, bool broadcastSignal = true) {
-        if (characterDatabase.RemoveCharacter(character)) {
+        if (DatabaseManager.Instance.characterDatabase.RemoveCharacter(character)) {
             if (broadcastSignal) {
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED, character);
             }
         }
     }
     public void AddNewLimboCharacter(Character character) {
-        characterDatabase.AddLimboCharacter(character);
+        DatabaseManager.Instance.characterDatabase.AddLimboCharacter(character);
         character.SetIsInLimbo(true);
     }
     public void RemoveLimboCharacter(Character character) {
-        if (characterDatabase.RemoveLimboCharacter(character)) {
+        if (DatabaseManager.Instance.characterDatabase.RemoveLimboCharacter(character)) {
             character.SetIsInLimbo(false);
         }
     }
@@ -927,16 +925,16 @@ public class CharacterManager : BaseMonoBehaviour {
 
     #region Utilities
     public Character GetCharacterByID(int id) {
-        if (characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
+        if (DatabaseManager.Instance.characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
             return character;
-        } else if (characterDatabase.limboCharacters.TryGetValue(id, out character)) {
+        } else if (DatabaseManager.Instance.characterDatabase.limboCharacters.TryGetValue(id, out character)) {
             return character;
         }
         return null;
     }
     public Character GetCharacterByName(string name) {
-        for (int i = 0; i < characterDatabase.allCharactersList.Count; i++) {
-            Character currChar = characterDatabase.allCharactersList[i];
+        for (int i = 0; i < DatabaseManager.Instance.characterDatabase.allCharactersList.Count; i++) {
+            Character currChar = DatabaseManager.Instance.characterDatabase.allCharactersList[i];
             if (currChar.name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
@@ -944,8 +942,8 @@ public class CharacterManager : BaseMonoBehaviour {
         return null;
     }
     public Character GetLimboCharacterByName(string name) {
-        for (int i = 0; i < characterDatabase.limboCharacters.Count; i++) {
-            Character currChar = characterDatabase.limboCharacters[i];
+        for (int i = 0; i < DatabaseManager.Instance.characterDatabase.limboCharacters.Count; i++) {
+            Character currChar = DatabaseManager.Instance.characterDatabase.limboCharacters[i];
             if (currChar.name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
@@ -1446,7 +1444,6 @@ public class CharacterManager : BaseMonoBehaviour {
 
     #region Monobehaviours
     protected override void OnDestroy() {
-        characterDatabase?.OnDestroy();
         base.OnDestroy();
         Instance = null;
     }

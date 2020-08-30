@@ -123,14 +123,15 @@ public class LevelUpUI : PopupMenuBase {
                 //} else {
                     //summonSlot.LevelUp();
                 //}
-            } else if (selectedObj is ArtifactSlot) {
-                ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
-                //if (artifactSlot.isLocked) {
-                //    PlayerManager.Instance.player.IncreaseArtifactSlot();
-                //} else {
-                    artifactSlot.LevelUp();
-                //}
-            }
+            } 
+            // else if (selectedObj is ArtifactSlot) {
+            //     ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
+            //     //if (artifactSlot.isLocked) {
+            //     //    PlayerManager.Instance.player.IncreaseArtifactSlot();
+            //     //} else {
+            //         artifactSlot.LevelUp();
+            //     //}
+            // }
         }
         Close();
     }

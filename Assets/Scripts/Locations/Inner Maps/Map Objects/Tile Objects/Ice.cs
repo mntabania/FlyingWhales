@@ -9,13 +9,7 @@ public class Ice : TileObject{
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
-    public Ice(SaveDataTileObject data) {
-        Initialize(data, false);
-        AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-        AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
-        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
-        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
-    }
+    public Ice(SaveDataTileObject data) { }
     
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

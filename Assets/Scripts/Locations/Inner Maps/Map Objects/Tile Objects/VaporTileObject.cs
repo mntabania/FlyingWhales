@@ -15,11 +15,11 @@ public class VaporTileObject : MovingTileObject {
     
     public VaporTileObject() {
         Initialize(TILE_OBJECT_TYPE.VAPOR, false);
-        //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         traitContainer.RemoveTrait(this, "Flammable");
         maxSize = 6;
         SetDoExpireEffect(true);
     }
+    public VaporTileObject(SaveDataTileObject data) { }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _vaporMapVisualObject = mapVisual as VaporMapObjectVisual;

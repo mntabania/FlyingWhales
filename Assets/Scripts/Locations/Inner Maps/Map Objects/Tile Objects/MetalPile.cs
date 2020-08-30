@@ -12,10 +12,7 @@ public class MetalPile : ResourcePile {
         traitContainer.RemoveTrait(this, "Flammable");
         SetResourceInPile(100);
     }
-    //public MetalPile(SaveDataTileObject data) : base(RESOURCE.METAL) {
-    //    Initialize(data, false);
-    //    //AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-    //}
+    public MetalPile(SaveDataTileObject data) : base(data, RESOURCE.METAL) { }
 
     //public override void AdjustResourceInPile(int adjustment) {
     //    base.AdjustResourceInPile(adjustment);
@@ -24,7 +21,7 @@ public class MetalPile : ResourcePile {
     //    }
     //}
     public override string ToString() {
-        return $"Metal Pile {id}";
+        return $"Metal Pile {id.ToString()}";
     }
     public virtual bool CanBeReplaced() {
         return true;

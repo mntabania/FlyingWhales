@@ -102,6 +102,21 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Tile Objects
+    private void RegisterPreplacedObjectsOfType(LocationStructure structure, InnerTileMap innerMap, params TILE_OBJECT_TYPE[] validTileObjectTypes) {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        for (int i = 0; i < preplacedObjs.Length; i++) {
+            StructureTemplateObjectData preplacedObj = preplacedObjs[i];
+            if (validTileObjectTypes.Contains(preplacedObj.tileObjectType)) {
+                Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+                LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
+                TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
+                newTileObject.SetIsPreplaced(true);
+            
+                PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);    
+            }
+        }
+        SetPreplacedObjectsState(false);
+    }
     private void RegisterPreplacedObjects(LocationStructure structure, InnerTileMap innerMap) {
         StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
         for (int i = 0; i < preplacedObjs.Length; i++) {
@@ -109,7 +124,7 @@ public class LocationStructureObject : PooledObject {
             Vector3Int tileCoords = innerMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = innerMap.map[tileCoords.x, tileCoords.y];
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
-            newTileObject.SetIsPreplaced(true, structure);
+            newTileObject.SetIsPreplaced(true);
             
             PreplacedObjectProcessing(preplacedObj, tile, structure, newTileObject);
         }
@@ -248,6 +263,8 @@ public class LocationStructureObject : PooledObject {
     public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
         RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
+        // //Only load preplaced structure tile object
+        // RegisterPreplacedObjectsOfType(structure, innerMap, TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT);
         RescanPathfindingGridOfStructure();
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
@@ -376,7 +393,9 @@ public class LocationStructureObject : PooledObject {
     public override void Reset() {
         base.Reset();
         SetPreplacedObjectsState(true);
-        _groundTileMap.gameObject.SetActive(true);
+        if (_groundTileMap != null) {
+            _groundTileMap.gameObject.SetActive(true);    
+        }
         if (_blockWallsTilemap != null) {
             _blockWallsTilemap.gameObject.SetActive(true);    
         }

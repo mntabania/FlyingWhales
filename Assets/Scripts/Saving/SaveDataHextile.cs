@@ -5,6 +5,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataHextile : SaveData<HexTile> {
+    public string persistentID;
     public int id;
     public int xCoordinate;
     public int yCoordinate;
@@ -22,6 +23,7 @@ public class SaveDataHextile : SaveData<HexTile> {
     public LANDMARK_TYPE landmarkType;
 
     public override void Save(HexTile tile) {
+        persistentID = tile.persistentID;
         id = tile.id;
         xCoordinate = tile.xCoordinate;
         yCoordinate = tile.yCoordinate;
@@ -43,6 +45,11 @@ public class SaveDataHextile : SaveData<HexTile> {
         }
     }
     public void Load(HexTile tile) {
+        if (string.IsNullOrEmpty(persistentID)) {
+            tile.data.persistentID = System.Guid.NewGuid().ToString();
+        } else {
+            tile.data.persistentID = persistentID;    
+        }
         tile.data.id = id;
         tile.data.xCoordinate = xCoordinate;
         tile.data.yCoordinate = yCoordinate;

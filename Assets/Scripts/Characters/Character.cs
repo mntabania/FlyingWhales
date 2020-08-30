@@ -15,7 +15,7 @@ using UtilityScripts;
 using JetBrains.Annotations;
 using Random = UnityEngine.Random;
 
-public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyTarget {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyTarget, ISavable {
     private int _id;
     private string _name;
     private string _firstName;
@@ -30,6 +30,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private Region _currentRegion;
     private bool _isAlliedWithPlayer;
 
+    public string persistentID { get; private set; }
     //visuals
     public CharacterVisuals visuals { get; }
     public BaseMapObjectVisual mapObjectVisual => marker;
@@ -62,7 +63,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public TrapStructure trapStructure { get; private set; }
-    public bool isDisabledByPlayer { get; protected set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
@@ -134,12 +134,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CrimeComponent crimeComponent { get; private set; }
 
     #region getters / setters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
+    public Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
     public virtual string raceClassName => GetDefaultRaceClassName();
     public override string relatableName => _firstName;
     public override int id => _id;
     public override GENDER gender => _gender;
-
     public string fullname => $"{_firstName} {_surName}";
     public string firstName => _firstName;
     public string surName => _surName;
@@ -259,6 +260,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
+        persistentID = System.Guid.NewGuid().ToString();
         _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : UtilityScripts.Utilities.SetID(this, id);
         _gender = gender;
         AssignClass(className, true);
@@ -270,6 +272,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         combatComponent.UpdateBasicData(true);
     }
     public Character(string className, RACE race, GENDER gender) : this() {
+        persistentID = System.Guid.NewGuid().ToString();
         _id = UtilityScripts.Utilities.SetID(this);
         _gender = gender;
         AssignClass(className, true);
@@ -329,6 +332,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
+        persistentID = data.persistentID;
         _id = UtilityScripts.Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetSexuality(data.sexuality);
@@ -382,7 +386,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         //supply = data.supply;
         //canCombat = data.isCombatant;
-        isDisabledByPlayer = data.isDisabledByPlayer;
         deathStr = data.deathStr;
 
         moodComponent.Load(data);
@@ -3878,10 +3881,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _state = state;
     }
     public bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE && !isDisabledByPlayer;
-    }
-    public void SetIsDisabledByPlayer(bool state) {
-        isDisabledByPlayer = state;
+        return _state != POI_STATE.INACTIVE;
     }
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }

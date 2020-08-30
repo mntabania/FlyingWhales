@@ -10,7 +10,6 @@ public class Ore : TileObject {
     //private const int Supply_Per_Mine = 50;
 
     public Ore() {
-        //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
         Initialize(TILE_OBJECT_TYPE.ORE, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
@@ -18,13 +17,7 @@ public class Ore : TileObject {
 
         SetYield(50);
     }
-    //public Ore(SaveDataTileObject data) {
-    //    //advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_METAL, INTERACTION_TYPE.ASSAULT, };
-    //    Initialize(data, false);
-    //    AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
-    //    AddAdvertisedAction(INTERACTION_TYPE.MINE_METAL);
-
-    //}
+    public Ore(SaveDataTileObject data) { }
 
     #region Overrides
     public override string ToString() {

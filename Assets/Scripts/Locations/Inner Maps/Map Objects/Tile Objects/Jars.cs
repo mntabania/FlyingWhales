@@ -5,6 +5,6 @@ public class Jars : TileObject{
         Initialize(TILE_OBJECT_TYPE.JARS);
     }
     public Jars(SaveDataTileObject data) {
-        Initialize(data);
+        
     }
 }

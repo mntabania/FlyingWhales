@@ -23,6 +23,7 @@ public sealed class PoisonCloudTileObject : MovingTileObject {
         SetDoExpireEffect(true);
         maxSize = 6;
     }
+    public PoisonCloudTileObject(SaveDataTileObject data) { }
 
     public void SetStacks(int stacks) {
         this.stacks = stacks;
