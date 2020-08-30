@@ -11,28 +11,12 @@ using Random = UnityEngine.Random;
 public class Faction : IJobOwner, ISavable {
     
     public const int MAX_HISTORY_LOGS = 60;
-    
+
     public string persistentID { get; }
     public int id { get; }
     public string name { get; private set; }
     public string description { get; private set; }
-    public bool isPlayerFaction => factionType.type == FACTION_TYPE.Demons;
     public bool isMajorFaction { get; private set; }
-    public RACE race {
-        get {
-            switch (factionType.type) {
-                case FACTION_TYPE.Elven_Kingdom:
-                    return RACE.ELVES;
-                case FACTION_TYPE.Human_Empire:
-                    return RACE.HUMANS;
-                case FACTION_TYPE.Demons:
-                    return RACE.DEMON;
-                default:
-                    return RACE.NONE;
-            }
-        }
-    } 
-    public JOB_OWNER ownerType => JOB_OWNER.FACTION;
     public ILeader leader { get; private set; }
     public Sprite emblem { get; private set; }
     public Color factionColor { get; private set; }
@@ -47,24 +31,41 @@ public class Faction : IJobOwner, ISavable {
     public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
-    public int newLeaderDesignationChance { get; private set; }
-    public Heirloom factionHeirloom { get; private set; }
     
+    public int newLeaderDesignationChance { get; private set; }
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
+    public Heirloom factionHeirloom { get; private set; }
+
     #region getters/setters
-    public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
-    public Type serializedData => typeof(SaveDataFaction);
     public bool isDestroyed => characters.Count <= 0;
     public bool isMajorFriendlyNeutral => isMajorFaction || this == FactionManager.Instance.vagrantFaction;
     public bool isMajorNonPlayerFriendlyNeutral => isMajorNonPlayer || this == FactionManager.Instance.vagrantFaction;
     public bool isMajorNonPlayer => isMajorFaction && !isPlayerFaction;
     public JobTriggerComponent jobTriggerComponent => factionJobTriggerComponent;
+    public bool isPlayerFaction => factionType.type == FACTION_TYPE.Demons;
+    public JOB_OWNER ownerType => JOB_OWNER.FACTION;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
+    public System.Type serializedData => typeof(SaveDataFaction);
+    public RACE race {
+        get {
+            switch (factionType.type) {
+                case FACTION_TYPE.Elven_Kingdom:
+                    return RACE.ELVES;
+                case FACTION_TYPE.Human_Empire:
+                    return RACE.HUMANS;
+                case FACTION_TYPE.Demons:
+                    return RACE.DEMON;
+                default:
+                    return RACE.NONE;
+            }
+        }
+    }
     #endregion
 
     public Faction(FACTION_TYPE _factionType) {
-        persistentID = Guid.NewGuid().ToString();
-        id = UtilityScripts.Utilities.SetID<Faction>(this);
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+        id = UtilityScripts.Utilities.SetID(this);
         SetName(RandomNameGenerator.GenerateKingdomName());
         // SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(UtilityScripts.Utilities.GetColorForFaction());
