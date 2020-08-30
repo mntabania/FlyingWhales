@@ -48,19 +48,19 @@ public class HexTileSpellsComponent {
     #region Loading
     public void Load(SaveDataHexTileSpellsComponent saveData) {
         if (saveData.hasEarthquake) {
-            StartEarthquake();
+            SetHasEarthquake(true);
             currentEarthquakeDuration = saveData.remainingEarthquakeDuration;
         }
         if (saveData.hasBrimstones) {
-            StartBrimstones();
+            SetHasBrimstones(true);
             currentBrimstonesDuration = saveData.remainingBrimstoneDuration;
         }
         if (saveData.hasElectricStorm) {
-            StartElectricStorm();
+            SetHasElectricStorm(true);
             currentElectricStormDuration = saveData.remainingElectricStormDuration;
         }
         if (saveData.hasIceteroids) {
-            StartIceteroids();
+            SetHasIceteroids(true);
             currentIceteroidsDuration = saveData.remainingIceteroidsDuration;
         }
     }

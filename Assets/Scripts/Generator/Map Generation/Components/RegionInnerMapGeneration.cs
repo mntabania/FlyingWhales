@@ -60,7 +60,6 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return MapGenerator.Instance.StartCoroutine(AssignTilesToStructures(saveDataLocationStructure, location));
             yield return MapGenerator.Instance.StartCoroutine(LoadStructureObject(saveDataLocationStructure, location));    
         }
-        yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(data, saveData));
 
         for (int i = 0; i < InnerMapManager.Instance.innerMaps.Count; i++) {
             InnerTileMap innerTileMap = InnerMapManager.Instance.innerMaps[i];
@@ -135,50 +134,6 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structure.OnDoneLoadStructure();
 
             yield return null;
-        }
-    }
-    private IEnumerator LoadTileObjects(MapGenerationData data, SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading objects...");
-        int batchCount = 0;
-        for (int i = 0; i < saveData.worldMapSave.tileObjectSaves.Count; i++) {
-            SaveDataTileObject saveDataTileObject = saveData.worldMapSave.tileObjectSaves[i];
-            TileObject tileObject = saveDataTileObject.Load();
-            if (string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
-                //the loaded object does not have a grid tile location, it will be loaded and in memory, but not placed in this section.
-                //if it in a character's inventory then it will be referenced by the character carrying it, when that character has been loaded.
-                continue;
-            }
-            LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
-            if (tileObject is MovingTileObject) {
-                SaveDataMovingTileObject saveDataMovingTileObject = saveDataTileObject as SaveDataMovingTileObject;
-                Assert.IsNotNull(saveDataMovingTileObject);
-                tileObject.SetGridTileLocation(gridTileLocation);
-                tileObject.OnPlacePOI();
-                tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
-            } else if (tileObject is Tombstone) {
-                //TODO:
-            } else {
-                gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
-                if (tileObject.mapObjectVisual != null) {
-                    if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
-                        tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);
-                        if (tileObject is Table) {
-                            tileObject.RevalidateTileObjectSlots();
-                        }
-                    } else {
-                        tileObject.mapObjectVisual.SetVisual(null);    
-                        // Debug.Log($"Could not find asset with name {saveDataTileObject.spriteName}");
-                    }
-                    tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);    
-                }    
-            }
-            
-            
-            batchCount++;
-            if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
-                batchCount = 0;
-                yield return null;    
-            }
         }
     }
     #endregion

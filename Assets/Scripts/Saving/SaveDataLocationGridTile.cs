@@ -34,7 +34,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         tileState = gridTile.tileState;
 
 
-        genericTileObjectSave = WorldMapSave.CreateNewSaveDataForTileObject("GenericTileObject");
+        genericTileObjectSave = SaveDataCurrentProgress.CreateNewSaveDataForTileObject("GenericTileObject");
         genericTileObjectSave.Save(gridTile.genericTileObject);
         // traits = new List<SaveDataTrait>();
         // for (int i = 0; i < gridTile.normalTraits.Count; i++) {

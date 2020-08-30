@@ -88,14 +88,11 @@ public class SaveManager : MonoBehaviour {
             DatabaseManager.Instance.hexTileDatabase,
             DatabaseManager.Instance.regionDatabase,
             DatabaseManager.Instance.settlementDatabase,
-            DatabaseManager.Instance.structureDatabase,
-            DatabaseManager.Instance.tileObjectDatabase
+            DatabaseManager.Instance.structureDatabase
         );
         completeSave.worldMapSave = worldMapSave;
-
-        if (string.IsNullOrEmpty(fileName)) {
-            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
-        }
+        completeSave.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
+        
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
         SaveGame.Save(path, completeSave);
         

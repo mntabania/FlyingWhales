@@ -28,8 +28,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
             DatabaseManager.Instance.hexTileDatabase, 
             DatabaseManager.Instance.regionDatabase, 
             DatabaseManager.Instance.settlementDatabase,
-            DatabaseManager.Instance.structureDatabase,
-            DatabaseManager.Instance.tileObjectDatabase
+            DatabaseManager.Instance.structureDatabase
         );
         saveData.worldMapSave = worldMapSave;
         //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);

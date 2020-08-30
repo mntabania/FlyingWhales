@@ -47,6 +47,7 @@ public class SaveDataCurrentProgress {
     private void ConstructObjectHub() {
         objectHub = new Dictionary<OBJECT_TYPE, BaseSaveDataHub>() {
             { OBJECT_TYPE.Faction, new SaveDataFactionHub() },
+            { OBJECT_TYPE.Tile_Object, new SaveDataTileObjectHub() },
         };
     }
     #endregion
@@ -64,7 +65,7 @@ public class SaveDataCurrentProgress {
         }
         return false;
     }
-    private T GetFromSaveHub<T>(OBJECT_TYPE objectType, string persistenID) {
+    public T GetFromSaveHub<T>(OBJECT_TYPE objectType, string persistenID) {
         if (objectHub.ContainsKey(objectType)) {
             return (T) objectHub[objectType].GetData(persistenID);
         }
@@ -94,6 +95,59 @@ public class SaveDataCurrentProgress {
         }
     }
     #endregion
+    
+    #region Tile Objects
+    public void SaveTileObjects(List<TileObject> tileObjects) {
+        //tile objects
+        List<TileObject> finishedObjects = new List<TileObject>();
+        for (int i = 0; i < tileObjects.Count; i++) {
+            TileObject tileObject = tileObjects[i];
+            if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
+                // Debug.LogWarning($"Grid tile location of {tileObject} is null! Not saving that...");
+                continue; //skip tile objects without grid tile location that are not being carried.
+            }
+            if (finishedObjects.Contains(tileObject)) {
+                // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
+                continue; //skip    
+            }
+            if (tileObject is GenericTileObject) {
+                continue; //do not place save data of generic tile objects here, since they are loaded alongside their respective LocationGridTiles  
+            }
+            if (tileObject is Artifact artifact) {
+                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
+                SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
+                saveDataTileObject.Save(tileObject);
+                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            } else {
+                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
+                SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
+                saveDataTileObject.Save(tileObject);
+                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            }
+            finishedObjects.Add(tileObject);
+        }
+        finishedObjects.Clear();
+        finishedObjects = null;
+    }
+    public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
+        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+            return obj;
+        }
+        return new SaveDataTileObject(); //if no special save data for tile object was found, then just use the generic one
+    }
+    private SaveDataTileObject createNewSaveDataForArtifact(string tileObjectTypeString) {
+        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+            return obj;
+        }
+        return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
+    }
+    #endregion
 
     #region Independent Loading
     public Player LoadPlayer() {
@@ -118,6 +172,16 @@ public class SaveDataCurrentProgress {
             if(objectHub[OBJECT_TYPE.Faction] is SaveDataFactionHub factionHub) {
                 Dictionary<string, SaveDataFaction> savedFactions = factionHub.hub;
                 foreach (SaveDataFaction data in savedFactions.Values) {
+                    data.Load();
+                }
+            }
+        }
+    }
+    public void LoadTileObjects() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Tile_Object)){
+            if(objectHub[OBJECT_TYPE.Tile_Object] is SaveDataTileObjectHub hub) {
+                Dictionary<string, SaveDataTileObject> savedFactions = hub.hub;
+                foreach (SaveDataTileObject data in savedFactions.Values) {
                     data.Load();
                 }
             }

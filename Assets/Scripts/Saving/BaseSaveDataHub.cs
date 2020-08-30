@@ -10,7 +10,7 @@ public class BaseSaveDataHub {
     public virtual bool RemoveFromSave<T>(T data) {
         return false;
     }
-    public virtual ISavableCounterpart GetData(string persistendID) {
+    public virtual ISavableCounterpart GetData(string persistentID) {
         return default;
     }
 }
@@ -43,9 +43,45 @@ public class SaveDataFactionHub : BaseSaveDataHub {
         }
         return false;
     }
-    public override ISavableCounterpart GetData(string persistendID) {
-        if (_hub.ContainsKey(persistendID)) {
-            return _hub[persistendID];
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}
+
+[System.Serializable]
+public class SaveDataTileObjectHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataTileObject> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataTileObject> hub => _hub;
+    #endregion
+
+    public SaveDataTileObjectHub() {
+        _hub = new Dictionary<string, SaveDataTileObject>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataTileObject save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataTileObject save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
         }
         return default;
     }

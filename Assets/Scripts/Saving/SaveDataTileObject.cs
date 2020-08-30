@@ -5,8 +5,9 @@ using Traits;
 using UnityEngine;
 
 [System.Serializable]
-public class SaveDataTileObject : SaveData<TileObject> {
-    public string persistentID;
+public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
+    public string _persistentID;
+    public OBJECT_TYPE _objectType;
     public int id;
     public string name;
     public TILE_OBJECT_TYPE tileObjectType;
@@ -25,8 +26,14 @@ public class SaveDataTileObject : SaveData<TileObject> {
     public string spriteName;
     public QuaternionSave rotation;
     
+    #region getters
+    public string persistentID => _persistentID;
+    public OBJECT_TYPE objectType => _objectType;
+    #endregion
+    
     public override void Save(TileObject tileObject) {
-        persistentID = tileObject.persistentID;
+        _persistentID = tileObject.persistentID;
+        _objectType = tileObject.objectType;
         id = tileObject.id;
         name = tileObject.name;
         tileObjectType = tileObject.tileObjectType;
