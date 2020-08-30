@@ -7,3 +7,8 @@ public interface ISavable {
     OBJECT_TYPE objectType { get; }
     System.Type serializedData { get; }
 }
+
+public interface ISavableCounterpart {
+    string persistentID { get; }
+    OBJECT_TYPE objectType { get; }
+}

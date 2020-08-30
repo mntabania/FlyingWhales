@@ -5,7 +5,9 @@ using BayatGames.SaveGameFree.Types;
 using Factions;
 
 [System.Serializable]
-public class SaveDataFaction : SaveData<Faction> {
+public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
+    public string _persistentID;
+    public OBJECT_TYPE _objectType;
     public int id;
     public string name;
     public string description;
@@ -26,8 +28,15 @@ public class SaveDataFaction : SaveData<Faction> {
 
     public int newLeaderDesignationChance;
 
+    #region getters
+    public string persistentID => _persistentID;
+    public OBJECT_TYPE objectType => _objectType;
+    #endregion
+
     #region Overrides
     public override void Save(Faction faction) {
+        _persistentID = faction.persistentID;
+        _objectType = faction.objectType;
         id = faction.id;
         name = faction.name;
         description = faction.description;

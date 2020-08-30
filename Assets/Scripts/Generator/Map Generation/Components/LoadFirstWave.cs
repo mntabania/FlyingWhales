@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoadDateGeneration : MapGenerationComponent {
+public class LoadFirstWave : MapGenerationComponent {
 
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
         yield return null;
@@ -15,7 +15,17 @@ public class LoadDateGeneration : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
-        saveData.LoadDate();
+        //Load Factions
+        yield return MapGenerator.Instance.StartCoroutine(LoadFactions(saveData));
+
+        //Load Characters
+
+        //Load Tile Objects
+    }
+
+    private IEnumerator LoadFactions(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Factions...");
+        saveData.LoadFactions();
         yield return null;
     }
 }

@@ -35,7 +35,45 @@ public class SaveDataCurrentProgress {
     public SaveDataPlayerGame playerSave;
 
     public List<SaveDataBaseSettlement> settlementSaves;
-    public List<SaveDataFaction> factionSaves;
+    //public List<SaveDataFaction> factionSaves;
+
+    //Pool of all saved objects
+    public Dictionary<OBJECT_TYPE, BaseSaveDataHub> objectHub;
+
+    public SaveDataCurrentProgress() {
+        if(objectHub == null) {
+            objectHub = new Dictionary<OBJECT_TYPE, BaseSaveDataHub>();
+        }
+    }
+
+    #region General
+    private void ConstructObjectHub() {
+        objectHub = new Dictionary<OBJECT_TYPE, BaseSaveDataHub>() {
+            { OBJECT_TYPE.Faction, new SaveDataFactionHub() },
+        };
+    }
+    #endregion
+
+    #region Hub
+    private bool AddToSaveHub<T>(T data, OBJECT_TYPE objectType) {
+        if (objectHub.ContainsKey(objectType)) { //The object type must always be present in the object hub dictionary if it is not, add it in ConstructObjectHub
+            return objectHub[objectType].AddToSave(data);
+        }
+        return false;
+    }
+    private bool RemoveFromSaveHub<T>(T data, OBJECT_TYPE objectType) {
+        if (objectHub.ContainsKey(objectType)) { //The object type must always be present in the object hub dictionary if it is not, add it in ConstructObjectHub
+            return objectHub[objectType].RemoveFromSave(data);
+        }
+        return false;
+    }
+    private T GetFromSaveHub<T>(OBJECT_TYPE objectType, string persistenID) {
+        if (objectHub.ContainsKey(objectType)) {
+            return objectHub[objectType].GetData<T>(persistenID);
+        }
+        return default;
+    }
+    #endregion
 
     #region Saving
     public void SaveDate() {
@@ -51,17 +89,24 @@ public class SaveDataCurrentProgress {
         playerSave.Save();
     }
     public void SaveFactions() {
-        factionSaves = new List<SaveDataFaction>();
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
             SaveDataFaction saveData = new SaveDataFaction();
             saveData.Save(faction);
-            factionSaves.Add(saveData);
+            AddToSaveHub(saveData, saveData.objectType);
         }
     }
     #endregion
 
-    #region Loading
+    #region Independent Loading
+    public Player LoadPlayer() {
+        return playerSave.Load();
+    }
+    #endregion
+
+    #region First Wave Loading
+    //FIRST WAVE LOADING - this is always the firsts to load, this loading does not require references from others and thus, only needs itself to load
+    //This typically populates data in the databases of objects
     public void LoadDate() {
         GameDate today = GameManager.Instance.Today();
         today.day = day;
@@ -71,30 +116,39 @@ public class SaveDataCurrentProgress {
         GameManager.Instance.continuousDays = continuousDays;
         GameManager.Instance.SetToday(today);
     }
-    public Player LoadPlayer() {
-        return playerSave.Load();
-    }
     public void LoadFactions() {
-        for (int i = 0; i < factionSaves.Count; i++) {
-            SaveDataFaction saveData = factionSaves[i];
-            saveData.Load();
+        if (objectHub.ContainsKey(OBJECT_TYPE.Faction)){
+            if(objectHub[OBJECT_TYPE.Faction] is SaveDataFactionHub factionHub) {
+                Dictionary<string, SaveDataFaction> savedFactions = factionHub.hub;
+                foreach (SaveDataFaction data in savedFactions.Values) {
+                    data.Load();
+                }
+            }
         }
     }
+    #endregion
+
+    #region Second Wave Loading
+    //SECOND WAVE LOADING - This loading should always be after the FIRST WAVE LOADING, almost all this requires references from other objects and thus, the object must be initiated first before any of these functions are called
+    //Initiation of objects are done in FIRST WAVE LOADING
     public void LoadFactionCharacters() {
-        for (int i = 0; i < factionSaves.Count; i++) {
-            SaveDataFaction saveData = factionSaves[i];
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            string persistentID = FactionManager.Instance.allFactions[i].persistentID;
+            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
             saveData.LoadCharacters();
         }
     }
     public void LoadFactionRelationships() {
-        for (int i = 0; i < factionSaves.Count; i++) {
-            SaveDataFaction saveData = factionSaves[i];
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            string persistentID = FactionManager.Instance.allFactions[i].persistentID;
+            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
             saveData.LoadRelationships();
         }
     }
     public void LoadFactionLogs() {
-        for (int i = 0; i < factionSaves.Count; i++) {
-            SaveDataFaction saveData = factionSaves[i];
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            string persistentID = FactionManager.Instance.allFactions[i].persistentID;
+            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
             saveData.LoadLogs();
         }
     }
