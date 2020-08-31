@@ -4,17 +4,23 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class BallLightningTileObject : MovingTileObject {
+public class BallLightning : MovingTileObject {
 
     private BallLightningMapObjectVisual _ballLightningMapVisual;
     public override string neutralizer => "Thunder Master";
+    public GameDate expiryDate { get; }
     
-    public BallLightningTileObject() {
+    public BallLightning() {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public BallLightningTileObject(SaveDataTileObject data) { }
+    public BallLightning(SaveDataTileObject data) {
+        SaveDataBallLightning saveDataBallLightning = data as SaveDataBallLightning;
+        Assert.IsNotNull(saveDataBallLightning);
+        expiryDate = saveDataBallLightning.expiryDate;
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _ballLightningMapVisual = mapVisual as BallLightningMapObjectVisual;
@@ -22,9 +28,6 @@ public class BallLightningTileObject : MovingTileObject {
     }
     public override void Neutralize() {
         _ballLightningMapVisual.Expire();
-    }
-    public void OnExpire() {
-        Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
@@ -43,8 +46,7 @@ public class BallLightningTileObject : MovingTileObject {
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
-        if (amount < 0) { //&& source != null
-            //CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+        if (amount < 0) { 
             Character responsibleCharacter = null;
             if (source is Character character) {
                 responsibleCharacter = character;
@@ -64,11 +66,6 @@ public class BallLightningTileObject : MovingTileObject {
             //object has been destroyed
             _ballLightningMapVisual.Expire();
         }
-        //if (amount < 0) {
-        //    Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);
-        //} else if (currentHP == maxHP) {
-        //    Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
-        //}
         Debug.Log($"{GameManager.Instance.TodayLogString()}HP of {this} was adjusted by {amount}. New HP is {currentHP}.");
     }
 
@@ -85,3 +82,15 @@ public class BallLightningTileObject : MovingTileObject {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataBallLightning : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        BallLightning ballLightning = tileObject as BallLightning;
+        Assert.IsNotNull(ballLightning);
+        expiryDate = ballLightning.expiryDate;
+    }
+}
+#endregion

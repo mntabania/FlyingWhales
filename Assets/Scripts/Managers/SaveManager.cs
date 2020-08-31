@@ -73,6 +73,9 @@ public class SaveManager : MonoBehaviour {
 
     #region Saving
     public void DoManualSave(string fileName = "") {
+        if (string.IsNullOrEmpty(fileName)) {
+            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
+        }
         SaveDataCurrentProgress completeSave = new SaveDataCurrentProgress();
         completeSave.Initialize();
         //date
@@ -81,19 +84,17 @@ public class SaveManager : MonoBehaviour {
         completeSave.SaveFactions();
         
         //save world map
-        //WorldMapSave worldMapSave = new WorldMapSave();
-        //worldMapSave.SaveWorld(
-        //    WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-        //    GridMap.Instance.normalHexTiles,
-        //    GridMap.Instance.allRegions
-        //);
-        //completeSave.worldMapSave = worldMapSave;
-        
-        //completeSave.SaveSettlements(LandmarkManager.Instance.allSettlements);
+        WorldMapSave worldMapSave = new WorldMapSave();
+        worldMapSave.SaveWorld(
+            WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
+            DatabaseManager.Instance.hexTileDatabase,
+            DatabaseManager.Instance.regionDatabase,
+            DatabaseManager.Instance.settlementDatabase,
+            DatabaseManager.Instance.structureDatabase
+        );
+        completeSave.worldMapSave = worldMapSave;
+        completeSave.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
 
-        if (string.IsNullOrEmpty(fileName)) {
-            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
-        }
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
         SaveGame.Save(path, completeSave);
         

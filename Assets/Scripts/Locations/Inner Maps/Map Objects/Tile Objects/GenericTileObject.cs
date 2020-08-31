@@ -7,7 +7,7 @@ using Traits;
 public class GenericTileObject : TileObject {
     private bool hasBeenInitialized { get; set; }
     public override LocationGridTile gridTileLocation => _owner;
-    private readonly LocationGridTile _owner;
+    private LocationGridTile _owner;
     public GenericTileObject(LocationGridTile locationGridTile) {
         _owner = locationGridTile;
     }
@@ -129,6 +129,9 @@ public class GenericTileObject : TileObject {
         }
         return false;
     }
+    public void SetTileOwner(LocationGridTile owner) {
+        _owner = owner;
+    }
 
     public void ManualInitialize(LocationGridTile tile) {
         if (hasBeenInitialized) {
@@ -142,3 +145,12 @@ public class GenericTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
     }
 }
+
+#region Save Data
+public class SaveDataGenericTileObject : SaveDataTileObject {
+    public override TileObject Load() {
+        GenericTileObject genericTileObject = InnerMapManager.Instance.LoadTileObject<GenericTileObject>(this);
+        return genericTileObject;
+    }
+}
+#endregion

@@ -93,7 +93,7 @@ public class Faction : IJobOwner, ISavable {
 
         SetName(data.name);
         SetDescription(data.description);
-        //TODO:UNCOMMENT THIS// SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemName));
+        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemName));
         SetFactionColor(data.factionColor);
         SetFactionActiveState(data.isActive);
         SetIsMajorFaction(data.isMajorFaction);

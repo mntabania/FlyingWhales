@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Databases;
 using UnityEngine;
 
 public class DatabaseManager : MonoBehaviour {
@@ -12,6 +13,8 @@ public class DatabaseManager : MonoBehaviour {
     public FactionDatabase factionDatabase { get; private set; }
     public TileObjectDatabase tileObjectDatabase { get; private set; }
     public LocationGridTileDatabase locationGridTileDatabase { get; private set; }
+    public SettlementDatabase settlementDatabase { get; private set; }
+    public LocationStructureDatabase structureDatabase { get; private set; }
     
     void Awake() {
         if (Instance == null) {
@@ -31,5 +34,7 @@ public class DatabaseManager : MonoBehaviour {
         factionDatabase = new FactionDatabase();
         tileObjectDatabase = new TileObjectDatabase();
         locationGridTileDatabase = new LocationGridTileDatabase();
+        settlementDatabase = new SettlementDatabase();
+        structureDatabase = new LocationStructureDatabase();
     }
 }

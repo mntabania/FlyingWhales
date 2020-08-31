@@ -15,14 +15,10 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
-    private FrostyFogTileObject owner;
+    private FrostyFog owner;
     private int _size;
 
     #region Abstract Members Implementation
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        return true;
-    }
     public override void UpdateTileObjectVisual(TileObject obj) { }
     #endregion
 
@@ -42,13 +38,15 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _objsInRange = new List<ITraitable>();
-        owner = obj as FrostyFogTileObject;
+        owner = obj as FrostyFog;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
+        if (owner.size > 0) {
+            SetSize(owner.size);
+        }
         MoveToRandomDirection();
-        //OnGamePaused(GameManager.Instance.isPaused);
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(owner.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);

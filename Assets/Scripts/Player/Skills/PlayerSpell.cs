@@ -433,7 +433,7 @@ public class BallLightningData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        BallLightningTileObject ballLightning = new BallLightningTileObject();
+        BallLightning ballLightning = new BallLightning();
         ballLightning.SetGridTileLocation(targetTile);
         ballLightning.OnPlacePOI();
         //IncreaseThreatThatSeesTile(targetTile, 10);
@@ -463,7 +463,7 @@ public class FrostyFogData : SpellData {
         targetTypes = new[] { SPELL_TARGET.TILE };
     }
     public override void ActivateAbility(LocationGridTile targetTile) {
-        FrostyFogTileObject frostyFog = new FrostyFogTileObject();
+        FrostyFog frostyFog = new FrostyFog();
         frostyFog.SetGridTileLocation(targetTile);
         frostyFog.OnPlacePOI();
         frostyFog.SetStacks(EditableValuesManager.Instance.frostyFogStacks);
@@ -494,10 +494,10 @@ public class VaporData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        VaporTileObject vaporTileObject = new VaporTileObject();
-        vaporTileObject.SetGridTileLocation(targetTile);
-        vaporTileObject.OnPlacePOI();
-        vaporTileObject.SetStacks(EditableValuesManager.Instance.vaporStacks);
+        Vapor vapor = new Vapor();
+        vapor.SetGridTileLocation(targetTile);
+        vapor.OnPlacePOI();
+        vapor.SetStacks(EditableValuesManager.Instance.vaporStacks);
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }
@@ -525,9 +525,9 @@ public class FireBallData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        FireBallTileObject fireBallTileObject = new FireBallTileObject();
-        fireBallTileObject.SetGridTileLocation(targetTile);
-        fireBallTileObject.OnPlacePOI();
+        FireBall fireBall = new FireBall();
+        fireBall.SetGridTileLocation(targetTile);
+        fireBall.OnPlacePOI();
         //IncreaseThreatThatSeesTile(targetTile, 10);
         base.ActivateAbility(targetTile);
     }

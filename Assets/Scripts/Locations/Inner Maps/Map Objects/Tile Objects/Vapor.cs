@@ -4,22 +4,28 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class VaporTileObject : MovingTileObject {
+public class Vapor : MovingTileObject {
 
     private VaporMapObjectVisual _vaporMapVisualObject;
     public int size { get; private set; }
     public int stacks { get; private set; }
-    public int maxSize { get; private set; }
+    public GameDate expiryDate { get; }
     public bool doExpireEffect { get; private set; }
     protected override int affectedRange => size;
+    public int maxSize => 6;
     
-    public VaporTileObject() {
+    public Vapor() {
         Initialize(TILE_OBJECT_TYPE.VAPOR, false);
         traitContainer.RemoveTrait(this, "Flammable");
-        maxSize = 6;
         SetDoExpireEffect(true);
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public VaporTileObject(SaveDataTileObject data) { }
+    public Vapor(SaveDataTileObject data) {
+        SaveDataVapor saveDataVapor = data as SaveDataVapor;
+        Assert.IsNotNull(saveDataVapor);
+        expiryDate = saveDataVapor.expiryDate;
+        SetStacks(saveDataVapor.stacks);
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _vaporMapVisualObject = mapVisual as VaporMapObjectVisual;
@@ -70,7 +76,7 @@ public class VaporTileObject : MovingTileObject {
             LocationGridTile targetTile = gridTileLocation;
             SetDoExpireEffect(false);
             _vaporMapVisualObject.Expire();
-            FrostyFogTileObject frostyFog = new FrostyFogTileObject();
+            FrostyFog frostyFog = new FrostyFog();
             frostyFog.SetGridTileLocation(targetTile);
             frostyFog.OnPlacePOI();
             frostyFog.SetStacks(stacks);
@@ -78,11 +84,11 @@ public class VaporTileObject : MovingTileObject {
             LocationGridTile targetTile = gridTileLocation;
             SetDoExpireEffect(false);
             _vaporMapVisualObject.Expire();
-            PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
-            poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6)));
-            poisonCloudTileObject.SetGridTileLocation(targetTile);
-            poisonCloudTileObject.OnPlacePOI();
-            poisonCloudTileObject.SetStacks(stacks);
+            PoisonCloud poisonCloud = new PoisonCloud();
+            poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))));
+            poisonCloud.SetGridTileLocation(targetTile);
+            poisonCloud.OnPlacePOI();
+            poisonCloud.SetStacks(stacks);
         }
         if (!hasExpired && currentHP == 0) {
             _vaporMapVisualObject.Expire();
@@ -106,7 +112,9 @@ public class VaporTileObject : MovingTileObject {
     #region Size
     private void SetSize(int size) {
         this.size = size;
-        _vaporMapVisualObject.SetSize(size);
+        if (_vaporMapVisualObject != null) {
+            _vaporMapVisualObject.SetSize(size);    
+        }
     }
     private void UpdateSizeBasedOnWetStacks() {
         if (stacks >= 1 && stacks <= 2) {
@@ -150,3 +158,16 @@ public class VaporTileObject : MovingTileObject {
     }
     #endregion
 }
+#region Save Data
+public class SaveDataVapor : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public int stacks;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Vapor vapor = tileObject as Vapor;
+        Assert.IsNotNull(vapor);
+        expiryDate = vapor.expiryDate;
+        stacks = vapor.stacks;
+    }
+}
+#endregion

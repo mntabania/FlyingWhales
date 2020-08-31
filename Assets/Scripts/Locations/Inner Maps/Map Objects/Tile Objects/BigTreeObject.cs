@@ -15,7 +15,9 @@ public class BigTreeObject : TreeObject {
         SetYield(InnerMapManager.Big_Tree_Yield);
 		traitContainer.AddTrait(this, "Immovable");
 	}
-	public BigTreeObject(SaveDataTileObject data) { }
+	public BigTreeObject(SaveDataTileObject data) { 
+		SetYield(InnerMapManager.Big_Tree_Yield);
+	}
 
 	public override string ToString() {
 		return $"Big Tree {id.ToString()}";
@@ -43,3 +45,6 @@ public class BigTreeObject : TreeObject {
 	}
 }
 
+#region Save Data
+public class SaveDataBigTreeObject : SaveDataTreeObject { }
+#endregion

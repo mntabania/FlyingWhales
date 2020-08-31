@@ -1477,6 +1477,10 @@ public class ConsoleBase : InfoUIBase {
         if (parameters.Length > 0) {
             customFileName = parameters[0];
         }
+        if (string.IsNullOrEmpty(customFileName)) {
+            customFileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
+        }
+        
         SaveManager.Instance.DoManualSave(customFileName);
     }
     #endregion

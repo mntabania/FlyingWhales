@@ -132,6 +132,9 @@ namespace Inner_Maps {
         public void CreateGenericTileObject() {
             genericTileObject = new GenericTileObject(this);
         }
+        public void LoadGenericTileObject(GenericTileObject genericTileObject) {
+            this.genericTileObject = genericTileObject;
+        }
         public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
             collectionOwner = _collectionOwner;
         }

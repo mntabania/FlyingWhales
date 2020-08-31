@@ -16,17 +16,12 @@ using Random = UnityEngine.Random;
 public partial class LandmarkManager : BaseMonoBehaviour {
 
     public static LandmarkManager Instance = null;
-    public static readonly int Max_Connections = 3;
-    public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
     public const int SUMMON_MINION_DURATION = 96;
-    public const int MAX_RESOURCE_PILE = 500;
     
     [SerializeField] private List<LandmarkData> landmarkData;
     public List<AreaData> areaData;
 
     public List<BaseLandmark> allLandmarks;
-    public List<BaseSettlement> allSettlements;
-    public List<NPCSettlement> allNonPlayerSettlements;
 
     [SerializeField] private GameObject landmarkGO;
 
@@ -42,9 +37,12 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public STRUCTURE_TYPE[] elfUtilityStructures { get; private set; }
     public STRUCTURE_TYPE[] elfCombatStructures { get; private set; }
 
+    #region getters
+    public List<BaseSettlement> allSettlements => DatabaseManager.Instance.settlementDatabase.allSettlements;
+    public List<NPCSettlement> allNonPlayerSettlements => DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements;
+    #endregion
+    
     public void Initialize() {
-        allSettlements = new List<BaseSettlement>();
-        allNonPlayerSettlements = new List<NPCSettlement>();
         allLandmarks = new List<BaseLandmark>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
@@ -278,10 +276,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType);
         newNpcSettlement.AddTileToSettlement(tiles);
         Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
-        allSettlements.Add(newNpcSettlement);
-        if(locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-            allNonPlayerSettlements.Add(newNpcSettlement);
-        }
+        DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
     }
     public NPCSettlement LoadNPCSettlement(SaveDataNPCSettlement saveDataNpcSettlement) {
@@ -292,19 +287,15 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             HexTile tile = tiles[i];
             newNpcSettlement.AddTileToSettlement(tile);
         }
-        
         Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
-        allSettlements.Add(newNpcSettlement);
-        if(newNpcSettlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-            allNonPlayerSettlements.Add(newNpcSettlement);
-        }
+        DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
     }
     public PlayerSettlement CreateNewPlayerSettlement(params HexTile[] tiles) {
         PlayerSettlement newPlayerSettlement = new PlayerSettlement();
         newPlayerSettlement.AddTileToSettlement(tiles);
         Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
-        allSettlements.Add(newPlayerSettlement);
+        DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }
     public PlayerSettlement LoadPlayerSettlement(SaveDataPlayerSettlement saveDataPlayerSettlement) {
@@ -317,7 +308,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
 
         Messenger.Broadcast(Signals.AREA_CREATED, newPlayerSettlement);
-        allSettlements.Add(newPlayerSettlement);
+        DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newPlayerSettlement);
         return newPlayerSettlement;
     }
     public NPCSettlement GetRandomVillageSettlement() {
@@ -372,39 +363,8 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public void RemoveArea(NPCSettlement npcSettlement) {
-        allSettlements.Remove(npcSettlement);
-    }
-    public NPCSettlement CreateNewArea(SaveDataBaseSettlement saveDataBaseSettlement) {
-        NPCSettlement newNpcSettlement = new NPCSettlement(saveDataBaseSettlement);
-
-        if (locationPortraits.ContainsKey(newNpcSettlement.locationType)) {
-        }
-        Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
-        allSettlements.Add(newNpcSettlement);
-        if (saveDataBaseSettlement.locationType != LOCATION_TYPE.DEMONIC_INTRUSION) {
-            allNonPlayerSettlements.Add(newNpcSettlement);
-        }
-        return newNpcSettlement;
-    }
-
     public BaseSettlement GetAreaByID(int id) {
-        for (int i = 0; i < allSettlements.Count; i++) {
-            BaseSettlement settlement = allSettlements[i];
-            if (settlement.id == id) {
-                return settlement;
-            }
-        }
-        return null;
-    }
-    public BaseSettlement GetAreaByName(string name) {
-        for (int i = 0; i < allSettlements.Count; i++) {
-            BaseSettlement settlement = allSettlements[i];
-            if (settlement.name.Equals(name)) {
-                return settlement;
-            }
-        }
-        return null;
+        return DatabaseManager.Instance.settlementDatabase.GetSettlementByID(id);
     }
     public void OwnSettlement(Faction newOwner, BaseSettlement settlement) {
         if (settlement.owner != null) {
@@ -436,6 +396,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             settlement?.AddStructure(structure);
             Assert.IsNotNull(structure, $"Created structure of {structureType.ToString()} is null!");
             structure.Initialize();
+            DatabaseManager.Instance.structureDatabase.RegisterStructure(structure);
             return structure;
         }
         else {
@@ -452,6 +413,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             Assert.IsNotNull(structure, $"Structure at {location.name} is null {structureType}");
             location.AddStructure(structure);
             structure.Initialize();
+            DatabaseManager.Instance.structureDatabase.RegisterStructure(structure);
             return structure;
         }
         else {

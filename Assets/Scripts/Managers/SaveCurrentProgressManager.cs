@@ -29,12 +29,13 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         WorldMapSave worldMapSave = new WorldMapSave();
         worldMapSave.SaveWorld(
             WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
-            GridMap.Instance.normalHexTiles,
-            GridMap.Instance.allRegions
+            DatabaseManager.Instance.hexTileDatabase, 
+            DatabaseManager.Instance.regionDatabase, 
+            DatabaseManager.Instance.settlementDatabase,
+            DatabaseManager.Instance.structureDatabase
         );
         currentSaveDataProgress.worldMapSave = worldMapSave;
 
-        currentSaveDataProgress.SaveSettlements(LandmarkManager.Instance.allSettlements);
         //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
         //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
         //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);

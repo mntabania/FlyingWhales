@@ -38,11 +38,11 @@ public class SpawnPoisonCloud : GoapAction {
 
     #region State Effects
     public void AfterSpawnSuccess(ActualGoapNode goapNode) {
-        PoisonCloudTileObject poisonCloudTileObject = new PoisonCloudTileObject();
-        poisonCloudTileObject.SetDurationInTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6)));
-        poisonCloudTileObject.SetGridTileLocation(goapNode.actor.gridTileLocation);
-        poisonCloudTileObject.OnPlacePOI();
-        poisonCloudTileObject.SetStacks(UnityEngine.Random.Range(3, 9));
+        PoisonCloud poisonCloud = new PoisonCloud();
+        poisonCloud.SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(2, 6))));
+        poisonCloud.SetGridTileLocation(goapNode.actor.gridTileLocation);
+        poisonCloud.OnPlacePOI();
+        poisonCloud.SetStacks(UnityEngine.Random.Range(3, 9));
     }
     #endregion
 

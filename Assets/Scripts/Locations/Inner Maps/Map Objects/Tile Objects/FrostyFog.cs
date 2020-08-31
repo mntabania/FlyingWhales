@@ -4,21 +4,27 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class FrostyFogTileObject : MovingTileObject {
+public class FrostyFog : MovingTileObject {
 
     private FrostyFogMapObjectVisual _frostyFogMapVisual;
     public int size { get; private set; }
     public int stacks { get; private set; }
-    public int maxSize { get; private set; }
+    public GameDate expiryDate { get; }
+    public int maxSize => 6;
 
-    public FrostyFogTileObject() {
+    public FrostyFog() {
         Initialize(TILE_OBJECT_TYPE.FROSTY_FOG, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         traitContainer.RemoveTrait(this, "Flammable");
-        maxSize = 6;
+        expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public FrostyFogTileObject(SaveDataTileObject data) { }
+    public FrostyFog(SaveDataTileObject data) {
+        SaveDataFrostyFog saveDataFrostyFog = data as SaveDataFrostyFog;
+        Assert.IsNotNull(saveDataFrostyFog);
+        expiryDate = saveDataFrostyFog.expiryDate;
+        SetStacks(saveDataFrostyFog.stacks);
+    }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
         _frostyFogMapVisual = mapVisual as FrostyFogMapObjectVisual;
@@ -67,7 +73,7 @@ public class FrostyFogTileObject : MovingTileObject {
                 numOfBallLightnings = 4;
             }
             for (int i = 0; i < numOfBallLightnings; i++) {
-                BallLightningTileObject ballLightning = new BallLightningTileObject();
+                BallLightning ballLightning = new BallLightning();
                 ballLightning.SetGridTileLocation(tileLocation);
                 ballLightning.OnPlacePOI();
             }
@@ -99,7 +105,9 @@ public class FrostyFogTileObject : MovingTileObject {
     }
     private void SetSize(int size) {
         this.size = size;
-        _frostyFogMapVisual.SetSize(size);
+        if (_frostyFogMapVisual != null) {
+            _frostyFogMapVisual.SetSize(size);    
+        }
     }
     private void UpdateSizeBasedOnStacks() {
         if (stacks >= 1 && stacks <= 2) {
@@ -118,3 +126,17 @@ public class FrostyFogTileObject : MovingTileObject {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataFrostyFog : SaveDataMovingTileObject {
+    public GameDate expiryDate;
+    public int stacks;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        FrostyFog frostyFog = tileObject as FrostyFog;
+        Assert.IsNotNull(frostyFog);
+        expiryDate = frostyFog.expiryDate;
+        stacks = frostyFog.stacks;
+    }
+}
+#endregion

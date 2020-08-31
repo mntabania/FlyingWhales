@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -20,10 +21,10 @@ namespace Locations.Settlements {
         public List<LocationStructure> allStructures { get; protected set; }
 
         #region getters
+        public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
+        public virtual Type serializedData => typeof(SaveDataBaseSettlement);
         public LocationStructure currentStructure => null;
         public BaseSettlement currentSettlement => this;
-        public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
-        public System.Type serializedData => typeof(SaveDataBaseSettlement);
         #endregion
 
         protected BaseSettlement(LOCATION_TYPE locationType) {
@@ -39,6 +40,7 @@ namespace Locations.Settlements {
             StartListeningForFires();
         }
         protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
+            persistentID = saveDataBaseSettlement.persistentID;
             SetName(saveDataBaseSettlement.name);
             id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
             tiles = new List<HexTile>();

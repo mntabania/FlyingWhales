@@ -39,7 +39,15 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
             SpriteRenderer spriteRenderer = spriteRenderers[i];
             //update the sprite given the wall objects material, and if it is damaged or not.
             Assert.IsFalse(structureWallObject.madeOf == RESOURCE.FOOD, $"{structureWallObject.name} has food as it's wall!");
-            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(structureWallObject.madeOf, spriteRenderer.sprite.name);
+            string orientation;
+            if (spriteRenderer.sprite.name.Contains("vertical")) {
+                orientation = "vertical";
+            } else if (spriteRenderer.sprite.name.Contains("horizontal")) {
+                orientation = "horizontal";
+            } else {
+                orientation = "corner";
+            }
+            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(structureWallObject.madeOf, orientation);
             if (structureWallObject.currentHP == structureWallObject.maxHP) {
                 spriteRenderer.sprite = wallAsset.undamaged;
             } else {
@@ -93,8 +101,4 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     }
 
     public override void UpdateTileObjectVisual(StructureWallObject obj) { }
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        return true; //always true so that this is skipped
-    }
 }

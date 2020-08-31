@@ -13,15 +13,11 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private int _size;
-    private VaporTileObject _vaporTileObject;
+    private Vapor _vapor;
 
     public bool wasJustPlaced { get; private set; }
 
     #region Abstract Members Implementation
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        return true;
-    }
     public override void UpdateTileObjectVisual(TileObject obj) { }
     #endregion
 
@@ -40,19 +36,18 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Overrides
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
-        _vaporTileObject = obj as VaporTileObject;
+        _vapor = obj as Vapor;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-        
         wasJustPlaced = true;
+        if (_vapor.size > 0) {
+            SetSize(_vapor.size);
+        }
         GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
         SchedulingManager.Instance.AddEntry(dueDate, () => wasJustPlaced = false, this);
-        
         MoveToRandomDirection();
-        GameDate expiry = GameManager.Instance.Today();
-        expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
-        _expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(_vapor.expiryDate, Expire, this);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         isSpawned = true;
@@ -127,7 +122,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Expiration
     public void Expire() {
         Debug.Log($"{this.name} expired!");
-        _vaporTileObject.OnExpire();
+        _vapor.OnExpire();
         _vaporEffect.Stop();
         visionTrigger.SetAllCollidersState(false);
         isSpawned = false;
@@ -136,7 +131,7 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
         }
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        _vaporTileObject.Expire();
+        _vapor.Expire();
         StartCoroutine(DestroyCoroutine());
     }
     private IEnumerator DestroyCoroutine() {
@@ -159,21 +154,21 @@ public class VaporMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public void OnTriggerEnter2D(Collider2D collision) {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
-        if (collidedWith != null && collidedWith.damageable is VaporTileObject otherVapor && otherVapor != _vaporTileObject) {
+        if (collidedWith != null && collidedWith.damageable is Vapor otherVapor && otherVapor != _vapor) {
             if (wasJustPlaced == false) {
                 CollidedWithVapor(otherVapor);
             }
         }
     }
-    private void CollidedWithVapor(VaporTileObject otherVapor) {
+    private void CollidedWithVapor(Vapor otherVapor) {
         if (!otherVapor.hasExpired) {
-            if (_vaporTileObject.size != _vaporTileObject.maxSize) {
+            if (_vapor.size != _vapor.maxSize) {
                 int stacksToCombine = otherVapor.stacks;
                 otherVapor.mapVisual.transform.DOKill();
                 otherVapor.mapVisual.transform.DOMove(transform.position, 4f);
                 otherVapor.SetDoExpireEffect(false);
                 otherVapor.Neutralize();
-                _vaporTileObject.SetStacks(_vaporTileObject.stacks + stacksToCombine);
+                _vapor.SetStacks(_vapor.stacks + stacksToCombine);
             }
         }
     }

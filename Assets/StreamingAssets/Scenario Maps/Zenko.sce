@@ -2861,7 +2861,7 @@
       ],
       "structureSettings": [
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "CITY_CENTER"
         },
         {
@@ -2941,11 +2941,11 @@
       ],
       "structureSettings": [
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "CITY_CENTER"
         },
         {
-          "resource": "WOOD",
+          "resource": "STONE",
           "structureType": "FARM"
         },
         {

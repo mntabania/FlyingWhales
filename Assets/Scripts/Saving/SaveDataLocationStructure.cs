@@ -5,20 +5,24 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 [System.Serializable]
-public abstract class SaveDataLocationStructure : SaveData<LocationStructure>{
+public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
+    public string persistentID;
     public int id;
     public string name;
     public STRUCTURE_TYPE structureType;
+    public string regionLocationID;
     public STRUCTURE_TAG[] structureTags;
     public Point[] tileCoordinates;
     public int currentHP;
-    public int[] residentIDs;
-    public int occupiedHexTileID;
+    public string[] residentIDs;
+    public string occupiedHexTileID;
 
     public override void Save(LocationStructure structure) {
+        persistentID = structure.persistentID;
         id = structure.id;
         name = structure.name;
         structureType = structure.structureType;
+        regionLocationID = structure.location.persistentID;
         
         //structure tags
         structureTags = new STRUCTURE_TAG[structure.structureTags.Count];
@@ -39,17 +43,17 @@ public abstract class SaveDataLocationStructure : SaveData<LocationStructure>{
         currentHP = structure.currentHP;
         
         //residents
-        residentIDs = new int[structure.residents.Count];
+        residentIDs = new string[structure.residents.Count];
         for (int i = 0; i < structure.residents.Count; i++) {
             Character resident = structure.residents[i];
-            residentIDs[i] = resident.id;
+            residentIDs[i] = resident.persistentID;
         }
 
         //occupied hex tile
         if (structure.occupiedHexTile != null) {
-            occupiedHexTileID = structure.occupiedHexTile.hexTileOwner.id;    
+            occupiedHexTileID = structure.occupiedHexTile.hexTileOwner.persistentID;    
         } else {
-            occupiedHexTileID = -1;
+            occupiedHexTileID = string.Empty;
             Debug.Log($"{structure.name} has no occupied hextile!");
         }
     }

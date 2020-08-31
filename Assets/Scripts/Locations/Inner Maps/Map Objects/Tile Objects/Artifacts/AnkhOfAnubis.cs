@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class AnkhOfAnubis : Artifact {
 
@@ -13,8 +14,11 @@ public class AnkhOfAnubis : Artifact {
         traitContainer.AddTrait(this, "Treasure");
         traitContainer.AddTrait(this, "Indestructible");
     }
-    //public AnkhOfAnubis(SaveDataArtifact data) : base(data) {
-    //}
+    public AnkhOfAnubis(SaveDataTileObject data) : base(data) {
+        SaveDataAnkhOfAnubis saveDataAnkhOfAnubis = data as SaveDataAnkhOfAnubis;
+        Assert.IsNotNull(saveDataAnkhOfAnubis);
+        isActivated = saveDataAnkhOfAnubis.isActivated;
+    }
 
     #region Overrides
     public override void ActivateTileObject() {
@@ -33,6 +37,13 @@ public class AnkhOfAnubis : Artifact {
     public override void OnTileObjectDroppedBy(Character inventoryOwner, LocationGridTile tile) {
         if (inventoryOwner.isDead && inventoryOwner.isNormalCharacter) {
             ActivateTileObject();
+        }
+    }
+    public override void OnPlacePOI() {
+        base.OnPlacePOI();
+        if (isActivated) {
+            GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Ankh_Of_Anubis_Activate);
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
         }
     }
     #endregion
@@ -55,3 +66,21 @@ public class AnkhOfAnubis : Artifact {
         }
     }
 }
+
+#region Save Data
+public class SaveDataAnkhOfAnubis : SaveDataArtifact {
+    public bool isActivated;
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        AnkhOfAnubis artifact = tileObject as AnkhOfAnubis;
+        Assert.IsNotNull(artifact);
+        isActivated = artifact.isActivated;
+    }
+    public override TileObject Load() {
+        TileObject tileObject = base.Load();
+        AnkhOfAnubis ankhOfAnubis = tileObject as AnkhOfAnubis;
+        Assert.IsNotNull(ankhOfAnubis);
+        return tileObject;
+    }
+}
+#endregion

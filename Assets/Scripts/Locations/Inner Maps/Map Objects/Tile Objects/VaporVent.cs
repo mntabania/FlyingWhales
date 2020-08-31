@@ -53,10 +53,10 @@ public class VaporVent : TileObject {
 
     #region Production
     private void ProduceVapor() {
-        VaporTileObject vaporTileObject = new VaporTileObject();
-        vaporTileObject.SetGridTileLocation(gridTileLocation);
-        vaporTileObject.OnPlacePOI();
-        vaporTileObject.SetStacks(Random.Range(2, 9));
+        Vapor vapor = new Vapor();
+        vapor.SetGridTileLocation(gridTileLocation);
+        vapor.OnPlacePOI();
+        vapor.SetStacks(Random.Range(2, 9));
     }
     #endregion
 }

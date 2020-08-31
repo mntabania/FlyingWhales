@@ -532,6 +532,15 @@ namespace Inner_Maps {
             }
             throw new System.Exception($"Could not create new instance of tile object of type {saveDataTileObject.tileObjectType}");
         }
+        public T LoadTileObject<T>(SaveDataArtifact saveDataTileObject) where T : TileObject {
+            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(saveDataTileObject.artifactType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            System.Type type = System.Type.GetType(typeName);
+            if (type != null) {
+                T obj = System.Activator.CreateInstance(type, saveDataTileObject) as T;
+                return obj;
+            }
+            throw new System.Exception($"Could not create new instance of tile object of type {saveDataTileObject.tileObjectType}");
+        }
         public TILE_OBJECT_TYPE GetTileObjectTypeFromTileAsset(Sprite sprite) {
             int index = sprite.name.IndexOf("#", StringComparison.Ordinal);
             string tileObjectName = sprite.name;

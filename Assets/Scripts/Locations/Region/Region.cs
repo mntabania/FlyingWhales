@@ -70,6 +70,7 @@ public class Region : ISavable {
     }
     public Region(SaveDataRegion data) : this() {
         persistentID = data.persistentID;
+        regionTemplate = data.regionTemplate;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];

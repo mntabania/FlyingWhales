@@ -21,11 +21,18 @@ public class LoadFirstWave : MapGenerationComponent {
         //Load Characters
 
         //Load Tile Objects
+        yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveData));
     }
 
     private IEnumerator LoadFactions(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Factions...");
         saveData.LoadFactions();
+        yield return null;
+    }
+    
+    private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Objects...");
+        saveData.LoadTileObjects();
         yield return null;
     }
 }

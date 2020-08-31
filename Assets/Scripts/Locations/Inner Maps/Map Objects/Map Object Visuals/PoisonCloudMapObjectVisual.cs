@@ -16,7 +16,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _expiryKey;
     private Tweener _movement;
     private HashSet<ITraitable> _objsInRange;
-    private PoisonCloudTileObject _poisonCloud;
+    private PoisonCloud _poisonCloud;
     
     public bool wasJustPlaced { get; private set; }
 
@@ -45,21 +45,23 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
         _objsInRange = new HashSet<ITraitable>();
-        _poisonCloud = obj as PoisonCloudTileObject;
+        _poisonCloud = obj as PoisonCloud;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
-
         wasJustPlaced = true;
 
+        if (_poisonCloud.size > 0) {
+            SetSize(_poisonCloud.size);
+        }
+        
         GameDate dueDate = GameManager.Instance.Today().AddTicks(1);
         SchedulingManager.Instance.AddEntry(dueDate, () => wasJustPlaced = false, this);
         
         _cloudEffect.gameObject.SetActive(true);
         _cloudEffect.Play();
         MoveToRandomDirection();
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().
-            AddTicks(_poisonCloud.durationInTicks), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(_poisonCloud.expiryDate, Expire, this);
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
@@ -178,7 +180,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
         if (isSpawned == false) { return; }
         BaseVisionTrigger collidedWith = collision.gameObject.GetComponent<BaseVisionTrigger>();
         if (collidedWith != null) {
-            if(collidedWith.damageable is PoisonCloudTileObject otherPoisonCloud && otherPoisonCloud != _poisonCloud) {
+            if(collidedWith.damageable is PoisonCloud otherPoisonCloud && otherPoisonCloud != _poisonCloud) {
                 if (wasJustPlaced == false) {
                     CollidedWithPoisonCloud(otherPoisonCloud);    
                 }
@@ -194,7 +196,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             RemoveObject(traitable);   
         }
     }
-    private void CollidedWithPoisonCloud(PoisonCloudTileObject otherPoisonCloud) {
+    private void CollidedWithPoisonCloud(PoisonCloud otherPoisonCloud) {
         if(!otherPoisonCloud.hasExpired) {
             if (_poisonCloud.size != _poisonCloud.maxSize) {
                 int stacksToCombine = otherPoisonCloud.stacks;

@@ -12,15 +12,11 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private string _movementKey;
     private Tweener _movement;
     private List<ITraitable> _objsInRange;
-    private LocustSwarmTileObject _locustSwarm;
+    private LocustSwarm _locustSwarm;
 
     public ParticleSystem locustSwarmParticle;
 
     #region Abstract Members Implementation
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        return true;
-    }
     public override void UpdateTileObjectVisual(TileObject obj) { }
     #endregion
 
@@ -39,13 +35,12 @@ public class LocustSwarmMapObjectVisual : MovingMapObjectVisual<TileObject> {
     #region Overrides
     public override void Initialize(TileObject obj) {
         base.Initialize(obj);
-        _locustSwarm = obj as LocustSwarmTileObject;
+        _locustSwarm = obj as LocustSwarm;
     }
     public override void PlaceObjectAt(LocationGridTile tile) {
         base.PlaceObjectAt(tile);
         RandomizeDirection();
-        //OnGamePaused(GameManager.Instance.isPaused);
-        _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6)), Expire, this);
+        _expiryKey = SchedulingManager.Instance.AddEntry(_locustSwarm.expiryDate, Expire, this);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);

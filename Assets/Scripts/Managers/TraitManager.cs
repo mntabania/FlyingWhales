@@ -251,15 +251,15 @@ public class TraitManager : BaseMonoBehaviour {
         }
     }
     public string GetNeutralizingTraitFor(TileObject tileObject) {
-        if(tileObject is TornadoTileObject) {
+        if(tileObject is Tornado) {
             return "Wind Master";
-        } else if (tileObject is LocustSwarmTileObject) {
+        } else if (tileObject is LocustSwarm) {
             return "Beastmaster";
-        } else if (tileObject is PoisonCloudTileObject) {
+        } else if (tileObject is PoisonCloud) {
             return "Poison Expert";
-        } else if (tileObject is BallLightningTileObject) {
+        } else if (tileObject is BallLightning) {
             return "Thunder Master";
-        } else if (tileObject is FireBallTileObject) {
+        } else if (tileObject is FireBall) {
             return "Fire Master";
         } else if (tileObject is Quicksand) {
             return "Earth Master";
