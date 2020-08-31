@@ -5,7 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class SaveDataPlayerGame : SaveData<Player> {
     //TODO: Player Faction, Player Settlement
-    public int factionID;
+    public string factionID;
+    public string settlementID;
     public int mana;
 
     public int portalTileXCoordinate;
@@ -14,69 +15,46 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public PLAYER_ARCHETYPE archetype;
 
     //TODO: Minions, Summons
+    public List<string> minionIDs;
+    public List<string> summonIDs;
 
-    //Threat
-    public int threat;
-
-    //Skills
-    public List<SaveDataPlayerSkill> skills;
-    //public bool canTriggerFlaw;
-    //public bool canRemoveTraits;
-
+    //Components
+    public SaveDataSeizeComponent seizeComponent;
+    public SaveDataThreatComponent threatComponent;
+    public SaveDataPlayerSkillComponent playerSkillComponent;
 
     #region Overrides
     public override void Save() {
         base.Save();
         Player player = PlayerManager.Instance.player;
-        factionID = player.playerFaction.id;
+        factionID = player.playerFaction.persistentID;
+        settlementID = player.playerSettlement.persistentID;
         mana = player.mana;
         portalTileXCoordinate = player.portalTile.data.xCoordinate;
         portalTileYCoordinate = player.portalTile.data.yCoordinate;
 
-        threat = player.threatComponent.threat;
-
         archetype = PlayerSkillManager.Instance.selectedArchetype;
 
-        //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
-        //canRemoveTraits = player.playerSkillComponent.canRemoveTraits;
+        minionIDs = new List<string>();
+        for (int i = 0; i < player.minions.Count; i++) {
+            Minion minion = player.minions[i];
+            minionIDs.Add(minion.character.persistentID);
+        }
 
-        skills = new List<SaveDataPlayerSkill>();
-        for (int i = 0; i < player.playerSkillComponent.spells.Count; i++) {
-            SpellData spell = PlayerSkillManager.Instance.GetSpellData(player.playerSkillComponent.spells[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
-            dataPlayerSkill.Save(spell);
-            skills.Add(dataPlayerSkill);
+        summonIDs = new List<string>();
+        for (int i = 0; i < player.summons.Count; i++) {
+            Summon summon = player.summons[i];
+            summonIDs.Add(summon.persistentID);
         }
-        for (int i = 0; i < player.playerSkillComponent.afflictions.Count; i++) {
-            SpellData spell = PlayerSkillManager.Instance.GetAfflictionData(player.playerSkillComponent.afflictions[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
-            dataPlayerSkill.Save(spell);
-            skills.Add(dataPlayerSkill);
-        }
-        for (int i = 0; i < player.playerSkillComponent.playerActions.Count; i++) {
-            PlayerAction spell = PlayerSkillManager.Instance.GetPlayerActionData(player.playerSkillComponent.playerActions[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
-            dataPlayerSkill.Save(spell);
-            skills.Add(dataPlayerSkill);
-        }
-        for (int i = 0; i < player.playerSkillComponent.demonicStructuresSkills.Count; i++) {
-            DemonicStructurePlayerSkill spell = PlayerSkillManager.Instance.GetDemonicStructureSkillData(player.playerSkillComponent.demonicStructuresSkills[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
-            dataPlayerSkill.Save(spell);
-            skills.Add(dataPlayerSkill);
-        }
-        for (int i = 0; i < player.playerSkillComponent.minionsSkills.Count; i++) {
-            MinionPlayerSkill spell = PlayerSkillManager.Instance.GetMinionPlayerSkillData(player.playerSkillComponent.minionsSkills[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
-            dataPlayerSkill.Save(spell);
-            skills.Add(dataPlayerSkill);
-        }
-        for (int i = 0; i < player.playerSkillComponent.summonsSkills.Count; i++) {
-            SummonPlayerSkill spell = PlayerSkillManager.Instance.GetSummonPlayerSkillData(player.playerSkillComponent.summonsSkills[i]);
-            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
-            dataPlayerSkill.Save(spell);
-            skills.Add(dataPlayerSkill);
-        }
+
+        seizeComponent = new SaveDataSeizeComponent();
+        seizeComponent.Save(player.seizeComponent);
+
+        threatComponent = new SaveDataThreatComponent();
+        threatComponent.Save(player.threatComponent);
+
+        playerSkillComponent = new SaveDataPlayerSkillComponent();
+        playerSkillComponent.Save(player.playerSkillComponent);
     }
     public override Player Load() {
         Player player = new Player(this);

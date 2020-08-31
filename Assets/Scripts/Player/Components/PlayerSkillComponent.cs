@@ -29,6 +29,17 @@ public class PlayerSkillComponent {
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
     }
+    public PlayerSkillComponent() {
+        spells = new List<SPELL_TYPE>();
+        afflictions = new List<SPELL_TYPE>();
+        playerActions = new List<SPELL_TYPE>();
+        demonicStructuresSkills = new List<SPELL_TYPE>();
+        minionsSkills = new List<SPELL_TYPE>();
+        summonsSkills = new List<SPELL_TYPE>();
+    }
+    public void SetPlayer(Player player) {
+        this.player = player;
+    }
 
     #region Loading
     public void LoadSkills(List<SaveDataPlayerSkill> data) {
@@ -274,4 +285,58 @@ public class PlayerSkillComponent {
         }
     }
     #endregion
+}
+[System.Serializable]
+public class SaveDataPlayerSkillComponent : SaveData<PlayerSkillComponent> {
+    public List<SaveDataPlayerSkill> skills;
+    //public bool canTriggerFlaw;
+    //public bool canRemoveTraits;
+
+    public override void Save(PlayerSkillComponent component) {
+        //canTriggerFlaw = player.playerSkillComponent.canTriggerFlaw;
+        //canRemoveTraits = player.playerSkillComponent.canRemoveTraits;
+
+        skills = new List<SaveDataPlayerSkill>();
+        for (int i = 0; i < component.spells.Count; i++) {
+            SpellData spell = PlayerSkillManager.Instance.GetSpellData(component.spells[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+        for (int i = 0; i < component.afflictions.Count; i++) {
+            SpellData spell = PlayerSkillManager.Instance.GetAfflictionData(component.afflictions[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+        for (int i = 0; i < component.playerActions.Count; i++) {
+            PlayerAction spell = PlayerSkillManager.Instance.GetPlayerActionData(component.playerActions[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+        for (int i = 0; i < component.demonicStructuresSkills.Count; i++) {
+            DemonicStructurePlayerSkill spell = PlayerSkillManager.Instance.GetDemonicStructureSkillData(component.demonicStructuresSkills[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+        for (int i = 0; i < component.minionsSkills.Count; i++) {
+            MinionPlayerSkill spell = PlayerSkillManager.Instance.GetMinionPlayerSkillData(component.minionsSkills[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+        for (int i = 0; i < component.summonsSkills.Count; i++) {
+            SummonPlayerSkill spell = PlayerSkillManager.Instance.GetSummonPlayerSkillData(component.summonsSkills[i]);
+            SaveDataPlayerSkill dataPlayerSkill = new SaveDataPlayerSkill();
+            dataPlayerSkill.Save(spell);
+            skills.Add(dataPlayerSkill);
+        }
+    }
+    public override PlayerSkillComponent Load() {
+        PlayerSkillComponent component = new PlayerSkillComponent();
+        component.LoadSkills(skills);
+        return component;
+    }
 }

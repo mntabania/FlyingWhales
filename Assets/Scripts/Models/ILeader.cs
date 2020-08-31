@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ILeader {
+public interface ILeader : ISavable {
     
     int id { get; }
     string name { get; }

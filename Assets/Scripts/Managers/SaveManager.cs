@@ -28,7 +28,6 @@ public class SaveManager : MonoBehaviour {
     #region getters
     public SaveDataPlayer currentSaveDataPlayer => savePlayerManager.currentSaveDataPlayer;
     public SaveDataCurrentProgress currentSaveDataProgress => saveCurrentProgressManager.currentSaveDataProgress;
-
     #endregion
 
 
@@ -74,8 +73,11 @@ public class SaveManager : MonoBehaviour {
 
     #region Saving
     public void DoManualSave(string fileName = "") {
+        if (string.IsNullOrEmpty(fileName)) {
+            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
+        }
         SaveDataCurrentProgress completeSave = new SaveDataCurrentProgress();
-        
+        completeSave.Initialize();
         //date
         completeSave.SaveDate();
         completeSave.SavePlayer();
@@ -92,7 +94,7 @@ public class SaveManager : MonoBehaviour {
         );
         completeSave.worldMapSave = worldMapSave;
         completeSave.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
-        
+
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
         SaveGame.Save(path, completeSave);
         

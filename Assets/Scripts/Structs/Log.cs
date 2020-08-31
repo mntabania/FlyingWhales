@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 //Log and Memory are the same now so assume that this class will have data that the Memory uses
-public class Log {
+public class Log : ISavable {
+    public string persistentID { get; private set; }
     public int id;
 
 	public MONTH month;
@@ -26,9 +27,7 @@ public class Log {
 
     public string logCallStack;
 
-    public GameDate date {
-        get { return new GameDate((int)month, day, year, tick); }
-    }
+
 
     //When this log is processed through the LogReplacer for the first time, the resulting text will be stored in this so that every time the text of this log is needed,
     //it will not go through the LogReplacer processing again, which saves cpu power
@@ -36,12 +35,17 @@ public class Log {
 
     //Memory data
     private ActualGoapNode _node;
-    public ActualGoapNode node {
-        get { return GetNodeAssociatedWithThisLog(); }
-    }
+
+    #region getters
+    public GameDate date => new GameDate((int) month, day, year, tick);
+    public ActualGoapNode node => GetNodeAssociatedWithThisLog();
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Log;
+    public System.Type serializedData => typeof(SaveDataLog);
+    #endregion
 
     public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null) {
-        this.id = UtilityScripts.Utilities.SetID<Log>(this);
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+        this.id = UtilityScripts.Utilities.SetID(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
@@ -57,7 +61,8 @@ public class Log {
     }
 
     public Log(GameDate date, string message, ActualGoapNode goapAction = null) {
-        this.id = UtilityScripts.Utilities.SetID<Log>(this);
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+        this.id = UtilityScripts.Utilities.SetID(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
@@ -244,7 +249,9 @@ public class Log {
 }
 
 [System.Serializable]
-public class SaveDataLog : SaveData<Log> {
+public class SaveDataLog : SaveData<Log>, ISavableCounterpart {
+    public string persistentID { get; private set; }
+    public OBJECT_TYPE objectType { get; private set; }
     public int id;
 
     public MONTH month;
@@ -263,6 +270,8 @@ public class SaveDataLog : SaveData<Log> {
 
     #region Overrides
     public override void Save(Log log) {
+        persistentID = log.persistentID;
+        objectType = log.objectType;
         id = log.id;
         month = log.month;
         day = log.day;
