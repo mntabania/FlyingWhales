@@ -271,7 +271,7 @@ public class SaveDataLog : SaveData<Log>, ISavableCounterpart {
     #region Overrides
     public override void Save(Log log) {
         persistentID = log.persistentID;
-        object = log.objectType;
+        objectType = log.objectType;
         id = log.id;
         month = log.month;
         day = log.day;
