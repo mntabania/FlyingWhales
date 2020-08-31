@@ -932,6 +932,9 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return null;
     }
+    public Character GetCharacterByPersistentID(string id) {
+        return DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(id);
+    }
     public Character GetCharacterByName(string name) {
         for (int i = 0; i < DatabaseManager.Instance.characterDatabase.allCharactersList.Count; i++) {
             Character currChar = DatabaseManager.Instance.characterDatabase.allCharactersList[i];

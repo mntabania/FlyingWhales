@@ -48,8 +48,10 @@ public class Player : ILeader, IObjectManipulator {
     public RACE race => RACE.HUMANS;
     public GENDER gender => GENDER.MALE;
     public Region currentRegion => null;
-   
     public Region homeRegion => null;
+    public string persistentID => string.Empty;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Player;
+    public System.Type serializedData => typeof(SaveDataPlayer);
     #endregion
 
     public Player() {
@@ -72,17 +74,29 @@ public class Player : ILeader, IObjectManipulator {
     }
     public Player(SaveDataPlayerGame data) {
         allIntel = new List<IIntel>();
+        minions = new List<Minion>();
+        summons = new List<Summon>();
         unlearnedSpells = new List<SPELL_TYPE>(PlayerDB.spells);
         unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
-        seizeComponent = new SeizeComponent();
-        threatComponent = new ThreatComponent(this);
-        playerSkillComponent = new PlayerSkillComponent(this);
+        seizeComponent = data.seizeComponent.Load();
+        threatComponent = data.threatComponent.Load();
+        playerSkillComponent = data.playerSkillComponent.Load();
+
+        threatComponent.SetPlayer(this);
+        playerSkillComponent.SetPlayer(this);
 
         //TODO: Load Minions/Summons
+        for (int i = 0; i < data.minionIDs.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
+            minions.Add(character.minion);
+        }
+        for (int i = 0; i < data.summonIDs.Count; i++) {
+            Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
+            summons.Add(summon);
+        }
+
         AdjustMana(data.mana);
         SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
-        threatComponent.AdjustThreat(data.threat);
-        playerSkillComponent.LoadSkills(data.skills);
 
         AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
@@ -163,7 +177,7 @@ public class Player : ILeader, IObjectManipulator {
         SetPlayerFaction(faction);
     }
     public void CreatePlayerFaction(SaveDataPlayerGame data) {
-        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
+        Faction faction = FactionManager.Instance.GetFactionByPersistentID(data.factionID);
         faction.SetLeader(this);
         SetPlayerFaction(faction);
     }

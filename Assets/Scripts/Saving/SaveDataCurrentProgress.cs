@@ -39,38 +39,49 @@ public class SaveDataCurrentProgress {
     //Pool of all saved objects
     public Dictionary<OBJECT_TYPE, BaseSaveDataHub> objectHub;
 
-    public SaveDataCurrentProgress() {
-        if(objectHub == null) {
+    #region General
+    public void Initialize() {
+        if (objectHub == null) {
             ConstructObjectHub();
         }
     }
-
-    #region General
     private void ConstructObjectHub() {
         objectHub = new Dictionary<OBJECT_TYPE, BaseSaveDataHub>() {
             { OBJECT_TYPE.Faction, new SaveDataFactionHub() },
+            { OBJECT_TYPE.Log, new SaveDataLogHub() },
         };
     }
     #endregion
 
     #region Hub
+    public bool AddToSaveHub<T>(T data) where T : ISavable {
+        if(data is ISavable savable) {
+            SaveData<T> obj = (SaveData<T>) System.Activator.CreateInstance(data.serializedData);
+            obj.Save(data);
+            return AddToSaveHub(obj, savable.objectType);
+        }
+        return false;
+    }
     private bool AddToSaveHub<T>(T data, OBJECT_TYPE objectType) {
         if (objectHub.ContainsKey(objectType)) { //The object type must always be present in the object hub dictionary if it is not, add it in ConstructObjectHub
             return objectHub[objectType].AddToSave(data);
+        } else {
+            throw new System.NullReferenceException("Trying to add object type " + objectType.ToString() + " in Object Hub but there is no entry for it. Make sure you add it in ConstructObjectHub");
         }
-        return false;
     }
     private bool RemoveFromSaveHub<T>(T data, OBJECT_TYPE objectType) {
         if (objectHub.ContainsKey(objectType)) { //The object type must always be present in the object hub dictionary if it is not, add it in ConstructObjectHub
             return objectHub[objectType].RemoveFromSave(data);
+        } else {
+            throw new System.NullReferenceException("Trying to remove object type " + objectType.ToString() + " in Object Hub but there is no entry for it. Make sure you add it in ConstructObjectHub");
         }
-        return false;
     }
-    private T GetFromSaveHub<T>(OBJECT_TYPE objectType, string persistenID) {
+    public T GetFromSaveHub<T>(OBJECT_TYPE objectType, string persistenID) {
         if (objectHub.ContainsKey(objectType)) {
             return (T) objectHub[objectType].GetData(persistenID);
+        } else {
+            throw new System.NullReferenceException("Trying to get object type " + objectType.ToString() + " in Object Hub but there is no entry for it. Make sure you add it in ConstructObjectHub");
         }
-        return default;
     }
     #endregion
 

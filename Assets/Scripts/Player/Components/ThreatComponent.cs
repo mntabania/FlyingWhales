@@ -23,6 +23,13 @@ public class ThreatComponent {
         // Messenger.AddListener(Signals.START_THREAT_EFFECT, OnStartThreatEffect);
         Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
     }
+    public ThreatComponent() {
+        isDecreasingThreatPerHour = false;
+        Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
+    }
+    public void SetPlayer(Player player) {
+        this.player = player;
+    }
     // private void PerHour() {
     //     AdjustThreat(threatPerHour);
     // }
@@ -150,5 +157,25 @@ public class ThreatComponent {
         }
         Messenger.Broadcast(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, characters);
         Messenger.Broadcast(Signals.START_THREAT_EFFECT);
+    }
+
+    #region Save
+    public void SetThreatFromSave(int amount) {
+        threat = amount;
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataThreatComponent : SaveData<ThreatComponent> {
+    public int threat;
+
+    public override void Save(ThreatComponent component) {
+        threat = component.threat;
+    }
+    public override ThreatComponent Load() {
+        ThreatComponent component = new ThreatComponent();
+        component.SetThreatFromSave(threat);
+        return component;
     }
 }

@@ -50,3 +50,39 @@ public class SaveDataFactionHub : BaseSaveDataHub {
         return default;
     }
 }
+
+[System.Serializable]
+public class SaveDataLogHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataLog> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataLog> hub => _hub;
+    #endregion
+
+    public SaveDataLogHub() {
+        _hub = new Dictionary<string, SaveDataLog>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataLog save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataLog save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistendID) {
+        if (_hub.ContainsKey(persistendID)) {
+            return _hub[persistendID];
+        }
+        return default;
+    }
+}

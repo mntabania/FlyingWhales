@@ -221,6 +221,9 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction GetFactionBasedOnID(int id) {
         return DatabaseManager.Instance.factionDatabase.GetFactionBasedOnID(id);
     }
+    public Faction GetFactionByPersistentID(string id) {
+        return DatabaseManager.Instance.factionDatabase.GetFactionByPersistentID(id);
+    }
     public Faction GetFactionBasedOnName(string name) {
         return DatabaseManager.Instance.factionDatabase.GetFactionBasedOnName(name);
     }

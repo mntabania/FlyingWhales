@@ -42,6 +42,12 @@ public class FactionDatabase {
         }
         return null;
     }
+    public Faction GetFactionByPersistentID(string persistentID) {
+        if (factionsByGUID.ContainsKey(persistentID)) {
+            return factionsByGUID[persistentID];
+        }
+        return null;
+    }
     public Faction GetFactionBasedOnName(string name) {
         for (int i = 0; i < allFactionsList.Count; i++) {
             if (allFactionsList[i].name.ToLower() == name.ToLower()) {

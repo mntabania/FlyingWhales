@@ -12,13 +12,17 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     #endregion
 
     #region Saving
+    public void AddToSaveHub<T>(T data) where T : ISavable {
+        currentSaveDataProgress.AddToSaveHub(data);
+    }
     public bool CanSaveCurrentProgress() {
         return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI;
     }
     public void SaveCurrentProgress() {
-        SaveDataCurrentProgress saveData = new SaveDataCurrentProgress();
-        saveData.SaveDate();
-        saveData.SavePlayer();
+        currentSaveDataProgress = new SaveDataCurrentProgress();
+        currentSaveDataProgress.Initialize();
+        currentSaveDataProgress.SaveDate();
+        currentSaveDataProgress.SavePlayer();
         //saveData.SaveFactions();
 
         //save world map
@@ -28,9 +32,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
             GridMap.Instance.normalHexTiles,
             GridMap.Instance.allRegions
         );
-        saveData.worldMapSave = worldMapSave;
+        currentSaveDataProgress.worldMapSave = worldMapSave;
 
-        saveData.SaveSettlements(LandmarkManager.Instance.allSettlements);
+        currentSaveDataProgress.SaveSettlements(LandmarkManager.Instance.allSettlements);
         //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
         //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
         //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
@@ -47,7 +51,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         //        save.SaveNotifications();
 
         //SaveGame.Encode = true;
-        SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", saveData);
+        SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", currentSaveDataProgress);
     }
 
     #endregion

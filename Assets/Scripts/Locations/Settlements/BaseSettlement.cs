@@ -7,7 +7,8 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyTarget {
+    public abstract class BaseSettlement : IPartyTarget, ISavable {
+        public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
         public string name { get; private set; }
@@ -21,9 +22,12 @@ namespace Locations.Settlements {
         #region getters
         public LocationStructure currentStructure => null;
         public BaseSettlement currentSettlement => this;
+        public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
+        public System.Type serializedData => typeof(SaveDataBaseSettlement);
         #endregion
 
         protected BaseSettlement(LOCATION_TYPE locationType) {
+            persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             id = UtilityScripts.Utilities.SetID(this);
             SetName(RandomNameGenerator.GenerateCityName(RACE.HUMANS));
             tiles = new List<HexTile>();
