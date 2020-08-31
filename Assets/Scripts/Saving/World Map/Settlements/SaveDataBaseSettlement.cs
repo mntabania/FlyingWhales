@@ -13,6 +13,7 @@ public abstract class SaveDataBaseSettlement : SaveData<BaseSettlement> {
     public LOCATION_TYPE locationType;
     public string name;
     public List<Point> tileCoordinates;
+    public string factionOwnerID;
 
     public virtual void Save(BaseSettlement baseSettlement) {
         persistentID = baseSettlement.persistentID;
@@ -20,6 +21,8 @@ public abstract class SaveDataBaseSettlement : SaveData<BaseSettlement> {
         locationType = baseSettlement.locationType;
         name = baseSettlement.name;
 
+        factionOwnerID = baseSettlement.owner != null ? baseSettlement.owner.persistentID : string.Empty;
+        
         tileCoordinates = new List<Point>();
         for (int i = 0; i < baseSettlement.tiles.Count; i++) {
             HexTile tile = baseSettlement.tiles[i];

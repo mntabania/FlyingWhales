@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Databases;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -43,7 +44,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public bool isBeingHarassed => _isBeingHarassedCount > 0;
-    //public bool isBeingRaided => _isBeingRaidedCount > 0;
     public bool isBeingInvaded => _isBeingInvadedCount > 0;
     #endregion
 
@@ -155,12 +155,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void DecreaseIsBeingHarassedCount() {
         _isBeingHarassedCount--;
     }
-    //public void IncreaseIsBeingRaidedCount() {
-    //    _isBeingRaidedCount++;
-    //}
-    //public void DecreaseIsBeingRaidedCount() {
-    //    _isBeingRaidedCount--;
-    //}
     public void IncreaseIsBeingInvadedCount() {
         _isBeingInvadedCount++;
     }
@@ -256,9 +250,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void CheckForNewRulerDesignation() {
         string debugLog =
             $"{GameManager.Instance.TodayLogString()}Checking for new npcSettlement ruler designation for {name}";
-        debugLog += $"\n-Chance: {newRulerDesignationChance}";
+        debugLog += $"\n-Chance: {newRulerDesignationChance.ToString()}";
         int chance = Random.Range(0, 100);
-        debugLog += $"\n-Roll: {chance}";
+        debugLog += $"\n-Roll: {chance.ToString()}";
         Debug.Log(debugLog);
         if (chance < newRulerDesignationChance) {
             DesignateNewRuler();
@@ -632,11 +626,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 break;
         }
     }
-    protected override void LoadStructures(SaveDataBaseSettlement data) {
-        base.LoadStructures(data);
-        UpdatePrison();
-        UpdateMainStorage();
-    }
     private void OnCharacterSaw(Character character, IPointOfInterest seenPOI) {
         if (character.homeSettlement == this && character.currentSettlement == this) {
             if (seenPOI is Character target) {
@@ -713,11 +702,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         yield return null;
     }
     private void PlaceResourcePiles() {
-        // if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
-        //     mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        // } else {
-        //     mainStorage = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-        // }
         WoodPile woodPile = InnerMapManager.Instance.CreateNewTileObject<WoodPile>(TILE_OBJECT_TYPE.WOOD_PILE);
         mainStorage.AddPOI(woodPile);
 
@@ -733,20 +717,23 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void UpdatePrison() {
         LocationStructure chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.PRISON);
         if (chosenPrison != null) {
-            prison = chosenPrison;
+            SetPrison(chosenPrison);
         } else {
             chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
             if (chosenPrison != null) {
-                prison = chosenPrison;
+                SetPrison(chosenPrison);
             } else {
                 foreach (var kvp in structures) {
                     if (kvp.Key != STRUCTURE_TYPE.WILDERNESS) {
-                        prison = kvp.Value[0];
+                        SetPrison(kvp.Value[0]);
                         break;
                     }
                 } 
             }
         }
+    }
+    private void SetPrison(LocationStructure locationStructure) {
+        prison = locationStructure;
     }
     private void UpdateMainStorage() {
         //try to assign warehouse, if no warehouse then assign main storage to city center, if no city center then set main storage to first structure that is not wilderness
@@ -764,30 +751,22 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         //only set main storage if: Its value is null, or the new storage is a different structure type than the current one. 
-        if (mainStorage == null || 
-            (newStorage != null && newStorage.structureType != mainStorage.structureType)) {
+        if (mainStorage == null || (newStorage != null && newStorage.structureType != mainStorage.structureType)) {
             SetMainStorage(newStorage);
         }
     }
-    // public void OnLocationStructureObjectPlaced(LocationStructure structure) {
-    //     if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-    //         //if a warehouse was placed, and this npcSettlement does not yet have a main storage structure,
-    //         //or is using the city center as their main storage structure, then use the new warehouse instead.
-    //         if (mainStorage == null || mainStorage.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-    //             SetMainStorage(structure);
-    //         }
-    //     } else if (structure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-    //         if (mainStorage == null) {
-    //             SetMainStorage(structure);
-    //         }
-    //     }
-    // }
     private void SetMainStorage(LocationStructure structure) {
         bool shouldCheckResourcePiles = mainStorage != null && structure != null && mainStorage != structure;
         mainStorage = structure;
         if (shouldCheckResourcePiles) {
             Messenger.Broadcast(Signals.SETTLEMENT_CHANGE_STORAGE, this);
         }
+    }
+    public void LoadPrison(LocationStructure prison) {
+        SetPrison(prison);
+    }
+    public void LoadMainStorage(LocationStructure mainStorage) {
+        SetMainStorage(mainStorage);
     }
     #endregion
 

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -22,6 +24,10 @@ public class LoadSecondWave : MapGenerationComponent {
         // yield return MapGenerator.Instance.StartCoroutine(LoadFactionCharacters(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadFactionLogs(saveData));
 
+        //Load Settlement data
+        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
+        
         //Load Characters
 
         //Load Tile Objects
@@ -90,7 +96,6 @@ public class LoadSecondWave : MapGenerationComponent {
                 batchCount = 0;
                 yield return null;    
             }
-            
         }
     }
     #endregion
@@ -102,6 +107,39 @@ public class LoadSecondWave : MapGenerationComponent {
             SaveDataHextile saveDataHextile = saveData.worldMapSave.hextileSaves[i];
             HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHextile.persistentID);
             hexTile.spellsComponent.Load(saveDataHextile.saveDataHexTileSpellsComponent);
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region Settlements
+    private IEnumerator LoadSettlementOwners(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
+        for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
+            SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
+            if (!string.IsNullOrEmpty(saveDataBaseSettlement.factionOwnerID)) {
+                BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement.persistentID);
+                Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(saveDataBaseSettlement.factionOwnerID);
+                LandmarkManager.Instance.OwnSettlement(faction, baseSettlement);    
+            }
+        }
+        yield return null;
+    }
+    private IEnumerator LoadSettlementMainStorageAndPrison(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
+        for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
+            SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
+            BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement.persistentID);
+            if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement && baseSettlement is NPCSettlement npcSettlement) {
+                if (!string.IsNullOrEmpty(saveDataNpcSettlement.prisonID)) {
+                    LocationStructure prison = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.prisonID);
+                    npcSettlement.LoadPrison(prison);
+                }
+                if (!string.IsNullOrEmpty(saveDataNpcSettlement.mainStorageID)) {
+                    LocationStructure mainStorage = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.mainStorageID);
+                    npcSettlement.LoadMainStorage(mainStorage);
+                }    
+            }
         }
         yield return null;
     }

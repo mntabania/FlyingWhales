@@ -276,12 +276,6 @@ namespace Locations.Settlements {
                 AddStructure(structure);
             }
         }
-        protected virtual void LoadStructures(SaveDataBaseSettlement data) {
-            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-            // for (int i = 0; i < data.structures.Count; i++) {
-            //     LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
-            // }
-        }
         public void AddStructure(LocationStructure structure) {
             if (!structures.ContainsKey(structure.structureType)) {
                 structures.Add(structure.structureType, new List<LocationStructure>());

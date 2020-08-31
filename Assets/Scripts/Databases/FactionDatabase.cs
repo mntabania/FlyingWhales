@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class FactionDatabase {
     
@@ -41,6 +42,12 @@ public class FactionDatabase {
             }
         }
         return null;
+    }
+    public Faction GetFactionBasedOnPersistentID(string id) {
+        if (factionsByGUID.ContainsKey(id)) {
+            return factionsByGUID[id];
+        }
+        throw new Exception($"There was no faction with persistent id {id}");
     }
     public Faction GetFactionBasedOnName(string name) {
         for (int i = 0; i < allFactionsList.Count; i++) {
