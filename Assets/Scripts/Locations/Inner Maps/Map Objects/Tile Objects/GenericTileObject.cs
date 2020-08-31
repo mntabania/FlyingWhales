@@ -144,6 +144,17 @@ public class GenericTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.GO_TO_TILE);
         AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
     }
+    public void ManualInitializeLoad(LocationGridTile tile, SaveDataTileObject saveDataTileObject) {
+        if (hasBeenInitialized) {
+            return;
+        }
+        hasBeenInitialized = true;
+        Initialize(saveDataTileObject);
+        SetGridTileLocation(tile);
+        AddAdvertisedAction(INTERACTION_TYPE.PLACE_FREEZING_TRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.GO_TO_TILE);
+        AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
+    }
 }
 
 #region Save Data

@@ -109,32 +109,6 @@ public class LevelUpUI : PopupMenuBase {
         levelUpBtn.interactable = true;
         selectedObj = obj;
     }
-
-    public void OnClickLevelUp() {
-        if(selectedObj != null) {
-            if (selectedObj is CombatAbility) {
-                (selectedObj as CombatAbility).LevelUp();
-            } else if (selectedObj is PlayerSpell) {
-                (selectedObj as PlayerSpell).LevelUp();
-            } else if (selectedObj is SummonSlot) {
-                SummonSlot summonSlot = selectedObj as SummonSlot;
-                //if (summonSlot.isLocked) {
-                //    PlayerManager.Instance.player.IncreaseSummonSlot();
-                //} else {
-                    //summonSlot.LevelUp();
-                //}
-            } 
-            // else if (selectedObj is ArtifactSlot) {
-            //     ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
-            //     //if (artifactSlot.isLocked) {
-            //     //    PlayerManager.Instance.player.IncreaseArtifactSlot();
-            //     //} else {
-            //         artifactSlot.LevelUp();
-            //     //}
-            // }
-        }
-        Close();
-    }
     public void OnClickCancel() {
         Close();
     }

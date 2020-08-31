@@ -1,8 +1,15 @@
-﻿namespace Traits {
+﻿using System;
+using Traits;
+using UnityEngine.Assertions;
+namespace Traits {
     public class Hunting : Status {
 
         private Character _owner;
         public HexTile targetTile { get; private set; }
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataHunting);
+        #endregion
         
         public Hunting() {
             name = "Hunting";
@@ -12,6 +19,15 @@
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(5);
             isHidden = true;
         }
+
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataHunting saveDataHunting = saveDataTrait as SaveDataHunting;
+            Assert.IsNotNull(saveDataHunting);
+            targetTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHunting.persistentID);
+        }
+        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
@@ -42,3 +58,17 @@
         }
     }
 }
+
+#region Save Data
+public class SaveDataHunting : SaveDataTrait {
+
+    public string targetTileID;
+    
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Hunting hunting = trait as Hunting;
+        Assert.IsNotNull(hunting);
+        targetTileID = hunting.targetTile.persistentID;
+    }
+}
+#endregion

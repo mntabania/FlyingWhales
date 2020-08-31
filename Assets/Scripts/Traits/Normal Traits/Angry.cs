@@ -1,15 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
+using Random = UnityEngine.Random;
 namespace Traits {
     public class Angry : Status {
 
         private Character owner;
 
-        private List<Character> responsibleCharactersStack; //list of characters that have added this status to the owner, this can contain duplicates of a character
-        
+        private readonly List<Character> _responsibleCharactersStack; //list of characters that have added this status to the owner, this can contain duplicates of a character
+        public List<Character> responsibleCharactersStack => _responsibleCharactersStack;
         public Angry() {
             name = "Angry";
             description = "Something or someone has made it mad!";
@@ -21,10 +25,18 @@ namespace Traits {
             stackLimit = 5;
             stackModifier = 0.5f;
             hindersSocials = true;
-            responsibleCharactersStack = new List<Character>();
+            _responsibleCharactersStack = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             //effects = new List<TraitEffect>();
         }
+
+        #region Loading
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            //TODO: Load Characters
+            throw new NotImplementedException();
+        }
+        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
@@ -156,4 +168,16 @@ namespace Traits {
         }
     }
 }
+
+#region Save Data
+public class SaveDataAngry : SaveDataTrait {
+    public List<string> characterIDs;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Angry angry = trait as Angry;
+        Assert.IsNotNull(angry);
+        characterIDs = SaveUtilities.ConvertSavableListToIDs(angry.responsibleCharactersStack);
+    }
+}
+#endregion
 

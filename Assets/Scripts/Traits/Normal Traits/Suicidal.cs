@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace Traits {
 	public class Suicidal : Status {
-
-		private Character _owner;
-		
 		public Suicidal() {
 			name = "Suicidal";
 			description = "Might end up killing itself anytime soon.";
@@ -22,7 +19,6 @@ namespace Traits {
 			base.OnAddTrait(addedTo);
 			if (addedTo is Character) {
 				Character character = addedTo as Character;
-				_owner = character;
 				character.behaviourComponent.ReplaceBehaviourComponent(typeof(DefaultAtHome),
 					typeof(SuicidalBehaviour));
 			}
@@ -43,20 +39,6 @@ namespace Traits {
 		//	}
 		//}
 		#endregion
-		
-		//#region Chaos Orb
-		//private void CheckForChaosOrb() {
-		//	string summary = $"{_owner.name} is rolling for chaos orb in suicidal trait";
-		//	int roll = Random.Range(0, 100);
-		//	int chance = 60;
-		//	summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
-		//	if (roll < chance) {
-		//		Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, _owner.marker.transform.position, 
-		//			1, _owner.currentRegion.innerMap);
-		//	}
-		//	_owner.logComponent.PrintLogIfActive(summary);
-		//}
-		//#endregion
 	}	
 }
 

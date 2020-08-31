@@ -1481,7 +1481,7 @@ public class ConsoleBase : InfoUIBase {
             customFileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
         }
         
-        SaveManager.Instance.DoManualSave(customFileName);
+        SaveManager.Instance.saveCurrentProgressManager.DoManualSave(customFileName);
     }
     #endregion
 }

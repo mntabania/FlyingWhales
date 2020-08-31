@@ -81,6 +81,10 @@ namespace Traits {
         bool HasTangibleTrait();
         #endregion
 
+        #region Loading
+        void Load(ITraitable owner, SaveDataTraitContainer saveDataTraitContainer);
+        #endregion
+        
         #region Clean Up
         void CleanUp();
         #endregion

@@ -20,7 +20,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
         //Load Faction Related Extra Data
-        yield return MapGenerator.Instance.StartCoroutine(LoadFactionRelationships(saveData));
+        // yield return MapGenerator.Instance.StartCoroutine(LoadFactionRelationships(saveData));
         // yield return MapGenerator.Instance.StartCoroutine(LoadFactionCharacters(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadFactionLogs(saveData));
 
@@ -32,9 +32,16 @@ public class LoadSecondWave : MapGenerationComponent {
 
         //Load Tile Objects
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadTileObjectTraits(saveData));
+        
+        //Load Structure Wall Traits
+        yield return MapGenerator.Instance.StartCoroutine(LoadStructureWallTraits(saveData));
         
         //Load Hex tile Spells Component
         yield return MapGenerator.Instance.StartCoroutine(LoadHexTileSpellsComponent(saveData));
+        
+        //Load Second wave trait data
+        yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
     }
 
     private IEnumerator LoadFactionRelationships(SaveDataCurrentProgress saveData) {
@@ -98,6 +105,22 @@ public class LoadSecondWave : MapGenerationComponent {
             }
         }
     }
+    private IEnumerator LoadTileObjectTraits(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading object traits...");
+        int batchCount = 0;
+        for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
+            string persistentID = tileObject.persistentID;
+            SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
+            SaveDataTraitContainer saveDataTraitContainer = saveDataTileObject.saveDataTraitContainer;
+            tileObject.traitContainer.Load(tileObject, saveDataTraitContainer);
+            batchCount++;
+            if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
+                batchCount = 0;
+                yield return null;    
+            }
+        }
+    }
     #endregion
 
     #region Hex Tile
@@ -141,6 +164,35 @@ public class LoadSecondWave : MapGenerationComponent {
                 }    
             }
         }
+        yield return null;
+    }
+    #endregion
+
+    #region Structure Walls
+    private IEnumerator LoadStructureWallTraits(SaveDataCurrentProgress saveData) {
+        for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
+            SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
+            if (saveDataLocationStructure is SaveDataManMadeStructure saveDataManMadeStructure) {
+                LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
+                ManMadeStructure manMadeStructure = structure as ManMadeStructure;
+                Assert.IsNotNull(manMadeStructure);
+                if (manMadeStructure.structureWalls != null) {
+                    for (int j = 0; j < manMadeStructure.structureWalls.Count; j++) {
+                        StructureWallObject structureWallObject = manMadeStructure.structureWalls[i];
+                        SaveDataStructureWallObject saveDataStructureWallObject = saveDataManMadeStructure.structureWallObjects[i];
+                        structureWallObject.traitContainer.Load(structureWallObject, saveDataStructureWallObject.saveDataTraitContainer);
+                    }    
+                }
+                yield return null;
+            }
+        }
+    }
+    #endregion
+
+    #region Trais
+    private IEnumerator LoadTraitsSecondWave(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading trait data...");
+        saveData.LoadTraitsSecondWave();
         yield return null;
     }
     #endregion

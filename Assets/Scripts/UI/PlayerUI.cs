@@ -143,7 +143,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [Header("Building")] 
     [SerializeField] private BuildListUI _buildListUI;
     
-    private PlayerJobActionButton[] interventionAbilityBtns;
     public HexTile harassDefendInvadeTargetHex { get; private set; }
 
     void Awake() {

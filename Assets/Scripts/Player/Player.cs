@@ -11,6 +11,7 @@ using Ruinarch;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -95,7 +96,7 @@ public class Player : ILeader, IObjectManipulator {
             summons.Add(summon);
         }
 
-        AdjustMana(data.mana);
+        mana = data.mana;
         SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
 
         AddListeners();
@@ -149,11 +150,11 @@ public class Player : ILeader, IObjectManipulator {
         // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
         return npcSettlement;
     }
-    public void LoadPlayerArea(PlayerSettlement npcSettlement) {
-        //Biomes.Instance.CorruptTileVisuals(npcSettlement.coreTile);
-        //npcSettlement.coreTile.tileLocation.SetCorruption(true);
-        SetPlayerArea(npcSettlement);
-        //_demonicPortal.tileLocation.ScheduleCorruption();
+    public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
+        PlayerSettlement pSettlement = settlement as PlayerSettlement;
+        Assert.IsNotNull(pSettlement, $"Could not load player settlement because it is either null or not a PlayerSettlement type {settlement?.ToString() ?? "Null"}");
+        SetPlayerArea(pSettlement);
     }
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;

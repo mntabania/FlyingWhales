@@ -6,12 +6,7 @@ using UnityEngine;
 namespace Traits {
     public class AccidentProne : Trait {
 
-        //public static INTERACTION_TYPE[] excludedActionsFromAccidentProneTrait = new INTERACTION_TYPE[] {
-        //    INTERACTION_TYPE.STUMBLE, INTERACTION_TYPE.PUKE, INTERACTION_TYPE.SEPTIC_SHOCK, INTERACTION_TYPE.ACCIDENT
-        //};
-
         public Character owner { get; private set; }
-        public CharacterState storedState { get; private set; }
 
         public AccidentProne() {
             name = "Accident Prone";

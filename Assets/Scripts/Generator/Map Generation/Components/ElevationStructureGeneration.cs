@@ -27,10 +27,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 				}
 				LocationStructure elevationStructure = LandmarkManager.Instance.CreateNewStructureAt(region, structureType, settlement);
 				
-				yield return MapGenerator.Instance.StartCoroutine(
-					GenerateElevationMap(currIsland, elevationStructure));
-				yield return MapGenerator.Instance.StartCoroutine(
-					RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
+				yield return MapGenerator.Instance.StartCoroutine(GenerateElevationMap(currIsland, elevationStructure));
+				yield return MapGenerator.Instance.StartCoroutine(RefreshTilemapCollider(region.innerMap.structureTilemapCollider));
 			}
 		}
 		yield return null;

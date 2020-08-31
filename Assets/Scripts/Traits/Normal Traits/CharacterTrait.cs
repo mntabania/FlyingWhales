@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Locations.Settlements;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     //This trait is present in all characters
     //A dummy trait in order for some jobs to be created
@@ -15,6 +18,10 @@ namespace Traits {
         public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
         public Character owner { get; private set; }
 
+        #region getters
+        public override Type serializedData => typeof(SaveDataCharacterTrait);
+        #endregion
+
         public CharacterTrait() {
             name = "Character Trait";
             type = TRAIT_TYPE.NEUTRAL;
@@ -25,9 +32,20 @@ namespace Traits {
             charactersAlreadySawForHope = new List<Character>();
             charactersThatHaveReactedToThis = new HashSet<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
-            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
+
+        #region Loading
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            SaveDataCharacterTrait saveDataCharacterTrait = saveDataTrait as SaveDataCharacterTrait;
+            Assert.IsNotNull(saveDataCharacterTrait);
+            alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
+            
+            //TODO: Load characters
+        }
+        #endregion
+        
         public void AddAlreadyInspectedObject(TileObject to) {
             if (!alreadyInspectedTileObjects.Contains(to)) {
                 alreadyInspectedTileObjects.Add(to);
@@ -278,94 +296,25 @@ namespace Traits {
             }
             return false;
         }
-        //public override void OnTickStarted() {
-        //    base.OnTickStarted();
-        //    if (hasSurvivedApprehension) {
-        //        CheckAsCriminal();
-        //    }
-        //}
         #endregion
-
-        private void CheckAsCriminal() {
-            if (owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME)) {
-                if (owner.jobQueue.jobsInQueue.Count > 0) {
-                    owner.jobQueue.CancelAllJobs();
-                }
-                // CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT, owner);
-                // owner.jobQueue.AddJobInQueue(job);
-                if (owner.canPerform && owner.canMove) {
-                    owner.jobComponent.PlanIdleReturnHome();
-                }
-            } 
-            //else if (owner.isAtHomeRegion) {
-            //    SetHasSurvivedApprehension(false);
-            //}
-        }
-
-        //public void SetHasSurvivedApprehension(bool state) {
-        //    if (hasSurvivedApprehension != state) {
-        //        hasSurvivedApprehension = state;
-        //        //if (hasSurvivedApprehension) {
-        //        //    Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
-        //        //} else {
-        //        //    if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-        //        //        Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
-        //        //    }
-        //        //}
-        //    }
-        //}
-        private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
-            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
-            //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target, characterThatWillDoJob);
-            //    characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
-            //    return true;
-            //}
-            //return false;
-            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, target);
-        }
-        private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
-            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Feeling_Concerned, target);
-            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
-            //    GoapPlanJob laughJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target, characterThatWillDoJob);
-            //    characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
-            //    return true;
-            //}
-            //return false;
-        }
-        private bool CreateMockJob(Character characterThatWillDoJob, Character target) {
-            return characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Mock, target);
-        }
-    }
-
-    public class SaveDataCharacterTrait : SaveDataTrait {
-        public List<TileObjectSerializableData> alreadyInspectedTileObjects;
-        //public bool hasSurvivedApprehension;
-
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            alreadyInspectedTileObjects = new List<TileObjectSerializableData>();
-            CharacterTrait derivedTrait = trait as CharacterTrait;
-            for (int i = 0; i < derivedTrait.alreadyInspectedTileObjects.Count; i++) {
-                TileObject to = derivedTrait.alreadyInspectedTileObjects[i];
-                TileObjectSerializableData toData = new TileObjectSerializableData {
-                    id = to.id,
-                    type = to.tileObjectType,
-                };
-                alreadyInspectedTileObjects.Add(toData);
-            }
-            //hasSurvivedApprehension = derivedTrait.hasSurvivedApprehension;
-        }
-
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            CharacterTrait derivedTrait = trait as CharacterTrait;
-            for (int i = 0; i < alreadyInspectedTileObjects.Count; i++) {
-                TileObjectSerializableData toData = alreadyInspectedTileObjects[i];
-                derivedTrait.AddAlreadyInspectedObject(InnerMapManager.Instance.GetTileObject(toData.type, toData.id));
-            }
-            //derivedTrait.SetHasSurvivedApprehension(hasSurvivedApprehension);
-            return trait;
-        }
     }
 }
+
+#region Save Data
+public class SaveDataCharacterTrait : SaveDataTrait {
+
+    public List<string> alreadyInspectedTileObjects;
+    public List<string> charactersAlreadySawForHope;
+    public List<string> charactersThatHaveReactedToThis;
+    
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        CharacterTrait characterTrait = trait as CharacterTrait;
+        Assert.IsNotNull(characterTrait);
+        alreadyInspectedTileObjects = SaveUtilities.ConvertSavableListToIDs(characterTrait.alreadyInspectedTileObjects);
+        charactersAlreadySawForHope = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersAlreadySawForHope);
+        charactersThatHaveReactedToThis = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersThatHaveReactedToThis.ToList());
+    }
+}
+#endregion
 

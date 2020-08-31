@@ -6,7 +6,6 @@ namespace Traits {
     public class Edible : Trait {
 
         private IPointOfInterest owner;
-        //private int fullnessProvided;
 
         public Edible() {
             name = "Edible";

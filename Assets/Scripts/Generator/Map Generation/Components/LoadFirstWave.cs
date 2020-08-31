@@ -22,6 +22,9 @@ public class LoadFirstWave : MapGenerationComponent {
 
         //Load Tile Objects
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveData));
+        
+        //Load Traits
+        yield return MapGenerator.Instance.StartCoroutine(LoadTraits(saveData));
     }
 
     private IEnumerator LoadFactions(SaveDataCurrentProgress saveData) {
@@ -29,10 +32,14 @@ public class LoadFirstWave : MapGenerationComponent {
         saveData.LoadFactions();
         yield return null;
     }
-    
     private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Objects...");
         saveData.LoadTileObjects();
+        yield return null;
+    }
+    private IEnumerator LoadTraits(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Load Traits...");
+        saveData.LoadTraits();
         yield return null;
     }
 }

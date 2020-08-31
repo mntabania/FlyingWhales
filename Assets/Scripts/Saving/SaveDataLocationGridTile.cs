@@ -16,7 +16,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public Vector3Save centeredLocalLocation;
     public LocationGridTile.Tile_Type tileType;
     public LocationGridTile.Tile_State tileState;
-    public SaveDataTileObject genericTileObjectSave;
+    public string genericTileObjectID;
 
     //tilemap assets
     public string groundTileMapAssetName;
@@ -32,18 +32,11 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         centeredLocalLocation = gridTile.centeredLocalLocation;
         tileType = gridTile.tileType;
         tileState = gridTile.tileState;
+        
+        genericTileObjectID = gridTile.genericTileObject.persistentID;
 
-
-        genericTileObjectSave = SaveDataCurrentProgress.CreateNewSaveDataForTileObject("GenericTileObject");
-        genericTileObjectSave.Save(gridTile.genericTileObject);
-        // traits = new List<SaveDataTrait>();
-        // for (int i = 0; i < gridTile.normalTraits.Count; i++) {
-        //     SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(gridTile.normalTraits[i]);
-        //     if (saveDataTrait != null) {
-        //         saveDataTrait.Save(gridTile.normalTraits[i]);
-        //         traits.Add(saveDataTrait);
-        //     }
-        // }
+        // genericTileObjectSave = SaveDataCurrentProgress.CreateNewSaveDataForTileObject("GenericTileObject");
+        // genericTileObjectSave.Save(gridTile.genericTileObject);
 
         //tilemap assets
         groundTileMapAssetName = gridTile.parentMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
@@ -52,14 +45,15 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         floorSample = gridTile.floorSample;
     }
 
-    public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap) {
+    public LocationGridTile InitialLoad(Tilemap tilemap, InnerTileMap parentAreaMap, SaveDataCurrentProgress saveData) {
         LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
         tile.SetFloorSample(floorSample);
-        TileObject loadedObject = genericTileObjectSave.Load();
+        SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, genericTileObjectID);
+        TileObject loadedObject = saveDataTileObject.Load();
         GenericTileObject genericTileObject = loadedObject as GenericTileObject;
         Assert.IsNotNull(genericTileObject);
         genericTileObject.SetTileOwner(tile);
-        genericTileObject.ManualInitialize(tile);
+        genericTileObject.ManualInitializeLoad(tile, saveDataTileObject);
         tile.LoadGenericTileObject(genericTileObject);
         return tile;
     }

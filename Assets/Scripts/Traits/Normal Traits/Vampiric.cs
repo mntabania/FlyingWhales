@@ -5,11 +5,6 @@ using UnityEngine;
 
 namespace Traits {
     public class Vampiric : Trait {
-        //private Character _character;
-
-        //private int _flatAttackMod;
-        //private int _flatHPMod;
-        //private int _flatSpeedMod;
         public override bool isSingleton => true;
 
         public Vampiric() {
@@ -18,24 +13,10 @@ namespace Traits {
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            //_flatHPMod = 500;
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
-
-        //public void VamipiricLevel(int level) {
-        //    //_flatAttackMod *= level;
-        //    //_flatHPMod *= level;
-        //    //_flatSpeedMod *= level;
-        //    if (level == 1) {
-        //        _flatHPMod *= 1;
-        //    } else if (level == 2) {
-        //        _flatHPMod = Mathf.RoundToInt(_flatHPMod * 1.5f);
-        //    } else if (level == 3) {
-        //        _flatHPMod *= 2;
-        //    }
-        //}
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
@@ -47,9 +28,6 @@ namespace Traits {
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
-                //character.AdjustAttackMod(_flatAttackMod);
-                //character.AdjustMaxHPMod(_flatHPMod);
-                //character.AdjustSpeedMod(_flatSpeedMod);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -60,16 +38,9 @@ namespace Traits {
                 character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
-                //character.AdjustAttackMod(-_flatAttackMod);
-                //character.AdjustMaxHPMod(-_flatHPMod);
-                //character.AdjustSpeedMod(-_flatSpeedMod);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
-        //protected override void OnChangeLevel() {
-        //    base.OnChangeLevel();
-        //    VamipiricLevel(level);
-        //}
         //public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
         //    if (targetPOI is Character) {
         //        //In Vampiric, the parameter traitOwner is the target character, that's why you must pass the target character in this parameter not the actual owner of the trait, the actual owner of the trait is the characterThatWillDoJob

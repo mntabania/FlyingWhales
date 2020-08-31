@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class Freezing : Status {
 
@@ -12,6 +14,10 @@ namespace Traits {
         public List<LocationStructure> excludedStructuresInSeekingShelter { get; private set; }
         public LocationStructure currentShelterStructure { get; private set; }
 
+        #region getters
+        public override Type serializedData => typeof(SaveDataFreezing);
+        #endregion
+        
         public Freezing() {
             name = "Freezing";
             description = "May be completely Frozen soon.";
@@ -27,6 +33,18 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
+
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataFreezing saveDataFreezing = saveDataTrait as SaveDataFreezing;
+            Assert.IsNotNull(saveDataFreezing);
+            excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(saveDataFreezing.excludedStructuresInSeekingShelter);
+            if (!string.IsNullOrEmpty(saveDataFreezing.currentShelterStructure)) {
+                currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFreezing.currentShelterStructure);    
+            }
+        }
+        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
@@ -126,3 +144,19 @@ namespace Traits {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataFreezing : SaveDataTrait {
+    public List<string> excludedStructuresInSeekingShelter;
+    public string currentShelterStructure;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Freezing freezing = trait as Freezing;
+        Assert.IsNotNull(freezing);
+        excludedStructuresInSeekingShelter = SaveUtilities.ConvertSavableListToIDs(freezing.excludedStructuresInSeekingShelter);
+        if (freezing.currentShelterStructure != null) {
+            currentShelterStructure = freezing.currentShelterStructure.persistentID;    
+        }
+    }
+}
+#endregion

@@ -216,7 +216,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         Vector3 worldPos = tile.centeredWorldLocation;
         thisTransform.position = worldPos;
     }
-    public void SetWorldPosition(Vector3 worldPosition) {
+    public virtual void SetWorldPosition(Vector3 worldPosition) {
         transform.position = worldPosition;
     }
     #endregion

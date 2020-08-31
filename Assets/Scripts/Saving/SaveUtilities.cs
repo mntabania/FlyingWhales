@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
+using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public static class SaveUtilities {
 
@@ -22,4 +25,39 @@ public static class SaveUtilities {
         }
     }
     #endregion
+
+    public static List<string> ConvertSavableListToIDs<T>(List<T> savables) where T : ISavable{
+        List<string> ids = new List<string>();
+        for (int i = 0; i < savables.Count; i++) {
+            ids.Add(savables[i].persistentID);
+        }
+        return ids;
+    } 
+    public static List<Character> ConvertIDListToCharacters(List<string> ids) {
+        List<Character> objects = new List<Character>();
+        for (int i = 0; i < ids.Count; i++) {
+            string id = ids[i];
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(id);
+            objects.Add(character);
+        }
+        return objects;
+    }
+    public static List<TileObject> ConvertIDListToTileObjects(List<string> ids) {
+        List<TileObject> objects = new List<TileObject>();
+        for (int i = 0; i < ids.Count; i++) {
+            string id = ids[i];
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(id);
+            objects.Add(tileObject);
+        }
+        return objects;
+    }
+    public static List<LocationStructure> ConvertIDListToStructures(List<string> ids) {
+        List<LocationStructure> objects = new List<LocationStructure>();
+        for (int i = 0; i < ids.Count; i++) {
+            string id = ids[i];
+            LocationStructure tileObject = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(id);
+            objects.Add(tileObject);
+        }
+        return objects;
+    }
 }

@@ -1,11 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class Pyrophobic : Trait {
 
         private Character owner;
-        private List<BurningSource> seenBurningSources;
 
+        #region getters
+        public List<BurningSource> seenBurningSources { get; }
+        public override Type serializedData => typeof(SaveDataPyrophobic);
+        #endregion
+        
         public Pyrophobic() {
             name = "Pyrophobic";
             description = "Will almost always flee when it sees a Fire.";
@@ -17,6 +24,19 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
 
+        #region Loading
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            SaveDataPyrophobic saveDataPyrophobic = saveDataTrait as SaveDataPyrophobic;
+            Assert.IsNotNull(saveDataPyrophobic);
+            for (int i = 0; i < saveDataPyrophobic.seenBurningSources.Count; i++) {
+                string burningSourceID = saveDataPyrophobic.seenBurningSources[i];
+                BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(burningSourceID);
+                seenBurningSources.Add(burningSource);
+            }
+        }
+        #endregion
+        
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {
@@ -91,3 +111,18 @@ namespace Traits {
     }
 }
 
+#region Save Data
+public class SaveDataPyrophobic : SaveDataTrait {
+    public List<string> seenBurningSources;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Pyrophobic pyrophobic = trait as Pyrophobic;
+        Assert.IsNotNull(pyrophobic);
+        seenBurningSources = new List<string>();
+        for (int i = 0; i < pyrophobic.seenBurningSources.Count; i++) {
+            BurningSource burningSource = pyrophobic.seenBurningSources[i];
+            seenBurningSources.Add(burningSource.persistentID);
+        }
+    }
+}
+#endregion

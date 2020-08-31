@@ -542,37 +542,3 @@ public class FireBallData : SpellData {
         TileHighlighter.Instance.PositionHighlight(1, tile);
     }
 }
-
-public class PlayerJobActionSlot {
-    public int level;
-    public PlayerSpell ability;
-
-    public PlayerJobActionSlot() {
-        level = 1;
-        ability = null;
-    }
-
-    public void SetAbility(PlayerSpell ability) {
-        this.ability = ability;
-        if (this.ability != null) {
-            this.ability.SetLevel(level);
-        }
-    }
-
-    public void LevelUp() {
-        level++;
-        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
-        if (this.ability != null) {
-            this.ability.SetLevel(level);
-        }
-        Messenger.Broadcast(Signals.PLAYER_GAINED_INTERVENE_LEVEL, this);
-    }
-    public void SetLevel(int amount) {
-        level = amount;
-        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
-        if (this.ability != null) {
-            this.ability.SetLevel(level);
-        }
-        Messenger.Broadcast(Signals.PLAYER_GAINED_INTERVENE_LEVEL, this);
-    }
-}

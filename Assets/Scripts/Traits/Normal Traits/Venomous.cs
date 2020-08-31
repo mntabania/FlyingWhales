@@ -4,9 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Venomous : Trait {
-
-        //private ITraitable _traitable;
-
+        
         public override bool isSingleton => true;
 
         public Venomous() {

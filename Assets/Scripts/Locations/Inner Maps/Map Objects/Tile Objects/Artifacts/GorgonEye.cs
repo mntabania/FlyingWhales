@@ -10,8 +10,7 @@ public class GorgonEye : Artifact {
         maxHP = 700;
         currentHP = maxHP;
     }
-    //public GorgonEye(SaveDataArtifact data) : base(data) {
-    //}
+    public GorgonEye(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override void ConstructDefaultActions() {

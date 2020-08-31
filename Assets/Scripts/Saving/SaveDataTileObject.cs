@@ -26,6 +26,9 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public string spriteName;
     public QuaternionSave rotation;
     
+    //Traits
+    public SaveDataTraitContainer saveDataTraitContainer;
+    
     #region getters
     public string persistentID => _persistentID;
     public OBJECT_TYPE objectType => _objectType;
@@ -60,7 +63,6 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         if (tileObject.mapObjectVisual == null || tileObject.mapObjectVisual.usedSprite == null) {
             spriteName = string.Empty;
             rotation = Quaternion.identity;
-            // Debug.Log($"Tile Object {tileObject} has no map object or visual.");
         } else {
             spriteName = tileObject.mapObjectVisual.usedSprite.name;
             rotation = tileObject.mapObjectVisual.rotation;
@@ -73,6 +75,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             index++;
         }
         
+        saveDataTraitContainer = new SaveDataTraitContainer();
+        saveDataTraitContainer.Save(tileObject.traitContainer);
     }
     public override TileObject Load() {
         TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);

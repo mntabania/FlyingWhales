@@ -3952,7 +3952,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (isNormalCharacter) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
             AddAdvertisedAction(INTERACTION_TYPE.PRAY);
-            AddAdvertisedAction(INTERACTION_TYPE.CURSE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
             AddAdvertisedAction(INTERACTION_TYPE.INVITE);

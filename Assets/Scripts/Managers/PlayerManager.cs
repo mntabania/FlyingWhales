@@ -63,6 +63,7 @@ public class PlayerManager : BaseMonoBehaviour {
     public void InitializePlayer(SaveDataCurrentProgress data) {
         player = data.LoadPlayer();
         player.CreatePlayerFaction(data.playerSave);
+        player.LoadPlayerArea(data.playerSave);
         PlayerUI.Instance.UpdateUI();
         // if (WorldConfigManager.Instance.isDemoWorld) {
         //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    
@@ -166,8 +167,6 @@ public class PlayerManager : BaseMonoBehaviour {
                 return new Meteor();
             //case SPELL_TYPE.IGNITE:
             //    return new Ignite();
-            case SPELL_TYPE.CURSED_OBJECT:
-                return new CursedObject();
             //case SPELL_TYPE.SPOIL:
             //    return new Spoil();
             case SPELL_TYPE.ALCOHOLIC:

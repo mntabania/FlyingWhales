@@ -4,11 +4,6 @@ using UnityEngine;
 
 namespace Traits {
     public class Unconscious : Status {
-        //private Character _sourceCharacter;
-        //public override bool isRemovedOnSwitchAlterEgo {
-        //    get { return true; }
-        //}
-
         public override bool isSingleton => true;
 
         public Unconscious() {
@@ -18,7 +13,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3); //144
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_UNCONSCIOUS };
-            //hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);

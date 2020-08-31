@@ -15,6 +15,8 @@ public class DatabaseManager : MonoBehaviour {
     public LocationGridTileDatabase locationGridTileDatabase { get; private set; }
     public SettlementDatabase settlementDatabase { get; private set; }
     public LocationStructureDatabase structureDatabase { get; private set; }
+    public TraitDatabase traitDatabase { get; private set; }
+    public BurningSourceDatabase burningSourceDatabase { get; private set; }
     
     void Awake() {
         if (Instance == null) {
@@ -36,5 +38,7 @@ public class DatabaseManager : MonoBehaviour {
         locationGridTileDatabase = new LocationGridTileDatabase();
         settlementDatabase = new SettlementDatabase();
         structureDatabase = new LocationStructureDatabase();
+        traitDatabase = new TraitDatabase();
+        burningSourceDatabase = new BurningSourceDatabase();
     }
 }

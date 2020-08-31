@@ -20,7 +20,6 @@ namespace Traits {
                 Character character = addedTo as Character;
                 character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this);
             }
-            SetDateEstablished(GameManager.Instance.Today());
         }
         /// <summary>
         /// Called when a stacking trait is added but the max stacks have been reached.

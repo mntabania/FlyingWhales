@@ -1,19 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Traits;
+using UtilityScripts;
 
 public class BurningSource {
 
+    public string persistentID { get; }
     public int id { get; }
     public List<ITraitable> objectsOnFire { get; }
 
     private int _poisOnFireCount; //Number of POI's currently on fire
-    
-    public BurningSource() {
+
+    public BurningSource(string overrideID = "") {
+        persistentID = string.IsNullOrEmpty(overrideID) ? UtilityScripts.Utilities.GetNewUniqueID() : overrideID;
         id = UtilityScripts.Utilities.SetID(this);
         objectsOnFire = new List<ITraitable>();
         _poisOnFireCount = 0;
         Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        DatabaseManager.Instance.burningSourceDatabase.Register(this);
     }
     public void AddObjectOnFire(ITraitable traitable) {
         if (objectsOnFire.Contains(traitable) == false) {
@@ -45,6 +50,7 @@ public class BurningSource {
     private void SetAsInactive() {
         Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
         Messenger.Broadcast(Signals.BURNING_SOURCE_INACTIVE, this);
+        DatabaseManager.Instance.burningSourceDatabase.UnRegister(this);
     }
     
     #region Listeners
@@ -57,14 +63,5 @@ public class BurningSource {
     
     public override string ToString() {
         return $"Burning Source {id.ToString()}. Objects: {objectsOnFire.Count.ToString()}";
-    }
-}
-
-[System.Serializable]
-public class SaveDataBurningSource {
-    public int id;
-
-    public void Save(BurningSource bs) {
-        id = bs.id;
     }
 }

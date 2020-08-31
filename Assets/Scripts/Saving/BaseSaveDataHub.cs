@@ -122,3 +122,39 @@ public class SaveDataLogHub : BaseSaveDataHub {
         return default;
     }
 }
+
+[System.Serializable]
+public class SaveDataTraitHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataTrait> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataTrait> hub => _hub;
+    #endregion
+
+    public SaveDataTraitHub() {
+        _hub = new Dictionary<string, SaveDataTrait>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataTrait save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataTrait save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}

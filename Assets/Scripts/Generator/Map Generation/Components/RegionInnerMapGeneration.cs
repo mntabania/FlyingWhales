@@ -43,11 +43,10 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
         }
         
         //create inner maps
-        Dictionary<string, TileBase> tileAssetDB = InnerMapManager.Instance.assetManager.GetFloorAndWallTileAssetDB();
         for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
             SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
             Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
-            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.LoadRegionMap(location, this, saveDataRegion.innerMapSave, tileAssetDB));
+            yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.LoadRegionMap(location, this, saveDataRegion.innerMapSave, saveData));
             // yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveDataRegion, location));
         }
         
@@ -61,6 +60,14 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return MapGenerator.Instance.StartCoroutine(LoadStructureObject(saveDataLocationStructure, location));    
         }
 
+        Dictionary<string, TileBase> tileAssetDB = InnerMapManager.Instance.assetManager.GetFloorAndWallTileAssetDB();
+        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+            Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
+            yield return MapGenerator.Instance.StartCoroutine(location.innerMap.LoadTileVisuals(this, saveDataRegion.innerMapSave, tileAssetDB));
+        }
+        tileAssetDB.Clear();
+        
         for (int i = 0; i < InnerMapManager.Instance.innerMaps.Count; i++) {
             InnerTileMap innerTileMap = InnerMapManager.Instance.innerMaps[i];
             innerTileMap.groundTilemap.RefreshAllTiles();

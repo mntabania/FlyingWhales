@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using Locations.Settlements;
+using Traits;
 using UnityEngine;
 
 public class SaveDataCurrentProgress {
@@ -48,18 +49,16 @@ public class SaveDataCurrentProgress {
             { OBJECT_TYPE.Faction, new SaveDataFactionHub() },
             { OBJECT_TYPE.Log, new SaveDataLogHub() },
             { OBJECT_TYPE.Tile_Object, new SaveDataTileObjectHub() },
+            { OBJECT_TYPE.Trait, new SaveDataTraitHub() },
         };
     }
     #endregion
 
     #region Hub
     public bool AddToSaveHub<T>(T data) where T : ISavable {
-        if(data is ISavable savable) {
-            SaveData<T> obj = (SaveData<T>) System.Activator.CreateInstance(data.serializedData);
-            obj.Save(data);
-            return AddToSaveHub(obj, savable.objectType);
-        }
-        return false;
+        SaveData<T> obj = (SaveData<T>) System.Activator.CreateInstance(data.serializedData);
+        obj.Save(data);
+        return AddToSaveHub(obj, data.objectType);
     }
     private bool AddToSaveHub<T>(T data, OBJECT_TYPE objectType) {
         if (objectHub.ContainsKey(objectType)) { //The object type must always be present in the object hub dictionary if it is not, add it in ConstructObjectHub
@@ -120,9 +119,6 @@ public class SaveDataCurrentProgress {
             if (finishedObjects.Contains(tileObject)) {
                 // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
                 continue; //skip    
-            }
-            if (tileObject is GenericTileObject) {
-                continue; //do not place save data of generic tile objects here, since they are loaded alongside their respective LocationGridTiles  
             }
             if (tileObject is Artifact artifact) {
                 string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
@@ -191,9 +187,33 @@ public class SaveDataCurrentProgress {
     public void LoadTileObjects() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Tile_Object)){
             if(objectHub[OBJECT_TYPE.Tile_Object] is SaveDataTileObjectHub hub) {
-                Dictionary<string, SaveDataTileObject> savedFactions = hub.hub;
-                foreach (SaveDataTileObject data in savedFactions.Values) {
+                Dictionary<string, SaveDataTileObject> saveDataTileObjects = hub.hub;
+                foreach (SaveDataTileObject data in saveDataTileObjects.Values) {
+                    //Special Case: Do not load generic tile objects here, since they were already loaded during region inner map generation.
+                    if (data.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                        data.Load();    
+                    }
+                }
+            }
+        }
+    }
+    public void LoadTraits() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
+            if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
+                Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
+                foreach (SaveDataTrait data in saveDataTraits.Values) {
                     data.Load();
+                }
+            }
+        }
+    }
+    public void LoadTraitsSecondWave() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
+            if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
+                Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
+                foreach (SaveDataTrait data in saveDataTraits.Values) {
+                    Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
+                    trait.LoadSecondWaveInstancedTrait(data);
                 }
             }
         }

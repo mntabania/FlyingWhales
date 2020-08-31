@@ -32,7 +32,7 @@ public class TraitManager : BaseMonoBehaviour {
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
 
     public static string[] instancedTraits = new string[] {
-        "Restrained", "Cursed", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
+        "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
         "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
         "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
@@ -61,7 +61,7 @@ public class TraitManager : BaseMonoBehaviour {
 
     public List<string> removeStatusTraits = new List<string> {
         "Unconscious", "Injured", "Poisoned", "Plagued",
-        "Infected", "Cursed", "Freezing", "Frozen", "Burning",
+        "Infected", "Freezing", "Frozen", "Burning",
     };
     public List<string> specialIllnessTraits = new List<string> {
         "Poisoned", "Plagued", "Infected"
@@ -162,9 +162,28 @@ public class TraitManager : BaseMonoBehaviour {
             Type type = System.Type.GetType(typeName);
             Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
             Trait trait = System.Activator.CreateInstance(type) as Trait;
+            Assert.IsNotNull(trait);
             if (trait.isSingleton) {
                 instancedSingletonTraits.Add(traitName, trait);
             }
+            trait.InitializeInstancedTrait();
+            return trait;
+        }
+    }
+    public Trait LoadTrait(SaveDataTrait saveDataTrait) {
+        if (instancedSingletonTraits.ContainsKey(saveDataTrait.name)) {
+            return instancedSingletonTraits[saveDataTrait.name];
+        } else {
+            string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(saveDataTrait.name);
+            string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            Type type = System.Type.GetType(typeName);
+            Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
+            Trait trait = System.Activator.CreateInstance(type) as Trait;
+            Assert.IsNotNull(trait);
+            if (trait.isSingleton) {
+                instancedSingletonTraits.Add(saveDataTrait.name, trait);
+            }
+            trait.LoadInstancedTrait(saveDataTrait);
             return trait;
         }
     }

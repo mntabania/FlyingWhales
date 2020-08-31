@@ -5,7 +5,7 @@ namespace Traits {
         public override bool isSingleton => true;
         
         public DeMooder() {
-            name = "De-Mooder";
+            name = "DeMooder";
             description = "Applies a temporary debuff on all hostiles in range. It will immediately perish afterwards.";
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;

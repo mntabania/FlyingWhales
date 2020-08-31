@@ -7,7 +7,6 @@ using Inner_Maps.Location_Structures;
 namespace Traits {
     public class Stoned : Status {
 
-        //public override bool isSingleton => true;
         private GameObject _stonedGO;
 
         public Stoned() {

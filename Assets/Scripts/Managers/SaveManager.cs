@@ -55,51 +55,7 @@ public class SaveManager : MonoBehaviour {
         savePlayerManager.SavePlayerData();
     }
 
-    #region General
-    public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {
-        if (trait.isNotSavable) {
-            return null;
-        }
-        SaveDataTrait saveDataTrait = null;
-        System.Type type = System.Type.GetType($"SaveData{trait.name}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-        if (type != null) {
-            saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTrait;
-        } else {
-            saveDataTrait = new SaveDataTrait();
-        }
-        return saveDataTrait;
-    }
-    #endregion
-
     #region Saving
-    public void DoManualSave(string fileName = "") {
-        if (string.IsNullOrEmpty(fileName)) {
-            fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;
-        }
-        SaveDataCurrentProgress completeSave = new SaveDataCurrentProgress();
-        completeSave.Initialize();
-        //date
-        completeSave.SaveDate();
-        completeSave.SavePlayer();
-        completeSave.SaveFactions();
-        
-        //save world map
-        WorldMapSave worldMapSave = new WorldMapSave();
-        worldMapSave.SaveWorld(
-            WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
-            DatabaseManager.Instance.hexTileDatabase,
-            DatabaseManager.Instance.regionDatabase,
-            DatabaseManager.Instance.settlementDatabase,
-            DatabaseManager.Instance.structureDatabase
-        );
-        completeSave.worldMapSave = worldMapSave;
-        completeSave.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
-
-        string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
-        SaveGame.Save(path, completeSave);
-        
-        Debug.Log($"Saved new game at {path}");
-    }
     public void SaveScenario(string fileName = "") {
         ScenarioMapData scenarioSave = new ScenarioMapData();
 

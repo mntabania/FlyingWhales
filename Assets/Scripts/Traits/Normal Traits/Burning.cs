@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
-
+using UnityEngine.Assertions;
+using Random = UnityEngine.Random;
 namespace Traits {
     public class Burning : Status {
         private ITraitable owner { get; set; }
@@ -13,6 +16,10 @@ namespace Traits {
         private GameObject burningEffect;
         private readonly List<ITraitable> _burningSpreadChoices;
         private bool _hasBeenRemoved;
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataBurning);
+        #endregion
 
         public Burning() {
             name = "Burning";
@@ -31,6 +38,16 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataBurning saveDataBurning = saveDataTrait as SaveDataBurning;
+            Assert.IsNotNull(saveDataBurning);
+            BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(saveDataBurning.persistentID);
+            LoadSourceOfBurning(burningSource);
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             owner = addedTo;
@@ -188,7 +205,6 @@ namespace Traits {
             if (UnityEngine.Random.Range(0, 100) >= 4) {
                 return;
             }
-            //TODO: CAN BE OPTIMIZED?
             _burningSpreadChoices.Clear();
             if (ShouldSpreadFire()) {
                 LocationGridTile origin = owner.gridTileLocation;
@@ -236,21 +252,16 @@ namespace Traits {
         }
 
     }
+}
 
-    public class SaveDataBurning : SaveDataTrait {
-        public int burningSourceID;
-
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            Burning derivedTrait = trait as Burning;
-            burningSourceID = derivedTrait.sourceOfBurning.id;
-        }
-
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            // Burning derivedTrait = trait as Burning;
-            // derivedTrait.LoadSourceOfBurning(LandmarkManager.Instance.GetBurningSourceByID(burningSourceID));
-            return trait;
-        }
+#region Save Data
+public class SaveDataBurning : SaveDataTrait {
+    public string burningSourceID;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Burning burning = trait as Burning;
+        Assert.IsNotNull(burning);
+        burningSourceID = burning.persistentID;
     }
 }
+#endregion
