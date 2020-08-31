@@ -925,12 +925,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
     #region Utilities
     public Character GetCharacterByID(int id) {
-        if (DatabaseManager.Instance.characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
-            return character;
-        } else if (DatabaseManager.Instance.characterDatabase.limboCharacters.TryGetValue(id, out character)) {
-            return character;
-        }
-        return null;
+        return DatabaseManager.Instance.characterDatabase.GetCharacterByID(id);
     }
     public Character GetCharacterByPersistentID(string id) {
         return DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(id);
@@ -945,8 +940,8 @@ public class CharacterManager : BaseMonoBehaviour {
         return null;
     }
     public Character GetLimboCharacterByName(string name) {
-        for (int i = 0; i < DatabaseManager.Instance.characterDatabase.limboCharacters.Count; i++) {
-            Character currChar = DatabaseManager.Instance.characterDatabase.limboCharacters[i];
+        for (int i = 0; i < DatabaseManager.Instance.characterDatabase.limboCharactersList.Count; i++) {
+            Character currChar = DatabaseManager.Instance.characterDatabase.limboCharactersList[i];
             if (currChar.name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }

@@ -42,6 +42,21 @@ public class CharacterDatabase {
         }
         return null;
     }
+    internal Character GetCharacterByID(int id) {
+        for (int i = 0; i < allCharactersList.Count; i++) {
+            Character currCharacter = allCharactersList[i];
+            if(currCharacter.id == id) {
+                return currCharacter;
+            }
+        }
+        for (int i = 0; i < limboCharactersList.Count; i++) {
+            Character currCharacter = limboCharactersList[i];
+            if (currCharacter.id == id) {
+                return currCharacter;
+            }
+        }
+        return null;
+    }
 
     public void OnDestroy() {
         if (allCharactersList != null) {
