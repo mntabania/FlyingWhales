@@ -26,7 +26,7 @@ public class CreateAntidote : GoapAction {
     //    TileObject obj = node.poiTarget as TileObject;
     //    log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     //}
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 250;
         costLog += $" +{cost}(Initial)";
@@ -54,7 +54,7 @@ public class CreateAntidote : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return actor == poiTarget;

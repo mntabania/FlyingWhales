@@ -19,8 +19,8 @@ public class ReplaceTileObject : GoapAction {
     #region Overrides
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        object[] otherData = node.otherData;
-        TileObject tileObjectToReplace = otherData[0] as TileObject;
+        OtherData[] otherData = node.otherData;
+        TileObject tileObjectToReplace = otherData[0].obj as TileObject;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     protected override void ConstructBasePreconditionsAndEffects() {
@@ -35,7 +35,7 @@ public class ReplaceTileObject : GoapAction {
         SetState("Replace Success", goapNode);
         
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     //public override bool InitializeOtherData(object[] otherData) {
@@ -58,12 +58,12 @@ public class ReplaceTileObject : GoapAction {
 
     #region State Effects
     public void PreReplaceSuccess(ActualGoapNode goapNode) {
-        TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
+        TileObject tileObjectToReplace = goapNode.otherData[0].obj as TileObject;
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterReplaceSuccess(ActualGoapNode goapNode) {
-        TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
-        LocationGridTile whereToPlace = goapNode.otherData[1] as LocationGridTile;
+        TileObject tileObjectToReplace = goapNode.otherData[0].obj as TileObject;
+        LocationGridTile whereToPlace = goapNode.otherData[1].obj as LocationGridTile;
         //place the tile object at the specified location.
         goapNode.targetStructure.AddPOI(tileObjectToReplace, whereToPlace);
         tileObjectToReplace.AdjustHP(tileObjectToReplace.maxHP, ELEMENTAL_TYPE.Normal);
@@ -76,7 +76,7 @@ public class ReplaceTileObject : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return actor == poiTarget;

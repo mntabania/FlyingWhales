@@ -1,5 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -10,31 +14,19 @@ public class GoapPlanJob : JobQueueItem {
     
     public GoapEffect goal { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
-    //public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
-    //public bool willImmediatelyBeDoneAfterReceivingPlan { get; protected set; }
-
-    //interaction type version
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
-
     //if INTERACTION_TYPE is NONE, it means that it is used by all
-    public Dictionary<INTERACTION_TYPE, object[]> otherData { get; protected set; } //TODO: Further optimize this by moving this dictionary to the actor itself
-
-    //forced interactions per effect
-    //public Dictionary<GoapEffect, INTERACTION_TYPE> forcedActions { get; private set; }
-
-    //plan constructor
-    //public System.Func<GoapPlan> planConstructor { get; private set; } //if this is set, the job will execute this when creating a plan instead of using the normal behaviour
-
-    //misc
-    //public bool allowDeadTargets { get; private set; }
-
-    public List<object> allOtherData { get; private set; }
+    public Dictionary<INTERACTION_TYPE, OtherData[]> otherData { get; protected set; } //TODO: Further optimize this by moving this dictionary to the actor itself
     public bool shouldBeCancelledOnDeath { get; private set; } //should this job be cancelled when the target dies?
 
+    #region getters
+    public override OBJECT_TYPE objectType => OBJECT_TYPE.Job;
+    public override Type serializedData => typeof(SaveDataGoapPlanJob);
+    #endregion
+    
     public GoapPlanJob() : base() {
-        otherData = new Dictionary<INTERACTION_TYPE, object[]>();
-        allOtherData = new List<object>();
+        otherData = new Dictionary<INTERACTION_TYPE, OtherData[]>();
     }
 
     public void Initialize(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, IJobOwner owner) {
@@ -42,114 +34,44 @@ public class GoapPlanJob : JobQueueItem {
         this.goal = goal;
         this.targetPOI = targetPOI;
         shouldBeCancelledOnDeath = true;
-        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        //allowDeadTargets = false;
     }
-    //public void Initialize(JOB_TYPE jobType, GoapEffect goal, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner){
-    //    Initialize(jobType, owner);
-    //    this.goal = goal;
-    //    this.targetPOI = targetPOI;
-    //    //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //    //allowDeadTargets = false;
-    //    this.otherData = otherData;
-    //    if (otherData != null) {
-    //        isNotSavable = true;
-    //        //allOtherData = new List<object>();
-    //        foreach (object[] data in otherData.Values) {
-    //            if (data != null) {
-    //                for (int i = 0; i < data.Length; i++) {
-    //                    allOtherData.Add(data[i]);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IJobOwner owner) : base(jobType, owner) {
-    //    //this.targetEffect = targetEffect;
-    //    //this.targetPOI = targetEffect.targetPOI;
-    //    this.targetInteractionType = targetInteractionType;
-    //    this.otherData = null;
-    //    //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //    //allowDeadTargets = false;
-    //}
-    //public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) : base(jobType, owner) {
-    //    //this.targetEffect = targetEffect;
-    //    //this.targetPOI = targetEffect.targetPOI;
-    //    this.targetInteractionType = targetInteractionType;
-    //    this.otherData = otherData;
-    //    //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //    //allowDeadTargets = false;
-    //    if(otherData != null) {
-    //        isNotSavable = true;
-    //        allOtherData = new List<object>();
-    //        foreach (object[] data in otherData.Values) {
-    //            if(data != null) {
-    //                for (int i = 0; i < data.Length; i++) {
-    //                    allOtherData.Add(data[i]);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     public void Initialize(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, IJobOwner owner) {
         Initialize(jobType, owner);
-        //this.targetEffect = targetEffect;
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
         shouldBeCancelledOnDeath = true;
-        //this.otherData = otherData;
-        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        //allowDeadTargets = false;
     }
-    //public void Initialize(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData, IJobOwner owner) : base(jobType, owner) {
-    //    //this.targetEffect = targetEffect;
-    //    this.targetPOI = targetPOI;
-    //    this.targetInteractionType = targetInteractionType;
-    //    this.otherData = otherData;
-    //    //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //    //allowDeadTargets = false;
-    //    if (otherData != null) {
-    //        isNotSavable = true;
-    //        allOtherData = new List<object>();
-    //        foreach (object[] data in otherData.Values) {
-    //            if (data != null) {
-    //                for (int i = 0; i < data.Length; i++) {
-    //                    allOtherData.Add(data[i]);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //public GoapPlanJob(JOB_TYPE jobType, GoapPlan targetPlan, IPointOfInterest targetPOI) : base(jobType) {
-    //    this.targetPOI = targetPOI;
-    //    this.targetPlan = targetPlan;
-    //    forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //    allowDeadTargets = false;
-    //    isNotSavable = true;
-    //}
     public void Initialize(SaveDataGoapPlanJob data) {
-        Initialize(data);
-        //goals = data.targetEffect.Load();
-        //targetInteractionType = data.targetInteractionType;
-        //allowDeadTargets = data.allowDeadTargets;
-        //if(data.targetPOIID != -1) {
-        //    if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-        //        targetPOI = CharacterManager.Instance.GetCharacterByID(data.targetPOIID);
-        //    } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
-        //        targetPOI = TokenManager.Instance.GetSpecialTokenByID(data.targetPOIID);
-        //    } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-        //        targetPOI = InteriorMapManager.Instance.GetTileObject(data.targetPOITileObjectType, data.targetPOIID);
-        //    }
-        //} else {
-        //    targetPOI = null;
-        //}
-        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        //for (int i = 0; i < data.forcedActionsGoapEffect.Count; i++) {
-        //    GoapEffect effect = data.forcedActionsGoapEffect[i].Load();
-        //    forcedActions.Add(effect, data.forcedActionsType[i]);
-        //}
+        base.Initialize(data);
+        goal = data.goal;
+        targetInteractionType = data.targetInteractionType;
+        shouldBeCancelledOnDeath = data.shouldBeCancelledOnDeath;
     }
 
+    #region Loading
+    public override void LoadSecondWave(SaveDataJobQueueItem saveData) {
+        base.LoadSecondWave(saveData);
+        SaveDataGoapPlanJob data = saveData as SaveDataGoapPlanJob;
+        Assert.IsNotNull(data);
+        if (!string.IsNullOrEmpty(data.targetPOIID)) {
+            if (data.targetPOIObjectType == OBJECT_TYPE.Tile_Object) {
+                targetPOI = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.targetPOIID);
+            } else if (data.targetPOIObjectType == OBJECT_TYPE.Character) {
+                targetPOI = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.targetPOIID);
+            }
+        }
+        foreach (var saveDataOtherData in data.otherData) {
+            OtherData[] loadedOtherData = new OtherData[saveDataOtherData.Value.Length];
+            for (int i = 0; i < loadedOtherData.Length; i++) {
+                SaveDataOtherData saved = saveDataOtherData.Value[i];
+                loadedOtherData[i] = saved.Load();
+            }
+            otherData.Add(saveDataOtherData.Key, loadedOtherData);
+        }
+    }
+    #endregion
+    
+    
     #region Overrides 
     public override bool ProcessJob() {
         if (hasBeenReset) { return false; }
@@ -247,19 +169,6 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
-        //if(assignedPlan != null && assignedPlan.allNodes != null) {
-        //    for (int i = 0; i < assignedPlan.allNodes.Count; i++) {
-        //        JobNode jobNode = assignedPlan.allNodes[i];
-        //        if(jobNode.singleNode != null) {
-        //            jobNode.singleNode.SetJob(null);
-        //        }
-        //        if (jobNode.multiNode != null) {
-        //            for (int j = 0; j < jobNode.multiNode.Length; j++) {
-        //                jobNode.multiNode[j].SetJob(null);
-        //            }
-        //        }
-        //    }
-        //}
         if (originalOwner != null && originalOwner.ownerType == JOB_OWNER.CHARACTER && assignedPlan == null) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If original owner is character just get the assignedCharacter because for personal jobs, the assignedCharacter is always the owner
             //No need to cast the owner anymore
@@ -281,61 +190,56 @@ public class GoapPlanJob : JobQueueItem {
         if(targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character target = targetPOI as Character;
             return target.carryComponent.IsNotBeingCarried();
-            //if (target.IsInOwnParty()) {
-            //    if (!allowDeadTargets && target.isDead) {
-            //        return false;
-            //    }
-            //} else {
-            //    //Must not take job if the target is in another party
-            //    return false;
-            //}
         }
         if(jobType == JOB_TYPE.REMOVE_STATUS && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetNormalTrait<Trait>((string) goal.conditionKey).IsResponsibleForTrait(character)) {
             return false;
         }
-        //if(character.HasTraitOf(TRAIT_TYPE.CRIMINAL) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-        //    return false;
-        //}
         return base.CanTakeJob(character);
     }
-    public override bool CanCharacterTakeThisJob(Character character) {
-        // if(originalOwner.ownerType == JOB_OWNER.CHARACTER) {
-        //     //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers
-        //     return CanTakeJob(character);
-        // }
-        // if (canTakeThis != null) {
-        //     if (canTakeThis(character)) {
-        //         return CanTakeJob(character);
-        //     }
-        //     return false;
-        // } else if (canTakeThisJob != null) {
-        //     if (canTakeThisJob(character, this)) {
-        //         return CanTakeJob(character);
-        //     }
-        //     return false;
-        // } else if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
-        //     if (canTakeThisJobWithTarget(character, targetPOI as Character)) {
-        //         return CanTakeJob(character);
-        //     }
-        //     return false;
-        // }
-        // return CanTakeJob(character);
-        bool canTakeJob = base.CanCharacterTakeThisJob(character);
-        bool canTakeJobOverride = true;
-        if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
-            canTakeJobOverride = canTakeThisJobWithTarget(character, targetPOI as Character);
-        }
-        return canTakeJob && canTakeJobOverride;
-    }
-    //public override void OnCharacterAssignedToJob(Character character) {
-    //    base.OnCharacterAssignedToJob(character);
-    //}
     public override string ToString() {
         return GetJobDetailString();
     }
     public override void AddOtherData(INTERACTION_TYPE actionType, object[] data) {
         Assert.IsFalse(otherData.ContainsKey(actionType), $"Job {name} already has other data for {actionType.ToString()}");
-        otherData[actionType] = data;
+        OtherData[] convertedDataArray = new OtherData[data.Length];
+        for (int i = 0; i < data.Length; i++) {
+            object obj = data[i];
+            OtherData convertedData = null;
+            if (obj is LocationGridTile locationGridTile) {
+                convertedData = new LocationGridTileOtherData(locationGridTile);
+            } else if (obj is LocationStructure locationStructure) {
+                convertedData = new LocationStructureOtherData(locationStructure);
+            } else if (obj is HexTile hexTile) {
+                convertedData = new HexTileOtherData(hexTile);
+            } else if (obj is int integer) {
+                convertedData = new IntOtherData(integer);
+            } else if (obj is TileObject tileObject) {
+                convertedData = new TileObjectOtherData(tileObject);
+            } else if (obj is Region region) {
+                convertedData = new RegionOtherData(region);
+            } else if (obj is BaseSettlement settlement) {
+                convertedData = new SettlementOtherData(settlement);
+            } else if (obj is Faction faction) {
+                convertedData = new FactionOtherData(faction);
+            } else if (obj is CrimeData crimeData) {
+                convertedData = new CrimeDataOtherData(crimeData);
+            } else if (obj is ActualGoapNode actualGoapNode) {
+                convertedData = new ActualGoapNodeOtherData(actualGoapNode);
+            } else if (obj is Rumor rumor) {
+                convertedData = new RumorOtherData(rumor);
+            } else if (obj is ICrimeable crimeable) {
+                convertedData = new CrimeableOtherData(crimeable);
+            } else if (obj is Character character) {
+                convertedData = new CharacterOtherData(character);
+            }
+            if (convertedData != null) {
+                convertedDataArray[i] = convertedData;    
+            } 
+            // else {
+            //     throw new Exception($"No Other Data class type for {obj}");
+            // }
+        }
+        otherData[actionType] = convertedDataArray;
     }
     public override bool CanBeInterruptedBy(JOB_TYPE jobType) {
         if(assignedPlan != null && assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {
@@ -364,38 +268,8 @@ public class GoapPlanJob : JobQueueItem {
     }
     #endregion
 
-    #region Forced Actions
-    /// <summary>
-    /// Add a forced action to this job.
-    /// Forced actions are used for plan generation, when a certain action in the plan has a precondition that is in the dictionary,
-    /// the plan generation must use the specified action type here.
-    /// </summary>
-    /// <param name="precondition"></param>
-    /// <param name="forcedAction"></param>
-    //public void AddForcedInteraction(GoapEffect precondition, INTERACTION_TYPE forcedAction) {
-    //    if (!forcedActions.ContainsKey(precondition)) {
-    //        forcedActions.Add(precondition, forcedAction);
-    //    }
-    //}
-    //public void ClearForcedActions() {
-    //    forcedActions.Clear();
-    //}
-    #endregion
-
-    #region Plan Constructor
-    //public void SetPlanConstructor(System.Func<GoapPlan> planConstructor) {
-    //    this.planConstructor = planConstructor;
-    //}
-    #endregion
-
     #region Misc
     public void SetAssignedPlan(GoapPlan plan) {
-        //if (assignedPlan != null) {
-        //    assignedPlan.SetJob(null);
-        //}
-        //if (plan != null) {
-        //    plan.SetJob(this);
-        //}
         GoapPlan prevPlan = assignedPlan;
         assignedPlan = plan;
         if(plan != null) {
@@ -406,12 +280,6 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    //public void SetWillImmediatelyBeDoneAfterReceivingPlan(bool state) {
-    //    willImmediatelyBeDoneAfterReceivingPlan = state;
-    //}
-    //public void AllowDeadTargets() {
-    //    allowDeadTargets = true;
-    //}
     /// <summary>
     /// Helper function to get what this job is trying to do.
     /// eg: Specify specific trait when it is Remove Trait job, specify specific item when it is Obtain Item job.
@@ -448,7 +316,7 @@ public class GoapPlanJob : JobQueueItem {
     public bool HasOtherData(INTERACTION_TYPE actionType) {
         return otherData.ContainsKey(actionType);
     }
-    public object[] GetOtherData(INTERACTION_TYPE actionType) {
+    public OtherData[] GetOtherData(INTERACTION_TYPE actionType) {
         if (HasOtherData(actionType)) {
             return otherData[actionType];
         }
@@ -459,21 +327,9 @@ public class GoapPlanJob : JobQueueItem {
     #region Goap Effects
     public bool HasGoalConditionKey(string key) {
         return goal.conditionKey == key;
-        //for (int i = 0; i < goals.Length; i++) {
-        //    if (goals[i].goapEffect.conditionKey == key) {
-        //        return true;
-        //    }
-        //}
-        //return false;
     }
     public bool HasGoalConditionType(GOAP_EFFECT_CONDITION conditionType) {
         return goal.conditionType == conditionType;
-        //for (int i = 0; i < goals.Length; i++) {
-        //    if (goals[i].goapEffect.conditionType == conditionType) {
-        //        return true;
-        //    }
-        //}
-        //return false;
     }
     #endregion
 
@@ -484,88 +340,10 @@ public class GoapPlanJob : JobQueueItem {
         targetPOI = null;
         targetInteractionType = INTERACTION_TYPE.NONE;
         otherData.Clear();
-        allOtherData.Clear();
         SetAssignedPlan(null);
         shouldBeCancelledOnDeath = true;
     }
     #endregion
-}
-
-//public class ForcedActionsComparer : IEqualityComparer<GoapEffect> {
-
-//    public bool Equals(GoapEffect x, GoapEffect y) {
-//        bool matchKeys = false;
-//        if(x.conditionKey is int && y.conditionKey is int) {
-//            int effectInt = (int) x.conditionKey;
-//            int preconditionInt = (int) y.conditionKey;
-//            matchKeys = effectInt >= preconditionInt;
-//        } else {
-//            matchKeys = x.conditionKey == y.conditionKey;
-//        }
-//        return x.conditionType == y.conditionType && x.targetPOI == y.targetPOI && matchKeys;
-//        //if (x.conditionType == y.conditionType) {
-//        //    if (string.IsNullOrEmpty(x.conditionString()) || string.IsNullOrEmpty(y.conditionString())) {
-//        //        return true;
-//        //    } else {
-//        //        return x.conditionString() == y.conditionString();
-//        //    }
-//        //}
-//        //return false;
-//    }
-
-//    public int GetHashCode(GoapEffect obj) {
-//        return obj.GetHashCode();
-//    }
-//}
-
-public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
-    public SaveDataGoapEffect[] goalEffects;
-    public int targetPOIID;
-    public POINT_OF_INTEREST_TYPE targetPOIType;
-    public TILE_OBJECT_TYPE targetPOITileObjectType;
-    public INTERACTION_TYPE targetInteractionType;
-    public bool allowDeadTargets;
-
-    public List<SaveDataGoapEffect> forcedActionsGoapEffect;
-    public List<INTERACTION_TYPE> forcedActionsType;
-
-    public override void Save(JobQueueItem job) {
-        base.Save(job);
-        GoapPlanJob goapJob = job as GoapPlanJob;
-        //allowDeadTargets = goapJob.allowDeadTargets;
-        targetInteractionType = goapJob.targetInteractionType;
-        if (goapJob.targetPOI != null) {
-            targetPOIID = goapJob.targetPOI.id;
-            targetPOIType = goapJob.targetPOI.poiType;
-            if(goapJob.targetPOI is TileObject) {
-                targetPOITileObjectType = (goapJob.targetPOI as TileObject).tileObjectType;
-            }
-        } else {
-            targetPOIID = -1;
-        }
-        //goalEffects = new SaveDataGoapEffect[goapJob.goals.Length];
-        //for (int i = 0; i < goapJob.goals.Length; i++) {
-        //    GoapEffect goalEffect = goapJob.goals[i].goapEffect;
-        //    SaveDataGoapEffect saveEffect = new SaveDataGoapEffect();
-        //    saveEffect.Save(goalEffect);
-        //    goalEffects[i] = saveEffect;
-        //}
-
-
-        //forcedActionsGoapEffect = new List<SaveDataGoapEffect>();
-        //forcedActionsType = new List<INTERACTION_TYPE>();
-        //foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in goapJob.forcedActions) {
-        //    SaveDataGoapEffect goapEffect = new SaveDataGoapEffect();
-        //    goapEffect.Save(kvp.Key);
-        //    forcedActionsGoapEffect.Add(goapEffect);
-
-        //    forcedActionsType.Add(kvp.Value);
-        //}
-    }
-
-    //public override JobQueueItem Load() {
-    //    return base.Load();
-    //}
 }
 
 public interface IGoapJobPremadeNodeCreator {

@@ -25,7 +25,7 @@ public class Poison : GoapAction {
         base.Perform(goapNode);
         SetState("Poison Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         string costLog = $"\n{name} {target.nameWithID}: +{cost}(RNG)";
         actor.logComponent.AppendCostLog(costLog);
@@ -104,7 +104,7 @@ public class Poison : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {

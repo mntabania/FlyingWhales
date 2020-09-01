@@ -41,7 +41,7 @@ public class ResolveCombat : GoapAction {
         //resolve cannot be invalid
         return goapActionInvalidity;
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +50(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 50;

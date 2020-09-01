@@ -24,7 +24,7 @@ public class RememberFallen : GoapAction {
         base.Perform(goapNode);
         SetState("Remember Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         costLog += $" +{cost}(Initial)";
@@ -88,7 +88,7 @@ public class RememberFallen : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {

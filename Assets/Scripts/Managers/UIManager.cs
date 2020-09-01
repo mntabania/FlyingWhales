@@ -156,7 +156,6 @@ public class UIManager : BaseMonoBehaviour {
             allMenus[i].Initialize();
         }
         openedPopups = new List<PopupMenuBase>();
-        questInfoUI.Initialize();
         questUI.Initialize();
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
@@ -256,7 +255,6 @@ public class UIManager : BaseMonoBehaviour {
         UpdateMonsterInfo();
         UpdateTileObjectInfo();
         UpdateRegionInfo();
-        UpdateQuestInfo();
         UpdateHextileInfo();
         UpdateStructureInfo();
     }
@@ -931,21 +929,6 @@ public class UIManager : BaseMonoBehaviour {
             tileObjectInfoUI.UpdateTileObjectInfo();
         }
     }
-    #endregion
-
-    #region Quest Info
-    [Space(10)]
-    [Header("Quest UI")]
-    public QuestInfoUI questInfoUI;
-    public void ShowQuestInfo(FactionQuest factionQuest) {
-        questInfoUI.ShowQuestInfoUI(factionQuest);
-    }
-    public void UpdateQuestInfo() {
-        if (questInfoUI.gameObject.activeSelf) {
-            questInfoUI.UpdateQuestInfo();
-        }
-    }
-
     #endregion
 
     #region Tile Info

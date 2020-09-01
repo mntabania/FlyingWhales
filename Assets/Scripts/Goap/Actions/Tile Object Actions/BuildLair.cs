@@ -20,25 +20,25 @@ public class BuildLair : GoapAction {
         SetState("Build Success", goapNode);
 
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        object[] otherData = node.otherData;
+        OtherData[] otherData = node.otherData;
         if (otherData != null) {
-            if (otherData.Length == 1 && otherData[0] is LocationGridTile) {
-                return (otherData[0] as LocationGridTile).structure;
+            if (otherData.Length == 1 && otherData[0].obj is LocationGridTile) {
+                return (otherData[0].obj as LocationGridTile).structure;
             }
         }
         return base.GetTargetStructure(node);
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         if (otherData != null) {
-            if (otherData.Length == 1 && otherData[0] is LocationGridTile) {
-                return otherData[0] as LocationGridTile;
+            if (otherData.Length == 1 && otherData[0].obj is LocationGridTile) {
+                return otherData[0].obj as LocationGridTile;
             }
         }
         return null;
@@ -50,7 +50,7 @@ public class BuildLair : GoapAction {
 
     #region Effects
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         Character actor = goapNode.actor;
 
         actor.ChangeFactionTo(FactionManager.Instance.undeadFaction);
@@ -61,7 +61,7 @@ public class BuildLair : GoapAction {
             FactionManager.Instance.undeadFaction.SetRelationshipFor(PlayerManager.Instance.player.playerFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
         }
         
-        LocationGridTile targetTile = otherData[0] as LocationGridTile;
+        LocationGridTile targetTile = otherData[0].obj as LocationGridTile;
         HexTile targetHex = targetTile.collectionOwner.partOfHextile.hexTileOwner;
         LandmarkManager.Instance.CreateNewLandmarkOnTile(targetHex, LANDMARK_TYPE.MONSTER_LAIR);
         NPCSettlement settlement = LandmarkManager.Instance.CreateNewSettlement(targetHex.region, LOCATION_TYPE.DUNGEON, targetHex);

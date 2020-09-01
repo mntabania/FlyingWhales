@@ -17,7 +17,7 @@ public class DestroyResourceAmount : GoapAction {
         base.Perform(goapNode);
         SetState("Destroy Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -35,19 +35,19 @@ public class DestroyResourceAmount : GoapAction {
 
     #region State Effects
     public void PreDestroySuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         int amountToReduce = 0;
         if (otherData != null && otherData.Length == 1) {
-            amountToReduce = (int) otherData[0];
+            amountToReduce = (int) otherData[0].obj;
         }
         goapNode.descriptionLog.AddToFillers(null, amountToReduce.ToString(), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterDestroySuccess(ActualGoapNode goapNode) {
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         int amountToReduce = 0;
         if(otherData != null && otherData.Length == 1) {
-            amountToReduce = (int) otherData[0];
+            amountToReduce = (int) otherData[0].obj;
         }
         pile.AdjustResourceInPile(-amountToReduce);
         goapNode.actor.behaviourComponent.SetIsDefending(false, null);

@@ -111,7 +111,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
     public Character disguisedTarget { get; private set; }
     //public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
     public bool isStealth { get; private set; }
-    public object[] otherData { get; private set; }
+    public OtherData[] otherData { get; private set; }
     public int cost { get; private set; }
 
     public GoapAction action { get; private set; }
@@ -162,7 +162,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
     public Log informationLog => descriptionLog;
     #endregion
 
-    public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
+    public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
         this.action = action;
         this.actor = actor;
         this.poiTarget = poiTarget;

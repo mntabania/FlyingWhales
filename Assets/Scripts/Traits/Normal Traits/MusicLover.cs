@@ -60,7 +60,7 @@ namespace Traits {
         //        owner.needsComponent.AdjustHappiness(4f);
         //    }
         //}
-        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.SING) {
                 //cost = Utilities.rng.Next(10, 27);
                 cost += -15;

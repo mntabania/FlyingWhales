@@ -77,14 +77,14 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.STEAL) {
                 cost = 0;//Utilities.rng.Next(5, 10);//5,46
             } else if (action == INTERACTION_TYPE.PICK_UP) {
                 cost = 10000;//Utilities.rng.Next(5, 10);//5,46
             }
         }
-        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) {
+        public override void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) {
             if (action == INTERACTION_TYPE.STEAL) {
                 effects.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR));
             }

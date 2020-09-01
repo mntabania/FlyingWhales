@@ -23,7 +23,7 @@ public class MonsterInvade : GoapAction {
         base.Perform(goapNode);
         SetState("Invade Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -31,7 +31,7 @@ public class MonsterInvade : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return !actor.partyComponent.hasParty;
@@ -42,13 +42,13 @@ public class MonsterInvade : GoapAction {
 
     #region State Effects
     public void AfterInvadeSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         if (otherData != null && otherData.Length == 1) {
             Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Monster_Invade, goapNode.actor);
             MonsterInvadeParty monsterInvadeParty = party as MonsterInvadeParty;
-            if(otherData[0] is LocationStructure targetStructure) {
+            if(otherData[0].obj is LocationStructure targetStructure) {
                 monsterInvadeParty.SetTargetStructure(targetStructure);
-            } else if (otherData[0] is HexTile hex) {
+            } else if (otherData[0].obj is HexTile hex) {
                 monsterInvadeParty.SetTargetHex(hex);
             }
         }

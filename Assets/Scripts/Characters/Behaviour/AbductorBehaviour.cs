@@ -21,8 +21,7 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 			//if already has an abducted victim at nest
 			if (abductedCharacter.isDead) {
 				//check if target is alive, if not, create a job to move corpse to a nearby location.
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT,
-					INTERACTION_TYPE.DROP, abductedCharacter, character);
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, abductedCharacter, character);
 				job.SetCannotBePushedBack(true);
 				LocationGridTile targetTile = character.behaviourComponent.nest.GetNearestUnoccupiedTileFromThis();
 				Assert.IsNotNull(targetTile);

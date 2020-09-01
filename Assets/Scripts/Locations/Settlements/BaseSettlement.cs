@@ -40,7 +40,7 @@ namespace Locations.Settlements {
             StartListeningForFires();
         }
         protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
-            persistentID = saveDataBaseSettlement.persistentID;
+            persistentID = saveDataBaseSettlement._persistentID;
             SetName(saveDataBaseSettlement.name);
             id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
             tiles = new List<HexTile>();

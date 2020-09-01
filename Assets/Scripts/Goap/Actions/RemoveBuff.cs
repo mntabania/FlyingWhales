@@ -20,7 +20,7 @@ public class RemoveBuff : GoapAction {
         base.Perform(goapNode);
         SetState("Remove Buff Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +0(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 0;
@@ -37,7 +37,7 @@ public class RemoveBuff : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
         bool hasMetRequirements = base.AreRequirementsSatisfied(actor, target, otherData);
         if (hasMetRequirements) {
             return target != actor && target.traitContainer.HasTrait("Resting", "Unconscious") && target.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF);

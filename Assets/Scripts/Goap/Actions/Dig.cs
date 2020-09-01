@@ -19,12 +19,12 @@ public class Dig : GoapAction {
         base.Perform(goapNode);
         SetState("Dig Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 0;
     }
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
         if (satisfied) {
             return target.gridTileLocation != null;

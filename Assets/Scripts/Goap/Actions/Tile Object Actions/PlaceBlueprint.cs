@@ -16,18 +16,18 @@ public class PlaceBlueprint : GoapAction {
         base.Perform(goapNode);
         SetState("Place Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 3;
     }
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
-        STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
+        STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0].obj;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget.gridTileLocation == null) {
@@ -43,11 +43,11 @@ public class PlaceBlueprint : GoapAction {
 
     #region State Effects
     public void PrePlaceSuccess(ActualGoapNode goapNode) {
-        STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
+        STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0].obj;
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
-        STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
+        STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0].obj;
         StructureTileObject spot = goapNode.poiTarget as StructureTileObject;
         // spot.PlaceBlueprintOnBuildingSpot(structureType);
 

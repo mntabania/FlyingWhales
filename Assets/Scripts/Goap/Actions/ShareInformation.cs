@@ -21,7 +21,7 @@ public class ShareInformation : GoapAction {
         base.Perform(goapNode);
         SetState("Share Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -38,9 +38,9 @@ public class ShareInformation : GoapAction {
             poiTarget = node.disguisedTarget;
         }
 
-        object[] otherData = node.otherData;
-        if (otherData.Length == 1 && otherData[0] is IReactable) {
-            IReactable reactable = otherData[0] as IReactable;
+        OtherData[] otherData = node.otherData;
+        if (otherData.Length == 1 && otherData[0].obj is IReactable) {
+            IReactable reactable = otherData[0].obj as IReactable;
             string articleWord = string.Empty;
             string information = string.Empty;
             if(reactable is ActualGoapNode actionReactable) {
@@ -48,7 +48,7 @@ public class ShareInformation : GoapAction {
                 if (actionReactable.action.goapType == INTERACTION_TYPE.SHARE_INFORMATION) {
                     //TODO: Localize this
                     if (actionReactable.otherData != null && actionReactable.otherData.Length == 1) {
-                        IReactable reactableRoot = actionReactable.otherData[0] as IReactable;
+                        IReactable reactableRoot = actionReactable.otherData[0].obj as IReactable;
                         string fillerWord = "sharing";
                         if (reactableRoot is Rumor) {
                             fillerWord = "spreading";
@@ -85,8 +85,8 @@ public class ShareInformation : GoapAction {
     }
     public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
-        object[] otherData = node.otherData;
-        IReactable reactable = otherData[0] as IReactable;
+        OtherData[] otherData = node.otherData;
+        IReactable reactable = otherData[0].obj as IReactable;
 
         REACTABLE_EFFECT reactableEffect = reactable.GetReactableEffect(witness);
         if (reactableEffect == REACTABLE_EFFECT.Negative) {
@@ -137,7 +137,7 @@ public class ShareInformation : GoapAction {
         return response;
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
-        IReactable reactable = node.otherData[0] as IReactable;
+        IReactable reactable = node.otherData[0].obj as IReactable;
         Assert.IsNotNull(reactable, $"{witness.name} is trying to get reactable effect of {node}, but reactable is null!");
         if (reactable.GetReactableEffect(witness) == REACTABLE_EFFECT.Negative) {
             return REACTABLE_EFFECT.Negative;
@@ -151,8 +151,8 @@ public class ShareInformation : GoapAction {
 
     #region State Effects
     public void AfterShareSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        IReactable reactable = otherData[0] as IReactable;
+        OtherData[] otherData = goapNode.otherData;
+        IReactable reactable = otherData[0].obj as IReactable;
         Character sharer = goapNode.actor;
         Character recipient = goapNode.poiTarget as Character;
         ProcessInformation(sharer, recipient, reactable, goapNode);
@@ -269,7 +269,7 @@ public class ShareInformation : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;

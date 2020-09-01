@@ -26,16 +26,16 @@ public class Roam : GoapAction {
 		base.Perform(goapNode);
 		SetState("Roam Success", goapNode);
 	}
-	protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+	protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 		string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
 		actor.logComponent.AppendCostLog(costLog);
 		return 10;
 	}
 	public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-		object[] otherData = goapNode.otherData;
+		OtherData[] otherData = goapNode.otherData;
 		if (otherData != null) {
-			if (otherData.Length == 1 && otherData[0] is LocationGridTile) { // && otherData[1] is LocationGridTile
-				return otherData[0] as LocationGridTile;
+			if (otherData.Length == 1 && otherData[0].obj is LocationGridTile) { // && otherData[1] is LocationGridTile
+				return otherData[0].obj as LocationGridTile;
 			}
 		}
 		return base.GetTargetTileToGoTo(goapNode);

@@ -16,7 +16,7 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.MAKE_LOVE) {
                 cost = UtilityScripts.Utilities.Rng.Next(40, 67);

@@ -73,6 +73,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         _plaguedExpiryKey = string.Empty;
     }
 
+    #region Loading
+    public void LoadJobs(List<string> jobIDs) {
+        for (int i = 0; i < jobIDs.Count; i++) {
+            string jobID = jobIDs[i];
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
+            availableJobs.Add(jobQueueItem);
+        }
+    }
+    #endregion
+
     #region Listeners
     private void SubscribeToSignals() {
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
@@ -873,22 +883,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return false;
     }
-    public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            if (availableJobs[i].jobType == jobType && availableJobs[i] is GoapPlanJob) {
-                GoapPlanJob job = availableJobs[i] as GoapPlanJob;
-                if (job.allOtherData != null) {
-                    for (int j = 0; j < job.allOtherData.Count; j++) {
-                        object data = job.allOtherData[j];
-                        if (data == otherData) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
     public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < availableJobs.Count; i++) {
             for (int j = 0; j < jobTypes.Length; j++) {
@@ -1016,8 +1010,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 affectedStructure.AddPOI(item);
 
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                //job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.HEALING_POTION).constructionCost });
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
+                job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);
                 AddToAvailableJobs(job);
             }
             
@@ -1030,8 +1023,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     affectedStructure.AddPOI(item);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                    //job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.TOOL).constructionCost });
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
+                    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Tool);
                     AddToAvailableJobs(job);
                 }
             }
@@ -1045,7 +1037,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     affectedStructure.AddPOI(item);
 
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewAntidote);
+                    job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Antidote);
                     AddToAvailableJobs(job);
                 }
             }

@@ -18,7 +18,7 @@ public class TakeResource : GoapAction {
         // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_STONE, GOAP_EFFECT_TARGET.ACTOR));
         // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_METAL, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         if(target is ResourcePile) {
             ResourcePile pile = target as ResourcePile;
@@ -48,7 +48,7 @@ public class TakeResource : GoapAction {
         base.Perform(goapNode);
         SetState("Take Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if(job.jobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || job.jobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || job.jobType == JOB_TYPE.OBTAIN_PERSONAL_FOOD) {
@@ -98,7 +98,7 @@ public class TakeResource : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget.gridTileLocation == null && poiTarget.isBeingCarriedBy != actor) {
@@ -126,7 +126,7 @@ public class TakeResource : GoapAction {
         //bool hasNeededAmount = false;
         if (goapNode.otherData != null) {
             //hasNeededAmount = true;
-            takenResource = (int)goapNode.otherData[0];
+            takenResource = (int)goapNode.otherData[0].obj;
         } else {
             takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
@@ -157,7 +157,7 @@ public class TakeResource : GoapAction {
         //bool hasNeededAmount = false;
         if (goapNode.otherData != null) {
             //hasNeededAmount = true;
-            takenResource = (int)goapNode.otherData[0];
+            takenResource = (int)goapNode.otherData[0].obj;
         } else {
             takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }

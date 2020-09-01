@@ -17,6 +17,7 @@ public class DatabaseManager : MonoBehaviour {
     public LocationStructureDatabase structureDatabase { get; private set; }
     public TraitDatabase traitDatabase { get; private set; }
     public BurningSourceDatabase burningSourceDatabase { get; private set; }
+    public JobDatabase jobDatabase { get; private set; }
     
     void Awake() {
         if (Instance == null) {
@@ -40,5 +41,6 @@ public class DatabaseManager : MonoBehaviour {
         structureDatabase = new LocationStructureDatabase();
         traitDatabase = new TraitDatabase();
         burningSourceDatabase = new BurningSourceDatabase();
+        jobDatabase = new JobDatabase();
     }
 }

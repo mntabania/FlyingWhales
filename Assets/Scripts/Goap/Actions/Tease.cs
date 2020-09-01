@@ -21,7 +21,7 @@ public class Tease : GoapAction {
         SetState("Tease Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job,
-        object[] otherData) {
+        OtherData[] otherData) {
         Character targetCharacter = poiTarget as Character;
         if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
             return UtilityScripts.Utilities.Rng.Next(40, 61);

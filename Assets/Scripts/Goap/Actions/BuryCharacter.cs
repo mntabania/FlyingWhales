@@ -22,16 +22,16 @@ public class BuryCharacter : GoapAction {
     #region Overrides
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
-        object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
-            return otherData[0] as LocationStructure;
+        OtherData[] otherData = node.otherData;
+        if (otherData != null && otherData.Length >= 1 && otherData[0].obj is LocationStructure) {
+            return otherData[0].obj as LocationStructure;
         } else {
             return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        if (goapNode.otherData != null && goapNode.otherData.Length == 2 && goapNode.otherData[1] is LocationGridTile) {
-            return goapNode.otherData[1] as LocationGridTile;
+        if (goapNode.otherData != null && goapNode.otherData.Length == 2 && goapNode.otherData[1].obj is LocationGridTile) {
+            return goapNode.otherData[1].obj as LocationGridTile;
         } else {
             LocationStructure targetStructure = GetTargetStructure(goapNode);
             if (targetStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
@@ -67,7 +67,7 @@ public class BuryCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Bury Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -126,7 +126,7 @@ public class BuryCharacter : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget is Character targetCharacter) {
@@ -144,7 +144,7 @@ public class BuryCharacter : GoapAction {
                 if (targetCharacter.marker == null) {
                     return false;
                 }
-                if (otherData != null && otherData.Length >= 1 && otherData[0] is LocationStructure) {
+                if (otherData != null && otherData.Length >= 1 && otherData[0].obj is LocationStructure) {
                     //if structure is provided, do not check for cemetery
                     return true;
                 } else {

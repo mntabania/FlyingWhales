@@ -19,24 +19,24 @@ public class AttackDemonicStructure : GoapAction {
 		base.Perform(goapNode);
 		SetState("Attack Success", goapNode);
 	}
-	protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+	protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
 		string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
 		actor.logComponent.AppendCostLog(costLog);
 		return 10;
 	}
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        object[] otherData = node.otherData;
+        OtherData[] otherData = node.otherData;
         if (otherData != null) {
-            if (otherData.Length == 1 && otherData[0] is LocationGridTile targetTile) { // && otherData[1] is LocationGridTile
+            if (otherData.Length == 1 && otherData[0].obj is LocationGridTile targetTile) { // && otherData[1] is LocationGridTile
                 return targetTile.structure;
             }
         }
         return base.GetTargetStructure(node);
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-		object[] otherData = goapNode.otherData;
+		OtherData[] otherData = goapNode.otherData;
 		if (otherData != null) {
-			if (otherData.Length == 1 && otherData[0] is LocationGridTile targetTile) { // && otherData[1] is LocationGridTile
+			if (otherData.Length == 1 && otherData[0].obj is LocationGridTile targetTile) { // && otherData[1] is LocationGridTile
 				return targetTile;
 			}
 		}

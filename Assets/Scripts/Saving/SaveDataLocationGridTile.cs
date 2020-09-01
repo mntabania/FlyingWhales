@@ -17,6 +17,10 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public LocationGridTile.Tile_Type tileType;
     public LocationGridTile.Tile_State tileState;
     public string genericTileObjectID;
+    public bool hasLandmine;
+    public bool hasFreezingTrap;
+    public bool hasSnareTrap;
+    public List<RACE> freezingTrapExclusions;
 
     //tilemap assets
     public string groundTileMapAssetName;
@@ -32,11 +36,12 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         centeredLocalLocation = gridTile.centeredLocalLocation;
         tileType = gridTile.tileType;
         tileState = gridTile.tileState;
+        hasLandmine = gridTile.hasLandmine;
+        hasFreezingTrap = gridTile.hasFreezingTrap;
+        hasSnareTrap = gridTile.hasSnareTrap;
+        freezingTrapExclusions = gridTile.freezingTrapExclusions;
         
         genericTileObjectID = gridTile.genericTileObject.persistentID;
-
-        // genericTileObjectSave = SaveDataCurrentProgress.CreateNewSaveDataForTileObject("GenericTileObject");
-        // genericTileObjectSave.Save(gridTile.genericTileObject);
 
         //tilemap assets
         groundTileMapAssetName = gridTile.parentMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
@@ -55,6 +60,16 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         genericTileObject.SetTileOwner(tile);
         genericTileObject.ManualInitializeLoad(tile, saveDataTileObject);
         tile.LoadGenericTileObject(genericTileObject);
+
+        if (hasLandmine) {
+            tile.SetHasLandmine(true);
+        }
+        if (hasFreezingTrap) {
+            tile.SetHasFreezingTrap(true, freezingTrapExclusions?.ToArray());
+        }
+        if (hasSnareTrap) {
+            tile.SetHasSnareTrap(true);
+        }
         return tile;
     }
 

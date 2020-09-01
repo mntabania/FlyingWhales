@@ -59,7 +59,7 @@ namespace Inner_Maps {
         private GameObject _freezingTrapEffect;
         private GameObject _snareTrapEffect;
 
-        private TrapChecker _freezingTrapChecker;
+        public List<RACE> freezingTrapExclusions { get; private set; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
@@ -545,7 +545,7 @@ namespace Inner_Maps {
                     boobyTrapped.DamageTargetByTrap(character);
                 }
             }
-            if (hasFreezingTrap && (_freezingTrapChecker == null || _freezingTrapChecker.CanTrapAffectCharacter(character))) {
+            if (hasFreezingTrap && (freezingTrapExclusions == null || !freezingTrapExclusions.Contains(character.race))) {
                 TriggerFreezingTrap(character);
             }
             if (hasSnareTrap) {
@@ -1331,14 +1331,14 @@ namespace Inner_Maps {
         #endregion
 
         #region Freezing Trap
-        public void SetHasFreezingTrap(bool state, TrapChecker freezingTrapChecker = null) {
+        public void SetHasFreezingTrap(bool state, params RACE[] freezingTrapExclusions) {
             if (hasFreezingTrap != state) {
                 hasFreezingTrap = state;
                 if (hasFreezingTrap) {
                     if (collectionOwner.isPartOfParentRegionMap) {
                         collectionOwner.partOfHextile.hexTileOwner.AddFreezingTrapInHexTile();
                     }
-                    _freezingTrapChecker = freezingTrapChecker;
+                    this.freezingTrapExclusions = new List<RACE>(freezingTrapExclusions);
                     _freezingTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Freezing_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
                 } else {
                     if (collectionOwner.isPartOfParentRegionMap) {
@@ -1346,7 +1346,7 @@ namespace Inner_Maps {
                     }
                     ObjectPoolManager.Instance.DestroyObject(_freezingTrapEffect);
                     _freezingTrapEffect = null;
-                    _freezingTrapChecker = null;
+                    this.freezingTrapExclusions = null;
                 }
             }
         }

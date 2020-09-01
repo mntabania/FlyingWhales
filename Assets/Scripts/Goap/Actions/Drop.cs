@@ -29,27 +29,27 @@ public class Drop : GoapAction {
         base.Perform(actionNode);
         SetState("Drop Success", actionNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        object[] otherData = node.otherData;
+        OtherData[] otherData = node.otherData;
         if (otherData != null) {
-            if (otherData.Length == 1 && otherData[0] is LocationStructure) {
-                return otherData[0] as LocationStructure;
-            } else if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
-                return otherData[0] as LocationStructure;
+            if (otherData.Length == 1 && otherData[0].obj is LocationStructure) {
+                return otherData[0].obj as LocationStructure;
+            } else if (otherData.Length == 2 && otherData[0].obj is LocationStructure && otherData[1].obj is LocationGridTile) {
+                return otherData[0].obj as LocationStructure;
             }
         }
         return base.GetTargetStructure(node);
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         if (otherData != null) {
-            if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
-                return otherData[1] as LocationGridTile;
+            if (otherData.Length == 2 && otherData[0].obj is LocationStructure && otherData[1].obj is LocationGridTile) {
+                return otherData[1].obj as LocationGridTile;
             }
         }
         return null;
@@ -97,16 +97,16 @@ public class Drop : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (actor == poiTarget) {
                 return false;
             }
             if (otherData != null) {
-                if (otherData.Length == 1 && otherData[0] is LocationStructure structure) {
+                if (otherData.Length == 1 && otherData[0].obj is LocationStructure structure) {
                     return actor.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(structure.passableTiles));
-                } else if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile targetTile) {
+                } else if (otherData.Length == 2 && otherData[0].obj is LocationStructure && otherData[1].obj is LocationGridTile targetTile) {
                     return actor.movementComponent.HasPathToEvenIfDiffRegion(targetTile);
                 }
             }
@@ -135,11 +135,11 @@ public class Drop : GoapAction {
     //}
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         LocationGridTile tile = null;
         if (otherData != null) {
-            if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
-                tile = otherData[1] as LocationGridTile;
+            if (otherData.Length == 2 && otherData[0].obj is LocationStructure && otherData[1].obj is LocationGridTile) {
+                tile = otherData[1].obj as LocationGridTile;
             }
         }
         goapNode.actor.UncarryPOI(goapNode.poiTarget, dropLocation: tile);

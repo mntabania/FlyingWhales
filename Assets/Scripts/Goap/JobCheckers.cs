@@ -10,8 +10,7 @@ public partial class InteractionManager {
         return furnitureToCreate.CanBeCraftedBy(character);
     }
     public bool CanDoJudgementJob(Character character) {
-        return character.isSettlementRuler ||
-               character.isFactionLeader; //|| character.characterClass.className == "Noble";
+        return character.isSettlementRuler || character.isFactionLeader;
     }
     public bool CanCraftTool(Character character) {
         return /*character.characterClass.CanDoJob(JOB_TYPE.CRAFT_OBJECT) &&*/ TILE_OBJECT_TYPE.TOOL.CanBeCraftedBy(character);
@@ -33,13 +32,6 @@ public partial class InteractionManager {
     }
     public bool CanBrewAntidote(Character character) {
         return TILE_OBJECT_TYPE.ANTIDOTE.CanBeCraftedBy(character);
-    }
-    public bool CanTakeBuryJob(Character character) {
-        if (!character.traitContainer.HasTrait("Criminal") && character.isAtHomeRegion &&
-            character.isPartOfHomeFaction && !character.traitContainer.HasTrait("Beast")) {
-            return true; //character.characterClass.CanDoJob(JOB_TYPE.BURY);
-        }
-        return false;
     }
     public bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {

@@ -20,7 +20,7 @@ public class FeelingBrokenhearted : GoapAction {
         base.Perform(goapNode);
         SetState("Brokenhearted Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 10;
     }
     #endregion

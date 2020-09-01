@@ -341,7 +341,7 @@ public class GoapPlanner {
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
         Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.gridTileLocation.parentMap.location.coreTile.region.awareness;
-        Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
+        Dictionary<INTERACTION_TYPE, OtherData[]> otherData = job.otherData;
         List<GoapNode> rawPlan = null; //The plan that will be created will be stored here
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
@@ -374,7 +374,7 @@ public class GoapPlanner {
                         GoapAction currentAction = actionList[j];
                         if (currentAction.WillEffectsMatchPreconditionTypeAndTarget(goalEffect)) {
                             //get other data for current action.
-                            object[] otherActionData = null;
+                            OtherData[] otherActionData = null;
                             if (job.otherData != null) {
                                 if (job.otherData.ContainsKey(currentAction.goapType)) {
                                     otherActionData = job.otherData[currentAction.goapType];
@@ -446,7 +446,7 @@ public class GoapPlanner {
     public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, bool isPersonalPlan, ref string log, GoapPlanJob job) {
         Dictionary<POINT_OF_INTEREST_TYPE, List<GoapAction>> allGoapActionAdvertisements = InteractionManager.Instance.allGoapActionAdvertisements;
         Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = owner.currentRegion.awareness;
-        Dictionary<INTERACTION_TYPE, object[]> otherData = job.otherData;
+        Dictionary<INTERACTION_TYPE, OtherData[]> otherData = job.otherData;
         List<GoapNode> rawPlan = new List<GoapNode>();
         owner.logComponent.ClearCostLog();
         owner.logComponent.AppendCostLog($"BASE COSTS OF {owner.name} ACTIONS ON {job.name} PLANNING");
@@ -454,7 +454,7 @@ public class GoapPlanner {
             //POI must either be the job's target or the actor is still aware of it
             return null;
         }
-        object[] data = null;
+        OtherData[] data = null;
         if (otherData != null) {
             if (otherData.ContainsKey(goalAction.goapType)) {
                 data = otherData[goalAction.goapType];
@@ -494,7 +494,7 @@ public class GoapPlanner {
             ActualGoapNode actualNode = currentJobNode.singleNode;
             GoapAction goalAction = actualNode.action;
             IPointOfInterest target = actualNode.poiTarget;
-            object[] otherData = actualNode.otherData;
+            OtherData[] otherData = actualNode.otherData;
             if (target == job.targetPOI || target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
                 //POI must either be the job's target or the actor is still aware of it
                 int cost = 0;
@@ -522,7 +522,7 @@ public class GoapPlanner {
                 ActualGoapNode actualNode = actualNodes[i];
                 GoapAction goalAction = actualNode.action;
                 IPointOfInterest target = actualNode.poiTarget;
-                object[] otherData = actualNode.otherData;
+                OtherData[] otherData = actualNode.otherData;
                 if (target != job.targetPOI && !target.IsStillConsideredPartOfAwarenessByCharacter(owner)) {
                     rawPlan.Clear();
                     break;
@@ -634,7 +634,7 @@ public class GoapPlanner {
         if (preconditions.Count > 0) {
             log += $"\n--Node {node.action.goapName} has preconditions: {preconditions.Count}";
             //get other data for current action
-            object[] preconditionActionData = null;
+            OtherData[] preconditionActionData = null;
             if (job.otherData != null) {
                 if (job.otherData.ContainsKey(action.goapType)) {
                     preconditionActionData = job.otherData[action.goapType];
@@ -683,7 +683,7 @@ public class GoapPlanner {
 
                                     if (currentAction.WillEffectsMatchPreconditionTypeAndTarget(preconditionEffect)) {
                                         //get other data for current action.
-                                        object[] otherActionData = null;
+                                        OtherData[] otherActionData = null;
                                         if (job.otherData != null) {
                                             if (job.otherData.ContainsKey(currentAction.goapType)) {
                                                 otherActionData = job.otherData[currentAction.goapType];
@@ -839,7 +839,7 @@ public class GoapPlanner {
         //return false;
     }
 
-    private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, object[]> otherData, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
+    private List<JobNode> TransformRawPlanToActualNodes(List<GoapNode> rawPlan, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, GoapPlan currentPlan = null) { //actualPlan is for recalculation only, so that it will no longer create a new list, since in recalculation we already have a list of job nodes
         List<JobNode> actualPlan = null;
         int index = 0;
         if (currentPlan == null) {
@@ -864,7 +864,7 @@ public class GoapPlanner {
                     //Single Job Node
                     int nodeIndex = tempNodeIndexHolder[0];
                     GoapNode rawNode = rawPlan[nodeIndex];
-                    object[] data = null;
+                    OtherData[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(rawNode.action.goapType)) {
                             data = otherData[rawNode.action.goapType];
@@ -885,7 +885,7 @@ public class GoapPlanner {
                     for (int i = 0; i < tempNodeIndexHolder.Count; i++) {
                         int nodeIndex = tempNodeIndexHolder[i];
                         GoapNode rawNode = rawPlan[nodeIndex];
-                        object[] data = null;
+                        OtherData[] data = null;
                         if (otherData != null) {
                             if (otherData.ContainsKey(rawNode.action.goapType)) {
                                 data = otherData[rawNode.action.goapType];

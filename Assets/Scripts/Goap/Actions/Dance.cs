@@ -22,7 +22,7 @@ public class Dance : GoapAction {
         base.Perform(goapNode);
         SetState("Dance Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
         costLog += $" +{cost}(Initial)";
@@ -43,7 +43,7 @@ public class Dance : GoapAction {
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetBored(-1);
     }
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             //"Actor should be in Good or better mood"

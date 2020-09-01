@@ -27,7 +27,7 @@ public class Cook : GoapAction {
         base.Perform(goapNode);
         SetState("Cook Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -53,15 +53,15 @@ public class Cook : GoapAction {
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
-        object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is TileObject) {
-            return (otherData[0] as TileObject).structureLocation;
+        OtherData[] otherData = node.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is TileObject tileObject) {
+            return tileObject.structureLocation;
         }
         return base.GetTargetStructure(node);
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        if (goapNode.otherData != null && goapNode.otherData.Length == 1 && goapNode.otherData[0] is TileObject) {
-            return goapNode.otherData[0] as TileObject;
+        if (goapNode.otherData != null && goapNode.otherData.Length == 1 && goapNode.otherData[0].obj is TileObject) {
+            return goapNode.otherData[0].obj as TileObject;
         }
         return base.GetTargetToGoTo(goapNode);
     }
@@ -106,7 +106,7 @@ public class Cook : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character targetCharacter = poiTarget as Character;

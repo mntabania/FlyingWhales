@@ -21,7 +21,7 @@ public class Accident : GoapAction {
         base.Perform(actionNode);
         SetState("Accident Success", actionNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +5(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 5;
@@ -29,7 +29,7 @@ public class Accident : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return actor == poiTarget;
@@ -40,7 +40,7 @@ public class Accident : GoapAction {
 
     #region State Effects
     public void PreAccidentSuccess(ActualGoapNode goapNode) {
-        GoapAction actionToDo = goapNode.otherData[0] as GoapAction;
+        GoapAction actionToDo = goapNode.otherData[0].obj as GoapAction;
         goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     public void AfterAccidentSuccess(ActualGoapNode goapNode) {

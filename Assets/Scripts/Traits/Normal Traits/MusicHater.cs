@@ -45,7 +45,7 @@ namespace Traits {
         //    base.OnReturnToLife(character);
         //    Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         //}
-        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             if (action == INTERACTION_TYPE.SING) {
                 cost += 2000;
             } else if (action == INTERACTION_TYPE.PLAY_GUITAR) {

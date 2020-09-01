@@ -19,7 +19,7 @@ public class Raid : GoapAction {
         base.Perform(goapNode);
         SetState("Raid Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -27,7 +27,7 @@ public class Raid : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return !actor.partyComponent.hasParty;
@@ -38,8 +38,8 @@ public class Raid : GoapAction {
 
     #region State Effects
     public void AfterRaidSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 2 && otherData[0] is BaseSettlement targetSettlement) {
+        OtherData[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 2 && otherData[0].obj is BaseSettlement targetSettlement) {
             Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Raid, goapNode.actor);
             RaidParty raidParty = party as RaidParty;
             raidParty.SetTargetSettlement(targetSettlement);

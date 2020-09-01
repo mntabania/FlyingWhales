@@ -13,7 +13,7 @@ public class StartCleanse : GoapAction {
         base.Perform(goapNode);
         SetState("Start Cleanse Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -22,8 +22,11 @@ public class StartCleanse : GoapAction {
     
     #region State Effects
     [UsedImplicitly]
-    public void AfterStartCleanseSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cleansing");
+    public void PreStartCleanseSuccess(ActualGoapNode goapNode) {
+        if (goapNode.associatedJob.originalOwner is NPCSettlement settlement) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cleansing");
+            settlement.settlementJobTriggerComponent.OnTakeCleanseTileJob(goapNode.actor);
+        }
     }
     #endregion
 }

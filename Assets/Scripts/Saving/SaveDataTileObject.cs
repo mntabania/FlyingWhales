@@ -17,7 +17,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public bool isPreplaced;
     public int[] resourceValues; //food, wood, stone, metal
     public POI_STATE poiState;
-    public INTERACTION_TYPE[] advertisedActions; 
+    public INTERACTION_TYPE[] advertisedActions;
+    public List<string> jobsTargetingThis;
     
     //hp
     public int currentHP;
@@ -56,6 +57,12 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         for (int i = 0; i < advertisedActions.Length; i++) {
             INTERACTION_TYPE interactionType = tileObject.advertisedActions[i];
             advertisedActions[i] = interactionType;
+        }
+        
+        jobsTargetingThis = new List<string>();
+        for (int i = 0; i < tileObject.allJobsTargetingThis.Count; i++) {
+            JobQueueItem jobQueueItem = tileObject.allJobsTargetingThis[i];
+            jobsTargetingThis.Add(jobQueueItem.persistentID);
         }
         
         currentHP = tileObject.currentHP;

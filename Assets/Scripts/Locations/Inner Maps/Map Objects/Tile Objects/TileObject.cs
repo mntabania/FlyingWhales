@@ -102,6 +102,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         tileObjectType = data.tileObjectType;
         name = data.name;
         allJobsTargetingThis = new List<JobQueueItem>();
+       
+        
         charactersThatAlreadyAssumed = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
@@ -109,7 +111,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         isPreplaced = data.isPreplaced;
         SetPOIState(data.poiState);
         CreateTraitContainer();
-        // traitContainer.AddTrait(this, "Flammable");
         LoadResources(data);
         for (int i = 0; i < data.advertisedActions.Length; i++) {
             INTERACTION_TYPE interactionType = data.advertisedActions[i];
@@ -120,6 +121,21 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
+
+    #region Loading
+    /// <summary>
+    /// Load data from second wave. NOTE: This is called after the tile object is placed.
+    /// </summary>
+    /// <param name="data">Saved data</param>
+    public virtual void LoadSecondWave(SaveDataTileObject data) {
+        for (int i = 0; i < data.jobsTargetingThis.Count; i++) {
+            string jobID = data.jobsTargetingThis[i];
+            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
+            AddJobTargetingThis(job);
+        }
+    }
+    #endregion
+    
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
@@ -226,8 +242,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return null;
     }
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,
-        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
@@ -248,7 +263,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     tileLocation = isBeingCarriedBy.gridTileLocation;
                 }
                 if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    object[] data = null;
+                    OtherData[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
                             data = otherData[currType];
@@ -286,8 +301,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
-        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost) {
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
@@ -297,7 +311,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 tileLocation = isBeingCarriedBy.gridTileLocation;
             }
             if(action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(tileLocation)) {
-                object[] data = null;
+                OtherData[] data = null;
                 if (otherData != null) {
                     if (otherData.ContainsKey(action.goapType)) {
                         data = otherData[action.goapType];
@@ -949,18 +963,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         UnsubscribeListeners();
-        if (_unbuiltObjectValidityChecker != null) {
-            Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-        }
+        Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
     }
     protected virtual void OnSetObjectAsBuilding() {
         mapVisual.SetVisualAlpha(128f / 255f);
         SetSlotAlpha(128f / 255f);
-        _unbuiltObjectValidityChecker = null;
         Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
     }
     protected virtual void OnSetObjectAsBuilt(){
-        _unbuiltObjectValidityChecker = null;
         Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         mapVisual.SetVisualAlpha(255f / 255f);
         SetSlotAlpha(255f / 255f);
@@ -976,20 +986,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
     }
     protected void CheckUnbuiltObjectValidity() {
-        if (_unbuiltObjectValidityChecker != null) {
-            if (_unbuiltObjectValidityChecker.Invoke(this) == false) {
-                //unbuilt object is no longer valid, remove it
-                Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
-                _unbuiltObjectValidityChecker = null;
-                Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
-                List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
-                for (int i = 0; i < jobs.Count; i++) {
-                    JobQueueItem jobQueueItem = jobs[i];
-                    jobQueueItem.CancelJob(false);
-                }
-                gridTileLocation?.structure.RemovePOI(this);
-                Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
+        if (allJobsTargetingThis.Count <= 0) {
+            //unbuilt object is no longer valid, remove it
+            Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
+            List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
+            for (int i = 0; i < jobs.Count; i++) {
+                JobQueueItem jobQueueItem = jobs[i];
+                jobQueueItem.CancelJob(false);
             }
+            gridTileLocation?.structure.RemovePOI(this);
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Unbuilt object {this} was removed!");
         }
     }
     #endregion

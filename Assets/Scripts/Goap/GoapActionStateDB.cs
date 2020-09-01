@@ -209,9 +209,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REPLACE_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Replace Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.CRAFT_FURNITURE, new[]{
-            new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
-        } },
         {INTERACTION_TYPE.TANTRUM, new[]{
             new StateNameAndDuration(){ name = "Tantrum Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },

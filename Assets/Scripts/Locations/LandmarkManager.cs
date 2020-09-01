@@ -282,7 +282,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public NPCSettlement LoadNPCSettlement(SaveDataNPCSettlement saveDataNpcSettlement) {
         List<HexTile> tiles = GameUtilities.GetHexTilesGivenCoordinates(saveDataNpcSettlement.tileCoordinates, GridMap.Instance.map);
         NPCSettlement newNpcSettlement = new NPCSettlement(saveDataNpcSettlement);
-        
         for (int i = 0; i < tiles.Count; i++) {
             HexTile tile = tiles[i];
             newNpcSettlement.AddTileToSettlement(tile);

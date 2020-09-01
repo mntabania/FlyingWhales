@@ -21,7 +21,7 @@ public class LaughAt : GoapAction {
         base.Perform(goapNode);
         SetState("Laugh Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return UtilityScripts.Utilities.Rng.Next(40, 61);
     }
     #endregion

@@ -42,7 +42,7 @@ public class DepositResourcePile : GoapAction {
     //    }
     //    return ee;
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<Precondition> p = new List<Precondition>();
         p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory));
         return p;
@@ -51,15 +51,14 @@ public class DepositResourcePile : GoapAction {
         base.Perform(goapNode);
         SetState("Deposit Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        object[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is IPointOfInterest) {
-            IPointOfInterest poiToBeDeposited = otherData[0] as IPointOfInterest;
+        OtherData[] otherData = node.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is IPointOfInterest poiToBeDeposited) {
             if(poiToBeDeposited.gridTileLocation != null) {
                 return poiToBeDeposited.gridTileLocation.structure;
             } else {
@@ -73,9 +72,8 @@ public class DepositResourcePile : GoapAction {
         //return base.GetTargetStructure(node);
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is IPointOfInterest) {
-            IPointOfInterest poiToBeDeposited = otherData[0] as IPointOfInterest;
+        OtherData[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is IPointOfInterest poiToBeDeposited) {
             if(poiToBeDeposited.gridTileLocation == null) {
                 //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
                 //return null so that the actor will get a random tile from the target structure instead
@@ -152,7 +150,7 @@ public class DepositResourcePile : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (actor.IsPOICarriedOrInInventory(poiTarget)) {
@@ -197,10 +195,10 @@ public class DepositResourcePile : GoapAction {
     public void AfterDepositSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
         ResourcePile poiTarget = goapNode.poiTarget as ResourcePile;
-        object[] otherData = goapNode.otherData;
+        OtherData[] otherData = goapNode.otherData;
         ResourcePile pileToBeDepositedTo = null;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is ResourcePile) {
-            pileToBeDepositedTo = otherData[0] as ResourcePile;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is ResourcePile) {
+            pileToBeDepositedTo = otherData[0].obj as ResourcePile;
         }
         if(pileToBeDepositedTo != null && pileToBeDepositedTo.gridTileLocation == goapNode.targetTile) {
             if (pileToBeDepositedTo.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {

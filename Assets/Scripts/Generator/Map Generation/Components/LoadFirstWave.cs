@@ -15,8 +15,13 @@ public class LoadFirstWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
+        saveData.LoadDate();
+        
         //Load Factions
         yield return MapGenerator.Instance.StartCoroutine(LoadFactions(saveData));
+        
+        //Load Jobs
+        yield return MapGenerator.Instance.StartCoroutine(LoadJobs(saveData));
 
         //Load Characters
 
@@ -25,6 +30,7 @@ public class LoadFirstWave : MapGenerationComponent {
         
         //Load Traits
         yield return MapGenerator.Instance.StartCoroutine(LoadTraits(saveData));
+        
     }
 
     private IEnumerator LoadFactions(SaveDataCurrentProgress saveData) {
@@ -38,8 +44,13 @@ public class LoadFirstWave : MapGenerationComponent {
         yield return null;
     }
     private IEnumerator LoadTraits(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Load Traits...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Traits...");
         saveData.LoadTraits();
+        yield return null;
+    }
+    private IEnumerator LoadJobs(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Jobs...");
+        saveData.LoadJobs();
         yield return null;
     }
 }

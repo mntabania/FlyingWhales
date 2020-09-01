@@ -23,7 +23,7 @@ public class Exterminate : GoapAction {
         base.Perform(goapNode);
         SetState("Exterminate Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -31,7 +31,7 @@ public class Exterminate : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return !actor.partyComponent.hasParty;
@@ -42,8 +42,8 @@ public class Exterminate : GoapAction {
 
     #region State Effects
     public void AfterExterminateSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 2 && otherData[0] is LocationStructure targetStructure && otherData[1] is NPCSettlement originSettlement) {
+        OtherData[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 2 && otherData[0].obj is LocationStructure targetStructure && otherData[1].obj is NPCSettlement originSettlement) {
             Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Extermination, goapNode.actor);
             ExterminationParty exterminationParty = party as ExterminationParty;
             exterminationParty.SetTargetStructure(targetStructure);

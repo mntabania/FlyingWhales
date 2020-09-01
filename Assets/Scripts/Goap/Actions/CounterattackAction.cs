@@ -23,7 +23,7 @@ public class CounterattackAction : GoapAction {
         base.Perform(goapNode);
         SetState("Counter Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -31,7 +31,7 @@ public class CounterattackAction : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return !actor.partyComponent.hasParty;
@@ -42,8 +42,8 @@ public class CounterattackAction : GoapAction {
 
     #region State Effects
     public void AfterCounterSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0] is LocationStructure targetStructure) {
+        OtherData[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is LocationStructure targetStructure) {
             Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Counterattack, goapNode.actor);
             CounterattackParty counterattackParty = party as CounterattackParty;
             counterattackParty.SetTargetStructure(targetStructure);

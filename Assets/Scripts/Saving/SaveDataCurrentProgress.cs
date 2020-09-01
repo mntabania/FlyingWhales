@@ -50,6 +50,7 @@ public class SaveDataCurrentProgress {
             { OBJECT_TYPE.Log, new SaveDataLogHub() },
             { OBJECT_TYPE.Tile_Object, new SaveDataTileObjectHub() },
             { OBJECT_TYPE.Trait, new SaveDataTraitHub() },
+            { OBJECT_TYPE.Job, new SaveDataJobHub() },
         };
     }
     #endregion
@@ -102,6 +103,12 @@ public class SaveDataCurrentProgress {
             SaveDataFaction saveData = new SaveDataFaction();
             saveData.Save(faction);
             AddToSaveHub(saveData, saveData.objectType);
+        }
+    }
+    public void SaveJobs() {
+        for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
+            AddToSaveHub(jobQueueItem);
         }
     }
     #endregion
@@ -207,13 +214,12 @@ public class SaveDataCurrentProgress {
             }
         }
     }
-    public void LoadTraitsSecondWave() {
-        if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
-            if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
-                Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
-                foreach (SaveDataTrait data in saveDataTraits.Values) {
-                    Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
-                    trait.LoadSecondWaveInstancedTrait(data);
+    public void LoadJobs() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Job)){
+            if(objectHub[OBJECT_TYPE.Job] is SaveDataJobHub hub) {
+                Dictionary<string, SaveDataJobQueueItem> saveDataTraits = hub.hub;
+                foreach (SaveDataJobQueueItem data in saveDataTraits.Values) {
+                    data.Load();
                 }
             }
         }
@@ -242,6 +248,17 @@ public class SaveDataCurrentProgress {
             string persistentID = FactionManager.Instance.allFactions[i].persistentID;
             SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
             saveData.LoadLogs();
+        }
+    }
+    public void LoadTraitsSecondWave() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
+            if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
+                Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
+                foreach (SaveDataTrait data in saveDataTraits.Values) {
+                    Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
+                    trait.LoadSecondWaveInstancedTrait(data);
+                }
+            }
         }
     }
     #endregion

@@ -32,7 +32,7 @@ public class Repair : GoapAction {
         base.Perform(goapNode);
         SetState("Repair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -54,7 +54,7 @@ public class Repair : GoapAction {
         //}
         return goapActionInvalidity;
     }
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
         if (satisfied) {
             return target.gridTileLocation != null;

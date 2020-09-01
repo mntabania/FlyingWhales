@@ -2,48 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Reflection;
+using Goap.Job_Checkers;
 using Traits;
 using UnityEngine.Assertions;
 
-public class JobQueueItem {
+public abstract class JobQueueItem : ISavable {
+    public string persistentID { get; private set; }
+    public abstract OBJECT_TYPE objectType { get; }
+    public abstract Type serializedData { get; }
     public int id { get; protected set; }
     public IJobOwner originalOwner { get; protected set; } //The true original owner of this job
     public Character assignedCharacter { get; protected set; } //Only has value if job is inside character's job queue
     public string name { get; private set; }
     public JOB_TYPE jobType { get; protected set; }
-    //public bool cannotCancelJob { get; private set; }
-    //public bool cancelJobOnFail { get; private set; }
-    //public bool cannotOverrideJob { get; private set; }
-    //public bool canBeDoneInLocation { get; private set; } //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
-    //public bool cancelJobOnDropPlan { get; private set; }
     public bool isStealth { get; private set; }
-    public bool isNotSavable { get; protected set; }
     public bool finishedSuccessfully { get; protected set; }
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
-
-    public System.Func<Character, bool> canTakeThis { get; protected set; }
-    public System.Func<Character, JobQueueItem, bool> canTakeThisJob { get; protected set; }
-    public System.Func<Character, Character, bool> canTakeThisJobWithTarget { get; protected set; }
-    public System.Func<bool> stillApplicable { get; protected set; }
-    public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
-    public System.Action<Character, JobQueueItem> onUnassignJobAction { get; protected set; }
+    public CanTakeJobChecker canTakeJobChecker { get; private set; }
+    public JobApplicabilityChecker stillApplicable { get; protected set; }
     public bool doNotRecalculate { get; protected set; }
     public int invalidCounter { get; protected set; }
     public bool isThisAPartyJob { get; protected set; }
-
-    protected int _priority; //The lower the amount the higher the priority
-
-    //Additional data
     public bool cannotBePushedBack { get; protected set; }
     public bool shouldBeRemovedFromSettlementWhenUnassigned { get; protected set; }
-    
     //object pool
     /// <summary>
     /// Has this job been returned to the pool?
     /// </summary>
     public bool hasBeenReset { get; protected set; }
+
+    protected int _priority; //The lower the amount the higher the priority
 
     public JobQueueItem() {
         id = -1;
@@ -51,40 +40,58 @@ public class JobQueueItem {
     }
 
     protected void Initialize(JOB_TYPE jobType, IJobOwner owner) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         hasBeenReset = false;
         this.jobType = jobType;
-        this.originalOwner = owner;
-        if (this.originalOwner == null) {
-            throw new Exception($"Original owner of job {this.ToString()} is null");
+        originalOwner = owner;
+        if (originalOwner == null) {
+            throw new Exception($"Original owner of job {ToString()} is null");
         }
-        this.name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
-        //this.blacklistedCharacters = new List<Character>();
+        name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.AddListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        DatabaseManager.Instance.jobDatabase.Register(this);
     }
     protected void Initialize(SaveDataJobQueueItem data) {
+        persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         hasBeenReset = false;
         name = data.name;
         jobType = data.jobType;
-        isNotSavable = data.isNotSavable;
-        //blacklistedCharacters = new List<Character>();
-        for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
-            blacklistedCharacters.Add(CharacterManager.Instance.GetCharacterByID(data.blacklistedCharacterIDs[i]));
-        }
-        //SetCannotCancelJob(data.cannotCancelJob);
-        //SetCancelOnFail(data.cancelJobOnFail);
-        //SetCannotOverrideJob(data.cannotOverrideJob);
-        //SetCanBeDoneInLocation(data.canBeDoneInLocation);
-        //SetCancelJobOnDropPlan(data.cancelJobOnDropPlan);
         SetIsStealth(data.isStealth);
+        SetDoNotRecalculate(data.doNotRecalculate);
+        invalidCounter = data.invalidCounter;
+        SetIsThisAPartyJob(data.isThisAPartyJob);
+        SetCannotBePushedBack(data.cannotBePushedBack);
+        SetShouldBeRemovedFromSettlementWhenUnassigned(data.shouldBeRemovedFromSettlementWhenUnassigned);
+        if (!string.IsNullOrEmpty(data.canTakeJobKey)) {
+            SetCanTakeThisJobChecker(data.canTakeJobKey);    
+        }
+        if (!string.IsNullOrEmpty(data.applicabilityCheckerKey)) {
+            SetStillApplicableChecker(data.applicabilityCheckerKey);
+        }
         SetInitialPriority();
         Messenger.AddListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.AddListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
+        DatabaseManager.Instance.jobDatabase.Register(this);
     }
 
+    #region Loading
+    public virtual void LoadSecondWave(SaveDataJobQueueItem data) {
+        if (data.originalOwnerType == OBJECT_TYPE.Settlement) {
+            originalOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.originalOwnerID) as NPCSettlement;
+        } else if (data.originalOwnerType == OBJECT_TYPE.Character) {
+            originalOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.originalOwnerID);
+        }
+        assignedCharacter = string.IsNullOrEmpty(data.assignedCharacterID) ? null : DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
+        for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
+            blacklistedCharacters.Add(DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.blacklistedCharacterIDs[i]));
+        }
+    }
+    #endregion
+    
     #region Virtuals
     protected virtual bool CanTakeJob(Character character) {
         return !character.traitContainer.HasTrait("Criminal") && character.canPerform; //!character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
@@ -103,27 +110,27 @@ public class JobQueueItem {
                 return false;
             }
         }
-        if(canTakeThis != null) {
-            if (canTakeThis(character)) {
+        if (canTakeJobChecker != null) {
+            if (canTakeJobChecker.CanTakeJob(character, this)) {
                 return CanTakeJob(character);
             }
-            return false;
-        } else if (canTakeThisJob != null) {
-            if (canTakeThisJob(character, this)) {
-                return CanTakeJob(character);
-            }
-            return false;
         }
+        // if(canTakeThis != null) {
+        //     if (canTakeThis(character)) {
+        //         return CanTakeJob(character);
+        //     }
+        //     return false;
+        // } else if (canTakeThisJob != null) {
+        //     if (canTakeThisJob(character, this)) {
+        //         return CanTakeJob(character);
+        //     }
+        //     return false;
+        // }
         return CanTakeJob(character);
     }
-    public virtual void OnCharacterAssignedToJob(Character character) {
-        onTakeJobAction?.Invoke(character, this);
-    }
-    public virtual void OnCharacterUnassignedToJob(Character character) {
-        onUnassignJobAction?.Invoke(character, this);
-    }
+    public virtual void OnCharacterAssignedToJob(Character character) { }
+    public virtual void OnCharacterUnassignedToJob(Character character) { }
     public virtual bool ProcessJob() { return false; }
-
     //Returns true or false if job was really removed in queue
     //reason parameter only applies if the job that is being cancelled is the currentActionNode's job
     public virtual bool CancelJob(bool shouldDoAfterEffect = true, string reason = "") {
@@ -213,24 +220,25 @@ public class JobQueueItem {
             OnCharacterUnassignedToJob(previousAssignedCharacter);
         }
     }
-    public void SetCanTakeThisJobChecker(System.Func<Character, bool> function) {
-        canTakeThis = function;
+
+    #region Can Take Job
+    private void SetCanTakeThisJobChecker(CanTakeJobChecker canTakeJobChecker) {
+        this.canTakeJobChecker = canTakeJobChecker;
     }
-    public void SetCanTakeThisJobChecker(System.Func<Character, JobQueueItem, bool> function) {
-        canTakeThisJob = function;
+    public void SetCanTakeThisJobChecker(string canTakeJobCheckerKey) {
+        SetCanTakeThisJobChecker(JobManager.Instance.GetJobChecker(canTakeJobCheckerKey));
     }
-    public void SetCanTakeThisJobChecker(System.Func<Character, Character, bool> function) {
-        canTakeThisJobWithTarget = function;
+    #endregion
+
+    #region Applicability
+    public void SetStillApplicableChecker(string applicabilityKey) {
+        SetStillApplicableChecker(JobManager.Instance.GetApplicabilityChecker(applicabilityKey));
     }
-    public void SetStillApplicableChecker(System.Func<bool> function) {
-        stillApplicable = function;
+    public void SetStillApplicableChecker(JobApplicabilityChecker jobApplicabilityChecker) {
+        stillApplicable = jobApplicabilityChecker;
     }
-    public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
-        onTakeJobAction = action;
-    }
-    public void SetOnUnassignJobAction(System.Action<Character, JobQueueItem> action) {
-        onUnassignJobAction = action;
-    }
+    #endregion
+    
     public void SetCannotBePushedBack (bool state) {
         cannotBePushedBack = state;
     }
@@ -242,21 +250,6 @@ public class JobQueueItem {
     public void SetShouldBeRemovedFromSettlementWhenUnassigned(bool state) {
         shouldBeRemovedFromSettlementWhenUnassigned = state;
     }
-    //public void SetCannotCancelJob(bool state) {
-    //    cannotCancelJob = state;
-    //}
-    //public void SetCancelOnFail(bool state) {
-    //    cancelJobOnFail = state;
-    //}
-    //public void SetCannotOverrideJob(bool state) {
-    //    cannotOverrideJob = state;
-    //}
-    //public void SetCanBeDoneInLocation(bool state) {
-    //    canBeDoneInLocation = state;
-    //}
-    //public void SetCancelJobOnDropPlan(bool state) {
-    //    cancelJobOnDropPlan = state;
-    //}
     public void AddBlacklistedCharacter(Character character) {
         if (!blacklistedCharacters.Contains(character)) {
             blacklistedCharacters.Add(character);
@@ -298,7 +291,7 @@ public class JobQueueItem {
     }
     public bool IsJobStillApplicable() {
         if (stillApplicable != null) {
-            return stillApplicable();
+            return stillApplicable.IsJobStillApplicable(this);
         }
         return true;
     }
@@ -319,24 +312,21 @@ public class JobQueueItem {
     #region Job Object Pool
     public virtual void Reset() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}Job {this} was reset with original owner {originalOwner}");
+        DatabaseManager.Instance.jobDatabase.UnRegister(this);
+        persistentID = string.Empty;
         hasBeenReset = true;
         shouldBeRemovedFromSettlementWhenUnassigned = false;
         id = -1;
         originalOwner = null;
         name = string.Empty;
         jobType = JOB_TYPE.NONE;
-        isNotSavable = false;
         blacklistedCharacters.Clear();
-        canTakeThis = null;
-        canTakeThisJob = null;
-        canTakeThisJobWithTarget = null;
-        onTakeJobAction = null;
+        canTakeJobChecker = null;
         assignedCharacter = null;
-        onUnassignJobAction = null;
+        stillApplicable = null;
         SetIsStealth(false);
         SetPriority(-1);
         SetCannotBePushedBack(false);
-        SetStillApplicableChecker(null);
         SetFinishedSuccessfully(false);
         SetDoNotRecalculate(false);
         SetIsThisAPartyJob(false);
@@ -345,88 +335,4 @@ public class JobQueueItem {
         Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);
     }
     #endregion
-}
-
-[System.Serializable]
-public class SaveDataJobQueueItem {
-    public int id;
-    //public string jobTypeIdentifier;
-    //public Character assignedCharacter { get; protected set; }
-    public string name;
-    public JOB_TYPE jobType;
-    public bool cannotCancelJob;
-    public bool cancelJobOnFail;
-    public bool cannotOverrideJob;
-    public bool canBeDoneInLocation; //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
-    public bool cancelJobOnDropPlan;
-    public bool isStealth;
-    public bool isNotSavable;
-    public List<int> blacklistedCharacterIDs;
-
-    public string canTakeThisJobMethodName;
-    public string canTakeThisJobWithTargetMethodName;
-    public string onTakeJobActionMethodName;
-
-    public virtual void Save(JobQueueItem job) {
-        id = job.id;
-        //jobTypeIdentifier = job.GetType().ToString();
-        name = job.name;
-        jobType = job.jobType;
-        //cannotCancelJob = job.cannotCancelJob;
-        //cancelJobOnFail = job.cancelJobOnFail;
-        //cannotOverrideJob = job.cannotOverrideJob;
-        //canBeDoneInLocation = job.canBeDoneInLocation;
-        //cancelJobOnDropPlan = job.cancelJobOnDropPlan;
-        isStealth = job.isStealth;
-        isNotSavable = job.isNotSavable;
-
-        blacklistedCharacterIDs = new List<int>();
-        for (int i = 0; i < job.blacklistedCharacters.Count; i++) {
-            blacklistedCharacterIDs.Add(job.blacklistedCharacters[i].id);
-        }
-
-        if(job.canTakeThisJob != null) {
-            canTakeThisJobMethodName = job.canTakeThisJob.Method.Name;
-        } else {
-            canTakeThisJobMethodName = string.Empty;
-        }
-        if (job.canTakeThisJobWithTarget != null) {
-            canTakeThisJobWithTargetMethodName = job.canTakeThisJobWithTarget.Method.Name;
-        } else {
-            canTakeThisJobWithTargetMethodName = string.Empty;
-        }
-        if (job.onTakeJobAction != null) {
-            onTakeJobActionMethodName = job.onTakeJobAction.Method.Name;
-        } else {
-            onTakeJobActionMethodName = string.Empty;
-        }
-    }
-
-    public virtual JobQueueItem Load() {
-        JobQueueItem job = System.Activator.CreateInstance(System.Type.GetType(GetType().ToString()), this) as JobQueueItem;
-
-        Type thisType = typeof(InteractionManager);
-        if(canTakeThisJobMethodName != string.Empty) {
-            MethodInfo canTakeThisJobMethod = thisType.GetMethod(canTakeThisJobMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if(canTakeThisJobMethod != null) {
-                Func<Character, JobQueueItem, bool> function = (Func<Character, JobQueueItem, bool>) Delegate.CreateDelegate(typeof(Func<Character, JobQueueItem, bool>), canTakeThisJobMethod, false);
-                job.SetCanTakeThisJobChecker(function);
-            }
-        }
-        if (canTakeThisJobWithTargetMethodName != string.Empty) {
-            MethodInfo canTakeThisJobWithTargetMethod = thisType.GetMethod(canTakeThisJobWithTargetMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if (canTakeThisJobWithTargetMethod != null) {
-                Func<Character, Character, bool> function = (Func<Character, Character, bool>) Delegate.CreateDelegate(typeof(Func<Character, Character, bool>), canTakeThisJobWithTargetMethod, false);
-                job.SetCanTakeThisJobChecker(function);
-            }
-        }
-        if (onTakeJobActionMethodName != string.Empty) {
-            MethodInfo onTakeJobActionMethod = thisType.GetMethod(onTakeJobActionMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if (onTakeJobActionMethod != null) {
-                Action<Character, JobQueueItem> function = (Action<Character, JobQueueItem>) Delegate.CreateDelegate(typeof(Action<Character, JobQueueItem>), onTakeJobActionMethod, false);
-                job.SetOnTakeJobAction(function);
-            }
-        }
-        return job;
-    }
 }

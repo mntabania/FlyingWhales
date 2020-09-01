@@ -19,7 +19,7 @@ public class Steal : GoapAction {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, GOAP_EFFECT_TARGET.ACTOR));
 
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         TileObject item = target as TileObject;
         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
@@ -32,7 +32,7 @@ public class Steal : GoapAction {
         base.Perform(goapNode);
         SetState("Steal Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(300, 351);
         costLog += $" +{cost}(Initial)";
@@ -70,9 +70,7 @@ public class Steal : GoapAction {
         return base.GetTargetToGoTo(goapNode);
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        object[] otherData = node.otherData;
         TileObject token = poiTarget as TileObject;
         if (token.isBeingCarriedBy != null) {
             return token.isBeingCarriedBy.currentStructure;
@@ -130,7 +128,7 @@ public class Steal : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             TileObject item = poiTarget as TileObject;

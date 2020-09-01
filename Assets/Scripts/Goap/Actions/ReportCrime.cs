@@ -22,7 +22,7 @@ public class ReportCrime : GoapAction {
         base.Perform(goapNode);
         SetState("Report Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -31,8 +31,8 @@ public class ReportCrime : GoapAction {
         base.AddFillersToLog(log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        object[] otherData = node.otherData;
-        if (otherData.Length == 2 && otherData[0] is ICrimeable crime) {
+        OtherData[] otherData = node.otherData;
+        if (otherData.Length == 2 && otherData[0].obj is ICrimeable crime) {
             //CrimeType crimeTypObj = CrimeManager.Instance.GetCrimeType(crime.crimeType);
             //log.AddToFillers(null, crimeTypObj.name, LOG_IDENTIFIER.STRING_1);
             Character criminal = crime.actor;
@@ -58,9 +58,9 @@ public class ReportCrime : GoapAction {
     }
     public override string ReactionToActor(Character actor, IPointOfInterest poiTarget, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, poiTarget, witness, node, status);
-        object[] otherData = node.otherData;
+        OtherData[] otherData = node.otherData;
 
-        if (otherData[0] is ICrimeable reactable) {
+        if (otherData[0].obj is ICrimeable reactable) {
             if (witness == reactable.actor) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
                 if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || witness.relationshipContainer.IsFriendsWith(actor)) {
@@ -93,9 +93,9 @@ public class ReportCrime : GoapAction {
 
     #region State Effects
     public void AfterReportSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        ICrimeable crime = otherData[0] as ICrimeable;
-        CrimeData crimeData = otherData[1] as CrimeData;
+        OtherData[] otherData = goapNode.otherData;
+        ICrimeable crime = otherData[0].obj as ICrimeable;
+        CrimeData crimeData = otherData[1].obj as CrimeData;
         Character sharer = goapNode.actor;
         Character recipient = goapNode.poiTarget as Character;
         sharer.crimeComponent.AddReportedCrime(crimeData);
@@ -207,7 +207,7 @@ public class ReportCrime : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;

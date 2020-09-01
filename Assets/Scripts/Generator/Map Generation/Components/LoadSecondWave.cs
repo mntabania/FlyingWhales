@@ -27,6 +27,7 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Settlement data
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementJobs(saveData));
         
         //Load Characters
 
@@ -42,6 +43,9 @@ public class LoadSecondWave : MapGenerationComponent {
         
         //Load Second wave trait data
         yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
+        
+        //Load Second Wave Job data
+        yield return MapGenerator.Instance.StartCoroutine(LoadJobsSecondWave(saveData));
     }
 
     private IEnumerator LoadFactionRelationships(SaveDataCurrentProgress saveData) {
@@ -72,6 +76,7 @@ public class LoadSecondWave : MapGenerationComponent {
                 //the loaded object does not have a grid tile location, it will be loaded and in memory, but not placed in this section.
                 //if it in a character's inventory then it will be referenced by the character carrying it, when that character has been loaded.
                 //Also do not load generic tile objects, since they are loaded in RegionInnerMapGeneration.
+                tileObject.LoadSecondWave(saveDataTileObject);
                 continue;
             }
             LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
@@ -81,6 +86,7 @@ public class LoadSecondWave : MapGenerationComponent {
                 tileObject.SetGridTileLocation(gridTileLocation);
                 tileObject.OnPlacePOI();
                 tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
+                tileObject.LoadSecondWave(saveDataTileObject);
             } else if (tileObject is Tombstone) {
                 //TODO:
             } else {
@@ -97,6 +103,7 @@ public class LoadSecondWave : MapGenerationComponent {
                     }
                     tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);    
                 }    
+                tileObject.LoadSecondWave(saveDataTileObject);
             }
             batchCount++;
             if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
@@ -137,11 +144,11 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Settlements
     private IEnumerator LoadSettlementOwners(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
             if (!string.IsNullOrEmpty(saveDataBaseSettlement.factionOwnerID)) {
-                BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement.persistentID);
+                BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement._persistentID);
                 Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(saveDataBaseSettlement.factionOwnerID);
                 LandmarkManager.Instance.OwnSettlement(faction, baseSettlement);    
             }
@@ -149,10 +156,10 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return null;
     }
     private IEnumerator LoadSettlementMainStorageAndPrison(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Area Spells...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
-            BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement.persistentID);
+            BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement._persistentID);
             if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement && baseSettlement is NPCSettlement npcSettlement) {
                 if (!string.IsNullOrEmpty(saveDataNpcSettlement.prisonID)) {
                     LocationStructure prison = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.prisonID);
@@ -165,6 +172,18 @@ public class LoadSecondWave : MapGenerationComponent {
             }
         }
         yield return null;
+    }
+    private IEnumerator LoadSettlementJobs(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Settlement Jobs...");
+        for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
+            SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
+            if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement) {
+                NPCSettlement npcSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataNpcSettlement.persistentID) as NPCSettlement;
+                Assert.IsNotNull(npcSettlement);
+                npcSettlement.LoadJobs(saveDataNpcSettlement.jobIDs);
+            }
+            yield return null;
+        }
     }
     #endregion
 
@@ -191,8 +210,26 @@ public class LoadSecondWave : MapGenerationComponent {
 
     #region Trais
     private IEnumerator LoadTraitsSecondWave(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading trait data...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more trait data...");
         saveData.LoadTraitsSecondWave();
+        yield return null;
+    }
+    #endregion
+
+    #region Jobs
+    private IEnumerator LoadJobsSecondWave(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more job data...");
+        int batchCount = 0;
+        for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
+            SaveDataJobQueueItem saveDataJobQueueItem = saveData.GetFromSaveHub<SaveDataJobQueueItem>(OBJECT_TYPE.Job, jobQueueItem.persistentID);
+            jobQueueItem.LoadSecondWave(saveDataJobQueueItem);
+            batchCount++;
+            if (batchCount == MapGenerationData.JobLoadingBatches) {
+                batchCount = 0;
+                yield return null;    
+            }
+        }
         yield return null;
     }
     #endregion

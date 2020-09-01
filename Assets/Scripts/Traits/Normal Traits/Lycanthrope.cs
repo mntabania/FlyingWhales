@@ -81,7 +81,7 @@ namespace Traits {
                 LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new object[] { wilderness });
+                character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });
             }
             return base.TriggerFlaw(character);
         }
@@ -95,7 +95,7 @@ namespace Traits {
                 LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                owner.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new object[] { wilderness });
+                owner.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new OtherData[] { new LocationStructureOtherData(wilderness) });
             }
         }
         private bool IsAlone() {
@@ -202,7 +202,7 @@ namespace Traits {
                 form.trapStructure.SetStructureAndDuration(null, 0);
                 form.trapStructure.SetForcedStructure(null);
             }
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             if (form.carryComponent.isBeingCarriedBy != null) {
                 form.carryComponent.masterCharacter.UncarryPOI(form);
             }

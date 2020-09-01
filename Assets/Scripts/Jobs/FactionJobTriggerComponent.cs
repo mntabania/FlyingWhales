@@ -13,7 +13,7 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
         // if (!_owner.HasJob(JOB_TYPE.COUNTERATTACK_PARTY)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK_PARTY, INTERACTION_TYPE.COUNTERATTACK_ACTION, null, _owner);
             job.AddOtherData(INTERACTION_TYPE.COUNTERATTACK_ACTION, new object[] { targetStructure });
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeCounterattackPartyJob);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Counterattack);
             _owner.AddToAvailableJobs(job);
             return true;
         // }
@@ -23,7 +23,7 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
         if (!_owner.HasJob(JOB_TYPE.RAID)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAID, INTERACTION_TYPE.RAID, null, _owner);
             job.AddOtherData(INTERACTION_TYPE.RAID, new object[] { targetSettlement, _owner });
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRaidJob);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Raid);
             _owner.AddToAvailableJobs(job);
             return true;
         }
@@ -31,14 +31,14 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
     }
     public void TriggerJoinPartyJob(Party party) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeJoinPartyJob);
+        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Party);
         _owner.AddToAvailableJobs(job);
     }
     public bool TriggerHeirloomHuntJob(Region regionToSearch) { //bool forceDoAction = false
         if (!_owner.HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_HEIRLOOM, INTERACTION_TYPE.HUNT_HEIRLOOM, _owner.factionHeirloom, _owner);
             job.AddOtherData(INTERACTION_TYPE.HUNT_HEIRLOOM, new object[] { regionToSearch });
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeHuntHeirloomJob);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Hunt_Heirloom);
             _owner.AddToAvailableJobs(job);
             return true;
         }

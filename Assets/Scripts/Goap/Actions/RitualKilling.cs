@@ -32,12 +32,12 @@ public class RitualKilling : GoapAction {
         base.Perform(goapNode);
         SetState("Killing Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         if (target is Character) {
             Character targetCharacter = target as Character;
             List<Precondition> p = new List<Precondition>();
@@ -131,7 +131,7 @@ public class RitualKilling : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");

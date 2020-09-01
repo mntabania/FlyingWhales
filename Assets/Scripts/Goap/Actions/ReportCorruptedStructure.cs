@@ -20,7 +20,7 @@ public class ReportCorruptedStructure : GoapAction {
         base.Perform(goapNode);
         SetState("Report Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -38,13 +38,13 @@ public class ReportCorruptedStructure : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        LocationStructure structureToReport = node.otherData[0] as LocationStructure;
+        LocationStructure structureToReport = node.otherData[0].obj as LocationStructure;
         log.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_2);
     }
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.homeSettlement != null;
@@ -60,8 +60,8 @@ public class ReportCorruptedStructure : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_2);
     //}
     public void AfterReportSuccess(ActualGoapNode goapNode) {
-        object[] otherData = goapNode.otherData;
-        LocationStructure structureToReport = otherData[0] as LocationStructure;
+        OtherData[] otherData = goapNode.otherData;
+        LocationStructure structureToReport = otherData[0].obj as LocationStructure;
         if (!InnerMapManager.Instance.HasWorldKnownDemonicStructure(structureToReport)) {
             InnerMapManager.Instance.AddWorldKnownDemonicStructure(structureToReport);
             // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Reported",

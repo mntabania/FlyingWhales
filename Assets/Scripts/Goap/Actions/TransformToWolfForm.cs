@@ -20,7 +20,7 @@ public class TransformToWolfForm : GoapAction {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 5;
     }
     #endregion

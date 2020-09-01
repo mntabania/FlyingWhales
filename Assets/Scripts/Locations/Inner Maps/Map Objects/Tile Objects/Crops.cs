@@ -76,8 +76,7 @@ public abstract class Crops : TileObject {
     }
     #endregion
     
-    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
-        bool destroyTileSlots = true) {
+    public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
     }
@@ -85,7 +84,11 @@ public abstract class Crops : TileObject {
         base.OnPlacePOI();
         Messenger.AddListener(Signals.TICK_ENDED, PerTickGrowth);
     }
-    
+    public override void OnDestroyPOI() {
+        base.OnDestroyPOI();
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickGrowth);
+    }
+
     #region Testing
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();

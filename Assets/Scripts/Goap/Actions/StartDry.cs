@@ -13,7 +13,7 @@ public class StartDry : GoapAction {
         base.Perform(goapNode);
         SetState("Start Dry Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -22,8 +22,11 @@ public class StartDry : GoapAction {
     
     #region State Effects
     [UsedImplicitly]
-    public void AfterStartDrySuccess(ActualGoapNode goapNode) {
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drying");
+    public void PreStartDrySuccess(ActualGoapNode goapNode) {
+        if (goapNode.associatedJob.originalOwner is NPCSettlement settlement) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Drying");
+            settlement.settlementJobTriggerComponent.OnTakeDryTileJob(goapNode.actor);
+        }
     }
     #endregion
 }

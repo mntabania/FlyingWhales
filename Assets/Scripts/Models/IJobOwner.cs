@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IJobOwner {
+    string persistentID { get; }
+    OBJECT_TYPE objectType { get; }
     JOB_OWNER ownerType { get; }
     string name { get; }
     JobTriggerComponent jobTriggerComponent { get; }

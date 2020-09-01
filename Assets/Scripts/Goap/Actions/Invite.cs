@@ -21,7 +21,7 @@ public class Invite : GoapAction {
         SetState("Invite Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job,
-        object[] otherData) {
+        OtherData[] otherData) {
         return 1;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -94,7 +94,7 @@ public class Invite : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
