@@ -322,7 +322,7 @@ public class HexTileSpellsComponent {
     }
     private IEnumerator CommenceFallingBrimstones() {
         while (hasBrimstones) {
-            while (GameManager.Instance.isPaused) {
+            while (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
@@ -401,7 +401,7 @@ public class HexTileSpellsComponent {
     }
     private IEnumerator CommenceElectricStorm() {
         while (hasElectricStorm) {
-            while (GameManager.Instance.isPaused) {
+            while (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
@@ -453,7 +453,7 @@ public class HexTileSpellsComponent {
     }
     private IEnumerator CommenceFallingIceteroids() {
         while (hasIceteroids) {
-            while (GameManager.Instance.isPaused) {
+            while (GameManager.Instance.isPaused || !GameManager.Instance.gameHasStarted) {
                 yield return null;
             }
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));

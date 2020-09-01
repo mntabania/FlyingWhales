@@ -294,10 +294,12 @@ namespace Inner_Maps {
         public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
             SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
+            parentMap.groundTilemap.RefreshTile(localPlace);
             if (genericTileObject.mapObjectVisual != null && genericTileObject.mapObjectVisual.usedSprite != null) {
                 //if this tile's map object is shown and is showing a visual, update it's sprite to use the updated sprite.
                 genericTileObject.mapObjectVisual.SetVisual(parentMap.groundTilemap.GetSprite(localPlace));
             }
+
             UpdateGroundTypeBasedOnAsset();
             if (updateEdges) {
                 CreateSeamlessEdgesForSelfAndNeighbours();
