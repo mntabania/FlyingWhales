@@ -637,10 +637,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (!marker) {
                 CreateMarker();
             }
+            marker.SetCollidersState(true);
             marker.transform.SetParent(currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
             marker.transform.localRotation = data.rotation;
-            marker.SetCollidersState(true);
+            
             
             //Do updating hidden state here because the marker must be created first
             OnSetIsHidden();

@@ -345,10 +345,13 @@ public class GoapPlanJob : JobQueueItem {
 
     #region Job Object Pool
     public override void Reset() {
-        base.Reset();
-        if (targetPOI is TileObject tileObject) {
-            tileObject.RemoveExistingJobTargetingThis(this);
+        if (targetPOI != null) {
+            targetPOI.RemoveJobTargetingThis(this);
+            if (targetPOI is TileObject tileObject) {
+                tileObject.RemoveExistingJobTargetingThis(this);
+            }
         }
+        base.Reset();
         goal.Reset();
         targetPOI = null;
         targetInteractionType = INTERACTION_TYPE.NONE;
