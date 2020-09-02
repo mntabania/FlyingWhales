@@ -23,16 +23,7 @@ public class MainMenuUI : MonoBehaviour {
     [Header("Buttons")]
     [SerializeField] private Button continueButton;
     [SerializeField] private Button newGameButton;
-    [SerializeField] private Button invadeButton;
-    [SerializeField] private Button researchButton;
-    
-    //[Header("Archetypes")]
-    //[SerializeField] private SkillTreeSelector _skillTreeSelector;
-    
-    [Header("Demo")]
-    [SerializeField] private Button startButton;
-    [SerializeField] private Button settingsButton;
-    
+
     [Header("Steam")]
     [SerializeField] private TextMeshProUGUI steamName;
     
@@ -40,88 +31,68 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI version;
     
     [Header("Yes/No Confirmation")]
-    [SerializeField] private YesNoConfirmation yesNoConfirmation;
+    public YesNoConfirmation yesNoConfirmation;
+    
+    [Header("Load Game")]
+    [SerializeField] private Button loadGameButton;
+    [SerializeField] private ScrollRect loadGameScrollRect;
+    [SerializeField] private GameObject saveItemPrefab;
+    [SerializeField] private GameObject loadGameWindow;
+    private string[] saveFiles;
     
     private void Awake() {
         Instance = this;
     }
     private void Start() {
+        if (!SaveManager.Instance.savePlayerManager.hasSavedDataPlayer) {
+            SaveManager.Instance.savePlayerManager.CreateNewSaveDataPlayer();
+        }
         newGameButton.interactable = true;
         steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
         version.text = $"Version: {Application.version}";
-        UpdateContinueButton();
-    }
-    public void UpdateMainMenuOnBack() {
-        UpdateContinueButton();
+        saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(string.Empty); //Set current save data to null everytime this is loaded, this is so that the previous save file is not loaded if new game was clicked
+        UpdateButtonStates();
     }
     public void ShowMenuButtons() {
         titleTween.OnValueChangedAnimation(true);
         glowTween.OnValueChangedAnimation(true);
-        // if (WorldConfigManager.Instance.isTutorialWorld) {
-        //     (startButton.transform as RectTransform).DOAnchorPosY(136f, 1f).SetEase(Ease.Linear);
-        //     (settingsButton.transform as RectTransform).DOAnchorPosY(92f, 1f).SetEase(Ease.Linear).SetDelay(0.5f);
-        // } else {
         buttonsTween.OnValueChangedAnimation(true);
-        // }
-        
     }
     private void HideMenuButtons() {
         buttonsTween.OnValueChangedAnimation(false);
     }
     public void ExitGame() {
-        //TODO: Add Confirmation Prompt
         Application.Quit();
     }
-    public void Glow2TweenPlayForward() {
-        glow2Tween.OnValueChangedAnimation(true);
-    }
-    public void Glow2TweenPlayReverse() {
-        glow2Tween.OnValueChangedAnimation(false);
-    }
-    public void GlowTweenPlayForward() {
-        glowTween.OnValueChangedAnimation(true);
-    }
-    public void GlowTweenPlayReverse() {
-        glowTween.OnValueChangedAnimation(false);
-    }
     public void OnClickPlayGame() {
-        // if (SaveManager.Instance.hasSavedDataPlayer) { //&& !SaveManager.Instance.currentSaveDataPlayer.IsDefault()
-        //     yesNoConfirmation.ShowYesNoConfirmation("Reset progress", "Starting a new game will reset your current progress. Are you sure you want to start a new game?", 
-        //         OnConfirmNewGame, showCover: true);
-        // } 
-        // else {
-        //     SaveManager.Instance.CreateNewSaveDataPlayer();
-        //     WorldSettings.Instance.Open();    
-        // }
-        if (!SaveManager.Instance.savePlayerManager.hasSavedDataPlayer) {
-            SaveManager.Instance.savePlayerManager.CreateNewSaveDataPlayer();
-        } 
         WorldSettings.Instance.Open(); 
     }
-    private void OnConfirmNewGame() {
-        SaveManager.Instance.savePlayerManager.CreateNewSaveDataPlayer();
-        WorldSettings.Instance.Open();
-    }
     public void OnClickContinue() {
-        WorldSettings.Instance.Open();
-    }
-    private void OnCompleteBGTween() {
-        invadeButton.gameObject.SetActive(true);
-        researchButton.gameObject.SetActive(true);
-    }
-    public void OnClickInvade() {
-        //StartNewGame();
-        //WorldSettings.Instance.Open();
-    }
-    public void OnClickResearch() {
-        //_skillTreeSelector.Show();
-    }
-    public void OnClickLoadGame() {
-        SaveManager.Instance.useSaveData = true;
-        newGameButton.interactable = false;
-        // loadGameButton.interactable = false;
-        AudioManager.Instance.TransitionToLoading();
-        MainMenuManager.Instance.LoadMainGameScene();
+        //Load latest save
+        string latestFile = string.Empty;
+        for (int i = 0; i < saveFiles.Length; i++) {
+            string saveFile = saveFiles[i];
+            if (string.IsNullOrEmpty(latestFile)) {
+                latestFile = saveFile;
+            } else {
+                //compare times
+                DateTime writeTimeOfCurrentSave = System.IO.File.GetLastWriteTime(saveFile);
+                DateTime writeTimeOfLatestSave = System.IO.File.GetLastWriteTime(latestFile);
+                if (writeTimeOfCurrentSave > writeTimeOfLatestSave) {
+                    latestFile = saveFile;
+                }
+            }
+        }
+
+        if (!string.IsNullOrEmpty(latestFile)) {
+            SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(latestFile);
+            MainMenuManager.Instance.StartGame();
+        } else {
+            //in case no latest file was found, doubt that this will happen.
+            OnClickPlayGame();
+        }
+        
     }
     public void OnClickSettings() {
         SettingsManager.Instance.OpenSettings();
@@ -129,7 +100,33 @@ public class MainMenuUI : MonoBehaviour {
     public void OnClickDiscord() {
         Application.OpenURL("http://discord.ruinarch.com/");
     }
-    public void UpdateContinueButton() {
-        continueButton.interactable = false; //SaveManager.Instance.hasSavedDataPlayer; // SaveManager.Instance.hasSavedDataCurrentProgress;
+    private void UpdateButtonStates() {
+        bool hasSaves = saveFiles != null && saveFiles.Length > 0;
+        continueButton.interactable = hasSaves;
+        loadGameButton.interactable = hasSaves;
     }
+
+    #region Load Game
+    public void OnClickLoadGame() {
+        LoadSavedGameItems();
+        loadGameWindow.gameObject.SetActive(true);
+        // SaveManager.Instance.useSaveData = true;
+        // newGameButton.interactable = false;
+        // // loadGameButton.interactable = false;
+        // AudioManager.Instance.TransitionToLoading();
+        // MainMenuManager.Instance.LoadMainGameScene();
+    }
+    public void OnClickCloseLoadGame() {
+        loadGameWindow.gameObject.SetActive(false);
+    }
+    private void LoadSavedGameItems() {
+        UtilityScripts.Utilities.DestroyChildren(loadGameScrollRect.content);
+        for (int i = 0; i < saveFiles.Length; i++) {
+            string saveFile = saveFiles[i];
+            GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, loadGameScrollRect.content);
+            SaveItem saveItem = saveItemGO.GetComponent<SaveItem>();
+            saveItem.SetSaveFile(saveFile);
+        }
+    }
+    #endregion
 }

@@ -5,7 +5,6 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-[System.Serializable]
 public class BaseRelationshipContainer : IRelationshipContainer {
     
     private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend

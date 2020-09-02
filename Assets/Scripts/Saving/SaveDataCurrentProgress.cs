@@ -7,23 +7,7 @@ using UnityEngine;
 using Interrupts;
 
 public class SaveDataCurrentProgress {
-    //public int width;
-    //public int height;
-    //public int borderThickness;
-    //public List<SaveDataHextile> hextileSaves;
-    //public List<SaveDataHextile> outerHextileSaves;
-    //public List<SaveDataLandmark> landmarkSaves;
-    //public List<SaveDataRegion> regionSaves;
-    //public List<SaveDataArea> nonPlayerAreaSaves;
-
-    //public List<SaveDataCharacter> characterSaves;
-    //public List<SaveDataTileObject> tileObjectSaves;
-    //// public List<SaveDataSpecialObject> specialObjectSaves;
-    //// public List<SaveDataAreaInnerTileMap> areaMapSaves;
-    //public List<SaveDataNotification> notificationSaves;
-
-    //public SaveDataArea playerAreaSave;
-    //public SaveDataPlayer playerSave;
+    public System.DateTime timeStamp;
     public string gameVersion;
 
     public int month;
@@ -45,6 +29,8 @@ public class SaveDataCurrentProgress {
 
     #region General
     public void Initialize() {
+        timeStamp = System.DateTime.Now;
+        gameVersion = Application.version;
         if (objectHub == null) {
             ConstructObjectHub();
         }

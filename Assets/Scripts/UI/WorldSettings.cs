@@ -76,7 +76,6 @@ public class WorldSettings : MonoBehaviour {
     }
     public void Close() {
         settingsGO.SetActive(false);
-        MainMenuUI.Instance.UpdateMainMenuOnBack();
     }
     private void InitializeData() {
         //if (raceWorldOptionItems.Count <= 0) {
@@ -243,13 +242,13 @@ public class WorldSettings : MonoBehaviour {
                 customizeWorldWindow.SetActive(true);
             } else {
                 Close();
-                MainMenuManager.Instance.StartNewGame();
+                MainMenuManager.Instance.StartGame();
             }
         } else if (customizeWorldWindow.activeSelf) {
             //Already in customize window
             if (worldSettingsData.AreSettingsValid()) {
                 Close();
-                MainMenuManager.Instance.StartNewGame();
+                MainMenuManager.Instance.StartGame();
             } else {
                 //show invalid message
                 invalidMessage.gameObject.SetActive(true);

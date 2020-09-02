@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using Scenario_Maps;
+using UnityEngine.Assertions;
 
 public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
@@ -23,10 +24,9 @@ public class StartupManager : MonoBehaviour {
 
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
 
-        if (SaveManager.Instance.useSaveData) {
-            SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgress();
-            SaveDataCurrentProgress saveData = SaveManager.Instance.currentSaveDataProgress;
-            yield return StartCoroutine(mapGenerator.InitializeSavedWorld(saveData));
+        if (!string.IsNullOrEmpty(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataPath)) {
+            SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgressBasedOnSetPath();
+            yield return StartCoroutine(mapGenerator.InitializeSavedWorld(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress));
         } else {
             if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
                 ScenarioMapData scenarioMapData = null;

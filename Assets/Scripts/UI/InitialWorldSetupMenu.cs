@@ -77,7 +77,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
     private void ReGenerateWorld() {
         DOTween.Clear(true);
         Messenger.Cleanup();
-        MainMenuManager.Instance.StartNewGame();
+        MainMenuManager.Instance.StartGame();
     }
     #endregion
 

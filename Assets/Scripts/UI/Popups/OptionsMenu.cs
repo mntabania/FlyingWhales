@@ -27,7 +27,7 @@ public class OptionsMenu : PopupMenuBase {
     }
     private void SaveCurrentProgress() {
         if (SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {
-            SaveManager.Instance.saveCurrentProgressManager.SaveCurrentProgress();
+            SaveManager.Instance.saveCurrentProgressManager.DoManualSave();
         } else {
             PlayerUI.Instance.ShowGeneralConfirmation("Save Progress", "Cannot save while seizing.");
         }

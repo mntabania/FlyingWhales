@@ -350,6 +350,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
+        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         RaceSetting rs = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = rs.CreateNewCopy();
@@ -620,7 +621,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         partyComponent.LoadReferences(data.partyComponent);
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
-
+        traitContainer.Load(this, data.saveDataTraitContainer);
+        
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {
