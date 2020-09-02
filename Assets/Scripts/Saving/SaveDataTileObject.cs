@@ -67,11 +67,11 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         }
         
         existingJobsTargetingThis = new List<string>();
-        for (int i = 0; i < tileObject.allExistingJobsTargetingThis.Count; i++) {
-            JobQueueItem jobQueueItem = tileObject.allExistingJobsTargetingThis[i];
+        for (int i = 0; i < data.allExistingJobsTargetingThis.Count; i++) {
+            JobQueueItem jobQueueItem = data.allExistingJobsTargetingThis[i];
             jobsTargetingThis.Add(jobQueueItem.persistentID);
         }
-        mapObjectState = tileObject.mapObjectState;
+        mapObjectState = data.mapObjectState;
         
         currentHP = data.currentHP;
 
