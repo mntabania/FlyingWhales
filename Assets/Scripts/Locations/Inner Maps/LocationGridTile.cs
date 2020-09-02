@@ -114,6 +114,23 @@ namespace Inner_Maps {
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
+        #region Loading
+        public void LoadSecondWave(SaveDataLocationGridTile saveDataLocationGridTile) {
+            if (saveDataLocationGridTile.hasLandmine) {
+                SetHasLandmine(true);
+            }
+            if (saveDataLocationGridTile.hasFreezingTrap) {
+                SetHasFreezingTrap(true, saveDataLocationGridTile.freezingTrapExclusions?.ToArray());
+            }
+            if (saveDataLocationGridTile.hasSnareTrap) {
+                SetHasSnareTrap(true);
+            }
+            for (int i = 0; i < saveDataLocationGridTile.meteorCount; i++) {
+                AddMeteor();
+            }
+        }
+        #endregion
+
         #region Other Data
         private Dictionary<GridNeighbourDirection, Point> possibleExits =>
             new Dictionary<GridNeighbourDirection, Point>() {
@@ -1434,6 +1451,17 @@ namespace Inner_Maps {
         public GraphNode graphNode { get; private set; }
         public void PredetermineGraphNode() {
             graphNode = AstarPath.active.GetNearest(centeredWorldLocation).node;
+        }
+        #endregion
+
+        #region Meteor
+        public int meteorCount { get; private set; }
+        public void AddMeteor() {
+            meteorCount++;
+            GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Meteor_Strike);
+        }
+        public void RemoveMeteor() {
+            meteorCount--;
         }
         #endregion
 

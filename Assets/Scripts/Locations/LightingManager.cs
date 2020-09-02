@@ -46,8 +46,19 @@ public class LightingManager : BaseMonoBehaviour {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         ComputeLightingValues();
-        SetGlobalLightIntensity(_brightestIntensity);
+        // SetGlobalLightIntensity(_brightestIntensity);
+        // UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
+        GameDate date = GameManager.Instance.Today();
+        if (_brightPeriodRange.IsInRange(GameManager.Instance.GetCeilingHoursBasedOnTicks(date.tick))) {
+            SetCurrentLightState(Light_State.Bright);
+            SetGlobalLightIntensity(_brightestIntensity);
+        } else {
+            SetCurrentLightState(Light_State.Dark);
+            SetGlobalLightIntensity(_darkestIntensity);
+        }
+        Messenger.Broadcast(Signals.INSTANT_UPDATE_INNER_MAP_LIGHT, currentGlobalLightState); //update other lights based on target light state
     }
+   
     private void OnTickEnded() {
         UpdateAllLightsBasedOnTimeOfDay(GameManager.Instance.Today());
     }
@@ -68,8 +79,7 @@ public class LightingManager : BaseMonoBehaviour {
             if (isTransitioning) { return; }
             _isTransitioning = true;
             //transitioning
-            Light_State targetLightState =
-                currentGlobalLightState == Light_State.Dark ? Light_State.Bright : Light_State.Dark;
+            Light_State targetLightState = currentGlobalLightState == Light_State.Dark ? Light_State.Bright : Light_State.Dark;
             _transitioningTo = targetLightState;
             Messenger.Broadcast(Signals.UPDATE_INNER_MAP_LIGHT, targetLightState); //update other lights based on target light state
             var targetIntensity = currentGlobalLightState == Light_State.Dark ? _brightestIntensity : _darkestIntensity;

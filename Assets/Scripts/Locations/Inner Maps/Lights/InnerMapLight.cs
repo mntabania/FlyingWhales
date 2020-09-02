@@ -15,9 +15,11 @@ public class InnerMapLight : MonoBehaviour{
     private void OnEnable() {
         InstantUpdateLightBasedOnGlobalLight(LightingManager.Instance.isTransitioning ? LightingManager.Instance.transitioningTo : LightingManager.Instance.currentGlobalLightState);
         Messenger.AddListener<LightingManager.Light_State>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnGlobalLight);
+        Messenger.AddListener<LightingManager.Light_State>(Signals.INSTANT_UPDATE_INNER_MAP_LIGHT, InstantUpdateLightBasedOnGlobalLight);
     }
     private void OnDisable() {
         Messenger.RemoveListener<LightingManager.Light_State>(Signals.UPDATE_INNER_MAP_LIGHT, UpdateLightBasedOnGlobalLight);
+        Messenger.RemoveListener<LightingManager.Light_State>(Signals.INSTANT_UPDATE_INNER_MAP_LIGHT, InstantUpdateLightBasedOnGlobalLight);
     }
     private void UpdateLightBasedOnGlobalLight(LightingManager.Light_State globalLightState) {
         //set intensity as inverse of given light state.

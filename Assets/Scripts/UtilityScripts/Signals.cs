@@ -49,6 +49,7 @@ public static class Signals {
     /// Parameters: TIME_IN_WORDS (current time of day)
     /// </summary>
     public static string UPDATE_INNER_MAP_LIGHT = "UpdateInnerMapLight";
+    public static string INSTANT_UPDATE_INNER_MAP_LIGHT = "InstantUpdateInnerMapLight";
     public static string BECOME_A_TERRITORY = "OnBecomeATerritory";
     /// <summary>
     /// Parameters (HexTile)

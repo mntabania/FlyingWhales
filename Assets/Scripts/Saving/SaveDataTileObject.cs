@@ -18,6 +18,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public POI_STATE poiState;
     public INTERACTION_TYPE[] advertisedActions;
     public List<string> jobsTargetingThis;
+    public List<string> existingJobsTargetingThis;
+    public MAP_OBJECT_STATE mapObjectState;
     
     //hp
     public int currentHP;
@@ -63,6 +65,13 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             JobQueueItem jobQueueItem = data.allJobsTargetingThis[i];
             jobsTargetingThis.Add(jobQueueItem.persistentID);
         }
+        
+        existingJobsTargetingThis = new List<string>();
+        for (int i = 0; i < data.allExistingJobsTargetingThis.Count; i++) {
+            JobQueueItem jobQueueItem = data.allExistingJobsTargetingThis[i];
+            jobsTargetingThis.Add(jobQueueItem.persistentID);
+        }
+        mapObjectState = data.mapObjectState;
         
         currentHP = data.currentHP;
 

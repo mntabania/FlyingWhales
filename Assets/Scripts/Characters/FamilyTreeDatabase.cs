@@ -6,10 +6,10 @@ using UtilityScripts;
 
 [System.Serializable]
 public class FamilyTreeDatabase {
-    public UtilityScripts.SerializableDictionary<RACE, List<FamilyTree>> allFamilyTreesDictionary;
+    public Dictionary<RACE, List<FamilyTree>> allFamilyTreesDictionary;
 
     public FamilyTreeDatabase() {
-        allFamilyTreesDictionary = new UtilityScripts.SerializableDictionary<RACE, List<FamilyTree>>();
+        allFamilyTreesDictionary = new Dictionary<RACE, List<FamilyTree>>();
     }
 
     public void AddFamilyTree(FamilyTree familyTree) {
@@ -61,14 +61,18 @@ public class FamilyTreeDatabase {
             return availableCharacters;
         }
     }
-    
-    public void Save() {
-        var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/Family Trees");
-        XmlSerializer serializer = new XmlSerializer(typeof(FamilyTreeDatabase)); //Create serializer
-        FileStream stream = new FileStream($"{Application.persistentDataPath}/Family Trees/FamilyTrees.xml", FileMode.Create); //Create file at this path
-        serializer.Serialize(stream, this); //Write the data in the xml file
-        stream.Close(); //Close the stream
+
+    public void Load(SaveDataCurrentProgress saveDataCurrentProgress) {
+        allFamilyTreesDictionary = saveDataCurrentProgress.familyTreeDatabase.allFamilyTreesDictionary;
     }
+    
+    // public void Save() {
+    //     var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/Family Trees");
+    //     XmlSerializer serializer = new XmlSerializer(typeof(FamilyTreeDatabase)); //Create serializer
+    //     FileStream stream = new FileStream($"{Application.persistentDataPath}/Family Trees/FamilyTrees.xml", FileMode.Create); //Create file at this path
+    //     serializer.Serialize(stream, this); //Write the data in the xml file
+    //     stream.Close(); //Close the stream
+    // }
     
     
 }

@@ -19,6 +19,8 @@ public class DatabaseManager : MonoBehaviour {
     public TraitDatabase traitDatabase { get; private set; }
     public BurningSourceDatabase burningSourceDatabase { get; private set; }
     public JobDatabase jobDatabase { get; private set; }
+    public FamilyTreeDatabase familyTreeDatabase { get; private set; }
+    
 
     //These databases are only used when loading from a saved game, and therefore must be cleared out when loading is complete to save memory
     public ActionDatabase actionDatabase { get; private set; }
@@ -51,7 +53,7 @@ public class DatabaseManager : MonoBehaviour {
         traitDatabase = new TraitDatabase();
         burningSourceDatabase = new BurningSourceDatabase();
         jobDatabase = new JobDatabase();
-
+        familyTreeDatabase = new FamilyTreeDatabase();
         actionDatabase = new ActionDatabase();
         interruptDatabase = new InterruptDatabase();
         logDatabase = new LogDatabase();

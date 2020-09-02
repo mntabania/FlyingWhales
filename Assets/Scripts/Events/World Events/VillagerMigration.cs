@@ -21,7 +21,7 @@ namespace Events.World_Events {
                         int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
                         int randomAmount = UnityEngine.Random.Range(1, 4);
                         randomAmount = Mathf.Min(randomAmount, availableCapacity);
-                        List<PreCharacterData> unspawnedCharacters = WorldConfigManager.Instance.mapGenerationData.familyTreeDatabase.ForceGetAllUnspawnedCharacters(randomSettlement.owner.race);
+                        List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharacters(randomSettlement.owner.race);
                         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(randomSettlement.region.innerMap.allEdgeTiles);
                         for (int i = 0; i < randomAmount; i++) {
                             if (unspawnedCharacters.Count == 0) { break; }

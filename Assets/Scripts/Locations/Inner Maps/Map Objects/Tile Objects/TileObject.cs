@@ -22,7 +22,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
     public LocationStructure structureLocation => gridTileLocation.structure;
     public bool isPreplaced { get; private set; }
+    /// <summary>
+    /// All currently in progress jobs targeting this.
+    /// </summary>
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
+    /// <summary>
+    /// All instantiated jobs that are targeting this object.
+    /// </summary>
+    public List<JobQueueItem> allExistingJobsTargetingThis { get; private set; }
     public List<Character> charactersThatAlreadyAssumed { get; private set; }
     public Character isBeingCarriedBy { get; private set; }
 
@@ -81,6 +88,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         this.tileObjectType = tileObjectType;
         name = GenerateName();
         allJobsTargetingThis = new List<JobQueueItem>();
+        allExistingJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
@@ -102,8 +110,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         tileObjectType = data.tileObjectType;
         name = data.name;
         allJobsTargetingThis = new List<JobQueueItem>();
-       
-        
+        allExistingJobsTargetingThis = new List<JobQueueItem>();
         charactersThatAlreadyAssumed = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
@@ -137,6 +144,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
             AddJobTargetingThis(job);
         }
+        for (int i = 0; i < data.existingJobsTargetingThis.Count; i++) {
+            string jobID = data.existingJobsTargetingThis[i];
+            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
+            AddExistingJobTargetingThis(job);
+        }
+        SetMapObjectState(data.mapObjectState);
     }
     #endregion
     
@@ -425,6 +438,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return true;
         }
         return false;
+    }
+    public void AddExistingJobTargetingThis(JobQueueItem job) {
+        allExistingJobsTargetingThis.Add(job);
+    }
+    public bool RemoveExistingJobTargetingThis(JobQueueItem job) {
+        return allExistingJobsTargetingThis.Remove(job);
     }
     public bool HasJobTargetingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
@@ -943,7 +962,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectMapVisual(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
     }
-    private INTERACTION_TYPE[] storedActions;
     protected override void OnMapObjectStateChanged() {
         if (mapVisual == null) { return; }
         if (mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
@@ -957,14 +975,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected virtual void OnSetObjectAsUnbuilt() {
         mapVisual.SetVisualAlpha(0f / 255f);
         SetSlotAlpha(0f / 255f);
-        //store advertised actions
-        if(advertisedActions != null && advertisedActions.Count > 0) {
-            storedActions = new INTERACTION_TYPE[advertisedActions.Count];
-            for (int i = 0; i < advertisedActions.Count; i++) {
-                storedActions[i] = advertisedActions[i];
-            }
-            advertisedActions.Clear();
-        }
+        SetPOIState(POI_STATE.INACTIVE);
         AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         UnsubscribeListeners();
         Messenger.AddListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
@@ -978,23 +989,19 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
         mapVisual.SetVisualAlpha(255f / 255f);
         SetSlotAlpha(255f / 255f);
+        SetPOIState(POI_STATE.ACTIVE);
         if (advertisedActions != null && advertisedActions.Count > 0) {
             RemoveAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
         }
-        if (storedActions != null) {
-            for (int i = 0; i < storedActions.Length; i++) {
-                AddAdvertisedAction(storedActions[i]);
-            }
-        }
-        storedActions = null;
         SubscribeListeners();
     }
     protected void CheckUnbuiltObjectValidity() {
-        if (allJobsTargetingThis.Count <= 0) {
+        if (allExistingJobsTargetingThis.Count <= 0) {
             //unbuilt object is no longer valid, remove it
             Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING,  this as IPointOfInterest);
             List<JobQueueItem> jobs = new List<JobQueueItem>(allJobsTargetingThis);
+            jobs.AddRange(allExistingJobsTargetingThis);
             for (int i = 0; i < jobs.Count; i++) {
                 JobQueueItem jobQueueItem = jobs[i];
                 jobQueueItem.CancelJob(false);

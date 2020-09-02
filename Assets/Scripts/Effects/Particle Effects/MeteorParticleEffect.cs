@@ -32,7 +32,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //This will make sure that the particle effect will show but it will be paused right away
         PlayParticle();
         yield return new WaitForSeconds(0.1f);
-        if (pauseOnGamePaused && GameManager.Instance.isPaused) {
+        if ((pauseOnGamePaused && GameManager.Instance.isPaused) || !GameManager.Instance.gameHasStarted) {
             PauseParticle();
         }
     }
@@ -50,7 +50,6 @@ public class MeteorParticleEffect : BaseParticleEffect {
         //for (int i = 0; i < meteorExplosionParticles.Length; i++) {
         //    meteorExplosionParticles[i].Play();
         //}
-        List<ITraitable> traitables = new List<ITraitable>();
         BurningSource bs = null;
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true, true); //radius
         for (int i = 0; i < tiles.Count; i++) {
@@ -62,8 +61,9 @@ public class MeteorParticleEffect : BaseParticleEffect {
         targetTile.genericTileObject.traitContainer.AddTrait(targetTile.genericTileObject, "Danger Remnant");
         Messenger.Broadcast(Signals.METEOR_FELL);
         InnerMapCameraMove.Instance.MeteorShake();
+        targetTile.RemoveMeteor();
         //GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
-        
+
     }
     private void MeteorEffect(ITraitable traitable, ref BurningSource bs) {
         if (traitable.gridTileLocation == null) { return; }

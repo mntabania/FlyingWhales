@@ -15,8 +15,6 @@ public class LoadFirstWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
-        saveData.LoadDate();
-        
         //Load Factions
         yield return MapGenerator.Instance.StartCoroutine(LoadFactions(saveData));
         

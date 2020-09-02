@@ -349,6 +349,8 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading world map...");
 		data.chosenWorldMapTemplate = saveData.worldMapSave.worldMapTemplate;
+		WorldSettings.Instance.worldSettingsData.SetWorldType(saveData.worldMapSave.worldType);
+		saveData.LoadDate();
 		Debug.Log($"Width: {data.width.ToString()} Height: {data.height.ToString()} Region Count: {data.regionCount.ToString()}");
 		yield return MapGenerator.Instance.StartCoroutine(GenerateGrid(data, saveData));
 	}

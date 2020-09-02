@@ -37,7 +37,8 @@ public class SaveCurrentProgressManager : MonoBehaviour {
             DatabaseManager.Instance.structureDatabase
         );
         currentSaveDataProgress.worldMapSave = worldMapSave;
-
+        currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
+        currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
         //        Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
         //        save.SaveHextiles(GridMap.Instance.normalHexTiles);
         //        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
@@ -80,6 +81,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         );
         currentSaveDataProgress.worldMapSave = worldMapSave;
         currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
+        currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
 
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
         SaveGame.Save(path, currentSaveDataProgress);

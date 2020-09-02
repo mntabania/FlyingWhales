@@ -60,4 +60,12 @@ public static class SaveUtilities {
         }
         return objects;
     }
+
+    public static SaveDataJobNode createSaveDataJobNode(JobNode jobNode) {
+        if (jobNode is SingleJobNode) {
+            return new SaveDataSingleJobNode();
+        } else {
+            return new SaveDataMultiJobNode();
+        }
+    }
 }

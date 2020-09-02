@@ -34,6 +34,9 @@ public class SaveDataCurrentProgress {
 
     public WorldMapSave worldMapSave;
 
+    //family trees
+    public FamilyTreeDatabase familyTreeDatabase;
+    
     //Player
     public SaveDataPlayerGame playerSave;
 
@@ -156,6 +159,9 @@ public class SaveDataCurrentProgress {
                 SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
                 saveDataTileObject.Save(tileObject);
                 AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            }
+            if (tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                Debug.Log($"Saved unbuilt object {tileObject}");
             }
             finishedObjects.Add(tileObject);
         }

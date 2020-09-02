@@ -1,20 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
 using System.Linq;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class Psychopath : Trait {
 
         public SerialVictim victim1Requirement { get; private set; }
         public Character character { get; private set; }
-
         public Character targetVictim { get; private set; }
         private Dictionary<Character, OpinionData> opinionCopy;
 
+        #region getters
+        public override Type serializedData => typeof(SaveDataPsychopath);
+        #endregion
+        
         public Psychopath() {
             name = "Psychopath";
             description = "Has a specific subset of target victims that it wants to abduct and then kill.";
@@ -26,6 +31,19 @@ namespace Traits {
             //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
+
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
+            Assert.IsNotNull(saveDataPsychopath);
+            victim1Requirement = saveDataPsychopath.victim1Requirement;
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            //TODO: Load target victim
+        }
+        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
@@ -560,44 +578,19 @@ namespace Traits {
             return false;
         }
     }
+}
 
-    public class SaveDataPsychopath : SaveDataTrait {
-        public SerialVictim victim1Requirement;
-        //public SerialVictim victim2Requirement;
+#region Save Data
+public class SaveDataPsychopath : SaveDataTrait {
+    public SerialVictim victim1Requirement;
+    public string targetVictimID;
 
-        public int targetVictimID;
-        public bool isFollowing;
-        public bool hasStartedFollowing;
-
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            Psychopath derivedTrait = trait as Psychopath;
-            victim1Requirement = derivedTrait.victim1Requirement;
-            //victim2Requirement = derivedTrait.victim2Requirement;
-
-            //isFollowing = derivedTrait.isFollowing;
-            //hasStartedFollowing = derivedTrait.hasStartedFollowing;
-
-            if (derivedTrait.targetVictim != null) {
-                targetVictimID = derivedTrait.targetVictim.id;
-            } else {
-                targetVictimID = -1;
-            }
-        }
-
-        // public override Trait Load(ref Character responsibleCharacter) {
-        //     Trait trait = base.Load(ref responsibleCharacter);
-        //     Psychopath derivedTrait = trait as Psychopath;
-        //     derivedTrait.SetVictimRequirements(victim1Requirement);
-        //     //derivedTrait.SetVictim2Requirement(victim2Requirement);
-        //
-        //     //derivedTrait.SetIsFollowing(isFollowing);
-        //     //derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
-        //
-        //     if (targetVictimID != -1) {
-        //         derivedTrait.SetTargetVictim(CharacterManager.Instance.GetCharacterByID(targetVictimID));
-        //     }
-        //     return trait;
-        // }
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Psychopath psychopath = trait as Psychopath;
+        Assert.IsNotNull(psychopath);
+        victim1Requirement = psychopath.victim1Requirement;
+        targetVictimID = psychopath.targetVictim != null ? psychopath.targetVictim.persistentID : string.Empty;
     }
 }
+#endregion
