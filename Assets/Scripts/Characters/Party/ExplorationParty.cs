@@ -151,14 +151,14 @@ public class ExplorationParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if (data is SaveDataExplorationParty subData) {
-            if (!string.IsNullOrEmpty(data.targetStructure)) {
+            if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
             for (int i = 0; i < subData.alreadyExplored.Count; i++) {
                 LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.alreadyExplored[i]);
                 alreadyExplored.Add(structure);
             }
-            if (!string.IsNullOrEmpty(data.regionRefForGettingNewStructure)) {
+            if (!string.IsNullOrEmpty(subData.regionRefForGettingNewStructure)) {
                 regionRefForGettingNewStructure = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionRefForGettingNewStructure);
             }
         }

@@ -92,7 +92,7 @@ public class CounterattackParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if(data is SaveDataCounterattackParty subData) {
-            if (!string.IsNullOrEmpty(data.targetStructure)) {
+            if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
         }
