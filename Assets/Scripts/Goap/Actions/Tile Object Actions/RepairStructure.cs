@@ -19,7 +19,7 @@ public class RepairStructure : GoapAction {
         //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", false, GOAP_EFFECT_TARGET.TARGET));
         // AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource);
     }
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         Assert.IsTrue(target is StructureTileObject, $"Repair structure is being advertised by something that is not a StructureTileObject! {target}");
         StructureTileObject structureTileObject = target as StructureTileObject;
         List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
@@ -49,7 +49,7 @@ public class RepairStructure : GoapAction {
         base.Perform(goapNode);
         SetState("Repair Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 2;
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
@@ -127,7 +127,7 @@ public class RepairStructure : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
         bool requirementsSatisfied = base.AreRequirementsSatisfied(actor, target, otherData);
         if (requirementsSatisfied) {
             if (target is StructureTileObject structureTileObject) {

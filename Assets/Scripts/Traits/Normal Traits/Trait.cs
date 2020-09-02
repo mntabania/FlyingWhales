@@ -1,19 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Interrupts;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     [System.Serializable]
-    public class Trait : IMoodModifier{
-        //public virtual string nameInUI {
-        //    get { return name; }
-        //}
-        public virtual bool isNotSavable {
-            get { return false; }
-        }
-
+    public class Trait : IMoodModifier, ISavable{
         //Non-changeable values
         public string name;
         public string description;
@@ -22,85 +16,64 @@ namespace Traits {
         public TRAIT_EFFECT effect;
         public List<INTERACTION_TYPE> advertisedInteractions;
         public int ticksDuration; //Zero (0) means Permanent
-        public int level;
         public int moodEffect;
         public bool isHidden;
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
-        //public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
-        //public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
-        //public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
-        //public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
-        //public bool hasOnCollideWith;
-        //public bool hasOnEnterGridTile;
-        //public bool isStacking;
-        //public int stackLimit;
-        //public float stackModifier;
         public ELEMENTAL_TYPE elementalType;
-        //public bool isNonRemovable; //determines if trait can be removed through natural process (ie. RemoveTrait, etc.), if this is set to true, it means that it can only be removed by certain functions
 
-        public Character responsibleCharacter { get { return responsibleCharacters != null ? responsibleCharacters.FirstOrDefault() : null; } }
+        /// <summary>
+        /// Persistent ID of this trait. NOTE: Only instanced traits use this.
+        /// </summary>
+        public string persistentID { get; private set; }
+        public OBJECT_TYPE objectType => OBJECT_TYPE.Trait;
         public List<Character> responsibleCharacters { get; protected set; }
-        //public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
         public ActualGoapNode gainedFromDoing { get; protected set; } //what action was this poi involved in that gave it this trait.
-        public GameDate dateEstablished { get; protected set; }
         public List<string> traitOverrideFunctionIdentifiers { get; protected set; }
-        //public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
+
+        #region Getters
+        public virtual Type serializedData => typeof(SaveDataTrait);
+        public Character responsibleCharacter => responsibleCharacters?.FirstOrDefault();
         public string moodModificationDescription => name;
         public int moodModifier => moodEffect;
         public string descriptionInUI => GetDescriptionInUI();
-
         public virtual bool isPersistent => false; //should this trait persist through all a character's alter egos
         public virtual bool isSingleton => false;
-
+        #endregion
+        
+        #region Initialization
+        public void InitializeInstancedTrait() {
+            persistentID = UtilityScripts.Utilities.GetNewUniqueID();
+            DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
+        }
+        public virtual void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            persistentID = saveDataTrait.persistentID;
+            Assert.IsFalse(string.IsNullOrEmpty(persistentID), $"Trait {saveDataTrait.name} does not have a persistent ID!");
+            DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
+        }
+        public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) { }
+        #endregion
+        
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
-            //if(type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
-            //    Character character = sourceCharacter as Character;
-            //    character.CreateApprehendJob();
-            //}
             if(addedTo is Character) {
                 Character character = addedTo as Character;
                 character.moodComponent.AddMoodEffect(moodEffect, this);
-                //if (string.IsNullOrEmpty(thoughtText) == false) {
-                //    character.AddOverrideThought(thoughtText);
-                //}
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
                     character.combatComponent.SetElementalType(elementalType);
                 }
             }
-            if (level == 0) {
-                SetLevel(1);
-            }
-            SetDateEstablished(GameManager.Instance.Today());
         }
         public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                character.moodComponent.RemoveMoodEffect(-moodEffect, this);    
-                //if (name == "Criminal") {
-                //    if (!character.traitContainer.HasTrait("Criminal")) {
-                //        character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
-                //    }
-                //}
-                //if (string.IsNullOrEmpty(thoughtText) == false) {
-                //    character.RemoveOverrideThought(thoughtText);
-                //}
+                character.moodComponent.RemoveMoodEffect(-moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
                     character.combatComponent.UpdateElementalType();
-                    //bool hasSetElementalTrait = false;
-                    //for (int i = 0; i < character.traitContainer.traits.Count; i++) {
-                    //    Trait currTrait = character.traitContainer.traits[i];
-                    //    if(currTrait.elementalType != ELEMENTAL_TYPE.Normal) {
-                    //        character.combatComponent.SetElementalType(elementalType);
-                    //        hasSetElementalTrait = true;
-                    //        break;
-                    //    }
-                    //}
-                    //if (!hasSetElementalTrait) {
-                    //    character.combatComponent.SetElementalType(ELEMENTAL_TYPE.Normal);
-                    //}
                 }
+            }
+            if (TraitManager.Instance.IsInstancedTrait(name)) {
+                DatabaseManager.Instance.traitDatabase.UnRegisterTrait(this);    
             }
         }
         public virtual void OnRemoveStatusBySchedule(ITraitable removedFrom) { }
@@ -114,7 +87,6 @@ namespace Traits {
         /// <param name="character">The character that died.</param>
         /// <returns>If this trait was removed or not.</returns>
         public virtual bool OnDeath(Character character) { return false; }
-        //public virtual bool OnAfterDeath(Character character, string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) { return false; }
         /// <summary>
         /// Used to return necessary actions when a character with this trait
         /// returns to life.
@@ -125,8 +97,6 @@ namespace Traits {
             return string.Empty;
         }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
-        // public virtual bool OnOthersSeeThisEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
-        // public virtual bool OnOthersSeeThisInDiffStructureEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
         public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }
         public virtual void OnEnterGridTile(IPointOfInterest poiWhoEntered, IPointOfInterest owner) { }
         public virtual void OnInitiateMapObjectVisual(ITraitable traitable) { }
@@ -178,9 +148,6 @@ namespace Traits {
             if (!character.canPerform) {
                 reasons.Add("Characters that cannot perform cannot be targeted by Trigger Flaw.");
             }
-            //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER)) {
-            //    reasons.Add("Inactive characters cannot be targeted by Trigger Flaw.");
-            //}
             return reasons;
 
         }
@@ -205,9 +172,6 @@ namespace Traits {
         public void SetGainedFromDoing(ActualGoapNode action) {
             gainedFromDoing = action;
         }
-        //public void OverrideDuration(int newDuration) {
-        //    ticksDuration = newDuration;
-        //}
         public virtual void AddCharacterResponsibleForTrait(Character character) {
             if (character != null) {
                 if (responsibleCharacters == null) {
@@ -226,37 +190,6 @@ namespace Traits {
             }
             return false;
         }
-        //public void SetExpiryTicket(ITraitable obj, string expiryTicket) {
-        //    if (expiryTickets == null) {
-        //        expiryTickets = new Dictionary<ITraitable, string>();
-        //    }
-        //    if (!expiryTickets.ContainsKey(obj)) {
-        //        expiryTickets.Add(obj, expiryTicket);
-        //    } else {
-        //        expiryTickets[obj] = expiryTicket;
-        //    }
-        //}
-        //public void RemoveExpiryTicket(ITraitable traitable) {
-        //    if (expiryTickets != null) {
-        //        expiryTickets.Remove(traitable);
-        //    }
-        //}
-        public void LevelUp() {
-            level++;
-            level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
-            OnChangeLevel();
-        }
-        public void SetLevel(int amount) {
-            level = amount;
-            level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
-            OnChangeLevel();
-        }
-        public void SetDateEstablished(GameDate date) {
-            dateEstablished = date;
-        }
-        //public void SetTraitEffects(List<TraitEffect> effects) {
-        //    this.effects = effects;
-        //}
         protected bool TryTransferJob(JobQueueItem currentJob, Character characterThatWillDoJob) {
             if (currentJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT || currentJob.originalOwner.ownerType == JOB_OWNER.FACTION) {
                 bool canBeTransfered = false;
@@ -296,9 +229,12 @@ namespace Traits {
         /// If this trait modifies any costs of an action, put it here.
         /// </summary>
         /// <param name="action">The type of action.</param>
+        /// <param name="actor"></param>
+        /// <param name="poiTarget"></param>
+        /// <param name="otherData"></param>
         /// <param name="cost">The cost to be modified.</param>
-        public virtual void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) { }
-        public virtual void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref List<GoapEffect> effects) { }
+        public virtual void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) { }
+        public virtual void ExecuteExpectedEffectModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref List<GoapEffect> effects) { }
         public virtual void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) { }
         public virtual void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) { }

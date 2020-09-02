@@ -1,17 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     public class Infected : Status {
 
+        public bool isLiving { get; private set; }
+        
         private Character owner;
         private bool _hasAlreadyDied;
-        public bool isLiving { get; private set; }
         private GameObject _infectedEffectGO;
 
-        public override bool isPersistent { get { return true; } }
-
+        #region getters
+        public override bool isPersistent => true;
+        public bool hasAlreadyDied => _hasAlreadyDied;
+        #endregion
+        
         public Infected() {
             name = "Infected";
             description = "Zombie Virus is circulating inside it.";
@@ -27,6 +32,19 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             //AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
         }
+
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataInfected saveDataInfected = saveDataTrait as SaveDataInfected;
+            Assert.IsNotNull(saveDataInfected);
+            _hasAlreadyDied = saveDataInfected.hasAlreadyDied;
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            //TODO: Load is living
+        }
+        #endregion
 
         #region Override
         public override void OnAddTrait(ITraitable addedTo) {
@@ -53,7 +71,7 @@ namespace Traits {
             }
         }
         public override bool OnDeath(Character character) {
-            if (_hasAlreadyDied) {
+            if (hasAlreadyDied) {
                 SetIsLiving(false);
             } else {
                 SetHasAlreadyDied(true);
@@ -82,7 +100,7 @@ namespace Traits {
         }
 
         private void HourlyCheck() {
-            if (!_hasAlreadyDied) {
+            if (!hasAlreadyDied) {
                 if(UnityEngine.Random.Range(0, 100) < 5) { //20
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Zombie_Death, owner);
                     owner.movementComponent.AdjustRunSpeedModifier(1f);
@@ -178,3 +196,16 @@ namespace Traits {
     }
 }
 
+#region Save Data
+public class SaveDataInfected : SaveDataTrait {
+    public bool hasAlreadyDied;
+    public bool isLiving;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Infected infected = trait as Infected;
+        Assert.IsNotNull(infected);
+        hasAlreadyDied = infected.hasAlreadyDied;
+        isLiving = infected.isLiving;
+    }
+}
+#endregion

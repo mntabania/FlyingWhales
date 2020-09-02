@@ -1,18 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class Overheating : Status {
-        //public override bool isSingleton => true;
+        
         public ITraitable traitable { get; private set; }
         public List<LocationStructure> excludedStructuresInSeekingShelter { get; private set; }
         public LocationStructure currentShelterStructure { get; private set; }
+        
         private GameObject _overheatingEffectGO;
-        private WeightedDictionary<string> weights;
+        private readonly WeightedDictionary<string> weights;
 
-
+        #region getters
+        public override Type serializedData => typeof(SaveDataOverheating);
+        #endregion
+        
         public Overheating() {
             name = "Overheating";
             description = "Its temperature is burning up.";
@@ -29,6 +35,18 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataOverheating saveDataOverheating = saveDataTrait as SaveDataOverheating;
+            Assert.IsNotNull(saveDataOverheating);
+            excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(saveDataOverheating.excludedStructuresInSeekingShelter);
+            if (!string.IsNullOrEmpty(saveDataOverheating.currentShelterStructure)) {
+                currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataOverheating.currentShelterStructure);    
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -134,3 +152,18 @@ namespace Traits {
         #endregion
     }
 }
+#region Save Data
+public class SaveDataOverheating : SaveDataTrait {
+    public List<string> excludedStructuresInSeekingShelter;
+    public string currentShelterStructure;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Overheating overheating = trait as Overheating;
+        Assert.IsNotNull(overheating);
+        excludedStructuresInSeekingShelter = SaveUtilities.ConvertSavableListToIDs(overheating.excludedStructuresInSeekingShelter);
+        if (overheating.currentShelterStructure != null) {
+            currentShelterStructure = overheating.currentShelterStructure.persistentID;    
+        }
+    }
+}
+#endregion

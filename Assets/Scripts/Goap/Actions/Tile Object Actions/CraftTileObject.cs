@@ -16,7 +16,7 @@ public class CraftTileObject : GoapAction {
     //protected override void ConstructBasePreconditionsAndEffects() {
     //    AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         if(target is TileObject tileObject) {
             TileObjectData data = TileObjectDB.GetTileObjectData(tileObject.tileObjectType);
             if (data != null && data.itemRequirementsForCreation != null) {
@@ -48,7 +48,7 @@ public class CraftTileObject : GoapAction {
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.Rng.Next(150, 201);
         costLog += $" +{cost}(Initial)";
@@ -129,7 +129,7 @@ public class CraftTileObject : GoapAction {
     //    return false;
     //    //return actor.supply >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;
     //}
-    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, string itemName) {
+    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, string itemName) {
         return actor.IsPOICarriedOrInInventory(itemName);
     }
     private bool HasWood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
@@ -147,7 +147,7 @@ public class CraftTileObject : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget is TileObject) {

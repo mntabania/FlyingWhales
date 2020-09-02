@@ -7,8 +7,7 @@ using UnityEngine;
 namespace Traits {
     public class Lycanthrope : Trait {
         public Character owner { get; private set; }
-        public override bool isPersistent { get { return true; } }
-
+        public override bool isPersistent => true;
         private int _level;
         public Lycanthrope() {
             name = "Lycanthrope";
@@ -72,168 +71,6 @@ namespace Traits {
         //}
         #endregion
 
-        //public void CheckForLycanthropy() {
-        //    int chance = UnityEngine.Random.Range(0, 100);
-        //    //TODO:
-        //    //if (restingTrait.lycanthropyTrait == null) {
-        //    //    if (currentState.currentDuration == currentState.duration) {
-        //    //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-        //    //        bool isTargettedByDrinkBlood = false;
-        //    //        for (int i = 0; i < actor.targettedByAction.Count; i++) {
-        //    //            if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-        //    //                isTargettedByDrinkBlood = true;
-        //    //                break;
-        //    //            }
-        //    //        }
-        //    //        if (isTargettedByDrinkBlood) {
-        //    //            currentState.OverrideDuration(currentState.duration + 1);
-        //    //        }
-        //    //    }
-        //    //} else {
-        //    //    bool isTargettedByDrinkBlood = false;
-        //    //    for (int i = 0; i < actor.targettedByAction.Count; i++) {
-        //    //        if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
-        //    //            isTargettedByDrinkBlood = true;
-        //    //            break;
-        //    //        }
-        //    //    }
-        //    //    if (currentState.currentDuration == currentState.duration) {
-        //    //        //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
-        //    //        if (isTargettedByDrinkBlood) {
-        //    //            currentState.OverrideDuration(currentState.duration + 1);
-        //    //        } else {
-        //    //            if (!restingTrait.hasTransformed) {
-        //    //                restingTrait.CheckForLycanthropy(true);
-        //    //            }
-        //    //        }
-        //    //    } else {
-        //    //        if (!isTargettedByDrinkBlood) {
-        //    //            restingTrait.CheckForLycanthropy();
-        //    //        }
-        //    //    }
-        //    //}
-        //    if (activeForm.race == RACE.WOLF) {
-        //        //Turn back to normal form
-        //        if (chance < 25) {
-        //            PlanRevertToNormal();
-        //        }
-        //    } else {
-        //        //Turn to wolf
-        //        if (chance < 25) {
-        //            PlanTransformToWolf();
-        //        }
-        //    }
-        //}
-
-        //public void PlanTransformToWolf() {
-        //    _character.currentActionNode?.EndPerTickEffect();
-        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM, _character, _character);
-        //    _character.jobQueue.AddJobInQueue(job);
-        //}
-        //public void PlanRevertToNormal() {
-        //    _character.currentActionNode?.EndPerTickEffect();
-        //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.REVERT_TO_NORMAL_FORM, _character, _character);
-        //    _character.jobQueue.AddJobInQueue(job);
-        //}
-        //public void TurnToWolf() {
-        //    ////Drop all plans except for the current action
-        //    //_character.AdjustIsWaitingForInteraction(1);
-        //    //_character.DropAllPlans(_character.currentActionNode.action.parentPlan);
-        //    //_character.AdjustIsWaitingForInteraction(-1);
-
-        //    ////Copy non delicate data
-        //    //data.SetData(_character);
-
-        //    //_character.SetHomeStructure(null);
-
-        //    ////Reset needs
-        //    //_character.ResetFullnessMeter();
-        //    //_character.ResetHappinessMeter();
-        //    //_character.ResetTirednessMeter();
-
-
-        //    ////Remove all awareness then add all edible plants and small animals of current location to awareness
-        //    //_character.awareness.Clear();
-        //    //foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
-        //    //    for (int i = 0; i < structures.Count; i++) {
-        //    //        for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-        //    //            IPointOfInterest poi = structures[i].pointsOfInterest[j];
-        //    //            if(poi is TileObject) {
-        //    //                TileObject tileObj = poi as TileObject;
-        //    //                if(tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-        //    //                    _character.AddAwareness(tileObj);
-        //    //                }
-        //    //            }
-        //    //        }
-        //    //    }
-        //    //}
-
-        //    ////Copy relationship data then remove them
-        //    ////data.SetRelationshipData(_character);
-        //    ////_character.RemoveAllRelationships(false);
-        //    //foreach (Character target in _character.relationships.Keys) {
-        //    //    CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, true);
-        //    //}
-
-        //    ////Remove race and class
-        //    ////This is done first so that when the traits are copied, it will not copy the traits from the race and class because if it is copied and the race and character is brought back, it will be doubled, which is not what we want
-        //    //_character.RemoveRace();
-        //    //_character.RemoveClass();
-
-        //    ////Copy traits and then remove them
-        //    //data.SetTraits(_character);
-        //    //_character.RemoveAllNonRelationshipTraits("Lycanthrope");
-
-        //    ////Change faction and race
-        //    //_character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        //    //_character.SetRace(RACE.WOLF);
-
-        //    ////Change class and role
-        //    //_character.AssignRole(CharacterRole.BEAST);
-        //    //_character.AssignClassByRole(_character.role);
-
-        //    //Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, _character);
-
-        //    //_character.CancelAllJobsTargettingThisCharacter("target is not found", false);
-        //    //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, _character, "target is not found");
-
-        //    _character.SwitchAlterEgo("Lycanthrope");
-        //    //Plan idle stroll to the wilderness
-        //    LocationStructure wilderness = _character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-        //    LocationGridTile targetTile = wilderness.GetRandomTile();
-        //    _character.PlanIdleStroll(wilderness, targetTile);
-        //}
-
-        //public void RevertToNormal() {
-        //    ////Drop all plans except for the current action
-        //    //_character.AdjustIsWaitingForInteraction(1);
-        //    //_character.DropAllPlans(_character.currentActionNode.action.parentPlan);
-        //    //_character.AdjustIsWaitingForInteraction(-1);
-
-        //    ////Revert back data including awareness
-        //    //_character.SetFullness(data.fullness);
-        //    //_character.SetTiredness(data.tiredness);
-        //    //_character.SetHappiness(data.happiness);
-        //    //_character.CopyAwareness(data.awareness);
-        //    //_character.SetHomeStructure(data.homeStructure);
-        //    //_character.ChangeFactionTo(data.faction);
-        //    //_character.ChangeRace(data.race);
-        //    //_character.AssignRole(data.role);
-        //    //_character.AssignClass(data.characterClass);
-
-        //    ////Bring back lost relationships
-        //    //foreach (Character target in _character.relationships.Keys) {
-        //    //    CharacterManager.Instance.SetIsDisabledRelationshipBetween(_character, target, false);
-        //    //}
-
-        //    ////Revert back the traits
-        //    //for (int i = 0; i < data.traits.Count; i++) {
-        //    //    _character.AddTrait(data.traits[i]);
-        //    //}
-
-        //    _character.SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
-        //}
-
         public override string TriggerFlaw(Character character) {
             if (IsAlone()) {
                 DoTransform();
@@ -244,7 +81,7 @@ namespace Traits {
                 LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new object[] { wilderness });
+                character.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, character, new OtherData[] { new LocationStructureOtherData(wilderness),  });
             }
             return base.TriggerFlaw(character);
         }
@@ -258,7 +95,7 @@ namespace Traits {
                 LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 //LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
                 //character.marker.GoTo(randomWildernessTile, CheckIfAlone);
-                owner.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new object[] { wilderness });
+                owner.PlanAction(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.STEALTH_TRANSFORM, owner, new OtherData[] { new LocationStructureOtherData(wilderness) });
             }
         }
         private bool IsAlone() {
@@ -365,7 +202,7 @@ namespace Traits {
                 form.trapStructure.SetStructureAndDuration(null, 0);
                 form.trapStructure.SetForcedStructure(null);
             }
-            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+            Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             if (form.carryComponent.isBeingCarriedBy != null) {
                 form.carryComponent.masterCharacter.UncarryPOI(form);
             }

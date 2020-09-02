@@ -509,7 +509,7 @@ namespace Inner_Maps {
             return DatabaseManager.Instance.tileObjectDatabase.GetTileObject(type, id);
         }
         public TileObject GetTileObjectByPersistentID(string id) {
-            return DatabaseManager.Instance.tileObjectDatabase.GetTileObject(id);
+            return DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(id);
         }
         public TileObject GetFirstTileObject(TILE_OBJECT_TYPE type) {
             return DatabaseManager.Instance.tileObjectDatabase.GetFirstTileObject(type);

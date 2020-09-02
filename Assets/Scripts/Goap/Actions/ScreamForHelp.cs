@@ -22,7 +22,7 @@ public class ScreamForHelp : GoapAction {
         base.Perform(goapNode);
         SetState("Scream Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     #endregion

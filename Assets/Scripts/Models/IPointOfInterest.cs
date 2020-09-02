@@ -6,6 +6,7 @@ using Traits;
 
 public interface IPointOfInterest : ITraitable, ISelectable {
     string persistentID { get; }
+    OBJECT_TYPE objectType { get; }
     new string name { get; }
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     string nameWithID { get; }
@@ -34,10 +35,8 @@ public interface IPointOfInterest : ITraitable, ISelectable {
     void SetPOIState(POI_STATE state);
     bool IsAvailable();
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,
-        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log);
-    bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
-        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost);
+    GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log);
+    bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost);
     bool IsValidCombatTargetFor(IPointOfInterest source);
     bool IsStillConsideredPartOfAwarenessByCharacter(Character character);
     bool IsOwnedBy(Character character);

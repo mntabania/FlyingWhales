@@ -12,7 +12,7 @@
         SetState(goapNode.actor.HasItem(TILE_OBJECT_TYPE.ICE_CRYSTAL) ? "Ice Cleanse Success" : "Cleanse Success",
             goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;

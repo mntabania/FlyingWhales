@@ -25,7 +25,7 @@ public class Tantrum : GoapAction {
         base.Perform(goapNode);
         SetState("Tantrum Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         //**Cost**: randomize between 3-10
         return UtilityScripts.Utilities.Rng.Next(3, 11);
     }
@@ -33,7 +33,7 @@ public class Tantrum : GoapAction {
 
     #region Effects
     public void PreTantrumSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(null, (string)goapNode.otherData[0], LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, (string)goapNode.otherData[0].obj, LOG_IDENTIFIER.STRING_1);
     }
     public void AfterTantrumSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Berserked");
@@ -41,7 +41,7 @@ public class Tantrum : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return actor == poiTarget;

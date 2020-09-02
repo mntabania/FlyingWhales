@@ -37,7 +37,7 @@ namespace Traits {
                 character.AddTraitNeededToBeRemoved(this);
                 //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(5);
 
-                if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
+                if (gainedFromDoing == null) {
                     character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } else {
                     if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT) {
@@ -47,7 +47,6 @@ namespace Traits {
                         }
                         addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        //TODO: gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
                     }
                 }
                 //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);

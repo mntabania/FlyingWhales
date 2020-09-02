@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
@@ -8,13 +10,17 @@ namespace Traits {
 
         public List<Character> awareCharacters { get; } //characters that know about this trait
         private ITraitable traitable { get; set; } //poi that has the poison
+        public Character cleanser { get; private set; }
+        
         private Character characterOwner;
         private StatusIcon _statusIcon;
         private GameObject _poisonedEffect;
-        public Character cleanser { get; private set; }
-
         private bool _isVenomous;
 
+        #region getters
+        public override Type serializedData => typeof(SaveDataPoisoned);
+        #endregion
+        
         public Poisoned() {
             name = "Poisoned";
             description = "Is suffering from progressive damage. | Is full of poison.";
@@ -22,7 +28,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(4);
             isTangible = true;
-            //effects = new List<TraitEffect>();
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_POISON, };
             awareCharacters = new List<Character>();
             mutuallyExclusive = new string[] { "Robust" };
@@ -30,13 +35,19 @@ namespace Traits {
             isStacking = true;
             stackLimit = 5;
             stackModifier = 0.5f;
-            SetLevel(1);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
+        #region Loading
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            //TODO: Load aware characters
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -194,25 +205,17 @@ namespace Traits {
         #endregion
         
     }
+}
 
-    public class SaveDataPoisoned : SaveDataTrait {
-        public List<int> awareCharacterIDs;
+#region Save Data
+public class SaveDataPoisoned : SaveDataTrait {
+    public List<string> awareCharacterIDs;
 
-        public override void Save(Trait trait) {
-            base.Save(trait);
-            Poisoned derivedTrait = trait as Poisoned;
-            for (int i = 0; i < derivedTrait.awareCharacters.Count; i++) {
-                awareCharacterIDs.Add(derivedTrait.awareCharacters[i].id);
-            }
-        }
-
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            Poisoned derivedTrait = trait as Poisoned;
-            for (int i = 0; i < awareCharacterIDs.Count; i++) {
-                derivedTrait.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharacterIDs[i]));
-            }
-            return trait;
-        }
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Poisoned poisoned = trait as Poisoned;
+        Assert.IsNotNull(poisoned);
+        awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(poisoned.awareCharacters);
     }
 }
+#endregion

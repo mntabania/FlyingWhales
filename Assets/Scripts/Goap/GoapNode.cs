@@ -110,7 +110,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public Character disguisedActor { get; private set; }
     public Character disguisedTarget { get; private set; }
     public bool isStealth { get; private set; }
-    public object[] otherData { get; private set; }
+    public OtherData[] otherData { get; private set; }
     public int cost { get; private set; }
 
     public GoapAction action { get; private set; }
@@ -161,7 +161,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public System.Type serializedData => typeof(SaveDataActualGoapNode);
     #endregion
 
-    public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
+    public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
         persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         this.action = action;
         this.actor = actor;

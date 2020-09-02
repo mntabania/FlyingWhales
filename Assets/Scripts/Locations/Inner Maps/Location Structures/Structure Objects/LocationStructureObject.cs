@@ -155,7 +155,6 @@ public class LocationStructureObject : PooledObject {
                 newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, npcSettlement);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
-                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
                 npcSettlement.AddToAvailableJobs(job);    
             }
             

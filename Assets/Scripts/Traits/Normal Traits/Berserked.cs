@@ -5,13 +5,7 @@ using Random = UnityEngine.Random;
 
 namespace Traits {
     public class Berserked : Status {
-
-        public override bool isNotSavable {
-            get { return true; }
-        }
-        
         private Character _owner;
-        // private List<CharacterBehaviourComponent> _behaviourComponentsBeforeBerserked;
         
         public Berserked() {
             name = "Berserked";
@@ -21,10 +15,8 @@ namespace Traits {
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(6);
             hindersWitness = true;
             hindersSocials = true;
-            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
-            //AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Cannot_Witness_Trait);
         }
 
         #region Overrides
@@ -137,20 +129,6 @@ namespace Traits {
         //    }
         //}
         #endregion
-        
-        //#region Chaos Orb
-        //private void CheckForChaosOrb() {
-        //    string summary = $"{_owner.name} is rolling for chaos orb in berserked trait";
-        //    int roll = Random.Range(0, 100);
-        //    int chance = 60;
-        //    summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
-        //    if (roll < chance) {
-        //        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, _owner.marker.transform.position, 
-        //            1, _owner.currentRegion.innerMap);
-        //    }
-        //    _owner.logComponent.PrintLogIfActive(summary);
-        //}
-        //#endregion
     }
 }
 

@@ -23,10 +23,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                         x.hasFreezingTrap == false && x.isOccupied == false && x.IsNextToSettlement() == false).ToList();
                 if (locationGridTileChoices.Count > 0) {
                     LocationGridTile targetTile = CollectionUtilities.GetRandomElement(locationGridTileChoices);
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP,
-                        INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.genericTileObject, character);
-                    job.AddOtherData(INTERACTION_TYPE.PLACE_FREEZING_TRAP,  
-                        new object[] { new TrapChecker(c => c.race != RACE.KOBOLD) });
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, INTERACTION_TYPE.PLACE_FREEZING_TRAP, targetTile.genericTileObject, character);
                     producedJob = job;
                     log += $"\nCreated job to place trap at {targetTile}.";
                     return true;

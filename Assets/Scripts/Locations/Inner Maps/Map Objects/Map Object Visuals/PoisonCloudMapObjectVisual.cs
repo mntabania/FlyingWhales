@@ -21,10 +21,6 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
     public bool wasJustPlaced { get; private set; }
 
     #region Abstract Members Implementation
-    public virtual void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
-    public virtual bool IsMapObjectMenuVisible() {
-        return true;
-    }
     public override void UpdateTileObjectVisual(TileObject obj) { }
     #endregion
 
@@ -76,6 +72,12 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             _cloudEffect.Play();
             _explosionEffect.Play();
         }
+    }
+    public override void SetWorldPosition(Vector3 worldPosition) {
+        base.SetWorldPosition(worldPosition);
+        _movement?.Kill();
+        _movement = null;
+        MoveToRandomDirection();
     }
     public override void Reset() {
         base.Reset();

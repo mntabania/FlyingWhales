@@ -19,7 +19,7 @@ public class FeelingConcerned : GoapAction {
         base.Perform(goapNode);
         SetState("Concerned Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     #endregion

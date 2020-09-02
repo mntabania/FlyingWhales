@@ -20,6 +20,7 @@ public class IgniteData : PlayerAction {
         // LocationGridTile tile = targetPOI.gridTileLocation;
         BurningSource bs = new BurningSource();
         Burning burning = new Burning();
+        burning.InitializeInstancedTrait();
         burning.SetSourceOfBurning(bs, targetPOI);
         targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");

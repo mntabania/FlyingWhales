@@ -165,10 +165,11 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
 
 public class SaveDataStructureWallObject : SaveData<StructureWallObject> {
     public int currentHP;
-    public List<SaveDataTrait> traits;
+    public SaveDataTraitContainer saveDataTraitContainer;
     
     public override void Save(StructureWallObject data) {
         currentHP = data.currentHP;
-        //TODO: Save traits!
+        saveDataTraitContainer = new SaveDataTraitContainer();
+        saveDataTraitContainer.Save(data.traitContainer);
     }
 }

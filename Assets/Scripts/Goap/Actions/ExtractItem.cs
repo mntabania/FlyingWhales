@@ -18,7 +18,7 @@ public class ExtractItem : GoapAction {
         //AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Ice", false, GOAP_EFFECT_TARGET.ACTOR));
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_POI, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         if (target.traitContainer.HasTrait("Wet")) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Water Flask", false, GOAP_EFFECT_TARGET.ACTOR));
@@ -62,7 +62,7 @@ public class ExtractItem : GoapAction {
         text = article + " " + text;
         log.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 250;
         costLog += $" +{cost}(Initial)";
@@ -127,7 +127,7 @@ public class ExtractItem : GoapAction {
     #endregion
 
     #region Requirement
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             return actor != poiTarget && (poiTarget.traitContainer.HasTrait("Wet", "Burning", "Frozen") || poiTarget is SnowMound);

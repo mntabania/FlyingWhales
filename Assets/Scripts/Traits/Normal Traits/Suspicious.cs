@@ -13,7 +13,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
-            //effects = new List<TraitEffect>();
         }
 
         #region Overrides

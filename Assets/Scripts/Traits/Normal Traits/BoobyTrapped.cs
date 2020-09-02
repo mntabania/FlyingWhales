@@ -1,15 +1,22 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class BoobyTrapped : Status {
         private ELEMENTAL_TYPE _element;
         
         public List<Character> awareCharacters { get; } //characters that know about this trait
         private ITraitable traitable { get; set; } //poi that has the trait
-        
+
+        #region getters
+        public ELEMENTAL_TYPE element => _element;
+        public override Type serializedData => typeof(SaveDataBoobyTrapped);
+        #endregion
+
         public BoobyTrapped() {
             name = "Booby Trapped";
             description = "This object will explode with [Element] damage if someone interacts with it.";
@@ -20,6 +27,20 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
         }
 
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataBoobyTrapped saveDataBoobyTrapped = saveDataTrait as SaveDataBoobyTrapped;
+            Assert.IsNotNull(saveDataBoobyTrapped);
+            _element = saveDataBoobyTrapped.elementalType;
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            //TODO: Load aware characters
+            throw new NotImplementedException();
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -82,7 +103,7 @@ namespace Traits {
                 List<IPointOfInterest> pois = currTile.GetPOIsOnTile();
                 for (int j = 0; j < pois.Count; j++) {
                     IPointOfInterest currPOI = pois[j];
-                    currPOI.AdjustHP(-800, _element, true);
+                    currPOI.AdjustHP(-800, element, true);
                 }
             }
             target.traitContainer.RemoveTrait(target, this);
@@ -94,3 +115,17 @@ namespace Traits {
         }
     }
 }
+
+#region Save Data
+public class SaveDataBoobyTrapped : SaveDataTrait {
+    public List<string> awareCharactersIDs;
+    public ELEMENTAL_TYPE elementalType;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        BoobyTrapped boobyTrapped = trait as BoobyTrapped;
+        Assert.IsNotNull(boobyTrapped);
+        awareCharactersIDs = SaveUtilities.ConvertSavableListToIDs(boobyTrapped.awareCharacters);
+        elementalType = boobyTrapped.elementalType;
+    }
+}
+#endregion

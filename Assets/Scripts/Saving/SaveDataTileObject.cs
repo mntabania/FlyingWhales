@@ -16,7 +16,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public bool isPreplaced;
     public int[] resourceValues; //food, wood, stone, metal
     public POI_STATE poiState;
-    public INTERACTION_TYPE[] advertisedActions; 
+    public INTERACTION_TYPE[] advertisedActions;
+    public List<string> jobsTargetingThis;
     
     //hp
     public int currentHP;
@@ -25,6 +26,11 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public string spriteName;
     public QuaternionSave rotation;
     
+    //Traits
+    public SaveDataTraitContainer saveDataTraitContainer;
+
+    public SaveDataLogComponent logComponent;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     #endregion
@@ -52,12 +58,17 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             advertisedActions[i] = interactionType;
         }
         
+        jobsTargetingThis = new List<string>();
+        for (int i = 0; i < data.allJobsTargetingThis.Count; i++) {
+            JobQueueItem jobQueueItem = data.allJobsTargetingThis[i];
+            jobsTargetingThis.Add(jobQueueItem.persistentID);
+        }
+        
         currentHP = data.currentHP;
 
         if (data.mapObjectVisual == null || data.mapObjectVisual.usedSprite == null) {
             spriteName = string.Empty;
             rotation = Quaternion.identity;
-            // Debug.Log($"Tile Object {tileObject} has no map object or visual.");
         } else {
             spriteName = data.mapObjectVisual.usedSprite.name;
             rotation = data.mapObjectVisual.rotation;
@@ -70,6 +81,11 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             index++;
         }
         
+        saveDataTraitContainer = new SaveDataTraitContainer();
+        saveDataTraitContainer.Save(data.traitContainer);
+
+        logComponent = new SaveDataLogComponent();
+        logComponent.Save(data.logComponent);
     }
     public override TileObject Load() {
         TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);

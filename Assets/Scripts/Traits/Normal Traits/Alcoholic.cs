@@ -1,14 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Traits;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     public class Alcoholic : Trait {
 
-        private bool hasDrankWithinTheDay;
+        private bool _hasDrankWithinTheDay;
         private Character owner;
 
+        #region Getter
+        public bool hasDrankWithinTheDay => _hasDrankWithinTheDay;
+        public override Type serializedData => typeof(SaveDataAlcoholic);
+        #endregion
+        
         public Alcoholic() {
             name = "Alcoholic";
             description = "More than just a social drinker.";
@@ -16,9 +23,18 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
             canBeTriggered = true;
-            hasDrankWithinTheDay = true;
+            _hasDrankWithinTheDay = true;
         }
 
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataAlcoholic saveDataAlcoholic = saveDataTrait as SaveDataAlcoholic;
+            Assert.IsNotNull(saveDataAlcoholic);
+            _hasDrankWithinTheDay = saveDataAlcoholic.hasDrankWithinTheDay;
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -57,7 +73,7 @@ namespace Traits {
             }
             return base.TriggerFlaw(character);
         }
-        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
+        public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.DRINK) {
                 cost =  UtilityScripts.Utilities.Rng.Next(5, 20);
@@ -69,15 +85,26 @@ namespace Traits {
             if (!hasDrankWithinTheDay) {
                 owner.traitContainer.AddTrait(owner, "Withdrawal");
             }
-            hasDrankWithinTheDay = false;
+            _hasDrankWithinTheDay = false;
         }
         private void OnPerformAction(ActualGoapNode node) {
             if(node.action.goapType == INTERACTION_TYPE.DRINK) {
                 if (!hasDrankWithinTheDay) {
-                    hasDrankWithinTheDay = true;
+                    _hasDrankWithinTheDay = true;
                 }
             }
         }
     }
-
 }
+
+#region Save Data
+public class SaveDataAlcoholic : SaveDataTrait {
+    public bool hasDrankWithinTheDay;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Traits.Alcoholic alcoholic = trait as Traits.Alcoholic;
+        Assert.IsNotNull(alcoholic);
+        hasDrankWithinTheDay = alcoholic.hasDrankWithinTheDay;
+    }
+}
+#endregion

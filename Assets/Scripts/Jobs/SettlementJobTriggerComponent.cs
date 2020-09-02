@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Goap.Job_Checkers;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Interrupts;
@@ -12,11 +13,6 @@ using UnityEngine.Assertions;
 public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	private readonly NPCSettlement _owner;
-
-	private const int MinimumFood = 100;
-	private const int MinimumMetal = 100;
-	private const int MinimumStone = 100;
-	private const int MinimumWood = 100;
 
 	public List<LocationGridTile> wetTiles { get; }
 	public List<LocationGridTile> poisonedTiles { get; }
@@ -230,13 +226,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private int GetMinimumResource(RESOURCE resource) {
 		switch (resource) {
 			case RESOURCE.FOOD:
-				return MinimumFood;
+				return ProduceResourceApplicabilityChecker.MinimumFood;
 			case RESOURCE.WOOD:
-				return MinimumWood;
+				return ProduceResourceApplicabilityChecker.MinimumWood;
 			case RESOURCE.METAL:
-				return MinimumMetal;
+				return ProduceResourceApplicabilityChecker.MinimumMetal;
 			case RESOURCE.STONE:
-				return MinimumStone;
+				return ProduceResourceApplicabilityChecker.MinimumStone;
 		}
 		throw new Exception($"There is no minimum resource for {resource.ToString()}");
 	}
@@ -330,37 +326,18 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}
 				ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(tileObjectType);
 				_owner.mainStorage.AddPOI(newPile);
-				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT, IsResourcePileStillValid);
+				newPile.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 				targetPile = newPile;
 			}
 			if (_owner.HasJob(jobType) == false) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(
-					GetProduceResourceGoapEffect(resourceType), string.Empty, 
-					false, GOAP_EFFECT_TARGET.ACTOR), targetPile, _owner);
-				if (jobType == JOB_TYPE.PRODUCE_WOOD) {
-					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceWoodJob);
-				} else if (jobType == JOB_TYPE.PRODUCE_METAL) {
-					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceMetalJob);
-				} else if (jobType == JOB_TYPE.PRODUCE_STONE) {
-					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceStoneJob);
-				} else {
-					job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceFoodJob);	
-				}
-			
-				job.SetStillApplicableChecker(() => IsProduceResourceJobStillValid(resourceType));
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, 
+					new GoapEffect(GetProduceResourceGoapEffect(resourceType), string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), 
+					targetPile, _owner);
+				job.SetStillApplicableChecker(JobManager.Produce_Resource_Applicability);
 				_owner.AddToAvailableJobs(job);	
 			}
 				
 		}
-	}
-	private bool IsProduceResourceJobStillValid(RESOURCE resource) {
-		return GetTotalResource(resource) < GetMinimumResource(resource);
-	}
-	private bool IsResourcePileStillValid(BaseMapObject mapObject) {
-		if (mapObject is ResourcePile resourcePile) {
-			return IsProduceResourceJobStillValid(resourcePile.providedResource);
-		}
-		return false;
 	}
 	#endregion
 
@@ -369,8 +346,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (_owner.HasJob(JOB_TYPE.REPAIR, target) == false) {
 			GoapPlanJob job =
 				JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR, target, _owner);
-			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairJob);
-			job.SetStillApplicableChecker(() => IsRepairJobStillValid(target));
+			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Repair);
+			job.SetStillApplicableChecker(JobManager.Repair_Applicability);
 			if (target is TileObject) {
 				TileObject tileObject = target as TileObject;
 				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
@@ -395,15 +372,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Haul
 	public void TryCreateHaulJob(ResourcePile target) {
-		// //if target is in this npcSettlement and is not in the main storage, then create a haul job.
-		// //if target is not in this npcSettlement, check if it is in the wilderness, if it is, then create haul job
-		// bool isAtValidLocation = true;
-		// if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) && target.gridTileLocation.structure != _owner.mainStorage) {
-		// 	isAtValidLocation = false;
-		// } else if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(_owner) == false && target.gridTileLocation.structure is Wilderness) {
-		// 	isAtValidLocation = false;
-		// }
-		//isAtValidLocation == false && 
 		if (_owner.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == _owner.region) {
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, 
@@ -411,20 +379,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			if (chosenPileToDepositTo != null) {
 			    job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { chosenPileToDepositTo });
 			}
-			job.SetStillApplicableChecker(() => IsHaulResourcePileStillApplicable(target));
-			job.SetCanTakeThisJobChecker(CanTakeHaulJob);
+			job.SetStillApplicableChecker(JobManager.Haul_Applicability);
+			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Haul);
 			_owner.AddToAvailableJobs(job);
 		}
-	}
-	private bool CanTakeHaulJob(Character character, JobQueueItem jobQueueItem) {
-		if (jobQueueItem is GoapPlanJob goapPlanJob && goapPlanJob.targetPOI.gridTileLocation != null) {
-			return !character.movementComponent.structuresToAvoid.Contains(goapPlanJob.targetPOI.gridTileLocation.structure);
-		}
-		return false;
-	}
-    private bool IsHaulResourcePileStillApplicable(ResourcePile resourcePile) {
-		return resourcePile.isBeingCarriedBy != null || (resourcePile.gridTileLocation != null
-		       && resourcePile.gridTileLocation.structure != _owner.mainStorage);
 	}
 	#endregion
 
@@ -440,8 +398,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                     Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
                     if (criminalTrait.IsWantedBy(_owner.owner)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, target, _owner);
-                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
-                        job.SetStillApplicableChecker(() => InteractionManager.Instance.IsJudgementJobStillApplicable(target));
+                        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Judgement);
+                        job.SetStillApplicableChecker(JobManager.Judge_Applicability);
                         _owner.AddToAvailableJobs(job);
                     }
                 }
@@ -458,8 +416,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
                 if (criminalTrait.IsWantedBy(_owner.owner)) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP,
                     target, _owner);
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
-                    job.SetStillApplicableChecker(() => IsApprehendStillApplicable(target, job));
+                    job.SetCanTakeThisJobChecker(JobManager.Can_Take_Apprehend);
+                    job.SetStillApplicableChecker(JobManager.Apprehend_Settlement_Applicability);
                     job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
                     job.SetDoNotRecalculate(true);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.prison });
@@ -468,27 +426,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			}
 		}
 	}
-	private bool IsApprehendStillApplicable(Character target, GoapPlanJob job) {
-        bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != _owner.prison;
-        if (target.gridTileLocation != null && isApplicable) {
-	        if (target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner)) {
-		        //if target is within or next to settlement, job is always valid
-		        return true;
-	        } else {
-		        //if target is no longer within settlement then check if job is already taken
-		        if (job.assignedCharacter != null) {
-			        //if job is taken, check if assigned character is in actual combat with the target (aka. is already fighting target and not just pursuing)
-			        return job.assignedCharacter.combatComponent.IsInActualCombatWith(target);
-		        } else {
-			        //if job is not yet taken, then it is invalid.
-			        return false;
-		        }
-		        // return job.assignedCharacter != null;
-	        }
-	        // return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(_owner) && isApplicable;    
-        }
-        return false;
-	}
 	#endregion
 
 	#region Patrol
@@ -496,7 +433,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		int patrolChance = UnityEngine.Random.Range(0, 100);
 		if (patrolChance < 15 && _owner.GetNumberOfJobsWith(JOB_TYPE.PATROL) < 2) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.START_PATROL, null, _owner);
-			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrol);
 			job.SetCannotBePushedBack(true);
 			_owner.AddToAvailableJobs(job);
 		}
@@ -507,11 +443,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryTriggerObtainPersonalFood(Table table) {
 		if (table.food < 20 && _owner.HasJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, table) == false) {
 			//Only get the amount of food that is missing from 30
-			int neededFood = 30 - table.food; //table.GetMaxResourceValue(RESOURCE.FOOD)
+			int neededFood = 30 - table.food; 
 			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, goapEffect, table, _owner);
-			job.SetCanTakeThisJobChecker(CanTakeObtainPersonalFoodJob);
-			job.SetStillApplicableChecker(() => table.gridTileLocation != null);
+			job.SetCanTakeThisJobChecker(JobManager.Can_Take_Obtain_Personal_Food);
+			job.SetStillApplicableChecker(JobManager.Obtain_Personal_Food_Applicability);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });
 			_owner.AddToAvailableJobs(job);
 		}
@@ -558,21 +494,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (targetPile != null && _owner.HasJob(JOB_TYPE.COMBINE_STOCKPILE, targetPile) == false) { //only create job if chosen target pile does not already have a job to combine it with another pile
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMBINE_STOCKPILE, 
 				INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, pile, _owner);
-			job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, 
-				new object[] { targetPile });
-			job.SetStillApplicableChecker(() => IsCombineStockpileStillApplicable(targetPile, pile, _owner));
-			job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoProduceFoodJob);
+			job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { targetPile });
+			job.SetStillApplicableChecker(JobManager.Combine_Stockpile_Applicability);
 			_owner.AddToAvailableJobs(job);
 		}
-	}
-	private bool IsCombineStockpileStillApplicable(ResourcePile targetPile, ResourcePile pileToDeposit, NPCSettlement npcSettlement) {
-		return targetPile.gridTileLocation != null
-		       && targetPile.gridTileLocation.IsPartOfSettlement(npcSettlement)
-		       && targetPile.structureLocation == npcSettlement.mainStorage
-		       && pileToDeposit.gridTileLocation != null
-		       && pileToDeposit.gridTileLocation.IsPartOfSettlement(npcSettlement)
-		       && pileToDeposit.structureLocation == npcSettlement.mainStorage
-		       && targetPile.HasEnoughSpaceFor(pileToDeposit.providedResource, pileToDeposit.resourceInPile);
 	}
 	#endregion
 
@@ -622,8 +547,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Restrained",
 				false, GOAP_EFFECT_TARGET.TARGET), 
 			target, _owner);
-		job.SetStillApplicableChecker(() => IsRestrainJobStillApplicable(target, job));
-		job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
+		job.SetStillApplicableChecker(JobManager.Restrain_Applicability);
+		job.SetCanTakeThisJobChecker(JobManager.Can_Take_Restrain);
 		job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
 		job.SetDoNotRecalculate(true);
 		// job.SetOnUnassignJobAction(OnUnassignRestrain);
@@ -671,10 +596,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			if (existingDouseFire < maxDouseFireJobs) {
 				int missing = maxDouseFireJobs - existingDouseFire;
 				for (int i = 0; i < missing; i++) {
-					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, 
-						INTERACTION_TYPE.START_DOUSE, null, _owner);
-					job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
-					job.SetOnTakeJobAction(OnTakeDouseFireJob);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, INTERACTION_TYPE.START_DOUSE, null, _owner);
+					job.SetCanTakeThisJobChecker(JobManager.Can_Take_Remove_Fire);
 					_owner.AddToAvailableJobs(job, 0);
 				}	
 			}	
@@ -712,7 +635,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private bool HasWaterAvailable(Character character) {
 		return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL);
 	}
-	private void OnTakeDouseFireJob(Character character, JobQueueItem jqi) {
+	public void OnTakeDouseFireJob(Character character) {
 		character.behaviourComponent.SetDouseFireSettlement(_owner);
 	}
 	public void AddDouser(Character character) {
@@ -745,15 +668,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			if (dryerCount < maxDryers) {
 				int missing = maxDryers - dryerCount;
 				for (int i = 0; i < missing; i++) {
-					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, 
-						INTERACTION_TYPE.START_DRY, null, _owner);
-					job.SetOnTakeJobAction(OnTakeDryTileJob);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DRY_TILES, INTERACTION_TYPE.START_DRY, null, _owner);
 					_owner.AddToAvailableJobs(job);
 				}	
 			}	
 		}
 	}
-	private void OnTakeDryTileJob(Character character, JobQueueItem jqi) {
+	public void OnTakeDryTileJob(Character character) {
 		character.behaviourComponent.SetDryingTilesForSettlement(_owner);
 	}
 	private void CheckDryTilesValidity() {
@@ -798,15 +719,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			if (cleansersCount < maxCleansers) {
 				int missing = maxCleansers - cleansersCount;
 				for (int i = 0; i < missing; i++) {
-					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_TILES, 
-						INTERACTION_TYPE.START_CLEANSE, null, _owner);
-					job.SetOnTakeJobAction(OnTakeCleanseTileJob);
+					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CLEANSE_TILES, INTERACTION_TYPE.START_CLEANSE, null, _owner);
 					_owner.AddToAvailableJobs(job);
 				}	
 			}	
 		}
 	}
-	private void OnTakeCleanseTileJob(Character character, JobQueueItem jobQueueItem) {
+	public void OnTakeCleanseTileJob(Character character) {
 		character.behaviourComponent.SetCleansingTilesForSettlement(_owner);
 	}
 	private void CheckCleanseTilesValidity() {
@@ -890,21 +809,17 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateMiningJob() {
 		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
-			job.SetCanTakeThisJobChecker(CanTakeMineJob);
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	private bool CanTakeMineJob(Character character, IPointOfInterest target) {
-		return character.characterClass.CanDoJob(JOB_TYPE.MINE);
-	}
-    #endregion
+	#endregion
 
     #region Party
     public bool TriggerExterminationJob(LocationStructure targetStructure) { //bool forceDoAction = false
         if (!_owner.HasJob(JOB_TYPE.EXTERMINATE)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXTERMINATE, INTERACTION_TYPE.EXTERMINATE, null, _owner);
             job.AddOtherData(INTERACTION_TYPE.EXTERMINATE, new object[] { targetStructure, _owner });
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeExterminateJob);
+            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Exterminate);
             _owner.AddToAvailableJobs(job);
             return true;
         }
@@ -912,7 +827,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
     }
     public void TriggerJoinPartyJob(Party party) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeJoinPartyJob);
+        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Party);
         _owner.AddToAvailableJobs(job);
     }
     #endregion

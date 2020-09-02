@@ -16,6 +16,10 @@ public class DatabaseManager : MonoBehaviour {
     public SettlementDatabase settlementDatabase { get; private set; }
     public LocationStructureDatabase structureDatabase { get; private set; }
 
+    public TraitDatabase traitDatabase { get; private set; }
+    public BurningSourceDatabase burningSourceDatabase { get; private set; }
+    public JobDatabase jobDatabase { get; private set; }
+
     //These databases are only used when loading from a saved game, and therefore must be cleared out when loading is complete to save memory
     public ActionDatabase actionDatabase { get; private set; }
     public InterruptDatabase interruptDatabase { get; private set; }
@@ -43,6 +47,11 @@ public class DatabaseManager : MonoBehaviour {
         locationGridTileDatabase = new LocationGridTileDatabase();
         settlementDatabase = new SettlementDatabase();
         structureDatabase = new LocationStructureDatabase();
+
+        traitDatabase = new TraitDatabase();
+        burningSourceDatabase = new BurningSourceDatabase();
+        jobDatabase = new JobDatabase();
+
         actionDatabase = new ActionDatabase();
         interruptDatabase = new InterruptDatabase();
         logDatabase = new LogDatabase();

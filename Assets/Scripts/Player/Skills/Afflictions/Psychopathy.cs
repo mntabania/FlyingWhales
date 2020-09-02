@@ -18,7 +18,6 @@ public class Psychopathy : PlayerSpell {
             Character currTarget = targetPOI as Character;
             if (CanPerformActionTowards(currTarget)) {
                 Trait newTrait = new Psychopath();
-                newTrait.SetLevel(level);
                 currTarget.traitContainer.AddTrait(currTarget, newTrait);
             }
             base.ActivateAction(targetPOI);

@@ -960,7 +960,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             // ScheduleExpiry();
             SetCollidersState(false);
             //onProcessCombat = null;
-            character.combatComponent.SetOnProcessCombatAction(null);
+            //character.combatComponent.SetOnProcessCombatAction(null);
             pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
             UpdateActionIcon();

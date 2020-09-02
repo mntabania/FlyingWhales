@@ -10,8 +10,7 @@ public class BerserkOrb : Artifact {
         maxHP = 700;
         currentHP = maxHP;
     }
-    //public BerserkOrb(SaveDataArtifact data) : base(data) {
-    //}
+    public BerserkOrb(SaveDataTileObject data) : base(data) { }
 
     #region Overrides
     public override void ConstructDefaultActions() {

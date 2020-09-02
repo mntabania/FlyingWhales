@@ -10,12 +10,9 @@ namespace Traits {
     public class Psychopath : Trait {
 
         public SerialVictim victim1Requirement { get; private set; }
-        //public SerialVictim victim2Requirement { get; private set; }
         public Character character { get; private set; }
 
         public Character targetVictim { get; private set; }
-        //public bool isFollowing { get; private set; }
-        //public bool hasStartedFollowing { get; private set; }
         private Dictionary<Character, OpinionData> opinionCopy;
 
         public Psychopath() {
@@ -588,19 +585,19 @@ namespace Traits {
             }
         }
 
-        public override Trait Load(ref Character responsibleCharacter) {
-            Trait trait = base.Load(ref responsibleCharacter);
-            Psychopath derivedTrait = trait as Psychopath;
-            derivedTrait.SetVictimRequirements(victim1Requirement);
-            //derivedTrait.SetVictim2Requirement(victim2Requirement);
-
-            //derivedTrait.SetIsFollowing(isFollowing);
-            //derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
-
-            if (targetVictimID != -1) {
-                derivedTrait.SetTargetVictim(CharacterManager.Instance.GetCharacterByID(targetVictimID));
-            }
-            return trait;
-        }
+        // public override Trait Load(ref Character responsibleCharacter) {
+        //     Trait trait = base.Load(ref responsibleCharacter);
+        //     Psychopath derivedTrait = trait as Psychopath;
+        //     derivedTrait.SetVictimRequirements(victim1Requirement);
+        //     //derivedTrait.SetVictim2Requirement(victim2Requirement);
+        //
+        //     //derivedTrait.SetIsFollowing(isFollowing);
+        //     //derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
+        //
+        //     if (targetVictimID != -1) {
+        //         derivedTrait.SetTargetVictim(CharacterManager.Instance.GetCharacterByID(targetVictimID));
+        //     }
+        //     return trait;
+        // }
     }
 }

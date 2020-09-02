@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace Traits {
     public class Hibernating : Status {
-        public override bool isNotSavable {
-            get { return true; }
-        }
-
         public override bool isSingleton => true;
 
         public Hibernating() {

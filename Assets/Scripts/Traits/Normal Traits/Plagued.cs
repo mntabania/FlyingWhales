@@ -7,8 +7,8 @@ namespace Traits {
 
         public IPointOfInterest owner { get; private set; } //poi that has the poison
 
-        private int pukeChance = 4;
-        private int septicChance = 1;
+        private readonly int pukeChance = 4;
+        private readonly int septicChance = 1;
 
         public Plagued() {
             name = "Plagued";
@@ -20,7 +20,6 @@ namespace Traits {
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
-            // moodEffect = -30;
         }
 
         #region Overrides

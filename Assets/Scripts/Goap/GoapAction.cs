@@ -108,8 +108,8 @@ public class GoapAction {
     }
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     public virtual void Perform(ActualGoapNode actionNode) { }
-    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) { return true; }
-    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) { return true; }
+    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 0;
     }
     public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
@@ -202,7 +202,7 @@ public class GoapAction {
     #endregion
 
     #region Utilities
-    public int GetCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    public int GetCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         int baseCost = GetBaseCost(actor, target, job, otherData);
         //modify costs based on actor's and target's traits
         //for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
@@ -238,7 +238,7 @@ public class GoapAction {
         }
         return false;
     }
-    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         // bool requirementActionSatisfied = !(poiTarget.poiType != POINT_OF_INTEREST_TYPE.CHARACTER 
         //                                     && poiTarget.traitContainer.HasTrait("Frozen") 
         //                                     && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME));
@@ -329,10 +329,10 @@ public class GoapAction {
     #endregion
 
     #region Preconditions
-    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, object[], JOB_TYPE, bool> condition) {
+    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, OtherData[], JOB_TYPE, bool> condition) {
         basePreconditions.Add(new Precondition(effect, condition));
     }
-    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
+    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         List<Precondition> preconditions = GetPreconditions(actor, target, otherData);
         for (int i = 0; i < preconditions.Count; i++) {
             if (!preconditions[i].CanSatisfyCondition(actor, target, otherData, jobType)) {
@@ -341,7 +341,7 @@ public class GoapAction {
         }
         return true;
     }
-    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public virtual List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         return basePreconditions;
     }
     #endregion
@@ -354,7 +354,7 @@ public class GoapAction {
     protected void AddPossibleExpectedEffectForTypeAndTargetMatching(GoapEffectConditionTypeAndTargetType effect) {
         possibleExpectedEffectsTypeAndTargetMatching.Add(effect);
     }
-    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, object[] otherData) {
+    public bool WillEffectsSatisfyPrecondition(GoapEffect precondition, Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<GoapEffect> effects = GetExpectedEffects(actor, target, otherData);
         for (int i = 0; i < effects.Count; i++) {
             if(EffectPreconditionMatching(effects[i], precondition)) {
@@ -404,7 +404,7 @@ public class GoapAction {
         }
         return false;
     }
-    protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+    protected virtual List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<GoapEffect> effects = new List<GoapEffect>(baseExpectedEffects);
         //modify expected effects depending on actor's traits
         List<Trait> traitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Expected_Effect_Trait);
@@ -443,6 +443,8 @@ public struct GoapEffectConditionTypeAndTargetType {
         this.target = target;
     }
 }
+
+[System.Serializable]
 public struct GoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
     //public object conditionKey;
@@ -465,7 +467,7 @@ public struct GoapEffect {
     }
 
     public override string ToString() {
-        return $"{conditionType} - {conditionKey} - {target}";
+        return $"{conditionType.ToString()} - {conditionKey} - {target.ToString()}";
     }
     //public string conditionString() {
     //    if(conditionKey is string) {

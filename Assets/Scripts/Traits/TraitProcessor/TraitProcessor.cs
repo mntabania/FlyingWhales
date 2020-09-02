@@ -18,7 +18,7 @@ namespace Traits {
             trait.OnAddTrait(traitable);
 
             int duration = overrideDuration;
-            if (duration == -1) { duration = trait.ticksDuration; }
+            if (duration == -1) { duration = trait.ticksDuration; } //if no override duration was given(-1), then use the default trait duration
             if (duration > 0) {
                 //traitable.traitContainer.currentDurations.Add(trait, 0);
                 GameDate removeDate = GameManager.Instance.Today();

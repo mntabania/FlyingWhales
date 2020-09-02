@@ -11,6 +11,7 @@ using Ruinarch;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -36,6 +37,7 @@ public class Player : ILeader, IObjectManipulator {
     //public float constructionRatePercentageModifier { get; private set; }
     public List<SPELL_TYPE> unlearnedSpells { get; }
     public List<SPELL_TYPE> unlearnedAfflictions { get; }
+    public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
 
     //Components
     public SeizeComponent seizeComponent { get; }
@@ -69,8 +71,8 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);
         //ConstructAllInterventionAbilitySlots();
-        AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        AddListeners();
     }
     public Player(SaveDataPlayerGame data) {
         allIntel = new List<IIntel>();
@@ -85,8 +87,8 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent.SetPlayer(this);
         playerSkillComponent.SetPlayer(this);
 
-        AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        AddListeners();
     }
 
     public void LoadPlayerData(SaveDataPlayer save) {
@@ -136,11 +138,11 @@ public class Player : ILeader, IObjectManipulator {
         // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
         return npcSettlement;
     }
-    public void LoadPlayerArea(PlayerSettlement npcSettlement) {
-        //Biomes.Instance.CorruptTileVisuals(npcSettlement.coreTile);
-        //npcSettlement.coreTile.tileLocation.SetCorruption(true);
-        SetPlayerArea(npcSettlement);
-        //_demonicPortal.tileLocation.ScheduleCorruption();
+    public void LoadPlayerArea(SaveDataPlayerGame saveDataPlayerGame) {
+        BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataPlayerGame.settlementID);
+        PlayerSettlement pSettlement = settlement as PlayerSettlement;
+        Assert.IsNotNull(pSettlement, $"Could not load player settlement because it is either null or not a PlayerSettlement type {settlement?.ToString() ?? "Null"}");
+        SetPlayerArea(pSettlement);
     }
     public void SetPlayerArea(PlayerSettlement npcSettlement) {
         playerSettlement = npcSettlement;
@@ -765,7 +767,6 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Tile Objects
-    public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public void SetCurrentlyActiveItem(TILE_OBJECT_TYPE item) {
         if (currentActiveItem != item) {
             TILE_OBJECT_TYPE previousActiveItem = currentActiveItem;

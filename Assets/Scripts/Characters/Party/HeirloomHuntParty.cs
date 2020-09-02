@@ -149,7 +149,7 @@ public class HeirloomHuntParty : Party {
         base.LoadReferences(data);
         if (data is SaveDataHeirloomHuntParty subData) {
             if (subData.targetHeirloom != string.Empty) {
-                targetHeirloom = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(subData.targetHeirloom) as Heirloom;
+                targetHeirloom = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(subData.targetHeirloom) as Heirloom;
             }
             if (subData.targetHex != string.Empty) {
                 targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);

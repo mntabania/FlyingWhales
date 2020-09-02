@@ -736,22 +736,6 @@ public class Faction : IJobOwner, ISavable {
         }
         return false;
     }
-    public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
-        for (int i = 0; i < availableJobs.Count; i++) {
-            if (availableJobs[i].jobType == jobType && availableJobs[i] is GoapPlanJob) {
-                GoapPlanJob job = availableJobs[i] as GoapPlanJob;
-                if (job.allOtherData != null) {
-                    for (int j = 0; j < job.allOtherData.Count; j++) {
-                        object data = job.allOtherData[j];
-                        if (data == otherData) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
     public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < availableJobs.Count; i++) {
             for (int j = 0; j < jobTypes.Length; j++) {
@@ -818,8 +802,8 @@ public class Faction : IJobOwner, ISavable {
             Character factionMember = characters[i];
             JobQueueItem job = factionMember.jobQueue.GetJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE);
             if(job != null && job is GoapPlanJob goapJob) {
-                object[] otherData = goapJob.GetOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
-                if(otherData != null && otherData.Length == 1 && otherData[0] == demonicStructure) {
+                OtherData[] otherData = goapJob.GetOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
+                if(otherData != null && otherData.Length == 1 && otherData[0].obj == demonicStructure) {
                     return true;
                 }
             }

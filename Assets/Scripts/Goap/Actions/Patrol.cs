@@ -15,13 +15,13 @@ public class Patrol : GoapAction {
         base.Perform(goapNode);
         SetState("Patrol Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
-        return goapNode.otherData[0] as LocationGridTile;
+        return goapNode.otherData[0].obj as LocationGridTile;
     }
     #endregion
 }

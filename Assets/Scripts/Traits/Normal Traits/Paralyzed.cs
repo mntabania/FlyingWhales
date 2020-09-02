@@ -6,7 +6,6 @@ namespace Traits {
     public class Paralyzed : Status {
 
         public Character owner { get; private set; }
-        //public List<Character> charactersThatKnow { get; private set; }
 
         public Paralyzed() {
             name = "Paralyzed";
@@ -15,7 +14,6 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
             ticksDuration = 0;
-            //charactersThatKnow = new List<Character>();
             hindersMovement = true;
             hindersPerform = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
@@ -49,19 +47,7 @@ namespace Traits {
         //     CheckParalyzedTraitPerHour();
         // }
         #endregion
-
-        //public void AddCharacterThatKnows(Character character) {
-        //    if (!charactersThatKnow.Contains(character)) {
-        //        charactersThatKnow.Add(character);
-        //    }
-        //}
-        //private bool CanPlanGoap() {
-        //    //If there is no npcSettlement, it means that there is no inner map, so character must not do goap actions, jobs, and plans
-        //    //characters that cannot witness, cannot plan actions.
-        //    return character.minion == null && !character.isDead && character.isStoppedByOtherCharacter <= 0 && character.canWitness
-        //        && character.currentActionNode == null && character.planner.status == GOAP_PLANNING_STATUS.NONE && character.jobQueue.jobsInQueue.Count <= 0
-        //        && !character.marker.hasFleePath && character.stateComponent.currentState == null && character.IsInOwnParty();
-        //}
+        
         private void CheckParalyzedTrait() {
             if(!owner.marker) {
                 return;
@@ -80,19 +66,6 @@ namespace Traits {
                 }
             }
         }
-        // private void CheckParalyzedTraitPerHour() {
-        //     if (owner.!marker) {
-        //         return;
-        //     }
-        //     if (/*owner.CanPerformEndTickJobs()*/
-        //             /*&& */(owner.needsComponent.isStarving || owner.needsComponent.isExhausted || owner.needsComponent.isSulking || owner.traitContainer.GetNormalTrait<Trait>("Burning") != null)
-        //             && UnityEngine.Random.Range(0, 100) < 75 && !owner.jobQueue.HasJob(JOB_TYPE.SCREAM)
-        //             && owner.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") == null
-        //             && !owner.HasJobTargetingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
-        //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, owner, owner);
-        //         owner.jobQueue.AddJobInQueue(job);
-        //     }
-        // }
 
         #region Carry/Drop
         private void OnCharacterFinishedAction(ActualGoapNode node) {
@@ -226,27 +199,4 @@ namespace Traits {
         }
         #endregion
     }
-
-
-    //public class SaveDataParalyzed : SaveDataTrait {
-    //    public List<int> charactersThatKnow;
-
-    //    public override void Save(Trait trait) {
-    //        base.Save(trait);
-    //        Paralyzed paralyzed = trait as Paralyzed;
-    //        charactersThatKnow = new List<int>();
-    //        for (int i = 0; i < paralyzed.charactersThatKnow.Count; i++) {
-    //            charactersThatKnow.Add(paralyzed.charactersThatKnow[i].id);
-    //        }
-    //    }
-
-    //    public override Trait Load(ref Character responsibleCharacter) {
-    //        Trait trait = base.Load(ref responsibleCharacter);
-    //        Paralyzed paralyzed = trait as Paralyzed;
-    //        for (int i = 0; i < charactersThatKnow.Count; i++) {
-    //            paralyzed.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
-    //        }
-    //        return trait;
-    //    }
-    //}
 }

@@ -2,7 +2,6 @@
     public class Dousing : Status {
 
         private Character _owner;
-        private bool _hasTendedAtLeastOnce;
         
         public Dousing() {
             name = "Dousing";

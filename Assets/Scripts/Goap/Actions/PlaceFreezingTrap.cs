@@ -10,7 +10,7 @@
         base.Perform(goapNode);
         SetState("Place Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -20,8 +20,7 @@
     #region State Effects
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
-            TrapChecker freezingTrapChecker = goapNode.otherData[0] as TrapChecker;
-            genericTileObject.gridTileLocation.SetHasFreezingTrap(true, freezingTrapChecker);
+            genericTileObject.gridTileLocation.SetHasFreezingTrap(true);
         }
     }
     #endregion

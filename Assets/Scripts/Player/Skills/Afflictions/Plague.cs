@@ -28,7 +28,6 @@ public class Plagued : PlayerSpell {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Traits.Plagued();
-                    newTrait.SetLevel(level);
                     currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

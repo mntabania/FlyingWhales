@@ -158,12 +158,6 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CURE_CHARACTER, new[]{
             new StateNameAndDuration(){ name = "Cure Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
-        {INTERACTION_TYPE.CURSE_CHARACTER, new[]{
-            new StateNameAndDuration(){ name = "Curse Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
-        } },
-        {INTERACTION_TYPE.DISPEL_MAGIC, new[]{
-            new StateNameAndDuration(){ name = "Dispel Magic Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
-        } },
         {INTERACTION_TYPE.JUDGE_CHARACTER, new[]{
             new StateNameAndDuration(){ name = "Judge Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
@@ -214,9 +208,6 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.REPLACE_TILE_OBJECT, new[]{
             new StateNameAndDuration(){ name = "Replace Success", status = InteractionManager.Goap_State_Success, duration = 0 },
-        } },
-        {INTERACTION_TYPE.CRAFT_FURNITURE, new[]{
-            new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
         {INTERACTION_TYPE.TANTRUM, new[]{
             new StateNameAndDuration(){ name = "Tantrum Success", status = InteractionManager.Goap_State_Success, duration = 0 },

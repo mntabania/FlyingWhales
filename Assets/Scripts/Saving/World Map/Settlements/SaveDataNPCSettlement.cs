@@ -1,26 +1,24 @@
 ﻿using System.Collections.Generic;
 using Locations.Settlements;
+using UnityEngine.Assertions;
 
 public class SaveDataNPCSettlement : SaveDataBaseSettlement {
-    public List<SaveDataJobQueueItem> jobs;
+    public List<string> jobIDs;
+    public string prisonID;
+    public string mainStorageID;
+    
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
-        jobs = new List<SaveDataJobQueueItem>();
-        // for (int i = 0; i < baseSettlement.availableJobs.Count; i++) {
-        //     JobQueueItem job = baseSettlement.availableJobs[i];
-        //     if (job.isNotSavable) {
-        //         continue;
-        //     }
-        //     //SaveDataJobQueueItem data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + job.GetType().ToString())) as SaveDataJobQueueItem;
-        //     SaveDataJobQueueItem data = null;
-        //     if (job is GoapPlanJob) {
-        //         data = new SaveDataGoapPlanJob();
-        //     } else if (job is CharacterStateJob) {
-        //         data = new SaveDataCharacterStateJob();
-        //     }
-        //     data.Save(job);
-        //     jobs.Add(data);
-        // }
+        NPCSettlement npcSettlement = baseSettlement as NPCSettlement;
+        Assert.IsNotNull(npcSettlement);
+        jobIDs = new List<string>();
+        for (int i = 0; i < npcSettlement.availableJobs.Count; i++) {
+            JobQueueItem job = npcSettlement.availableJobs[i];    
+            jobIDs.Add(job.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(job);
+        }
+        prisonID = npcSettlement.prison != null ? npcSettlement.prison.persistentID : string.Empty;
+        mainStorageID = npcSettlement.mainStorage != null ? npcSettlement.mainStorage.persistentID : string.Empty;
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

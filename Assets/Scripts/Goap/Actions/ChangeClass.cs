@@ -15,10 +15,10 @@ public class ChangeClass : GoapAction {
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.CHANGE_CLASS, GOAP_EFFECT_TARGET.ACTOR));
     }
-    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
+    protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         if(otherData != null && otherData.Length > 0) {
-            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CHANGE_CLASS, conditionKey = (string) otherData[0], target = GOAP_EFFECT_TARGET.ACTOR });
+            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.CHANGE_CLASS, conditionKey = (string) otherData[0].obj, target = GOAP_EFFECT_TARGET.ACTOR });
         }
         return ee;
     }
@@ -26,17 +26,17 @@ public class ChangeClass : GoapAction {
         base.Perform(goapNode);
         SetState("Change Class Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     #endregion
 
     #region Effects
     public void PreChangeClassSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters((string)goapNode.otherData[0]), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters((string)goapNode.otherData[0].obj), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterChangeClassSuccess(ActualGoapNode goapNode) {
-        string className = (string) goapNode.otherData[0];
+        string className = (string) goapNode.otherData[0].obj;
         goapNode.actor.AssignClass(className);
     }
     #endregion

@@ -10,6 +10,7 @@ public class Initializer : MonoBehaviour {
     public IEnumerator InitializeDataBeforeWorldCreation() {
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
+        DatabaseManager.Instance.Initialize();
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         TraitManager.Instance.Initialize();
@@ -30,7 +31,6 @@ public class Initializer : MonoBehaviour {
         PlayerUI.Instance.Initialize();
         RandomNameGenerator.Initialize();
         WorldEventManager.Instance.Initialize();
-        DatabaseManager.Instance.Initialize();
         yield return null;
     }
 

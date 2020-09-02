@@ -22,7 +22,7 @@ public class Watch : GoapAction {
         base.Perform(goapNode);
         SetState("Watch Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 10;
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -38,17 +38,17 @@ public class Watch : GoapAction {
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
-        object[] otherData = node.otherData;
+        OtherData[] otherData = node.otherData;
         if (otherData.Length == 1) {
-            if (otherData[0] is GoapAction) {
-                GoapAction actionBeingWatched = otherData[0] as GoapAction;
+            if (otherData[0].obj is GoapAction) {
+                GoapAction actionBeingWatched = otherData[0].obj as GoapAction;
                 //actionIconString = actionBeingWatched.actionIconString;
                 log.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
-            } else if (otherData[0] is CombatState) {
-                CharacterState stateBeingWatched = otherData[0] as CombatState;
+            } else if (otherData[0].obj is CombatState) {
+                CharacterState stateBeingWatched = otherData[0].obj as CombatState;
                 log.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
-            } else if (otherData[0] is DouseFireState) {
-                CharacterState stateBeingWatched = otherData[0] as DouseFireState;
+            } else if (otherData[0].obj is DouseFireState) {
+                CharacterState stateBeingWatched = otherData[0].obj as DouseFireState;
                 log.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
                 log.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
             }
@@ -69,8 +69,8 @@ public class Watch : GoapAction {
 
     #region State Effects
     public void PreWatchSuccess(ActualGoapNode goapNode) {
-        GoapAction actionBeingWatched = goapNode.otherData[0] as GoapAction;
-        CharacterState stateBeingWatched = goapNode.otherData[0] as CharacterState;
+        GoapAction actionBeingWatched = goapNode.otherData[0].obj as GoapAction;
+        CharacterState stateBeingWatched = goapNode.otherData[0].obj as CharacterState;
         if (actionBeingWatched != null) {
             goapNode.descriptionLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
         }else if (stateBeingWatched != null) {
@@ -91,8 +91,8 @@ public class Watch : GoapAction {
             goapNode.EndPerTickEffect();
             return;
         }
-        ActualGoapNode actionBeingWatched = goapNode.otherData[0] as ActualGoapNode;
-        CharacterState stateBeingWatched = goapNode.otherData[0] as CharacterState;
+        ActualGoapNode actionBeingWatched = goapNode.otherData[0].obj as ActualGoapNode;
+        CharacterState stateBeingWatched = goapNode.otherData[0].obj as CharacterState;
         if (actionBeingWatched != null) {
             if (actionBeingWatched.actionStatus == ACTION_STATUS.SUCCESS || actionBeingWatched.actionStatus == ACTION_STATUS.FAIL || actionBeingWatched.actor.currentActionNode != actionBeingWatched) {
                 //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
@@ -134,7 +134,7 @@ public class Watch : GoapAction {
     #endregion
 
     #region Requirements
-    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;

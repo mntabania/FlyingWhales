@@ -109,6 +109,12 @@ public class FrostyFogMapObjectVisual : MovingMapObjectVisual<TileObject> {
                 break;
         }
     }
+    public override void SetWorldPosition(Vector3 worldPosition) {
+        base.SetWorldPosition(worldPosition);
+        _movement?.Kill();
+        _movement = null;
+        MoveToRandomDirection();
+    }
     #endregion
 
     #region Effects

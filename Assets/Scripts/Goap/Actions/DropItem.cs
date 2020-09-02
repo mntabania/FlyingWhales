@@ -21,7 +21,7 @@ public class DropItem : GoapAction {
     //protected override void ConstructBasePreconditionsAndEffects() {
     //    AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsItemInInventory);
     //}
-    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
         List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
         p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsItemInInventory));
         return p;
@@ -30,14 +30,14 @@ public class DropItem : GoapAction {
         base.Perform(goapNode);
         SetState("Drop Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
-        object[] otherData = node.otherData;
-        return otherData[0] as LocationStructure;
+        OtherData[] otherData = node.otherData;
+        return otherData[0].obj as LocationStructure;
     }
     public override void OnActionStarted(ActualGoapNode node) {
         node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);

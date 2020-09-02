@@ -49,12 +49,12 @@ namespace Characters.Behaviour {
         public override void OnAddBehaviourToCharacter(Character character) {
             base.OnAddBehaviourToCharacter(character);
             character.movementComponent.SetEnableDigging(true);
-            // character.behaviourComponent.OnBecomeSnatcher();
+            character.behaviourComponent.OnBecomeSnatcher();
         }
         public override void OnRemoveBehaviourFromCharacter(Character character) {
             base.OnRemoveBehaviourFromCharacter(character);
             character.movementComponent.SetEnableDigging(false);
-            // character.behaviourComponent.OnNoLongerSnatcher();
+            character.behaviourComponent.OnNoLongerSnatcher();
         }
         private HexTile GetNearestDemonicStructure(Character character) {
             if (character.hexTileLocation != null) {

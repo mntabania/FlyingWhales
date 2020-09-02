@@ -124,7 +124,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} GenerateGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
-        protected IEnumerator LoadGrid(int width, int height, MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap) {
+        protected IEnumerator LoadGrid(int width, int height, MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, SaveDataCurrentProgress saveData) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
             stopwatch.Start();
             this.width = width;
@@ -138,7 +138,7 @@ namespace Inner_Maps {
             LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
                 SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];
-                LocationGridTile tile = saveDataLocationGridTile.InitialLoad(groundTilemap, this);
+                LocationGridTile tile = saveDataLocationGridTile.InitialLoad(groundTilemap, this, saveData);
                 tile.SetStructure(wilderness);
                 allTiles.Add(tile);
                 if (tile.IsAtEdgeOfWalkableMap()) {
@@ -155,7 +155,7 @@ namespace Inner_Maps {
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Load Grid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
-        protected IEnumerator LoadTileVisuals(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, Dictionary<string, TileBase> tileAssetDB) {
+        public IEnumerator LoadTileVisuals(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, Dictionary<string, TileBase> tileAssetDB) {
             int batchCount = 0;
             for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
                 SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];

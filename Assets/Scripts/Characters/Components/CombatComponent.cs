@@ -60,7 +60,7 @@ public class CombatComponent : CharacterComponent {
         maxHPModification = data.maxHPModification;
         attackSpeed = data.attackSpeed;
         combatMode = data.combatMode;
-        elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamage.type);
+        elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamageType);
         willProcessCombat = data.willProcessCombat;
     }
 
@@ -899,7 +899,7 @@ public class CombatComponent : CharacterComponent {
             }
         }
         for (int i = 0; i < data.hostileTileObjectsInRange.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.hostileTileObjectsInRange[i]);
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.hostileTileObjectsInRange[i]);
             if (!hostilesInRange.Contains(tileObject)) {
                 hostilesInRange.Add(tileObject);
             }
@@ -912,7 +912,7 @@ public class CombatComponent : CharacterComponent {
             }
         }
         for (int i = 0; i < data.avoidTileObjectsInRange.Count; i++) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.avoidTileObjectsInRange[i]);
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.avoidTileObjectsInRange[i]);
             if (!avoidInRange.Contains(tileObject)) {
                 avoidInRange.Add(tileObject);
             }
@@ -924,7 +924,7 @@ public class CombatComponent : CharacterComponent {
             combatDataDictionary.Add(character, combatData);
         }
         foreach (KeyValuePair<string, SaveDataCombatData> item in data.tileObjectCombatData) {
-            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(item.Key);
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(item.Key);
             CombatData combatData = item.Value.Load();
             combatDataDictionary.Add(tileObject, combatData);
         }

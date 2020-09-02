@@ -54,7 +54,7 @@ public class SocialParty : Party {
     }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();
-        targetStructure.SetHasActiveSocialParty(false);
+        targetStructure?.SetHasActiveSocialParty(false);
     }
     #endregion
 

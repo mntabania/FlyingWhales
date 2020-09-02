@@ -421,7 +421,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             lycanData = data.lycanData.Load();
         }
         if (data.grave != string.Empty) {
-            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.grave) as Tombstone;
+            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
         }
         if (data.ruledSettlement != string.Empty) {
             ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
@@ -456,11 +456,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             territories.Add(hex);
         }
         for (int i = 0; i < data.items.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.items[i]);
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
             items.Add(obj);
         }
         for (int i = 0; i < data.ownedItems.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.ownedItems[i]);
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
             ownedItems.Add(obj);
         }
 
@@ -3280,7 +3280,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    PlanIdleStroll(currentStructure);
         //}
     }
-    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
+    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
@@ -3296,7 +3296,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, object[] otherData = null) {
+    public void PlanIdle(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, out JobQueueItem producedJob, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
@@ -3324,7 +3324,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, effect, target, this);
         producedJob = job;
     }
-    public void PlanAction(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, object[] otherData = null) {
+    public void PlanAction(JOB_TYPE jobType, INTERACTION_TYPE type, IPointOfInterest target, OtherData[] otherData = null) {
         ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[type], this, target, otherData, 0);
         GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, target);
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, type, target, this);
@@ -3895,8 +3895,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Point Of Interest
     //Returns the chosen action for the plan
-    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job,
-        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost, ref string log) {
+    public GoapAction AdvertiseActionsToActor(Character actor, GoapEffect precondition, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost, ref string log) {
         GoapAction chosenAction = null;
         if (advertisedActions != null && advertisedActions.Count > 0) {//&& IsAvailable()
             bool isCharacterAvailable = IsAvailable();
@@ -3913,7 +3912,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     continue; //skip
                 }
                 if ((action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation)) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    object[] data = null;
+                    OtherData[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
                             data = otherData[currType];
@@ -3951,14 +3950,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return chosenAction;
     }
-    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
-        Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+    public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job, Dictionary<INTERACTION_TYPE, OtherData[]> otherData, ref int cost) {
         if((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
             && (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation))) {
-            object[] data = null;
+            OtherData[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {
                     data = otherData[action.goapType];
@@ -4048,7 +4046,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (isNormalCharacter) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
             AddAdvertisedAction(INTERACTION_TYPE.PRAY);
-            AddAdvertisedAction(INTERACTION_TYPE.CURSE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
             AddAdvertisedAction(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
             AddAdvertisedAction(INTERACTION_TYPE.INVITE);

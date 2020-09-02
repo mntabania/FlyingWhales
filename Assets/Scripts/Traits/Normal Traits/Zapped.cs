@@ -17,7 +17,6 @@ namespace Traits {
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
-            //hasOnEnterGridTile = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Enter_Grid_Tile_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);

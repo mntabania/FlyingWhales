@@ -1,15 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Traits;
 using UnityEngine;
-
+using UnityEngine.Assertions;
+using Random = UnityEngine.Random;
 namespace Traits {
     public class Catatonic : Status {
 
         public Character owner { get; private set; }
-
-        private float chanceToRemove;
+        
+        private float _chanceToRemove;
         private const int MaxDays = 4;
+
+        #region getters
+        public float chanceToRemove => _chanceToRemove;
+        public override Type serializedData => typeof(SaveDataCatatonic);
+        #endregion
         
         public Catatonic() {
             name = "Catatonic";
@@ -25,6 +33,15 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataCatatonic saveDataCatatonic = saveDataTrait as SaveDataCatatonic;
+            Assert.IsNotNull(saveDataCatatonic);
+            _chanceToRemove = saveDataCatatonic.chanceToRemove;
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
@@ -125,7 +142,7 @@ namespace Traits {
 
         #region Removal
         private void CheckRemovalChance() {
-            chanceToRemove += GetChanceIncreasePerHour();
+            _chanceToRemove = chanceToRemove + GetChanceIncreasePerHour();
             float roll = Random.Range(0f, 100f);
             Debug.Log(
                 $"{GameManager.Instance.TodayLogString()} {owner.name} is rolling for chance to remove catatonic. Roll is {roll.ToString()}. Chance is {chanceToRemove.ToString()}");
@@ -137,41 +154,18 @@ namespace Traits {
             return 100f / (MaxDays * 24f);
         }
         #endregion
-
-        //#region Chaos Orb
-        //private void CheckForChaosOrb() {
-        //    string summary = $"{owner.name} is rolling for chaos orb in catatonic trait";
-        //    int roll = Random.Range(0, 100);
-        //    int chance = 5;
-        //    summary += $"\nRoll is {roll.ToString()}. Chance is {chance.ToString()}";
-        //    if (roll < chance) {
-        //        Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, owner.marker.transform.position, 
-        //            1, owner.currentRegion.innerMap);
-        //    }
-        //    owner.logComponent.PrintLogIfActive(summary);
-        //}
-        //#endregion
     }
-
-    //public class SaveDataCatatonic : SaveDataTrait {
-    //    public List<int> charactersThatKnow;
-
-    //    public override void Save(Trait trait) {
-    //        base.Save(trait);
-    //        Catatonic catatonic = trait as Catatonic;
-    //        charactersThatKnow = new List<int>();
-    //        for (int i = 0; i < catatonic.charactersThatKnow.Count; i++) {
-    //            charactersThatKnow.Add(catatonic.charactersThatKnow[i].id);
-    //        }
-    //    }
-
-    //    public override Trait Load(ref Character responsibleCharacter) {
-    //        Trait trait = base.Load(ref responsibleCharacter);
-    //        Catatonic catatonic = trait as Catatonic;
-    //        for (int i = 0; i < charactersThatKnow.Count; i++) {
-    //            catatonic.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
-    //        }
-    //        return trait;
-    //    }
-    //}
 }
+
+#region Save Data
+public class SaveDataCatatonic : SaveDataTrait {
+    public float chanceToRemove;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Catatonic catatonic = trait as Catatonic;
+        Assert.IsNotNull(catatonic);
+        chanceToRemove = catatonic.chanceToRemove;
+    }
+}
+#endregion

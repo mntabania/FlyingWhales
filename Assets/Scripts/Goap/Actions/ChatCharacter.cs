@@ -25,7 +25,7 @@ public class ChatCharacter : GoapAction {
         base.Perform(goapNode);
         SetState("Chat Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 1;
     }
     #endregion

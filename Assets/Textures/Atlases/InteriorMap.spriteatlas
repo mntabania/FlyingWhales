@@ -868,7 +868,7 @@ SpriteAtlas:
   - demonCircleLarge00
   - demonSigilSquare00
   - demonWallA-11101110-00
-  - BIG_TREE_OBJECT#1
+  - BIG_TREE_OBJECT#4
   - spider_eggs
   - well00
   - corruptedSpike01
@@ -1484,7 +1484,7 @@ SpriteAtlas:
   - caveWallA-0011-00
   - laidWallA11101000-00
   - demonBarsVertical00
-  - BIG_TREE_OBJECT#2
+  - BIG_TREE_OBJECT#5
   - TRAINING_DUMMY#2
   - wood_horizontal_1
   - table4Slots

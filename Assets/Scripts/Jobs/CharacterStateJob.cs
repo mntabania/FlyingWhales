@@ -1,44 +1,33 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class CharacterStateJob : JobQueueItem {
-
+    
     public CHARACTER_STATE targetState { get; protected set; }
     public CharacterState assignedState { get; protected set; }
-    public Region targetRegion { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
-    public List<System.Action<Character>> onUnassignActions { get; private set; }
 
-    public CharacterStateJob() : base() {
-        onUnassignActions = new List<System.Action<Character>>();
-    }
-    public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion, IJobOwner owner) {
-        Initialize(jobType, owner);
-        this.targetState = state;
-        this.targetRegion = targetRegion;
-        //onUnassignActions = new List<System.Action<Character>>();
-    }
+    #region getters
+    public override OBJECT_TYPE objectType => OBJECT_TYPE.Job;
+    public override Type serializedData => typeof(SaveDataCharacterStateJob);
+    #endregion
+    
+    public CharacterStateJob() : base() { }
     public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, IPointOfInterest targetPOI, IJobOwner owner) {
         Initialize(jobType, owner);
         this.targetState = state;
         this.targetPOI = targetPOI;
-        //onUnassignActions = new List<System.Action<Character>>();
     }
     public void Initialize(JOB_TYPE jobType, CHARACTER_STATE state, IJobOwner owner) {
         Initialize(jobType, owner);
         this.targetState = state;
-        //onUnassignActions = new List<System.Action<Character>>();
     }
     public void Initialize(SaveDataCharacterStateJob data) {
-        Initialize(data);
+        base.Initialize(data);
         targetState = data.targetState;
-        if(data.targetRegionID != -1) {
-            targetRegion = GridMap.Instance.GetRegionByID(data.targetRegionID);
-        } else {
-            targetRegion = null;
-        }
-        //onUnassignActions = new List<System.Action<Character>>();
     }
 
     #region Overrides
@@ -149,17 +138,11 @@ public class CharacterStateJob : JobQueueItem {
     //    }
     //    return base.CanTakeJob(character);
     //}
-    public override void OnCharacterUnassignedToJob(Character character) {
-        base.OnCharacterAssignedToJob(character);
-        ExecuteUnassignActions(character);
-    }
     public override void Reset() {
         base.Reset();
         targetState = CHARACTER_STATE.NONE;
         assignedState = null;
-        targetRegion = null;
         targetPOI = null;
-        onUnassignActions.Clear();
     }
     #endregion
 
@@ -172,72 +155,18 @@ public class CharacterStateJob : JobQueueItem {
         }
         assignedState = state;
     }
-
-    #region Unassign Actions
-    public void AddOnUnassignAction(System.Action<Character> unassignAction) {
-        onUnassignActions.Add(unassignAction);
-    }
-    /// <summary>
-    /// Execute external actions that are triggered when this job becomes unassigned. 
-    /// NOTE: This also clears the list of said actions.
-    /// </summary>
-    private void ExecuteUnassignActions(Character unassignedCharacter) {
-        for (int i = 0; i < onUnassignActions.Count; i++) {
-            onUnassignActions[i].Invoke(unassignedCharacter);
-        }
-        onUnassignActions.Clear();
-    }
-    #endregion
-
 }
 
 public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
     public CHARACTER_STATE targetState;
-    public int targetRegionID;
-
-    //Only save assigned character in state job because 
-    public int assignedCharacterID;
-    public SaveDataCharacterState connectedState; //This should only have value if the character's current state is connected to this job
 
     public override void Save(JobQueueItem job) {
         base.Save(job);
         CharacterStateJob stateJob = job as CharacterStateJob;
+        Assert.IsNotNull(stateJob);
         targetState = stateJob.targetState;
-        if(stateJob.targetRegion != null) {
-            targetRegionID = stateJob.targetRegion.id;
-        } else {
-            targetRegionID = -1;
-        }
-        if(stateJob.assignedCharacter != null) {
-            assignedCharacterID = stateJob.assignedCharacter.id;
-            if (stateJob.assignedCharacter.stateComponent.currentState.job == stateJob) {
-                connectedState = SaveUtilities.CreateCharacterStateSaveDataInstance(stateJob.assignedCharacter.stateComponent.currentState);
-                connectedState.Save(stateJob.assignedCharacter.stateComponent.currentState);
-            }
-        } else {
-            assignedCharacterID = -1;
-        }
     }
-
     public override JobQueueItem Load() {
-        CharacterStateJob stateJob = base.Load() as CharacterStateJob;
-        if (this.assignedCharacterID != -1) {
-            Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(this.assignedCharacterID);
-            stateJob.SetAssignedCharacter(assignedCharacter);
-            //Load Character State if there is any.
-            if (this.connectedState != null) {
-                CharacterState newState = assignedCharacter.stateComponent.LoadState(connectedState);
-                if (newState != null) {
-                    stateJob.SetAssignedState(newState);
-                } else {
-                    throw new System.Exception(
-                        $"{assignedCharacter.name} tried doing state {stateJob.targetState} but was unable to do so! This must not happen!");
-                }
-            }
-        }
-
-        return stateJob;
+        return JobManager.Instance.CreateNewCharacterStateJob(this);
     }
-
-
 }

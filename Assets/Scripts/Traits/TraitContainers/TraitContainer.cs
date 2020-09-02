@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Inner_Maps;
+using Traits;
 using UnityEngine.Assertions;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
@@ -12,13 +13,9 @@ namespace Traits {
         public List<Trait> traits { get; private set; }
         public List<Status> statuses { get; private set; }
         public Dictionary<string, List<Trait>> traitOverrideFunctions { get; private set; }
-        //public List<Trait> onCollideWithTraits { get; private set; }
-        //public List<Trait> onEnterGridTileTraits { get; private set; }
-
         public Dictionary<string, int> stacks { get; private set; }
         public Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; private set; }
         public Dictionary<string, bool> traitSwitches { get; private set; }
-        //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
         #region getters/setters
         #endregion
@@ -27,13 +24,10 @@ namespace Traits {
             allTraitsAndStatuses = new List<Trait>();
             statuses = new List<Status>();
             traits = new List<Trait>();
-            //onCollideWithTraits = new List<Trait>();
-            //onEnterGridTileTraits = new List<Trait>();
             traitOverrideFunctions = new Dictionary<string, List<Trait>>();
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<TraitRemoveSchedule>>();
             traitSwitches = new Dictionary<string, bool>();
-            //currentDurations = new Dictionary<Trait, int>();
         }
 
         #region Adding
@@ -493,6 +487,13 @@ namespace Traits {
             }
             return false;
         }
+        public bool RemoveTraitOnSchedule(ITraitable removeFrom, string traitName) {
+            if (HasTrait(traitName)) {
+                Trait trait = GetNormalTrait<Trait>(traitName);
+                return RemoveTraitOnSchedule(removeFrom, trait);
+            }
+            return false;
+        }
         /// <summary>
         /// Remove all traits that are not persistent.
         /// </summary>
@@ -766,6 +767,32 @@ namespace Traits {
         }
         #endregion
 
+        #region Loading
+        public void Load(ITraitable owner, SaveDataTraitContainer saveDataTraitContainer) {
+            for (int i = 0; i < saveDataTraitContainer.nonInstancedTraits.Count; i++) {
+                string nonInstancedTraitName = saveDataTraitContainer.nonInstancedTraits[i];
+                //add trait to container, bue set duration as 0, since the traits removal will be handled when loading the schedule tickets
+                TraitAddition(owner, nonInstancedTraitName, null, null, 0);
+            }
+            for (int i = 0; i < saveDataTraitContainer.instancedTraitsIDs.Count; i++) {
+                string persistentID = saveDataTraitContainer.instancedTraitsIDs[i];
+                Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(persistentID);
+                TraitAddition(owner, trait, null, null, 0);
+            }
+            stacks.Clear();
+            foreach (var stack in saveDataTraitContainer.stacks) {
+                stacks.Add(stack.Key, stack.Value);
+            }
+            foreach (var ticket in saveDataTraitContainer.scheduleTickets) {
+                for (int i = 0; i < ticket.Value.Count; i++) {
+                    GameDate removeDate = ticket.Value[i];
+                    string ticketID = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(owner, ticket.Key), this);
+                    AddScheduleTicket(ticket.Key, ticketID, removeDate);
+                }
+            }
+        }
+        #endregion
+        
         #region Clean Up
         public void CleanUp() {
             allTraitsAndStatuses?.Clear();
@@ -792,3 +819,36 @@ public class TraitRemoveSchedule {
         ticket = string.Empty;
     }
 }
+
+#region Save Data
+public class SaveDataTraitContainer : SaveData<ITraitContainer> {
+    public List<string> nonInstancedTraits; //list of trait names
+    public List<string> instancedTraitsIDs; //list of persistent ids per instanced trait
+    public Dictionary<string, int> stacks;
+    public Dictionary<string, List<GameDate>> scheduleTickets;
+    public override void Save(ITraitContainer data) {
+        base.Save(data);
+        nonInstancedTraits = new List<string>();
+        instancedTraitsIDs = new List<string>();
+        for (int i = 0; i < data.allTraitsAndStatuses.Count; i++) {
+            Trait trait = data.allTraitsAndStatuses[i];
+            if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
+                instancedTraitsIDs.Add(trait.persistentID);
+                Assert.IsFalse(string.IsNullOrEmpty(trait.persistentID), $"Persistent id of instanced trait {trait.name} is empty!");
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(trait);
+            } else {
+                nonInstancedTraits.Add(trait.name);
+            }
+        }
+        stacks = data.stacks;
+        scheduleTickets = new Dictionary<string, List<GameDate>>();
+        foreach (var schedule in data.scheduleTickets) {
+            scheduleTickets.Add(schedule.Key, new List<GameDate>());
+            for (int i = 0; i < schedule.Value.Count; i++) {
+                TraitRemoveSchedule removeSchedule = schedule.Value[i];
+                scheduleTickets[schedule.Key].Add(removeSchedule.removeDate);
+            }
+        }
+    }
+}
+#endregion

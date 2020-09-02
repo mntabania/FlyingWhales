@@ -5,11 +5,6 @@ using Random = UnityEngine.Random;
 
 namespace Traits {
     public class Agitated : Status {
-
-        public override bool isNotSavable {
-            get { return true; }
-        }
-
         public override bool isSingleton => true;
         
         public Agitated() {

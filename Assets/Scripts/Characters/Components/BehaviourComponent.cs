@@ -704,9 +704,28 @@ public class BehaviourComponent : CharacterComponent {
     }
     public void OnBecomeAbductor() {
         Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
     }
     public void OnNoLongerAbductor() {
         Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+    }
+    private void OnAbductorRemovedJobFromQueue(JobQueueItem job, Character character) {
+        if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT) {
+            if (character is Summon summon) {
+                character.combatComponent.SetCombatMode(summon.defaultCombatMode);    
+            } else {
+                character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+            }
+            
+        }
+    }
+    private void OnAbductorAddedJobToQueue(JobQueueItem job, Character character) {
+        if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
+            character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        }
     }
     private void CheckIfMonsterAte(Character character, GoapPlanJob job) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_EAT) {
@@ -839,29 +858,29 @@ public class BehaviourComponent : CharacterComponent {
     #region Snatcher
     public void SetIsSnatching(bool state) {
         isCurrentlySnatching = state;
-        if (state) {
-            Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);    
-        } else {
-            Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);
-        }
-        
     }
-    // public void OnBecomeSnatcher() {
-    //     Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnSnatcherFinishedJob);
-    //     Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnSnatcherDied);
-    // }
-    // public void OnNoLongerSnatcher() {
-    //     Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_ACTION, OnSnatcherFinishedJob);
-    //     Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnSnatcherDied);
-    // }
-    // private void OnSnatcherDied(Character character) {
-    //     if (character == owner) {
-    //         OnNoLongerSnatcher();
-    //     }
-    // }
+    public void OnBecomeSnatcher() {
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+    }
+    public void OnNoLongerSnatcher() {
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnSnatcherAddedJobToQueue);
+        Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnSnatchJobRemoved);   
+    }
+    private void OnSnatcherAddedJobToQueue(JobQueueItem job, Character character) {
+        if (character == owner && job.jobType == JOB_TYPE.SNATCH && character.combatComponent.combatMode != COMBAT_MODE.Defend) {
+            character.combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        }
+    }
+    
     private void OnSnatchJobRemoved(JobQueueItem job, Character character) {
-        if (character == owner &&  job.jobType == JOB_TYPE.SNATCH) {
+        if (character == owner && job.jobType == JOB_TYPE.SNATCH) {
             SetIsSnatching(false);
+            if (character is Summon summon) {
+                character.combatComponent.SetCombatMode(summon.defaultCombatMode);
+            } else {
+                character.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+            }
         }
     }
     #endregion

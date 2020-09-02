@@ -13,7 +13,7 @@ public class StartDouse : GoapAction {
         base.Perform(goapNode);
         SetState("Start Douse Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
@@ -22,8 +22,11 @@ public class StartDouse : GoapAction {
     
     #region State Effects
     [UsedImplicitly]
-    public void AfterStartDouseSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Dousing");
+    public void PreStartDouseSuccess(ActualGoapNode goapNode) {
+        if (goapNode.associatedJob.originalOwner is NPCSettlement settlement) {
+            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Dousing");
+            settlement.settlementJobTriggerComponent.OnTakeDouseFireJob(goapNode.actor);
+        }
     }
     #endregion
 }

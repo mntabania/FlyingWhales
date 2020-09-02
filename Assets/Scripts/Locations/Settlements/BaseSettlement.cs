@@ -40,7 +40,7 @@ namespace Locations.Settlements {
             StartListeningForFires();
         }
         protected BaseSettlement(SaveDataBaseSettlement saveDataBaseSettlement) {
-            persistentID = saveDataBaseSettlement.persistentID;
+            persistentID = saveDataBaseSettlement._persistentID;
             SetName(saveDataBaseSettlement.name);
             id = UtilityScripts.Utilities.SetID(this, saveDataBaseSettlement.id);
             tiles = new List<HexTile>();
@@ -275,12 +275,6 @@ namespace Locations.Settlements {
                 LocationStructure structure = preCreatedStructures[i];
                 AddStructure(structure);
             }
-        }
-        protected virtual void LoadStructures(SaveDataBaseSettlement data) {
-            structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-            // for (int i = 0; i < data.structures.Count; i++) {
-            //     LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
-            // }
         }
         public void AddStructure(LocationStructure structure) {
             if (!structures.ContainsKey(structure.structureType)) {

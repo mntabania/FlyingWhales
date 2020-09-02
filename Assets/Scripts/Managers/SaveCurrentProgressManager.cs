@@ -23,7 +23,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress.Initialize();
         currentSaveDataProgress.SaveDate();
         currentSaveDataProgress.SavePlayer();
-        //saveData.SaveFactions();
+        currentSaveDataProgress.SaveFactions();
+        
+        currentSaveDataProgress.SaveJobs();
 
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
@@ -54,7 +56,36 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         //SaveGame.Encode = true;
         SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", currentSaveDataProgress);
     }
+    public void DoManualSave(string fileName = "") {
+        if (string.IsNullOrEmpty(fileName)) {
+            fileName = savedCurrentProgressFileName;
+        }
+        currentSaveDataProgress = new SaveDataCurrentProgress();
+        currentSaveDataProgress.Initialize();
+        //date
+        currentSaveDataProgress.SaveDate();
+        currentSaveDataProgress.SavePlayer();
+        currentSaveDataProgress.SaveFactions();
+        currentSaveDataProgress.SaveCharacters();
+        currentSaveDataProgress.SaveJobs();
+        
+        //save world map
+        WorldMapSave worldMapSave = new WorldMapSave();
+        worldMapSave.SaveWorld(
+            WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, 
+            DatabaseManager.Instance.hexTileDatabase,
+            DatabaseManager.Instance.regionDatabase,
+            DatabaseManager.Instance.settlementDatabase,
+            DatabaseManager.Instance.structureDatabase
+        );
+        currentSaveDataProgress.worldMapSave = worldMapSave;
+        currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
 
+        string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
+        SaveGame.Save(path, currentSaveDataProgress);
+        
+        Debug.Log($"Saved new game at {path}");
+    }
     #endregion
 
     #region Loading

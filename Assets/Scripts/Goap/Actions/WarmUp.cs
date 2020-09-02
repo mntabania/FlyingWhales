@@ -20,7 +20,7 @@ public class WarmUp : GoapAction {
         base.Perform(goapNode);
         SetState("Warm Success", goapNode);
     }
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 20;
         costLog += $" +20(Initial)";

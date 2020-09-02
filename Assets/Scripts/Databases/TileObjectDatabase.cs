@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -38,11 +39,11 @@ public class TileObjectDatabase {
         }
         return null;
     }
-    public TileObject GetTileObject(string id) {
+    public TileObject GetTileObjectByPersistentID(string id) {
         if (tileObjectsByGUID.ContainsKey(id)) {
             return tileObjectsByGUID[id];
         }
-        return null;
+        throw new Exception($"Could not find tile object with id {id}");
     }
     public TileObject GetFirstTileObject(TILE_OBJECT_TYPE type) {
         if (allTileObjects.ContainsKey(type)) {

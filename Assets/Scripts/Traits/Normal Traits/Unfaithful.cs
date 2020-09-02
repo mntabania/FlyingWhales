@@ -4,9 +4,7 @@ using UnityEngine;
 using UtilityScripts;
 namespace Traits {
     public class Unfaithful : Trait {
-
-        public float affairChanceMultiplier { get; private set; }
-
+        
         public Unfaithful() {
             name = "Unfaithful";
             description = "Cannot commit to a monogamous relationship.";
@@ -17,16 +15,6 @@ namespace Traits {
         }
 
         #region Overrides
-        protected override void OnChangeLevel() {
-            base.OnChangeLevel();
-            if (level == 1) {
-                affairChanceMultiplier = 5f;
-            } else if (level == 2) {
-                affairChanceMultiplier = 10f;
-            } else if (level == 3) {
-                affairChanceMultiplier = 5f;
-            }
-        }
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
             int loverID = character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER); 

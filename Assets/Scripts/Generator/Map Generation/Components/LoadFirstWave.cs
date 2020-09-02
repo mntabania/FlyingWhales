@@ -15,8 +15,13 @@ public class LoadFirstWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
+        saveData.LoadDate();
+        
         //Load Factions
         yield return MapGenerator.Instance.StartCoroutine(LoadFactions(saveData));
+        
+        //Load Jobs
+        yield return MapGenerator.Instance.StartCoroutine(LoadJobs(saveData));
 
         //Load Characters
         yield return MapGenerator.Instance.StartCoroutine(LoadCharacters(saveData));
@@ -29,6 +34,10 @@ public class LoadFirstWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadLogs(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadParties(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadCrimes(saveData));
+
+        //Load Traits
+        yield return MapGenerator.Instance.StartCoroutine(LoadTraits(saveData));
+
     }
 
     private IEnumerator LoadFactions(SaveDataCurrentProgress saveData) {
@@ -37,17 +46,15 @@ public class LoadFirstWave : MapGenerationComponent {
         yield return null;
     }
     private IEnumerator LoadCharacters(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Characters..."); //The loading can't say "Loading Interrupts..." so it is classified as an action
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Characters...");
         saveData.LoadCharacters();
         yield return null;
     }
-
     private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Objects...");
         saveData.LoadTileObjects();
         yield return null;
     }
-
     private IEnumerator LoadLogs(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Logs...");
         saveData.LoadLogs();
@@ -67,14 +74,24 @@ public class LoadFirstWave : MapGenerationComponent {
     }
 
     private IEnumerator LoadParties(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Parties..."); //The loading can't say "Loading Interrupts..." so it is classified as an action
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Parties...");
         saveData.LoadParties();
         yield return null;
     }
 
     private IEnumerator LoadCrimes(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Crimes..."); //The loading can't say "Loading Interrupts..." so it is classified as an action
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Crimes...");
         saveData.LoadCrimes();
+        yield return null;
+    }
+    private IEnumerator LoadTraits(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Traits...");
+        saveData.LoadTraits();
+        yield return null;
+    }
+    private IEnumerator LoadJobs(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Jobs...");
+        saveData.LoadJobs();
         yield return null;
     }
 }

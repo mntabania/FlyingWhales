@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class Necromancer : Trait {
         public Character owner { get; private set; }
@@ -14,6 +16,7 @@ namespace Traits {
 
         #region getters
         public int numOfSkeletonFollowers { get { return GetNumOfSkeletonFollowers(); } }
+        public override Type serializedData => typeof(SaveDataNecromancer);
         #endregion
 
         public Necromancer() {
@@ -24,6 +27,23 @@ namespace Traits {
             ticksDuration = 0;
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.BUILD_LAIR, INTERACTION_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.READ_NECRONOMICON, INTERACTION_TYPE.MEDITATE, INTERACTION_TYPE.REGAIN_ENERGY };
         }
+
+        #region Loading
+        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadInstancedTrait(saveDataTrait);
+            SaveDataNecromancer saveDataNecromancer = saveDataTrait as SaveDataNecromancer;
+            Assert.IsNotNull(saveDataNecromancer);
+            if (!string.IsNullOrEmpty(saveDataNecromancer.lairStructureID)) {
+                lairStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNecromancer.lairStructureID);
+            }
+            if (!string.IsNullOrEmpty(saveDataNecromancer.attackVillageID)) {
+                attackVillageTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataNecromancer.attackVillageID) as NPCSettlement;
+            }
+            prevClassName = saveDataNecromancer.prevClassName;
+            lifeAbsorbed = saveDataNecromancer.lifeAbsorbed;
+            energy = saveDataNecromancer.energy;
+        }
+        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
@@ -92,3 +112,23 @@ namespace Traits {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataNecromancer : SaveDataTrait {
+    public string lairStructureID;
+    public string attackVillageID;
+    public string prevClassName;
+    public int lifeAbsorbed;
+    public int energy;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Necromancer necromancer = trait as Necromancer;
+        Assert.IsNotNull(necromancer);
+        lairStructureID = necromancer.lairStructure == null ? string.Empty : necromancer.lairStructure.persistentID;
+        attackVillageID = necromancer.attackVillageTarget == null ? string.Empty : necromancer.attackVillageTarget.persistentID;
+        prevClassName = necromancer.prevClassName;
+        lifeAbsorbed = necromancer.lifeAbsorbed;
+        energy = necromancer.energy;
+    }
+}
+#endregion

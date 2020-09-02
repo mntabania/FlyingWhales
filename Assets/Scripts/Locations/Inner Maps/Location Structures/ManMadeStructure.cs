@@ -124,7 +124,6 @@ namespace Inner_Maps.Location_Structures {
             Assert.IsNotNull(_structureTileObject, $"Repair job is being created for {this} but it does not have a structure tile object");
             if (settlementLocation is NPCSettlement npcSettlement) {
                 GoapPlanJob repairJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPAIR, INTERACTION_TYPE.REPAIR_STRUCTURE, _structureTileObject, npcSettlement);
-                repairJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairStructureJob);
                 npcSettlement.AddToAvailableJobs(repairJob);    
             }
         }

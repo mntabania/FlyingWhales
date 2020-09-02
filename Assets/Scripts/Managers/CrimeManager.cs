@@ -621,7 +621,7 @@ public class CrimeData : ISavable {
             if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 target = CharacterManager.Instance.GetCharacterByPersistentID(data.target);
             } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                target = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.target);
+                target = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.target);
             }
         }
         if (data.targetFaction != string.Empty) {

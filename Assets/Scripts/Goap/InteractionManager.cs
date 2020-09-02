@@ -102,7 +102,7 @@ public partial class InteractionManager : BaseMonoBehaviour {
         return null;
     }
 
-    public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
+    public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         if (goapActionData.ContainsKey(goapType)) {
             return goapActionData[goapType].CanSatisfyRequirements(actor, poiTarget, otherData);
         }

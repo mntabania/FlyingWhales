@@ -84,7 +84,8 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                             LocationStructure targetStructure = targetCharacter.homeStructure;
                             Assert.IsNotNull(targetStructure, $"Home structure of visit target {targetCharacter.name} is null!");
                             log += $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship, {targetCharacter.name} and set Base Structure for 2.5 hours";
-                            character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, new object[] { targetStructure, targetCharacter });
+                            character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, targetCharacter, out producedJob, 
+                                new OtherData[] { new LocationStructureOtherData(targetStructure), new CharacterOtherData(targetCharacter), });
                         } else {
                             log += "\n  -No valid character to visit.";
                         }

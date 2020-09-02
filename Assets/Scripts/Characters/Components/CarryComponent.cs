@@ -204,7 +204,7 @@ public class CarryComponent : CharacterComponent {
             if(data.carriedPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 poi = CharacterManager.Instance.GetCharacterByPersistentID(data.carriedPOI);
             } else if (data.carriedPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                poi = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.carriedPOI);
+                poi = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.carriedPOI);
             }
             carriedPOI = poi;
             //CarryPOI(poi);
