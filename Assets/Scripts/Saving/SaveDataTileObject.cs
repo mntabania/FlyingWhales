@@ -6,8 +6,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
-    public string _persistentID;
-    public OBJECT_TYPE _objectType;
+    public string persistentID { get; set; }
     public int id;
     public string name;
     public TILE_OBJECT_TYPE tileObjectType;
@@ -27,48 +26,46 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public QuaternionSave rotation;
     
     #region getters
-    public string persistentID => _persistentID;
-    public OBJECT_TYPE objectType => _objectType;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
     #endregion
     
-    public override void Save(TileObject tileObject) {
-        _persistentID = tileObject.persistentID;
-        _objectType = tileObject.objectType;
-        id = tileObject.id;
-        name = tileObject.name;
-        tileObjectType = tileObject.tileObjectType;
-        characterOwnerID = tileObject.characterOwner?.id ?? -1;
-        if (tileObject.gridTileLocation != null) {
-            regionLocationID = tileObject.gridTileLocation.parentMap.region.id;
-            tileLocationID = tileObject.gridTileLocation.persistentID;    
+    public override void Save(TileObject data) {
+        persistentID = data.persistentID;
+        id = data.id;
+        name = data.name;
+        tileObjectType = data.tileObjectType;
+        characterOwnerID = data.characterOwner?.id ?? -1;
+        if (data.gridTileLocation != null) {
+            regionLocationID = data.gridTileLocation.parentMap.region.id;
+            tileLocationID = data.gridTileLocation.persistentID;    
         } else {
             regionLocationID = -1;
             tileLocationID = string.Empty;
         }
         
-        isPreplaced = tileObject.isPreplaced;
-        poiState = tileObject.state;
+        isPreplaced = data.isPreplaced;
+        poiState = data.state;
         
-        advertisedActions = new INTERACTION_TYPE[tileObject.advertisedActions.Count];
+        advertisedActions = new INTERACTION_TYPE[data.advertisedActions.Count];
         for (int i = 0; i < advertisedActions.Length; i++) {
-            INTERACTION_TYPE interactionType = tileObject.advertisedActions[i];
+            INTERACTION_TYPE interactionType = data.advertisedActions[i];
             advertisedActions[i] = interactionType;
         }
         
-        currentHP = tileObject.currentHP;
+        currentHP = data.currentHP;
 
-        if (tileObject.mapObjectVisual == null || tileObject.mapObjectVisual.usedSprite == null) {
+        if (data.mapObjectVisual == null || data.mapObjectVisual.usedSprite == null) {
             spriteName = string.Empty;
             rotation = Quaternion.identity;
             // Debug.Log($"Tile Object {tileObject} has no map object or visual.");
         } else {
-            spriteName = tileObject.mapObjectVisual.usedSprite.name;
-            rotation = tileObject.mapObjectVisual.rotation;
+            spriteName = data.mapObjectVisual.usedSprite.name;
+            rotation = data.mapObjectVisual.rotation;
         }
 
-        resourceValues = new int[tileObject.storedResources.Count];
+        resourceValues = new int[data.storedResources.Count];
         int index = 0;
-        foreach (var storedResource in tileObject.storedResources) {
+        foreach (var storedResource in data.storedResources) {
             resourceValues[index] = storedResource.Value;
             index++;
         }

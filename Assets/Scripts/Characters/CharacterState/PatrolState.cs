@@ -48,7 +48,7 @@ public class PatrolState : CharacterState {
     //}
     public override void PerTickInState() {
         base.PerTickInState();
-        if (!stateComponent.character.canCombat) {
+        if (!stateComponent.owner.canCombat) {
             stateComponent.ExitCurrentState();
             return;
         }
@@ -65,16 +65,16 @@ public class PatrolState : CharacterState {
     }
     #endregion
     private void StartPatrolMovement() {
-        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartPatrolMovement);
+        stateComponent.owner.marker.GoTo(PickRandomTileToGoTo(), StartPatrolMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure chosenStructure = stateComponent.character.currentRegion.GetRandomStructure();
+        LocationStructure chosenStructure = stateComponent.owner.currentRegion.GetRandomStructure();
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if (chosenTile != null) {
             return chosenTile;
         } else {
             throw new System.Exception(
-                $"No tile in {chosenStructure.name} for {stateComponent.character.name} to go to in {stateName}");
+                $"No tile in {chosenStructure.name} for {stateComponent.owner.name} to go to in {stateName}");
         }
     }
 }

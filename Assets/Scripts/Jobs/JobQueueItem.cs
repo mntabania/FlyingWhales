@@ -6,7 +6,8 @@ using System.Reflection;
 using Traits;
 using UnityEngine.Assertions;
 
-public class JobQueueItem {
+public class JobQueueItem : ISavable {
+    public string persistentID { get; private set; }
     public int id { get; protected set; }
     public IJobOwner originalOwner { get; protected set; } //The true original owner of this job
     public Character assignedCharacter { get; protected set; } //Only has value if job is inside character's job queue
@@ -45,12 +46,18 @@ public class JobQueueItem {
     /// </summary>
     public bool hasBeenReset { get; protected set; }
 
+    #region getters
+    public virtual OBJECT_TYPE objectType => OBJECT_TYPE.Action_Job;
+    public virtual System.Type serializedData => typeof(SaveDataJobQueueItem);
+    #endregion
+
     public JobQueueItem() {
         id = -1;
         blacklistedCharacters = new List<Character>();
     }
 
     protected void Initialize(JOB_TYPE jobType, IJobOwner owner) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         hasBeenReset = false;
         this.jobType = jobType;

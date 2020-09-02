@@ -82,7 +82,6 @@ namespace Traits {
         }
         public CrimeData AddCrime(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, Criminal criminalTrait, IPointOfInterest target, Faction targetFaction, REACTION_STATUS reactionStatus) {
             CrimeData newData = new CrimeData(crimeType, crimeSeverity, crime, criminal, target, targetFaction);
-            newData.SetCriminalTrait(criminalTrait);
             activeCrimes.Add(newData);
             newData.OnCrimeAdded();
             return newData;

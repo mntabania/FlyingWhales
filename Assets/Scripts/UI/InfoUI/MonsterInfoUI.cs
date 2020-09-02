@@ -335,7 +335,7 @@ public class MonsterInfoUI : InfoUIBase {
     public void ShowCharacterTestingInfo() {
 #if UNITY_EDITOR
         string summary = $"Home structure: {activeMonster.homeStructure?.ToString() ?? "None"}" ?? "None";
-        summary = $"{summary}{$"\nTerritories: {activeMonster.territorries?.Count.ToString() ?? "None"}"}";
+        summary = $"{summary}{$"\nTerritories: {activeMonster.territories?.Count.ToString() ?? "None"}"}";
         summary = $"{summary}{($"\nCurrent structure: {activeMonster.currentStructure}" ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeMonster.state.ToString())}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeMonster.needsComponent.doNotGetHungry.ToString())}";

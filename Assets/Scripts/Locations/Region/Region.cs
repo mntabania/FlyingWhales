@@ -278,9 +278,9 @@ public class Region : ISavable {
         List<HexTile> areas = null;
         for (int i = 0; i < residents.Count; i++) {
             Character regionResident = residents[i];
-            if (regionResident.territorries != null && regionResident.territorries.Count > 0) {
-                for (int j = 0; j < regionResident.territorries.Count; j++) {
-                    HexTile territory = regionResident.territorries[j];
+            if (regionResident.territories != null && regionResident.territories.Count > 0) {
+                for (int j = 0; j < regionResident.territories.Count; j++) {
+                    HexTile territory = regionResident.territories[j];
                     if (areas == null) {
                         areas = new List<HexTile>();
                     }
@@ -339,10 +339,10 @@ public class Region : ISavable {
         List<Character> validCharacters = null;
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
-            if (resident != character && resident.territorries.Count > 0) {
-                for (int j = 0; j < character.territorries.Count; j++) {
-                    HexTile territory = character.territorries[j];
-                    if (resident.territorries.Contains(territory)) {
+            if (resident != character && resident.territories.Count > 0) {
+                for (int j = 0; j < character.territories.Count; j++) {
+                    HexTile territory = character.territories[j];
+                    if (resident.territories.Contains(territory)) {
                         if (validCharacters == null) {
                             validCharacters = new List<Character>();
                         }

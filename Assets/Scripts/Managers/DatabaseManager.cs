@@ -15,7 +15,14 @@ public class DatabaseManager : MonoBehaviour {
     public LocationGridTileDatabase locationGridTileDatabase { get; private set; }
     public SettlementDatabase settlementDatabase { get; private set; }
     public LocationStructureDatabase structureDatabase { get; private set; }
-    
+
+    //These databases are only used when loading from a saved game, and therefore must be cleared out when loading is complete to save memory
+    public ActionDatabase actionDatabase { get; private set; }
+    public InterruptDatabase interruptDatabase { get; private set; }
+    public LogDatabase logDatabase { get; private set; }
+    public PartyDatabase partyDatabase { get; private set; }
+    public CrimeDatabase crimeDatabase { get; private set; }
+
     void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -36,5 +43,10 @@ public class DatabaseManager : MonoBehaviour {
         locationGridTileDatabase = new LocationGridTileDatabase();
         settlementDatabase = new SettlementDatabase();
         structureDatabase = new LocationStructureDatabase();
+        actionDatabase = new ActionDatabase();
+        interruptDatabase = new InterruptDatabase();
+        logDatabase = new LogDatabase();
+        partyDatabase = new PartyDatabase();
+        crimeDatabase = new CrimeDatabase();
     }
 }

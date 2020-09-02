@@ -9,8 +9,7 @@ using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UnityEngine.Assertions;
 
-public class InterruptComponent {
-    public Character owner { get; private set; }
+public class InterruptComponent : CharacterComponent {
     public InterruptHolder currentInterrupt { get; private set; }
     public int currentDuration { get; private set; }
     //public string identifier { get; private set; }
@@ -29,11 +28,15 @@ public class InterruptComponent {
     //public Log currentEffectLog => _currentEffectLog;
     #endregion
 
-    public InterruptComponent(Character owner) {
-        this.owner = owner;
+    public InterruptComponent() {
         _pendingSimultaneousInterrupts = new List<Action>();
         //identifier = string.Empty;
         //simultaneousIdentifier = string.Empty;
+    }
+    public InterruptComponent(SaveDataInterruptComponent data) {
+        _pendingSimultaneousInterrupts = new List<Action>();
+        currentDuration = data.currentDuration;
+        currentSimultaneousInterruptDuration = data.currentSimultaneousInterruptDuration;
     }
 
     #region General
@@ -303,11 +306,44 @@ public class InterruptComponent {
         return false; 
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataInterruptComponent data) {
+        if (data.currentInterruptID != string.Empty) {
+            currentInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.currentInterruptID);
+            CreateThoughtBubbleLog(currentInterrupt.interrupt);
+        }
+        if (data.triggeredSimultaneousInterruptID != string.Empty) {
+            triggeredSimultaneousInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.triggeredSimultaneousInterruptID);
+        }
+    }
+    #endregion
 }
 
+[System.Serializable]
 public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
-    public InterruptHolder currentInterrupt;
+    public string currentInterruptID;
     public int currentDuration;
-    public InterruptHolder triggeredSimultaneousInterrupt;
+    public string triggeredSimultaneousInterruptID;
     public int currentSimultaneousInterruptDuration;
+
+    #region Overrides
+    public override void Save(InterruptComponent data) {
+        currentDuration = data.currentDuration;
+        currentSimultaneousInterruptDuration = data.currentSimultaneousInterruptDuration;
+        if(data.currentInterrupt != null) {
+            currentInterruptID = data.currentInterrupt.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentInterrupt);
+        }
+        if (data.triggeredSimultaneousInterrupt != null) {
+            triggeredSimultaneousInterruptID = data.triggeredSimultaneousInterrupt.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.triggeredSimultaneousInterrupt);
+        }
+    }
+
+    public override InterruptComponent Load() {
+        InterruptComponent component = new InterruptComponent(this);
+        return component;
+    }
+    #endregion
 }

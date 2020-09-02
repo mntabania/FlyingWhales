@@ -127,7 +127,7 @@ public class CharacterVisuals {
             Sprite currSprite = assets.animationSprites[i];
             markerAnimations.Add(currSprite.name, currSprite);
         }
-        if (character.marker != null) {
+        if (character.marker) {
             character.marker.UpdateName();    
             // character.marker.UpdateNameplatePosition();    
         }

@@ -4,8 +4,7 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 
-public class CombatComponent {
-	public Character owner { get; private set; }
+public class CombatComponent : CharacterComponent {
     public int attack { get; private set; }
     public int attackModification { get; private set; }
     public int maxHP { get; private set; }
@@ -15,8 +14,8 @@ public class CombatComponent {
     public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
-    public List<IPointOfInterest> bannedFromHostileList { get; private set; }
-    public Dictionary<IPointOfInterest, CombatData> fightCombatData { get; private set; }
+    public List<Character> bannedFromHostileList { get; private set; }
+    public Dictionary<IPointOfInterest, CombatData> combatDataDictionary { get; private set; }
     //public string avoidReason { get; private set; }
     public ElementalDamageData elementalDamage { get; private set; }
     //public ActualGoapNode actionThatTriggeredCombatState { get; private set; }
@@ -24,10 +23,10 @@ public class CombatComponent {
     // public ActualGoapNode combatConnectedActionNode { get; private set; }
 
     //delegates
-    public delegate void OnProcessCombat(CombatState state);
-    private OnProcessCombat onProcessCombat; //actions to be executed and cleared when a character processes combat.
+    //public delegate void OnProcessCombat(CombatState state);
+    //private OnProcessCombat onProcessCombat; //actions to be executed and cleared when a character processes combat.
 
-    private bool _willProcessCombat;
+    public bool willProcessCombat { get; private set; }
 
     #region getters
     public bool isInCombat => owner.stateComponent.currentState != null && owner.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
@@ -40,22 +39,35 @@ public class CombatComponent {
                                                         ? 1f : owner.raceSetting.attackMultiplier));
     #endregion
 
-    public CombatComponent(Character owner) {
-		this.owner = owner;
+    public CombatComponent() {
         hostilesInRange = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
-        bannedFromHostileList = new List<IPointOfInterest>();
-        fightCombatData = new Dictionary<IPointOfInterest, CombatData>();
+        bannedFromHostileList = new List<Character>();
+        combatDataDictionary = new Dictionary<IPointOfInterest, CombatData>();
         SetCombatMode(COMBAT_MODE.Aggressive);
         SetElementalType(ELEMENTAL_TYPE.Normal);
         //UpdateBasicData(true);
 	}
+    public CombatComponent(SaveDataCombatComponent data) {
+        hostilesInRange = new List<IPointOfInterest>();
+        avoidInRange = new List<IPointOfInterest>();
+        bannedFromHostileList = new List<Character>();
+        combatDataDictionary = new Dictionary<IPointOfInterest, CombatData>();
 
+        attack = data.attack;
+        attackModification = data.attackModification;
+        maxHP = data.maxHP;
+        maxHPModification = data.maxHPModification;
+        attackSpeed = data.attackSpeed;
+        combatMode = data.combatMode;
+        elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(data.elementalDamage.type);
+        willProcessCombat = data.willProcessCombat;
+    }
 
     #region General
-    public void OnThisCharacterEndedCombatState() {
-        SetOnProcessCombatAction(null);
-    }
+    //public void OnThisCharacterEndedCombatState() {
+    //    SetOnProcessCombatAction(null);
+    //}
     private void ProcessCombatBehavior() {
         string log = $"{owner.name} process combat switch is turned on, processing combat...";
         if (owner.interruptComponent.isInterrupted) {
@@ -93,14 +105,14 @@ public class CombatComponent {
         //onProcessCombat?.Invoke(owner.stateComponent.currentState as CombatState);
         //SetOnProcessCombatAction(null);
     }
-    public void AddOnProcessCombatAction(OnProcessCombat action) {
-        onProcessCombat += action;
-    }
-    public void SetOnProcessCombatAction(OnProcessCombat action) {
-        onProcessCombat = action;
-    }
+    //public void AddOnProcessCombatAction(OnProcessCombat action) {
+    //    onProcessCombat += action;
+    //}
+    //public void SetOnProcessCombatAction(OnProcessCombat action) {
+    //    onProcessCombat = action;
+    //}
     public void CheckCombatPerTickEnded() {
-        if (_willProcessCombat) {
+        if (willProcessCombat) {
             SetWillProcessCombat(false); //Moved this up here, because ProcessCombatBehavior can set process combat to true again, and we don't want to overwrite that.
             ProcessCombatBehavior();
         }
@@ -130,7 +142,7 @@ public class CombatComponent {
     //    jobThatTriggeredCombatState = job;
     //}
     public void SetWillProcessCombat(bool state) {
-        _willProcessCombat = state;
+        willProcessCombat = state;
     }
     private bool IsInActualCombat() {
         if(owner.marker && owner.stateComponent.currentState != null && owner.stateComponent.currentState is CombatState combatState) {
@@ -367,7 +379,7 @@ public class CombatComponent {
     }
     public bool Fight(IPointOfInterest target, string reason, ActualGoapNode connectedAction = null, bool isLethal = true) {
         bool hasFought = false;
-        bool cannotFight = reason == CombatManager.Hostility && bannedFromHostileList.Contains(target);
+        bool cannotFight = reason == CombatManager.Hostility && (target is Character targetCharacter && bannedFromHostileList.Contains(targetCharacter));
         if (!hostilesInRange.Contains(target) && !cannotFight) {
             string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
@@ -376,15 +388,15 @@ public class CombatComponent {
 
             //CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
             //newCombatData.SetFightData(reason, connectedAction, isLethal);
-            if (fightCombatData.ContainsKey(target)) {
+            if (combatDataDictionary.ContainsKey(target)) {
                 //CombatData prevCombatData = fightCombatData[target];
                 //ObjectPoolManager.Instance.ReturnCombatDataToPool(prevCombatData);
                 //fightCombatData[target] = newCombatData;
-                fightCombatData[target].SetFightData(reason, connectedAction, isLethal);
+                combatDataDictionary[target].SetFightData(reason, connectedAction, isLethal);
             } else {
                 CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
                 newCombatData.SetFightData(reason, connectedAction, isLethal);
-                fightCombatData.Add(target, newCombatData);
+                combatDataDictionary.Add(target, newCombatData);
             }
 
             if (target is TileObject targetTileObject) {
@@ -422,12 +434,12 @@ public class CombatComponent {
                 avoidInRange.Add(target);
                 SetWillProcessCombat(true);
 
-                if (fightCombatData.ContainsKey(target)) {
-                    fightCombatData[target].SetFlightData(reason);
+                if (combatDataDictionary.ContainsKey(target)) {
+                    combatDataDictionary[target].SetFlightData(reason);
                 } else {
                     CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
                     newCombatData.SetFlightData(reason);
-                    fightCombatData.Add(target, newCombatData);
+                    combatDataDictionary.Add(target, newCombatData);
                 }
 
                 debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
@@ -460,12 +472,12 @@ public class CombatComponent {
                     if (owner.marker.inVisionPOIs.Contains(hostile)) {
                         avoidInRange.Add(hostile);
 
-                        if (fightCombatData.ContainsKey(hostile)) {
-                            fightCombatData[hostile].SetFlightData(reason);
+                        if (combatDataDictionary.ContainsKey(hostile)) {
+                            combatDataDictionary[hostile].SetFlightData(reason);
                         } else {
                             CombatData newCombatData = ObjectPoolManager.Instance.CreateNewCombatData();
                             newCombatData.SetFlightData(reason);
-                            fightCombatData.Add(hostile, newCombatData);
+                            combatDataDictionary.Add(hostile, newCombatData);
                         }
 
                         if (hostile is Character) {
@@ -554,8 +566,8 @@ public class CombatComponent {
         }
     }
     public bool IsLethalCombatForTarget(Character character) {
-        if (fightCombatData.ContainsKey(character)) {
-            return fightCombatData[character].isLethal;
+        if (combatDataDictionary.ContainsKey(character)) {
+            return combatDataDictionary[character].isLethal;
         }
         return true;
     }
@@ -648,32 +660,30 @@ public class CombatComponent {
     //        RemoveHostileInRange(token);
     //    }
     //}
-    private void AddPOIToBannedFromHostile(IPointOfInterest poi) {
+    private void AddPOIToBannedFromHostile(Character targetCharacter) {
         if (owner.movementComponent.isStationary) {
             //Stationary characters cannot ban hostiles because they can't move/pursue targets
             return;
         }
-        if (poi is Character targetCharacter) {
-            //Dead/unconscious characters should not be banned because they can no longer be attacked anyway
-            if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Unconscious")) {
-                return;
-            }
-
-            if (targetCharacter.combatComponent.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
-                //Only ban characters that are already fleeing when you removed them from hostile list
-            } else {
-                return;
-            }
+        //Dead/unconscious characters should not be banned because they can no longer be attacked anyway
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Unconscious")) {
+            return;
         }
-        if (!bannedFromHostileList.Contains(poi)) {
-            bannedFromHostileList.Add(poi);
+
+        if (targetCharacter.combatComponent.isInCombat && !(targetCharacter.stateComponent.currentState as CombatState).isAttacking) {
+            //Only ban characters that are already fleeing when you removed them from hostile list
+        } else {
+            return;
+        }
+        if (!bannedFromHostileList.Contains(targetCharacter)) {
+            bannedFromHostileList.Add(targetCharacter);
             GameDate dueDate = GameManager.Instance.Today();
             dueDate.AddTicks(2);
-            SchedulingManager.Instance.AddEntry(dueDate, () => RemovePOIToBannedFromHostile(poi), owner);
+            SchedulingManager.Instance.AddEntry(dueDate, () => RemovePOIToBannedFromHostile(targetCharacter), owner);
         }
     }
-    private bool RemovePOIToBannedFromHostile(IPointOfInterest poi) {
-        return bannedFromHostileList.Remove(poi);
+    private bool RemovePOIToBannedFromHostile(Character targetCharacter) {
+        return bannedFromHostileList.Remove(targetCharacter);
     }
     #endregion
 
@@ -717,7 +727,7 @@ public class CombatComponent {
     }
     public void RemoveHostileInRangeSchedule(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Contains(poi)) {
-            if(fightCombatData.ContainsKey(poi) && fightCombatData[poi].reasonForCombat != CombatManager.Demon_Kill && fightCombatData[poi].connectedAction == null) {
+            if(combatDataDictionary.ContainsKey(poi) && combatDataDictionary[poi].reasonForCombat != CombatManager.Demon_Kill && combatDataDictionary[poi].connectedAction == null) {
                 GameDate dueDate = GameManager.Instance.Today();
                 dueDate.AddTicks(2);
                 SchedulingManager.Instance.AddEntry(dueDate, () => FinalCheckForRemoveHostileSchedule(poi, processCombatBehavior), owner);
@@ -747,16 +757,16 @@ public class CombatComponent {
 
     #region Combat Data
     public CombatData GetCombatData(IPointOfInterest target) {
-        if (fightCombatData.ContainsKey(target)) {
-            return fightCombatData[target];
+        if (combatDataDictionary.ContainsKey(target)) {
+            return combatDataDictionary[target];
         }
         return null;
     }
     public void ClearCombatData() {
-        foreach (CombatData combatData in fightCombatData.Values) {
+        foreach (CombatData combatData in combatDataDictionary.Values) {
             ObjectPoolManager.Instance.ReturnCombatDataToPool(combatData);
         }
-        fightCombatData.Clear();
+        combatDataDictionary.Clear();
     }
     public string GetCombatLogKeyReason(IPointOfInterest target) {
         string key = string.Empty;
@@ -818,7 +828,7 @@ public class CombatComponent {
         //https://trello.com/c/GXzaAAsP/1361-dropped-combat-related-jobs-should-remove-target-from-hostile-list-if-not-yet-in-actual-combat-with-it
         if (!job.finishedSuccessfully) {
             bool hasRemoved = false;
-            foreach (KeyValuePair<IPointOfInterest, CombatData> kvp in fightCombatData) {
+            foreach (KeyValuePair<IPointOfInterest, CombatData> kvp in combatDataDictionary) {
                 if (kvp.Value.connectedAction != null && kvp.Value.connectedAction.associatedJob == job) {
                     if (!IsInActualCombatWith(kvp.Key)) {
                         if (RemoveHostileInRange(kvp.Key, false)){
@@ -879,6 +889,64 @@ public class CombatComponent {
         //Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataCombatComponent data) {
+        for (int i = 0; i < data.hostileCharactersInRange.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.hostileCharactersInRange[i]);
+            if (!hostilesInRange.Contains(character)) {
+                hostilesInRange.Add(character);
+            }
+        }
+        for (int i = 0; i < data.hostileTileObjectsInRange.Count; i++) {
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.hostileTileObjectsInRange[i]);
+            if (!hostilesInRange.Contains(tileObject)) {
+                hostilesInRange.Add(tileObject);
+            }
+        }
+
+        for (int i = 0; i < data.avoidCharactersInRange.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.avoidCharactersInRange[i]);
+            if (!avoidInRange.Contains(character)) {
+                avoidInRange.Add(character);
+            }
+        }
+        for (int i = 0; i < data.avoidTileObjectsInRange.Count; i++) {
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.avoidTileObjectsInRange[i]);
+            if (!avoidInRange.Contains(tileObject)) {
+                avoidInRange.Add(tileObject);
+            }
+        }
+
+        foreach (KeyValuePair<string, SaveDataCombatData> item in data.characterCombatData) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(item.Key);
+            CombatData combatData = item.Value.Load();
+            combatDataDictionary.Add(character, combatData);
+        }
+        foreach (KeyValuePair<string, SaveDataCombatData> item in data.tileObjectCombatData) {
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(item.Key);
+            CombatData combatData = item.Value.Load();
+            combatDataDictionary.Add(tileObject, combatData);
+        }
+
+        for (int i = 0; i < data.bannedFromHostileList.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.bannedFromHostileList[i]);
+            if (!bannedFromHostileList.Contains(character)) {
+                bannedFromHostileList.Add(character);
+            }
+        }
+    }
+    #endregion
+}
+
+public struct CombatReaction {
+    public COMBAT_REACTION reaction;
+    public string reason;
+
+    public CombatReaction(COMBAT_REACTION reaction, string reason = "") {
+        this.reaction = reaction;
+        this.reason = reason;
+    }
 }
 
 public class CombatData {
@@ -889,6 +957,14 @@ public class CombatData {
 
     public CombatData() {
         Initialize();
+    }
+    public CombatData(SaveDataCombatData data) {
+        reasonForCombat = data.reasonForCombat;
+        avoidReason = data.avoidReason;
+        isLethal = data.isLethal;
+        if (data.connectedAction != string.Empty) {
+            connectedAction = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.connectedAction);
+        }
     }
     public void Initialize() {
         reasonForCombat = string.Empty;
@@ -909,12 +985,108 @@ public class CombatData {
     }
 }
 
-public struct CombatReaction {
-    public COMBAT_REACTION reaction;
-    public string reason;
+[System.Serializable]
+public class SaveDataCombatData : SaveData<CombatData> {
+    public string reasonForCombat;
+    public string avoidReason;
+    public string connectedAction;
+    public bool isLethal;
 
-    public CombatReaction(COMBAT_REACTION reaction, string reason = "") {
-        this.reaction = reaction;
-        this.reason = reason;
+    #region Overrides
+    public override void Save(CombatData data) {
+        reasonForCombat = data.reasonForCombat;
+        avoidReason = data.avoidReason;
+        isLethal = data.isLethal;
+        if(data.connectedAction != null) {
+            connectedAction = data.connectedAction.persistentID;
+        }
     }
+
+    public override CombatData Load() {
+        CombatData component = new CombatData(this);
+        return component;
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCombatComponent : SaveData<CombatComponent> {
+    public int attack;
+    public int attackModification;
+    public int maxHP;
+    public int maxHPModification;
+    public int attackSpeed;
+
+    public COMBAT_MODE combatMode;
+    public List<string> hostileCharactersInRange;
+    public List<string> hostileTileObjectsInRange;
+
+    public List<string> avoidCharactersInRange;
+    public List<string> avoidTileObjectsInRange;
+
+    public List<string> bannedFromHostileList;
+
+    public Dictionary<string, SaveDataCombatData> characterCombatData;
+    public Dictionary<string, SaveDataCombatData> tileObjectCombatData;
+
+    public ELEMENTAL_TYPE elementalDamageType;
+
+    public bool willProcessCombat;
+
+    #region Overrides
+    public override void Save(CombatComponent data) {
+        attack = data.attack;
+        attackModification = data.attackModification;
+        maxHP = data.maxHP;
+        maxHPModification = data.maxHPModification;
+        attackSpeed = data.attackSpeed;
+        combatMode = data.combatMode;
+        elementalDamageType = data.elementalDamage.type;
+        willProcessCombat = data.willProcessCombat;
+
+        hostileCharactersInRange = new List<string>();
+        hostileTileObjectsInRange = new List<string>();
+        for (int i = 0; i < data.hostilesInRange.Count; i++) {
+            IPointOfInterest poi = data.hostilesInRange[i];
+            if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                hostileCharactersInRange.Add(poi.persistentID);
+            } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                hostileTileObjectsInRange.Add(poi.persistentID);
+            }
+        }
+
+        avoidCharactersInRange = new List<string>();
+        avoidTileObjectsInRange = new List<string>();
+        for (int i = 0; i < data.avoidInRange.Count; i++) {
+            IPointOfInterest poi = data.avoidInRange[i];
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                avoidCharactersInRange.Add(poi.persistentID);
+            } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                avoidTileObjectsInRange.Add(poi.persistentID);
+            }
+        }
+
+        characterCombatData = new Dictionary<string, SaveDataCombatData>();
+        tileObjectCombatData = new Dictionary<string, SaveDataCombatData>();
+        foreach (KeyValuePair<IPointOfInterest, CombatData> item in data.combatDataDictionary) {
+            SaveDataCombatData saveCombatData = new SaveDataCombatData();
+            saveCombatData.Save(item.Value);
+            if(item.Key.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                characterCombatData.Add(item.Key.persistentID, saveCombatData);
+            } else if (item.Key.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                tileObjectCombatData.Add(item.Key.persistentID, saveCombatData);
+            }
+        }
+
+        bannedFromHostileList = new List<string>();
+        for (int i = 0; i < data.bannedFromHostileList.Count; i++) {
+            bannedFromHostileList.Add(data.bannedFromHostileList[i].persistentID);
+        }
+    }
+
+    public override CombatComponent Load() {
+        CombatComponent component = new CombatComponent(this);
+        return component;
+    }
+    #endregion
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildStructureComponent {
+public class BuildStructureComponent : CharacterComponent {
     private const string Dwelling = "Dwelling";
     private const string Survival_Structures = "Survival Structures"; //Hunter's Lodge/Apothecary/Mage Quarters
     private const string Utility_Structures = "Utility Structures"; //Inn/Warehouse/Cemetery/Prison/Granary/Miner's Camp
@@ -12,10 +12,10 @@ public class BuildStructureComponent {
     //private const string Human_Utility_Structures = "Human Utility Structures"; //Granary/Miner's Camp/Inn
     //private const string Human_Combat_Structures = "Human Combat Structures"; //Raider's Camp/Assassin's Guild/Hunter's Lodge/Mage Quarters
 
-    public Character character { get; private set; }
+    public Character owner { get; private set; }
     public int currentIndex { get; private set; }
 
-    private int startLoopIndex;
+    public int startLoopIndex { get; private set; }
 
     private List<STRUCTURE_TYPE> survivalStructures;
     private List<STRUCTURE_TYPE> utilityStructures;
@@ -24,8 +24,7 @@ public class BuildStructureComponent {
     private List<STRUCTURE_TYPE> missingStructures;
     private List<string> buildStructureOrder;
 
-    public BuildStructureComponent(Character character) {
-        this.character = character;
+    public BuildStructureComponent() {
         startLoopIndex = 0;
         currentIndex = 0;
         survivalStructures = new List<STRUCTURE_TYPE>();
@@ -37,6 +36,10 @@ public class BuildStructureComponent {
         ResetCategorizedStructures("Utility");
         ResetCategorizedStructures("Combat");
         AssignBuildOrder();
+    }
+    public BuildStructureComponent(SaveDataBuildStructureComponent data) {
+        currentIndex = data.currentIndex;
+        startLoopIndex = data.startLoopIndex;
     }
 
     #region General
@@ -98,7 +101,7 @@ public class BuildStructureComponent {
 
     #region Categorized Structures
     private void ResetCategorizedStructures(string category) {
-        STRUCTURE_TYPE[] referenceArray = LandmarkManager.Instance.GetRaceStructureRequirements(character.race, category);
+        STRUCTURE_TYPE[] referenceArray = LandmarkManager.Instance.GetRaceStructureRequirements(owner.race, category);
         List<STRUCTURE_TYPE> usedList = null;
         if(category == "Survival") {
             usedList = survivalStructures;
@@ -115,9 +118,9 @@ public class BuildStructureComponent {
 
     #region Build Orders
     private void AssignBuildOrder() {
-        if(character.race == RACE.ELVES) {
+        if(owner.race == RACE.ELVES) {
             buildStructureOrder = ElfBuildOrder();
-        }else if (character.race == RACE.HUMANS) {
+        }else if (owner.race == RACE.HUMANS) {
             buildStructureOrder = HumanBuildOrder();
         }
         //structureRequirementNumberGuide = new Dictionary<string, BuildStructureRequirementNumberGuide>() {
@@ -160,10 +163,28 @@ public class BuildStructureComponent {
         };
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataBuildStructureComponent data) {
+        //Currently N/A
+    }
+    #endregion
 }
 
 [System.Serializable]
 public class SaveDataBuildStructureComponent : SaveData<BuildStructureComponent> {
     public int currentIndex;
     public int startLoopIndex;
+
+    #region Overrides
+    public override void Save(BuildStructureComponent data) {
+        currentIndex = data.currentIndex;
+        startLoopIndex = data.startLoopIndex;
+    }
+
+    public override BuildStructureComponent Load() {
+        BuildStructureComponent component = new BuildStructureComponent(this);
+        return component;
+    }
+    #endregion
 }

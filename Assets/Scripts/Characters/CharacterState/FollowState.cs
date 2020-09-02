@@ -30,7 +30,7 @@ public class FollowState : CharacterState {
     #endregion
 
     private void StartFollowMovement() {
-        stateComponent.character.marker.GoTo(targetPOI, StartFollowMovement, null);
+        stateComponent.owner.marker.GoTo(targetPOI, StartFollowMovement, null);
     }
 }
 

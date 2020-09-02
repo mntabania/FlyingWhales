@@ -32,7 +32,7 @@ public class StrollOutsideState : CharacterState {
     }
 
     private void StartStrollMovement() {
-        stateComponent.character.marker.DoStrollMovement(StartStrollMovement);
+        stateComponent.owner.marker.DoStrollMovement(StartStrollMovement);
         // LocationGridTile target = PickRandomTileToGoTo();
         // if(target != null) {
         //     stateComponent.character.marker.GoTo(target, StartStrollMovement, null); //_notAllowedStructures
@@ -47,19 +47,19 @@ public class StrollOutsideState : CharacterState {
         //} else {
         //    targetTile = stateComponent.character.gridTileLocation;
         //}
-        if (stateComponent.character.homeSettlement != null) {
+        if (stateComponent.owner.homeSettlement != null) {
             //only stroll around surrounding areas
-            HexTile chosenHex = stateComponent.character.homeSettlement.GetAPlainAdjacentHextile();
+            HexTile chosenHex = stateComponent.owner.homeSettlement.GetAPlainAdjacentHextile();
             if (chosenHex != null) {
-                return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.character.movementComponent.HasPathTo(t)));
+                return CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => stateComponent.owner.movementComponent.HasPathTo(t)));
             }
         }
-        if (stateComponent.character.hexTileLocation != null) {
+        if (stateComponent.owner.hexTileLocation != null) {
             //stroll around surrounding area of current hextile
             List<HexTile> choices = new List<HexTile>();
-            for (int i = 0; i < stateComponent.character.hexTileLocation.ValidTilesWithinRegion.Count; i++) {
-                HexTile hexTile = stateComponent.character.hexTileLocation.ValidTilesWithinRegion[i];
-                if (stateComponent.character.movementComponent.HasPathTo(hexTile)) {
+            for (int i = 0; i < stateComponent.owner.hexTileLocation.ValidTilesWithinRegion.Count; i++) {
+                HexTile hexTile = stateComponent.owner.hexTileLocation.ValidTilesWithinRegion[i];
+                if (stateComponent.owner.movementComponent.HasPathTo(hexTile)) {
                     choices.Add(hexTile);
                 }
             }
@@ -69,7 +69,7 @@ public class StrollOutsideState : CharacterState {
             }
         }
 
-        HexTile hex = stateComponent.character.gridTileLocation.GetNearestHexTileWithinRegion();
+        HexTile hex = stateComponent.owner.gridTileLocation.GetNearestHexTileWithinRegion();
         targetTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
         return targetTile;
     }

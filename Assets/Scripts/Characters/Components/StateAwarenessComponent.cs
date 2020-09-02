@@ -4,8 +4,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Traits;
 
-public class StateAwarenessComponent {
-    public Character owner { get; private set; }
+public class StateAwarenessComponent : CharacterComponent {
 
     public bool startMissingTimer { get; private set; }
     public bool startPresumedDeadTimer { get; private set; }
@@ -13,9 +12,16 @@ public class StateAwarenessComponent {
     public int currentMissingTicks { get; private set; }
     public int currentPresumedDeadTicks { get; private set; }
 
-    public StateAwarenessComponent(Character owner) {
-        this.owner = owner;
+    public StateAwarenessComponent() {
     }
+
+    public StateAwarenessComponent(SaveDataStateAwarenessComponent data) {
+        startMissingTimer = data.startMissingTimer;
+        startPresumedDeadTimer = data.startPresumedDeadTimer;
+        currentMissingTicks = data.currentMissingTicks;
+        currentPresumedDeadTicks = data.currentPresumedDeadTicks;
+    }
+
     public void SubscribeSignals() {
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_PRESUMED_DEAD, OnCharacterPresumedDead);
@@ -141,4 +147,33 @@ public class StateAwarenessComponent {
             }
         }
     }
+
+    #region Loading
+    public void LoadReferences(SaveDataStateAwarenessComponent data) {
+        //Currently N/A
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataStateAwarenessComponent : SaveData<StateAwarenessComponent> {
+    public bool startMissingTimer;
+    public bool startPresumedDeadTimer;
+
+    public int currentMissingTicks;
+    public int currentPresumedDeadTicks;
+
+    #region Overrides
+    public override void Save(StateAwarenessComponent data) {
+        startMissingTimer = data.startMissingTimer;
+        startPresumedDeadTimer = data.startPresumedDeadTimer;
+        currentMissingTicks = data.currentMissingTicks;
+        currentPresumedDeadTicks = data.currentPresumedDeadTicks;
+    }
+
+    public override StateAwarenessComponent Load() {
+        StateAwarenessComponent component = new StateAwarenessComponent(this);
+        return component;
+    }
+    #endregion
 }

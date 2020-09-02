@@ -5,6 +5,7 @@ using UnityEngine;
 using Traits;
 
 public interface IPointOfInterest : ITraitable, ISelectable {
+    string persistentID { get; }
     new string name { get; }
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     string nameWithID { get; }

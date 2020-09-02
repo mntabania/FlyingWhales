@@ -9,9 +9,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UtilityScripts;
 
-public class MovementComponent {
-    public Character owner { get; private set; }
-
+public class MovementComponent : CharacterComponent {
     public bool isRunning { get; private set; }
     public bool noRunExceptCombat { get; private set; }
     public bool noRunWithoutException { get; private set; }
@@ -26,19 +24,35 @@ public class MovementComponent {
     public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
 
-    private int _enableDiggingCounter;
-    private int _avoidSettlementsCounter;
+    public int enableDiggingCounter { get; private set; }
+    public int avoidSettlementsCounter { get; private set; }
 
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
     public float runSpeed => owner.raceSetting.runSpeed + (owner.raceSetting.runSpeed * runSpeedModifier);
-    public bool enableDigging => _enableDiggingCounter > 0;
-    public bool avoidSettlements => _avoidSettlementsCounter > 0;
+    public bool enableDigging => enableDiggingCounter > 0;
+    public bool avoidSettlements => avoidSettlementsCounter > 0;
     #endregion
 
-    public MovementComponent(Character owner) {
-        this.owner = owner;
+    public MovementComponent() {
         structuresToAvoid = new List<LocationStructure>();
+    }
+    public MovementComponent(SaveDataMovementComponent data) {
+        structuresToAvoid = new List<LocationStructure>();
+
+        isRunning = data.isRunning;
+        noRunExceptCombat = data.noRunExceptCombat;
+        noRunWithoutException = data.noRunWithoutException;
+        useRunSpeed = data.useRunSpeed;
+        speedModifier = data.speedModifier;
+        walkSpeedModifier = data.walkSpeedModifier;
+        runSpeedModifier = data.runSpeedModifier;
+        hasMovedOnCorruption = data.hasMovedOnCorruption;
+        isStationary = data.isStationary;
+        cameFromWurmHole = data.cameFromWurmHole;
+        isTravellingInWorld = data.isTravellingInWorld;
+        enableDiggingCounter = data.enableDiggingCounter;
+        avoidSettlementsCounter = data.avoidSettlementsCounter;
     }
 
     public void UpdateSpeed() {
@@ -139,9 +153,9 @@ public class MovementComponent {
     }
     public void SetAvoidSettlements(bool state) {
         if (state) {
-            _avoidSettlementsCounter++;
+            avoidSettlementsCounter++;
         } else {
-            _avoidSettlementsCounter--;
+            avoidSettlementsCounter--;
         }
     }
     public void SetCameFromWurmHole(bool state) {
@@ -335,9 +349,9 @@ public class MovementComponent {
     }
     public void SetEnableDigging(bool state) {
         if (state) {
-            _enableDiggingCounter++;
+            enableDiggingCounter++;
         } else {
-            _enableDiggingCounter--;
+            enableDiggingCounter--;
         }
     }
     public LocationGridTile GetBlockerTargetTileOnReachEndPath(Path path, LocationGridTile lastGridTileInPath) {
@@ -435,6 +449,73 @@ public class MovementComponent {
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerExterminationJob(locationStructure);
             }
         }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataMovementComponent data) {
+        if (data.targetRegionToTravelInWorld != string.Empty) {
+            targetRegionToTravelInWorld = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.targetRegionToTravelInWorld);
+        }
+
+        for (int i = 0; i < data.structuresToAvoid.Count; i++) {
+            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.structuresToAvoid[i]);
+            structuresToAvoid.Add(structure);
+        }
+
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataMovementComponent : SaveData<MovementComponent> {
+    public bool isRunning;
+    public bool noRunExceptCombat;
+    public bool noRunWithoutException;
+    public int useRunSpeed;
+    public float speedModifier;
+    public float walkSpeedModifier;
+    public float runSpeedModifier;
+    public bool hasMovedOnCorruption;
+    public bool isStationary;
+    public bool cameFromWurmHole;
+    public bool isTravellingInWorld;
+    public string targetRegionToTravelInWorld;
+    public List<string> structuresToAvoid;
+
+    public int enableDiggingCounter;
+    public int avoidSettlementsCounter;
+
+    #region Overrides
+    public override void Save(MovementComponent data) {
+        isRunning = data.isRunning;
+        noRunExceptCombat = data.noRunExceptCombat;
+        noRunWithoutException = data.noRunWithoutException;
+        useRunSpeed = data.useRunSpeed;
+        speedModifier = data.speedModifier;
+        walkSpeedModifier = data.walkSpeedModifier;
+        runSpeedModifier = data.runSpeedModifier;
+        hasMovedOnCorruption = data.hasMovedOnCorruption;
+        isStationary = data.isStationary;
+        cameFromWurmHole = data.cameFromWurmHole;
+        isTravellingInWorld = data.isTravellingInWorld;
+
+        if(data.targetRegionToTravelInWorld != null) {
+            targetRegionToTravelInWorld = data.targetRegionToTravelInWorld.persistentID;
+        }
+
+        structuresToAvoid = new List<string>();
+        for (int i = 0; i < data.structuresToAvoid.Count; i++) {
+            structuresToAvoid.Add(data.structuresToAvoid[i].persistentID);
+        }
+
+        enableDiggingCounter = data.enableDiggingCounter;
+        avoidSettlementsCounter = data.avoidSettlementsCounter;
+    }
+
+    public override MovementComponent Load() {
+        MovementComponent component = new MovementComponent(this);
+        return component;
     }
     #endregion
 }

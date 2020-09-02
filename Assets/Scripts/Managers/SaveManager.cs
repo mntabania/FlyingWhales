@@ -82,6 +82,7 @@ public class SaveManager : MonoBehaviour {
         completeSave.SaveDate();
         completeSave.SavePlayer();
         completeSave.SaveFactions();
+        completeSave.SaveCharacters();
         
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();

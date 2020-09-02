@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Locations.Settlements;
 
-public class Party {
+public class Party : ISavable {
+    public string persistentID { get; private set; }
     public Character leader { get; protected set; }
 
     public PARTY_TYPE partyType { get; protected set; }
@@ -17,17 +18,35 @@ public class Party {
     public List<Character> members { get; protected set; } //includes the leader
     public bool isWaitTimeOver { get; protected set; }
     public bool isDisbanded { get; protected set; }
-    private bool isAlreadyWaiting;
+    public bool isAlreadyWaiting { get; private set; }
 
     #region getters
     public virtual IPartyTarget target => null;
     public virtual HexTile waitingHexArea => null;
+    public virtual System.Type serializedData => typeof(SaveDataParty);
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
     #endregion
 
     public Party(PARTY_TYPE partyType) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         this.partyType = partyType;
         partyName = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(partyType.ToString());
         members = new List<Character>();
+    }
+
+    public Party(SaveDataParty data) {
+        members = new List<Character>();
+        persistentID = data.persistentID;
+        partyType = data.partyType;
+        partyName = data.partyName;
+        waitTimeInTicks = data.waitTimeInTicks;
+        minimumPartySize = data.minimumPartySize;
+        relatedBehaviour = System.Type.GetType(data.relatedBehaviour);
+        jobQueueOwnerType = data.jobQueueOwnerType;
+
+        isWaitTimeOver = data.isWaitTimeOver;
+        isDisbanded = data.isDisbanded;
+        isAlreadyWaiting = data.isAlreadyWaiting;
     }
 
     #region Virtuals
@@ -183,6 +202,73 @@ public class Party {
         } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
             jobOwner.ForceCancelJobTypesTargetingPOI(JOB_TYPE.JOIN_PARTY, leader);
         }
+    }
+    #endregion
+
+    #region Loading
+    public virtual void LoadReferences(SaveDataParty data) {
+        leader = CharacterManager.Instance.GetCharacterByPersistentID(data.leader);
+        if(jobQueueOwnerType == JOB_OWNER.CHARACTER) {
+            jobOwner = CharacterManager.Instance.GetCharacterByPersistentID(data.jobOwner);
+        } else if (jobQueueOwnerType == JOB_OWNER.FACTION) {
+            jobOwner = FactionManager.Instance.GetFactionByPersistentID(data.jobOwner);
+        } else if (jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
+            jobOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.jobOwner) as NPCSettlement;
+        }
+        for (int i = 0; i < data.members.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.members[i]);
+            members.Add(character);
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
+    public string persistentID { get; set; }
+    public string leader;
+
+    public PARTY_TYPE partyType;
+    public string partyName;
+    public int waitTimeInTicks;
+    public int minimumPartySize;
+    public string relatedBehaviour;
+    public JOB_OWNER jobQueueOwnerType;
+    public string jobOwner;
+
+    public List<string> members;
+    public bool isWaitTimeOver;
+    public bool isDisbanded;
+    public bool isAlreadyWaiting;
+
+    #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Party;
+    #endregion
+
+    #region Overrides
+    public override void Save(Party data) {
+        persistentID = data.persistentID;
+        leader = data.leader.persistentID;
+        partyType = data.partyType;
+        partyName = data.partyName;
+        waitTimeInTicks = data.waitTimeInTicks;
+        minimumPartySize = data.minimumPartySize;
+        relatedBehaviour = data.relatedBehaviour.ToString();
+        jobQueueOwnerType = data.jobQueueOwnerType;
+        jobOwner = data.jobOwner.persistentID;
+        isWaitTimeOver = data.isWaitTimeOver;
+        isDisbanded = data.isDisbanded;
+        isAlreadyWaiting = data.isAlreadyWaiting;
+
+        members = new List<string>();
+        for (int i = 0; i < data.members.Count; i++) {
+            members.Add(data.members[i].persistentID);
+        }
+    }
+
+    public override Party Load() {
+        Party party = CharacterManager.Instance.CreateNewParty(this);
+        return party;
     }
     #endregion
 }

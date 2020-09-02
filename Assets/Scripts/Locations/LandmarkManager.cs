@@ -363,8 +363,11 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public BaseSettlement GetAreaByID(int id) {
+    public BaseSettlement GetSettlementByID(int id) {
         return DatabaseManager.Instance.settlementDatabase.GetSettlementByID(id);
+    }
+    public BaseSettlement GetSettlementByPersistentID(string id) {
+        return DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(id);
     }
     public void OwnSettlement(Faction newOwner, BaseSettlement settlement) {
         if (settlement.owner != null) {

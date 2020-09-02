@@ -398,23 +398,25 @@ public class CrimeManager : BaseMonoBehaviour {
     #endregion
 }
 
-public class CrimeData {
-    public CRIME_SEVERITY crimeSeverity { get; }
-    public CRIME_TYPE crimeType { get; }
+public class CrimeData : ISavable {
+    public string persistentID { get; private set; }
+    public CRIME_SEVERITY crimeSeverity { get; private set; }
+    public CRIME_TYPE crimeType { get; private set; }
     public CRIME_STATUS crimeStatus { get; private set; }
     public ICrimeable crime { get; private set; }
 
-    public Character criminal { get; }
-    public Criminal criminalTrait { get; private set; }
-    public IPointOfInterest target { get; }
-    public Faction targetFaction { get; }
+    public Character criminal { get; private set; }
+    public IPointOfInterest target { get; private set; }
+    public Faction targetFaction { get; private set; }
     public Character judge { get; private set; }
-    public List<Character> witnesses { get; }
-    public List<Faction> factionsThatConsidersWanted { get; }
+    public List<Character> witnesses { get; private set; }
+    public List<Faction> factionsThatConsidersWanted { get; private set; }
     public bool isRemoved { get; private set; }
 
     #region getters
     public CrimeType crimeTypeObj => CrimeManager.Instance.GetCrimeType(crimeType);
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Crime;
+    public System.Type serializedData => typeof(SaveDataCrimeData);
     #endregion
 
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
@@ -428,6 +430,18 @@ public class CrimeData {
         factionsThatConsidersWanted = new List<Faction>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
 
+
+        SubscribeToListeners();
+    }
+    public CrimeData(SaveDataCrimeData data) {
+        witnesses = new List<Character>();
+        factionsThatConsidersWanted = new List<Faction>();
+
+        persistentID = data.persistentID;
+        crimeSeverity = data.crimeSeverity;
+        crimeType = data.crimeType;
+        crimeStatus = data.crimeStatus;
+        isRemoved = data.isRemoved;
 
         SubscribeToListeners();
     }
@@ -460,7 +474,7 @@ public class CrimeData {
         if (IsWitness(character)) {
             if (!HasWanted()) {
                 if (AreAllWitnessesDead()) {
-                    criminalTrait.RemoveCrime(this);
+                    criminal.traitContainer.GetNormalTrait<Criminal>("Criminal").RemoveCrime(this);
 
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses");
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -488,9 +502,6 @@ public class CrimeData {
     }
     public void SetJudge(Character character) {
         judge = character;
-    }
-    public void SetCriminalTrait(Criminal criminalTrait) {
-        this.criminalTrait = criminalTrait;
     }
     public string GetCrimeDataDescription() {
         string desc = crimeTypeObj.name + " - " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(crimeStatus.ToString());
@@ -591,6 +602,107 @@ public class CrimeData {
     }
     public bool HasWanted() {
         return factionsThatConsidersWanted.Count > 0;
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataCrimeData data) {
+        if (data.crime != string.Empty) {
+            if(data.crimableType == CRIMABLE_TYPE.Action) {
+                crime = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.crime);
+            } else if (data.crimableType == CRIMABLE_TYPE.Interrupt) {
+                crime = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.crime);
+            }
+        }
+        if (data.criminal != string.Empty) {
+            criminal = CharacterManager.Instance.GetCharacterByPersistentID(data.criminal);
+        }
+        if (data.target != string.Empty) {
+            if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                target = CharacterManager.Instance.GetCharacterByPersistentID(data.target);
+            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                target = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.target);
+            }
+        }
+        if (data.targetFaction != string.Empty) {
+            targetFaction = FactionManager.Instance.GetFactionByPersistentID(data.targetFaction);
+        }
+        if (data.judge != string.Empty) {
+            judge = CharacterManager.Instance.GetCharacterByPersistentID(data.judge);
+        }
+        for (int i = 0; i < data.witnesses.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.witnesses[i]);
+            witnesses.Add(character);
+        }
+        for (int i = 0; i < data.factionsThatConsidersWanted.Count; i++) {
+            Faction targetFaction = FactionManager.Instance.GetFactionByPersistentID(data.factionsThatConsidersWanted[i]);
+            factionsThatConsidersWanted.Add(targetFaction);
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCrimeData : SaveData<CrimeData>, ISavableCounterpart {
+    public string persistentID { get; set; }
+    public CRIME_SEVERITY crimeSeverity;
+    public CRIME_TYPE crimeType;
+    public CRIME_STATUS crimeStatus;
+    public bool isRemoved;
+
+
+    public string crime;
+    public CRIMABLE_TYPE crimableType;
+    public string criminal;
+    public string target;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+    public string targetFaction;
+    public string judge;
+    public List<string> witnesses;
+    public List<string> factionsThatConsidersWanted;
+
+    #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Crime;
+    #endregion
+
+    #region Overrides
+    public override void Save(CrimeData data) {
+        persistentID = data.persistentID;
+        crimeSeverity = data.crimeSeverity;
+        crimeType = data.crimeType;
+        crimeStatus = data.crimeStatus;
+        isRemoved = data.isRemoved;
+
+        if (data.crime != null) {
+            crime = data.crime.persistentID;
+            crimableType = data.crime.crimableType;
+        }
+        if (data.criminal != null) {
+            criminal = data.criminal.persistentID;
+        }
+        if (data.target != null) {
+            target = data.target.persistentID;
+            targetPOIType = data.target.poiType;
+        }
+        if (data.targetFaction != null) {
+            targetFaction = data.targetFaction.persistentID;
+        }
+        if (data.judge != null) {
+            judge = data.judge.persistentID;
+        }
+        witnesses = new List<string>();
+        for (int i = 0; i < data.witnesses.Count; i++) {
+            witnesses.Add(data.witnesses[i].persistentID);
+        }
+        factionsThatConsidersWanted = new List<string>();
+        for (int i = 0; i < data.factionsThatConsidersWanted.Count; i++) {
+            factionsThatConsidersWanted.Add(data.factionsThatConsidersWanted[i].persistentID);
+        }
+    }
+
+    public override CrimeData Load() {
+        CrimeData interrupt = new CrimeData(this);
+        return interrupt;
     }
     #endregion
 }

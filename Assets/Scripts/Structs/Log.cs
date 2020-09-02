@@ -76,6 +76,7 @@ public class Log : ISavable {
     }
 
     public Log(SaveDataLog data) {
+        persistentID = data.persistentID;
         id = UtilityScripts.Utilities.SetID(this, data.id);
         month = data.month;
         day = data.day;
@@ -88,15 +89,6 @@ public class Log : ISavable {
 
         message = data.message;
         logText = data.logText;
-
-        fillers = new List<LogFiller>();
-        for (int i = 0; i < data.fillers.Count; i++) {
-            LogFiller filler = data.fillers[i].Load();
-            fillers.Add(filler);
-        }
-
-        //No goap action when loaded because we cannot save goap action
-        _node = null;
     }
 
     public void SetLogType(LOG_TYPE logType) {
@@ -246,12 +238,26 @@ public class Log : ISavable {
         this.logText = text;
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataLog data) {
+        fillers = new List<LogFiller>();
+        for (int i = 0; i < data.fillers.Count; i++) {
+            LogFiller filler = data.fillers[i].Load();
+            fillers.Add(filler);
+        }
+
+        //No goap action when loaded because we cannot save goap action
+        if(data.actionID != string.Empty) {
+            _node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.actionID);
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]
 public class SaveDataLog : SaveData<Log>, ISavableCounterpart {
-    public string persistentID { get; private set; }
-    public OBJECT_TYPE objectType { get; private set; }
+    public string persistentID { get; set; }
     public int id;
 
     public MONTH month;
@@ -267,29 +273,38 @@ public class SaveDataLog : SaveData<Log>, ISavableCounterpart {
     public string logText;
 
     public List<SaveDataLogFiller> fillers;
+    public string actionID;
+
+    #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Log;
+    #endregion
 
     #region Overrides
-    public override void Save(Log log) {
-        persistentID = log.persistentID;
-        objectType = log.objectType;
-        id = log.id;
-        month = log.month;
-        day = log.day;
-        year = log.year;
-        tick = log.tick;
+    public override void Save(Log data) {
+        persistentID = data.persistentID;
+        id = data.id;
+        month = data.month;
+        day = data.day;
+        year = data.year;
+        tick = data.tick;
 
-        category = log.category;
-        file = log.file;
-        key = log.key;
+        category = data.category;
+        file = data.file;
+        key = data.key;
 
-        message = log.message;
-        logText = log.logText;
+        message = data.message;
+        logText = data.logText;
 
         fillers = new List<SaveDataLogFiller>();
-        for (int i = 0; i < log.fillers.Count; i++) {
+        for (int i = 0; i < data.fillers.Count; i++) {
             SaveDataLogFiller filler = new SaveDataLogFiller();
-            filler.Save(log.fillers[i]);
+            filler.Save(data.fillers[i]);
             fillers.Add(filler);
+        }
+
+        ActualGoapNode node = data.node;
+        if(node != null) {
+            actionID = node.persistentID;
         }
     }
 

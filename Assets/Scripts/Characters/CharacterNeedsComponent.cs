@@ -5,9 +5,7 @@ using Traits;
 using UnityEngine;
 using Random = System.Random;
 
-public class CharacterNeedsComponent {
-
-    private readonly Character _owner;
+public class CharacterNeedsComponent : CharacterComponent {
     public int doNotGetHungry { get; private set; }
     public int doNotGetTired{ get; private set; }
     public int doNotGetBored{ get; private set; }
@@ -38,7 +36,7 @@ public class CharacterNeedsComponent {
     public float tirednessDecreaseRate { get; private set; }
     public int tirednessForcedTick { get; private set; }
     public int currentSleepTicks { get; private set; }
-    public int sleepScheduleJobID { get; set; }
+    public string sleepScheduleJobID { get; set; }
     public bool hasCancelledSleepSchedule { get; private set; }
     private float tirednessLowerBound; //how low can this characters tiredness go
     public const float TIREDNESS_DEFAULT = 100f;
@@ -90,8 +88,7 @@ public class CharacterNeedsComponent {
 
     private bool _hasTriggeredThisHour;
 
-    public CharacterNeedsComponent(Character character) {
-        this._owner = character;
+    public CharacterNeedsComponent() {
         SetTirednessLowerBound(0f);
         SetFullnessLowerBound(0f);
         SetHappinessLowerBound(0f);
@@ -102,6 +99,38 @@ public class CharacterNeedsComponent {
         SetFullnessForcedTick();
         SetTirednessForcedTick();
         //UpdateBaseStaminaDecreaseRate();
+    }
+    public CharacterNeedsComponent(SaveDataCharacterNeedsComponent data) {
+        doNotGetHungry = data.doNotGetHungry;
+        doNotGetTired = data.doNotGetTired;
+        doNotGetBored = data.doNotGetBored;
+        doNotGetDrained = data.doNotGetDrained;
+        doNotGetDiscouraged = data.doNotGetDiscouraged;
+
+        tiredness = data.tiredness;
+        tirednessDecreaseRate = data.tirednessDecreaseRate;
+        tirednessForcedTick = data.tirednessForcedTick;
+        currentSleepTicks = data.currentSleepTicks;
+        sleepScheduleJobID = data.sleepScheduleJobID;
+        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
+
+        fullness = data.fullness;
+        fullnessDecreaseRate = data.fullnessDecreaseRate;
+        fullnessForcedTick = data.fullnessForcedTick;
+
+        happiness = data.happiness;
+        happinessDecreaseRate = data.happinessDecreaseRate;
+
+        stamina = data.stamina;
+        staminaDecreaseRate = data.staminaDecreaseRate;
+        baseStaminaDecreaseRate = data.baseStaminaDecreaseRate;
+
+        hope = data.hope;
+
+        hasForcedFullness = data.hasForcedFullness;
+        hasForcedTiredness = data.hasForcedTiredness;
+        forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
+        forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
     }
     
     #region Initialization
@@ -170,45 +199,45 @@ public class CharacterNeedsComponent {
 
     public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
         if (HasNeeds() == false) { return; }
-        string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} will check his/her needs.";
+        string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} will check his/her needs.";
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
-            summary += $"\n{_owner.name} is starving. Planning fullness recovery actions...";
-            if (!_owner.traitContainer.HasTrait("Burning")) {
-                PlanFullnessRecoveryActions(_owner);
+            summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
+            if (!owner.traitContainer.HasTrait("Burning")) {
+                PlanFullnessRecoveryActions(owner);
             } else {
-                summary += $"\n{_owner.name} is poisoned or burning will not plan fullness recovery...";
+                summary += $"\n{owner.name} is poisoned or burning will not plan fullness recovery...";
             }
         }
         if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
-            summary += $"\n{_owner.name} is exhausted. Planning tiredness recovery actions...";
-            if (!_owner.traitContainer.HasTrait("Burning", "Poisoned")) {
-                PlanTirednessRecoveryActions(_owner);
+            summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
+            if (!owner.traitContainer.HasTrait("Burning", "Poisoned")) {
+                PlanTirednessRecoveryActions(owner);
             } else {
-                summary += $"\n{_owner.name} is poisoned or burning will not plan tiredness recovery...";
+                summary += $"\n{owner.name} is poisoned or burning will not plan tiredness recovery...";
             }
         }
         if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
-            summary += $"\n{_owner.name} is sulking. Planning happiness recovery actions...";
-            PlanHappinessRecoveryActions(_owner);
+            summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
+            PlanHappinessRecoveryActions(owner);
         }
         Debug.Log(summary);
     }
     private void CheckStarving() {
         if (isStarving) {
-            PlanFullnessRecoveryActions(_owner);
+            PlanFullnessRecoveryActions(owner);
         }
     }
 
     public bool HasNeeds() {
-        return _owner.race != RACE.SKELETON && _owner.characterClass.className != "Zombie" && _owner.characterClass.className != "Necromancer" && !_owner.returnedToLife && _owner.minion == null && !(_owner is Summon)
-            && !_owner.traitContainer.HasTrait("Fervor")
+        return owner.race != RACE.SKELETON && owner.characterClass.className != "Zombie" && owner.characterClass.className != "Necromancer" && !owner.returnedToLife && owner.minion == null && !(owner is Summon)
+            && !owner.traitContainer.HasTrait("Fervor")
             /*&& _character.isAtHomeRegion && _character.homeNpcSettlement != null*/; //Characters living on a region without a npcSettlement must not decrease needs
     }
     public void DecreaseNeeds() {
         //Stamina is not affected by HasNeeds checker, so anyone, even demons will decrease their stamina
         if (doNotGetDrained <= 0) {
-            if (_owner.marker && _owner.marker.isMoving) {
-                if (_owner.movementComponent.isRunning) {
+            if (owner.marker && owner.marker.isMoving) {
+                if (owner.movementComponent.isRunning) {
                     AdjustStamina(-(baseStaminaDecreaseRate + staminaDecreaseRate));
                 } else {
                     AdjustStamina(2f);
@@ -278,8 +307,8 @@ public class CharacterNeedsComponent {
         OnRefreshed(wasRefreshed, wasTired, wasExhausted);
     }
     public void AdjustTiredness(float adjustment) {
-        if(adjustment < 0 && _owner.traitContainer.HasTrait("Vampiric")) {
-            _owner.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
+        if(adjustment < 0 && owner.traitContainer.HasTrait("Vampiric")) {
+            owner.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
             return;
         }
         bool wasTired = isTired;
@@ -291,7 +320,7 @@ public class CharacterNeedsComponent {
         tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0f) {
             if (!wasUnconscious) {
-                _owner.traitContainer.AddTrait(_owner, "Unconscious");
+                owner.traitContainer.AddTrait(owner, "Unconscious");
             }
             OnExhausted(wasRefreshed, wasTired, wasExhausted);
             return;
@@ -329,7 +358,7 @@ public class CharacterNeedsComponent {
         tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0f) {
             if (!wasUnconscious) {
-                _owner.traitContainer.AddTrait(_owner, "Unconscious");
+                owner.traitContainer.AddTrait(owner, "Unconscious");
             }
             OnExhausted(wasRefreshed, wasTired, wasExhausted);
             return;
@@ -360,52 +389,52 @@ public class CharacterNeedsComponent {
     }
     private void OnRefreshed(bool wasRefreshed, bool wasTired, bool wasExhausted) {
         if (!wasRefreshed) {
-            _owner.traitContainer.AddTrait(_owner, "Refreshed");
+            owner.traitContainer.AddTrait(owner, "Refreshed");
         }
         if (wasExhausted) {
-            _owner.traitContainer.RemoveTrait(_owner, "Exhausted");
+            owner.traitContainer.RemoveTrait(owner, "Exhausted");
         }
         if (wasTired) {
-            _owner.traitContainer.RemoveTrait(_owner, "Tired");
+            owner.traitContainer.RemoveTrait(owner, "Tired");
         }
     }
     private void OnTired(bool wasRefreshed, bool wasTired, bool wasExhausted) {
         if (!wasTired) {
-            _owner.traitContainer.AddTrait(_owner, "Tired");
+            owner.traitContainer.AddTrait(owner, "Tired");
         }
         if (wasExhausted) {
-            _owner.traitContainer.RemoveTrait(_owner, "Exhausted");
+            owner.traitContainer.RemoveTrait(owner, "Exhausted");
         }
         if (wasRefreshed) {
-            _owner.traitContainer.RemoveTrait(_owner, "Refreshed");
+            owner.traitContainer.RemoveTrait(owner, "Refreshed");
         }
     }
     private void OnExhausted(bool wasRefreshed, bool wasTired, bool wasExhausted) {
         if (!wasExhausted) {
-            _owner.traitContainer.AddTrait(_owner, "Exhausted");
+            owner.traitContainer.AddTrait(owner, "Exhausted");
             //Messenger.Broadcast<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "exhausted");
         }
         if (wasTired) {
-            _owner.traitContainer.RemoveTrait(_owner, "Tired");
+            owner.traitContainer.RemoveTrait(owner, "Tired");
         }
         if (wasRefreshed) {
-            _owner.traitContainer.RemoveTrait(_owner, "Refreshed");
+            owner.traitContainer.RemoveTrait(owner, "Refreshed");
         }
     }
     private void OnNormalEnergy(bool wasRefreshed, bool wasTired, bool wasExhausted) {
         if (wasExhausted) {
-            _owner.traitContainer.RemoveTrait(_owner, "Exhausted");
+            owner.traitContainer.RemoveTrait(owner, "Exhausted");
         }
         if (wasTired) {
-            _owner.traitContainer.RemoveTrait(_owner, "Tired");
+            owner.traitContainer.RemoveTrait(owner, "Tired");
         }
         if (wasRefreshed) {
-            _owner.traitContainer.RemoveTrait(_owner, "Refreshed");
+            owner.traitContainer.RemoveTrait(owner, "Refreshed");
         }
     }
     private void RemoveTiredOrExhausted() {
-        if (_owner.traitContainer.RemoveTrait(_owner, "Tired") == false) {
-            _owner.traitContainer.RemoveTrait(_owner, "Exhausted");
+        if (owner.traitContainer.RemoveTrait(owner, "Tired") == false) {
+            owner.traitContainer.RemoveTrait(owner, "Exhausted");
         }
     }
     public void SetTirednessForcedTick() {
@@ -461,7 +490,7 @@ public class CharacterNeedsComponent {
                     triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                     //job.SetCancelOnFail(true);
                     character.jobQueue.AddJobInQueue(job);
                 } else {
@@ -473,12 +502,12 @@ public class CharacterNeedsComponent {
         return false;
     }
     public bool PlanExtremeTirednessRecoveryActionsForCannotPerform() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
             //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
-            JobQueueItem tirednessRecoveryJob = _owner.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
+            JobQueueItem tirednessRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
             if (tirednessRecoveryJob != null) {
                 //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
-                JobQueueItem currJob = _owner.currentJob;
+                JobQueueItem currJob = owner.currentJob;
                 if (currJob == tirednessRecoveryJob) {
                     return false;
                 } else {
@@ -487,14 +516,14 @@ public class CharacterNeedsComponent {
             }
             JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             bool triggerSpooked = false;
-            Spooked spooked = _owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
+            Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
             if (spooked != null) {
-                triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * _owner.traitContainer.stacks[spooked.name]);
+                triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
             }
             if (!triggerSpooked) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP_OUTSIDE, _owner, _owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP_OUTSIDE, owner, owner);
                 //job.SetCancelOnFail(true);
-                _owner.jobQueue.AddJobInQueue(job);
+                owner.jobQueue.AddJobInQueue(job);
             } else {
                 spooked.TriggerFeelingSpooked();
             }
@@ -516,10 +545,10 @@ public class CharacterNeedsComponent {
                     triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                     //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
                     //job.SetCancelOnFail(true);
-                    sleepScheduleJobID = job.id;
+                    sleepScheduleJobID = job.persistentID;
                     //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 /*|| stateComponent.stateToDo != null*/;
                     character.jobQueue.AddJobInQueue(job); //, !willNotProcess
                 } else {
@@ -543,9 +572,9 @@ public class CharacterNeedsComponent {
                     triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                     //job.SetCancelOnFail(true);
-                    sleepScheduleJobID = job.id;
+                    sleepScheduleJobID = job.persistentID;
                     //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
                     character.jobQueue.AddJobInQueue(job); //!willNotProcess
@@ -577,7 +606,7 @@ public class CharacterNeedsComponent {
 
     #region Happiness
     public void ResetHappinessMeter() {
-        if (_owner.traitContainer.HasTrait("Psychopath")) {
+        if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -591,7 +620,7 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void AdjustHappiness(float adjustment) {
-        if (_owner.traitContainer.HasTrait("Psychopath")) {
+        if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -615,7 +644,7 @@ public class CharacterNeedsComponent {
     }
     public void SetHappiness(float amount, bool bypassPsychopathChecking = false) {
         if (!bypassPsychopathChecking) {
-            if (_owner.traitContainer.HasTrait("Psychopath")) {
+            if (owner.traitContainer.HasTrait("Psychopath")) {
                 //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
                 return;
             }
@@ -640,51 +669,51 @@ public class CharacterNeedsComponent {
     }
     private void OnEntertained(bool wasEntertained, bool wasBored, bool wasSulking) {
         if (!wasEntertained) {
-            _owner.traitContainer.AddTrait(_owner, "Entertained");
+            owner.traitContainer.AddTrait(owner, "Entertained");
         }
         if (wasBored) {
-            _owner.traitContainer.RemoveTrait(_owner, "Bored");
+            owner.traitContainer.RemoveTrait(owner, "Bored");
         }
         if (wasSulking) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sulking");
+            owner.traitContainer.RemoveTrait(owner, "Sulking");
         }
     }
     private void OnBored(bool wasEntertained, bool wasBored, bool wasSulking) {
         if (!wasBored) {
-            _owner.traitContainer.AddTrait(_owner, "Bored");
+            owner.traitContainer.AddTrait(owner, "Bored");
         }
         if (wasEntertained) {
-            _owner.traitContainer.RemoveTrait(_owner, "Entertained");
+            owner.traitContainer.RemoveTrait(owner, "Entertained");
         }
         if (wasSulking) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sulking");
+            owner.traitContainer.RemoveTrait(owner, "Sulking");
         }
     }
     private void OnSulking(bool wasEntertained, bool wasBored, bool wasSulking) {
         if (!wasSulking) {
-            _owner.traitContainer.AddTrait(_owner, "Sulking");
+            owner.traitContainer.AddTrait(owner, "Sulking");
         }
         if (wasEntertained) {
-            _owner.traitContainer.RemoveTrait(_owner, "Entertained");
+            owner.traitContainer.RemoveTrait(owner, "Entertained");
         }
         if (wasBored) {
-            _owner.traitContainer.RemoveTrait(_owner, "Bored");
+            owner.traitContainer.RemoveTrait(owner, "Bored");
         }
     }
     private void OnNormalHappiness(bool wasEntertained, bool wasBored, bool wasSulking) {
         if (wasSulking) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sulking");
+            owner.traitContainer.RemoveTrait(owner, "Sulking");
         }
         if (wasEntertained) {
-            _owner.traitContainer.RemoveTrait(_owner, "Entertained");
+            owner.traitContainer.RemoveTrait(owner, "Entertained");
         }
         if (wasBored) {
-            _owner.traitContainer.RemoveTrait(_owner, "Bored");
+            owner.traitContainer.RemoveTrait(owner, "Bored");
         }
     }
     private void RemoveBoredOrSulking() {
-        if (_owner.traitContainer.RemoveTrait(_owner, "Bored") == false) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sulking");
+        if (owner.traitContainer.RemoveTrait(owner, "Bored") == false) {
+            owner.traitContainer.RemoveTrait(owner, "Sulking");
         }
     }
     public void AdjustDoNotGetBored(int amount) {
@@ -718,7 +747,7 @@ public class CharacterNeedsComponent {
                         triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[heartbroken.name]);
                     }
                     if (!triggerBrokenhearted) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                         character.jobQueue.AddJobInQueue(job);
                     } else {
                         heartbroken.TriggerBrokenhearted();
@@ -752,11 +781,11 @@ public class CharacterNeedsComponent {
         fullness += adjustment;
         fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
         if(adjustment > 0) {
-            _owner.HPRecovery(0.02f);
+            owner.HPRecovery(0.02f);
         }
         if (fullness == 0f) {
             if (!wasMalnourished) {
-                _owner.traitContainer.AddTrait(_owner, "Malnourished");
+                owner.traitContainer.AddTrait(owner, "Malnourished");
             }
             OnStarving(wasFull, wasHungry, wasStarving);
             return;
@@ -797,7 +826,7 @@ public class CharacterNeedsComponent {
 
         if (fullness == 0f) {
             if (!wasMalnourished) {
-                _owner.traitContainer.AddTrait(_owner, "Malnourished");
+                owner.traitContainer.AddTrait(owner, "Malnourished");
             }
             OnStarving(wasFull, wasHungry, wasStarving);
             return;
@@ -827,59 +856,59 @@ public class CharacterNeedsComponent {
     }
     private void OnFull(bool wasFull, bool wasHungry, bool wasStarving, bool wasMalnourished) {
         if (!wasFull) {
-            _owner.traitContainer.AddTrait(_owner, "Full");
+            owner.traitContainer.AddTrait(owner, "Full");
         }
         if (wasHungry) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hungry");
+            owner.traitContainer.RemoveTrait(owner, "Hungry");
         }
         if (wasStarving) {
-            _owner.traitContainer.RemoveTrait(_owner, "Starving");
+            owner.traitContainer.RemoveTrait(owner, "Starving");
         }
-        _owner.traitContainer.RemoveTrait(_owner, "Malnourished");
+        owner.traitContainer.RemoveTrait(owner, "Malnourished");
         // if (wasMalnourished) {
         //     _character.traitContainer.RemoveTrait(_character, "Malnourished");
         // }
     }
     private void OnHungry(bool wasFull, bool wasHungry, bool wasStarving) {
         if (!wasHungry) {
-            _owner.traitContainer.AddTrait(_owner, "Hungry");
+            owner.traitContainer.AddTrait(owner, "Hungry");
         }
         if (wasFull) {
-            _owner.traitContainer.RemoveTrait(_owner, "Full");
+            owner.traitContainer.RemoveTrait(owner, "Full");
         }
         if (wasStarving) {
-            _owner.traitContainer.RemoveTrait(_owner, "Starving");
+            owner.traitContainer.RemoveTrait(owner, "Starving");
         }
     }
     private void OnStarving(bool wasFull, bool wasHungry, bool wasStarving) {
         if (!wasStarving) {
-            _owner.traitContainer.AddTrait(_owner, "Starving");
+            owner.traitContainer.AddTrait(owner, "Starving");
         }
         if (wasFull) {
-            _owner.traitContainer.RemoveTrait(_owner, "Full");
+            owner.traitContainer.RemoveTrait(owner, "Full");
         }
         if (wasHungry) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hungry");
+            owner.traitContainer.RemoveTrait(owner, "Hungry");
         }
     }
     private void OnNormalFullness(bool wasFull, bool wasHungry, bool wasStarving, bool wasMalnourished) {
         if (wasStarving) {
-            _owner.traitContainer.RemoveTrait(_owner, "Starving");
+            owner.traitContainer.RemoveTrait(owner, "Starving");
         }
         if (wasFull) {
-            _owner.traitContainer.RemoveTrait(_owner, "Full");
+            owner.traitContainer.RemoveTrait(owner, "Full");
         }
         if (wasHungry) {
-            _owner.traitContainer.RemoveTrait(_owner, "Hungry");
+            owner.traitContainer.RemoveTrait(owner, "Hungry");
         }
-        _owner.traitContainer.RemoveTrait(_owner, "Malnourished");
+        owner.traitContainer.RemoveTrait(owner, "Malnourished");
         // if (wasMalnourished) {
         //     _character.traitContainer.RemoveTrait(_character, "Malnourished");
         // }
     }
     private void RemoveHungryOrStarving() {
-        if (_owner.traitContainer.RemoveTrait(_owner, "Hungry") == false) {
-            _owner.traitContainer.RemoveTrait(_owner, "Starving");
+        if (owner.traitContainer.RemoveTrait(owner, "Hungry") == false) {
+            owner.traitContainer.RemoveTrait(owner, "Starving");
         }
     }
     public void SetFullnessForcedTick() {
@@ -924,7 +953,7 @@ public class CharacterNeedsComponent {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                 }
                 if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                     job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                     //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                     //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
@@ -967,7 +996,7 @@ public class CharacterNeedsComponent {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                 }
                 if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                     job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                     //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                     //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
@@ -1012,15 +1041,15 @@ public class CharacterNeedsComponent {
         return false;
     }
     public void PlanFullnessRecoveryNormal() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
             bool triggerGrieving = false;
-            Griefstricken griefstricken = _owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+            Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
             if (griefstricken != null) {
-                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * _owner.traitContainer.stacks[griefstricken.name]);
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[griefstricken.name]);
             }
             if (!triggerGrieving) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                 //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
                 //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
@@ -1029,7 +1058,7 @@ public class CharacterNeedsComponent {
                 //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
                 //}
                 //job.SetCancelOnFail(true);
-                _owner.jobQueue.AddJobInQueue(job);
+                owner.jobQueue.AddJobInQueue(job);
             } else {
                 griefstricken.TriggerGrieving();
             }
@@ -1037,15 +1066,15 @@ public class CharacterNeedsComponent {
     }
     public void PlanFullnessRecoveryNormal(out JobQueueItem producedJob) {
         producedJob = null;
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
             bool triggerGrieving = false;
-            Griefstricken griefstricken = _owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+            Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
             if (griefstricken != null) {
-                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * _owner.traitContainer.stacks[griefstricken.name]);
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[griefstricken.name]);
             }
             if (!triggerGrieving) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
                 producedJob = job;
             } else {
@@ -1103,64 +1132,64 @@ public class CharacterNeedsComponent {
     }
     private void OnSprightly(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (!wasSprightly) {
-            _owner.traitContainer.AddTrait(_owner, "Sprightly");
-            _owner.movementComponent.SetNoRunExceptCombat(false);
-            _owner.movementComponent.SetNoRunWithoutException(false);
+            owner.traitContainer.AddTrait(owner, "Sprightly");
+            owner.movementComponent.SetNoRunExceptCombat(false);
+            owner.movementComponent.SetNoRunWithoutException(false);
         }
         if (wasSpent) {
-            _owner.traitContainer.RemoveTrait(_owner, "Spent");
+            owner.traitContainer.RemoveTrait(owner, "Spent");
         }
         if (wasDrained) {
-            _owner.traitContainer.RemoveTrait(_owner, "Drained");
+            owner.traitContainer.RemoveTrait(owner, "Drained");
         }
-        _owner.movementComponent.UpdateSpeed();
+        owner.movementComponent.UpdateSpeed();
     }
     private void OnSpent(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (!wasSpent) {
-            _owner.traitContainer.AddTrait(_owner, "Spent");
-            _owner.movementComponent.SetNoRunExceptCombat(true);
-            //_owner.movementComponent.SetNoRunWithoutException(false);
+            owner.traitContainer.AddTrait(owner, "Spent");
+            owner.movementComponent.SetNoRunExceptCombat(true);
+            //owner.movementComponent.SetNoRunWithoutException(false);
         }
         if (wasSprightly) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sprightly");
+            owner.traitContainer.RemoveTrait(owner, "Sprightly");
         }
         if (wasDrained) {
-            _owner.traitContainer.RemoveTrait(_owner, "Drained");
+            owner.traitContainer.RemoveTrait(owner, "Drained");
         }
-        _owner.movementComponent.UpdateSpeed();
+        owner.movementComponent.UpdateSpeed();
     }
     private void OnDrained(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (!wasDrained) {
-            _owner.traitContainer.AddTrait(_owner, "Drained");
-            _owner.movementComponent.SetNoRunExceptCombat(true);
-            _owner.movementComponent.SetNoRunWithoutException(true);
+            owner.traitContainer.AddTrait(owner, "Drained");
+            owner.movementComponent.SetNoRunExceptCombat(true);
+            owner.movementComponent.SetNoRunWithoutException(true);
         }
         if (wasSprightly) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sprightly");
+            owner.traitContainer.RemoveTrait(owner, "Sprightly");
         }
         if (wasSpent) {
-            _owner.traitContainer.RemoveTrait(_owner, "Spent");
+            owner.traitContainer.RemoveTrait(owner, "Spent");
         }
-        _owner.movementComponent.UpdateSpeed();
+        owner.movementComponent.UpdateSpeed();
     }
     private void OnNormalStamina(bool wasSprightly, bool wasSpent, bool wasDrained) {
         if (wasDrained) {
-            _owner.traitContainer.RemoveTrait(_owner, "Drained");
+            owner.traitContainer.RemoveTrait(owner, "Drained");
         }
         if (wasSprightly) {
-            _owner.traitContainer.RemoveTrait(_owner, "Sprightly");
+            owner.traitContainer.RemoveTrait(owner, "Sprightly");
         }
         if (wasSpent) {
-            _owner.traitContainer.RemoveTrait(_owner, "Spent");
+            owner.traitContainer.RemoveTrait(owner, "Spent");
         }
-        _owner.movementComponent.UpdateSpeed();
+        owner.movementComponent.UpdateSpeed();
     }
     public void AdjustDoNotGetDrained(int amount) {
         doNotGetDrained += amount;
         doNotGetDrained = Math.Max(doNotGetDrained, 0);
     }
     public void UpdateBaseStaminaDecreaseRate() {
-        baseStaminaDecreaseRate = Mathf.RoundToInt(_owner.characterClass.staminaReduction * (_owner.raceSetting.staminaReductionMultiplier == 0f ? 1f : _owner.raceSetting.staminaReductionMultiplier));
+        baseStaminaDecreaseRate = Mathf.RoundToInt(owner.characterClass.staminaReduction * (owner.raceSetting.staminaReductionMultiplier == 0f ? 1f : owner.raceSetting.staminaReductionMultiplier));
     }
     #endregion
 
@@ -1212,46 +1241,46 @@ public class CharacterNeedsComponent {
     }
     private void OnHopeful(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
         // if (!wasHopeful) {
-        //     _owner.traitContainer.AddTrait(_owner, "Hopeful");
+        //     owner.traitContainer.AddTrait(owner, "Hopeful");
         // }
         // if (wasDiscouraged) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
+        //     owner.traitContainer.RemoveTrait(owner, "Discouraged");
         // }
         // if (wasHopeless) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
+        //     owner.traitContainer.RemoveTrait(owner, "Hopeless");
         // }
     }
     private void OnDiscouraged(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
         // if (!wasDiscouraged) {
-        //     _owner.traitContainer.AddTrait(_owner, "Discouraged");
+        //     owner.traitContainer.AddTrait(owner, "Discouraged");
         // }
         // if (wasHopeful) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
+        //     owner.traitContainer.RemoveTrait(owner, "Hopeful");
         // }
         // if (wasHopeless) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
+        //     owner.traitContainer.RemoveTrait(owner, "Hopeless");
         // }
     }
     private void OnHopeless(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
         // if (!wasHopeless) {
-        //     _owner.traitContainer.AddTrait(_owner, "Hopeless");
+        //     owner.traitContainer.AddTrait(owner, "Hopeless");
         // }
         // if (wasHopeful) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
+        //     owner.traitContainer.RemoveTrait(owner, "Hopeful");
         // }
         // if (wasDiscouraged) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
+        //     owner.traitContainer.RemoveTrait(owner, "Discouraged");
         // }
     }
     private void OnNormalHope(bool wasHopeful, bool wasDiscouraged, bool wasHopeless) {
         // if (wasHopeless) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeless");
+        //     owner.traitContainer.RemoveTrait(owner, "Hopeless");
         // }
         // if (wasHopeful) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Hopeful");
+        //     owner.traitContainer.RemoveTrait(owner, "Hopeful");
         // }
         // if (wasDiscouraged) {
-        //     _owner.traitContainer.RemoveTrait(_owner, "Discouraged");
+        //     owner.traitContainer.RemoveTrait(owner, "Discouraged");
         // }
     }
     public void AdjustDoNotGetDiscouraged(int amount) {
@@ -1278,13 +1307,13 @@ public class CharacterNeedsComponent {
         // }
     }
     private void OnCharacterFinishedJob(Character character, GoapPlanJob job) {
-        if (_owner == character) {
+        if (owner == character) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{character.name} has finished job {job.ToString()}");
             //after doing an extreme needs type job, check again if the character needs to recover more of that need.
             if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
-                PlanFullnessRecoveryActions(_owner);
+                PlanFullnessRecoveryActions(owner);
             } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
-                PlanTirednessRecoveryActions(_owner);
+                PlanTirednessRecoveryActions(owner);
             }
         }
     }
@@ -1302,7 +1331,7 @@ public class CharacterNeedsComponent {
             triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
         }
         if (!triggerGrieving) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
             //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
             //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
@@ -1314,6 +1343,12 @@ public class CharacterNeedsComponent {
         } else {
             griefstricken.TriggerGrieving();
         }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataCharacterNeedsComponent data) {
+        //Currently N/A
     }
     #endregion
 }
@@ -1332,7 +1367,7 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
     public float tirednessDecreaseRate;
     public int tirednessForcedTick;
     public int currentSleepTicks;
-    public int sleepScheduleJobID;
+    public string sleepScheduleJobID;
     public bool hasCancelledSleepSchedule;
 
     //Fullness
@@ -1366,7 +1401,34 @@ public class SaveDataCharacterNeedsComponent : SaveData<CharacterNeedsComponent>
         doNotGetDiscouraged = data.doNotGetDiscouraged;
 
         tiredness = data.tiredness;
+        tirednessDecreaseRate = data.tirednessDecreaseRate;
+        tirednessForcedTick = data.tirednessForcedTick;
+        currentSleepTicks = data.currentSleepTicks;
+        sleepScheduleJobID = data.sleepScheduleJobID;
+        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
 
+        fullness = data.fullness;
+        fullnessDecreaseRate = data.fullnessDecreaseRate;
+        fullnessForcedTick = data.fullnessForcedTick;
+
+        happiness = data.happiness;
+        happinessDecreaseRate = data.happinessDecreaseRate;
+
+        stamina = data.stamina;
+        staminaDecreaseRate = data.staminaDecreaseRate;
+        baseStaminaDecreaseRate = data.baseStaminaDecreaseRate;
+
+        hope = data.hope;
+
+        hasForcedFullness = data.hasForcedFullness;
+        hasForcedTiredness = data.hasForcedTiredness;
+        forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
+        forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
+    }
+
+    public override CharacterNeedsComponent Load() {
+        CharacterNeedsComponent component = new CharacterNeedsComponent(this);
+        return component;
     }
     #endregion
 }

@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Rumor : IReactable {
+    //Rumors are not ISavable because we do not need a persistent ID for them
+    //Rumors are saved under SaveDataInterruptHolder or SaveDataActualGoapNode
+    //Since they are the only ones who has a reference to rumors, we do not need to put them in the hub to conserve save space
+    //This also means that we do not need to save the IRumorable because their parent (SaveDataInterruptHolder or SaveDataActualGoapNode) are the ones responsible for setting it
+
     public Character characterThatCreatedRumor { get; private set; }
     public Character targetCharacter { get; private set; }
     public IRumorable rumorable { get; private set; }
@@ -19,11 +24,13 @@ public class Rumor : IReactable {
     public List<Character> awareCharacters => rumorable.awareCharacters;
     #endregion
 
-    public Rumor(Character characterThatCreated, IRumorable rumorable) {
+    public Rumor(Character characterThatCreated, Character targetCharacter) {
         characterThatCreatedRumor = characterThatCreated;
-        targetCharacter = rumorable.actor;
+        this.targetCharacter = targetCharacter;
+    }
+    
+    public void SetRumorable(IRumorable rumorable) {
         this.rumorable = rumorable;
-        this.rumorable.SetAsRumor(this);
     }
 
     #region IReactable
@@ -42,6 +49,27 @@ public class Rumor : IReactable {
     }
     public void AddAwareCharacter(Character character) {
         rumorable.AddAwareCharacter(character);
+    }
+    #endregion
+}
+
+
+[System.Serializable]
+public class SaveDataRumor : SaveData<Rumor> {
+    public string characterThatCreatedRumorID;
+    public string targetCharacterID;
+
+    #region Overrides
+    public override void Save(Rumor data) {
+        characterThatCreatedRumorID = data.characterThatCreatedRumor.persistentID;
+        targetCharacterID = data.targetCharacter.persistentID;
+    }
+
+    public override Rumor Load() {
+        Character characterThatCreatedRumor = CharacterManager.Instance.GetCharacterByPersistentID(characterThatCreatedRumorID);
+        Character targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(targetCharacterID);
+        Rumor rumor = new Rumor(characterThatCreatedRumor, targetCharacter);
+        return rumor;
     }
     #endregion
 }

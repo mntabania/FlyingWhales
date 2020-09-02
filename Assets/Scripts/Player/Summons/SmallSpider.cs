@@ -74,7 +74,7 @@ public class SmallSpider : Summon {
         Faction targetFaction = faction;
 
         LocationStructure home = homeStructure;
-        List<HexTile> ogTerritories = territorries;
+        List<HexTile> ogTerritories = territories;
         
         SetShowNotificationOnDeath(false);
         Death("Transform Giant Spider");

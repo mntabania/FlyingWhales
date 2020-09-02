@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Assumption : IReactable {
-    public Character characterThatCreatedRumor { get; private set; }
+    //Same as Rumor - See Rumor comments
+
+    public Character characterThatCreatedAssumption { get; private set; }
     public Character targetCharacter { get; private set; }
     public ActualGoapNode assumedAction { get; private set; }
 
@@ -19,11 +21,13 @@ public class Assumption : IReactable {
     public List<Character> awareCharacters => assumedAction.awareCharacters;
     #endregion
 
-    public Assumption(Character characterThatCreated, ActualGoapNode assumedAction) {
-        characterThatCreatedRumor = characterThatCreated;
-        targetCharacter = assumedAction.actor;
+    public Assumption(Character characterThatCreated, Character targetCharacter) {
+        characterThatCreatedAssumption = characterThatCreated;
+        this.targetCharacter = targetCharacter;
+    }
+
+    public void SetAssumedAction(ActualGoapNode assumedAction) {
         this.assumedAction = assumedAction;
-        this.assumedAction.SetAsAssumption(this);
     }
 
     #region IReactable
@@ -42,6 +46,26 @@ public class Assumption : IReactable {
     }
     public void AddAwareCharacter(Character character) {
         assumedAction.AddAwareCharacter(character);
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataAssumption : SaveData<Assumption> {
+    public string characterThatCreatedAssumptionID;
+    public string targetCharacterID;
+
+    #region Overrides
+    public override void Save(Assumption data) {
+        characterThatCreatedAssumptionID = data.characterThatCreatedAssumption.persistentID;
+        targetCharacterID = data.targetCharacter.persistentID;
+    }
+
+    public override Assumption Load() {
+        Character characterThatCreatedAssumption = CharacterManager.Instance.GetCharacterByPersistentID(characterThatCreatedAssumptionID);
+        Character targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(targetCharacterID);
+        Assumption rumor = new Assumption(characterThatCreatedAssumption, targetCharacter);
+        return rumor;
     }
     #endregion
 }

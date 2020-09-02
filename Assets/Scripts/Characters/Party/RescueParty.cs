@@ -7,11 +7,12 @@ using Inner_Maps.Location_Structures;
 public class RescueParty : Party {
 
     public Character targetCharacter { get; private set; }
-    private bool isReleasing;
-    private bool isSearching;
+    public bool isReleasing { get; private set; }
+    public bool isSearching { get; private set; }
 
     #region getters
     public override IPartyTarget target => targetCharacter;
+    public override System.Type serializedData => typeof(SaveDataRescueParty);
     #endregion
 
     public RescueParty() : base(PARTY_TYPE.Rescue) {
@@ -19,6 +20,12 @@ public class RescueParty : Party {
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(RescueBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
+    }
+    public RescueParty(SaveDataParty data) : base(data) {
+        if (data is SaveDataRescueParty subData) {
+            isReleasing = subData.isReleasing;
+            isSearching = subData.isSearching;
+        }
     }
 
     #region Overrides
@@ -89,6 +96,38 @@ public class RescueParty : Party {
         if (targetCharacter.currentStructure == structure) {
             if (IsMember(character)) {
                 StartSearchTimer();
+            }
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataRescueParty subData) {
+            if (subData.targetCharacter != string.Empty) {
+                targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(subData.targetCharacter);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataRescueParty : SaveDataParty {
+    public string targetCharacter;
+    public bool isReleasing;
+    public bool isSearching;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is RescueParty subData) {
+            isReleasing = subData.isReleasing;
+            isSearching = subData.isSearching;
+
+            if (subData.targetCharacter != null) {
+                targetCharacter = subData.targetCharacter.persistentID;
             }
         }
     }

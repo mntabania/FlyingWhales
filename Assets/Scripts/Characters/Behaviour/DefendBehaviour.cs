@@ -14,7 +14,7 @@ public class DefendBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.isAtHomeStructure || character.IsAtTerritory()) {
-            List<Character> choices = GetTargetChoices(character.territorries, character);
+            List<Character> choices = GetTargetChoices(character.territories, character);
             if (choices != null) {
                 Character chosenTarget = CollectionUtilities.GetRandomElement(choices);
                 character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);

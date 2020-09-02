@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CrimeComponent {
-    public Character owner { get; private set; }
+public class CrimeComponent : CharacterComponent {
 
     public List<CrimeData> witnessedCrimes { get; private set; }
     public List<CrimeData> reportedCrimes { get; private set; }
 
-    public CrimeComponent(Character owner) {
-        this.owner = owner;
+    public CrimeComponent() {
         witnessedCrimes = new List<CrimeData>();
         reportedCrimes = new List<CrimeData>();
+    }
+    public CrimeComponent(SaveDataCrimeComponent data) {
     }
 
     #region Crimes
@@ -59,6 +59,49 @@ public class CrimeComponent {
             return false;
         }
         return true;
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataCrimeComponent data) {
+        for (int i = 0; i < data.witnessedCrimes.Count; i++) {
+            CrimeData crime = DatabaseManager.Instance.crimeDatabase.GetCrimeByPersistentID(data.witnessedCrimes[i]);
+            witnessedCrimes.Add(crime);
+        }
+
+        for (int i = 0; i < data.reportedCrimes.Count; i++) {
+            CrimeData crime = DatabaseManager.Instance.crimeDatabase.GetCrimeByPersistentID(data.reportedCrimes[i]);
+            reportedCrimes.Add(crime);
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCrimeComponent : SaveData<CrimeComponent> {
+    public List<string> witnessedCrimes;
+    public List<string> reportedCrimes;
+
+    #region Overrides
+    public override void Save(CrimeComponent data) {
+        witnessedCrimes = new List<string>();
+        for (int i = 0; i < data.witnessedCrimes.Count; i++) {
+            CrimeData crime = data.witnessedCrimes[i];
+            witnessedCrimes.Add(crime.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(crime);
+        }
+
+        reportedCrimes = new List<string>();
+        for (int i = 0; i < data.reportedCrimes.Count; i++) {
+            CrimeData crime = data.reportedCrimes[i];
+            reportedCrimes.Add(crime.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(crime);
+        }
+    }
+
+    public override CrimeComponent Load() {
+        CrimeComponent component = new CrimeComponent(this);
+        return component;
     }
     #endregion
 }

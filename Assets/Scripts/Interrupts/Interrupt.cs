@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inner_Maps;
+using Interrupts;
 
 namespace Interrupts {
     public class Interrupt {
@@ -57,7 +59,8 @@ namespace Interrupts {
         #endregion
     }
 
-    public class InterruptHolder : IRumorable, ICrimeable {
+    public class InterruptHolder : IRumorable, ICrimeable, ISavable {
+        public string persistentID { get; private set; }
         public Interrupt interrupt { get; private set; }
         public Character actor { get; private set; }
         public IPointOfInterest target { get; private set; }
@@ -76,11 +79,24 @@ namespace Interrupts {
         public Log informationLog => effectLog;
         public bool isStealth => false;
         public bool isRumor => rumor != null;
+        public RUMOR_TYPE rumorType => RUMOR_TYPE.Interrupt;
+        public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Interrupt;
+        public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
+        public System.Type serializedData => typeof(SaveDataInterruptHolder);
         #endregion
 
         public InterruptHolder() {
+            persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             identifier = string.Empty;
             awareCharacters = new List<Character>();
+        }
+        public InterruptHolder(SaveDataInterruptHolder data) {
+            awareCharacters = new List<Character>();
+            persistentID = data.persistentID;
+            interrupt = InteractionManager.Instance.GetInterruptData(data.interruptType);
+            identifier = data.identifier;
+            reason = data.reason;
+            crimeType = data.crimeType;
         }
 
         #region General
@@ -126,6 +142,9 @@ namespace Interrupts {
         public void SetAsRumor(Rumor newRumor) {
             if (rumor != newRumor) {
                 rumor = newRumor;
+                if (rumor != null) {
+                    rumor.SetRumorable(this);
+                }
             }
         }
         #endregion
@@ -180,20 +199,111 @@ namespace Interrupts {
             return $"Interrupt: {interrupt?.type.ToString() ?? "None"}. Actor: {actor?.name ?? "None"}";
         }
         #endregion
+
+        #region Loading
+        public void LoadReferences(SaveDataInterruptHolder data) {
+            actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actorID);
+            if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                target = CharacterManager.Instance.GetCharacterByPersistentID(data.targetID);
+            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                target = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetID);
+            }
+
+            disguisedActor = null;
+            disguisedTarget = null;
+            if (data.disguisedActorID != string.Empty) {
+                disguisedActor = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedActorID);
+            }
+            if (data.disguisedTargetID != string.Empty) {
+                disguisedTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedTargetID);
+            }
+
+            effectLog = null;
+            if (data.effectLogID != string.Empty) {
+                effectLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.effectLogID);
+            }
+
+            if (data.awareCharacterIDs.Count > 0) {
+                for (int i = 0; i < data.awareCharacterIDs.Count; i++) {
+                    Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacterIDs[i]);
+                    awareCharacters.Add(character);
+                }
+            }
+
+            if (data.hasRumor) {
+                rumor = data.rumor.Load();
+                rumor.SetRumorable(this);
+            }
+        }
+        #endregion
+    }
+}
+
+
+[System.Serializable]
+public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounterpart {
+    public string persistentID { get; set; }
+    public INTERRUPT interruptType;
+    public string actorID;
+    public string targetID;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+    public string disguisedActorID;
+    public string disguisedTargetID;
+    public string effectLogID;
+    public string identifier;
+    public SaveDataRumor rumor;
+    public bool hasRumor;
+    public List<string> awareCharacterIDs;
+    public string reason;
+    public CRIME_TYPE crimeType;
+
+    #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
+    #endregion
+
+    #region Overrides
+    public override void Save(InterruptHolder data) {
+        persistentID = data.persistentID;
+        interruptType = data.interrupt.type;
+        actorID = data.actor.persistentID;
+        targetID = data.target.persistentID;
+        targetPOIType = data.target.poiType;
+        identifier = data.identifier;
+        reason = data.reason;
+        crimeType = data.crimeType;
+
+        disguisedActorID = string.Empty;
+        disguisedTargetID = string.Empty;
+        if (data.disguisedActor != null) {
+            disguisedActorID = data.disguisedActor.persistentID;
+        }
+        if (data.disguisedTarget != null) {
+            disguisedTargetID = data.disguisedTarget.persistentID;
+        }
+
+        effectLogID = string.Empty;
+        if (data.effectLog != null) {
+            effectLogID = data.effectLog.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.effectLog);
+        }
+
+        if (data.rumor != null) {
+            hasRumor = true;
+            SaveDataRumor savedRumor = new SaveDataRumor();
+            savedRumor.Save(data.rumor);
+        }
+
+        if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
+            awareCharacterIDs = new List<string>();
+            for (int i = 0; i < data.awareCharacters.Count; i++) {
+                awareCharacterIDs.Add(data.awareCharacters[i].persistentID);
+            }
+        }
     }
 
-    public class SaveDataInterruptHolder : SaveData<InterruptHolder> {
-        public INTERRUPT interruptType;
-        public int actorID;
-        public int targetID;
-        public POINT_OF_INTEREST_TYPE targetPOIType;
-        public int disguisedActor;
-        public int disguisedTarget;
-        public Log effectLog;
-        public string identifier;
-        public Rumor rumor;
-        public List<int> awareCharacters;
-        public string reason;
-        public CRIME_TYPE crimeType;
+    public override InterruptHolder Load() {
+        InterruptHolder interrupt = new InterruptHolder(this);
+        return interrupt;
     }
+    #endregion
 }

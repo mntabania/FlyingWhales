@@ -126,6 +126,14 @@ public class GridMap : BaseMonoBehaviour {
         }
         return null;
     }
+    public Region GetRegionByPersistentID(string id) {
+        for (int i = 0; i < allRegions.Length; i++) {
+            if (allRegions[i].persistentID == id) {
+                return allRegions[i];
+            }
+        }
+        return null;
+    }
     public Region GetRegionByName(string name) {
         for (int i = 0; i < allRegions.Length; i++) {
             if (allRegions[i].name == name) {

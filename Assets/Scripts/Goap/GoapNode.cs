@@ -103,13 +103,12 @@ public abstract class JobNode {
 }
 
 //actual nodes located in a finished plan that is going to be executed by a character
-public class ActualGoapNode : IRumorable, ICrimeable {
-    //public AlterEgoData poiTargetAlterEgo { get; private set; } //The alter ego the target was using while doing this action. only occupied if target is a character
+public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
+    public string persistentID { get; private set; }
     public Character actor { get; private set; }
     public IPointOfInterest poiTarget { get; private set; }
     public Character disguisedActor { get; private set; }
     public Character disguisedTarget { get; private set; }
-    //public AlterEgoData actorAlterEgo { get; private set; } //The alter ego the character was using while doing this action.
     public bool isStealth { get; private set; }
     public object[] otherData { get; private set; }
     public int cost { get; private set; }
@@ -123,7 +122,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
     public LocationGridTile targetTile { get; private set; }
     public IPointOfInterest targetPOIToGoTo { get; private set; }
     public JOB_TYPE associatedJobType { get; private set; }
-    public JobQueueItem associatedJob { get { return _associatedJob; } }
+    public JobQueueItem associatedJob { get; private set; }
 
 
     public string currentStateName { get; private set; }
@@ -135,10 +134,6 @@ public class ActualGoapNode : IRumorable, ICrimeable {
 
     //Crime
     public CRIME_TYPE crimeType { get; private set; }
-
-    private JobQueueItem _associatedJob;
-    private Character _actor;
-    private IPointOfInterest _target;
 
     #region getters
     //TODO: Refactor these getters after all errors are resolved.
@@ -160,9 +155,14 @@ public class ActualGoapNode : IRumorable, ICrimeable {
     public string classificationName => "News";
     public IPointOfInterest target => poiTarget;
     public Log informationLog => descriptionLog;
+    public RUMOR_TYPE rumorType => RUMOR_TYPE.Action;
+    public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Action;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Action;
+    public System.Type serializedData => typeof(SaveDataActualGoapNode);
     #endregion
 
     public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, object[] otherData, int cost) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         this.action = action;
         this.actor = actor;
         this.poiTarget = poiTarget;
@@ -179,6 +179,20 @@ public class ActualGoapNode : IRumorable, ICrimeable {
         }
         //Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
+
+    public ActualGoapNode(SaveDataActualGoapNode data) {
+        awareCharacters = new List<Character>();
+        persistentID = data.persistentID;
+        isStealth = data.isStealth;
+        cost = data.cost;
+        action = InteractionManager.Instance.goapActionData[data.action];
+        actionStatus = data.actionStatus;
+        associatedJobType = data.associatedJobType;
+        currentStateName = data.currentStateName;
+        currentStateDuration = data.currentStateDuration;
+        crimeType = data.crimeType;
+    }
+
 
     //public void DestroyNode() {
     //    Messenger.RemoveListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
@@ -871,12 +885,12 @@ public class ActualGoapNode : IRumorable, ICrimeable {
         isStealth = job.isStealth;
     }
     public void OnUnattachPlanToJob(GoapPlanJob job) {
-        if(_associatedJob == job) {
+        if(associatedJob == job) {
             SetJob(null);
         }
     }
     public void SetJob(JobQueueItem job) {
-        _associatedJob = job;
+        associatedJob = job;
     }
     //private JobQueueItem GetAssociatedJob () {
     //    if(_associatedJob != null && _associatedJob.originalOwner) {
@@ -902,6 +916,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
         if(rumor != newRumor) {
             rumor = newRumor;
             if(rumor != null) {
+                rumor.SetRumorable(this);
                 actionStatus = ACTION_STATUS.SUCCESS;
                 currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
                 CreateDescriptionLog(currentState);
@@ -915,6 +930,7 @@ public class ActualGoapNode : IRumorable, ICrimeable {
         if (assumption != newAssumption) {
             assumption = newAssumption;
             if (assumption != null) {
+                assumption.SetAssumedAction(this);
                 actionStatus = ACTION_STATUS.SUCCESS;
                 currentStateName = GoapActionStateDB.goapActionStates[goapType][0].name;
                 CreateDescriptionLog(currentState);
@@ -964,6 +980,167 @@ public class ActualGoapNode : IRumorable, ICrimeable {
             }
             crimeType = action.GetCrimeType(actor, target, this);
         }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataActualGoapNode data) {
+        actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actor);
+        if (data.poiTargetType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            poiTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.poiTarget);
+        } else if (data.poiTargetType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            poiTarget = InnerMapManager.Instance.GetTileObjectByPersistentID(data.poiTarget);
+        }
+        if (data.disguisedActor != string.Empty) {
+            disguisedActor = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedActor);
+        }
+        if (data.disguisedTarget != string.Empty) {
+            disguisedTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedTarget);
+        }
+        if (data.thoughtBubbleLog != string.Empty) {
+            thoughtBubbleLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleLog);
+        }
+        if (data.thoughtBubbleMovingLog != string.Empty) {
+            thoughtBubbleMovingLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleMovingLog);
+        }
+        if (data.descriptionLog != string.Empty) {
+            descriptionLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.descriptionLog);
+        }
+        if (data.targetStructure != string.Empty) {
+            targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetStructure);
+        }
+        if (data.targetPOIToGoTo != string.Empty) {
+            if (data.targetPOIToGoToType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                targetPOIToGoTo = CharacterManager.Instance.GetCharacterByPersistentID(data.targetPOIToGoTo);
+            } else if (data.targetPOIToGoToType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                targetPOIToGoTo = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetPOIToGoTo);
+            }
+        }
+        for (int i = 0; i < data.awareCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacters[i]);
+            awareCharacters.Add(character);
+        }
+        if (data.hasRumor) {
+            rumor = data.rumor.Load();
+            rumor.SetRumorable(this);
+        }
+        if (data.hasAssumption) {
+            assumption = data.assumption.Load();
+            assumption.SetAssumedAction(this);
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterpart {
+    public string persistentID { get; set; }
+    public string actor;
+    public string poiTarget;
+    public POINT_OF_INTEREST_TYPE poiTargetType;
+    public string disguisedActor;
+    public string disguisedTarget;
+    public bool isStealth;
+    //public object[] otherData; TODO
+    public int cost;
+
+    public INTERACTION_TYPE action;
+    public ACTION_STATUS actionStatus;
+    public string thoughtBubbleLog;
+    public string thoughtBubbleMovingLog;
+    public string descriptionLog;
+    public string targetStructure;
+    public string targetTile;
+    public string targetPOIToGoTo;
+    public POINT_OF_INTEREST_TYPE targetPOIToGoToType;
+    public JOB_TYPE associatedJobType;
+    //public JobQueueItem associatedJob; TODO
+
+
+    public string currentStateName;
+    public int currentStateDuration;
+    public SaveDataRumor rumor;
+    public SaveDataAssumption assumption;
+    public bool hasRumor;
+    public bool hasAssumption;
+
+    public List<string> awareCharacters;
+
+    //Crime
+    public CRIME_TYPE crimeType;
+
+    #region getters
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Action;
+    #endregion
+
+    #region Overrides
+    public override void Save(ActualGoapNode data) {
+        persistentID = data.persistentID;
+        isStealth = data.isStealth;
+        cost = data.cost;
+        action = data.action.goapType;
+        actionStatus = data.actionStatus;
+        associatedJobType = data.associatedJobType;
+        currentStateName = data.currentStateName;
+        currentStateDuration = data.currentStateDuration;
+        crimeType = data.crimeType;
+
+        actor = data.actor.persistentID;
+        poiTarget = data.poiTarget.persistentID;
+        poiTargetType = data.poiTarget.poiType;
+
+        disguisedActor = string.Empty;
+        disguisedTarget = string.Empty;
+        if (data.disguisedActor != null) {
+            disguisedActor = data.disguisedActor.persistentID;
+        }
+        if (data.disguisedTarget != null) {
+            disguisedTarget = data.disguisedTarget.persistentID;
+        }
+
+        if (data.thoughtBubbleLog != null) {
+            thoughtBubbleLog = data.thoughtBubbleLog.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.thoughtBubbleLog);
+        }
+        if (data.thoughtBubbleMovingLog != null) {
+            thoughtBubbleMovingLog = data.thoughtBubbleMovingLog.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.thoughtBubbleMovingLog);
+        }
+        if (data.descriptionLog != null) {
+            descriptionLog = data.descriptionLog.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.descriptionLog);
+        }
+        if (data.targetStructure != null) {
+            targetStructure = data.targetStructure.persistentID;
+        }
+        if (data.targetStructure != null) {
+            targetStructure = data.targetStructure.persistentID;
+        }
+        if (data.targetPOIToGoTo != null) {
+            targetPOIToGoTo = data.targetPOIToGoTo.persistentID;
+            targetPOIToGoToType = data.targetPOIToGoTo.poiType;
+        }
+        if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
+            awareCharacters = new List<string>();
+            for (int i = 0; i < data.awareCharacters.Count; i++) {
+                awareCharacters.Add(data.awareCharacters[i].persistentID);
+            }
+        }
+        if (data.rumor != null) {
+            hasRumor = true;
+            SaveDataRumor savedRumor = new SaveDataRumor();
+            savedRumor.Save(data.rumor);
+        }
+        if (data.assumption != null) {
+            hasAssumption = true;
+            SaveDataAssumption savedAssumption = new SaveDataAssumption();
+            savedAssumption.Save(data.assumption);
+        }
+    }
+
+    public override ActualGoapNode Load() {
+        ActualGoapNode action = new ActualGoapNode(this);
+        return action;
     }
     #endregion
 }

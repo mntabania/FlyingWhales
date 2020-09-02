@@ -13,8 +13,6 @@ public class SaveDataMinion : SaveData<Minion> {
         isSummoned = minion.isSummoned;
         minionPlayerSkillType = minion.minionPlayerSkillType;
     }
-
-
     #endregion
 
     public Minion Load(Character character) {

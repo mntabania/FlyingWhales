@@ -11,7 +11,6 @@ public abstract class Ent : Summon {
     /// </summary>
     public bool isTree { get; private set; }
     
-
     protected Ent(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.ENT, UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }

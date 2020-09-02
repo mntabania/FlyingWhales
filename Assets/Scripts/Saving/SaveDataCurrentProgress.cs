@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using Locations.Settlements;
 using UnityEngine;
+using Interrupts;
 
 public class SaveDataCurrentProgress {
     //public int width;
@@ -13,7 +14,7 @@ public class SaveDataCurrentProgress {
     //public List<SaveDataLandmark> landmarkSaves;
     //public List<SaveDataRegion> regionSaves;
     //public List<SaveDataArea> nonPlayerAreaSaves;
-    
+
     //public List<SaveDataCharacter> characterSaves;
     //public List<SaveDataTileObject> tileObjectSaves;
     //// public List<SaveDataSpecialObject> specialObjectSaves;
@@ -22,6 +23,7 @@ public class SaveDataCurrentProgress {
 
     //public SaveDataArea playerAreaSave;
     //public SaveDataPlayer playerSave;
+    public string gameVersion;
 
     public int month;
     public int day;
@@ -48,6 +50,11 @@ public class SaveDataCurrentProgress {
             { OBJECT_TYPE.Faction, new SaveDataFactionHub() },
             { OBJECT_TYPE.Log, new SaveDataLogHub() },
             { OBJECT_TYPE.Tile_Object, new SaveDataTileObjectHub() },
+            { OBJECT_TYPE.Action, new SaveDataActionHub() },
+            { OBJECT_TYPE.Interrupt, new SaveDataInterruptHub() },
+            { OBJECT_TYPE.Party, new SaveDataPartyHub() },
+            { OBJECT_TYPE.Crime, new SaveDataCrimeHub() },
+            { OBJECT_TYPE.Character, new SaveDataCharacterHub() },
         };
     }
     #endregion
@@ -105,8 +112,22 @@ public class SaveDataCurrentProgress {
             AddToSaveHub(saveData, saveData.objectType);
         }
     }
+    public void SaveCharacters() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            SaveDataCharacter saveData = new SaveDataCharacter();
+            saveData.Save(character);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
+            SaveDataCharacter saveData = new SaveDataCharacter();
+            saveData.Save(character);
+            AddToSaveHub(saveData, saveData.objectType);
+        }
+    }
     #endregion
-    
+
     #region Tile Objects
     public void SaveTileObjects(List<TileObject> tileObjects) {
         //tile objects
@@ -160,12 +181,6 @@ public class SaveDataCurrentProgress {
     }
     #endregion
 
-    #region Independent Loading
-    public Player LoadPlayer() {
-        return playerSave.Load();
-    }
-    #endregion
-
     #region First Wave Loading
     //FIRST WAVE LOADING - this is always the firsts to load, this loading does not require references from others and thus, only needs itself to load
     //This typically populates data in the databases of objects
@@ -181,8 +196,8 @@ public class SaveDataCurrentProgress {
     public void LoadFactions() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Faction)){
             if(objectHub[OBJECT_TYPE.Faction] is SaveDataFactionHub factionHub) {
-                Dictionary<string, SaveDataFaction> savedFactions = factionHub.hub;
-                foreach (SaveDataFaction data in savedFactions.Values) {
+                Dictionary<string, SaveDataFaction> saved = factionHub.hub;
+                foreach (SaveDataFaction data in saved.Values) {
                     data.Load();
                 }
             }
@@ -191,41 +206,135 @@ public class SaveDataCurrentProgress {
     public void LoadTileObjects() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Tile_Object)){
             if(objectHub[OBJECT_TYPE.Tile_Object] is SaveDataTileObjectHub hub) {
-                Dictionary<string, SaveDataTileObject> savedFactions = hub.hub;
-                foreach (SaveDataTileObject data in savedFactions.Values) {
+                Dictionary<string, SaveDataTileObject> saved = hub.hub;
+                foreach (SaveDataTileObject data in saved.Values) {
                     data.Load();
                 }
             }
         }
+    }
+    public void LoadActions() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Action)) {
+            if (objectHub[OBJECT_TYPE.Action] is SaveDataActionHub hub) {
+                Dictionary<string, SaveDataActualGoapNode> saved = hub.hub;
+                foreach (SaveDataActualGoapNode data in saved.Values) {
+                    ActualGoapNode action = data.Load();
+                    DatabaseManager.Instance.actionDatabase.AddAction(action);
+                }
+            }
+        }
+    }
+    public void LoadInterrupts() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Interrupt)) {
+            if (objectHub[OBJECT_TYPE.Interrupt] is SaveDataInterruptHub hub) {
+                Dictionary<string, SaveDataInterruptHolder> saved = hub.hub;
+                foreach (SaveDataInterruptHolder data in saved.Values) {
+                    InterruptHolder interrupt = data.Load();
+                    DatabaseManager.Instance.interruptDatabase.AddInterrupt(interrupt);
+                }
+            }
+        }
+    }
+    public void LoadLogs() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Log)) {
+            if (objectHub[OBJECT_TYPE.Log] is SaveDataLogHub hub) {
+                Dictionary<string, SaveDataLog> saved = hub.hub;
+                foreach (SaveDataLog data in saved.Values) {
+                    Log log = data.Load();
+                    DatabaseManager.Instance.logDatabase.AddLog(log);
+                }
+            }
+        }
+    }
+    public void LoadParties() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Party)) {
+            if (objectHub[OBJECT_TYPE.Party] is SaveDataPartyHub hub) {
+                Dictionary<string, SaveDataParty> saved = hub.hub;
+                foreach (SaveDataParty data in saved.Values) {
+                    Party party = data.Load();
+                    DatabaseManager.Instance.partyDatabase.AddParty(party);
+                }
+            }
+        }
+    }
+    public void LoadCrimes() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Crime)) {
+            if (objectHub[OBJECT_TYPE.Crime] is SaveDataCrimeHub hub) {
+                Dictionary<string, SaveDataCrimeData> saved = hub.hub;
+                foreach (SaveDataCrimeData data in saved.Values) {
+                    CrimeData crime = data.Load();
+                    DatabaseManager.Instance.crimeDatabase.AddCrime(crime);
+                }
+            }
+        }
+    }
+    public void LoadCharacters() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Character)) {
+            if (objectHub[OBJECT_TYPE.Character] is SaveDataCharacterHub hub) {
+                Dictionary<string, SaveDataCharacter> saved = hub.hub;
+                foreach (SaveDataCharacter data in saved.Values) {
+                    Character character = data.Load();
+                }
+            }
+        }
+    }
+    public Player LoadPlayer() {
+        return playerSave.Load();
     }
     #endregion
 
     #region Second Wave Loading
     //SECOND WAVE LOADING - This loading should always be after the FIRST WAVE LOADING, almost all this requires references from other objects and thus, the object must be initiated first before any of these functions are called
     //Initiation of objects are done in FIRST WAVE LOADING
-    public void LoadFactionCharacters() {
+    public void LoadFactionReferences() {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            string persistentID = FactionManager.Instance.allFactions[i].persistentID;
-            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
-            saveData.LoadCharacters();
+            Faction faction = FactionManager.Instance.allFactions[i];
+            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, faction.persistentID);
+            faction.LoadReferences(saveData);
         }
     }
-    public void LoadFactionRelationships() {
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            string persistentID = FactionManager.Instance.allFactions[i].persistentID;
-            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
-            saveData.LoadRelationships();
+    public void LoadPlayerReferences() {
+        PlayerManager.Instance.player.LoadReferences(playerSave);
+    }
+    public void LoadCharacterReferences() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            SaveDataCharacter saveData = GetFromSaveHub<SaveDataCharacter>(OBJECT_TYPE.Character, character.persistentID);
+            character.LoadReferences(saveData);
         }
     }
-    public void LoadFactionLogs() {
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            string persistentID = FactionManager.Instance.allFactions[i].persistentID;
-            SaveDataFaction saveData = GetFromSaveHub<SaveDataFaction>(OBJECT_TYPE.Faction, persistentID);
-            saveData.LoadLogs();
+    public void LoadActionReferences() {
+        foreach (KeyValuePair<string, ActualGoapNode> item in DatabaseManager.Instance.actionDatabase.allActions) {
+            SaveDataActualGoapNode saveData = GetFromSaveHub<SaveDataActualGoapNode>(OBJECT_TYPE.Action, item.Key);
+            item.Value.LoadReferences(saveData);
+        }
+    }
+    public void LoadInterruptReferences() {
+        foreach (KeyValuePair<string, InterruptHolder> item in DatabaseManager.Instance.interruptDatabase.allInterrupts) {
+            SaveDataInterruptHolder saveData = GetFromSaveHub<SaveDataInterruptHolder>(OBJECT_TYPE.Interrupt, item.Key);
+            item.Value.LoadReferences(saveData);
+        }
+    }
+    public void LoadLogReferences() {
+        foreach (KeyValuePair<string, Log> item in DatabaseManager.Instance.logDatabase.allLogs) {
+            SaveDataLog saveData = GetFromSaveHub<SaveDataLog>(OBJECT_TYPE.Log, item.Key);
+            item.Value.LoadReferences(saveData);
+        }
+    }
+    public void LoadPartyReferences() {
+        foreach (KeyValuePair<string, Party> item in DatabaseManager.Instance.partyDatabase.allParties) {
+            SaveDataParty saveData = GetFromSaveHub<SaveDataParty>(OBJECT_TYPE.Party, item.Key);
+            item.Value.LoadReferences(saveData);
+        }
+    }
+    public void LoadCrimeReferences() {
+        foreach (KeyValuePair<string, CrimeData> item in DatabaseManager.Instance.crimeDatabase.allCrimes) {
+            SaveDataCrimeData saveData = GetFromSaveHub<SaveDataCrimeData>(OBJECT_TYPE.Crime, item.Key);
+            item.Value.LoadReferences(saveData);
         }
     }
     #endregion
-    
+
     //public void SaveHextiles(List<HexTile> tiles) {
     //    hextileSaves = new List<SaveDataHextile>();
     //    for (int i = 0; i < tiles.Count; i++) {

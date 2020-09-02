@@ -431,51 +431,11 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     public Character CreateNewCharacter(SaveDataCharacter data) {
         Character newCharacter = new Character(data);
-        //newCharacter.CreateOwnParty();
-        //for (int i = 0; i < data.alterEgos.Count; i++) {
-        //    data.alterEgos[i].Load(newCharacter);
-        //}
-
-        //Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
-        //if(faction != null) {
-        //    faction.JoinFaction(newCharacter);
-        //    if (data.isFactionLeader) {
-        //        faction.OnlySetLeader(newCharacter);
-        //    }
-        //}
-        
-        //Region currRegion = null;
-        //if (data.currentLocationID != -1) {
-        //    currRegion = GridMap.Instance.GetRegionByID(data.currentLocationID);
-        //}
-        //if (currRegion != null) {
-        //    newCharacter.avatar.SetPosition(currRegion.coreTile.transform.position);
-        //}
-
-
-
-
-        // if (data.isDead) {
-        //     if (home != null) {
-        //         newCharacter.SetHomeRegion(home); //keep this data with character to prevent errors
-        //         //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
-        //     }
-        //     if(currRegion != null) {
-        //         newCharacter.SetRegionLocation(currRegion);
-        //     }
-        // } else {
-        //     if (home != null) {
-        //         newCharacter.MigrateHomeTo(home, null, false);
-        //     }
-        //     if (currRegion != null) {
-        //         currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
-        //     }
-        // }
-        // for (int i = 0; i < data.items.Count; i++) {
-        //     data.items[i].Load(newCharacter);
-        // }
-
-        AddNewCharacter(newCharacter);
+        if (newCharacter.isInLimbo) {
+            AddNewLimboCharacter(newCharacter);
+        } else {
+            AddNewCharacter(newCharacter);
+        }
         return newCharacter;
     }
     public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null, NPCSettlement homeLocation = null, LocationStructure homeStructure = null) {
@@ -1418,6 +1378,16 @@ public class CharacterManager : BaseMonoBehaviour {
         Party newParty = CreateNewParty(partyType);
         newParty.SetLeader(leader);
         return newParty;
+    }
+    private SaveDataParty CreateNewParty(Party party) {
+        var typeName = $"SaveData{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(party.partyName)}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        SaveDataParty saveParty = Activator.CreateInstance(party.serializedData) as SaveDataParty;
+        saveParty.Save(party);
+        return saveParty;
+    }
+    public Party CreateNewParty(SaveDataParty savedParty) {
+        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(savedParty.partyName)}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        return Activator.CreateInstance(Type.GetType(typeName), savedParty) as Party;
     }
     #endregion
 

@@ -5,8 +5,7 @@ using Traits;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class CarryComponent {
-    public Character owner { get; private set; }
+public class CarryComponent : CharacterComponent {
     public IPointOfInterest carriedPOI { get; private set; }
     public Character isBeingCarriedBy { get; private set; }
     public Character justGotCarriedBy { get; private set; }
@@ -15,9 +14,10 @@ public class CarryComponent {
     public bool isCarryingAnyPOI => carriedPOI != null;
     public Character masterCharacter => isBeingCarriedBy != null ? isBeingCarriedBy : owner;
     #endregion
+    public CarryComponent() {
+    }
 
-    public CarryComponent(Character owner) {
-        this.owner = owner;
+    public CarryComponent(SaveDataCarryComponent data) {
     }
 
     #region General
@@ -194,6 +194,55 @@ public class CarryComponent {
     }
     public void SetJustGotCarriedBy(Character character) {
         justGotCarriedBy = character;
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataCarryComponent data) {
+        if (data.carriedPOI != string.Empty) {
+            IPointOfInterest poi = null;
+            if(data.carriedPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                poi = CharacterManager.Instance.GetCharacterByPersistentID(data.carriedPOI);
+            } else if (data.carriedPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                poi = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(data.carriedPOI);
+            }
+            carriedPOI = poi;
+            //CarryPOI(poi);
+        }
+        if (data.isBeingCarriedBy != null) {
+            isBeingCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.isBeingCarriedBy);
+        }
+        if (data.justGotCarriedBy != null) {
+            justGotCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.justGotCarriedBy);
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCarryComponent : SaveData<CarryComponent> {
+    public string carriedPOI;
+    public POINT_OF_INTEREST_TYPE carriedPOIType;
+    public string isBeingCarriedBy;
+    public string justGotCarriedBy;
+
+    #region Overrides
+    public override void Save(CarryComponent data) {
+        if(data.carriedPOI != null) {
+            carriedPOI = data.carriedPOI.persistentID;
+            carriedPOIType = data.carriedPOI.poiType;
+        }
+        if (data.isBeingCarriedBy != null) {
+            isBeingCarriedBy = data.isBeingCarriedBy.persistentID;
+        }
+        if (data.justGotCarriedBy != null) {
+            justGotCarriedBy = data.justGotCarriedBy.persistentID;
+        }
+    }
+
+    public override CarryComponent Load() {
+        CarryComponent component = new CarryComponent(this);
+        return component;
     }
     #endregion
 }

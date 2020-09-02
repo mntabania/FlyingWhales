@@ -6,8 +6,7 @@ using Factions;
 
 [System.Serializable]
 public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
-    public string _persistentID;
-    public OBJECT_TYPE _objectType;
+    public string persistentID { get; set; }
     public int id;
     public string name;
     public string description;
@@ -29,67 +28,65 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     public int newLeaderDesignationChance;
 
     #region getters
-    public string persistentID => _persistentID;
-    public OBJECT_TYPE objectType => _objectType;
+    public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     #endregion
 
     #region Overrides
-    public override void Save(Faction faction) {
-        _persistentID = faction.persistentID;
-        _objectType = faction.objectType;
-        id = faction.id;
-        name = faction.name;
-        description = faction.description;
-        isMajorFaction = faction.isMajorFaction;
-        emblemName = faction.emblem.name;
-        factionColor = faction.factionColor;
-        isActive = faction.isActive;
+    public override void Save(Faction data) {
+        persistentID = data.persistentID;
+        id = data.id;
+        name = data.name;
+        description = data.description;
+        isMajorFaction = data.isMajorFaction;
+        emblemName = data.emblem.name;
+        factionColor = data.factionColor;
+        isActive = data.isActive;
 
-        if (faction.leader == null) {
+        if (data.leader == null) {
             leaderID = string.Empty;
         } else {
-            isLeaderPlayer = faction.leader.objectType == OBJECT_TYPE.Player;
-            leaderID = faction.leader.persistentID;
+            isLeaderPlayer = data.leader.objectType == OBJECT_TYPE.Player;
+            leaderID = data.leader.persistentID;
         }
 
         characterIDs = new List<string>();
-        if(faction.characters != null) {
-            for (int i = 0; i < faction.characters.Count; i++) {
-                characterIDs.Add(faction.characters[i].persistentID);
+        if(data.characters != null) {
+            for (int i = 0; i < data.characters.Count; i++) {
+                characterIDs.Add(data.characters[i].persistentID);
             }
         }
 
         bannedCharacterIDs = new List<string>();
-        if (faction.bannedCharacters != null) {
-            for (int i = 0; i < faction.bannedCharacters.Count; i++) {
-                bannedCharacterIDs.Add(faction.bannedCharacters[i].persistentID);
+        if (data.bannedCharacters != null) {
+            for (int i = 0; i < data.bannedCharacters.Count; i++) {
+                bannedCharacterIDs.Add(data.bannedCharacters[i].persistentID);
             }
         }
 
         ownedSettlementIDs = new List<string>();
-        if (faction.ownedSettlements != null) {
-            for (int i = 0; i < faction.ownedSettlements.Count; i++) {
-                ownedSettlementIDs.Add(faction.ownedSettlements[i].persistentID);
+        if (data.ownedSettlements != null) {
+            for (int i = 0; i < data.ownedSettlements.Count; i++) {
+                ownedSettlementIDs.Add(data.ownedSettlements[i].persistentID);
             }
         }
 
         relationships = new Dictionary<string, SaveDataFactionRelationship>();
-        foreach (KeyValuePair<Faction, FactionRelationship> item in faction.relationships) {
+        foreach (KeyValuePair<Faction, FactionRelationship> item in data.relationships) {
             SaveDataFactionRelationship saveRel = new SaveDataFactionRelationship();
             saveRel.Save(item.Value);
             relationships.Add(item.Key.persistentID, saveRel);
         }
 
         factionType = new SaveDataFactionType();
-        factionType.Save(faction.factionType);
+        factionType.Save(data.factionType);
 
         history = new List<string>();
-        for (int i = 0; i < faction.history.Count; i++) {
-            Log log = faction.history[i];
+        for (int i = 0; i < data.history.Count; i++) {
+            Log log = data.history[i];
             history.Add(log.persistentID);
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log);
         }
-        newLeaderDesignationChance = faction.newLeaderDesignationChance;
+        newLeaderDesignationChance = data.newLeaderDesignationChance;
     }
 
     public override Faction Load() {
@@ -98,50 +95,4 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
     }
     #endregion
 
-    public void LoadCharacters() {
-        Faction faction = FactionManager.Instance.GetFactionByPersistentID(persistentID);
-        if (!isLeaderPlayer) {
-            if(leaderID != string.Empty) {
-                Character character = CharacterManager.Instance.GetCharacterByPersistentID(leaderID);
-                faction.OnlySetLeader(character);
-            }
-        }
-        for (int i = 0; i < characterIDs.Count; i++) {
-            Character character = CharacterManager.Instance.GetCharacterByPersistentID(characterIDs[i]);
-            faction.AddCharacter(character);
-        }
-        for (int i = 0; i < bannedCharacterIDs.Count; i++) {
-            Character character = CharacterManager.Instance.GetCharacterByPersistentID(bannedCharacterIDs[i]);
-            faction.AddBannedCharacter(character);
-        }
-    }
-    public void LoadSettlements() {
-        //TODO
-    }
-    public void LoadRelationships() {
-        Faction faction1 = FactionManager.Instance.GetFactionByPersistentID(persistentID);
-        foreach (KeyValuePair<string, SaveDataFactionRelationship> item in relationships) {
-            Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
-            FactionRelationship rel = null;
-            if (faction1.GetRelationshipWith(faction2) == null) {
-                if (rel == null) {
-                    item.Value.Load();
-                }
-                faction1.AddNewRelationship(faction2, rel);
-            }
-            if (faction2.GetRelationshipWith(faction1) == null) {
-                if(rel == null) {
-                    item.Value.Load();
-                }
-                faction2.AddNewRelationship(faction1, rel);
-            }
-        }
-    }
-    public void LoadLogs() {
-        Faction faction = FactionManager.Instance.GetFactionByPersistentID(persistentID);
-        for (int i = 0; i < history.Count; i++) {
-            SaveDataLog saveLog = SaveManager.Instance.currentSaveDataProgress.GetFromSaveHub<SaveDataLog>(OBJECT_TYPE.Log, history[i]);
-            faction.AddHistory(saveLog.Load());
-        }
-    }
 }

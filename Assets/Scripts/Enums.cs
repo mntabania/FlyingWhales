@@ -1017,7 +1017,10 @@ public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
 public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Social, Heirloom_Hunt, }
 public enum COMBAT_REACTION { None, Fight, Flight }
-public enum OBJECT_TYPE { Character, Summon, Minion, Faction, Region, Hextile, Structure, Settlement, Gridtile, Trait, Action_Job, State_Job, Action, Interrupt, Tile_Object, Player, Log }
+public enum OBJECT_TYPE { Character, Summon, Minion, Faction, Region, Hextile, Structure, Settlement, Gridtile, Trait, Action_Job, State_Job, Action, Interrupt, Tile_Object, Player, Log, Rumor, Assumption, Party, Crime }
+public enum RUMOR_TYPE { Action, Interrupt }
+public enum ASSUMPTION_TYPE { Action, Interrupt }
+public enum CRIMABLE_TYPE { Action, Interrupt }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

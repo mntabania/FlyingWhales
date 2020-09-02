@@ -26,10 +26,10 @@ public class SmallSpiderBehaviour : CharacterBehaviourComponent {
     private List<Character> GetWebbedCharactersAtHome(Character character) {
         if (character.homeStructure != null) {
             return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
-        } else if (character.territorries != null && character.territorries.Count > 0) {
+        } else if (character.territories != null && character.territories.Count > 0) {
             List<Character> characters = null;
-            for (int i = 0; i < character.territorries.Count; i++) {
-                HexTile territory = character.territorries[i];
+            for (int i = 0; i < character.territories.Count; i++) {
+                HexTile territory = character.territories[i];
                 List<Character> validCharacters =
                     territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
                 if (validCharacters != null) {

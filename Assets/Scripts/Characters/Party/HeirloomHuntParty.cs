@@ -17,6 +17,7 @@ public class HeirloomHuntParty : Party {
     #region getters
     public override IPartyTarget target => targetHeirloom;
     //public override HexTile waitingHexArea => targetHex;
+    public override System.Type serializedData => typeof(SaveDataHeirloomHuntParty);
     #endregion
 
     public HeirloomHuntParty() : base(PARTY_TYPE.Heirloom_Hunt) {
@@ -24,6 +25,11 @@ public class HeirloomHuntParty : Party {
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(HeirloomHuntBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
+    }
+    public HeirloomHuntParty(SaveDataParty data) : base(data) {
+        if (data is SaveDataHeirloomHuntParty subData) {
+            foundHeirloom = subData.foundHeirloom;
+        }
     }
 
     #region Overrides
@@ -64,18 +70,18 @@ public class HeirloomHuntParty : Party {
 
     #region General
     private void ProcessFoundHeirloom() {
-        if(foundHeirloom) {
+        if (foundHeirloom) {
 
         } else {
             //if(targetHeirloom.isBeingCarriedBy != null || !targetHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
             //    || targetHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType != BIOMES.DESERT) {
             //    DisbandParty();
             //} else {
-                if (UnityEngine.Random.Range(0, 100) < currentChance) {
-                    ProcessSettingTargetHex();
-                } else {
-                    DisbandParty();
-                }
+            if (UnityEngine.Random.Range(0, 100) < currentChance) {
+                ProcessSettingTargetHex();
+            } else {
+                DisbandParty();
+            }
             //}
         }
     }
@@ -133,6 +139,51 @@ public class HeirloomHuntParty : Party {
         if (targetHex == hex) {
             if (IsMember(character)) {
                 StartSearchTimer();
+            }
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataHeirloomHuntParty subData) {
+            if (subData.targetHeirloom != string.Empty) {
+                targetHeirloom = DatabaseManager.Instance.tileObjectDatabase.GetTileObject(subData.targetHeirloom) as Heirloom;
+            }
+            if (subData.targetHex != string.Empty) {
+                targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
+            }
+            if (subData.regionToSearch != string.Empty) {
+                regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataHeirloomHuntParty : SaveDataParty {
+    public string targetHeirloom;
+    public string targetHex;
+    public bool foundHeirloom;
+    public string regionToSearch;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is HeirloomHuntParty subData) {
+            foundHeirloom = subData.foundHeirloom;
+
+            if (subData.targetHeirloom != null) {
+                targetHeirloom = subData.targetHeirloom.persistentID;
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(subData.targetHeirloom);
+            }
+            if (subData.targetHex != null) {
+                targetHex = subData.targetHex.persistentID;
+            }
+            if (subData.regionToSearch != null) {
+                regionToSearch = subData.regionToSearch.persistentID;
             }
         }
     }

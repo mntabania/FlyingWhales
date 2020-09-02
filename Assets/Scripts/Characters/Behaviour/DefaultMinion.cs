@@ -11,21 +11,23 @@ public class DefaultMinion : CharacterBehaviourComponent {
 	}
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} will roam around assigned area!";
-        if(character.behaviourComponent.assignedTargetSettlement != null) {
-            NPCSettlement assignedSettlement = character.behaviourComponent.assignedTargetSettlement;
-            HexTile chosenHex = CollectionUtilities.GetRandomElement(assignedSettlement.tiles);
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-            character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
-            return true;
-        } else if (character.behaviourComponent.assignedTargetHex != null) {
-            HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
-            character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
-            return true;
-        } else {
-            character.jobComponent.TriggerRoamAroundTile(out producedJob);
-            return true;
-        }
+        //if(character.behaviourComponent.assignedTargetSettlement != null) {
+        //    NPCSettlement assignedSettlement = character.behaviourComponent.assignedTargetSettlement;
+        //    HexTile chosenHex = CollectionUtilities.GetRandomElement(assignedSettlement.tiles);
+        //    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+        //    character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
+        //    return true;
+        //} else if (character.behaviourComponent.assignedTargetHex != null) {
+        //    HexTile chosenHex = character.behaviourComponent.assignedTargetHex;
+        //    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
+        //    character.jobComponent.TriggerRoamAroundTile(out producedJob, chosenTile);
+        //    return true;
+        //} else {
+        //    character.jobComponent.TriggerRoamAroundTile(out producedJob);
+        //    return true;
+        //}
+        character.jobComponent.TriggerRoamAroundTile(out producedJob);
+        return true;
         //      if (character.minion != null) {
         //	log += $"\n-{character.name} is minion";
         //	if (character.gridTileLocation != null) {

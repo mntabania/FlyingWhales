@@ -62,8 +62,7 @@ public class PlayerManager : BaseMonoBehaviour {
     }
     public void InitializePlayer(SaveDataCurrentProgress data) {
         player = data.LoadPlayer();
-        player.CreatePlayerFaction(data.playerSave);
-        PlayerUI.Instance.UpdateUI();
+
         // if (WorldConfigManager.Instance.isDemoWorld) {
         //     player.LoadPlayerData(SaveManager.Instance.currentSaveDataPlayer);    
         // }

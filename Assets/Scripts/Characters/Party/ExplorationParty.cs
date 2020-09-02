@@ -8,13 +8,14 @@ public class ExplorationParty : Party {
 
     public LocationStructure targetStructure { get; private set; }
 
-    private List<LocationStructure> alreadyExplored;
-    private bool isExploring;
-    private int currentChance;
-    private Region _regionRefForGettingNewStructure;
+    public List<LocationStructure> alreadyExplored { get; private set; }
+    public bool isExploring { get; private set; }
+    public int currentChance { get; private set; }
+    public Region regionRefForGettingNewStructure { get; private set; }
 
     #region getters
     public override IPartyTarget target => targetStructure;
+    public override System.Type serializedData => typeof(SaveDataExplorationParty);
     #endregion
 
     public ExplorationParty() : base(PARTY_TYPE.Exploration) {
@@ -23,6 +24,13 @@ public class ExplorationParty : Party {
         relatedBehaviour = typeof(ExploreBehaviour);
         jobQueueOwnerType = JOB_OWNER.SETTLEMENT;
         alreadyExplored = new List<LocationStructure>();
+    }
+    public ExplorationParty(SaveDataParty data) : base(data) {
+        alreadyExplored = new List<LocationStructure>();
+        if (data is SaveDataExplorationParty subData) {
+            isExploring = subData.isExploring;
+            currentChance = subData.currentChance;
+        }
     }
 
     #region Overrides
@@ -62,7 +70,7 @@ public class ExplorationParty : Party {
     protected override void OnSetLeader() {
         base.OnSetLeader();
         if (leader != null) {
-            _regionRefForGettingNewStructure = leader.currentRegion;
+            regionRefForGettingNewStructure = leader.currentRegion;
         }
     }
     #endregion
@@ -76,10 +84,10 @@ public class ExplorationParty : Party {
         }
     }
     private void ProcessSettingTargetStructure() {
-        List<Region> adjacentRegions = _regionRefForGettingNewStructure.AdjacentRegions();
+        List<Region> adjacentRegions = regionRefForGettingNewStructure.AdjacentRegions();
         LocationStructure target = null;
         if (adjacentRegions != null) {
-            adjacentRegions.Add(_regionRefForGettingNewStructure);
+            adjacentRegions.Add(regionRefForGettingNewStructure);
             while (target == null && adjacentRegions.Count > 0) {
                 Region chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
                 target = chosenRegion.GetRandomSpecialStructureExcept(alreadyExplored);
@@ -91,7 +99,7 @@ public class ExplorationParty : Party {
                 SetTargetStructure(target);
             }
         } else {
-            target = _regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
+            target = regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
             if (target != null) {
                 SetTargetStructure(target);
             }
@@ -105,7 +113,7 @@ public class ExplorationParty : Party {
             targetStructure = structure;
             if (targetStructure != null) {
                 alreadyExplored.Add(targetStructure);
-                _regionRefForGettingNewStructure = targetStructure.location;
+                regionRefForGettingNewStructure = targetStructure.location;
             }
         }
     }
@@ -134,6 +142,56 @@ public class ExplorationParty : Party {
         if (targetStructure == structure) {
             if (IsMember(character)) {
                 StartExplorationTimer();
+            }
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataExplorationParty subData) {
+            if (subData.targetStructure != string.Empty) {
+                targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
+            }
+            for (int i = 0; i < subData.alreadyExplored.Count; i++) {
+                LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.alreadyExplored[i]);
+                alreadyExplored.Add(structure);
+            }
+            if (subData.regionRefForGettingNewStructure != string.Empty) {
+                regionRefForGettingNewStructure = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionRefForGettingNewStructure);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataExplorationParty : SaveDataParty {
+    public string targetStructure;
+    public List<string> alreadyExplored;
+    public bool isExploring;
+    public int currentChance;
+    public string regionRefForGettingNewStructure;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is ExplorationParty subData) {
+            if (subData.targetStructure != null) {
+                targetStructure = subData.targetStructure.persistentID;
+            }
+
+            alreadyExplored = new List<string>();
+            for (int i = 0; i < subData.alreadyExplored.Count; i++) {
+                alreadyExplored.Add(subData.alreadyExplored[i].persistentID);
+            }
+
+            isExploring = subData.isExploring;
+            currentChance = subData.currentChance;
+
+            if (subData.regionRefForGettingNewStructure != null) {
+                regionRefForGettingNewStructure = subData.regionRefForGettingNewStructure.persistentID;
             }
         }
     }

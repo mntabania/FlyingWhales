@@ -17,10 +17,9 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
+        yield return MapGenerator.Instance.StartCoroutine(LoadPlayerReferences(saveData));
         //Load Faction Related Extra Data
-        yield return MapGenerator.Instance.StartCoroutine(LoadFactionRelationships(saveData));
-        // yield return MapGenerator.Instance.StartCoroutine(LoadFactionCharacters(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadFactionLogs(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadFactionReferences(saveData));
 
         //Load Characters
 
@@ -29,23 +28,36 @@ public class LoadSecondWave : MapGenerationComponent {
         
         //Load Hex tile Spells Component
         yield return MapGenerator.Instance.StartCoroutine(LoadHexTileSpellsComponent(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadActionReferences(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadLogReferences(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadPartyReferences(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadCrimeReferences(saveData));
     }
 
-    private IEnumerator LoadFactionRelationships(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Faction Relationships...");
-        saveData.LoadFactionRelationships();
+    #region Player
+    private IEnumerator LoadPlayerReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
+        saveData.LoadPlayerReferences();
         yield return null;
     }
-    private IEnumerator LoadFactionCharacters(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Faction Members...");
-        saveData.LoadFactionCharacters();
+    #endregion
+
+    #region Faction
+    private IEnumerator LoadFactionReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Faction Data...");
+        saveData.LoadFactionReferences();
         yield return null;
     }
-    private IEnumerator LoadFactionLogs(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Faction Logs...");
-        saveData.LoadFactionLogs();
+    #endregion
+
+    #region Character
+    private IEnumerator LoadCharacterReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Character Data...");
+        saveData.LoadCharacterReferences();
         yield return null;
     }
+    #endregion
 
     #region Tile Objects
     private IEnumerator LoadTileObjects(SaveDataCurrentProgress saveData) {
@@ -103,6 +115,34 @@ public class LoadSecondWave : MapGenerationComponent {
             HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHextile.persistentID);
             hexTile.spellsComponent.Load(saveDataHextile.saveDataHexTileSpellsComponent);
         }
+        yield return null;
+    }
+    #endregion
+
+    #region Others
+    private IEnumerator LoadActionReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Action Data...");
+        saveData.LoadActionReferences();
+        yield return null;
+    }
+    private IEnumerator LoadInterruptReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Action Data...");
+        saveData.LoadInterruptReferences();
+        yield return null;
+    }
+    private IEnumerator LoadLogReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Log Data...");
+        saveData.LoadLogReferences();
+        yield return null;
+    }
+    private IEnumerator LoadPartyReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Party Data...");
+        saveData.LoadPartyReferences();
+        yield return null;
+    }
+    private IEnumerator LoadCrimeReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Crime Data...");
+        saveData.LoadCrimeReferences();
         yield return null;
     }
     #endregion

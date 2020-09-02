@@ -6,67 +6,42 @@ using UnityEngine;
 //Basically, this is a manager for the character states
 //This is where you switch from one state to another, etc.
 //Everything a character wants to do with a state must go through here
-public class CharacterStateComponent {
-    //public string previousMajorStateName;
-    //public string previousStateName;
-    //public string currentStateName;
-
-    public Character character { get; private set; }
+public class CharacterStateComponent : CharacterComponent {
     //If a major state is replaced by a minor state, must be stored in order for the character to go back to this state after doing the minor state
     //public CharacterState previousMajorState { get; private set; }
     //This is the character's current state
     public CharacterState currentState { get; private set; }
     
-    public CharacterStateComponent(Character character) {
-        this.character = character;
-    }
 
     public void OnTickEnded() {
         PerTickCurrentState();
     }
-    //public void OnDeath() {
-    //    if(currentState != null) {
-    //        ExitCurrentState();
-    //    }
-    //}
     public void SetCurrentState(CharacterState state) {
         currentState = state;
-        //Debug.Log(character.name + " set state to " + currentState?.stateName ?? "Null");
     }
-    //public void SetStateToDo(CharacterState state, bool unassignJob = true, bool stopMovement = true) {
-    //    if(unassignJob && state == null && stateToDo != null) {
-    //        if(stateToDo.job != null) {
-    //            stateToDo.job.SetAssignedCharacter(null);
-    //            stateToDo.job.SetAssignedState(null);
-    //        }
-    //    }
-    //    if (stopMovement) {
-    //        if (character.currentParty.icon.isTravelling) {
-    //            if (character.currentParty.icon.travelLine == null) {
-    //                character.marker.StopMovement();
-    //            } else {
-    //                character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-    //            }
-    //        }
-    //    }
-    //    stateToDo = state;
-    //}
 
+    public CharacterStateComponent() {
+
+    }
+    public CharacterStateComponent(SaveDataCharacterStateComponent data) {
+
+    }
+   
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
     public CharacterState SwitchToState(CHARACTER_STATE state, IPointOfInterest targetPOI = null, int durationOverride = -1) {
         //Cannot switch state is has negative disabler
-        if(!character.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        if(!owner.canPerform) { //character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
             return null;
         }
         //Before switching character must end current action first because once a character is in a state in cannot make plans
-        if (character.currentActionNode != null) { // && character.currentActionNode.action.goapType.ShouldBeStoppedWhenSwitchingStates() //removed this because it is no longer needed
-            character.StopCurrentActionNode();
+        if (owner.currentActionNode != null) { // && character.currentActionNode.action.goapType.ShouldBeStoppedWhenSwitchingStates() //removed this because it is no longer needed
+            owner.StopCurrentActionNode();
         }
 
         //Stop the movement of character because the new state probably has different movement behavior
-        if (character.marker && character.marker.isMoving) {
-            character.marker.StopMovement();
+        if (owner.marker && owner.marker.isMoving) {
+            owner.marker.StopMovement();
         }
 
         if (currentState != null) {
@@ -74,30 +49,6 @@ public class CharacterStateComponent {
         }
         //Create the new state
         CharacterState newState = CreateNewState(state);
-        //if (currentState != null) {
-        //    if (currentState.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
-        //        if(newState.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
-        //            //If the new state is a major state, automatically end current major state, do not just pause it
-        //            //Also, do not store the previous major state because since the new state is a major state, it must not go back to the previous major state
-        //            previousMajorState = null;
-        //            currentState.ExitState();
-        //        } else {
-        //            //Store current state as previous major state so the character will go back to that state after doing the minor state
-        //            //Pause the previous major state so that the timer will not tick, if there's any
-        //            previousMajorState = currentState;
-        //            previousMajorState.PauseState();
-        //        }
-        //    } else {
-        //        //If current state is a minor state, simply end it
-        //        currentState.ExitState();
-        //    }
-        //}
-        //else if (stateToDo != null) {
-        //    if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
-        //        previousMajorState = stateToDo;
-        //    }
-        //    SetStateToDo(null, false, false);
-        //}
 
         //Assigns new state as the current state then enter that state
         //newState.SetParentMajorState(previousMajorState);
@@ -106,11 +57,6 @@ public class CharacterStateComponent {
             newState.ChangeDuration(durationOverride);
         }
         newState.SetTargetPOI(targetPOI);
-        //newState.SetStartStateAction(startStateAction);
-        //newState.SetEndStateAction(endStateAction);
-        //newState.SetOtherDataOnStartState(otherData);
-        //newState.SetTargetCharacter(targetCharacter);
-        //newState.SetTargetArea(targetNpcSettlement);
         newState.EnterState();
         return newState;
     }
@@ -135,11 +81,11 @@ public class CharacterStateComponent {
     /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState() {
         if (currentState == null) {
-            throw new System.Exception($"{character.name} is trying to exit his/her current state but it is null");
+            throw new System.Exception($"{owner.name} is trying to exit his/her current state but it is null");
         }
 
-        if (character.marker && character.marker.isMoving) {
-            character.marker.StopMovement();
+        if (owner.marker && owner.marker.isMoving) {
+            owner.marker.StopMovement();
         }
 
         CharacterStateJob stateJob = currentState.job;
@@ -151,89 +97,15 @@ public class CharacterStateComponent {
         //Note: Original owner is checked here because there are times that the job for this state is already cancelled in AfterExitingState
         //So if we do not check here it will result in Null Ref since there is no more job at this point
         if(stateJob != null && stateJob.originalOwner != null) {
-            if(stateJob == character.currentJob) {
-                character.SetCurrentJob(null);
+            if(stateJob == owner.currentJob) {
+                owner.SetCurrentJob(null);
             }
             stateJob.ForceCancelJob();
         }
-
-        //CharacterState currState = this.currentState; //local variable for currentState
-        //if (currState != null) {
-        //    //This ends the current state but I added a checker that the parameter state must be the same as the current state to avoid inconsistencies
-        //    if(currState != state) {
-        //        Debug.LogError("Inconsistency! The current state " + currState.stateName + " of " + character.name + " does not match the state " + state.stateName);
-        //        //return;
-        //    }
-        //    currState.ExitState();
-        //}
-        //CharacterState previousState = currState;
-        //if (character.isDead) {
-        //    if(previousMajorState != null) {
-        //        previousMajorState.ExitState();
-        //    }
-        //    previousMajorState = null;
-        //    SetCurrentState(null);
-        //    //currState.endStateAction?.Invoke();
-        //    previousState.AfterExitingState();
-        //    return;
-        //}
-        ////If the current state is a minor state and there is a previous major state, resume that major state
-        //if(currState.stateCategory == CHARACTER_STATE_CATEGORY.MINOR && previousMajorState != null) {
-        //    if(previousMajorState.duration > 0 && previousMajorState.currentDuration >= previousMajorState.duration) {
-        //        //In a rare case that the previous major state has already timed out, end that state and do not resume it
-        //        //This goes back to normal
-        //        previousMajorState.ExitState();
-        //        SetCurrentState(null);
-        //        //currState.endStateAction?.Invoke();
-        //    } else {
-        //        if(character.doNotDisturb > 0) {
-        //            previousMajorState.ExitState();
-        //            SetCurrentState(null);
-        //            //currState.endStateAction?.Invoke();
-        //        } else {
-        //            bool resumeState = true;
-        //            if(currState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
-        //                //if (!previousMajorState.isUnending) {
-        //                    if (previousMajorState.hasStarted) {
-        //                        previousMajorState.ExitState();
-        //                    }
-        //                    SetCurrentState(null);
-        //                    //currState.endStateAction?.Invoke();
-        //                    resumeState = false;
-        //                //}
-        //            }
-        //            if (resumeState) {
-        //                if (previousMajorState.hasStarted) {
-        //                    //Resumes previous major state
-        //                    if (previousMajorState.CanResumeState()) {
-        //                        SetCurrentState(previousMajorState);
-        //                        //currState.endStateAction?.Invoke();
-        //                        previousMajorState.ResumeState();
-        //                    } else {
-        //                        previousMajorState = null;
-        //                        SetCurrentState(null);
-        //                        //currState.endStateAction?.Invoke();
-        //                    }
-        //                } else {
-        //                    SetCurrentState(null);
-        //                    //currState.endStateAction?.Invoke();
-        //                    previousMajorState.EnterState();
-        //                }
-        //            }
-        //        }
-        //    }
-        //    previousMajorState = null;
-        //} else {
-        //    //This goes back to normal
-        //    previousMajorState = null;
-        //    SetCurrentState(null);
-        //    //currState.endStateAction?.Invoke();
-        //}
-        //previousState.AfterExitingState();
     }
     private void PerTickCurrentState() {
         if(currentState != null && !currentState.isPaused && !currentState.isDone) {
-            if(!character.canPerform) {
+            if(!owner.canPerform) {
                 ExitCurrentState();
                 return;
             }
@@ -254,12 +126,6 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.PATROL:
                 newState = new PatrolState(this);
                 break;
-            //case CHARACTER_STATE.FLEE:
-            //    newState = new FleeState(this);
-            //    break;
-            //case CHARACTER_STATE.ENGAGE:
-            //    newState = new EngageState(this);
-            //    break;
             case CHARACTER_STATE.HUNT:
                 newState = new HuntState(this);
                 break;
@@ -291,7 +157,25 @@ public class CharacterStateComponent {
         return newState;
     }
 
-    //public void ClearPreviousState() {
-    //    previousMajorState = null;
-    //}
+    #region Loading
+    public void LoadReferences(SaveDataCharacterStateComponent data) {
+        //Currently N/A
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCharacterStateComponent : SaveData<CharacterStateComponent> {
+    //Do not save current state? Just let it run on load?
+
+    #region Overrides
+    public override void Save(CharacterStateComponent data) {
+
+    }
+
+    public override CharacterStateComponent Load() {
+        CharacterStateComponent component = new CharacterStateComponent(this);
+        return component;
+    }
+    #endregion
 }

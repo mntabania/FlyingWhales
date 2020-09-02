@@ -69,16 +69,16 @@ public class HuntState : CharacterState {
     //    StartHuntMovement();
     //}
     private void StartHuntMovement() {
-        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartHuntMovement);
+        stateComponent.owner.marker.GoTo(PickRandomTileToGoTo(), StartHuntMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure chosenStructure = stateComponent.character.currentRegion.GetRandomStructure();
+        LocationStructure chosenStructure = stateComponent.owner.currentRegion.GetRandomStructure();
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if (chosenTile != null) {
             return chosenTile;
         } else {
             throw new System.Exception(
-                $"No tile in {chosenStructure.name} for {stateComponent.character.name} to go to in {stateName}");
+                $"No tile in {chosenStructure.name} for {stateComponent.owner.name} to go to in {stateName}");
         }
     }
 }
