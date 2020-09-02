@@ -935,37 +935,37 @@ public class BehaviourComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataBehaviourComponent data) {
-        if (data.attackVillageTarget != string.Empty) {
+        if (!string.IsNullOrEmpty(data.attackVillageTarget)) {
             attackVillageTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.attackVillageTarget) as NPCSettlement;
         }
-        if (data.attackHexTarget != string.Empty) {
+        if (!string.IsNullOrEmpty(data.attackHexTarget)) {
             attackHexTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.attackHexTarget);
         }
-        if (data.attackDemonicStructureTarget != string.Empty) {
+        if (!string.IsNullOrEmpty(data.attackDemonicStructureTarget)) {
             attackDemonicStructureTarget = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.attackDemonicStructureTarget) as DemonicStructure;
         }
-        if (data.dousingFireForSettlement != string.Empty) {
+        if (!string.IsNullOrEmpty(data.dousingFireForSettlement)) {
             dousingFireForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dousingFireForSettlement) as NPCSettlement;
         }
-        if (data.cleansingTilesForSettlement != string.Empty) {
+        if (!string.IsNullOrEmpty(data.cleansingTilesForSettlement)) {
             cleansingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.cleansingTilesForSettlement) as NPCSettlement;
         }
-        if (data.dryingTilesForSettlement != string.Empty) {
+        if (!string.IsNullOrEmpty(data.dryingTilesForSettlement)) {
             dryingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dryingTilesForSettlement) as NPCSettlement;
         }
-        if (data.targetMiningTile != string.Empty) {
+        if (!string.IsNullOrEmpty(data.targetMiningTile)) {
             targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.targetMiningTile);
         }
-        if (data.currentAbductTarget != string.Empty) {
+        if (!string.IsNullOrEmpty(data.currentAbductTarget)) {
             currentAbductTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);
         }
-        if (data.invaderToFollow != string.Empty) {
+        if (!string.IsNullOrEmpty(data.invaderToFollow)) {
             invaderToFollow = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);
         }
-        if (data.nest != string.Empty) {
+        if (!string.IsNullOrEmpty(data.nest)) {
             nest = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.nest);
         }
-        if (data.abominationTarget != string.Empty) {
+        if (!string.IsNullOrEmpty(data.abominationTarget)) {
             abominationTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.abominationTarget);
         }
         if (data.deMoodVillageTarget != null) {

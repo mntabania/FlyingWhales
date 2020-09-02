@@ -105,13 +105,13 @@ public class ExterminationParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if (data is SaveDataExterminationParty subData) {
-            if (subData.targetStructure != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
-            if (subData.waitingArea != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.waitingArea)) {
                 waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
             }
-            if (subData.originSettlement != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.originSettlement)) {
                 originSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.originSettlement) as NPCSettlement;
             }
         }

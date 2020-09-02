@@ -211,15 +211,15 @@ namespace Interrupts {
 
             disguisedActor = null;
             disguisedTarget = null;
-            if (data.disguisedActorID != string.Empty) {
+            if (!string.IsNullOrEmpty(data.disguisedActorID)) {
                 disguisedActor = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedActorID);
             }
-            if (data.disguisedTargetID != string.Empty) {
+            if (!string.IsNullOrEmpty(data.disguisedTargetID)) {
                 disguisedTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedTargetID);
             }
 
             effectLog = null;
-            if (data.effectLogID != string.Empty) {
+            if (!string.IsNullOrEmpty(data.effectLogID)) {
                 effectLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.effectLogID);
             }
 

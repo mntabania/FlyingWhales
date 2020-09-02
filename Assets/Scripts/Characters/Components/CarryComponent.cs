@@ -205,7 +205,7 @@ public class CarryComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataCarryComponent data) {
-        if (data.carriedPOI != string.Empty) {
+        if (!string.IsNullOrEmpty(data.carriedPOI)) {
             IPointOfInterest poi = null;
             if(data.carriedPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 poi = CharacterManager.Instance.GetCharacterByPersistentID(data.carriedPOI);
@@ -215,10 +215,10 @@ public class CarryComponent : CharacterComponent {
             //carriedPOI = poi;
             CarryPOI(poi, isFromSave: true);
         }
-        if (data.isBeingCarriedBy != null) {
+        if (!string.IsNullOrEmpty(data.isBeingCarriedBy)) {
             isBeingCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.isBeingCarriedBy);
         }
-        if (data.justGotCarriedBy != null) {
+        if (!string.IsNullOrEmpty(data.justGotCarriedBy)) {
             justGotCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.justGotCarriedBy);
         }
     }

@@ -148,13 +148,13 @@ public class HeirloomHuntParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if (data is SaveDataHeirloomHuntParty subData) {
-            if (subData.targetHeirloom != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetHeirloom)) {
                 targetHeirloom = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(subData.targetHeirloom) as Heirloom;
             }
-            if (subData.targetHex != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetHex)) {
                 targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
             }
-            if (subData.regionToSearch != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.regionToSearch)) {
                 regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);
             }
         }

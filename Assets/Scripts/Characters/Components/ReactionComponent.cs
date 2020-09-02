@@ -1615,7 +1615,7 @@ public class ReactionComponent : CharacterComponent {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.charactersThatSawThisDead[i]);
             charactersThatSawThisDead.Add(character);
         }
-        if (data.disguisedCharacter != string.Empty) {
+        if (!string.IsNullOrEmpty(data.disguisedCharacter)) {
             disguisedCharacter = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedCharacter);
         }
     }

@@ -103,10 +103,10 @@ public class RaidParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if (data is SaveDataRaidParty subData) {
-            if (subData.targetSettlement != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetSettlement)) {
                 targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.targetSettlement);
             }
-            if (subData.waitingArea != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.waitingArea)) {
                 waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
             }
         }

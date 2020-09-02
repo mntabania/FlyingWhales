@@ -21,7 +21,7 @@ public class PartyComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataPartyComponent data) {
-        if (data.currentParty != string.Empty) {
+        if (!string.IsNullOrEmpty(data.currentParty)) {
             currentParty = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.currentParty);
         }
     }

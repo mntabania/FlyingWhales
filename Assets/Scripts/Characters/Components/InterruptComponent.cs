@@ -309,11 +309,11 @@ public class InterruptComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataInterruptComponent data) {
-        if (data.currentInterruptID != string.Empty) {
+        if (!string.IsNullOrEmpty(data.currentInterruptID)) {
             currentInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.currentInterruptID);
             CreateThoughtBubbleLog(currentInterrupt.interrupt);
         }
-        if (data.triggeredSimultaneousInterruptID != string.Empty) {
+        if (!string.IsNullOrEmpty(data.triggeredSimultaneousInterruptID)) {
             triggeredSimultaneousInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.triggeredSimultaneousInterruptID);
         }
     }

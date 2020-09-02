@@ -61,7 +61,7 @@ public class Dragon : Summon {
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if(data is SaveDataDragon savedData) {
-            if(savedData.targetStructure != string.Empty) {
+            if(!string.IsNullOrEmpty(savedData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(savedData.targetStructure);
             }
         }

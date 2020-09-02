@@ -33,7 +33,7 @@ public class Ghost : Summon {
     }
     public override void LoadReferences(SaveDataCharacter data) {
         if (data is SaveDataGhost savedData) {
-            if (savedData.betrayedBy != string.Empty) {
+            if (!string.IsNullOrEmpty(savedData.betrayedBy)) {
                 betrayedBy = CharacterManager.Instance.GetCharacterByPersistentID(savedData.betrayedBy);
             }
         }

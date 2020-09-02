@@ -607,27 +607,27 @@ public class CrimeData : ISavable {
 
     #region Loading
     public void LoadReferences(SaveDataCrimeData data) {
-        if (data.crime != string.Empty) {
+        if (!string.IsNullOrEmpty(data.crime)) {
             if(data.crimableType == CRIMABLE_TYPE.Action) {
                 crime = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.crime);
             } else if (data.crimableType == CRIMABLE_TYPE.Interrupt) {
                 crime = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.crime);
             }
         }
-        if (data.criminal != string.Empty) {
+        if (!string.IsNullOrEmpty(data.criminal)) {
             criminal = CharacterManager.Instance.GetCharacterByPersistentID(data.criminal);
         }
-        if (data.target != string.Empty) {
+        if (!string.IsNullOrEmpty(data.target)) {
             if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 target = CharacterManager.Instance.GetCharacterByPersistentID(data.target);
             } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 target = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.target);
             }
         }
-        if (data.targetFaction != string.Empty) {
+        if (!string.IsNullOrEmpty(data.targetFaction)) {
             targetFaction = FactionManager.Instance.GetFactionByPersistentID(data.targetFaction);
         }
-        if (data.judge != string.Empty) {
+        if (!string.IsNullOrEmpty(data.judge)) {
             judge = CharacterManager.Instance.GetCharacterByPersistentID(data.judge);
         }
         for (int i = 0; i < data.witnesses.Count; i++) {

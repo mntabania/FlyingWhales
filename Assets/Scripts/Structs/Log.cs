@@ -247,8 +247,7 @@ public class Log : ISavable {
             fillers.Add(filler);
         }
 
-        //No goap action when loaded because we cannot save goap action
-        if(data.actionID != string.Empty) {
+        if(!string.IsNullOrEmpty(data.actionID)) {
             _node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.actionID);
         }
     }

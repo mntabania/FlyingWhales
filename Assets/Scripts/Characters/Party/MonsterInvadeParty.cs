@@ -113,13 +113,13 @@ public class MonsterInvadeParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if (data is SaveDataMonsterInvadeParty subData) {
-            if (subData.targetStructure != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
-            if (subData.targetHex != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetHex)) {
                 targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
             }
-            if (subData.hexForJoining != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.hexForJoining)) {
                 hexForJoining = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.hexForJoining);
             }
         }

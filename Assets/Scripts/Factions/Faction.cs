@@ -989,7 +989,7 @@ public class Faction : IJobOwner, ISavable {
     #region Loading
     public void LoadReferences(SaveDataFaction data) {
         if (!data.isLeaderPlayer) {
-            if (data.leaderID != string.Empty) {
+            if (!string.IsNullOrEmpty(data.leaderID)) {
                 Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.leaderID);
                 leader = character;
             }

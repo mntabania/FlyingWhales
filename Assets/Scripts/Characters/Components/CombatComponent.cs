@@ -962,7 +962,7 @@ public class CombatData {
         reasonForCombat = data.reasonForCombat;
         avoidReason = data.avoidReason;
         isLethal = data.isLethal;
-        if (data.connectedAction != string.Empty) {
+        if (!string.IsNullOrEmpty(data.connectedAction)) {
             connectedAction = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.connectedAction);
         }
     }

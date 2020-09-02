@@ -454,7 +454,7 @@ public class MovementComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
-        if (data.targetRegionToTravelInWorld != string.Empty) {
+        if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
             targetRegionToTravelInWorld = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.targetRegionToTravelInWorld);
         }
 

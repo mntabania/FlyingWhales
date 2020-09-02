@@ -20,7 +20,7 @@ public class TileObjectComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataTileObjectComponent data) {
-        if (data.primaryBed != string.Empty) {
+        if (!string.IsNullOrEmpty(data.primaryBed)) {
             primaryBed = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.primaryBed) as Bed;
         }
     }

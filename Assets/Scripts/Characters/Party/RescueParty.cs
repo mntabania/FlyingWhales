@@ -105,7 +105,7 @@ public class RescueParty : Party {
     public override void LoadReferences(SaveDataParty data) {
         base.LoadReferences(data);
         if (data is SaveDataRescueParty subData) {
-            if (subData.targetCharacter != string.Empty) {
+            if (!string.IsNullOrEmpty(subData.targetCharacter)) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(subData.targetCharacter);
             }
         }

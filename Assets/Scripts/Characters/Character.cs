@@ -556,34 +556,34 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (data.hasLycan) {
             lycanData = data.lycanData.Load();
         }
-        if (data.grave != string.Empty) {
+        if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
         }
-        if (data.ruledSettlement != string.Empty) {
+        if (!string.IsNullOrEmpty(data.ruledSettlement)) {
             ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
         }
-        if (data.deathLog != string.Empty) {
+        if (!string.IsNullOrEmpty(data.deathLog)) {
             deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
         }
-        if (data.homeRegion != string.Empty) {
+        if (!string.IsNullOrEmpty(data.homeRegion)) {
             homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
         }
-        if (data.homeSettlement != string.Empty) {
+        if (!string.IsNullOrEmpty(data.homeSettlement)) {
             homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
         }
-        if (data.homeStructure != string.Empty) {
+        if (!string.IsNullOrEmpty(data.homeStructure)) {
             homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
         }
-        if (data.currentRegion != string.Empty) {
+        if (!string.IsNullOrEmpty(data.currentRegion)) {
             _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
         }
-        if (data.currentStructure != string.Empty) {
+        if (!string.IsNullOrEmpty(data.currentStructure)) {
             _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
         }
-        if (data.faction != string.Empty) {
+        if (!string.IsNullOrEmpty(data.faction)) {
             _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
         }
-        if (data.prevFaction != string.Empty) {
+        if (!string.IsNullOrEmpty(data.prevFaction)) {
             prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
         }
 

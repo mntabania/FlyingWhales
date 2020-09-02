@@ -920,22 +920,22 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         } else if (data.poiTargetType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             poiTarget = InnerMapManager.Instance.GetTileObjectByPersistentID(data.poiTarget);
         }
-        if (data.disguisedActor != string.Empty) {
+        if (!string.IsNullOrEmpty(data.disguisedActor)) {
             disguisedActor = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedActor);
         }
-        if (data.disguisedTarget != string.Empty) {
+        if (!string.IsNullOrEmpty(data.disguisedTarget)) {
             disguisedTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedTarget);
         }
-        if (data.thoughtBubbleLog != string.Empty) {
+        if (!string.IsNullOrEmpty(data.thoughtBubbleLog)) {
             thoughtBubbleLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleLog);
         }
-        if (data.thoughtBubbleMovingLog != string.Empty) {
+        if (!string.IsNullOrEmpty(data.thoughtBubbleMovingLog)) {
             thoughtBubbleMovingLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleMovingLog);
         }
-        if (data.descriptionLog != string.Empty) {
+        if (!string.IsNullOrEmpty(data.descriptionLog)) {
             descriptionLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.descriptionLog);
         }
-        if (data.targetStructure != string.Empty) {
+        if (!string.IsNullOrEmpty(data.targetStructure)) {
             targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetStructure);
         }
         if (data.targetPOIToGoTo != string.Empty) {

@@ -70,7 +70,7 @@ public struct SaveDataLogFiller {
             obj = null,
         };
 
-        if(objID != string.Empty) {
+        if(!string.IsNullOrEmpty(objID)) {
             LogFiller tempFiller = filler;
             if (objIdentifier == "character") {
                 tempFiller.obj = CharacterManager.Instance.GetCharacterByPersistentID(objID);
