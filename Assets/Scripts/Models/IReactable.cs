@@ -20,6 +20,8 @@ public interface IReactable {
 }
 
 public interface IRumorable {
+    string persistentID { get; }
+    OBJECT_TYPE objectType { get; }
     string name { get; }
     RUMOR_TYPE rumorType { get; }
     Character actor { get; }

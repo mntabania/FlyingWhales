@@ -51,7 +51,11 @@ namespace Traits {
             Assert.IsFalse(string.IsNullOrEmpty(persistentID), $"Trait {saveDataTrait.name} does not have a persistent ID!");
             DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
         }
-        public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) { }
+        public virtual void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            if (!string.IsNullOrEmpty(saveDataTrait.gainedFromDoing)) {
+                gainedFromDoing = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(saveDataTrait.gainedFromDoing);    
+            }
+        }
         #endregion
         
         #region Virtuals

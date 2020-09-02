@@ -282,8 +282,7 @@ public class MapGenerator : MonoBehaviour {
             LevelLoaderManager.Instance.UpdateLoadingBar(1f, 0.5f);
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
-            Debug.Log(
-                $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+            Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
             // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             //     Faction faction = FactionManager.Instance.allFactions[i];

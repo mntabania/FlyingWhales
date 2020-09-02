@@ -181,9 +181,6 @@ public class RestrainCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    //public void PreRestrainSuccess(ActualGoapNode goapNode) {
-    //    //TODO: currentState.SetIntelReaction(SuccessReactions);
-    //}
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);

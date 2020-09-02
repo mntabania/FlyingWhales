@@ -11,6 +11,8 @@ public class FrostyFog : MovingTileObject {
     public int stacks { get; private set; }
     public GameDate expiryDate { get; }
     public int maxSize => 6;
+    
+    public override System.Type serializedData => typeof(SaveDataFrostyFog);
 
     public FrostyFog() {
         Initialize(TILE_OBJECT_TYPE.FROSTY_FOG, false);

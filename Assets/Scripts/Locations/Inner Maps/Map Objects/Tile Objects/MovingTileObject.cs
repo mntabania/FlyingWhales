@@ -11,6 +11,8 @@ public abstract class MovingTileObject : TileObject {
     public bool hasExpired { get; protected set; }
     protected virtual int affectedRange => 1;
 
+    public override System.Type serializedData => typeof(SaveDataMovingTileObject);
+    
     protected virtual bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_mapVisual != null) {
             if (_mapVisual.isSpawned) {

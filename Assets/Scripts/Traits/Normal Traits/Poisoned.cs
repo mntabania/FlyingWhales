@@ -44,7 +44,9 @@ namespace Traits {
         #region Loading
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            //TODO: Load aware characters
+            SaveDataPoisoned saveDataPoisoned = saveDataTrait as SaveDataPoisoned;
+            Assert.IsNotNull(saveDataPoisoned);
+            awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataPoisoned.awareCharacterIDs));
         }
         #endregion
         

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Relatable : BaseRelatable{
 
-    public IRelationshipContainer relationshipContainer { get; }
+    public IRelationshipContainer relationshipContainer { get; private set; }
     public IRelationshipValidator relationshipValidator { get; }
     public IRelationshipProcessor relationshipProcessor { get; }
     
@@ -14,4 +14,7 @@ public abstract class Relatable : BaseRelatable{
         relationshipProcessor = RelationshipManager.Instance.GetProcessor(this);
     }
 
+    public void SetRelationshipContainer(IRelationshipContainer relationshipContainer) {
+        this.relationshipContainer = relationshipContainer;
+    }
 }

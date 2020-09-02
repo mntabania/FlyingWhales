@@ -14,6 +14,7 @@ public sealed class PoisonCloud : MovingTileObject {
     public bool doExpireEffect { get; private set; }
     public override string neutralizer => "Poison Expert";
     protected override int affectedRange => size;
+    public override System.Type serializedData => typeof(SaveDataPoisonCloud);
     
     public PoisonCloud() {
         Initialize(TILE_OBJECT_TYPE.POISON_CLOUD, false);

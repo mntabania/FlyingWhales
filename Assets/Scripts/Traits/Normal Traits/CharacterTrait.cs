@@ -41,8 +41,8 @@ namespace Traits {
             SaveDataCharacterTrait saveDataCharacterTrait = saveDataTrait as SaveDataCharacterTrait;
             Assert.IsNotNull(saveDataCharacterTrait);
             alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
-            
-            //TODO: Load characters
+            charactersAlreadySawForHope.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersAlreadySawForHope));
+            charactersThatHaveReactedToThis = new HashSet<Character>(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersThatHaveReactedToThis));
         }
         #endregion
         

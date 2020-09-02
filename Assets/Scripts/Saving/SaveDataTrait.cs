@@ -8,7 +8,7 @@ public class SaveDataTrait : SaveData<Trait>, ISavableCounterpart {
     public OBJECT_TYPE _objectType;
     public string name;
     public List<string> responsibleCharacters;
-    //TODO: Persistent ID of gainedFromDoingAction.
+    public string gainedFromDoing;
 
     #region getters
     public string persistentID => _persistentID;
@@ -26,6 +26,11 @@ public class SaveDataTrait : SaveData<Trait>, ISavableCounterpart {
                 responsibleCharacters.Add(character.persistentID);
             }    
         }
+        if (trait.gainedFromDoing != null) {
+            gainedFromDoing = trait.gainedFromDoing.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(trait.gainedFromDoing);
+        }
+        
     }
     public override Trait Load() {
         Trait trait = TraitManager.Instance.LoadTrait(this);

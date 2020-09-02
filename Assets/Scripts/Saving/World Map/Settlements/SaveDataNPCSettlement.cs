@@ -6,6 +6,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public List<string> jobIDs;
     public string prisonID;
     public string mainStorageID;
+    public string rulerID;
     
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -17,6 +18,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
             jobIDs.Add(job.persistentID);
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(job);
         }
+        rulerID = npcSettlement.ruler?.persistentID ?? string.Empty;
         prisonID = npcSettlement.prison != null ? npcSettlement.prison.persistentID : string.Empty;
         mainStorageID = npcSettlement.mainStorage != null ? npcSettlement.mainStorage.persistentID : string.Empty;
     }

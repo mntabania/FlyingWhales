@@ -75,7 +75,7 @@ public class GoapPlanJob : JobQueueItem {
             otherData.Add(saveDataOtherData.Key, loadedOtherData);
         }
         if (data.saveDataGoapPlan != null) {
-            GoapPlan goapPlan = new GoapPlan(data.saveDataGoapPlan);
+            GoapPlan goapPlan = data.saveDataGoapPlan.Load();
             assignedPlan = goapPlan;
         }
     }
@@ -233,12 +233,12 @@ public class GoapPlanJob : JobQueueItem {
                 convertedData = new FactionOtherData(faction);
             } else if (obj is CrimeData crimeData) {
                 convertedData = new CrimeDataOtherData(crimeData);
+            } else if (obj is ICrimeable crimeable) {
+                convertedData = new CrimeableOtherData(crimeable);
             } else if (obj is ActualGoapNode actualGoapNode) {
                 convertedData = new ActualGoapNodeOtherData(actualGoapNode);
             } else if (obj is Rumor rumor) {
                 convertedData = new RumorOtherData(rumor);
-            } else if (obj is ICrimeable crimeable) {
-                convertedData = new CrimeableOtherData(crimeable);
             } else if (obj is Character character) {
                 convertedData = new CharacterOtherData(character);
             }

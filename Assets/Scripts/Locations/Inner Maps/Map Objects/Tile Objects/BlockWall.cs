@@ -12,6 +12,7 @@ public class BlockWall : TileObject {
 
     #region Getters
     public string expiryScheduleKey => _expiryScheduleKey;
+    public override System.Type serializedData => typeof(SaveDataBlockWall);
     #endregion
     
     public BlockWall() {

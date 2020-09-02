@@ -4,18 +4,25 @@ using UnityEngine;
 
 public class JobQueue {
     public Character owner { get; private set; }
-    //public Quest quest { get; private set; } //If there is a quest it means that this is a quest job
 
     public List<JobQueueItem> jobsInQueue { get; private set; }
-
-    //public bool isAreaOrQuestJobQueue {
-    //    get { return owner == null; }
-    //}
+    
     public JobQueue(Character owner) {
         this.owner = owner;
         jobsInQueue = new List<JobQueueItem>();
     }
 
+    #region Loading
+    public void LoadReferences(SaveDataCharacter saveDataCharacter) {
+        for (int i = 0; i < saveDataCharacter.jobs.Count; i++) {
+            string jobID = saveDataCharacter.jobs[i];
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
+            jobsInQueue.Add(jobQueueItem);
+            jobQueueItem.OnAddJobToQueue();
+        }
+    }
+    #endregion
+    
     public bool AddJobInQueue(JobQueueItem job) { //, bool processLogicForPersonalJob = true
         if (!owner.canPerform) {
             //We are only checking the jobs that has an assigned plan because we already have a handle for jobs that goes through multithread in ReceivePlanFromGoapThread

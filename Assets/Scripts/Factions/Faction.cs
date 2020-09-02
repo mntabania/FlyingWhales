@@ -477,10 +477,11 @@ public class Faction : IJobOwner, ISavable {
     public void AddNewRelationship(Faction relWith, FactionRelationship relationship) {
         if (!relationships.ContainsKey(relWith)) {
             relationships.Add(relWith, relationship);
-        } else {
-            throw new System.Exception(
-                $"{this.name} already has a relationship with {relWith.name}, but something is trying to create a new one!");
-        }
+        } 
+        // else {
+        //     throw new System.Exception(
+        //         $"{this.name} already has a relationship with {relWith.name}, but something is trying to create a new one!");
+        // }
     }
     public void RemoveRelationshipWith(Faction relWith) {
         if (relationships.ContainsKey(relWith)) {

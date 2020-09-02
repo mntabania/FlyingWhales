@@ -429,9 +429,8 @@ public class CrimeData : ISavable {
         witnesses = new List<Character>();
         factionsThatConsidersWanted = new List<Faction>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
-
-
         SubscribeToListeners();
+        DatabaseManager.Instance.crimeDatabase.AddCrime(this);
     }
     public CrimeData(SaveDataCrimeData data) {
         witnesses = new List<Character>();
@@ -444,6 +443,7 @@ public class CrimeData : ISavable {
         isRemoved = data.isRemoved;
 
         SubscribeToListeners();
+        DatabaseManager.Instance.crimeDatabase.AddCrime(this);
     }
 
     private void SetCrime(ICrimeable crime) {

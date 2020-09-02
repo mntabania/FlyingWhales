@@ -10,6 +10,8 @@ public class BallLightning : MovingTileObject {
     public override string neutralizer => "Thunder Master";
     public GameDate expiryDate { get; }
     
+    public override System.Type serializedData => typeof(SaveDataBallLightning);
+    
     public BallLightning() {
         Initialize(TILE_OBJECT_TYPE.BALL_LIGHTNING, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);

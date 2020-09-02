@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Tombstone : TileObject {
     public override Vector2 selectableSize => new Vector2(1f, 0.8f);
@@ -25,6 +26,9 @@ public class Tombstone : TileObject {
         _respawnCorpseOnDestroy = true;
     }
     public Tombstone(SaveDataTileObject data) {
+        SaveDataTombstone saveDataTombstone = data as SaveDataTombstone;
+        Assert.IsNotNull(saveDataTombstone);
+        character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTombstone.characterID);
         _respawnCorpseOnDestroy = true;
     }
     public override void OnPlacePOI() {
@@ -74,18 +78,13 @@ public class Tombstone : TileObject {
     }
 }
 
-//public class SaveDataTombstone : SaveDataTileObject {
-//    public int characterID;
+public class SaveDataTombstone : SaveDataTileObject {
+    public string characterID;
 
-//    public override void Save(TileObject tileObject) {
-//        base.Save(tileObject);
-//        Tombstone obj = tileObject as Tombstone;
-//        characterID = obj.character.id;
-//    }
-
-//    public override TileObject Load() {
-//        Tombstone obj = base.Load() as Tombstone;
-//        obj.SetCharacter(CharacterManager.Instance.GetCharacterByID(characterID), this);
-//        return obj;
-//    }
-//}
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Tombstone obj = tileObject as Tombstone;
+        Assert.IsNotNull(obj);
+        characterID = obj.character.persistentID;
+    }
+}

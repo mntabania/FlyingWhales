@@ -15,6 +15,7 @@ public class TreasureChest : TileObject {
     private Character[] _users;
     
     public override Character[] users => _users;
+    public override System.Type serializedData => typeof(SaveDataTreasureChest);
     
     private readonly TILE_OBJECT_TYPE[] _possibleItems = new[] {
         TILE_OBJECT_TYPE.HEALING_POTION,

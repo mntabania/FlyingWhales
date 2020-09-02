@@ -13,6 +13,7 @@ public class Vapor : MovingTileObject {
     public bool doExpireEffect { get; private set; }
     protected override int affectedRange => size;
     public int maxSize => 6;
+    public override System.Type serializedData => typeof(SaveDataVapor);
     
     public Vapor() {
         Initialize(TILE_OBJECT_TYPE.VAPOR, false);

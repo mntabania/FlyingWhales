@@ -19,7 +19,7 @@ namespace Databases {
             allJobs.Remove(job);
         }
 
-        public JobQueueItem GetJobWithID(string id) {
+        public JobQueueItem GetJobWithPersistentID(string id) {
             if (jobsByGUID.ContainsKey(id)) {
                 return jobsByGUID[id];
             }

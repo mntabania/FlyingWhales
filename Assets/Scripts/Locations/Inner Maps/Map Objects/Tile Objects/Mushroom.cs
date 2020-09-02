@@ -6,6 +6,8 @@ using UtilityScripts;
 
 public class Mushroom : Crops {
 
+    public override System.Type serializedData => typeof(SaveDataMushroom);
+    
     public Mushroom() : base() {
         Initialize(TILE_OBJECT_TYPE.MUSHROOM);
     }

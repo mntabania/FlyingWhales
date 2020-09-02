@@ -10,6 +10,8 @@ public class FireBall : MovingTileObject {
     public override string neutralizer => "Fire Master";
     public GameDate expiryDate { get; }
     
+    public override System.Type serializedData => typeof(SaveDataFireBall);
+    
     public FireBall() {
         Initialize(TILE_OBJECT_TYPE.FIRE_BALL, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);

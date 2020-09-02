@@ -9,6 +9,7 @@ public class PoisonVent : TileObject {
 
     #region Getters
     public int activityCycle => _activityCycle;
+    public override System.Type serializedData => typeof(SaveDataPoisonVent);
     #endregion
     
     public PoisonVent() {

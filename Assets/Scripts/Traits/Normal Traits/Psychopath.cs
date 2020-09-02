@@ -14,7 +14,7 @@ namespace Traits {
         public SerialVictim victim1Requirement { get; private set; }
         public Character character { get; private set; }
         public Character targetVictim { get; private set; }
-        private Dictionary<Character, OpinionData> opinionCopy;
+        public Dictionary<int, OpinionData> opinionCopy { get; private set; }
 
         #region getters
         public override Type serializedData => typeof(SaveDataPsychopath);
@@ -27,7 +27,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
-            opinionCopy = new Dictionary<Character, OpinionData>();
+            opinionCopy = new Dictionary<int, OpinionData>();
             //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
         }
@@ -38,10 +38,15 @@ namespace Traits {
             SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
             Assert.IsNotNull(saveDataPsychopath);
             victim1Requirement = saveDataPsychopath.victim1Requirement;
+            opinionCopy = saveDataPsychopath.opinionCopy;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            //TODO: Load target victim
+            SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
+            Assert.IsNotNull(saveDataPsychopath);
+            if (!string.IsNullOrEmpty(saveDataPsychopath.targetVictimID)) {
+                targetVictim = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataPsychopath.targetVictimID);
+            }
         }
         #endregion
 
@@ -363,16 +368,16 @@ namespace Traits {
                     data.SetOpinion(key, originalData.allOpinions[key]);
                     originalData.allOpinions[key] = 0;
                 }
-                opinionCopy.Add(targetCharacter, data);
+                opinionCopy.Add(targetCharacter.id, data);
             }
         }
         private void BringBackOpinion() {
-            foreach (KeyValuePair<Character, OpinionData> kvp in opinionCopy) {
+            foreach (KeyValuePair<int, OpinionData> kvp in opinionCopy) {
                 if (character.relationshipContainer.HasRelationshipWith(kvp.Key)) {
                     foreach (KeyValuePair<string, int> dataKvp in kvp.Value.allOpinions) {
                         if(dataKvp.Key == "Base") { continue; }
                         if (character.relationshipContainer.HasOpinion(kvp.Key, dataKvp.Key)) {
-                            character.relationshipContainer.SetOpinion(character, kvp.Key, dataKvp.Key, dataKvp.Value);
+                            character.relationshipContainer.SetOpinion(character, DatabaseManager.Instance.characterDatabase.GetCharacterByID(kvp.Key), dataKvp.Key, dataKvp.Value);
                         }
                     }
                 }
@@ -385,10 +390,10 @@ namespace Traits {
                 //Do not copy Base opinion
                 return;
             }
-            if (!opinionCopy.ContainsKey(target)) {
-                opinionCopy.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
+            if (!opinionCopy.ContainsKey(target.id)) {
+                opinionCopy.Add(target.id, ObjectPoolManager.Instance.CreateNewOpinionData());
             }
-            opinionCopy[target].AdjustOpinion(opinionText, opinionValue);
+            opinionCopy[target.id].AdjustOpinion(opinionText, opinionValue);
         }
         #endregion
     }
@@ -584,6 +589,7 @@ namespace Traits {
 public class SaveDataPsychopath : SaveDataTrait {
     public SerialVictim victim1Requirement;
     public string targetVictimID;
+    public Dictionary<int, OpinionData> opinionCopy;
 
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -591,6 +597,7 @@ public class SaveDataPsychopath : SaveDataTrait {
         Assert.IsNotNull(psychopath);
         victim1Requirement = psychopath.victim1Requirement;
         targetVictimID = psychopath.targetVictim != null ? psychopath.targetVictim.persistentID : string.Empty;
+        opinionCopy = psychopath.opinionCopy;
     }
 }
 #endregion

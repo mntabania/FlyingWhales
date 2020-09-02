@@ -1,4 +1,6 @@
-﻿public class SingleJobNode : JobNode {
+﻿using UnityEngine.Assertions;
+
+public class SingleJobNode : JobNode {
     public override ActualGoapNode singleNode { get { return node; } }
     public override ActualGoapNode[] multiNode { get { return null;} }
     public override int currentNodeIndex { get { return -1; } }
@@ -8,9 +10,8 @@
         this.node = node;
         
     }
-    public SingleJobNode(SaveDataJobNode saveDataJobNode) : base (saveDataJobNode){
-        //TODO:
-        
+    public SingleJobNode(SaveDataSingleJobNode saveDataJobNode) : base (saveDataJobNode) {
+        this.node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(saveDataJobNode.nodeID);
     }
 
     #region Overrides
@@ -34,7 +35,13 @@ public class SaveDataSingleJobNode : SaveDataJobNode {
     public string nodeID;
     public override void Save(JobNode data) {
         base.Save(data);
-        nodeID = string.Empty; //TODO: Connect node id
+        SingleJobNode singleJobNode = data as SingleJobNode;
+        Assert.IsNotNull(singleJobNode);
+        nodeID = singleJobNode.node.persistentID;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(singleJobNode.node);
+    }
+    public override JobNode Load() {
+        return new SingleJobNode(this);
     }
 }
 #endregion

@@ -77,6 +77,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> territories;
     public List<string> items;
     public List<string> ownedItems;
+    public List<string> jobs;
+
+    public SaveDataTraitContainer saveDataTraitContainer;
+    public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
     public SaveDataCharacterNeedsComponent needsComponent;
     public SaveDataBuildStructureComponent buildStructureComponent;
@@ -223,6 +227,18 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         for (int i = 0; i < data.ownedItems.Count; i++) {
             ownedItems.Add(data.ownedItems[i].persistentID);
         }
+        
+        jobs = new List<string>();
+        for (int i = 0; i < data.jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem jobQueueItem = data.jobQueue.jobsInQueue[i];
+            jobs.Add(jobQueueItem.persistentID);
+        }
+        
+        saveDataTraitContainer = new SaveDataTraitContainer();
+        saveDataTraitContainer.Save(data.traitContainer);
+        
+        saveDataBaseRelationshipContainer = new SaveDataBaseRelationshipContainer();
+        saveDataBaseRelationshipContainer.Save(data.relationshipContainer as BaseRelationshipContainer);
     }
     public override Character Load() {
         Character character = CharacterManager.Instance.CreateNewCharacter(this);

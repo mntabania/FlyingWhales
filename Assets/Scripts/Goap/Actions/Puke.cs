@@ -25,7 +25,6 @@ public class Puke : GoapAction {
     #region State Effects
     public void PrePukeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.INACTIVE);
-        //TODO: currentState.SetIntelReaction(SuccessReactions);
     }
     public void AfterPukeSuccess(ActualGoapNode goapNode) {
         goapNode.actor.SetPOIState(POI_STATE.ACTIVE);

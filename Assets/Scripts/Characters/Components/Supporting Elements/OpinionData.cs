@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+[System.Serializable]
 public class OpinionData {
     public Dictionary<string, int> allOpinions;
     /// <summary>

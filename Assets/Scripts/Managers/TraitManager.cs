@@ -171,21 +171,17 @@ public class TraitManager : BaseMonoBehaviour {
         }
     }
     public Trait LoadTrait(SaveDataTrait saveDataTrait) {
-        if (instancedSingletonTraits.ContainsKey(saveDataTrait.name)) {
-            return instancedSingletonTraits[saveDataTrait.name];
-        } else {
-            string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(saveDataTrait.name);
-            string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-            Type type = System.Type.GetType(typeName);
-            Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
-            Trait trait = System.Activator.CreateInstance(type) as Trait;
-            Assert.IsNotNull(trait);
-            if (trait.isSingleton) {
-                instancedSingletonTraits.Add(saveDataTrait.name, trait);
-            }
-            trait.LoadInstancedTrait(saveDataTrait);
-            return trait;
+        string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(saveDataTrait.name);
+        string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = System.Type.GetType(typeName);
+        Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
+        Trait trait = System.Activator.CreateInstance(type) as Trait;
+        Assert.IsNotNull(trait);
+        if (trait.isSingleton && !instancedSingletonTraits.ContainsKey(saveDataTrait.name)) {
+            instancedSingletonTraits.Add(saveDataTrait.name, trait);
         }
+        trait.LoadInstancedTrait(saveDataTrait);
+        return trait;
     }
     public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
         List<Trait> traits = new List<Trait>();
