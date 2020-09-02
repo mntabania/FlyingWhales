@@ -6,8 +6,8 @@ public class BaseRelationshipData : IRelationshipData {
     
     public string targetName { get; private set; }
     public GENDER targetGender { get; private set; }
-    public List<RELATIONSHIP_TYPE> relationships { get; }
-    public OpinionData opinions { get; }
+    public List<RELATIONSHIP_TYPE> relationships { get; private set; }
+    public OpinionData opinions { get; private set; }
     public AwarenessData awareness { get; private set; }
     
     public BaseRelationshipData() {

@@ -350,7 +350,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
-        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         RaceSetting rs = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = rs.CreateNewCopy();
@@ -555,6 +554,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Virtuals
     public virtual void OnSetIsHidden() { }
     public virtual void LoadReferences(SaveDataCharacter data) {
+        ConstructDefaultActions();
         if (data.hasLycan) {
             lycanData = data.lycanData.Load();
         }
@@ -602,6 +602,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ownedItems.Add(obj);
         }
 
+        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
         needsComponent.LoadReferences(data.needsComponent);
         buildStructureComponent.LoadReferences(data.buildStructureComponent);
         stateComponent.LoadReferences(data.stateComponent);
@@ -644,7 +645,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             reactionComponent.UpdateHiddenState();
         }
         visuals.UpdateAllVisuals(this);
-
+        SubscribeToSignals();
     }
     #endregion
 

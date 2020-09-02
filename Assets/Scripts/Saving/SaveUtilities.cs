@@ -38,7 +38,9 @@ public static class SaveUtilities {
         for (int i = 0; i < ids.Count; i++) {
             string id = ids[i];
             Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(id);
-            objects.Add(character);
+            if (character != null) {
+                objects.Add(character);    
+            }
         }
         return objects;
     }
