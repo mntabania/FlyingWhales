@@ -77,6 +77,7 @@ namespace Inner_Maps.Location_Structures {
             id = UtilityScripts.Utilities.SetID(this, data.id);
             structureType = data.structureType;
             name = data.name;
+            nameWithoutID = data.nameWithoutID;
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();

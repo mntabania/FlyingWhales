@@ -9,6 +9,7 @@ public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string persistentID;
     public int id;
     public string name;
+    public string nameWithoutID;
     public STRUCTURE_TYPE structureType;
     public string regionLocationID;
     public STRUCTURE_TAG[] structureTags;
@@ -21,6 +22,7 @@ public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
         persistentID = structure.persistentID;
         id = structure.id;
         name = structure.name;
+        nameWithoutID = structure.nameWithoutID;
         structureType = structure.structureType;
         regionLocationID = structure.location.persistentID;
         

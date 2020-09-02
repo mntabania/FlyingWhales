@@ -623,13 +623,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         crimeComponent.LoadReferences(data.crimeComponent);
         traitContainer.Load(this, data.saveDataTraitContainer);
         
+        if(traitContainer.HasTrait("Character Trait")) {
+            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+        }
+        if (traitContainer.HasTrait("Necromancer")) {
+            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
+        }
+
         //Place marker after loading references
         if (data.hasMarker) {
             if (!marker) {
                 CreateMarker();
             }
+            marker.transform.SetParent(currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
             marker.transform.localRotation = data.rotation;
+
+            //Do updating hidden state here because the marker must be created first
+            OnSetIsHidden();
+            reactionComponent.UpdateHiddenState();
         }
         visuals.UpdateAllVisuals(this);
 

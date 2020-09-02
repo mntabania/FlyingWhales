@@ -320,6 +320,8 @@ public class MapGenerator : MonoBehaviour {
             UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(saveData.playerSave.archetype);
             // UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(PLAYER_ARCHETYPE.Ravager);
             LevelLoaderManager.Instance.SetLoadingState(false);
+
+            DatabaseManager.Instance.ClearVolatileDatabases();
             yield return new WaitForSeconds(1f);
         }
     }
