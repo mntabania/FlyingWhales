@@ -165,6 +165,7 @@ public class Summon : Character {
             }
 
             Dead dead = new Dead();
+            dead.InitializeInstancedTrait();
             dead.AddCharacterResponsibleForTrait(responsibleCharacter);
             traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
