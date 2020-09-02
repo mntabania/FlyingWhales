@@ -54,16 +54,16 @@ public class StrollState : CharacterState {
     #endregion
     private void StartStrollMovement() {
         LocationGridTile target = PickRandomTileToGoTo();
-        stateComponent.character.marker.GoTo(target, StartStrollMovement);
+        stateComponent.owner.marker.GoTo(target, StartStrollMovement);
         //Debug.Log(stateComponent.character.name + " will stroll to " + target.ToString());
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.parentMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 4, 3, false, true);
+        List<LocationGridTile> tiles = stateComponent.owner.gridTileLocation.parentMap.GetUnoccupiedTilesInRadius(stateComponent.owner.gridTileLocation, 4, 3, false, true);
         if (tiles.Count > 0) {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         } else {
             throw new System.Exception(
-                $"No unoccupied tile in 3-tile radius for {stateComponent.character.name} to go to in {stateName}");
+                $"No unoccupied tile in 3-tile radius for {stateComponent.owner.name} to go to in {stateName}");
         }
         //int multiplier = 1;//UnityEngine.Random.Range(5, 8);
         //Vector3 forwardPos = stateComponent.character.marker.visualsParent.up * multiplier;

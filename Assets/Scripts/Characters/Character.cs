@@ -33,7 +33,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string persistentID { get; private set; }
     //visuals
     public CharacterVisuals visuals { get; }
-    public BaseMapObjectVisual mapObjectVisual => marker;
     //public CharacterAvatar avatar { get; private set; }
     public int currentHP { get; protected set; }
     public int doNotRecoverHP { get; protected set; }
@@ -86,21 +85,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<string> interestedItemNames { get; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
-    public List<HexTile> territorries { get; private set; }
+    public List<HexTile> territories { get; private set; }
     public NPCSettlement ruledSettlement { get; private set; }
 
     public LycanthropeData lycanData { get; protected set; }
     public Necromancer necromancerTrait { get; protected set; }
 
-    private POI_STATE _state;
+    public POI_STATE state { get; private set; }
 
     //limiters
-    private int _canWitnessValue; //if this is >= 0 then character can witness events
-    private int _canMoveValue; //if this is >= 0 then character can move
-    private int _canBeAttackedValue; //if this is >= 0 then character can be attacked
-    private int _canPerformValue; //if this is >= 0 then character can perform
-    private int canTakeJobsValue; //if this is >= 0 then character can take jobs
-    private int _sociableValue; //if this is >= 0 then character wants to socialize
+    public int canWitnessValue { get; private set; }//if this is >= 0 then character can witness events
+    public int canMoveValue { get; private set; } //if this is >= 0 then character can move
+    public int canBeAttackedValue { get; private set; } //if this is >= 0 then character can be attacked
+    public int canPerformValue { get; private set; }//if this is >= 0 then character can perform
+    public int canTakeJobsValue { get; private set; }//if this is >= 0 then character can take jobs
+    public int sociableValue { get; private set; } //if this is >= 0 then character wants to socialize
 
     //misc
     public bool returnedToLife { get; private set; }
@@ -113,7 +112,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     //Components / Managers
     public GoapPlanner planner { get; private set; }
-    public CharacterNeedsComponent needsComponent { get; }
+    public CharacterNeedsComponent needsComponent { get; private set; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
@@ -154,12 +153,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isFactionless => faction == null || FactionManager.Instance.neutralFaction == faction;
     public bool isSettlementRuler => ruledSettlement != null;
     public bool isHidden => reactionComponent.isHidden;
-    public bool canWitness => _canWitnessValue >= 0;
-    public bool canMove => _canMoveValue >= 0;
-    public bool canBeAttacked => _canBeAttackedValue >= 0;
-    public bool canPerform => _canPerformValue >= 0;
+    public bool canWitness => canWitnessValue >= 0;
+    public bool canMove => canMoveValue >= 0;
+    public bool canBeAttacked => canBeAttackedValue >= 0;
+    public bool canPerform => canPerformValue >= 0;
     public bool canTakeJobs => canTakeJobsValue >= 0;
-    public bool isSociable => _sociableValue >= 0;
+    public bool isSociable => sociableValue >= 0;
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
@@ -176,7 +175,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public RACE race => _raceSetting.race;
-    public POI_STATE state => _state;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
 
     public CharacterClass characterClass => _characterClass;
@@ -190,6 +188,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
     public Character characterOwner => null;
+    public BaseMapObjectVisual mapObjectVisual => marker;
     /// <summary>
     /// Is this character allied with the player? Whether secretly (not part of player faction)
     /// or openly (part of player faction).
@@ -260,7 +259,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
-        persistentID = System.Guid.NewGuid().ToString();
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : UtilityScripts.Utilities.SetID(this, id);
         _gender = gender;
         AssignClass(className, true);
@@ -297,7 +296,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
-        territorries = new List<HexTile>();
+        territories = new List<HexTile>();
         interestedItemNames = new List<string>();
         SetPOIState(POI_STATE.ACTIVE);
         ConstructResources();
@@ -306,92 +305,191 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         locationHistory = new List<string>();
         actionHistory = new List<string>();
 
-        //Components
-        needsComponent = new CharacterNeedsComponent(this);
-        stateComponent = new CharacterStateComponent(this);
         jobQueue = new JobQueue(this);
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
-        nonActionEventsComponent = new NonActionEventsComponent(this);
-        interruptComponent = new InterruptComponent(this);
-        behaviourComponent = new BehaviourComponent(this);
-        moodComponent = new MoodComponent(this);
-        jobComponent = new CharacterJobTriggerComponent(this);
-        reactionComponent = new ReactionComponent(this);
-        logComponent = new LogComponent(this);
-        combatComponent = new CombatComponent(this);
-        rumorComponent = new RumorComponent(this);
-        assumptionComponent = new AssumptionComponent(this);
-        movementComponent = new MovementComponent(this);
-        stateAwarenessComponent = new StateAwarenessComponent(this);
-        carryComponent = new CarryComponent(this);
-        partyComponent = new PartyComponent(this);
-        tileObjectComponent = new TileObjectComponent(this);
-        crimeComponent = new CrimeComponent(this);
+        jobComponent = new CharacterJobTriggerComponent(); jobComponent.SetOwner(this);
+        logComponent = new LogComponent(); logComponent.SetOwner(this);
+
+        //Components
+        needsComponent = new CharacterNeedsComponent(); needsComponent.SetOwner(this);
+        stateComponent = new CharacterStateComponent(); stateComponent.SetOwner(this);
+        nonActionEventsComponent = new NonActionEventsComponent(); nonActionEventsComponent.SetOwner(this);
+        interruptComponent = new InterruptComponent(); interruptComponent.SetOwner(this);
+        behaviourComponent = new BehaviourComponent(); behaviourComponent.SetOwner(this);
+        moodComponent = new MoodComponent(); moodComponent.SetOwner(this);
+        reactionComponent = new ReactionComponent(); reactionComponent.SetOwner(this);
+        combatComponent = new CombatComponent(); combatComponent.SetOwner(this);
+        rumorComponent = new RumorComponent(); rumorComponent.SetOwner(this);
+        assumptionComponent = new AssumptionComponent(); assumptionComponent.SetOwner(this);
+        movementComponent = new MovementComponent(); movementComponent.SetOwner(this);
+        stateAwarenessComponent = new StateAwarenessComponent(); stateAwarenessComponent.SetOwner(this);
+        carryComponent = new CarryComponent(); carryComponent.SetOwner(this);
+        partyComponent = new PartyComponent(); partyComponent.SetOwner(this);
+        tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
+        crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
+        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
 
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
-        persistentID = data.persistentID;
-        _id = UtilityScripts.Utilities.SetID(this, data.id);
-        _gender = data.gender;
-        SetSexuality(data.sexuality);
-        AssignClass(data.className, true);
-        AssignRace(race, true);
-        SetName(data.name);
-        //visuals = new CharacterVisuals(data);
-        
-        //numOfActionsBeingPerformedOnThis = data.isStoppedByOtherCharacter;
-
-        //_overrideThoughts = new List<string>();
         advertisedActions = new List<INTERACTION_TYPE>();
-        stateComponent = new CharacterStateComponent(this);
         items = new List<TileObject>();
         ownedItems = new List<TileObject>();
-        jobQueue = new JobQueue(this);
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
-        trapStructure = new TrapStructure();
-        //for testing
+        forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
+        territories = new List<HexTile>();
+        interestedItemNames = new List<string>();
+
         locationHistory = new List<string>();
         actionHistory = new List<string>();
+
+        jobQueue = new JobQueue(this);
+        trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
+        visuals = new CharacterVisuals(this, data);
+        AssignClass(data.className, true);
+        AssignRace(data.race, true);
+        CreateTraitContainer();
 
-        SetIsDead(data.isDead);
-    }
-
-    //This is done separately after all traits have been loaded so that the data will be accurate
-    //It is because all traits are added again, this would mean that OnAddedTrait will also be called
-    //Some values of character are modified by adding traits, so since adding trait will still be processed, it will get modified twice or more
-    //For example, the Glutton trait adds fullnessDecreaseRate by 50%
-    //Now when the fullnessDecreaseRate value is loaded the value of it already includes the Glutton trait modification
-    //But since the Glutton trait will process the add trait function, fullnessDecreaseRate will add by 50% again
-    //So for example if the saved value is 150, then the loaded value will be 300 (150+150)
-    public void LoadAllStatsOfCharacter(SaveDataCharacter data) {
-        //_doNotDisturb = data.doNotDisturb;
-        //_doNotGetHungry = data.doNotGetHungry;
-        //_doNotGetLonely = data.doNotGetLonely;
-        //_doNotGetTired = data.doNotGetTired;
-
+        persistentID = data.persistentID;
+        _id = data.id;
+        _name = data.name;
+        _firstName = data.firstName;
+        _surName = data.surName;
+        _isDead = data.isDead;
+        _gender = data.gender;
+        sexuality = data.sexuality;
+        _isAlliedWithPlayer = data.isAlliedWithPlayer;
         currentHP = data.currentHP;
-        //_level = data.level;
-        //_experience = data.experience;
-        //_maxExperience = data.maxExperience;
+        doNotRecoverHP = data.doNotRecoverHP;
         attackPowerMod = data.attackPowerMod;
         speedMod = data.speedMod;
         maxHPMod = data.maxHPMod;
         attackPowerPercentMod = data.attackPowerPercentMod;
         speedPercentMod = data.speedPercentMod;
         maxHPPercentMod = data.maxHPPercentMod;
-
-        //supply = data.supply;
-        //canCombat = data.isCombatant;
+        advertisedActions = data.advertisedActions;
+        canCombat = data.canCombat;
         deathStr = data.deathStr;
+        storedResources = data.storedResources;
+        hasUnresolvedCrime = data.hasUnresolvedCrime;
+        isInLimbo = data.isInLimbo;
+        isLimboCharacter = data.isLimboCharacter;
+        destroyMarkerOnDeath = data.destroyMarkerOnDeath;
+        isWanderer = data.isWanderer;
+        hasRisen = data.hasRisen;
+        interestedItemNames = data.interestedItemNames;
+        state = data.state;
+        canWitnessValue = data.canWitnessValue;
+        canMoveValue = data.canMoveValue;
+        canBeAttackedValue = data.canBeAttackedValue;
+        canPerformValue = data.canPerformValue;
+        canTakeJobsValue = data.canTakeJobsValue;
+        sociableValue = data.sociableValue;
+        returnedToLife = data.returnedToLife;
 
-        moodComponent.Load(data);
-        needsComponent.LoadAllStatsOfCharacter(data);
-        
-        //returnedToLife = data.returnedToLife;
+        needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
+        buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
+        stateComponent = data.stateComponent.Load(); stateComponent.SetOwner(this);
+        nonActionEventsComponent = data.nonActionEventsComponent.Load(); nonActionEventsComponent.SetOwner(this);
+        interruptComponent = data.interruptComponent.Load(); interruptComponent.SetOwner(this);
+        behaviourComponent = data.behaviourComponent.Load(); behaviourComponent.SetOwner(this);
+        moodComponent = data.moodComponent.Load(); moodComponent.SetOwner(this);
+        jobComponent = data.jobComponent.Load(); jobComponent.SetOwner(this);
+        reactionComponent = data.reactionComponent.Load(); reactionComponent.SetOwner(this);
+        logComponent = data.logComponent.Load(); logComponent.SetOwner(this);
+        combatComponent = data.combatComponent.Load(); combatComponent.SetOwner(this);
+        rumorComponent = data.rumorComponent.Load(); rumorComponent.SetOwner(this);
+        assumptionComponent = data.assumptionComponent.Load(); assumptionComponent.SetOwner(this);
+        movementComponent = data.movementComponent.Load(); movementComponent.SetOwner(this);
+        stateAwarenessComponent = data.stateAwarenessComponent.Load(); stateAwarenessComponent.SetOwner(this);
+        carryComponent = data.carryComponent.Load(); carryComponent.SetOwner(this);
+        partyComponent = data.partyComponent.Load(); partyComponent.SetOwner(this);
+        tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
+        crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
+
+        if (data.hasMinion) {
+            _minion = data.minion.Load(this);
+            visuals.CreateWholeImageMaterial();
+        }
+    }
+
+    public void LoadReferences(SaveDataCharacter data) {
+        if (data.hasLycan) {
+            lycanData = data.lycanData.Load();
+        }
+        if (data.grave != string.Empty) {
+            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
+        }
+        if (data.ruledSettlement != string.Empty) {
+            ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
+        }
+        if (data.deathLog != string.Empty) {
+            deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
+        }
+        if (data.homeRegion != string.Empty) {
+            homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
+        }
+        if (data.homeSettlement != string.Empty) {
+            homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
+        }
+        if (data.homeStructure != string.Empty) {
+            homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
+        }
+        if (data.currentRegion != string.Empty) {
+            _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
+        }
+        if (data.currentStructure != string.Empty) {
+            _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
+        }
+        if (data.faction != string.Empty) {
+            _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
+        }
+        if (data.prevFaction != string.Empty) {
+            prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
+        }
+
+        for (int i = 0; i < data.territories.Count; i++) {
+            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
+            territories.Add(hex);
+        }
+        for (int i = 0; i < data.items.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
+            items.Add(obj);
+        }
+        for (int i = 0; i < data.ownedItems.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
+            ownedItems.Add(obj);
+        }
+
+        needsComponent.LoadReferences(data.needsComponent);
+        buildStructureComponent.LoadReferences(data.buildStructureComponent);
+        stateComponent.LoadReferences(data.stateComponent);
+        nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
+        interruptComponent.LoadReferences(data.interruptComponent);
+        behaviourComponent.LoadReferences(data.behaviourComponent);
+        moodComponent.LoadReferences(data.moodComponent);
+        jobComponent.LoadReferences(data.jobComponent);
+        reactionComponent.LoadReferences(data.reactionComponent);
+        logComponent.LoadReferences(data.logComponent);
+        combatComponent.LoadReferences(data.combatComponent);
+        rumorComponent.LoadReferences(data.rumorComponent);
+        assumptionComponent.LoadReferences(data.assumptionComponent);
+        movementComponent.LoadReferences(data.movementComponent);
+        stateAwarenessComponent.LoadReferences(data.stateAwarenessComponent);
+        carryComponent.LoadReferences(data.carryComponent);
+        partyComponent.LoadReferences(data.partyComponent);
+        tileObjectComponent.LoadReferences(data.tileObjectComponent);
+        crimeComponent.LoadReferences(data.crimeComponent);
+
+        //Place marker after loading references
+        if (data.hasMarker) {
+            CreateMarker();
+            marker.transform.position = data.worldPos;
+            marker.transform.localRotation = data.rotation;
+        }
         
     }
     /// <summary>
@@ -1590,11 +1688,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(ruledSettlement != settlement) {
             ruledSettlement = settlement;
             if (isSettlementRuler) {
-                AssignBuildStructureComponent();
                 behaviourComponent.AddBehaviourComponent(typeof(SettlementRulerBehaviour));
                 jobComponent.AddPriorityJob(JOB_TYPE.JUDGE_PRISONER);
             } else {
-                UnassignBuildStructureComponent();
                 behaviourComponent.RemoveBehaviourComponent(typeof(SettlementRulerBehaviour));
                 if (!isFactionLeader) {
                     jobComponent.RemovePriorityJob(JOB_TYPE.JUDGE_PRISONER);
@@ -1932,13 +2028,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public int GetCanPerformValue() {
-        return _canPerformValue;
+        return canPerformValue;
     }
     public void SetHasRisen(bool state) {
         hasRisen = state;
     }
     public bool IsAtTerritory() {
-        return territorries.Count > 0 && hexTileLocation != null && territorries.Contains(hexTileLocation);
+        return territories.Count > 0 && hexTileLocation != null && territories.Contains(hexTileLocation);
     }
     public bool IsInDanger() {
         return traitContainer.HasTrait("Restrained") && !IsInHomeSettlement();
@@ -2478,7 +2574,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
         AdjustHP(-characterThatAttacked.combatComponent.attack, elementalType, source: characterThatAttacked, showHPBar: true);
-        attackSummary += $"\nDealt damage {stateComponent.character.combatComponent.attack}";
+        attackSummary += $"\nDealt damage {stateComponent.owner.combatComponent.attack}";
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (currentHP <= 0) {
@@ -2765,10 +2861,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (homeStructure != null) { //if no home settlement, check home structure
             return otherCharacter.homeStructure == homeStructure;
         }
-        if (territorries != null && otherCharacter.territorries != null) { //if no home settlement and home structure check territtories
-            for (int i = 0; i < territorries.Count; i++) {
-                HexTile territory = territorries[i];
-                if (otherCharacter.territorries.Contains(territory)) {
+        if (territories != null && otherCharacter.territories != null) { //if no home settlement and home structure check territtories
+            for (int i = 0; i < territories.Count; i++) {
+                HexTile territory = territories[i];
+                if (otherCharacter.territories.Contains(territory)) {
                     return true;
                 }
             }
@@ -3876,10 +3972,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
     }
     public void SetPOIState(POI_STATE state) {
-        _state = state;
+        this.state = state;
     }
     public bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE;
+        return state != POI_STATE.INACTIVE;
     }
     public void OnPlacePOI() { /*FOR INTERFACE ONLY*/ }
     public void OnDestroyPOI() { /*FOR INTERFACE ONLY*/ }
@@ -5072,7 +5168,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void OnCharacterEndedState(Character character, CharacterState state) {
         if (character == this) {
             if (state is CombatState && marker) {
-                combatComponent.OnThisCharacterEndedCombatState();
+                //combatComponent.OnThisCharacterEndedCombatState();
                 marker.visionCollider.ReCategorizeVision();
             }
         }
@@ -5193,14 +5289,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Limiters
     public void IncreaseCanWitness() {
-        _canWitnessValue++;
+        canWitnessValue++;
     }
     public void DecreaseCanWitness() {
-        _canWitnessValue--;
+        canWitnessValue--;
     }
     public void IncreaseCanMove() {
         bool couldNotMoveBefore = canMove == false;
-        _canMoveValue++;
+        canMoveValue++;
         if (couldNotMoveBefore && canMove) {
             //character could not move before adjustment, but can move after adjustment
             Messenger.Broadcast(Signals.CHARACTER_CAN_MOVE_AGAIN, this);
@@ -5208,21 +5304,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DecreaseCanMove() {
         bool couldMoveBefore = canMove;
-        _canMoveValue--;
+        canMoveValue--;
         if (couldMoveBefore && canMove == false) {
             //character could move before adjustment, but cannot move after adjustment
             Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_MOVE, this);
         }
     }
     public void IncreaseCanBeAttacked() {
-        _canBeAttackedValue++;
+        canBeAttackedValue++;
     }
     public void DecreaseCanBeAttacked() {
-        _canBeAttackedValue--;
+        canBeAttackedValue--;
     }
     public void IncreaseCanPerform() {
         bool couldNotPerformBefore = canPerform == false;
-        _canPerformValue++;
+        canPerformValue++;
         if (couldNotPerformBefore && canPerform) {
             //character could not perform before adjustment, but can perform after adjustment
             Messenger.Broadcast(Signals.CHARACTER_CAN_PERFORM_AGAIN, this);
@@ -5230,7 +5326,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void DecreaseCanPerform() {
         bool couldPerformBefore = canPerform;
-        _canPerformValue--;
+        canPerformValue--;
         if (couldPerformBefore && canPerform == false) {
             //character could perform before adjustment, but cannot perform after adjustment
             Messenger.Broadcast(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, this);
@@ -5243,10 +5339,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canTakeJobsValue--;
     }
     public void IncreaseSociable() {
-        _sociableValue++;
+        sociableValue++;
     }
     public void DecreaseSociable() {
-        _sociableValue--;
+        sociableValue--;
     }
     /// <summary>
     /// Set whether this character is allied with the player outside the faction system.
@@ -5263,20 +5359,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region IJobOwner
     public virtual void OnJobAddedToCharacterJobQueue(JobQueueItem job, Character character) { }
     public virtual void OnJobRemovedFromCharacterJobQueue(JobQueueItem job, Character character) {
-        if(this == character && job == jobComponent.finalJobAssignment) {
-            jobComponent.SetFinalJobAssignment(null);
-            Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
-        }
+        //if(this == character && job == jobComponent.finalJobAssignment) {
+        //    jobComponent.SetFinalJobAssignment(null);
+        //    Messenger.AddListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
+        //}
         JobManager.Instance.OnFinishJob(job);
     }
-    private void DissipateAfterFinalJobAssignment() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
-        LocationGridTile deathTile = gridTileLocation;
-        Death();
-        if (deathTile != null && this is Summon) {
-            GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
-        }
-    }
+    //private void DissipateAfterFinalJobAssignment() {
+    //    Messenger.RemoveListener(Signals.TICK_STARTED, DissipateAfterFinalJobAssignment);
+    //    LocationGridTile deathTile = gridTileLocation;
+    //    Death();
+    //    if (deathTile != null && this is Summon) {
+    //        GameManager.Instance.CreateParticleEffectAt(deathTile, PARTICLE_EFFECT.Minion_Dissipate);
+    //    }
+    //}
     public bool ForceCancelJob(JobQueueItem job) {
         //JobManager.Instance.OnFinishGoapPlanJob(job);
         return true;
@@ -5296,15 +5392,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void ForceCancelJobTypesTargetingPOI(JOB_TYPE jobType, IPointOfInterest target) {
         //NA
-    }
-    #endregion
-
-    #region Build Structure Component
-    public void AssignBuildStructureComponent() {
-        buildStructureComponent = new BuildStructureComponent(this);
-    }
-    public void UnassignBuildStructureComponent() {
-        buildStructureComponent = null;
     }
     #endregion
 
@@ -5429,9 +5516,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     
     #region Territorries
     public void AddTerritory([NotNull]HexTile tile, bool returnHome = true) {
-        if (territorries.Contains(tile) == false) {
-            territorries.Add(tile);
-            HexTile firstTerritory = territorries[0];
+        if (territories.Contains(tile) == false) {
+            territories.Add(tile);
+            HexTile firstTerritory = territories[0];
             Messenger.Broadcast(Signals.BECOME_A_TERRITORY, tile, this);
             if(firstTerritory.region != homeRegion) {
                 if(homeRegion != null) {
@@ -5448,7 +5535,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void RemoveTerritory(HexTile tile) {
-        if (territorries.Remove(tile)) {
+        if (territories.Remove(tile)) {
             //QUESTION: Should a character be removed as region resident if it does not have a territory, home structure, home settlement there?
 
             //if(territorries.Count == 0) {
@@ -5460,28 +5547,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void ClearTerritory() {
         //QUESTION: Should a character be removed as region resident if it does not have a territory, home structure, home settlement there?
-        territorries.Clear();
+        territories.Clear();
     }
     public bool HasTerritory() {
-        return territorries.Count > 0;
+        return territories.Count > 0;
     }
     public bool IsInTerritory() {
         if (gridTileLocation != null && gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-            return territorries.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
+            return territories.Contains(gridTileLocation.collectionOwner.partOfHextile.hexTileOwner);
         }
         return false;
     }
     public bool IsTerritory(HexTile hex) {
-        if(territorries.Count > 0) {
-            return territorries.Contains(hex);
+        if(territories.Count > 0) {
+            return territories.Contains(hex);
         }
         return false;
     }
     public LocationGridTile GetRandomLocationGridTileWithPath() {
         LocationGridTile chosenTile = null;
-        if (territorries.Count > 0) {
+        if (territories.Count > 0) {
             //while (chosenTile == null) {
-            HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
+            HexTile chosenTerritory = territories[UnityEngine.Random.Range(0, territories.Count)];
             LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
             if (movementComponent.HasPathToEvenIfDiffRegion(chosenGridTile)) {
                 chosenTile = chosenGridTile;

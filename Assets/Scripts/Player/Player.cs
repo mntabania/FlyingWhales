@@ -37,6 +37,7 @@ public class Player : ILeader, IObjectManipulator {
     //public float constructionRatePercentageModifier { get; private set; }
     public List<SPELL_TYPE> unlearnedSpells { get; }
     public List<SPELL_TYPE> unlearnedAfflictions { get; }
+    public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
 
     //Components
     public SeizeComponent seizeComponent { get; }
@@ -70,8 +71,8 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent = new ThreatComponent(this);
         playerSkillComponent = new PlayerSkillComponent(this);
         //ConstructAllInterventionAbilitySlots();
-        AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        AddListeners();
     }
     public Player(SaveDataPlayerGame data) {
         allIntel = new List<IIntel>();
@@ -86,21 +87,8 @@ public class Player : ILeader, IObjectManipulator {
         threatComponent.SetPlayer(this);
         playerSkillComponent.SetPlayer(this);
 
-        //TODO: Load Minions/Summons
-        for (int i = 0; i < data.minionIDs.Count; i++) {
-            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
-            minions.Add(character.minion);
-        }
-        for (int i = 0; i < data.summonIDs.Count; i++) {
-            Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
-            summons.Add(summon);
-        }
-
-        mana = data.mana;
-        SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
-
-        AddListeners();
         currentActiveItem = TILE_OBJECT_TYPE.NONE;
+        AddListeners();
     }
 
     public void LoadPlayerData(SaveDataPlayer save) {
@@ -174,11 +162,6 @@ public class Player : ILeader, IObjectManipulator {
     #region Faction
     public void CreatePlayerFaction() {
         Faction faction = FactionManager.Instance.CreateNewFaction(FACTION_TYPE.Demons, "Demons");
-        faction.SetLeader(this);
-        SetPlayerFaction(faction);
-    }
-    public void CreatePlayerFaction(SaveDataPlayerGame data) {
-        Faction faction = FactionManager.Instance.GetFactionByPersistentID(data.factionID);
         faction.SetLeader(this);
         SetPlayerFaction(faction);
     }
@@ -672,12 +655,6 @@ public class Player : ILeader, IObjectManipulator {
     //}
     #endregion
 
-    //#region Invasion
-    //public void SetConstructionRatePercentageModifier(float amount) {
-    //    constructionRatePercentageModifier = amount;
-    //}
-    //#endregion
-
     #region Combat Ability
     public void SetCurrentActiveCombatAbility(CombatAbility ability) {
         if(currentActiveCombatAbility == ability) {
@@ -725,168 +702,6 @@ public class Player : ILeader, IObjectManipulator {
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
     #endregion
-
-    //#region Intervention Ability
-    //private void ConstructAllInterventionAbilitySlots() {
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i] == null) {
-    //            interventionAbilitySlots[i] = new PlayerJobActionSlot();
-    //        }
-    //    }
-    //}
-    //public void GainNewInterventionAbility(SPELL_TYPE ability, bool showNewAbilityUI = false) {
-    //    PlayerSpell playerSpell = PlayerManager.Instance.CreateNewInterventionAbility(ability);
-    //    GainNewInterventionAbility(playerSpell, showNewAbilityUI);
-    //}
-    //public void GainNewInterventionAbility(PlayerSpell ability, bool showNewAbilityUI = false) {
-    //    if (!HasEmptyInterventionSlot()) {
-    //        PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllInterventionAbilities(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
-    //    } else {
-    //        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //            if (interventionAbilitySlots[i].ability == null) {
-    //                interventionAbilitySlots[i].SetAbility(ability);
-    //                Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, ability);
-    //                if (showNewAbilityUI) {
-    //                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(null, ability);
-    //                }
-    //                break;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void ConsumeAbility(PlayerSpell ability) {
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].ability == ability) {
-    //            interventionAbilitySlots[i].SetAbility(null);
-    //            Messenger.Broadcast(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, ability);
-    //            break;
-    //        }
-    //    }
-    //}
-    //private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
-    //    PlayerSpell replace = objToReplace as PlayerSpell;
-    //    PlayerSpell add = objToAdd as PlayerSpell;
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].ability == replace) {
-    //            interventionAbilitySlots[i].SetAbility(add);
-    //            Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, add);
-    //            break;
-    //        }
-    //    }
-    //}
-    //private void OnRejectInterventionAbility(object rejectedObj) { }
-    //private int GetInterventionAbilityCount() {
-    //    int count = 0;
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].ability != null) {
-    //            count++;
-    //        }
-    //    }
-    //    return count;
-    //}
-    //public bool HasEmptyInterventionSlot() {
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].ability == null) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-    //public List<PlayerSpell> GetAllInterventionAbilities() {
-    //    List<PlayerSpell> abilities = new List<PlayerSpell>();
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].ability != null) {
-    //            abilities.Add(interventionAbilitySlots[i].ability);
-    //        }
-    //    }
-    //    return abilities;
-    //}
-    //public void ResetInterventionAbilitiesCD() {
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].ability != null) {
-    //            interventionAbilitySlots[i].ability.InstantCooldown();
-    //        }
-    //    }
-    //}
-    //public bool AreAllInterventionSlotsMaxLevel() {
-    //    for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-    //        if (interventionAbilitySlots[i].level < PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY) {
-    //            return false;
-    //        }
-    //    }
-    //    return true;
-    //}
-    //public void LoadResearchNewInterventionAbility(SaveDataPlayer data) {
-    //    if(data.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
-    //        currentNewInterventionAbilityCycleIndex = data.currentNewInterventionAbilityCycleIndex;
-    //        currentInterventionAbilityTimerTick = data.currentInterventionAbilityTimerTick;
-    //        NewCycleForNewInterventionAbility(data.interventionAbilityToResearch);
-    //    } else {
-    //        StartResearchNewInterventionAbility();
-    //    }
-    //}
-    //private void InitializeNewInterventionAbilityCycle() {
-    //    currentNewInterventionAbilityCycleIndex = -1;
-    //    newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-    //    interventionAbilityToResearch = INTERVENTION_ABILITY.NONE;
-    //}
-    //public void StartResearchNewInterventionAbility() {
-    //    currentInterventionAbilityTimerTick = 0;
-    //    currentNewInterventionAbilityCycleIndex++;
-    //    if (currentNewInterventionAbilityCycleIndex > 3) {
-    //        currentNewInterventionAbilityCycleIndex = 0;
-    //    }
-
-    //    int tier = GetTierBasedOnCycle();
-    //    List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
-
-    //    int index1 = UnityEngine.Random.Range(0, abilities.Count);
-    //    INTERVENTION_ABILITY ability1 = abilities[index1];
-    //    abilities.RemoveAt(index1);
-
-    //    if (abilities.Count <= 0) {
-    //        abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
-    //    }
-    //    int index2 = UnityEngine.Random.Range(0, abilities.Count);
-    //    INTERVENTION_ABILITY ability2 = abilities[index2];
-    //    abilities.RemoveAt(index2);
-
-    //    if (abilities.Count <= 0) {
-    //        abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
-    //    }
-    //    int index3 = UnityEngine.Random.Range(0, abilities.Count);
-    //    INTERVENTION_ABILITY ability3 = abilities[index3];
-
-    //    PlayerUI.Instance.researchInterventionAbilityUI.SetAbility1(ability1);
-    //    PlayerUI.Instance.researchInterventionAbilityUI.SetAbility2(ability2);
-    //    PlayerUI.Instance.researchInterventionAbilityUI.SetAbility3(ability3);
-    //    PlayerUI.Instance.researchInterventionAbilityUI.ShowResearchUI();
-    //}
-    //private void PerTickInterventionAbility() {
-    //    currentInterventionAbilityTimerTick++;
-    //    if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
-    //        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
-    //        GainNewInterventionAbility(interventionAbilityToResearch, true);
-    //        StartResearchNewInterventionAbility();
-    //    }
-    //}
-    //public void NewCycleForNewInterventionAbility(INTERVENTION_ABILITY interventionAbilityToResearch) {
-    //    if (!isNotFirstResearch) {
-    //        isNotFirstResearch = true;
-    //    }
-    //    this.interventionAbilityToResearch = interventionAbilityToResearch;
-    //    TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks - currentInterventionAbilityTimerTick, null);
-    //    Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);
-    //}
-    //private int GetTierBasedOnCycle() {
-    //    //Tier Cycle - 3, 3, 2, 1
-    //    if (currentNewInterventionAbilityCycleIndex == 0) return 3;
-    //    else if (currentNewInterventionAbilityCycleIndex == 1) return 3;
-    //    else if (currentNewInterventionAbilityCycleIndex == 2) return 2;
-    //    else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
-    //    return 3;
-    //}
-    //#endregion
 
     #region The Eye
     private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) { }
@@ -952,7 +767,6 @@ public class Player : ILeader, IObjectManipulator {
     #endregion
 
     #region Tile Objects
-    public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
     public void SetCurrentlyActiveItem(TILE_OBJECT_TYPE item) {
         if (currentActiveItem != item) {
             TILE_OBJECT_TYPE previousActiveItem = currentActiveItem;
@@ -1056,6 +870,27 @@ public class Player : ILeader, IObjectManipulator {
     //         SaveManager.Instance.currentSaveDataPlayer.SaveTileObjects(cryptTileObjects);
     //     }
     // }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataPlayerGame data) {
+        for (int i = 0; i < data.minionIDs.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.minionIDs[i]);
+            minions.Add(character.minion);
+        }
+        for (int i = 0; i < data.summonIDs.Count; i++) {
+            Summon summon = CharacterManager.Instance.GetCharacterByPersistentID(data.summonIDs[i]) as Summon;
+            summons.Add(summon);
+        }
+
+        AdjustMana(data.mana);
+        SetPortalTile(GridMap.Instance.map[data.portalTileXCoordinate, data.portalTileYCoordinate]);
+
+        Faction faction = FactionManager.Instance.GetFactionByPersistentID(data.factionID);
+        SetPlayerFaction(faction);
+
+        PlayerUI.Instance.UpdateUI();
+    }
     #endregion
 }
 

@@ -52,6 +52,42 @@ public class SaveDataFactionHub : BaseSaveDataHub {
 }
 
 [System.Serializable]
+public class SaveDataCharacterHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataCharacter> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataCharacter> hub => _hub;
+    #endregion
+
+    public SaveDataCharacterHub() {
+        _hub = new Dictionary<string, SaveDataCharacter>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataCharacter save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataCharacter save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}
+
+[System.Serializable]
 public class SaveDataTileObjectHub : BaseSaveDataHub {
     public Dictionary<string, SaveDataTileObject> _hub;
 
@@ -124,6 +160,40 @@ public class SaveDataLogHub : BaseSaveDataHub {
 }
 
 [System.Serializable]
+public class SaveDataActionHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataActualGoapNode> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataActualGoapNode> hub => _hub;
+    #endregion
+
+    public SaveDataActionHub() {
+        _hub = new Dictionary<string, SaveDataActualGoapNode>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataActualGoapNode save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataActualGoapNode save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistendID) {
+        if (_hub.ContainsKey(persistendID)) {
+            return _hub[persistendID];
+        }
+        return default;
+    }
+}
+
 public class SaveDataTraitHub : BaseSaveDataHub {
     public Dictionary<string, SaveDataTrait> _hub;
 
@@ -144,9 +214,112 @@ public class SaveDataTraitHub : BaseSaveDataHub {
         }
         return false;
     }
-
     public override bool RemoveFromSave<T>(T data) {
         if (data is SaveDataTrait save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistendID) {
+        if (_hub.ContainsKey(persistendID)) {
+            return _hub[persistendID];
+        }
+        return default;
+    }
+}
+
+[System.Serializable]
+public class SaveDataInterruptHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataInterruptHolder> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataInterruptHolder> hub => _hub;
+    #endregion
+
+    public SaveDataInterruptHub() {
+        _hub = new Dictionary<string, SaveDataInterruptHolder>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataInterruptHolder save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataInterruptHolder save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistendID) {
+        if (_hub.ContainsKey(persistendID)) {
+            return _hub[persistendID];
+        }
+        return default;
+    }
+}
+
+[System.Serializable]
+public class SaveDataPartyHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataParty> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataParty> hub => _hub;
+    #endregion
+
+    public SaveDataPartyHub() {
+        _hub = new Dictionary<string, SaveDataParty>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataParty save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataParty save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}
+
+public class SaveDataJobHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataJobQueueItem> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataJobQueueItem> hub => _hub;
+    #endregion
+
+    public SaveDataJobHub() {
+        _hub = new Dictionary<string, SaveDataJobQueueItem>();
+    }
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataJobQueueItem save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataJobQueueItem save) {
             return _hub.Remove(save.persistentID);
         }
         return false;
@@ -160,19 +333,19 @@ public class SaveDataTraitHub : BaseSaveDataHub {
 }
 
 [System.Serializable]
-public class SaveDataJobHub : BaseSaveDataHub {
-    public Dictionary<string, SaveDataJobQueueItem> _hub;
+public class SaveDataCrimeHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataCrimeData> _hub;
 
     #region getters
-    public Dictionary<string, SaveDataJobQueueItem> hub => _hub;
+    public Dictionary<string, SaveDataCrimeData> hub => _hub;
     #endregion
 
-    public SaveDataJobHub() {
-        _hub = new Dictionary<string, SaveDataJobQueueItem>();
+    public SaveDataCrimeHub() {
+        _hub = new Dictionary<string, SaveDataCrimeData>();
     }
 
     public override bool AddToSave<T>(T data) {
-        if (data is SaveDataJobQueueItem save) {
+        if (data is SaveDataCrimeData save) {
             if (!_hub.ContainsKey(save.persistentID)) {
                 _hub.Add(save.persistentID, save);
                 return true;
@@ -180,9 +353,8 @@ public class SaveDataJobHub : BaseSaveDataHub {
         }
         return false;
     }
-
     public override bool RemoveFromSave<T>(T data) {
-        if (data is SaveDataJobQueueItem save) {
+        if (data is SaveDataCrimeData save) {
             return _hub.Remove(save.persistentID);
         }
         return false;
@@ -216,7 +388,6 @@ public class SaveDataSettlementHub : BaseSaveDataHub {
         }
         return false;
     }
-
     public override bool RemoveFromSave<T>(T data) {
         if (data is SaveDataBaseSettlement save) {
             return _hub.Remove(save._persistentID);

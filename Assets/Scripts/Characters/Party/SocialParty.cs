@@ -10,6 +10,7 @@ public class SocialParty : Party {
 
     #region getters
     public override IPartyTarget target => targetStructure;
+    public override System.Type serializedData => typeof(SaveDataSocialParty);
     #endregion
 
     public SocialParty() : base(PARTY_TYPE.Social) {
@@ -17,6 +18,8 @@ public class SocialParty : Party {
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(4);
         relatedBehaviour = typeof(SocialPartyBehaviour);
         jobQueueOwnerType = JOB_OWNER.SETTLEMENT;
+    }
+    public SocialParty(SaveDataParty data) : base(data) {
     }
 
     #region Overrides
@@ -61,6 +64,33 @@ public class SocialParty : Party {
             targetStructure = structure;
             if(targetStructure != null) {
                 targetStructure.SetHasActiveSocialParty(true);
+            }
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataSocialParty subData) {
+            if (subData.targetStructure != string.Empty) {
+                targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataSocialParty : SaveDataParty {
+    public string targetStructure;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is SocialParty subData) {
+            if (subData.targetStructure != null) {
+                targetStructure = subData.targetStructure.persistentID;
             }
         }
     }

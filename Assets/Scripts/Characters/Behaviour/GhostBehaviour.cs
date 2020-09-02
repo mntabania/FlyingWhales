@@ -14,7 +14,7 @@ public class GhostBehaviour : CharacterBehaviourComponent {
         if (character.gridTileLocation != null) {
             if (character.HasTerritory()) {
                 //Only get the first territory because right now even though the territory is a list, only one territory is being assigned at a time
-                HexTile territory = character.territorries[0];
+                HexTile territory = character.territories[0];
                 if (territory.HasAliveVillagerResident()) {
                     character.ClearTerritory();
                 }

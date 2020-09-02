@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
 
-public class RumorComponent {
-    public Character owner { get; private set; }
-
+public class RumorComponent : CharacterComponent {
     private List<string> _rumorPool;
     private List<ActualGoapNode> _negativeInfoPool;
     private List<IPointOfInterest> _rumorTargetPool;
 
-    public RumorComponent(Character owner) {
-        this.owner = owner;
+    public RumorComponent() {
+        _rumorPool = new List<string>();
+        _rumorTargetPool = new List<IPointOfInterest>();
+        _negativeInfoPool = new List<ActualGoapNode>();
+    }
+    public RumorComponent(SaveDataRumorComponent data) {
         _rumorPool = new List<string>();
         _rumorTargetPool = new List<IPointOfInterest>();
         _negativeInfoPool = new List<ActualGoapNode>();
@@ -201,9 +203,32 @@ public class RumorComponent {
             rumorable = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
         }
         if(rumorable != null) {
-            return new Rumor(owner, rumorable);
+            Rumor rumor = new Rumor(owner, rumoredCharacter);
+            rumorable.SetAsRumor(rumor);
+            return rumor;
         }
         throw new System.Exception("Cannot create new rumor for identifier " + identifier + " because rumorable is null!");
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataRumorComponent data) {
+        //Currently N/A
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataRumorComponent : SaveData<RumorComponent> {
+
+    #region Overrides
+    public override void Save(RumorComponent data) {
+
+    }
+
+    public override RumorComponent Load() {
+        RumorComponent component = new RumorComponent(this);
+        return component;
     }
     #endregion
 }

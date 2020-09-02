@@ -56,7 +56,7 @@ public class CharacterState {
         CreateStartStateLog();
         CreateThoughtBubbleLog();
         DoMovementBehavior();
-        Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
+        Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.owner, this);
         ProcessInVisionPOIsOnStartState();
         //if(startStateAction != null) {
         //    startStateAction();
@@ -107,7 +107,7 @@ public class CharacterState {
     public virtual bool OnEnterVisionWith(IPointOfInterest targetPOI) { return false; }
     //What happens if there are already point of interest in your vision upon entering the state
     public virtual bool ProcessInVisionPOIsOnStartState() {
-        if(stateComponent.character.marker.inVisionPOIs.Count > 0) {
+        if(stateComponent.owner.marker.inVisionPOIs.Count > 0) {
             return true;
         }
         return false;
@@ -121,8 +121,8 @@ public class CharacterState {
     //public virtual void SetOtherDataOnStartState(object otherData) { }
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
-        stateComponent.character.marker.UpdateActionIcon();
-        Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
+        stateComponent.owner.marker.UpdateActionIcon();
+        Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.owner, this);
     }
     //public virtual bool CanResumeState() {
     //    return true;
@@ -134,17 +134,17 @@ public class CharacterState {
         if (isPaused) {
             return;
         }
-        stateComponent.character.logComponent.PrintLogIfActive(
-            $"Pausing {stateName} for {stateComponent.character.name}");
+        stateComponent.owner.logComponent.PrintLogIfActive(
+            $"Pausing {stateName} for {stateComponent.owner.name}");
         isPaused = true;
         if(stateComponent.currentState == this) {
             stateComponent.SetCurrentState(null);
         }
-        if(stateComponent.character.currentJob == job) {
-            stateComponent.character.SetCurrentJob(null);
+        if(stateComponent.owner.currentJob == job) {
+            stateComponent.owner.SetCurrentJob(null);
         }
         //StopStatePerTick();
-        Messenger.Broadcast(Signals.CHARACTER_PAUSED_STATE, stateComponent.character, this);
+        Messenger.Broadcast(Signals.CHARACTER_PAUSED_STATE, stateComponent.owner, this);
     }
     /// <summary>
     /// Resumes the state and its movement behavior
@@ -156,14 +156,14 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
-        stateComponent.character.logComponent.PrintLogIfActive(
-            $"Resuming {stateName} for {stateComponent.character.name}");
+        stateComponent.owner.logComponent.PrintLogIfActive(
+            $"Resuming {stateName} for {stateComponent.owner.name}");
         isPaused = false;
         if (stateComponent.currentState != this) {
             stateComponent.SetCurrentState(this);
         }
-        if (stateComponent.character.currentJob != job) {
-            stateComponent.character.SetCurrentJob(job);
+        if (stateComponent.owner.currentJob != job) {
+            stateComponent.owner.SetCurrentJob(job);
         }
         //stateComponent.SetCurrentState(this);
         //StartStatePerTick();
@@ -173,7 +173,7 @@ public class CharacterState {
     protected virtual void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble");
-            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetPOI != null) {
                 thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
@@ -255,8 +255,8 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.character.logComponent.PrintLogIfActive(
-            $"Exiting {stateName} for {stateComponent.character.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
+        stateComponent.owner.logComponent.PrintLogIfActive(
+            $"Exiting {stateName} for {stateComponent.owner.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
@@ -274,7 +274,7 @@ public class CharacterState {
     private void CreateStartStateLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "start")) {
             Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "start");
-            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetPOI != null) {
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
@@ -289,7 +289,7 @@ public class CharacterState {
     private void CreateTravellingThoughtBubbleLog(NPCSettlement targetLocation) {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble_m")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m");
-            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
@@ -334,7 +334,7 @@ public class CharacterState {
     //    isUnending = state;
     //}
     public override string ToString() {
-        return $"{stateName} by {stateComponent.character.name} with job : {(job?.name ?? "None")}";
+        return $"{stateName} by {stateComponent.owner.name} with job : {(job?.name ?? "None")}";
     }
     #endregion
 }

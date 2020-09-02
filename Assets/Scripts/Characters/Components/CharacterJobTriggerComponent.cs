@@ -13,27 +13,41 @@ using Crime_System;
 using Random = UnityEngine.Random;
 
 public class CharacterJobTriggerComponent : JobTriggerComponent {
-	private Character _owner;
+	public Character owner { get; private set; }
 
-    public JobQueueItem finalJobAssignment { get; private set; }
     public JOB_TYPE primaryJob { get; private set; }
     public List<JOB_TYPE> priorityJobs { get; private set; }
-    public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
-    public List<JOB_TYPE> primaryJobCandidates;
+    public Dictionary<INTERACTION_TYPE, int> numOfTimesActionDone { get; private set; }
+    public List<JOB_TYPE> primaryJobCandidates { get; private set; }
 
-    private List<string> obtainPersonalItemRandomList;
-    private List<string> obtainPersonalItemUnownedRandomList;
-    private bool hasStartedScreamCheck;
+    public List<string> obtainPersonalItemRandomList { get; private set; }
+    public List<string> obtainPersonalItemUnownedRandomList { get; private set; }
+    public bool hasStartedScreamCheck { get; private set; }
     public bool doNotDoRecoverHPJob { get; private set; }
+    public bool canReportDemonicStructure { get; private set; }
 
-    public CharacterJobTriggerComponent(Character owner) {
-		_owner = owner;
-        _canReportDemonicStructure = true;
-        numOfTimesActionDone = new Dictionary<GoapAction, int>();
+    public CharacterJobTriggerComponent() {
+        canReportDemonicStructure = true;
+        numOfTimesActionDone = new Dictionary<INTERACTION_TYPE, int>();
         primaryJobCandidates = new List<JOB_TYPE>();
         priorityJobs = new List<JOB_TYPE>();
         SetPrimaryJob(JOB_TYPE.NONE);
 	}
+    public CharacterJobTriggerComponent(SaveDataCharacterJobTriggerComponent data) {
+        primaryJob = data.primaryJob;
+        priorityJobs = data.priorityJobs;
+        numOfTimesActionDone = data.numOfTimesActionDone;
+        primaryJobCandidates = data.primaryJobCandidates;
+        obtainPersonalItemRandomList = data.obtainPersonalItemRandomList;
+        obtainPersonalItemUnownedRandomList = data.obtainPersonalItemUnownedRandomList;
+        hasStartedScreamCheck = data.hasStartedScreamCheck;
+        doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
+        canReportDemonicStructure = data.canReportDemonicStructure;
+    }
+
+    public void SetOwner(Character owner) {
+        this.owner = owner;
+    }
 
     #region Listeners
     public void SubscribeToListeners() {
@@ -70,19 +84,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         TryStopScreamCheck();
 	}
 	private void OnCharacterCanPerformAgain(Character character) {
-		if (character == _owner) {
+		if (character == owner) {
 			// if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
 			// 	TriggerFleeHome();	
 			// }
 			// character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN); //cancel all restrain jobs.
-			_owner.needsComponent.CheckExtremeNeeds();
+			owner.needsComponent.CheckExtremeNeeds();
 
             //Add all in vision poi to process again
-            for (int i = 0; i < _owner.marker.inVisionPOIs.Count; i++) {
-                IPointOfInterest inVision = _owner.marker.inVisionPOIs[i];
-                _owner.marker.AddUnprocessedPOI(inVision);
+            for (int i = 0; i < owner.marker.inVisionPOIs.Count; i++) {
+                IPointOfInterest inVision = owner.marker.inVisionPOIs[i];
+                owner.marker.AddUnprocessedPOI(inVision);
             }
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, _owner as IPlayerActionTarget);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //for (int i = 0; i < _owner.marker.inVisionCharacters.Count; i++) {
             //    Character inVisionCharacter = _owner.marker.inVisionCharacters[i];
             //    _owner.marker.AddUnprocessedPOI(inVisionCharacter);
@@ -90,7 +104,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {
-		if (character == _owner && character.isDead == false) {
+		if (character == owner && character.isDead == false) {
 			//TODO: THIS IS ONLY TEMPORARY! REDO THIS!
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Narcoleptic_Attack) {
@@ -109,7 +123,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             if (character.traitContainer.HasTrait("Unconscious")) {
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
-            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, _owner as IPlayerActionTarget);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //_owner.behaviourComponent.SetIsHarassing(false, null);
             //_owner.behaviourComponent.SetIsInvading(false, null);
             //_owner.behaviourComponent.SetIsDefending(false, null);
@@ -117,12 +131,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
 	}
 	private void OnCharacterCanNoLongerMove(Character character) {
-		if (character == _owner) {
+		if (character == owner) {
 			TryStartScreamCheck();
 		}
 	}
 	private void OnCharacterCanMoveAgain(Character character) {
-		if (character == _owner) {
+		if (character == owner) {
 			TryStopScreamCheck();
 		}
 	}
@@ -132,7 +146,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         // }
     }
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
-		if (traitable == _owner) {
+		if (traitable == owner) {
 			if (TraitManager.Instance.removeStatusTraits.Contains(trait.name)) {
 				TryCreateRemoveStatusJob(trait);
 			}
@@ -143,10 +157,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
     }
 	private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner) {
+		if (traitable == owner) {
 			TryStopScreamCheck();
 			if (TraitManager.Instance.removeStatusTraits.Contains(nameof(trait))) {
-				_owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_STATUS, trait.name, removedBy); //so that the character that cured him will not cancel his job.
+				owner.ForceCancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_STATUS, trait.name, removedBy); //so that the character that cured him will not cancel his job.
 			}
 		}
 	}
@@ -161,13 +175,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
   //      }
 	}
 	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
-		if (character == _owner) {
+		if (character == owner) {
 			TryCreateRemoveStatusJob();
 		}
 	}
 	private void OnCharacterExitedHexTile(Character character, HexTile tile) {
-		if (character == _owner) {
-            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
+		if (character == owner) {
+            Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, owner as IPointOfInterest);
         }
 	}
     private void OnSeizePOI(IPointOfInterest poi) {
@@ -181,17 +195,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
     }
     private void OnSeizedCharacter(Character character) {
-		if (character == _owner) {
+		if (character == owner) {
 			TryStopScreamCheck();
 		}
 	}
 	private void OnUnseizeCharacter(Character character) {
-		if (character == _owner) {
+		if (character == owner) {
 			TryStartScreamCheck();
 		}
 	}
 	private void OnJobRemovedFromQueue(JobQueueItem jobQueueItem, Character character) {
-		if (character == _owner && jobQueueItem.jobType == JOB_TYPE.CRAFT_MISSING_FURNITURE) {
+		if (character == owner && jobQueueItem.jobType == JOB_TYPE.CRAFT_MISSING_FURNITURE) {
 			Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
 		}
 	}
@@ -201,52 +215,49 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void SetPrimaryJob(JOB_TYPE jobType) {
         primaryJob = jobType;
     }
-    public void SetFinalJobAssignment(JobQueueItem job) {
-        finalJobAssignment = job;
-    }
     public string GetPriorityJobs() {
         string jobs = string.Empty;
-        if (_owner.characterClass.priorityJobs != null && _owner.characterClass.priorityJobs.Length > 0) {
-            for (int i = 0; i < _owner.characterClass.priorityJobs.Length; i++) {
+        if (owner.characterClass.priorityJobs != null && owner.characterClass.priorityJobs.Length > 0) {
+            for (int i = 0; i < owner.characterClass.priorityJobs.Length; i++) {
                 if (i > 0) {
                     jobs += ",";
                 }
-                jobs += _owner.characterClass.priorityJobs[i].ToString();
+                jobs += owner.characterClass.priorityJobs[i].ToString();
             }
         }
-        if(_owner.jobComponent.priorityJobs.Count > 0) {
+        if(owner.jobComponent.priorityJobs.Count > 0) {
             if(jobs != string.Empty) {
                 jobs += ",";
             }
-            for (int i = 0; i < _owner.jobComponent.priorityJobs.Count; i++) {
+            for (int i = 0; i < owner.jobComponent.priorityJobs.Count; i++) {
                 if (i > 0) {
                     jobs += ",";
                 }
-                jobs += _owner.jobComponent.priorityJobs[i].ToString();
+                jobs += owner.jobComponent.priorityJobs[i].ToString();
             }
         }
         return jobs;
     }
     public string GetSecondaryJobs() {
         string jobs = string.Empty;
-        if (_owner.characterClass.secondaryJobs != null && _owner.characterClass.secondaryJobs.Length > 0) {
-            for (int i = 0; i < _owner.characterClass.secondaryJobs.Length; i++) {
+        if (owner.characterClass.secondaryJobs != null && owner.characterClass.secondaryJobs.Length > 0) {
+            for (int i = 0; i < owner.characterClass.secondaryJobs.Length; i++) {
                 if (i > 0) {
                     jobs += ",";
                 }
-                jobs += _owner.characterClass.secondaryJobs[i].ToString();
+                jobs += owner.characterClass.secondaryJobs[i].ToString();
             }
         }
         return jobs;
     }
     public string GetAbleJobs() {
         string jobs = string.Empty;
-        if (_owner.characterClass.ableJobs != null && _owner.characterClass.ableJobs.Length > 0) {
-            for (int i = 0; i < _owner.characterClass.ableJobs.Length; i++) {
+        if (owner.characterClass.ableJobs != null && owner.characterClass.ableJobs.Length > 0) {
+            for (int i = 0; i < owner.characterClass.ableJobs.Length; i++) {
                 if (i > 0) {
                     jobs += ",";
                 }
-                jobs += _owner.characterClass.ableJobs[i].ToString();
+                jobs += owner.characterClass.ableJobs[i].ToString();
             }
         }
         return jobs;
@@ -266,18 +277,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     /// <param name="jobType">The job type to compare to.</param>
     /// <returns>True or false</returns>
     public bool HasHigherPriorityJobThan(JOB_TYPE jobType) {
-	    if (_owner.jobQueue.jobsInQueue.Count == 0) {
+	    if (owner.jobQueue.jobsInQueue.Count == 0) {
 		    return false;
 	    } else {
-		    return _owner.jobQueue.jobsInQueue[0].priority > jobType.GetJobTypePriority();
+		    return owner.jobQueue.jobsInQueue[0].priority > jobType.GetJobTypePriority();
 	    }
     }
     #endregion
 
     #region General Jobs
     public bool PlanIdleStroll(LocationStructure targetStructure, LocationGridTile targetTile = null) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL, owner);
+        owner.jobQueue.AddJobInQueue(job);
         //if (currentStructure == targetStructure) {
         //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL);
         //} else {
@@ -286,8 +297,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return true;
     }
     public bool PlanIdleStrollOutside() {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
+        owner.jobQueue.AddJobInQueue(job);
         //if (currentStructure == targetStructure) {
         //    stateComponent.SwitchToState(CHARACTER_STATE.STROLL_OUTSIDE);
         //} else {
@@ -296,61 +307,61 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return true;
     }
     public bool PlanIdleStrollOutside(out JobQueueItem producedJob) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, _owner);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
         producedJob = job;
         return true;
     }
     public bool PlanZombieStrollOutside(out JobQueueItem producedJob) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ZOMBIE_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, _owner);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.ZOMBIE_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
         producedJob = job;
         return true;
     }
     public bool PlanIdleBerserkStrollOutside(out JobQueueItem producedJob) {
-        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.BERSERK_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, _owner);
+        CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.BERSERK_STROLL, CHARACTER_STATE.STROLL_OUTSIDE, owner);
         producedJob = job;
         return true;
     }
     public bool PlanIdleReturnHome() { //bool forceDoAction = false
-        if (_owner.homeStructure != null && _owner.homeStructure.tiles.Count > 0 && !_owner.homeStructure.hasBeenDestroyed) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+        if (owner.homeStructure != null && owner.homeStructure.tiles.Count > 0 && !owner.homeStructure.hasBeenDestroyed) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            return _owner.jobQueue.AddJobInQueue(job);
-        } else if (_owner.HasTerritory()) {
+            return owner.jobQueue.AddJobInQueue(job);
+        } else if (owner.HasTerritory()) {
             return TriggerReturnTerritory();
         }
         return false;
     }
     public bool PlanIdleReturnHome(out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (_owner.homeStructure != null && _owner.homeStructure.tiles.Count > 0 && !_owner.homeStructure.hasBeenDestroyed) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+        if (owner.homeStructure != null && owner.homeStructure.tiles.Count > 0 && !owner.homeStructure.hasBeenDestroyed) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE_RETURN_HOME, INTERACTION_TYPE.RETURN_HOME, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
             producedJob = job;
             return true;
-        } else if (_owner.HasTerritory()) {
+        } else if (owner.HasTerritory()) {
             return TriggerReturnTerritory(out producedJob);
         }
         producedJob = null;
         return false;
     }
     public bool PlanReturnHomeUrgent() { //bool forceDoAction = false
-        if (_owner.homeStructure != null && _owner.homeStructure.tiles.Count > 0 && !_owner.homeStructure.hasBeenDestroyed) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_HOME_URGENT, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+        if (owner.homeStructure != null && owner.homeStructure.tiles.Count > 0 && !owner.homeStructure.hasBeenDestroyed) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_HOME_URGENT, INTERACTION_TYPE.RETURN_HOME, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
-        } else if (_owner.HasTerritory()) {
+        } else if (owner.HasTerritory()) {
             return TriggerReturnTerritoryUrgent();
         }
         return false;
@@ -359,9 +370,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Job Triggers
     private void TriggerScreamJob() {
-		if (_owner.jobQueue.HasJob(JOB_TYPE.SCREAM) == false) {
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _owner, _owner);
-			_owner.jobQueue.AddJobInQueue(job);
+		if (owner.jobQueue.HasJob(JOB_TYPE.SCREAM) == false) {
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, owner, owner);
+			owner.jobQueue.AddJobInQueue(job);
 		}
 	}
 	public void TriggerBuryPsychopathVictim(Character target, NPCSettlement settlementOfTarget) {
@@ -370,51 +381,51 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			buryJob?.ForceCancelJob(false);	
 		}
 
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.BURY_CHARACTER, target, _owner);
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.BURY_CHARACTER, target, owner);
 
         bool hasChosenTile = false;
-        HexTile chosenHex = _owner.currentRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.IsNextToVillage() && h.settlementOnTile == null && _owner.movementComponent.HasPathTo(h));
+        HexTile chosenHex = owner.currentRegion.GetRandomHexThatMeetCriteria(h => h.elevationType != ELEVATION.MOUNTAIN && h.elevationType != ELEVATION.WATER && h.IsNextToVillage() && h.settlementOnTile == null && owner.movementComponent.HasPathTo(h));
         if(chosenHex != null) {
-            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => _owner.movementComponent.HasPathTo(t)));
+            LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles.Where(t => owner.movementComponent.HasPathTo(t)));
             if(chosenTile != null) {
                 hasChosenTile = true;
                 job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { chosenTile.structure, chosenTile });
             }
         }
         if (!hasChosenTile) {
-            LocationStructure wilderness = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement(_owner.homeSettlement) == false).ToList();
+            LocationStructure wilderness = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.IsPartOfSettlement(owner.homeSettlement) == false).ToList();
             LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
             job.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { wilderness, targetTile });
         }
-		_owner.jobQueue.AddJobInQueue(job);
+		owner.jobQueue.AddJobInQueue(job);
 	}
 	public bool TriggerFleeHome(JOB_TYPE jobType = JOB_TYPE.FLEE_TO_HOME) {
-        if(_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed && _owner.homeStructure.tiles.Count > 0 && !_owner.isAtHomeStructure) {
-            if (!_owner.jobQueue.HasJob(jobType)) {
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], _owner, _owner, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
+        if(owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed && owner.homeStructure.tiles.Count > 0 && !owner.isAtHomeStructure) {
+            if (!owner.jobQueue.HasJob(jobType)) {
+                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RETURN_HOME], owner, owner, null, 0);
+                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.RETURN_HOME, owner, owner);
                 goapPlan.SetDoNotRecalculate(true);
                 job.SetCannotBePushedBack(true);
                 job.SetAssignedPlan(goapPlan);
-                _owner.jobQueue.AddJobInQueue(job);
+                owner.jobQueue.AddJobInQueue(job);
             }
             return true;
         }
         return false;
 	}
 	public bool TriggerDestroy(IPointOfInterest target) {
-		if (!_owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
-			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, _owner);
+		if (!owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
+			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, owner);
 			destroyJob.SetStillApplicableChecker(JobManager.Destroy_Applicability);
-            return _owner.jobQueue.AddJobInQueue(destroyJob);
+            return owner.jobQueue.AddJobInQueue(destroyJob);
 		}
 		return false;
 	}
 	public bool TriggerDestroy(IPointOfInterest target, out JobQueueItem producedJob) {
-		if (!_owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
-			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, _owner);
+		if (!owner.jobQueue.HasJob(JOB_TYPE.DESTROY, target)) {
+			GoapPlanJob destroyJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.ASSAULT, target, owner);
 			destroyJob.SetStillApplicableChecker(JobManager.Destroy_Applicability);
 			producedJob = destroyJob;
 			return true;
@@ -423,40 +434,40 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		return false;
 	}
 	private void TriggerSettlementRemoveStatusJob(Trait trait) {
-		if (_owner.isDead) { return; }
+		if (owner.isDead) { return; }
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
-			if (_owner.homeSettlement.HasJob(goapEffect, _owner) == false) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner.homeSettlement);
+			if (owner.homeSettlement.HasJob(goapEffect, owner) == false) {
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, owner, owner.homeSettlement);
 				job.SetCanTakeThisJobChecker(JobManager.Can_Take_Remove_Status);
 				job.SetStillApplicableChecker(JobManager.Remove_Status_Applicability);
-				_owner.homeSettlement.AddToAvailableJobs(job);
+				owner.homeSettlement.AddToAvailableJobs(job);
 			}	
 		}
 	}
 	private void TriggerRemoveStatusSelf(Trait trait) {
 		if (trait.gainedFromDoing == null || trait.gainedFromDoing.isStealth == false) { //only create remove status job if trait was not gained from a stealth action
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, target = GOAP_EFFECT_TARGET.TARGET };
-			if (_owner.jobQueue.HasJob(goapEffect, _owner) == false) {
-				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner);
+			if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
+				GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, owner, owner);
 				job.SetStillApplicableChecker(JobManager.Remove_Status_Self_Applicability);
-				_owner.jobQueue.AddJobInQueue(job);
+				owner.jobQueue.AddJobInQueue(job);
 			}	
 		}
 	}
     public void TriggerRemoveStatusTarget(IPointOfInterest target, string traitName) {
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, target = GOAP_EFFECT_TARGET.TARGET };
-        if (_owner.jobQueue.HasJob(goapEffect, _owner) == false) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, target, _owner);
+        if (owner.jobQueue.HasJob(goapEffect, owner) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, target, owner);
             job.SetStillApplicableChecker(JobManager.Remove_Status_Target_Applicability);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     private void TriggerFeed(Character target) {
 		GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, _owner);
+		GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, target, owner);
 		job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-		_owner.jobQueue.AddJobInQueue(job);
+		owner.jobQueue.AddJobInQueue(job);
 	}
     //private bool TriggerMoveCharacterToBed(Character target) {
 	//	if (target.homeStructure != null && target.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false) {
@@ -504,50 +515,50 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (hasStartedScreamCheck) {
 			return;
 		}
-        if (!_owner.isNormalCharacter) {
+        if (!owner.isNormalCharacter) {
             return;
         }
-		if ((_owner.canMove == false && 
-		     _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
-            || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
+		if ((owner.canMove == false && 
+		     owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
+            || (owner.traitContainer.HasTrait("Restrained") && owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
-			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} has started scream check</color>");
+			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} has started scream check</color>");
 		}
 	}
 	private void TryStopScreamCheck() {
 		if (hasStartedScreamCheck == false) {
 			return;
 		}
-		bool isNotNeedy = !_owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking");
-		bool isNotRestrained = !_owner.traitContainer.HasTrait("Restrained");
-		bool isRestrainedButInPrison = _owner.traitContainer.HasTrait("Restrained") &&
-		                               _owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
+		bool isNotNeedy = !owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking");
+		bool isNotRestrained = !owner.traitContainer.HasTrait("Restrained");
+		bool isRestrainedButInPrison = owner.traitContainer.HasTrait("Restrained") &&
+		                               owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
 		
 		//scream will stop check if
 		// - character can already move or
 		// - character is no longer exhausted, starving or sulking and
 		// - character is no longer restrained or
 		// - character is still restrained, but is at prison.
-		if (((_owner.canMove || isNotNeedy) && (isNotRestrained || isRestrainedButInPrison)) 
-		    || _owner.gridTileLocation == null || _owner.isDead) {
+		if (((owner.canMove || isNotNeedy) && (isNotRestrained || isRestrainedButInPrison)) 
+		    || owner.gridTileLocation == null || owner.isDead) {
 			hasStartedScreamCheck = false;
 			Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyScreamCheck);
-			Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{_owner.name} has stopped scream check</color>");
+			Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped scream check</color>");
 		}
 	}
 	private void HourlyScreamCheck() {
-		if (_owner.canPerform == true) {
+		if (owner.canPerform == true) {
 			return;
 		}
-        if (_owner.needsComponent.isExhausted) {
-            _owner.needsComponent.PlanExtremeTirednessRecoveryActionsForCannotPerform();
+        if (owner.needsComponent.isExhausted) {
+            owner.needsComponent.PlanExtremeTirednessRecoveryActionsForCannotPerform();
             return;
         }
-		string summary = $"{_owner.name} is checking for scream.";
+		string summary = $"{owner.name} is checking for scream.";
 		int chance = 50;
-		if (_owner.canMove == false && 
-		    _owner.traitContainer.HasTrait("Starving", "Sulking")) { //"Exhausted", 
+		if (owner.canMove == false && 
+		    owner.traitContainer.HasTrait("Starving", "Sulking")) { //"Exhausted", 
             chance = 75;
 		}
 		summary += $"Chance is {chance.ToString()}.";
@@ -573,15 +584,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	#region Remove Status
 	private void TryCreateRemoveStatusJob(Trait trait) {
-		if (_owner.homeSettlement != null && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
-		    && _owner.traitContainer.HasTrait("Criminal") == false) {
+		if (owner.homeSettlement != null && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
+		    && owner.traitContainer.HasTrait("Criminal") == false) {
 			TriggerSettlementRemoveStatusJob(trait);
 		}
 	}
 	private void TryCreateRemoveStatusJob() {
-		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
-		    && _owner.traitContainer.HasTrait("Criminal") == false) {
-			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
+		if (owner.homeSettlement != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
+		    && owner.traitContainer.HasTrait("Criminal") == false) {
+			List<Trait> statusTraits = owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
 				TryCreateRemoveStatusJob(trait);
@@ -594,9 +605,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	public bool TryTriggerFeed(Character targetCharacter) {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.FEED)) {
 			GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, target = GOAP_EFFECT_TARGET.TARGET };
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, _owner);
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FEED, goapEffect, targetCharacter, owner);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-			return _owner.jobQueue.AddJobInQueue(job);
+			return owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
 	}
@@ -606,10 +617,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure, bool doNotRecalculate = false) {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP,
-				targetCharacter, _owner);
+				targetCharacter, owner);
 			job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {dropLocationStructure});
             job.SetDoNotRecalculate(doNotRecalculate);
-			return _owner.jobQueue.AddJobInQueue(job);
+			return owner.jobQueue.AddJobInQueue(job);
 		}
 		return false;
 	}
@@ -617,7 +628,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         producedJob = null;
         if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP,
-                targetCharacter, _owner);
+                targetCharacter, owner);
             job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
             job.SetDoNotRecalculate(doNotRecalculate);
             producedJob = job;
@@ -627,9 +638,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryTriggerMoveCharacter(Character targetCharacter, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
 		if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
-			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, _owner);
+			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);
 			job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
-			return _owner.jobQueue.AddJobInQueue(job);   
+			return owner.jobQueue.AddJobInQueue(job);   
 		}
 		return false;
 	}
@@ -667,12 +678,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
 	#region Suicide
 	public GoapPlanJob TriggerSuicideJob() {
-		if (_owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
+		if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, 
 					false, GOAP_EFFECT_TARGET.ACTOR),
-				_owner,  _owner);
-			_owner.jobQueue.AddJobInQueue(job);
+				owner,  owner);
+			owner.jobQueue.AddJobInQueue(job);
 			return job;	
 		}
 		return null;
@@ -681,21 +692,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Actions
     public void IncreaseNumOfTimesActionDone(GoapAction action) {
-        if (!numOfTimesActionDone.ContainsKey(action)) {
-            numOfTimesActionDone.Add(action, 1);
+        if (!numOfTimesActionDone.ContainsKey(action.goapType)) {
+            numOfTimesActionDone.Add(action.goapType, 1);
         } else {
-            numOfTimesActionDone[action]++;
+            numOfTimesActionDone[action.goapType]++;
         }
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddDays(3);
-        SchedulingManager.Instance.AddEntry(dueDate, () => DecreaseNumOfTimesActionDone(action), _owner);
+        SchedulingManager.Instance.AddEntry(dueDate, () => DecreaseNumOfTimesActionDone(action), owner);
     }
     private void DecreaseNumOfTimesActionDone(GoapAction action) {
-        numOfTimesActionDone[action]--;
+        numOfTimesActionDone[action.goapType]--;
     }
     public int GetNumOfTimesActionDone(GoapAction action) {
-        if (numOfTimesActionDone.ContainsKey(action)) {
-            return numOfTimesActionDone[action];
+        if (numOfTimesActionDone.ContainsKey(action.goapType)) {
+            return numOfTimesActionDone[action.goapType];
         }
         return 0;
     }
@@ -703,66 +714,66 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     
     #region Roam
     public bool TriggerRoamAroundTerritory() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
             LocationGridTile chosenTile;
-            if (_owner.homeStructure != null) {
-                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+            if (owner.homeStructure != null) {
+                chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
             } 
-            else if (_owner.homeSettlement != null) {
-                chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+            else if (owner.homeSettlement != null) {
+                chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
             } 
-            else if (_owner.territorries.Count > 0) {
-                HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+            else if (owner.territories.Count > 0) {
+                HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
                 chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
             } else {
-                if (_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                        HexTile chosenHex = _owner.gridTileLocation.GetNearestHexTileWithinRegion();
+                if (owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                    if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                        HexTile chosenHex = owner.gridTileLocation.GetNearestHexTileWithinRegion();
                         chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                     } else {
-                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        HexTile chosenHex = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                         chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                     }
                 } else {
-                    chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
                 }
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerRoamAroundTerritory(out JobQueueItem producedJob, bool checkIfPathPossibleWithoutDigging = false) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TERRITORY)) {
 		    LocationGridTile chosenTile;
-		    if (_owner.homeStructure != null) {
+		    if (owner.homeStructure != null) {
                 if (checkIfPathPossibleWithoutDigging) {
-				    List<LocationGridTile> choices = _owner.homeStructure.passableTiles
-                        .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
-				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+				    List<LocationGridTile> choices = owner.homeStructure.passableTiles
+                        .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+				    chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
 			    } else {
-				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
+				    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
                     //string log = _owner.name + "-> " + _owner.homeStructure.name + " PASSABLE TILES: " + _owner.homeStructure.passableTiles.Count;
                     //for (int i = 0; i < _owner.homeStructure.passableTiles.Count; i++) {
                     //    log += "\n" + _owner.homeStructure.passableTiles[i];
                     //}
                     //Debug.LogWarning(log);
 			    }
-		    } else if (_owner.homeSettlement != null) {
+		    } else if (owner.homeSettlement != null) {
 			    chosenTile = checkIfPathPossibleWithoutDigging ? 
-				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
-				    _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-		    } else if(_owner.territorries.Count > 0) {
-			    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)) : 
+				    owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+		    } else if(owner.territories.Count > 0) {
+			    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
 			    if (checkIfPathPossibleWithoutDigging) {
 				    List<LocationGridTile> choices = chosenTerritory.locationGridTiles
-					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+					    .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    if (choices.Count > 0) {
 					    chosenTile = CollectionUtilities.GetRandomElement(choices);	    
 				    } else {
@@ -773,21 +784,21 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);    
 			    }
 		    } else {
-                if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                        HexTile chosenHex = _owner.gridTileLocation.GetNearestHexTileWithinRegion();
+                if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                    if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                        HexTile chosenHex = owner.gridTileLocation.GetNearestHexTileWithinRegion();
                         chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                     } else {
-                        HexTile chosenHex = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                        HexTile chosenHex = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                         chosenTile = CollectionUtilities.GetRandomElement(chosenHex.locationGridTiles);
                     }
                 } else {
-                    chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
                 }
             }
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -798,11 +809,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerRoamAroundCorruption(HexTile chosenTerritory, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_CORRUPTION)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_CORRUPTION)) {
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_CORRUPTION, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile),  }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_CORRUPTION, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -813,66 +824,66 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerRoamAroundPortal() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_PORTAL)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_PORTAL)) {
             HexTile chosenTerritory = PlayerManager.Instance.player.portalTile;
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_PORTAL, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_PORTAL, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerRoamAroundTile(JOB_TYPE jobType, LocationGridTile tile = null) {
-        if (!_owner.jobQueue.HasJob(jobType)) {
+        if (!owner.jobQueue.HasJob(jobType)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
-                if (_owner.isAtHomeStructure) {
-                    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
-                } else if (_owner.IsInHomeSettlement()) {
-                    chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-                } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-                    HexTile chosenTerritory = _owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => _owner.movementComponent.HasPathTo(h));
+                if (owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
+                } else if (owner.IsInHomeSettlement()) {
+                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                    HexTile chosenTerritory = owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => owner.movementComponent.HasPathTo(h));
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
-                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                    HexTile chosenTerritory = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 }
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerRoamAroundTile(JOB_TYPE jobType, out JobQueueItem producedJob, LocationGridTile tile = null) {
-	    if (!_owner.jobQueue.HasJob(jobType)) {
+	    if (!owner.jobQueue.HasJob(jobType)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-			    if (_owner.isAtHomeStructure) {
-				    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
-			    } else if (_owner.IsInHomeSettlement()) {
-				    chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-			    } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-				    HexTile chosenTerritory = _owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => _owner.movementComponent.HasPathTo(h));
+			    if (owner.isAtHomeStructure) {
+				    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
+			    } else if (owner.IsInHomeSettlement()) {
+				    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+			    } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+				    HexTile chosenTerritory = owner.gridTileLocation.GetNearestHexTileWithinRegionThatMeetCriteria(h => owner.movementComponent.HasPathTo(h));
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    } else {
-				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+				    HexTile chosenTerritory = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    }
 		    }
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.ROAM, _owner, _owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.ROAM, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -883,24 +894,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerRoamAroundTile(out JobQueueItem producedJob, LocationGridTile tile = null) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-                if (_owner.isAtHomeStructure) {
-                    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.passableTiles);
-                } else if (_owner.IsInHomeSettlement()) {
-                    chosenTile = _owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t));
-                } else if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
-				    HexTile chosenTerritory = _owner.gridTileLocation.GetNearestHexTileWithinRegion();
+                if (owner.isAtHomeStructure) {
+                    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.passableTiles);
+                } else if (owner.IsInHomeSettlement()) {
+                    chosenTile = owner.homeSettlement.GetRandomPassableGridTileInSettlementThatMeetCriteria(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t));
+                } else if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+				    HexTile chosenTerritory = owner.gridTileLocation.GetNearestHexTileWithinRegion();
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    } else {
-				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+				    HexTile chosenTerritory = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    }
 		    }
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, _owner, _owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -911,24 +922,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerRoamAroundStructure(out JobQueueItem producedJob, LocationGridTile tile = null) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_STRUCTURE)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_STRUCTURE)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
-                if (_owner.currentStructure != null) {
+                if (owner.currentStructure != null) {
                     //OPTIMIZE THIS!
                     //chosenTile = CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
-                    if(_owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-                        chosenTile = _owner.gridTileLocation.GetNearestHexTileWithinRegion().GetRandomTile();
+                    if(owner.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+                        chosenTile = owner.gridTileLocation.GetNearestHexTileWithinRegion().GetRandomTile();
                     } else {
-                        List<LocationGridTile> choices = _owner.currentStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(_owner.gridTileLocation, t)).ToList();
-                        chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(_owner.currentStructure.passableTiles);
+                        List<LocationGridTile> choices = owner.currentStructure.passableTiles.Where(t => PathfindingManager.Instance.HasPathEvenDiffRegion(owner.gridTileLocation, t)).ToList();
+                        chosenTile = choices.Count > 0 ? CollectionUtilities.GetRandomElement(choices) : CollectionUtilities.GetRandomElement(owner.currentStructure.passableTiles);
                     }
 
                 }
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_STRUCTURE, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_STRUCTURE, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -939,43 +950,43 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerAttackDemonicStructure(LocationGridTile tile = null) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
             LocationGridTile chosenTile = tile;
             if (chosenTile == null) {
-                if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+                if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
                     TriggerStand(JOB_TYPE.STAND);
                     return false;
                 } else {
-                    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                    HexTile chosenTerritory = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 }
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             // job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerAttackDemonicStructure(out JobQueueItem producedJob, LocationGridTile tile = null) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.COUNTERATTACK)) {
 		    LocationGridTile chosenTile = tile;
 		    if (chosenTile == null) {
-			    if (_owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
+			    if (owner.gridTileLocation.collectionOwner.isPartOfParentRegionMap == false) {
 				    TriggerStand(out producedJob);
 				    return false;
 			    } else {
-				    HexTile chosenTerritory = _owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+				    HexTile chosenTerritory = owner.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
 				    chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
 			    }
 		    }
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, _owner, _owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK, INTERACTION_TYPE.ATTACK_DEMONIC_STRUCTURE, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    // job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -986,25 +997,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerMoveToHex(HexTile hex) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 	        LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerMoveToHex(out JobQueueItem producedJob, HexTile hex) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
 		    LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, _owner, _owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -1015,23 +1026,23 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerStand(JOB_TYPE jobType) {
-        if (!_owner.jobQueue.HasJob(jobType)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.STAND, _owner, _owner);
+        if (!owner.jobQueue.HasJob(jobType)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.STAND, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerStand(out JobQueueItem producedJob) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.STAND)) {
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND], _owner, _owner, null, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND, INTERACTION_TYPE.STAND, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.STAND)) {
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND], owner, owner, null, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND, INTERACTION_TYPE.STAND, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -1042,74 +1053,74 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerReturnTerritory() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
             LocationGridTile chosenTile;
-            if (_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed) {
-                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+            if (owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed) {
+                chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.unoccupiedTiles);
             } else {
-                if (_owner.territorries.Count > 0) {
-                    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+                if (owner.territories.Count > 0) {
+                    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     //If has no territory, roam around tile instead
                     return TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE);
                 }
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerReturnTerritoryUrgent() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME_URGENT)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME_URGENT)) {
             LocationGridTile chosenTile;
-            if (_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed) {
-                chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+            if (owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed) {
+                chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.unoccupiedTiles);
             } else {
-                if (_owner.territorries.Count > 0) {
-                    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+                if (owner.territories.Count > 0) {
+                    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
                     chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
                 } else {
                     //If has no territory, roam around tile instead
                     return TriggerRoamAroundTile(JOB_TYPE.ROAM_AROUND_TILE);
                 }
             }
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], _owner, chosenTile.genericTileObject, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_HOME_URGENT, INTERACTION_TYPE.GO_TO_TILE, chosenTile.genericTileObject, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.GO_TO_TILE], owner, chosenTile.genericTileObject, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_HOME_URGENT, INTERACTION_TYPE.GO_TO_TILE, chosenTile.genericTileObject, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerReturnTerritory(out JobQueueItem producedJob) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.RETURN_TERRITORY)) {
 		    LocationGridTile chosenTile;
-		    if (_owner.homeStructure != null) {
-			    chosenTile = CollectionUtilities.GetRandomElement(_owner.homeStructure.unoccupiedTiles);
+		    if (owner.homeStructure != null) {
+			    chosenTile = CollectionUtilities.GetRandomElement(owner.homeStructure.unoccupiedTiles);
 		    } else {
-			    if (_owner.territorries.Count > 0) {
-				    HexTile chosenTerritory = _owner.territorries[UnityEngine.Random.Range(0, _owner.territorries.Count)];
+			    if (owner.territories.Count > 0) {
+				    HexTile chosenTerritory = owner.territories[UnityEngine.Random.Range(0, owner.territories.Count)];
 				    List<LocationGridTile> validTiles = chosenTerritory.locationGridTiles
-					    .Where(t => _owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
+					    .Where(t => owner.movementComponent.HasPathToEvenIfDiffRegion(t)).ToList();
 				    chosenTile = CollectionUtilities.GetRandomElement(validTiles.Count > 0 ? validTiles : chosenTerritory.locationGridTiles);
 			    } else {
 				    //If has no territory, roam around tile instead
 				    return TriggerRoamAroundTile(out producedJob);
 			    }
 		    }
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, _owner, _owner);
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_TERRITORY, INTERACTION_TYPE.ROAM, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -1120,38 +1131,38 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerReturnPortal() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RETURN_PORTAL)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RETURN_PORTAL)) {
             HexTile chosenTerritory = PlayerManager.Instance.player.portalTile;
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(chosenTerritory.locationGridTiles);
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_PORTAL, INTERACTION_TYPE.ROAM, _owner, _owner);
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RETURN_PORTAL, INTERACTION_TYPE.ROAM, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerMonsterSleep() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SLEEP_OUTSIDE], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP_OUTSIDE, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SLEEP_OUTSIDE], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP_OUTSIDE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerMonsterSleep(out JobQueueItem producedJob) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SLEEP_OUTSIDE], _owner, _owner, null, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP_OUTSIDE, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SLEEP_OUTSIDE], owner, owner, null, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP_OUTSIDE, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -1162,8 +1173,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public void CreateLearnMonsterJob(Character target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LEARN_MONSTER, INTERACTION_TYPE.STUDY_MONSTER, target, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LEARN_MONSTER, INTERACTION_TYPE.STUDY_MONSTER, target, owner);
+        owner.jobQueue.AddJobInQueue(job);
     }
     public void CreateTakeArtifactJob(TileObject target, LocationStructure dropLocation) {
         //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ARTIFACT, INTERACTION_TYPE.DROP_ITEM, target, _owner);
@@ -1175,64 +1186,64 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     //    _owner.jobQueue.AddJobInQueue(job);
     //}
     public void CreateOpenChestJob(TileObject target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OPEN_CHEST, INTERACTION_TYPE.OPEN, target, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OPEN_CHEST, INTERACTION_TYPE.OPEN, target, owner);
+        owner.jobQueue.AddJobInQueue(job);
     }
     public void CreateDestroyResourceAmountJob(ResourcePile target, int amount) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, target, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, target, owner);
         if(amount > 0) {
             job.AddOtherData(INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, new object[] { amount });
         }
-        _owner.jobQueue.AddJobInQueue(job);
+        owner.jobQueue.AddJobInQueue(job);
     }
     public void TriggerStopJobs() {
-	    if (_owner.marker) {
-		    _owner.marker.StopMovement();
+	    if (owner.marker) {
+		    owner.marker.StopMovement();
 	    }
-	    _owner.jobQueue.CancelAllJobs();
+	    owner.jobQueue.CancelAllJobs();
     }
     #endregion
 
     #region Abduct
     public void CreateAbductJob(Character target) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP, target, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP, target, owner);
         LocationStructure dropLocationStructure = PlayerManager.Instance.player.portalTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.TORTURE_CHAMBERS);
         if (dropLocationStructure == null) {
 	        dropLocationStructure = PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure;
         }
         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }); //For now drop in portal, this will be changed to Demonic Prison
-        _owner.jobQueue.AddJobInQueue(job);
+        owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
     
     #region Violence
     public GoapPlanJob CreateKnockoutJob(Character targetCharacter) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
-		    _owner.jobQueue.AddJobInQueue(job);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
+		    owner.jobQueue.AddJobInQueue(job);
             return job;
 	    }
         return null;
     }
     public GoapPlanJob CreateBrawlJob(Character targetCharacter) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.BRAWL, targetCharacter)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.BRAWL, targetCharacter)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BRAWL, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
+            owner.jobQueue.AddJobInQueue(job);
             return job;
         }
         return null;
     }
     public GoapPlanJob CreateDemonKillJob(Character targetCharacter) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
-		    _owner.jobQueue.AddJobInQueue(job);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
+		    owner.jobQueue.AddJobInQueue(job);
             return job;
 	    }
         return null;
     }
     public bool CreateDemonKillJob(Character targetCharacter, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.DEMON_KILL, targetCharacter)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DEMON_KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, owner);
             producedJob = job;
             return true;
         }
@@ -1240,9 +1251,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public GoapPlanJob CreateBerserkAttackJob(IPointOfInterest targetPOI) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.BERSERK_ATTACK, targetPOI)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BERSERK_ATTACK, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetPOI, owner);
+            owner.jobQueue.AddJobInQueue(job);
             return job;
         }
         return null;
@@ -1251,40 +1262,40 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Needs
     public void CreateProduceFoodJob() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _owner, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.PRODUCE_FOOD, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     public bool CreateButcherJob(Character target) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, _owner);
-            return _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, owner);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
     public bool CreateButcherJob(Character target, out JobQueueItem producedJob) {
         producedJob = null;
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.BUTCHER, target, owner);
             producedJob = job;
             return true;
         }
         return false;
     }
     public void CreateEatJob(IPointOfInterest target) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, _owner);
-            if (_owner.jobQueue.AddJobInQueue(job)) {
-                _owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, owner);
+            if (owner.jobQueue.AddJobInQueue(job)) {
+                owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
             }
         }
     }
     public bool CreateDrinkBloodJob(JOB_TYPE jobType, IPointOfInterest target) {
-	    if (!_owner.jobQueue.HasJob(jobType)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, _owner);
-		    if (_owner.jobQueue.AddJobInQueue(job)) {
-			    _owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+	    if (!owner.jobQueue.HasJob(jobType)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
+		    if (owner.jobQueue.AddJobInQueue(job)) {
+			    owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
 		    }
 		    return true;
 	    }
@@ -1294,16 +1305,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Items
     public void CreateTakeItemJob(TileObject targetItem) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, targetItem, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ITEM, INTERACTION_TYPE.PICK_UP, targetItem, owner);
+        owner.jobQueue.AddJobInQueue(job);
     }
     public bool TryCreateObtainPersonalItemJob() {
-        if (!_owner.IsInventoryAtFullCapacity()) {
+        if (!owner.IsInventoryAtFullCapacity()) {
             string chosenItemName = GetItemNameForObtainPersonalItemJob();
             if(chosenItemName != string.Empty) {
                 GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
-                _owner.jobQueue.AddJobInQueue(job);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, owner, owner);
+                owner.jobQueue.AddJobInQueue(job);
                 return true;
             }
         }
@@ -1311,11 +1322,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     }
     public bool TryCreateObtainPersonalItemJob(out JobQueueItem producedJob) {
-	    if (!_owner.IsInventoryAtFullCapacity() && !_owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
+	    if (!owner.IsInventoryAtFullCapacity() && !owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
             string chosenItemName = GetItemNameForObtainPersonalItemJob();
             if (chosenItemName != string.Empty) {
                 GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, owner, owner);
                 producedJob = job;
                 return true;
             }
@@ -1325,9 +1336,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     }
     public bool TryCreateObtainPersonalItemJob(string chosenItemName, out JobQueueItem producedJob) {
-	    if (!_owner.IsInventoryAtFullCapacity() && !_owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
+	    if (!owner.IsInventoryAtFullCapacity() && !owner.jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM)) {
 		    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, chosenItemName, false, GOAP_EFFECT_TARGET.ACTOR);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, _owner, _owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, owner, owner);
 		    producedJob = job;
 		    return true;
 	    }
@@ -1336,42 +1347,42 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     }
     public void CreateDropItemJob(JOB_TYPE jobType, TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
-        if(!_owner.jobQueue.HasJob(jobType, target)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+        if(!owner.jobQueue.HasJob(jobType, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DROP_ITEM, target, owner);
             job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
             job.SetDoNotRecalculate(doNotRecalculate);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     public void CreateHoardItemJob(TileObject target, LocationStructure dropLocation, bool doNotRecalculate = false) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.HOARD, target)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HOARD, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.HOARD, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HOARD, INTERACTION_TYPE.DROP_ITEM, target, owner);
             job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
             job.SetDoNotRecalculate(doNotRecalculate);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     private string GetItemNameForObtainPersonalItemJob() {
-        if (_owner.homeSettlement != null && _owner.interestedItemNames != null && _owner.interestedItemNames.Count > 0) {
+        if (owner.homeSettlement != null && owner.interestedItemNames != null && owner.interestedItemNames.Count > 0) {
             if (obtainPersonalItemRandomList == null) { obtainPersonalItemRandomList = new List<string>(); }
             if (obtainPersonalItemUnownedRandomList == null) { obtainPersonalItemUnownedRandomList = new List<string>(); }
             obtainPersonalItemRandomList.Clear();
             obtainPersonalItemUnownedRandomList.Clear();
-            for (int i = 0; i < _owner.interestedItemNames.Count; i++) {
-                string itemName = _owner.interestedItemNames[i];
+            for (int i = 0; i < owner.interestedItemNames.Count; i++) {
+                string itemName = owner.interestedItemNames[i];
                 bool itemHasBeenAdded = false;
-                for (int j = 0; j < _owner.homeSettlement.tiles.Count; j++) {
-                    HexTile hexInSettlement = _owner.homeSettlement.tiles[j];
+                for (int j = 0; j < owner.homeSettlement.tiles.Count; j++) {
+                    HexTile hexInSettlement = owner.homeSettlement.tiles[j];
                     for (int k = 0; k < hexInSettlement.itemsInHex.Count; k++) {
                         TileObject itemInHex = hexInSettlement.itemsInHex[k];
                         if (itemInHex.name == itemName) {
-                            if (itemInHex.gridTileLocation != null && itemInHex.IsOwnedBy(_owner) && itemInHex.gridTileLocation.structure == _owner.homeStructure) {
+                            if (itemInHex.gridTileLocation != null && itemInHex.IsOwnedBy(owner) && itemInHex.gridTileLocation.structure == owner.homeStructure) {
                                 //Should not obtain personal item if item is already personally owned is in the home structure of the owner
                                 continue;
                             }
                             itemHasBeenAdded = true;
                             obtainPersonalItemRandomList.Add(itemName);
-                            if (!_owner.HasItem(itemName)) {
+                            if (!owner.HasItem(itemName)) {
                                 obtainPersonalItemUnownedRandomList.Add(itemName);
                             }
                             break;
@@ -1394,9 +1405,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Hide At Home
     public bool CreateHideAtHomeJob() {
-        if (_owner.homeStructure != null && !_owner.homeStructure.hasBeenDestroyed && _owner.homeStructure.tiles.Count > 0) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HIDE_AT_HOME, INTERACTION_TYPE.RETURN_HOME, _owner, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (owner.homeStructure != null && !owner.homeStructure.hasBeenDestroyed && owner.homeStructure.tiles.Count > 0) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HIDE_AT_HOME, INTERACTION_TYPE.RETURN_HOME, owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
@@ -1406,23 +1417,23 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Idle
     public bool TriggerStandStill() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.STAND_STILL)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND_STILL], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND_STILL, INTERACTION_TYPE.STAND_STILL, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.STAND_STILL)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND_STILL], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND_STILL, INTERACTION_TYPE.STAND_STILL, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerStandStill(out JobQueueItem producedJob) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.STAND_STILL)) {
-		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND_STILL], _owner, _owner, null, 0);
-		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND_STILL, INTERACTION_TYPE.STAND_STILL, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.STAND_STILL)) {
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.STAND_STILL], owner, owner, null, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.STAND_STILL, INTERACTION_TYPE.STAND_STILL, owner, owner);
 		    goapPlan.SetDoNotRecalculate(true);
 		    job.SetCannotBePushedBack(true);
 		    job.SetAssignedPlan(goapPlan);
@@ -1436,14 +1447,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Undermine
     public bool CreateUndermineJob(Character targetCharacter, string reason) {
-        if (_owner.jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
+        if (owner.jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
             return false;
         }
-        if (targetCharacter.isDead || _owner.traitContainer.HasTrait("Diplomatic")) {
+        if (targetCharacter.isDead || owner.traitContainer.HasTrait("Diplomatic")) {
             return false;
         }
         if (targetCharacter.homeRegion == null) {
-            targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have a home region");
+            targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have a home region");
             return false;
         }
         IPointOfInterest chosenObject = null;
@@ -1456,25 +1467,25 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         }
         //IPointOfInterest chosenObject = targetCharacter.homeRegion.GetFirstTileObjectOnTheFloorOwnedBy(targetCharacter);
         if (chosenObject == null) {
-            targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
+            targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot undermine " + targetCharacter.name + " because he/she does not have an owned item on the floor in his/her home region");
             return false;
         }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
+        owner.jobQueue.AddJobInQueue(job);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine");
-        log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        _owner.logComponent.AddHistory(log);
+        owner.logComponent.AddHistory(log);
         return true;
     }
     private bool CreatePlaceTrapPOIJob(IPointOfInterest target, JOB_TYPE jobType = JOB_TYPE.PLACE_TRAP) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
-        _owner.jobQueue.AddJobInQueue(job);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+        owner.jobQueue.AddJobInQueue(job);
         return true;
     }
     private bool CreatePlaceTrapPOIJob(IPointOfInterest target, out JobQueueItem producedJob) {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_TRAP, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), target, owner);
 	    producedJob = job;
 	    return true;
     }
@@ -1510,32 +1521,31 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #endregion
 
     #region Report Demonic Structure
-    private bool _canReportDemonicStructure;
     public void CreateReportDemonicStructure(LocationStructure structureToReport) {
-	    if (_canReportDemonicStructure && !_owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+	    if (canReportDemonicStructure && !owner.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
 		    // UIManager.Instance.ShowYesNoConfirmation("Demonic Structure Seen", 
 			   //  $"Your demonic structure {structureToReport.name} has been seen by {_owner.name}!", 
 			   //  onClickNoAction: _owner.CenterOnCharacter, yesBtnText: "OK", noBtnText: $"Jump to {_owner}", 
 			   //  showCover:true, pauseAndResume: true);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE, INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, _owner, _owner);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE, INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, owner, owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE, new object[] { structureToReport });
-            _owner.jobQueue.AddJobInQueue(job);
-            Messenger.Broadcast(Signals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, _owner, job);
+            owner.jobQueue.AddJobInQueue(job);
+            Messenger.Broadcast(Signals.DEMONIC_STRUCTURE_DISCOVERED, structureToReport, owner, job);
         }
     }
     /// <summary>
     /// Disable report demonic structure until this character steps foot in his/her home.
     /// </summary>
     public void DisableReportStructure() {
-	    _canReportDemonicStructure = false;
+	    canReportDemonicStructure = false;
 	    Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
     }
     public void EnableReportStructure() {
-	    _canReportDemonicStructure = true;
+	    canReportDemonicStructure = true;
 	    Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
     }
     private void TryEnableReportStructure(Character character, LocationStructure structure) {
-	    if (character == _owner) {
+	    if (character == owner) {
 		    if (character.homeStructure != null && structure == character.homeStructure) {
 			    EnableReportStructure();    
 		    }
@@ -1556,28 +1566,28 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public void OnHPReduced() {
         if (!doNotDoRecoverHPJob) {
-            if (_owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && _owner.isNormalCharacter && _owner.currentHP > 0 && _owner.currentHP < Mathf.FloorToInt(_owner.maxHP * 0.5f)) {
+            if (owner.jobQueue.HasJob(JOB_TYPE.RECOVER_HP) == false && owner.isNormalCharacter && owner.currentHP > 0 && owner.currentHP < Mathf.FloorToInt(owner.maxHP * 0.5f)) {
                 CreateHealSelfJob();
             }
         }
     }
     private void CreateHealSelfJob() {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECOVER_HP, INTERACTION_TYPE.HEAL_SELF, _owner, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECOVER_HP, INTERACTION_TYPE.HEAL_SELF, owner, owner);
 	    job.SetStillApplicableChecker(JobManager.Heal_Self_Applicability);
-	    _owner.jobQueue.AddJobInQueue(job);
+	    owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
     
     #region Undermine
     public bool CreatePoisonFoodJob(Character targetCharacter, JOB_TYPE jobType = JOB_TYPE.POISON_FOOD) {
-	    if (_owner.jobQueue.HasJob(jobType, targetCharacter)) {
+	    if (owner.jobQueue.HasJob(jobType, targetCharacter)) {
 		    return false;
 	    }
 	    if (targetCharacter.isDead) {
 		    return false;
 	    }
 	    if (targetCharacter.homeRegion == null) {
-		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
+		    targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
 		    return false;
 	    }
         IPointOfInterest chosenObject = null;
@@ -1599,14 +1609,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		        }
 	        }
 	        if (chosenObject == null) {
-		        targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " +
+		        targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " +
 		                                                      targetCharacter.name +
 		                                                      " because he/she does not have an owned item on the floor in his/her home region");
 		        return false;
 	        }
         }
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
-	    _owner.jobQueue.AddJobInQueue(job);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
+	    owner.jobQueue.AddJobInQueue(job);
 
 	    // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
 	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -1615,7 +1625,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     public bool CreatePoisonFoodJob(Character targetCharacter, out JobQueueItem producedJob) {
-	    if (_owner.jobQueue.HasJob(JOB_TYPE.POISON_FOOD, targetCharacter)) {
+	    if (owner.jobQueue.HasJob(JOB_TYPE.POISON_FOOD, targetCharacter)) {
 		    producedJob = null;
 		    return false;
 	    }
@@ -1624,7 +1634,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    return false;
 	    }
 	    if (targetCharacter.homeRegion == null) {
-		    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
+		    targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " + targetCharacter.name + " because he/she does not have a home region");
 		    producedJob = null;
 		    return false;
 	    }
@@ -1647,14 +1657,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    }
 		    }
 		    if (chosenObject == null) {
-			    targetCharacter.logComponent.PrintLogIfActive(_owner.name + " cannot poison food " +
+			    targetCharacter.logComponent.PrintLogIfActive(owner.name + " cannot poison food " +
 			                                                  targetCharacter.name +
 			                                                  " because he/she does not have an owned item on the floor in his/her home region");
 			    producedJob = null;
 			    return false;
 		    }
 	    }
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
 	    producedJob = job;
 
 	    // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
@@ -1673,9 +1683,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (negativeInfo == null) {
             return false;
         }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHARE_NEGATIVE_INFO, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SHARE_NEGATIVE_INFO, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, owner);
         job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { negativeInfo });
-        _owner.jobQueue.AddJobInQueue(job);
+        owner.jobQueue.AddJobInQueue(job);
         return true;
     }
     public bool CreateSpreadRumorJob(Character targetCharacter, Rumor rumor) {
@@ -1685,9 +1695,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (rumor == null) {
             return false;
         }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPREAD_RUMOR, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPREAD_RUMOR, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, owner);
         job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { rumor });
-        _owner.jobQueue.AddJobInQueue(job);
+        owner.jobQueue.AddJobInQueue(job);
         return true;
     }
     public bool CreateConfirmRumorJob(Character targetCharacter, ActualGoapNode action) {
@@ -1697,62 +1707,62 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (action == null) {
             return false;
         }
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CONFIRM_RUMOR, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, _owner);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CONFIRM_RUMOR, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, owner);
         job.AddOtherData(INTERACTION_TYPE.SHARE_INFORMATION, new object[] { action });
-        _owner.jobQueue.AddJobInQueue(job);
+        owner.jobQueue.AddJobInQueue(job);
         return true;
     }
     public bool TryCreateReportCrimeJob(Character actor, IPointOfInterest target, CrimeData crimeData, ICrimeable crime) {
-        if(_owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
+        if(owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
             return CreateReportCrimeJob(crimeData, crime);
         } else {
             Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_not_report");
-            addLog.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
             addLog.AddLogToInvolvedObjects();
-            _owner.crimeComponent.AddReportedCrime(crimeData);
+            owner.crimeComponent.AddReportedCrime(crimeData);
         }
         return false;
     }
     public bool CreateReportCrimeJob(CrimeData crimeData, ICrimeable crime) {
-        if(_owner.faction != null && _owner.faction.isMajorNonPlayer) {
-            if (crimeData.IsWantedBy(_owner.faction)) {
+        if(owner.faction != null && owner.faction.isMajorNonPlayer) {
+            if (crimeData.IsWantedBy(owner.faction)) {
                 //Should no longer report if already wanted by the source's faction
                 return false;
             }
         }
         bool canReportToFactionLeader = false;
         bool canReportToSettlementRuler = false;
-        if (_owner.faction != null && _owner.faction.isMajorNonPlayer && _owner.faction.leader != null && _owner.faction.leader is Character characterLeader
-            && !characterLeader.isDead && characterLeader != _owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
+        if (owner.faction != null && owner.faction.isMajorNonPlayer && owner.faction.leader != null && owner.faction.leader is Character characterLeader
+            && !characterLeader.isDead && characterLeader != owner && characterLeader != crimeData.criminal && characterLeader != crimeData.target) {
             if(!crimeData.IsWitness(characterLeader)) {
                 canReportToFactionLeader = true;
             }
         }
-        if (_owner.homeSettlement != null && _owner.homeSettlement.ruler != null && !_owner.homeSettlement.ruler.isDead && _owner.homeSettlement.ruler != _owner && _owner.homeSettlement.ruler != crimeData.criminal && _owner.homeSettlement.ruler != crimeData.target) {
-            if (!crimeData.IsWitness(_owner.homeSettlement.ruler)) {
+        if (owner.homeSettlement != null && owner.homeSettlement.ruler != null && !owner.homeSettlement.ruler.isDead && owner.homeSettlement.ruler != owner && owner.homeSettlement.ruler != crimeData.criminal && owner.homeSettlement.ruler != crimeData.target) {
+            if (!crimeData.IsWitness(owner.homeSettlement.ruler)) {
                 canReportToSettlementRuler = true;
             }
         }
         Character targetCharacter = null;
         if(canReportToFactionLeader && canReportToSettlementRuler) {
             if(UnityEngine.Random.Range(0, 2) == 0) {
-                targetCharacter = _owner.faction.leader as Character;
+                targetCharacter = owner.faction.leader as Character;
             } else {
-                targetCharacter = _owner.homeSettlement.ruler;
+                targetCharacter = owner.homeSettlement.ruler;
             }
         } else {
             if (canReportToFactionLeader) {
-                targetCharacter = _owner.faction.leader as Character;
+                targetCharacter = owner.faction.leader as Character;
             } else if (canReportToSettlementRuler) {
-                targetCharacter = _owner.homeSettlement.ruler;
+                targetCharacter = owner.homeSettlement.ruler;
             }
         }
         if(targetCharacter != null) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, targetCharacter, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, targetCharacter, owner);
             job.AddOtherData(INTERACTION_TYPE.REPORT_CRIME, new object[] { crime, crimeData });
-            return _owner.jobQueue.AddJobInQueue(job);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
@@ -1760,9 +1770,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Visit Different Region
     public bool TriggerVisitDifferentRegion() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
             Region chosenRegion = null;
-            List<Region> adjacentRegions = _owner.currentRegion.AdjacentRegions();
+            List<Region> adjacentRegions = owner.currentRegion.AdjacentRegions();
             if(adjacentRegions != null && adjacentRegions.Count > 0) {
                 chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
             }
@@ -1770,14 +1780,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 HexTile hex = chosenRegion.GetRandomPlainHex();
                 if(hex != null) {
                     LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(hex.locationGridTiles);
-                    if (_owner.gridTileLocation != null && _owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {
-                        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
-                        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, _owner, _owner);
+                    if (owner.gridTileLocation != null && owner.movementComponent.HasPathToEvenIfDiffRegion(chosenTile)) {
+                        ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], owner, owner, new OtherData[] { new LocationGridTileOtherData(chosenTile) }, 0);
+                        GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.VISIT_DIFFERENT_REGION, INTERACTION_TYPE.ROAM, owner, owner);
                         goapPlan.SetDoNotRecalculate(true);
                         job.SetCannotBePushedBack(true);
                         job.SetAssignedPlan(goapPlan);
-                        _owner.jobQueue.AddJobInQueue(job);
+                        owner.jobQueue.AddJobInQueue(job);
                         return true;
                     }
                 }
@@ -1792,11 +1802,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Bury
     public void TriggerBuryMe() {
-	    if (_owner.minion == null && !(_owner is Animal) && _owner.gridTileLocation != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
+	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
 	        && settlement is NPCSettlement npcSettlement) {
 		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
 		                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-		    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, _owner, npcSettlement);
+		    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, owner, npcSettlement);
 		    buryJob.SetCanTakeThisJobChecker(JobManager.Can_Take_Bury_Job);
 		    buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });
 		    buryJob.SetStillApplicableChecker(JobManager.Bury_Settlement_Applicability);
@@ -1810,19 +1820,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return target.gridTileLocation != null && target.marker != null;
     }
     public void TriggerPersonalBuryJob(Character targetCharacter) {
-        if (_owner.gridTileLocation != null && !_owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
+        if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY, targetCharacter)) {
             LocationStructure targetStructure = null;
-            if (_owner.homeSettlement != null) {
-	            targetStructure = _owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            if (owner.homeSettlement != null) {
+	            targetStructure = owner.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
             }
             if (targetStructure == null) {
-	            targetStructure = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+	            targetStructure = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             }
-            if (_owner.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomPassableTile())) {
-                GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, _owner);
+            if (owner.movementComponent.HasPathToEvenIfDiffRegion(targetStructure.GetRandomPassableTile())) {
+                GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, owner);
                 buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[] { targetStructure });
                 buryJob.SetStillApplicableChecker(JobManager.Bury_Applicability);
-                _owner.jobQueue.AddJobInQueue(buryJob);
+                owner.jobQueue.AddJobInQueue(buryJob);
             }
         }
     }
@@ -1830,16 +1840,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Go To
     public bool CreateGoToJob(IPointOfInterest target) {
-        if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
+        if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, owner);
             job.SetCannotBePushedBack(true);
-            return _owner.jobQueue.AddJobInQueue(job);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
     public bool CreateGoToJob(IPointOfInterest target, out JobQueueItem producedJob) {
-	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, _owner);
+	    if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO, target)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO, target, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
 		    return true;
@@ -1848,8 +1858,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool CreateGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
-	    if(!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+	    if(!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
 		    producedJob = job;
 		    return true;
@@ -1858,8 +1868,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool CreateFleeToJob(LocationGridTile tile, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.GO_TO)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -1868,8 +1878,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool CreatePartyGoToJob(LocationGridTile tile, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTY_GO_TO)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTY_GO_TO, INTERACTION_TYPE.GO_TO_TILE, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -1878,10 +1888,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool CreateFleeCrimeJob(LocationGridTile tile) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.FLEE_CRIME)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FLEE_CRIME, INTERACTION_TYPE.FLEE_CRIME, tile.genericTileObject, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.FLEE_CRIME)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FLEE_CRIME, INTERACTION_TYPE.FLEE_CRIME, tile.genericTileObject, owner);
             job.SetCannotBePushedBack(true);
-            return _owner.jobQueue.AddJobInQueue(job);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
@@ -1889,16 +1899,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Build
     public void TriggerSpawnLair(LocationGridTile targetTile) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_LAIR, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_LAIR, owner, owner);
             job.AddOtherData(INTERACTION_TYPE.BUILD_LAIR, new object[] { targetTile });
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     public void TriggerSpawnLair(LocationGridTile targetTile, out JobQueueItem producedJob) {
 	    producedJob = null;
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_LAIR, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_LAIR, owner, owner);
 		    job.AddOtherData(INTERACTION_TYPE.BUILD_LAIR, new object[] { targetTile });
 		    producedJob = job;
 	    }
@@ -1907,83 +1917,83 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Necromancer
     public bool TriggerAbsorbLife() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, _owner, _owner);
-            return _owner.jobQueue.AddJobInQueue(job);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, owner, owner);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
     public bool TriggerAbsorbLife(out JobQueueItem producedJob) {
         producedJob = null;
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
             GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.ABSORB_LIFE, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, _owner, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, effect, owner, owner);
             producedJob = job;
             return true;
         }
         return false;
     }
     public bool TriggerAbsorbLife(IPointOfInterest target) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, _owner);
-            return _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, owner);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
     public void TriggerAbsorbLife(IPointOfInterest target, out JobQueueItem producedJob) {
 	    producedJob = null;
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_LIFE)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_LIFE, INTERACTION_TYPE.ABSORB_LIFE, target, owner);
 		    producedJob = job;
 	    }
     }
     public bool TriggerSpawnSkeleton() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, _owner, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerSpawnSkeleton(out JobQueueItem producedJob) {
 	    producedJob = null;
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_SKELETON)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_SKELETON, INTERACTION_TYPE.SPAWN_SKELETON, owner, owner);
 		    producedJob = job;
 		    return true;
 	    }
 	    return false;
     }
     public void TriggerRaiseCorpse(IPointOfInterest target) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, owner);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     public void TriggerRaiseCorpse(IPointOfInterest target, out JobQueueItem producedJob) {
 	    producedJob = null;
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.RAISE_CORPSE)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAISE_CORPSE, INTERACTION_TYPE.RAISE_CORPSE, target, owner);
 		    producedJob = job;
 	    }
     }
     public void TriggerAbsorbPower(IPointOfInterest target) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_POWER)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_POWER, INTERACTION_TYPE.ABSORB_POWER, target, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_POWER)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_POWER, INTERACTION_TYPE.ABSORB_POWER, target, owner);
+            owner.jobQueue.AddJobInQueue(job);
         }
     }
     public void TriggerAbsorbPower(IPointOfInterest target, out JobQueueItem producedJob) {
 	    producedJob = null;
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.ABSORB_POWER)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_POWER, INTERACTION_TYPE.ABSORB_POWER, target, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.ABSORB_POWER)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABSORB_POWER, INTERACTION_TYPE.ABSORB_POWER, target, owner);
 		    producedJob = job;
 	    }
     }
     public bool TriggerReadNecronomicon(out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.READ_NECRONOMICON, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.READ_NECRONOMICON, owner, owner);
             producedJob = job;
             return true;
         }
@@ -1991,16 +2001,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerMeditate() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, _owner, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerMeditate(out JobQueueItem producedJob) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MEDITATE, owner, owner);
 		    producedJob = job;
 		    return true;
 	    }
@@ -2008,16 +2018,16 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     public bool TriggerRegainEnergy() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.REGAIN_ENERGY, _owner, _owner);
-            _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.REGAIN_ENERGY, owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
     }
     public bool TriggerRegainEnergy(out JobQueueItem producedJob) {
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.REGAIN_ENERGY, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.REGAIN_ENERGY, owner, owner);
 		    producedJob = job;
 		    return true;
 	    }
@@ -2036,29 +2046,29 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         //     }
         // }
         NPCSettlement settlementToGoTo = null;
-        if (_owner.homeSettlement != null) {
-	        if (_owner.currentSettlement != null) {
-		        if (_owner.currentSettlement == _owner.homeSettlement) {
+        if (owner.homeSettlement != null) {
+	        if (owner.currentSettlement != null) {
+		        if (owner.currentSettlement == owner.homeSettlement) {
 			        //if current settlement is home settlement
-			        settlementToGoTo = _owner.homeSettlement;    
-		        } else if (_owner.currentSettlement is NPCSettlement npcSettlement && 
-		                   npcSettlement.owner != null && _owner.faction != null && npcSettlement.owner == _owner.faction) {
+			        settlementToGoTo = owner.homeSettlement;    
+		        } else if (owner.currentSettlement is NPCSettlement npcSettlement && 
+		                   npcSettlement.owner != null && owner.faction != null && npcSettlement.owner == owner.faction) {
 			        //if current settlement is owned by same faction as this character
 			        settlementToGoTo = npcSettlement;
 		        } else {
-			        settlementToGoTo = _owner.homeSettlement;
+			        settlementToGoTo = owner.homeSettlement;
 		        }
 	        }    
         }
-        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(_owner, target) && settlementToGoTo != null;
+        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && settlementToGoTo != null;
         if (target.traitContainer.HasTrait("Criminal") && canDoJob) {
-            if (_owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
+            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
                 Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                if (criminalTrait.IsWantedBy(_owner.faction)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
+                if (criminalTrait.IsWantedBy(owner.faction)) {
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
                     job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
-                    return _owner.jobQueue.AddJobInQueue(job);
+                    return owner.jobQueue.AddJobInQueue(job);
                 }
             }
 
@@ -2070,17 +2080,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Sabotage
     public bool TryCreateSabotageNeighbourJob(Character target, out JobQueueItem producedJob) {
 	    //create predetermined plan and job
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, owner);
 	    List<JobNode> jobNodes = new List<JobNode>();
-	    if (_owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
+	    if (owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
 		    //Pick up cultist kit at home
-		    TileObject cultistKitAtHome = _owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
-		    Assert.IsNotNull(cultistKitAtHome, $"{_owner.name} wants to sabotage neighbour but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
-		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], _owner, cultistKitAtHome, null, 0);
+		    TileObject cultistKitAtHome = owner.homeStructure?.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.CULTIST_KIT);
+		    Assert.IsNotNull(cultistKitAtHome, $"{owner.name} wants to sabotage neighbour but has no cultist kit at home or in inventory. This should never happen, because the Cultist Behaviour checks this beforehand");
+		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], owner, cultistKitAtHome, null, 0);
 		    jobNodes.Add(new SingleJobNode(pickupNode));
 	    }
 	    
-	    ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], _owner, target, null, 0);
+	    ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], owner, target, null, 0);
 	    jobNodes.Add(new SingleJobNode(removeBuffNode));
 	    
 	    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
@@ -2092,11 +2102,11 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return true;
     }
     private bool IsValidSabotageNeighbourTarget(Character character) {
-	    AWARENESS_STATE awarenessState = _owner.relationshipContainer.GetAwarenessState(character);
+	    AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(character);
 	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
 	           character.traitContainer.HasTrait("Resting", "Unconscious") &&
 	           character.traitContainer.HasTraitOf(TRAIT_TYPE.BUFF) &&
-	           character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character) &&
+	           character.traitContainer.HasTrait("Cultist") == false && owner.HasSameHomeAs(character) &&
 	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
     }
     public bool TryGetValidSabotageNeighbourTarget(out Character targetCharacter) {
@@ -2114,7 +2124,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    for (int i = 0; i < choices.Count; i++) {
 			    Character character = choices[i];
 			    int weight = 0;
-			    string opinionLabel = _owner.relationshipContainer.GetOpinionLabel(character);
+			    string opinionLabel = owner.relationshipContainer.GetOpinionLabel(character);
 			    if (opinionLabel == RelationshipManager.Close_Friend) {
 				    weight += Random.Range(10, 51);
 			    } else if (opinionLabel == RelationshipManager.Friend) {
@@ -2126,7 +2136,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    }
 			    targetWeights.AddElement(character, weight);
 		    }
-		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{_owner.name}'s Sabotage Neighbour Weights:");
+		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{owner.name}'s Sabotage Neighbour Weights:");
 		    if (targetWeights.GetTotalOfWeights() > 0) {
 			    targetCharacter = targetWeights.PickRandomElementGivenWeights();
 			    return true;
@@ -2139,19 +2149,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Pray
     public void TriggerPray() {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.PRAY, _owner, _owner);
-	    ActualGoapNode prayNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PRAY], _owner, _owner, null, 0);
-	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(prayNode) }, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.PRAY, owner, owner);
+	    ActualGoapNode prayNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PRAY], owner, owner, null, 0);
+	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(prayNode) }, owner);
 	    goapPlan.SetDoNotRecalculate(true);
 	    job.SetCannotBePushedBack(true);
-	    _owner.jobQueue.AddJobInQueue(job);
+	    owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
 
     #region Spawn Objects
     public bool TriggerSpawnPoisonCloud(out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.SPAWN_POISON_CLOUD, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.SPAWN_POISON_CLOUD, owner, owner);
             producedJob = job;
             return true;
         }
@@ -2163,19 +2173,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Decrease Mood
     public bool TriggerDecreaseMood(out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DECREASE_MOOD,
-		    INTERACTION_TYPE.DECREASE_MOOD, _owner, _owner);
+		    INTERACTION_TYPE.DECREASE_MOOD, owner, owner);
 	    producedJob = job;
 	    return true;
     }
     private bool IsDecreaseMoodJobInTerritoryStillApplicable(Character target) {
-	    return target.hexTileLocation != null && _owner.territorries.Contains(target.hexTileLocation);
+	    return target.hexTileLocation != null && owner.territories.Contains(target.hexTileLocation);
     }
     #endregion
 
     #region Disable
     public bool TriggerDisable(out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DISABLE,
-		    INTERACTION_TYPE.DISABLE, _owner, _owner);
+		    INTERACTION_TYPE.DISABLE, owner, owner);
 	    producedJob = job;
 	    return true;
     }
@@ -2183,8 +2193,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Monsters
     public bool TriggerLayEgg(out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.LAY_EGG, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.LAY_EGG, owner, owner);
             producedJob = job;
             return true;
         }
@@ -2192,14 +2202,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerMonsterAbduct(Character targetCharacter, out JobQueueItem producedJob, LocationGridTile targetTile = null) {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, targetCharacter, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_ABDUCT, INTERACTION_TYPE.DROP, targetCharacter, owner);
 	    job.SetCannotBePushedBack(true);
-	    job.AddOtherData(INTERACTION_TYPE.DROP, targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {_owner.homeStructure});
+	    job.AddOtherData(INTERACTION_TYPE.DROP, targetTile != null ? new object[] {targetTile.structure, targetTile} : new object[] {owner.homeStructure});
 	    producedJob = job;
 	    return true;
     }
     public bool TriggerEatAlive(Character webbedCharacter, out JobQueueItem producedJob) {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT_ALIVE, webbedCharacter, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_EAT, INTERACTION_TYPE.EAT_ALIVE, webbedCharacter, owner);
 	    producedJob = job;
 	    return true;
     }
@@ -2208,7 +2218,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Arson
     public bool TriggerArson(TileObject target, out JobQueueItem producedJob) {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ARSON,
-		    INTERACTION_TYPE.BURN, target, _owner);
+		    INTERACTION_TYPE.BURN, target, owner);
 	    producedJob = job;
 	    return true;
     }
@@ -2216,19 +2226,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Seek Shelter
     public bool TriggerSeekShelterJob() {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.SEEK_SHELTER) && _owner.gridTileLocation != null) {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.SEEK_SHELTER) && owner.gridTileLocation != null) {
             List<LocationStructure> exclusions = null;
-            if (_owner.traitContainer.HasTrait("Freezing")) {
-                Freezing freezing = _owner.traitContainer.GetNormalTrait<Freezing>("Freezing");
+            if (owner.traitContainer.HasTrait("Freezing")) {
+                Freezing freezing = owner.traitContainer.GetNormalTrait<Freezing>("Freezing");
                 exclusions = freezing.excludedStructuresInSeekingShelter;
-            } else if (_owner.traitContainer.HasTrait("Overheating")) {
-                Overheating overheating = _owner.traitContainer.GetNormalTrait<Overheating>("Overheating");
+            } else if (owner.traitContainer.HasTrait("Overheating")) {
+                Overheating overheating = owner.traitContainer.GetNormalTrait<Overheating>("Overheating");
                 exclusions = overheating.excludedStructuresInSeekingShelter;
             }
-            LocationStructure nearestInteriorStructure = _owner.gridTileLocation.GetNearestInteriorStructureFromThisExcept(exclusions);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEEK_SHELTER, INTERACTION_TYPE.TAKE_SHELTER, _owner, _owner);
+            LocationStructure nearestInteriorStructure = owner.gridTileLocation.GetNearestInteriorStructureFromThisExcept(exclusions);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEEK_SHELTER, INTERACTION_TYPE.TAKE_SHELTER, owner, owner);
             job.AddOtherData(INTERACTION_TYPE.TAKE_SHELTER, new object[] { nearestInteriorStructure });
-            _owner.jobQueue.AddJobInQueue(job);
+            owner.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
@@ -2237,14 +2247,14 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Dark Ritual
     public bool TryCreateDarkRitualJob(out JobQueueItem producedJob) {
-	    if (_owner.currentRegion != null) {
+	    if (owner.currentRegion != null) {
 		    MagicCircle magicCircle = null;
-		    if (_owner.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE)) {
-			    List<MagicCircle> magicCircles = _owner.currentRegion.GetTileObjectsOfType<MagicCircle>();
+		    if (owner.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.MAGIC_CIRCLE)) {
+			    List<MagicCircle> magicCircles = owner.currentRegion.GetTileObjectsOfType<MagicCircle>();
 			    magicCircle = CollectionUtilities.GetRandomElement(magicCircles);
 		    } else {
 			    MagicCircle newCircle = InnerMapManager.Instance.CreateNewTileObject<MagicCircle>(TILE_OBJECT_TYPE.MAGIC_CIRCLE);
-			    List<LocationGridTile> choices = _owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
+			    List<LocationGridTile> choices = owner.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).unoccupiedTiles.ToList();
 			    if (choices.Count > 0) {
 				    LocationGridTile targetTile = CollectionUtilities.GetRandomElement(choices);
 				    targetTile.structure.AddPOI(newCircle, targetTile);
@@ -2254,12 +2264,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    }
 
 		    if (magicCircle != null) {
-			    GoapPlanJob ritualJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DARK_RITUAL, INTERACTION_TYPE.DARK_RITUAL, magicCircle, _owner);
+			    GoapPlanJob ritualJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DARK_RITUAL, INTERACTION_TYPE.DARK_RITUAL, magicCircle, owner);
 
 			    if (magicCircle.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
 				    //if provided magic circle is unbuilt, add a pre-made plan to draw that magic circle.
-				    ActualGoapNode drawNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRAW_MAGIC_CIRCLE], _owner, magicCircle, null, 0);
-				    ActualGoapNode ritualNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DARK_RITUAL], _owner, magicCircle, null, 0);
+				    ActualGoapNode drawNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRAW_MAGIC_CIRCLE], owner, magicCircle, null, 0);
+				    ActualGoapNode ritualNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DARK_RITUAL], owner, magicCircle, null, 0);
 				    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(drawNode), new SingleJobNode(ritualNode) }, magicCircle);
 				    goapPlan.SetDoNotRecalculate(true);
 				    // ritualJob.SetCannotBePushedBack(true);
@@ -2275,7 +2285,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    return false;
     }
     private void CheckIfDarkRitualJobRemoved(JobQueueItem job, Character character) {
-	    if (character == _owner && job.jobType == JOB_TYPE.DARK_RITUAL) {
+	    if (character == owner && job.jobType == JOB_TYPE.DARK_RITUAL) {
 		    //check if unbuilt magic circle is still valid, if any.
 		    Messenger.Broadcast(Signals.CHECK_UNBUILT_OBJECT_VALIDITY);
 		    Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, CheckIfDarkRitualJobRemoved);
@@ -2283,26 +2293,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    
     }
     private bool IsUnbuiltMagicCircleStillValid(BaseMapObject mapObject) {
-	    return _owner.jobQueue.HasJob(JOB_TYPE.DARK_RITUAL);
+	    return owner.jobQueue.HasJob(JOB_TYPE.DARK_RITUAL);
     }
     #endregion
 
     #region Cultist
     public void TriggerCultistTransform() {
-	    if (_owner.jobQueue.HasJob(JOB_TYPE.CULTIST_TRANSFORM) == false) {
+	    if (owner.jobQueue.HasJob(JOB_TYPE.CULTIST_TRANSFORM) == false) {
 		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CULTIST_TRANSFORM,
-			    INTERACTION_TYPE.CULTIST_TRANSFORM, _owner, _owner);
-		    _owner.jobQueue.AddJobInQueue(job);
+			    INTERACTION_TYPE.CULTIST_TRANSFORM, owner, owner);
+		    owner.jobQueue.AddJobInQueue(job);
 	    }
     }
     #endregion
 
     #region Party
     public bool TriggerExploreJob(out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EXPLORE], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXPLORE, INTERACTION_TYPE.EXPLORE, _owner, _owner);
+        if (!owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EXPLORE], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXPLORE, INTERACTION_TYPE.EXPLORE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2313,10 +2323,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerRescueJob(Character targetCharacter, out JobQueueItem producedJob) {
-        if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], _owner, targetCharacter, null, 0);
+        if (!owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2327,22 +2337,22 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerRescueJob(Character targetCharacter) {
-        if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], _owner, targetCharacter, null, 0);
+        if (!owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RESCUE], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESCUE, INTERACTION_TYPE.RESCUE, targetCharacter, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            return _owner.jobQueue.AddJobInQueue(job);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
     public bool TriggerMonsterInvadeJob(LocationStructure targetStructure, out JobQueueItem producedJob) {
-        if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.MONSTER_INVADE], _owner, _owner, new OtherData[] { new LocationStructureOtherData(targetStructure),  }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_INVADE, INTERACTION_TYPE.MONSTER_INVADE, _owner, _owner);
+        if (!owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.MONSTER_INVADE], owner, owner, new OtherData[] { new LocationStructureOtherData(targetStructure),  }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_INVADE, INTERACTION_TYPE.MONSTER_INVADE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2353,10 +2363,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerMonsterInvadeJob(HexTile targetHex, out JobQueueItem producedJob) {
-        if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.MONSTER_INVADE], _owner, _owner, new OtherData[] { new HexTileOtherData(targetHex) }, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_INVADE, INTERACTION_TYPE.MONSTER_INVADE, _owner, _owner);
+        if (!owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.MONSTER_INVADE], owner, owner, new OtherData[] { new HexTileOtherData(targetHex) }, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MONSTER_INVADE, INTERACTION_TYPE.MONSTER_INVADE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2367,22 +2377,22 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerReleaseJob(Character targetCharacter) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RELEASE_CHARACTER)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], _owner, targetCharacter, null, 0);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RELEASE_CHARACTER)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RELEASE_CHARACTER], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RELEASE_CHARACTER, INTERACTION_TYPE.RELEASE_CHARACTER, targetCharacter, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RELEASE_CHARACTER, INTERACTION_TYPE.RELEASE_CHARACTER, targetCharacter, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
-            return _owner.jobQueue.AddJobInQueue(job);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
     public bool TriggerHostSocialPartyJob(out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.partyComponent.hasParty) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.HOST_SOCIAL_PARTY], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HOST_SOCIAL_PARTY, INTERACTION_TYPE.HOST_SOCIAL_PARTY, _owner, _owner);
+        if (!owner.partyComponent.hasParty) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.HOST_SOCIAL_PARTY], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HOST_SOCIAL_PARTY, INTERACTION_TYPE.HOST_SOCIAL_PARTY, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2396,10 +2406,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Disguise
     public bool TriggerDisguiseJob(Character targetCharacter, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DISGUISE], _owner, targetCharacter, null, 0);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DISGUISE], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.DISGUISE, targetCharacter, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.DISGUISE, targetCharacter, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2413,8 +2423,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Succubus
     public bool TriggerMakeLoveJob(Character targetCharacter, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MAKE_LOVE, targetCharacter, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.MAKE_LOVE, targetCharacter, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -2426,26 +2436,26 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Inspect
     public void TriggerInspect(TileObject item) {
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, item, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, item, owner);
 	    //create predetermined plan
 	    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.INSPECT],
-		    _owner, item, null, 0);
+		    owner, item, null, 0);
 	    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, item);
 	    goapPlan.SetDoNotRecalculate(true);
 	    job.SetCannotBePushedBack(true);
 	    job.SetAssignedPlan(goapPlan);
-	    _owner.jobQueue.AddJobInQueue(job);
+	    owner.jobQueue.AddJobInQueue(job);
     }
     #endregion
 
     #region Kidnap
     public bool TriggerKidnapJob(Character target) {
-        if (_owner.homeSettlement != null && _owner.homeSettlement.prison != null) {
-            if (!_owner.jobQueue.HasJob(JOB_TYPE.KIDNAP)) {
+        if (owner.homeSettlement != null && owner.homeSettlement.prison != null) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP)) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KIDNAP, INTERACTION_TYPE.DROP,
-                    target, _owner);
-                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { _owner.homeSettlement.prison });
-                return _owner.jobQueue.AddJobInQueue(job);
+                    target, owner);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { owner.homeSettlement.prison });
+                return owner.jobQueue.AddJobInQueue(job);
             }
         }
         return false;
@@ -2454,10 +2464,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Disguise
     public bool TriggerRecruitJob(Character targetCharacter, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RECRUIT)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RECRUIT], _owner, targetCharacter, null, 0);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RECRUIT)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.RECRUIT], owner, targetCharacter, null, 0);
             GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECRUIT, INTERACTION_TYPE.RECRUIT, targetCharacter, _owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RECRUIT, INTERACTION_TYPE.RECRUIT, targetCharacter, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetAssignedPlan(goapPlan);
             producedJob = job;
@@ -2470,10 +2480,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Troll
     public bool TriggerBuildTrollCauldronJob(out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_TROLL_CAULDRON], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_TROLL_CAULDRON, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_TROLL_CAULDRON], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_TROLL_CAULDRON, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetAssignedPlan(goapPlan);
             producedJob = job;
@@ -2483,8 +2493,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerCookJob(Character targetCharacter, TileObject whereToCook, out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.COOK, targetCharacter, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PRODUCE_FOOD)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.COOK, targetCharacter, owner);
             job.AddOtherData(INTERACTION_TYPE.COOK, new object[] { whereToCook });
             producedJob = job;
             return true;
@@ -2493,9 +2503,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerRestrainJob(Character target) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.RESTRAIN)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, _owner);
-            return _owner.jobQueue.AddJobInQueue(job);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.RESTRAIN)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.RESTRAIN_CHARACTER, target, owner);
+            return owner.jobQueue.AddJobInQueue(job);
         }
         return false;
     }
@@ -2503,10 +2513,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Partying
     public bool TriggerSingJob(out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SING], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.SING, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.SING], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.SING, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2517,10 +2527,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerDanceJob(out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DANCE], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.DANCE, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DANCE], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.DANCE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2531,10 +2541,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerPartyDrinkJob(Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRINK], _owner, table, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.DRINK, table, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRINK], owner, table, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.DRINK, table, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2545,8 +2555,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerPartyEatJob(Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.EAT, table, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.EAT, table, owner);
             job.SetCannotBePushedBack(true);
             producedJob = job;
             return true;
@@ -2555,10 +2565,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerPlayCardsJob(Desk desk, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLAY_CARDS], _owner, desk, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.PLAY_CARDS, desk, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.PARTYING)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLAY_CARDS], owner, desk, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PARTYING, INTERACTION_TYPE.PLAY_CARDS, desk, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2575,7 +2585,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    TileObject unbuiltFurniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType);
 	    targetStructure.AddPOI(unbuiltFurniture);
 	    unbuiltFurniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-	    GoapPlanJob craftJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, unbuiltFurniture, _owner);
+	    GoapPlanJob craftJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_MISSING_FURNITURE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, unbuiltFurniture, owner);
 	    craftJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(tileObjectType).constructionCost });
 	    producedJob = craftJob;
 	    return true;
@@ -2585,8 +2595,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Wolf Lair
     public void TriggerSpawnWolfLair(LocationGridTile targetTile, out JobQueueItem producedJob) {
 	    producedJob = null;
-	    if (!_owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_WOLF_LAIR, _owner, _owner);
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.SPAWN_LAIR)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SPAWN_LAIR, INTERACTION_TYPE.BUILD_WOLF_LAIR, owner, owner);
 		    job.AddOtherData(INTERACTION_TYPE.BUILD_WOLF_LAIR, new object[] { targetTile });
 		    producedJob = job;
 	    }
@@ -2595,10 +2605,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Outside Home Region
     public bool TriggerDrinkJob(JOB_TYPE jobType, Table table, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(jobType)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRINK], _owner, table, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK, table, _owner);
+        if (!owner.jobQueue.HasJob(jobType)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.DRINK], owner, table, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK, table, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2609,10 +2619,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerBuildCampfireJob(out JobQueueItem producedJob) {
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_CAMPFIRE], _owner, _owner, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_CAMPFIRE, _owner, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.IDLE)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_CAMPFIRE], owner, owner, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IDLE, INTERACTION_TYPE.BUILD_CAMPFIRE, owner, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetAssignedPlan(goapPlan);
             producedJob = job;
@@ -2622,10 +2632,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         return false;
     }
     public bool TriggerWarmUp(Campfire campfire, out JobQueueItem producedJob) { //bool forceDoAction = false
-        if (!_owner.jobQueue.HasJob(JOB_TYPE.WARM_UP)) {
-            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.WARM_UP], _owner, campfire, null, 0);
-            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.WARM_UP, INTERACTION_TYPE.WARM_UP, campfire, _owner);
+        if (!owner.jobQueue.HasJob(JOB_TYPE.WARM_UP)) {
+            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.WARM_UP], owner, campfire, null, 0);
+            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, owner);
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.WARM_UP, INTERACTION_TYPE.WARM_UP, campfire, owner);
             goapPlan.SetDoNotRecalculate(true);
             job.SetCannotBePushedBack(true);
             job.SetAssignedPlan(goapPlan);
@@ -2639,9 +2649,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Evangelize
     private bool IsValidEvangelizeTarget(Character character) {
-	    AWARENESS_STATE awarenessState = _owner.relationshipContainer.GetAwarenessState(character);
+	    AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(character);
 	    return character.isNormalCharacter && !character.traitContainer.HasTrait("Travelling") && 
-	           character.traitContainer.HasTrait("Cultist") == false && _owner.HasSameHomeAs(character) &&
+	           character.traitContainer.HasTrait("Cultist") == false && owner.HasSameHomeAs(character) &&
 	           awarenessState != AWARENESS_STATE.Missing && awarenessState != AWARENESS_STATE.Presumed_Dead;
     }
     public bool TryGetValidEvangelizeTarget(out Character targetCharacter) {
@@ -2659,7 +2669,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    for (int i = 0; i < choices.Count; i++) {
 			    Character character = choices[i];
 			    int weight = 0;
-			    string opinionLabel = _owner.relationshipContainer.GetOpinionLabel(character);
+			    string opinionLabel = owner.relationshipContainer.GetOpinionLabel(character);
 			    if (opinionLabel == RelationshipManager.Close_Friend) {
 				    weight += Random.Range(300, 451);
 			    } else if (opinionLabel == RelationshipManager.Friend) {
@@ -2669,7 +2679,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    }
 			    targetWeights.AddElement(character, weight);
 		    }
-		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{_owner.name}'s Evangelize Weights:");
+		    targetWeights.LogDictionaryValues($"{GameManager.Instance.TodayLogString()}{owner.name}'s Evangelize Weights:");
 		    if (targetWeights.GetTotalOfWeights() > 0) {
 			    targetCharacter = targetWeights.PickRandomElementGivenWeights();
 			    return true;
@@ -2680,9 +2690,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public bool TryCreateEvangelizeJob(Character target, out JobQueueItem producedJob) {
 	    //create predetermined plan and job
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, _owner);
+	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EVANGELIZE, INTERACTION_TYPE.EVANGELIZE, target, owner);
 	    List<JobNode> jobNodes = new List<JobNode>();
-	    ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], _owner, target, null, 0);
+	    ActualGoapNode evangelizeNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.EVANGELIZE], owner, target, null, 0);
 	    jobNodes.Add(new SingleJobNode(evangelizeNode));
 	    
 	    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
@@ -2697,13 +2707,52 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Snatch
     public void CreateSnatchJob(Character targetCharacter, LocationGridTile targetLocation, LocationStructure structure) {
-	    if (_owner.jobQueue.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
-		    _owner.behaviourComponent.SetIsSnatching(true);
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP, targetCharacter, _owner);
+	    if (owner.jobQueue.HasJob(JOB_TYPE.SNATCH, targetCharacter) == false) {
+		    owner.behaviourComponent.SetIsSnatching(true);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNATCH, INTERACTION_TYPE.DROP, targetCharacter, owner);
 		    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { structure, targetLocation });
-		    _owner.jobQueue.AddJobInQueue(job);
-		    Debug.Log($"{_owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
+		    owner.jobQueue.AddJobInQueue(job);
+		    Debug.Log($"{owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
 	    }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
+        //Currently N/A
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCharacterJobTriggerComponent : SaveData<CharacterJobTriggerComponent> {
+    public JOB_TYPE primaryJob;
+    public List<JOB_TYPE> priorityJobs;
+    public Dictionary<INTERACTION_TYPE, int> numOfTimesActionDone;
+    public List<JOB_TYPE> primaryJobCandidates;
+
+    public List<string> obtainPersonalItemRandomList;
+    public List<string> obtainPersonalItemUnownedRandomList;
+    public bool hasStartedScreamCheck;
+    public bool doNotDoRecoverHPJob;
+    public bool canReportDemonicStructure;
+
+    #region Overrides
+    public override void Save(CharacterJobTriggerComponent data) {
+        primaryJob = data.primaryJob;
+        priorityJobs = data.priorityJobs;
+        numOfTimesActionDone = data.numOfTimesActionDone;
+        primaryJobCandidates = data.primaryJobCandidates;
+        obtainPersonalItemRandomList = data.obtainPersonalItemRandomList;
+        obtainPersonalItemUnownedRandomList = data.obtainPersonalItemUnownedRandomList;
+        hasStartedScreamCheck = data.hasStartedScreamCheck;
+        doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
+        canReportDemonicStructure = data.canReportDemonicStructure;
+    }
+
+    public override CharacterJobTriggerComponent Load() {
+        CharacterJobTriggerComponent component = new CharacterJobTriggerComponent(this);
+        return component;
     }
     #endregion
 }

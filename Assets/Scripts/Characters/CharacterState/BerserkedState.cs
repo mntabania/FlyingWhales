@@ -20,9 +20,9 @@ public class BerserkedState : CharacterState {
 
     #region Overrides
     protected override void StartState() {
-        stateComponent.character.needsComponent.AdjustDoNotGetHungry(1);
-        stateComponent.character.needsComponent.AdjustDoNotGetBored(1);
-        stateComponent.character.needsComponent.AdjustDoNotGetTired(1);
+        stateComponent.owner.needsComponent.AdjustDoNotGetHungry(1);
+        stateComponent.owner.needsComponent.AdjustDoNotGetBored(1);
+        stateComponent.owner.needsComponent.AdjustDoNotGetTired(1);
         //stateComponent.character.traitContainer.AddTrait(stateComponent.character, "Berserked");
         //BerserkBuff berserkBuff = new BerserkBuff();
         //berserkBuff.SetLevel(level);
@@ -30,9 +30,9 @@ public class BerserkedState : CharacterState {
         base.StartState();
     }
     protected override void EndState() {
-        stateComponent.character.needsComponent.AdjustDoNotGetHungry(-1);
-        stateComponent.character.needsComponent.AdjustDoNotGetBored(-1);
-        stateComponent.character.needsComponent.AdjustDoNotGetTired(-1);
+        stateComponent.owner.needsComponent.AdjustDoNotGetHungry(-1);
+        stateComponent.owner.needsComponent.AdjustDoNotGetBored(-1);
+        stateComponent.owner.needsComponent.AdjustDoNotGetTired(-1);
         //stateComponent.character.needsComponent.AdjustHappiness(50);
         //stateComponent.character.needsComponent.AdjustTiredness(50);
         base.EndState();
@@ -116,12 +116,12 @@ public class BerserkedState : CharacterState {
         //    }
             
         //}
-        stateComponent.character.combatComponent.ClearAvoidInRange(false);
+        stateComponent.owner.combatComponent.ClearAvoidInRange(false);
 
         bool hasProcessedCombatBehavior = false;
         if (base.ProcessInVisionPOIsOnStartState()) {
-            for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
-                IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
+            for (int i = 0; i < stateComponent.owner.marker.inVisionPOIs.Count; i++) {
+                IPointOfInterest poi = stateComponent.owner.marker.inVisionPOIs[i];
                 if (OnEnterVisionWith(poi)) {
                     if(poi is Character) {
                         hasProcessedCombatBehavior = true;
@@ -130,9 +130,9 @@ public class BerserkedState : CharacterState {
                 }
             }
         }
-        if (stateComponent.character.combatComponent.hostilesInRange.Count > 0 && !hasProcessedCombatBehavior) {
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, stateComponent.character);
-            stateComponent.character.jobQueue.AddJobInQueue(job);
+        if (stateComponent.owner.combatComponent.hostilesInRange.Count > 0 && !hasProcessedCombatBehavior) {
+            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, stateComponent.owner);
+            stateComponent.owner.jobQueue.AddJobInQueue(job);
             //stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
         }
         return true;
@@ -158,9 +158,9 @@ public class BerserkedState : CharacterState {
     #endregion
 
     private void OnArriveAtLocation() {
-        if (stateComponent.character.currentActionNode == null) {
+        if (stateComponent.owner.currentActionNode == null) {
             Debug.LogWarning(
-                $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} arrived at location of item/tile object to be destroyed during {stateName}, but current action is null");
+                $"{GameManager.Instance.TodayLogString()}{stateComponent.owner.name} arrived at location of item/tile object to be destroyed during {stateName}, but current action is null");
             return;
         }
         //stateComponent.character.currentActionNode.SetEndAction(BerserkAgain);
@@ -180,16 +180,16 @@ public class BerserkedState : CharacterState {
     //    ResumeState();
     //}
     private void StartBerserkedMovement() {
-        stateComponent.character.marker.GoTo(PickRandomTileToGoTo(), StartBerserkedMovement);
+        stateComponent.owner.marker.GoTo(PickRandomTileToGoTo(), StartBerserkedMovement);
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure chosenStructure = stateComponent.character.currentRegion.GetRandomStructure();
+        LocationStructure chosenStructure = stateComponent.owner.currentRegion.GetRandomStructure();
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if (chosenTile != null) {
             return chosenTile;
         } else {
             throw new System.Exception(
-                $"No tile in {chosenStructure.name} for {stateComponent.character.name} to go to in {stateName}");
+                $"No tile in {chosenStructure.name} for {stateComponent.owner.name} to go to in {stateName}");
         }
     }
 

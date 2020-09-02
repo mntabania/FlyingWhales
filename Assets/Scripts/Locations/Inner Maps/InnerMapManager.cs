@@ -508,6 +508,9 @@ namespace Inner_Maps {
         public TileObject GetTileObject(TILE_OBJECT_TYPE type, int id) {
             return DatabaseManager.Instance.tileObjectDatabase.GetTileObject(type, id);
         }
+        public TileObject GetTileObjectByPersistentID(string id) {
+            return DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(id);
+        }
         public TileObject GetFirstTileObject(TILE_OBJECT_TYPE type) {
             return DatabaseManager.Instance.tileObjectDatabase.GetFirstTileObject(type);
         }

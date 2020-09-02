@@ -21,6 +21,7 @@ public interface IReactable {
 
 public interface IRumorable {
     string name { get; }
+    RUMOR_TYPE rumorType { get; }
     Character actor { get; }
     IPointOfInterest target { get; }
     Character disguisedActor { get; }

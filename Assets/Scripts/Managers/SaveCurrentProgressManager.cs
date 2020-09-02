@@ -67,7 +67,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress.SaveDate();
         currentSaveDataProgress.SavePlayer();
         currentSaveDataProgress.SaveFactions();
-
+        currentSaveDataProgress.SaveCharacters();
         currentSaveDataProgress.SaveJobs();
         
         //save world map

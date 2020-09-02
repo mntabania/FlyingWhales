@@ -100,7 +100,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             AddCommonAdvertisements();
         }
         ConstructDefaultActions();
-        logComponent = new LogComponent(this);
+        logComponent = new LogComponent(); logComponent.SetOwner(this);
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
@@ -124,7 +124,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             AddAdvertisedAction(interactionType);
         }
         ConstructDefaultActions();
-        logComponent = new LogComponent(this);
+
+        logComponent = data.logComponent.Load();
+        logComponent.SetOwner(this);
+
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
@@ -135,6 +138,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// </summary>
     /// <param name="data">Saved data</param>
     public virtual void LoadSecondWave(SaveDataTileObject data) {
+        logComponent.LoadReferences(data.logComponent);
         for (int i = 0; i < data.jobsTargetingThis.Count; i++) {
             string jobID = data.jobsTargetingThis[i];
             JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);

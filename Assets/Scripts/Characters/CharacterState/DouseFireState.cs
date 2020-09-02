@@ -42,7 +42,7 @@ public class DouseFireState : CharacterState {
         //     IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
         //     AddFire(poi);
         // }
-        AddFire(stateComponent.character);
+        AddFire(stateComponent.owner);
         base.StartState();
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
@@ -60,12 +60,12 @@ public class DouseFireState : CharacterState {
             } else {
                 //get water from pond
                 if (GetWater() == false) {
-                    job.AddBlacklistedCharacter(stateComponent.character);
+                    job.AddBlacklistedCharacter(stateComponent.owner);
                     stateComponent.ExitCurrentState();
                 }
             }
         } else {
-            if (stateComponent.character.currentActionNode == null && stateComponent.currentState == this) {
+            if (stateComponent.owner.currentActionNode == null && stateComponent.currentState == this) {
                 //no more fire, exit state
                 stateComponent.ExitCurrentState();
             }
@@ -105,7 +105,7 @@ public class DouseFireState : CharacterState {
 
     #region Utilities
     private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
-        if (trait is Burning && traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(stateComponent.character.homeSettlement)) {
+        if (trait is Burning && traitable.gridTileLocation != null && traitable.gridTileLocation.IsPartOfSettlement(stateComponent.owner.homeSettlement)) {
             if (_fires.Contains(traitable) == false) {
                 _fires.Add(traitable);
             }
@@ -114,7 +114,7 @@ public class DouseFireState : CharacterState {
     private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
         if (trait is Burning) {
             if (_fires.Remove(traitable)) {
-                if (currentTarget == traitable && removedBy != stateComponent.character) { 
+                if (currentTarget == traitable && removedBy != stateComponent.owner) { 
                     //only redetermine action if burning was removed by something or someone else
                     currentTarget = null;
                     isDousingFire = false;
@@ -124,7 +124,7 @@ public class DouseFireState : CharacterState {
         }
     }
     private bool HasWater() {
-        return stateComponent.character.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
+        return stateComponent.owner.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
     private bool NeedsWater() {
         return true; 
@@ -136,12 +136,12 @@ public class DouseFireState : CharacterState {
         if (isFetchingWater) {
             return true;
         }
-        List<TileObject> targets = stateComponent.character.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
+        List<TileObject> targets = stateComponent.owner.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
         TileObject nearestWater = null;
         float nearestDist = 9999f;
         for (int i = 0; i < targets.Count; i++) {
             TileObject currObj = targets[i];
-            float dist = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currObj.gridTileLocation.localLocation);
+            float dist = Vector2.Distance(stateComponent.owner.gridTileLocation.localLocation, currObj.gridTileLocation.localLocation);
             if (dist < nearestDist) {
                 nearestWater = currObj;
                 nearestDist = dist;
@@ -149,18 +149,18 @@ public class DouseFireState : CharacterState {
         }
 
         if (nearestWater != null) {
-            stateComponent.character.marker.GoTo(nearestWater.gridTileLocation, ObtainWater);
+            stateComponent.owner.marker.GoTo(nearestWater.gridTileLocation, ObtainWater);
             isFetchingWater = true;
             return true;
         }
-        Debug.LogWarning($"{stateComponent.character.name} cannot find any sources of water!");
+        Debug.LogWarning($"{stateComponent.owner.name} cannot find any sources of water!");
         return false;
     }
     private void ObtainWater() {
         //character gains 3 water buckets
-        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
-        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
-        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+        stateComponent.owner.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+        stateComponent.owner.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
+        stateComponent.owner.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_FLASK));
         isFetchingWater = false; 
     }
     private void DouseNearestFire() {
@@ -171,7 +171,7 @@ public class DouseFireState : CharacterState {
         ITraitable nearestFire = null;
         float nearest = 99999f;
         if (currentTarget != null && currentTarget.worldObject != null && currentTarget.traitContainer.GetNormalTrait<Burning>("Burning") != null) {
-            nearest = Vector2.Distance(stateComponent.character.worldObject.transform.position, currentTarget.worldObject.transform.position);
+            nearest = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currentTarget.worldObject.transform.position);
             nearestFire = currentTarget;
         }
 
@@ -180,7 +180,7 @@ public class DouseFireState : CharacterState {
             Burning burning = currFire.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burning != null && burning.douser == null) {
                 //only consider dousing fire that is not yet assigned
-                float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);
+                float dist = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currFire.worldObject.transform.position);
                 if (dist < nearest) {
                     nearestFire = currFire;
                     nearest = dist;
@@ -192,20 +192,20 @@ public class DouseFireState : CharacterState {
             currentTarget = nearestFire;
             Burning burning = nearestFire.traitContainer.GetNormalTrait<Burning>("Burning"); 
             Assert.IsNotNull(burning, $"Burning of {nearestFire} is null.");
-            burning.SetDouser(stateComponent.character);
-            stateComponent.character.marker.GoTo(nearestFire, DouseFire);
+            burning.SetDouser(stateComponent.owner);
+            stateComponent.owner.marker.GoTo(nearestFire, DouseFire);
         } 
         Profiler.EndSample();
     }
     private void DouseFire() {
-        if (currentTarget != null && currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character)) {
+        if (currentTarget != null && currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.owner)) {
             if (NeedsWater()) {
-                TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
+                TileObject water = this.stateComponent.owner.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
                 if (water != null) {
                     //Reduce water count by 1.
-                    this.stateComponent.character.UnobtainItem(water);
+                    this.stateComponent.owner.UnobtainItem(water);
                 }
-                currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);    
+                currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.owner);    
             }    
         }
         isDousingFire = false;

@@ -219,7 +219,7 @@ public class Summon : Character {
         behaviourComponent.OnSummon(tile);
     }
     protected virtual void AfterDeath(LocationGridTile deathTileLocation) {
-        if (marker == null && destroyMarkerOnDeath && (behaviourComponent.isInvading || behaviourComponent.isDefending || behaviourComponent.isHarassing)) {
+        if (marker == null && destroyMarkerOnDeath/* && (behaviourComponent.isInvading || behaviourComponent.isDefending || behaviourComponent.isHarassing)*/) {
             GameManager.Instance.CreateParticleEffectAt(deathTileLocation, PARTICLE_EFFECT.Minion_Dissipate);
         }
         behaviourComponent.SetIsHarassing(false, null);

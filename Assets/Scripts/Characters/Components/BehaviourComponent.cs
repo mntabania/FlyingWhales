@@ -8,20 +8,16 @@ using Locations.Settlements;
 using Pathfinding;
 using UtilityScripts;
 
-public class BehaviourComponent {
-
-	public Character owner { get; private set; }
+public class BehaviourComponent : CharacterComponent {
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
-    public List<Character> invadeCombatantTargetList { get; private set; }
-    public List<Character> invadeNonCombatantTargetList { get; private set; }
-    public NPCSettlement assignedTargetSettlement { get; private set; }
+    //public NPCSettlement assignedTargetSettlement { get; private set; }
     public NPCSettlement attackVillageTarget { get; private set; }
     public HexTile attackHexTarget { get; private set; }
-    public HexTile assignedTargetHex { get; private set; }
+    //public HexTile assignedTargetHex { get; private set; }
     public DemonicStructure attackDemonicStructureTarget { get; private set; }
-    public bool isHarassing { get; private set; }
-    public bool isDefending { get; private set; }
-    public bool isInvading { get; private set; }
+    //public bool isHarassing { get; private set; }
+    //public bool isDefending { get; private set; }
+    //public bool isInvading { get; private set; }
     public bool isAttackingDemonicStructure { get; private set; }
     public bool hasLayedAnEgg { get; private set; }
     public bool isAgitated { get; private set; }
@@ -36,15 +32,14 @@ public class BehaviourComponent {
     public NPCSettlement dryingTilesForSettlement { get; private set; }
     //mining
     public LocationGridTile targetMiningTile { get; private set; }
-    public ABPath currentMiningPath { get; private set; }
     
     //Abduct
     //public ABPath currentAbductDigPath { get; private set; }
     public Character currentAbductTarget { get; private set; }
     
     //De-Mood
-    public bool canDeMood => _currentDeMoodCooldown >= _deMoodCooldownPeriod;
-    private int _currentDeMoodCooldown;
+    public bool canDeMood => currentDeMoodCooldown >= _deMoodCooldownPeriod;
+    public int currentDeMoodCooldown { get; private set; }
     private readonly int _deMoodCooldownPeriod;
     public List<HexTile> deMoodVillageTarget { get; private set; }
     
@@ -53,8 +48,8 @@ public class BehaviourComponent {
     public int followerCount { get; private set; }
     
     //disabler
-    public bool canDisable => _currentDisableCooldown >= _disableCooldownPeriod;
-    private int _currentDisableCooldown;
+    public bool canDisable => currentDisableCooldown >= _disableCooldownPeriod;
+    public int currentDisableCooldown { get; private set; }
     private readonly int _disableCooldownPeriod;
     public Character invaderToFollow { get; private set; }
     
@@ -64,8 +59,8 @@ public class BehaviourComponent {
     public bool hasEatenInTheNight { get; private set; }
     
     //arsonist
-    public bool canArson => _currentArsonCooldown >= _arsonCooldownPeriod;
-    private int _currentArsonCooldown;
+    public bool canArson => currentArsonCooldown >= _arsonCooldownPeriod;
+    public int currentArsonCooldown { get; private set; }
     private readonly int _arsonCooldownPeriod;
     public List<HexTile> arsonVillageTarget { get; private set; }
     
@@ -75,63 +70,65 @@ public class BehaviourComponent {
     //snatcher
     public bool isCurrentlySnatching;
     
-    private COMBAT_MODE combatModeBeforeHarassRaidInvade;
-    private COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
+    //private COMBAT_MODE combatModeBeforeHarassRaidInvade;
+    public COMBAT_MODE combatModeBeforeAttackingDemonicStructure { get; private set; }
 
-    public BehaviourComponent (Character owner) {
-        this.owner = owner;
+    public BehaviourComponent () {
         defaultBehaviourSetName = string.Empty;
         currentBehaviourComponents = new List<CharacterBehaviourComponent>();
-        invadeCombatantTargetList = new List<Character>();
-        invadeNonCombatantTargetList = new List<Character>();
         
         //De-Mood
         _deMoodCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
-        _currentDeMoodCooldown = _deMoodCooldownPeriod;
+        currentDeMoodCooldown = _deMoodCooldownPeriod;
         
         //Disabler
         _disableCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
-        _currentDisableCooldown = _disableCooldownPeriod;
+        currentDisableCooldown = _disableCooldownPeriod;
         
         //Arson
         _arsonCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
-        _currentArsonCooldown = _arsonCooldownPeriod;
+        currentArsonCooldown = _arsonCooldownPeriod;
         
         PopulateInitialBehaviourComponents();
+    }
+    public BehaviourComponent(SaveDataBehaviourComponent data) {
+        _deMoodCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _disableCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+        _arsonCooldownPeriod = GameManager.ticksPerHour * 2; //2 hours
+
+        currentBehaviourComponents = new List<CharacterBehaviourComponent>();
+        for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
+            CharacterBehaviourComponent component = CharacterManager.Instance.GetCharacterBehaviourComponent(System.Type.GetType(data.currentBehaviourComponents[i]));
+            if (!currentBehaviourComponents.Contains(component)) {
+                currentBehaviourComponents.Add(component);
+            }
+        }
+        isAttackingDemonicStructure = data.isAttackingDemonicStructure;
+        hasLayedAnEgg = data.hasLayedAnEgg;
+        isAgitated = data.isAgitated;
+        subterraneanJustExitedCombat = data.subterraneanJustExitedCombat;
+        defaultBehaviourSetName = data.defaultBehaviourSetName;
+        currentDeMoodCooldown = data.currentDeMoodCooldown;
+        followerCount = data.followerCount;
+        currentDisableCooldown = data.currentDisableCooldown;
+        currentArsonCooldown = data.currentArsonCooldown;
+        hasEatenInTheMorning = data.hasEatenInTheMorning;
+        hasEatenInTheNight = data.hasEatenInTheNight;
+        isCurrentlySnatching = data.isCurrentlySnatching;
+        combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
     }
 
     #region General
     public void PopulateInitialBehaviourComponents() {
         ChangeDefaultBehaviourSet(CharacterManager.Default_Resident_Behaviour);
     }
-    //public void OnChangeClass(CharacterClass newClass, CharacterClass oldClass) {
-    //    if(oldClass == newClass) {
-    //        return;
-    //    }
-    //    //if(oldClass != null && newClass != null) {
-    //    //    string oldClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(oldClass.className);
-    //    //    string newClassBehaviourComponentKey = CharacterManager.Instance.GetClassBehaviourComponentKey(newClass.className);
-    //    //    if (oldClassBehaviourComponentKey == newClassBehaviourComponentKey) {
-    //    //        return;
-    //    //    }
-    //    //}
-    //    //if (oldClass != null) {
-    //    //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(oldClass.className);
-    //    //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
-    //    //        RemoveBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
-    //    //    }
-    //    //}
-    //    //if(newClass != null) {
-    //    //    System.Type[] classBehaviourComponents = CharacterManager.Instance.GetDefaultBehaviourSet(newClass.className);
-    //    //    for (int i = 0; i < classBehaviourComponents.Length; i++) {
-    //    //        AddBehaviourComponent(CharacterManager.Instance.GetCharacterBehaviourComponent(classBehaviourComponents[i]));
-    //    //    }
-    //    //}
-    //}
     private bool AddBehaviourComponent(CharacterBehaviourComponent component) {
         if(component == null) {
             throw new System.Exception(
                 $"{GameManager.Instance.TodayLogString()}{owner.name} is trying to add a new behaviour component but it is null!");
+        }
+        if (HasBehaviour(component.GetType())) {
+            return false;
         }
         bool behaviourAdded = AddBehaviourComponentInOrder(component);
         if (behaviourAdded) {
@@ -186,90 +183,90 @@ public class BehaviourComponent {
         return true;
     }
     public void SetIsHarassing(bool state, HexTile target) {
-        if(isHarassing != state) {
-            isHarassing = state;
-            NPCSettlement previousTarget = assignedTargetSettlement;
-            assignedTargetHex = target;
-            if (assignedTargetHex != null) {
-                assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
-            } else {
-                assignedTargetSettlement = null;
-            }
-            owner.jobQueue.CancelAllJobs();
-            if (isHarassing) {
-                assignedTargetSettlement.IncreaseIsBeingHarassedCount();
-                combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
-                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                AddBehaviourComponent(typeof(HarassBehaviour));
-                //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Harass_Action, () => true, null, () => SetIsHarassing(false, null)));
-                //owner.AddPlayerAction(SPELL_TYPE.END_HARASS);
-            } else {
-                previousTarget.DecreaseIsBeingHarassedCount();
-                owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
-                RemoveBehaviourComponent(typeof(HarassBehaviour));
-                //owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
-                //owner.RemovePlayerAction(SPELL_TYPE.END_HARASS);
-            }
-        }
+        //if(isHarassing != state) {
+        //    isHarassing = state;
+        //    NPCSettlement previousTarget = assignedTargetSettlement;
+        //    assignedTargetHex = target;
+        //    if (assignedTargetHex != null) {
+        //        assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
+        //    } else {
+        //        assignedTargetSettlement = null;
+        //    }
+        //    owner.jobQueue.CancelAllJobs();
+        //    if (isHarassing) {
+        //        assignedTargetSettlement.IncreaseIsBeingHarassedCount();
+        //        combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
+        //        owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //        AddBehaviourComponent(typeof(HarassBehaviour));
+        //        //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
+        //        //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Harass_Action, () => true, null, () => SetIsHarassing(false, null)));
+        //        //owner.AddPlayerAction(SPELL_TYPE.END_HARASS);
+        //    } else {
+        //        previousTarget.DecreaseIsBeingHarassedCount();
+        //        owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
+        //        RemoveBehaviourComponent(typeof(HarassBehaviour));
+        //        //owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
+        //        //owner.RemovePlayerAction(SPELL_TYPE.END_HARASS);
+        //    }
+        //}
     }
     public void SetIsDefending(bool state, HexTile target) {
-        if (isDefending != state) {
-            isDefending = state;
-            HexTile previousTarget = assignedTargetHex;
-            assignedTargetHex = target;
-            //if (assignedTargetHex != null) {
-            //    assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
-            //} else {
-            //    assignedTargetSettlement = null;
-            //}
-            owner.jobQueue.CancelAllJobs();
-            if (isDefending) {
-                assignedTargetHex.IncreaseIsBeingDefendedCount();
-                combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
-                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                AddBehaviourComponent(typeof(DefendBehaviour));
-                //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));
-                //owner.AddPlayerAction(SPELL_TYPE.END_RAID);
-            } else {
-                previousTarget.DecreaseIsBeingDefendedCount();
-                owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
-                RemoveBehaviourComponent(typeof(DefendBehaviour));
-                //owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
-                //owner.RemovePlayerAction(SPELL_TYPE.END_RAID);
-            }
-        }
+        //if (isDefending != state) {
+        //    isDefending = state;
+        //    HexTile previousTarget = assignedTargetHex;
+        //    assignedTargetHex = target;
+        //    //if (assignedTargetHex != null) {
+        //    //    assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
+        //    //} else {
+        //    //    assignedTargetSettlement = null;
+        //    //}
+        //    owner.jobQueue.CancelAllJobs();
+        //    if (isDefending) {
+        //        assignedTargetHex.IncreaseIsBeingDefendedCount();
+        //        combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
+        //        owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //        AddBehaviourComponent(typeof(DefendBehaviour));
+        //        //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
+        //        //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Raid_Action, () => true, null, () => SetIsRaiding(false, null)));
+        //        //owner.AddPlayerAction(SPELL_TYPE.END_RAID);
+        //    } else {
+        //        previousTarget.DecreaseIsBeingDefendedCount();
+        //        owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
+        //        RemoveBehaviourComponent(typeof(DefendBehaviour));
+        //        //owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
+        //        //owner.RemovePlayerAction(SPELL_TYPE.END_RAID);
+        //    }
+        //}
     }
     public void SetIsInvading(bool state, HexTile target) {
-        if (isInvading != state) {
-            isInvading = state;
-            NPCSettlement previousTarget = assignedTargetSettlement;
-            assignedTargetHex = target;
-            if (assignedTargetHex != null) {
-                assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
-            } else {
-                assignedTargetSettlement = null;
-            }
-            owner.jobQueue.CancelAllJobs();
-            if (isInvading) {
-                assignedTargetSettlement.IncreaseIsBeingInvadedCount();
-                combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
-                owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
-                AddBehaviourComponent(typeof(InvadeBehaviour));
-                //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
-                //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
-                //owner.AddPlayerAction(SPELL_TYPE.END_INVADE);
-                //Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
-            } else {
-                previousTarget.DecreaseIsBeingInvadedCount();
-                owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
-                RemoveBehaviourComponent(typeof(InvadeBehaviour));
-                //owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
-                //owner.RemovePlayerAction(SPELL_TYPE.END_INVADE);
-                //Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
-            }
-        }
+        //if (isInvading != state) {
+        //    isInvading = state;
+        //    NPCSettlement previousTarget = assignedTargetSettlement;
+        //    assignedTargetHex = target;
+        //    if (assignedTargetHex != null) {
+        //        assignedTargetSettlement = assignedTargetHex.settlementOnTile as NPCSettlement;
+        //    } else {
+        //        assignedTargetSettlement = null;
+        //    }
+        //    owner.jobQueue.CancelAllJobs();
+        //    if (isInvading) {
+        //        assignedTargetSettlement.IncreaseIsBeingInvadedCount();
+        //        combatModeBeforeHarassRaidInvade = owner.combatComponent.combatMode;
+        //        owner.combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        //        AddBehaviourComponent(typeof(InvadeBehaviour));
+        //        //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
+        //        //owner.AddPlayerAction(new PlayerAction(PlayerDB.End_Invade_Action, () => true, null, () => SetIsInvading(false, null)));
+        //        //owner.AddPlayerAction(SPELL_TYPE.END_INVADE);
+        //        //Messenger.AddListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+        //    } else {
+        //        previousTarget.DecreaseIsBeingInvadedCount();
+        //        owner.combatComponent.SetCombatMode(combatModeBeforeHarassRaidInvade);
+        //        RemoveBehaviourComponent(typeof(InvadeBehaviour));
+        //        //owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
+        //        //owner.RemovePlayerAction(SPELL_TYPE.END_INVADE);
+        //        //Messenger.RemoveListener<NPCSettlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
+        //    }
+        //}
     }
     //private void OnNoLongerAbleResidentsInsideSettlement(NPCSettlement npcSettlement) {
     //    if(assignedTargetSettlement == npcSettlement) {
@@ -406,8 +403,8 @@ public class BehaviourComponent {
             if (goapPlanJob.jobType == JOB_TYPE.IDLE_RETURN_HOME) {
                 if (character.homeStructure != null) {
                     return character.movementComponent.HasPathToEvenIfDiffRegion(character.homeStructure.GetRandomUnoccupiedTile());
-                } else if (character.territorries != null && character.territorries.Count > 0) {
-                    HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territorries);
+                } else if (character.territories != null && character.territories.Count > 0) {
+                    HexTile randomTerritory = CollectionUtilities.GetRandomElement(character.territories);
                     return character.movementComponent.HasPathToEvenIfDiffRegion(CollectionUtilities.GetRandomElement(randomTerritory.locationGridTiles));
                 }
             } else if (goapPlanJob.jobType == JOB_TYPE.RESCUE || goapPlanJob.jobType == JOB_TYPE.EXTERMINATE ||
@@ -562,9 +559,6 @@ public class BehaviourComponent {
     public void SetTargetMiningTile(LocationGridTile tile) {
         targetMiningTile = tile;
     }
-    public void SetCurrentMiningPath(ABPath path) {
-        currentMiningPath = path;
-    }
     #endregion
 
     #region Attack Village
@@ -616,14 +610,14 @@ public class BehaviourComponent {
         }
     }
     private void StartDeMoodCooldown() {
-        _currentDeMoodCooldown = 0;
+        currentDeMoodCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);
     }
     private void PerTickDeMoodCooldown() {
-        if (_currentDeMoodCooldown >= _deMoodCooldownPeriod) {
+        if (currentDeMoodCooldown >= _deMoodCooldownPeriod) {
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickDeMoodCooldown);    
         }
-        _currentDeMoodCooldown++;
+        currentDeMoodCooldown++;
     }
     public void SetDeMoodVillageTarget(List<HexTile> targets) {
         deMoodVillageTarget = targets;
@@ -656,14 +650,14 @@ public class BehaviourComponent {
         }
     }
     private void StartDisablerCooldown() {
-        _currentDisableCooldown = 0;
+        currentDisableCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickDisablerCooldown);
     }
     private void PerTickDisablerCooldown() {
-        if (_currentDisableCooldown >= _disableCooldownPeriod) {
+        if (currentDisableCooldown >= _disableCooldownPeriod) {
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickDisablerCooldown);    
         }
-        _currentDisableCooldown++;
+        currentDisableCooldown++;
     }
     public void SetInvaderToFollow(Character characterToFollow) {
         Character previousInvaderToFollow = invaderToFollow;
@@ -795,14 +789,14 @@ public class BehaviourComponent {
         arsonVillageTarget = target;
     }
     private void StartArsonistCooldown() {
-        _currentArsonCooldown = 0;
+        currentArsonCooldown = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickArsonistCooldown);
     }
     private void PerTickArsonistCooldown() {
-        if (_currentArsonCooldown >= _arsonCooldownPeriod) {
+        if (currentArsonCooldown >= _arsonCooldownPeriod) {
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickArsonistCooldown);    
         }
-        _currentArsonCooldown++;
+        currentArsonCooldown++;
     }
     public void OnBecomeArsonist() {
         Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfArsonistDidBurn);
@@ -902,7 +896,7 @@ public class BehaviourComponent {
         if (character == owner) {
             if (character.homeSettlement != null && character.homeSettlement.tiles.Contains(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");
-            } else if (character.territorries != null && character.territorries.Contains(tile)) {
+            } else if (character.territories != null && character.territories.Contains(tile)) {
                 character.traitContainer.RemoveTrait(character, "Dazed");    
             }
         }
@@ -927,6 +921,199 @@ public class BehaviourComponent {
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnDazedCharacterCanNoLongerPerform);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnDazedCharacterStartedState);
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataBehaviourComponent data) {
+        if (data.attackVillageTarget != string.Empty) {
+            attackVillageTarget = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.attackVillageTarget) as NPCSettlement;
+        }
+        if (data.attackHexTarget != string.Empty) {
+            attackHexTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.attackHexTarget);
+        }
+        if (data.attackDemonicStructureTarget != string.Empty) {
+            attackDemonicStructureTarget = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.attackDemonicStructureTarget) as DemonicStructure;
+        }
+        if (data.dousingFireForSettlement != string.Empty) {
+            dousingFireForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dousingFireForSettlement) as NPCSettlement;
+        }
+        if (data.cleansingTilesForSettlement != string.Empty) {
+            cleansingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.cleansingTilesForSettlement) as NPCSettlement;
+        }
+        if (data.dryingTilesForSettlement != string.Empty) {
+            dryingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dryingTilesForSettlement) as NPCSettlement;
+        }
+        if (data.targetMiningTile != string.Empty) {
+            targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.targetMiningTile);
+        }
+        if (data.currentAbductTarget != string.Empty) {
+            currentAbductTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);
+        }
+        if (data.invaderToFollow != string.Empty) {
+            invaderToFollow = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);
+        }
+        if (data.nest != string.Empty) {
+            nest = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.nest);
+        }
+        if (data.abominationTarget != string.Empty) {
+            abominationTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.abominationTarget);
+        }
+        if (data.deMoodVillageTarget != null) {
+            deMoodVillageTarget = new List<HexTile>();
+            for (int i = 0; i < data.deMoodVillageTarget.Count; i++) {
+                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.deMoodVillageTarget[i]);
+                deMoodVillageTarget.Add(hex);
+            }
+        }
+        if (data.invadeVillageTarget != null) {
+            invadeVillageTarget = new List<HexTile>();
+            for (int i = 0; i < data.invadeVillageTarget.Count; i++) {
+                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.invadeVillageTarget[i]);
+                invadeVillageTarget.Add(hex);
+            }
+        }
+        if (data.arsonVillageTarget != null) {
+            arsonVillageTarget = new List<HexTile>();
+            for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
+                HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.arsonVillageTarget[i]);
+                arsonVillageTarget.Add(hex);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
+    public List<string> currentBehaviourComponents;
+    public string attackVillageTarget;
+    public string attackHexTarget;
+    public string attackDemonicStructureTarget; //Must be demonic structure when loaded
+    public bool isAttackingDemonicStructure;
+    public bool hasLayedAnEgg;
+    public bool isAgitated;
+    public bool subterraneanJustExitedCombat;
+    public string defaultBehaviourSetName;
+
+    //douse fire
+    public string dousingFireForSettlement;
+    //cleanse tiles
+    public string cleansingTilesForSettlement;
+    //cleanse tiles
+    public string dryingTilesForSettlement;
+    //mining
+    public string targetMiningTile;
+
+    //Abduct
+    public string currentAbductTarget;
+
+    //De-Mood
+    public int currentDeMoodCooldown;
+    public List<string> deMoodVillageTarget;
+
+    //invade
+    public List<string> invadeVillageTarget;
+    public int followerCount;
+
+    //disabler
+    public int currentDisableCooldown;
+    public string invaderToFollow;
+
+    //abductor
+    public string nest;
+    public bool hasEatenInTheMorning;
+    public bool hasEatenInTheNight;
+
+    //arsonist
+    public int currentArsonCooldown;
+    public List<string> arsonVillageTarget;
+
+    //Abomination
+    public string abominationTarget;
+
+    //snatcher
+    public bool isCurrentlySnatching;
+
+    public COMBAT_MODE combatModeBeforeAttackingDemonicStructure;
+
+    #region Overrides
+    public override void Save(BehaviourComponent data) {
+        currentBehaviourComponents = new List<string>();
+        for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
+            currentBehaviourComponents.Add(data.currentBehaviourComponents[i].ToString());
+        }
+        isAttackingDemonicStructure = data.isAttackingDemonicStructure;
+        hasLayedAnEgg = data.hasLayedAnEgg;
+        isAgitated = data.isAgitated;
+        subterraneanJustExitedCombat = data.subterraneanJustExitedCombat;
+        defaultBehaviourSetName = data.defaultBehaviourSetName;
+        currentDeMoodCooldown = data.currentDeMoodCooldown;
+        followerCount = data.followerCount;
+        currentDisableCooldown = data.currentDisableCooldown;
+        currentArsonCooldown = data.currentArsonCooldown;
+        hasEatenInTheMorning = data.hasEatenInTheMorning;
+        hasEatenInTheNight = data.hasEatenInTheNight;
+        isCurrentlySnatching = data.isCurrentlySnatching;
+        combatModeBeforeAttackingDemonicStructure = data.combatModeBeforeAttackingDemonicStructure;
+
+
+        if (data.attackVillageTarget != null) {
+            attackVillageTarget = data.attackVillageTarget.persistentID;
+        }
+        if (data.attackHexTarget != null) {
+            attackHexTarget = data.attackHexTarget.persistentID;
+        }
+        if (data.attackDemonicStructureTarget != null) {
+            attackDemonicStructureTarget = data.attackDemonicStructureTarget.persistentID;
+        }
+        if (data.dousingFireForSettlement != null) {
+            dousingFireForSettlement = data.dousingFireForSettlement.persistentID;
+        }
+        if (data.cleansingTilesForSettlement != null) {
+            cleansingTilesForSettlement = data.cleansingTilesForSettlement.persistentID;
+        }
+        if (data.dryingTilesForSettlement != null) {
+            dryingTilesForSettlement = data.dryingTilesForSettlement.persistentID;
+        }
+        if (data.targetMiningTile != null) {
+            targetMiningTile = data.targetMiningTile.persistentID;
+        }
+        if (data.currentAbductTarget != null) {
+            currentAbductTarget = data.currentAbductTarget.persistentID;
+        }
+        if (data.invaderToFollow != null) {
+            invaderToFollow = data.invaderToFollow.persistentID;
+        }
+        if (data.nest != null) {
+            nest = data.nest.persistentID;
+        }
+        if (data.abominationTarget != null) {
+            abominationTarget = data.abominationTarget.persistentID;
+        }
+        if (data.deMoodVillageTarget != null) {
+            deMoodVillageTarget = new List<string>();
+            for (int i = 0; i < data.deMoodVillageTarget.Count; i++) {
+                deMoodVillageTarget.Add(data.deMoodVillageTarget[i].persistentID);
+            }
+        }
+        if (data.invadeVillageTarget != null) {
+            invadeVillageTarget = new List<string>();
+            for (int i = 0; i < data.invadeVillageTarget.Count; i++) {
+                invadeVillageTarget.Add(data.invadeVillageTarget[i].persistentID);
+            }
+        }
+        if (data.arsonVillageTarget != null) {
+            arsonVillageTarget = new List<string>();
+            for (int i = 0; i < data.arsonVillageTarget.Count; i++) {
+                arsonVillageTarget.Add(data.arsonVillageTarget[i].persistentID);
+            }
+        }
+    }
+
+    public override BehaviourComponent Load() {
+        BehaviourComponent component = new BehaviourComponent(this);
+        return component;
     }
     #endregion
 }

@@ -12,9 +12,7 @@ using Tutorial;
 using UtilityScripts;
 using Random = System.Random;
 
-public class ReactionComponent {
-    public Character owner { get; private set; }
-
+public class ReactionComponent : CharacterComponent {
     private List<Character> _assumptionSuspects;
     public List<Character> charactersThatSawThisDead { get; private set; }
     public bool isHidden { get; private set; }
@@ -24,10 +22,14 @@ public class ReactionComponent {
     public bool isDisguised => disguisedCharacter != null;
     #endregion
     
-    public ReactionComponent(Character owner) {
-        this.owner = owner;
+    public ReactionComponent() {
         _assumptionSuspects = new List<Character>();
         charactersThatSawThisDead = new List<Character>();
+    }
+    public ReactionComponent(SaveDataReactionComponent data) {
+        _assumptionSuspects = new List<Character>();
+        charactersThatSawThisDead = new List<Character>();
+        isHidden = data.isHidden;
     }
 
     #region Processes
@@ -602,8 +604,7 @@ public class ReactionComponent {
                 if (disguisedActor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
                     //If the source is harassing or defending, combat should not be lethal
                     //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
-                    bool isLethal = (!disguisedActor.behaviourComponent.isHarassing && !disguisedActor.behaviourComponent.isDefending)
-                        || ((disguisedActor.race == RACE.DEMON && disguisedTarget.race == RACE.ANGEL) || (disguisedActor.race == RACE.ANGEL && disguisedTarget.race == RACE.DEMON));
+                    bool isLethal = /*(!disguisedActor.behaviourComponent.isHarassing && !disguisedActor.behaviourComponent.isDefending) || */ ((disguisedActor.race == RACE.DEMON && disguisedTarget.race == RACE.ANGEL) || (disguisedActor.race == RACE.ANGEL && disguisedTarget.race == RACE.DEMON));
                     bool isTopPrioJobLethal = actor.jobQueue.jobsInQueue.Count <= 0 || actor.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                     if (actor.jobQueue.jobsInQueue.Count > 0) {
                         debugLog = $"{debugLog}\n-{actor.jobQueue.jobsInQueue[0].jobType}";
@@ -1349,7 +1350,7 @@ public class ReactionComponent {
     }
     //The reason why we pass the character that was hit instead of just getting the current closest hostile in combat state is because 
     public void ReactToCombat(CombatState combat, IPointOfInterest poiHit) {
-        Character attacker = combat.stateComponent.character;
+        Character attacker = combat.stateComponent.owner;
         Character reactor = owner;
         if (reactor.combatComponent.isInCombat) {
             string inCombatLog = $"{reactor.name} is in combat and reacting to combat of {attacker.name} against {poiHit.nameWithID}";
@@ -1605,6 +1606,44 @@ public class ReactionComponent {
                 }
             }
         }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataReactionComponent data) {
+        for (int i = 0; i < data.charactersThatSawThisDead.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.charactersThatSawThisDead[i]);
+            charactersThatSawThisDead.Add(character);
+        }
+        if (data.disguisedCharacter != string.Empty) {
+            disguisedCharacter = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedCharacter);
+        }
+    }
+    #endregion
+
+}
+
+[System.Serializable]
+public class SaveDataReactionComponent : SaveData<ReactionComponent> {
+    public List<string> charactersThatSawThisDead;
+    public string disguisedCharacter;
+    public bool isHidden;
+
+    #region Overrides
+    public override void Save(ReactionComponent data) {
+        charactersThatSawThisDead = new List<string>();
+        for (int i = 0; i < data.charactersThatSawThisDead.Count; i++) {
+            charactersThatSawThisDead.Add(data.charactersThatSawThisDead[i].persistentID);
+        }
+        if(data.disguisedCharacter != null) {
+            disguisedCharacter = data.disguisedCharacter.persistentID;
+        }
+        isHidden = data.isHidden;
+    }
+
+    public override ReactionComponent Load() {
+        ReactionComponent component = new ReactionComponent(this);
+        return component;
     }
     #endregion
 }

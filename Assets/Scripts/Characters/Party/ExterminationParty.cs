@@ -8,12 +8,13 @@ public class ExterminationParty : Party {
 
     public LocationStructure targetStructure { get; private set; }
     public HexTile waitingArea { get; private set; }
-    private bool isExterminating;
-    private NPCSettlement originSettlement;
+    public bool isExterminating { get; private set; }
+    public NPCSettlement originSettlement { get; private set; }
 
     #region getters
     public override IPartyTarget target => targetStructure;
     public override HexTile waitingHexArea => waitingArea;
+    public override System.Type serializedData => typeof(SaveDataExterminationParty);
     #endregion
 
     public ExterminationParty() : base(PARTY_TYPE.Extermination) {
@@ -21,6 +22,11 @@ public class ExterminationParty : Party {
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(ExterminateBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
+    }
+    public ExterminationParty(SaveDataParty data) : base(data) {
+        if (data is SaveDataExterminationParty subData) {
+            isExterminating = subData.isExterminating;
+        }
     }
 
     #region Overrides
@@ -48,7 +54,7 @@ public class ExterminationParty : Party {
     }
     protected override void OnDisbandParty() {
         base.OnDisbandParty();
-        if(originSettlement.exterminateTargetStructure == targetStructure) {
+        if (originSettlement.exterminateTargetStructure == targetStructure) {
             originSettlement.SetExterminateTarget(null);
         }
     }
@@ -63,9 +69,9 @@ public class ExterminationParty : Party {
         }
     }
     public void SetTargetStructure(LocationStructure structure) {
-        if(targetStructure != structure) {
+        if (targetStructure != structure) {
             targetStructure = structure;
-            if(targetStructure != null) {
+            if (targetStructure != null) {
                 SetWaitingArea();
             }
         }
@@ -91,6 +97,50 @@ public class ExterminationParty : Party {
         if (isExterminating) {
             isExterminating = false;
             ProcessExterminationOrDisbandment();
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataExterminationParty subData) {
+            if (subData.targetStructure != string.Empty) {
+                targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
+            }
+            if (subData.waitingArea != string.Empty) {
+                waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
+            }
+            if (subData.originSettlement != string.Empty) {
+                originSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.originSettlement) as NPCSettlement;
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataExterminationParty : SaveDataParty {
+    public string targetStructure;
+    public string waitingArea;
+    public bool isExterminating;
+    public string originSettlement;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is ExterminationParty subData) {
+            isExterminating = subData.isExterminating;
+
+            if (subData.targetStructure != null) {
+                targetStructure = subData.targetStructure.persistentID;
+            }
+            if (subData.waitingArea != null) {
+                waitingArea = subData.waitingArea.persistentID;
+            }
+            if (subData.originSettlement != null) {
+                originSettlement = subData.originSettlement.persistentID;
+            }
         }
     }
     #endregion

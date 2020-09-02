@@ -4,22 +4,30 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class LogComponent  {
-    public IPointOfInterest owner { get; }
+public class LogComponent {
+    public IPointOfInterest owner { get; private set; }
     public List<Log> history { get; }
     /// <summary>
     /// History categorized by files
     /// </summary>
-    private readonly Dictionary<string, List<Log>> _categorizedHistory;
+    private readonly Dictionary<string, List<Log>> categorizedHistory;
 
     private string _planCostLog;
     private const int MaxLogs = 100; 
     
-    public LogComponent(IPointOfInterest owner) {
-        this.owner = owner;
-        _categorizedHistory = new Dictionary<string, List<Log>>();
+    public LogComponent() {
+        categorizedHistory = new Dictionary<string, List<Log>>();
         history = new List<Log>();
         ClearCostLog();
+    }
+    public LogComponent(SaveDataLogComponent data) {
+        categorizedHistory = new Dictionary<string, List<Log>>();
+        history = new List<Log>();
+        ClearCostLog();
+    }
+
+    public void SetOwner(IPointOfInterest owner) {
+        this.owner = owner;
     }
 
     #region History
@@ -49,14 +57,14 @@ public class LogComponent  {
         }
     }
     private void CategorizeLog(Log log) {
-        if (_categorizedHistory.ContainsKey(log.file) == false) {
-            _categorizedHistory.Add(log.file, new List<Log>());
+        if (categorizedHistory.ContainsKey(log.file) == false) {
+            categorizedHistory.Add(log.file, new List<Log>());
         }
-        _categorizedHistory[log.file].Add(log);
+        categorizedHistory[log.file].Add(log);
     }
     private void RemoveLogFromCategorizedList(Log log) {
-        if (_categorizedHistory.ContainsKey(log.file)) {
-            _categorizedHistory[log.file].Remove(log);
+        if (categorizedHistory.ContainsKey(log.file)) {
+            categorizedHistory[log.file].Remove(log);
         }
     }
     
@@ -122,16 +130,47 @@ public class LogComponent  {
 
     #region Data Getting
     public Log GetLatestLogInCategory(string category) {
-        if (_categorizedHistory.ContainsKey(category)) {
-            return _categorizedHistory[category].Last();
+        if (categorizedHistory.ContainsKey(category)) {
+            return categorizedHistory[category].Last();
         }
         return null;
     }
     public List<Log> GetLogsInCategory(string category) {
-        if (_categorizedHistory.ContainsKey(category)) {
-            return _categorizedHistory[category];
+        if (categorizedHistory.ContainsKey(category)) {
+            return categorizedHistory[category];
         }
         return null;
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataLogComponent data) {
+        for (int i = 0; i < data.history.Count; i++) {
+            Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.history[i]);
+            history.Add(log);
+            CategorizeLog(log);
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataLogComponent : SaveData<LogComponent> {
+    public List<string> history;
+
+    #region Overrides
+    public override void Save(LogComponent data) {
+        history = new List<string>();
+        for (int i = 0; i < data.history.Count; i++) {
+            Log log = data.history[i];
+            history.Add(log.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log);
+        }
+    }
+
+    public override LogComponent Load() {
+        LogComponent component = new LogComponent(this);
+        return component;
     }
     #endregion
 }

@@ -4,8 +4,7 @@ using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
 
-public class NonActionEventsComponent {
-    private Character owner { get; }
+public class NonActionEventsComponent : CharacterComponent {
 
     private const string Warm_Chat = "Warm Chat";
     private const string Awkward_Chat = "Awkward Chat";
@@ -20,10 +19,13 @@ public class NonActionEventsComponent {
     /// </summary>
     public GameDate lastConversationDate { get; private set; }
     
-    public NonActionEventsComponent(Character owner) {
-        this.owner = owner;
+    public NonActionEventsComponent() {
         chatWeights = new WeightedDictionary<string>();
         lastConversationDate = GameManager.Instance.Today();
+    }
+    public NonActionEventsComponent(SaveDataNonActionEventsComponent data) {
+        chatWeights = new WeightedDictionary<string>();
+        lastConversationDate = data.lastConversationDate;
     }
 
     #region Utilities
@@ -495,8 +497,26 @@ public class NonActionEventsComponent {
         return "flirted_back";
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataNonActionEventsComponent data) {
+        //Currently N/A
+    }
+    #endregion
 }
 
+[System.Serializable]
 public class SaveDataNonActionEventsComponent : SaveData<NonActionEventsComponent> {
     public GameDate lastConversationDate;
+
+    #region Overrides
+    public override void Save(NonActionEventsComponent data) {
+        lastConversationDate = data.lastConversationDate;
+    }
+
+    public override NonActionEventsComponent Load() {
+        NonActionEventsComponent component = new NonActionEventsComponent(this);
+        return component;
+    }
+    #endregion
 }

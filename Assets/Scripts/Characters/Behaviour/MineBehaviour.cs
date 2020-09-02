@@ -15,9 +15,9 @@ public class MineBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        if (character.behaviourComponent.currentMiningPath != null) {
-            return true; //wait for path to finish.
-        }
+        //if (character.behaviourComponent.currentMiningPath != null) {
+        //    return true; //wait for path to finish.
+        //}
         LocationGridTile targetTile = character.behaviourComponent.targetMiningTile;
         if (targetTile == null) {
             HexTile nearestCaveTile = GetNearestCaveTile(character);

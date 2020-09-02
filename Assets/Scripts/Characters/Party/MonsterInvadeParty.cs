@@ -9,12 +9,13 @@ public class MonsterInvadeParty : Party {
     public LocationStructure targetStructure { get; private set; }
     public HexTile targetHex { get; private set; }
 
-    private HexTile _hexForJoining;
+    public HexTile hexForJoining { get; private set; }
 
-    private bool isInvading;
+    public bool isInvading { get; private set; }
 
     #region getters
     public override IPartyTarget target => targetStructure;
+    public override System.Type serializedData => typeof(SaveDataMonsterInvadeParty);
     #endregion
 
     public MonsterInvadeParty() : base(PARTY_TYPE.Monster_Invade) {
@@ -23,11 +24,16 @@ public class MonsterInvadeParty : Party {
         relatedBehaviour = typeof(MonsterInvadeBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
     }
+    public MonsterInvadeParty(SaveDataParty data) : base(data) {
+        if (data is SaveDataMonsterInvadeParty subData) {
+            isInvading = subData.isInvading;
+        }
+    }
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return character.race == leader.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && _hexForJoining != null
-            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == _hexForJoining;
+        return character.race == leader.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && hexForJoining != null
+            && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hexForJoining;
     }
     protected override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
@@ -51,7 +57,7 @@ public class MonsterInvadeParty : Party {
         base.OnSetLeader();
         if(leader != null) {
             if (leader.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                _hexForJoining = leader.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+                hexForJoining = leader.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
             }
         }
     }
@@ -99,6 +105,50 @@ public class MonsterInvadeParty : Party {
         if (isInvading) {
             isInvading = false;
             ProcessDisbandment();
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataMonsterInvadeParty subData) {
+            if (subData.targetStructure != string.Empty) {
+                targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
+            }
+            if (subData.targetHex != string.Empty) {
+                targetHex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.targetHex);
+            }
+            if (subData.hexForJoining != string.Empty) {
+                hexForJoining = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.hexForJoining);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataMonsterInvadeParty : SaveDataParty {
+    public string targetStructure;
+    public string targetHex;
+    public string hexForJoining;
+    public bool isInvading;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is MonsterInvadeParty subData) {
+            isInvading = subData.isInvading;
+
+            if (subData.targetStructure != null) {
+                targetStructure = subData.targetStructure.persistentID;
+            }
+            if (subData.targetHex != null) {
+                targetHex = subData.targetHex.persistentID;
+            }
+            if (subData.hexForJoining != null) {
+                hexForJoining = subData.hexForJoining.persistentID;
+            }
         }
     }
     #endregion

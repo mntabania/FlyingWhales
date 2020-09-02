@@ -33,7 +33,7 @@ public class CleanseTilesState : CharacterState {
             //cleanse nearest poisoned tile
             CleanseNearestTile();
         } else {
-            if (stateComponent.character.currentActionNode == null && stateComponent.currentState == this) {
+            if (stateComponent.owner.currentActionNode == null && stateComponent.currentState == this) {
                 //no more poisoned tiles, exit state
                 stateComponent.ExitCurrentState();
             }
@@ -59,7 +59,7 @@ public class CleanseTilesState : CharacterState {
     #endregion
 
     private bool StillHasPoisonedTile() {
-        return stateComponent.character.homeSettlement.settlementJobTriggerComponent.poisonedTiles.Count > 0;
+        return stateComponent.owner.homeSettlement.settlementJobTriggerComponent.poisonedTiles.Count > 0;
     }
     private void CleanseNearestTile() {
         if (_isCleansingTile) {
@@ -68,15 +68,15 @@ public class CleanseTilesState : CharacterState {
         LocationGridTile nearestTile = null;
         float nearest = 99999f;
         if (currentTarget != null && currentTarget.genericTileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned") != null) {
-            nearest = Vector2.Distance(stateComponent.character.worldObject.transform.position, currentTarget.worldLocation);
+            nearest = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currentTarget.worldLocation);
             nearestTile = currentTarget;
         }
 
-        for (int i = 0; i < stateComponent.character.homeSettlement.settlementJobTriggerComponent.poisonedTiles.Count; i++) {
-            LocationGridTile tile = stateComponent.character.homeSettlement.settlementJobTriggerComponent.poisonedTiles[i];
+        for (int i = 0; i < stateComponent.owner.homeSettlement.settlementJobTriggerComponent.poisonedTiles.Count; i++) {
+            LocationGridTile tile = stateComponent.owner.homeSettlement.settlementJobTriggerComponent.poisonedTiles[i];
             Poisoned poisoned = tile.genericTileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
             if (poisoned != null && poisoned.cleanser == null) {
-                float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, tile.worldLocation);
+                float dist = Vector2.Distance(stateComponent.owner.worldObject.transform.position, tile.worldLocation);
                 if (dist < nearest) {
                     nearestTile = tile;
                     nearest = dist;
@@ -88,23 +88,23 @@ public class CleanseTilesState : CharacterState {
             currentTarget = nearestTile;
             Poisoned poisoned = nearestTile.genericTileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned"); 
             Assert.IsNotNull(poisoned, $"Poisoned of {nearestTile} is null.");
-            poisoned.SetCleanser(stateComponent.character);
-            stateComponent.character.marker.GoTo(nearestTile, TryCleanse);
+            poisoned.SetCleanser(stateComponent.owner);
+            stateComponent.owner.marker.GoTo(nearestTile, TryCleanse);
         } 
     }
 
     private void TryCleanse() {
-        if (stateComponent.character.HasItem(TILE_OBJECT_TYPE.ICE_CRYSTAL)) {
+        if (stateComponent.owner.HasItem(TILE_OBJECT_TYPE.ICE_CRYSTAL)) {
             _isCleansingWithoutIce = false;
             Cleanse();
-            stateComponent.character.UnobtainItem(TILE_OBJECT_TYPE.ICE_CRYSTAL);
+            stateComponent.owner.UnobtainItem(TILE_OBJECT_TYPE.ICE_CRYSTAL);
         } else {
             _isCleansingWithoutIce = true;
         }
     }
     private void Cleanse() {
         if (currentTarget != null) {
-            currentTarget.genericTileObject.traitContainer.RemoveStatusAndStacks(currentTarget.genericTileObject, "Poisoned", stateComponent.character);
+            currentTarget.genericTileObject.traitContainer.RemoveStatusAndStacks(currentTarget.genericTileObject, "Poisoned", stateComponent.owner);
             currentTarget = null;
             _isCleansingTile = false;
             DetermineAction();    

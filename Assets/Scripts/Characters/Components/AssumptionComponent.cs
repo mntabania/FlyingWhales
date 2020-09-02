@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 
-public class AssumptionComponent {
-    public Character owner { get; private set; }
-
+public class AssumptionComponent : CharacterComponent {
     public List<AssumptionData> assumptionData { get; private set; }
 
-    public AssumptionComponent(Character owner) {
-        this.owner = owner;
+    public AssumptionComponent() {
         assumptionData = new List<AssumptionData>();
+    }
+    public AssumptionComponent(SaveDataAssumptionComponent data) {
+        assumptionData = data.assumptionData;
     }
 
     #region General
@@ -49,7 +49,9 @@ public class AssumptionComponent {
     }
     private Assumption CreateNewAssumption(Character assumedCharacter, IPointOfInterest targetOfAssumedCharacter, INTERACTION_TYPE assumedActionType) {
         ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[assumedActionType], assumedCharacter, targetOfAssumedCharacter, null, 0);
-        return new Assumption(owner, assumedAction);
+        Assumption assumption = new Assumption(owner, assumedCharacter);
+        assumedAction.SetAsAssumption(assumption);
+        return assumption;
     }
     public ActualGoapNode CreateNewActionToReactTo(Character actor, IPointOfInterest target, INTERACTION_TYPE actionType) {
         ActualGoapNode assumedAction = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], actor, target, null, 0);
@@ -69,25 +71,48 @@ public class AssumptionComponent {
     private bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
         for (int i = 0; i < assumptionData.Count; i++) {
             AssumptionData data = assumptionData[i];
-            if (data.assumedActionType == actionType && data.actorID == actor.id && data.targetID == target.id && data.targetPOIType == target.poiType) {
+            if (data.assumedActionType == actionType && data.actorID == actor.persistentID && data.targetID == target.persistentID && data.targetPOIType == target.poiType) {
                 return true;
             }
         }
         return false;
     }
     #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataAssumptionComponent data) {
+        //Currently N/A
+    }
+    #endregion
 }
 
+[System.Serializable]
 public struct AssumptionData {
     public INTERACTION_TYPE assumedActionType;
-    public int actorID;
-    public int targetID;
+    public string actorID;
+    public string targetID;
     public POINT_OF_INTEREST_TYPE targetPOIType;
 
     public AssumptionData(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target) {
         assumedActionType = actionType;
-        actorID = actor.id;
-        targetID = target.id;
+        actorID = actor.persistentID;
+        targetID = target.persistentID;
         targetPOIType = target.poiType;
     }
+}
+
+[System.Serializable]
+public class SaveDataAssumptionComponent : SaveData<AssumptionComponent> {
+    public List<AssumptionData> assumptionData;
+
+    #region Overrides
+    public override void Save(AssumptionComponent data) {
+        assumptionData = data.assumptionData;
+    }
+
+    public override AssumptionComponent Load() {
+        AssumptionComponent component = new AssumptionComponent(this);
+        return component;
+    }
+    #endregion
 }

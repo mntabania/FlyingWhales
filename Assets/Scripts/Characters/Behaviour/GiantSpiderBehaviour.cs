@@ -57,10 +57,10 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
             if (character.homeStructure != null) {
                 residentCount = character.homeStructure.residents.Count(x => x.isDead == false);
                 eggCount = character.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
-            } else if (character.territorries.Count > 0) {
+            } else if (character.territories.Count > 0) {
                 residentCount = character.homeRegion.GetCharactersWithSameTerritory(character)?.Count ?? 0;
-                for (int i = 0; i < character.territorries.Count; i++) {
-                    HexTile hexTile = character.territorries[i];
+                for (int i = 0; i < character.territories.Count; i++) {
+                    HexTile hexTile = character.territories[i];
                     eggCount += hexTile.GetTileObjectsInHexTile(TILE_OBJECT_TYPE.SPIDER_EGG).Count;
                 }
             }
@@ -84,10 +84,10 @@ public class GiantSpiderBehaviour : CharacterBehaviourComponent {
     private List<Character> GetWebbedCharactersAtHome(Character character) {
         if (character.homeStructure != null) {
             return character.homeStructure.GetCharactersThatMeetCriteria(c => c.traitContainer.HasTrait("Webbed"));
-        } else if (character.territorries != null && character.territorries.Count > 0) {
+        } else if (character.territories != null && character.territories.Count > 0) {
             List<Character> characters = null;
-            for (int i = 0; i < character.territorries.Count; i++) {
-                HexTile territory = character.territorries[i];
+            for (int i = 0; i < character.territories.Count; i++) {
+                HexTile territory = character.territories[i];
                 List<Character> validCharacters =
                     territory.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Webbed"));
                 if (validCharacters != null) {

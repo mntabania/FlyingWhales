@@ -6,64 +6,74 @@ using Traits;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MoodComponent {
+public class MoodComponent : CharacterComponent {
 	
-	private readonly Character _owner;
 	public int moodValue { get; private set; }
+    public bool isInNormalMood { get; private set; }
+    public bool isInLowMood { get; private set; }
+    public bool isInCriticalMood { get; private set; }
+    public float currentLowMoodEffectChance { get; private set; }
+    public float currentCriticalMoodEffectChance { get; private set; }
+    public bool executeMoodChangeEffects { get; private set; }
+    public bool isInMajorMentalBreak { get; private set; }
+    public bool isInMinorMentalBreak { get; private set; }
 
-	private bool _isInNormalMood;
-	private bool _isInLowMood;
-	private bool _isInCriticalMood;
-	private float _currentLowMoodEffectChance;
-	
-	private float _currentCriticalMoodEffectChance;
-	private bool _executeMoodChangeEffects;
-	private bool _isInMajorMentalBreak;
-	private bool _isInMinorMentalBreak;
+    public bool hasMoodChanged { get; private set; }
+    public string mentalBreakName { get; private set; }
 
-    private bool _hasMoodChanged;
-	
-	public Dictionary<string, int> moodModificationsSummary { get; }
-	public string mentalBreakName { get; private set; }
-	public MOOD_STATE moodState {
+    public Dictionary<string, int> moodModificationsSummary { get; private set; }
+
+    #region getters
+    public MOOD_STATE moodState {
 		get {
-			if (_isInNormalMood) {
+			if (isInNormalMood) {
 				return MOOD_STATE.Normal;	
-			} else if (_isInLowMood) {
+			} else if (isInLowMood) {
 				return MOOD_STATE.Bad;
-			} else if (_isInCriticalMood) {
+			} else if (isInCriticalMood) {
 				return MOOD_STATE.Critical;
 			} else {
-				throw new Exception($"Problem determining {_owner.name}'s mood. Because all switches are set to false.");
+				throw new Exception($"Problem determining {owner.name}'s mood. Because all switches are set to false.");
 			}
 		}
 	}
 	public string moodStateName {
 		get {
-			if (_isInNormalMood) {
+			if (isInNormalMood) {
 				return "Normal";	
-			} else if (_isInLowMood) {
+			} else if (isInLowMood) {
 				return "Bad";
-			} else if (_isInCriticalMood) {
+			} else if (isInCriticalMood) {
 				return "Critical";
 			} else {
 				return "";
 			}
 		}
 	}
-	public float currentCriticalMoodEffectChance => _currentCriticalMoodEffectChance;
-	public float currentLowMoodEffectChance => _currentLowMoodEffectChance;
-	public bool executeMoodChangeEffects => _executeMoodChangeEffects;
-	
-	public MoodComponent(Character owner) {
-		_owner = owner;
+    #endregion
+
+    public MoodComponent() {
 		EnableMoodEffects();
 		moodModificationsSummary = new Dictionary<string, int>();
-		_isInNormalMood = true; //set as initially in normal mood
+		isInNormalMood = true; //set as initially in normal mood
 	}
+    public MoodComponent(SaveDataMoodComponent data) {
+        moodValue = data.moodValue;
+        isInNormalMood = data.isInNormalMood;
+        isInLowMood = data.isInLowMood;
+        isInCriticalMood = data.isInCriticalMood;
+        currentLowMoodEffectChance = data.currentLowMoodEffectChance;
+        currentCriticalMoodEffectChance = data.currentCriticalMoodEffectChance;
+        executeMoodChangeEffects = data.executeMoodChangeEffects;
+        isInMajorMentalBreak = data.isInMajorMentalBreak;
+        isInMinorMentalBreak = data.isInMinorMentalBreak;
+        hasMoodChanged = data.hasMoodChanged;
+        mentalBreakName = data.mentalBreakName;
+        moodModificationsSummary = data.moodModificationsSummary;
+    }
 
-	#region Events
-	public void OnCharacterBecomeMinionOrSummon() {
+    #region Events
+    public void OnCharacterBecomeMinionOrSummon() {
 		DisableMoodEffects();
 		//StopCheckingForMinorMentalBreak();
 		StopCheckingForMajorMentalBreak();
@@ -74,14 +84,14 @@ public class MoodComponent {
 	#endregion
 
 	private void EnableMoodEffects() {
-		_executeMoodChangeEffects = true;
+		executeMoodChangeEffects = true;
 	}
 	private void DisableMoodEffects() {
-		_executeMoodChangeEffects = false;
+		executeMoodChangeEffects = false;
 	}
 	public void SetMoodValue(int amount) {
 		moodValue = amount;
-        _hasMoodChanged = true;
+        hasMoodChanged = true;
         //OnMoodChanged();
 	}
 	public void AddMoodEffect(int amount, IMoodModifier modifier) {
@@ -90,7 +100,7 @@ public class MoodComponent {
 		}
 		moodValue += amount;
 		AddModificationToSummary(modifier.moodModificationDescription, amount);
-        _hasMoodChanged = true;
+        hasMoodChanged = true;
         //OnMoodChanged();
 	}
 	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
@@ -99,35 +109,35 @@ public class MoodComponent {
 		}
 		moodValue += amount;
 		RemoveModificationFromSummary(modifier.moodModificationDescription, amount);
-        _hasMoodChanged = true;
+        hasMoodChanged = true;
         //OnMoodChanged();
 	}
     public void OnTickEnded() {
-        if (_hasMoodChanged) {
-            _hasMoodChanged = false;
+        if (hasMoodChanged) {
+            hasMoodChanged = false;
             OnMoodChanged();
         }
     }
 
-	#region Loading
-	public void Load(SaveDataCharacter saveDataCharacter) {
-		//SetMoodValue(saveDataCharacter.moodValue);
-	}
-	#endregion
+    #region Loading
+    public void LoadReferences(SaveDataMoodComponent data) {
+        //Currently N/A
+    }
+    #endregion
 
-	#region Events
-	private void OnMoodChanged() {
+    #region Events
+    private void OnMoodChanged() {
 		if (moodValue >= EditableValuesManager.Instance.normalMoodMinThreshold) {
-			if (_isInNormalMood == false) {
+			if (isInNormalMood == false) {
 				EnterNormalMood();	
 			}
 		} else if (moodValue >= EditableValuesManager.Instance.lowMoodMinThreshold 
 		           && moodValue <= EditableValuesManager.Instance.lowMoodHighThreshold) {
-			if (_isInLowMood == false) {
+			if (isInLowMood == false) {
 				EnterLowMood();	
 			}
 		} else if (moodValue <= EditableValuesManager.Instance.criticalMoodHighThreshold) {
-			if (_isInCriticalMood == false) {
+			if (isInCriticalMood == false) {
 				EnterCriticalMood();	
 			}
 		}
@@ -138,12 +148,12 @@ public class MoodComponent {
 	private void EnterNormalMood() {
 		SwitchMoodStates(MOOD_STATE.Normal);
 		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>normal</b> mood state");
+			$"{GameManager.Instance.TodayLogString()} {owner.name} is <color=green>entering</color> <b>normal</b> mood state");
 	}
 	private void ExitNormalMood() {
-		_isInNormalMood = false;
+		isInNormalMood = false;
 		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>normal</b> mood state");
+			$"{GameManager.Instance.TodayLogString()} {owner.name} is <color=red>exiting</color> <b>normal</b> mood state");
 	}
 	#endregion
 	
@@ -151,13 +161,13 @@ public class MoodComponent {
 	private void EnterLowMood() {
 		SwitchMoodStates(MOOD_STATE.Bad);
 		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>Low</b> mood state");
+			$"{GameManager.Instance.TodayLogString()} {owner.name} is <color=green>entering</color> <b>Low</b> mood state");
 		
 	}
 	private void ExitLowMood() {
-		_isInLowMood = false;
+		isInLowMood = false;
 		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>low</b> mood state");
+			$"{GameManager.Instance.TodayLogString()} {owner.name} is <color=red>exiting</color> <b>low</b> mood state");
 	}
 	#endregion
 
@@ -165,12 +175,12 @@ public class MoodComponent {
 	private void EnterCriticalMood() {
 		SwitchMoodStates(MOOD_STATE.Critical);
 		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> <b>critical</b> mood state");
+			$"{GameManager.Instance.TodayLogString()} {owner.name} is <color=green>entering</color> <b>critical</b> mood state");
 		if (executeMoodChangeEffects) {
 			//start checking for major mental breaks
-			if (_isInMajorMentalBreak) {
+			if (isInMajorMentalBreak) {
 				Debug.Log(
-					$"{GameManager.Instance.TodayLogString()}{_owner.name} is currently in a major mental break. So not starting hourly check for major mental break.");
+					$"{GameManager.Instance.TodayLogString()}{owner.name} is currently in a major mental break. So not starting hourly check for major mental break.");
 			} else {
 				StartCheckingForMajorMentalBreak();
 			}
@@ -181,9 +191,9 @@ public class MoodComponent {
 		
 	}
 	private void ExitCriticalMood() {
-		_isInCriticalMood = false;
+		isInCriticalMood = false;
 		Debug.Log(
-			$"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=red>exiting</color> <b>critical</b> mood state");
+			$"{GameManager.Instance.TodayLogString()} {owner.name} is <color=red>exiting</color> <b>critical</b> mood state");
 		if (executeMoodChangeEffects) {
 			//stop checking for major mental breaks
 			StopCheckingForMajorMentalBreak();
@@ -194,10 +204,10 @@ public class MoodComponent {
 	}
 	private void CheckForMajorMentalBreak() {
 		IncreaseMajorMentalBreakChance();
-		if (_owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
+		if (owner.canPerform && isInMinorMentalBreak == false && isInMajorMentalBreak == false) {
 			float roll = Random.Range(0f, 100f);
 			Debug.Log(
-				$"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
+				$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MAJOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentCriticalMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
 			if (roll <= currentCriticalMoodEffectChance) {
 				//Trigger Major Mental Break.
 				TriggerMajorMentalBreak();
@@ -205,15 +215,15 @@ public class MoodComponent {
 		}
 	}
 	private void AdjustMajorMentalBreakChance(float amount) {
-		_currentCriticalMoodEffectChance = currentCriticalMoodEffectChance + amount;
-		_currentCriticalMoodEffectChance = Mathf.Clamp(currentCriticalMoodEffectChance, 0, 100f);
+		currentCriticalMoodEffectChance = currentCriticalMoodEffectChance + amount;
+		currentCriticalMoodEffectChance = Mathf.Clamp(currentCriticalMoodEffectChance, 0, 100f);
 		if (currentCriticalMoodEffectChance <= 0f) {
 			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
 		}
 	}
 	private void SetMajorMentalBreakChance(float amount) {
-		_currentCriticalMoodEffectChance = amount;
-		_currentCriticalMoodEffectChance = Mathf.Clamp(currentCriticalMoodEffectChance, 0, 100f);
+		currentCriticalMoodEffectChance = amount;
+		currentCriticalMoodEffectChance = Mathf.Clamp(currentCriticalMoodEffectChance, 0, 100f);
 		if (currentCriticalMoodEffectChance <= 0f) {
 			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMajorMentalBreakChance);
 		}
@@ -231,109 +241,109 @@ public class MoodComponent {
 		return (100f / (EditableValuesManager.Instance.majorMentalBreakHourThreshold * 24f)) * -1f; //because there are 24 hours in a day
 	}
 	private void ResetMajorMentalBreakChance() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} reset major mental break chance.</color>");
+		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} reset major mental break chance.</color>");
 		SetMajorMentalBreakChance(0f);
 	}
 	private void StopCheckingForMajorMentalBreak() {
-		Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{_owner.name} has stopped checking for major mental break.</color>");
+		Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped checking for major mental break.</color>");
 		Messenger.RemoveListener(Signals.TICK_STARTED, CheckForMajorMentalBreak);
 	}
 	private void StartCheckingForMajorMentalBreak() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} has started checking for major mental break.</color>");
+		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} has started checking for major mental break.</color>");
 		Messenger.AddListener(Signals.TICK_STARTED, CheckForMajorMentalBreak);
 	}
 	#endregion
 
 	#region Major Mental Break
 	private void TriggerMajorMentalBreak() {
-		if (_isInMajorMentalBreak) {
-			throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a major mental break, but is trying to trigger another one!");
+		if (isInMajorMentalBreak) {
+			throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} is already in a major mental break, but is trying to trigger another one!");
 		}
 		
-		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered major mental break.";
-		_isInMajorMentalBreak = true;
-		if (_owner.characterClass.className.Equals("Peasant") || _owner.characterClass.className.Equals("Miner") 
-		    || _owner.characterClass.className.Equals("Craftsman")) {
+		string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} triggered major mental break.";
+		isInMajorMentalBreak = true;
+		if (owner.characterClass.className.Equals("Peasant") || owner.characterClass.className.Equals("Miner") 
+		    || owner.characterClass.className.Equals("Craftsman")) {
 			int roll = Random.Range(0, 2);
 			if (roll == 0) {
 				//catatonic
 				summary += "Chosen break is <b>catatonic</b>";
 				TriggerCatatonic();
-				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+				owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 			} else if (roll == 1) {
 				//suicidal
 				summary += "Chosen break is <b>suicidal</b>";
 				TriggerSuicidal();
-				_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+				owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 			}
-		} else if (_owner.characterClass.className.Equals("Druid") || _owner.characterClass.className.Equals("Shaman") 
-					|| _owner.characterClass.className.Equals("Mage")) {
+		} else if (owner.characterClass.className.Equals("Druid") || owner.characterClass.className.Equals("Shaman") 
+					|| owner.characterClass.className.Equals("Mage")) {
 			mentalBreakName = "Loss of Control";
-			// _owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+			// owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 			TriggerLossOfControl();
 		} else {
 			summary += "Chosen break is <b>Berserked</b>";
 			TriggerBerserk();
-			_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+			owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 		}
 		
 		Debug.Log($"<color=red>{summary}</color>");
 		StopCheckingForMajorMentalBreak();
 	}
 	private void TriggerBerserk() {
-		if (_owner.traitContainer.AddTrait(_owner, "Berserked")) {
+		if (owner.traitContainer.AddTrait(owner, "Berserked")) {
 			mentalBreakName = "Berserked";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
 		} else {
-			Debug.LogWarning($"{_owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
+			Debug.LogWarning($"{owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
 		}
 	}
 	private void CheckIfBerserkLost(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner && trait is Berserked) {
+		if (traitable == owner && trait is Berserked) {
 			//gain catharsis
-			_owner.traitContainer.AddTrait(_owner, "Catharsis");
+			owner.traitContainer.AddTrait(owner, "Catharsis");
 			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);
 			OnMentalBreakDone();
 		}
 	}
 	private void TriggerCatatonic() {
-		if (_owner.traitContainer.AddTrait(_owner, "Catatonic")) {
+		if (owner.traitContainer.AddTrait(owner, "Catatonic")) {
 			mentalBreakName = "Catatonia";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
 		} else {
-			Debug.LogWarning($"{_owner.name} triggered catatonic mental break but could not add catatonic trait to its traits!");
+			Debug.LogWarning($"{owner.name} triggered catatonic mental break but could not add catatonic trait to its traits!");
 		}
 	}
 	private void CheckIfCatatonicLost(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner && trait is Catatonic) {
+		if (traitable == owner && trait is Catatonic) {
 			//gain catharsis
-			_owner.traitContainer.AddTrait(_owner, "Catharsis");
+			owner.traitContainer.AddTrait(owner, "Catharsis");
 			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);	
 			OnMentalBreakDone();
 		}
 	}
 	private void TriggerSuicidal() {
-		if (_owner.traitContainer.AddTrait(_owner, "Suicidal")) {
+		if (owner.traitContainer.AddTrait(owner, "Suicidal")) {
 			mentalBreakName = "Suicidal";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 		} else {
-			Debug.LogWarning($"{_owner.name} triggered suicidal mental break but could not add suicidal trait to its traits!");
+			Debug.LogWarning($"{owner.name} triggered suicidal mental break but could not add suicidal trait to its traits!");
 		}
 	}
 	private void CheckIfSuicidalLost(ITraitable traitable, Trait trait, Character removedBy) {
-		if (traitable == _owner && trait is Suicidal) {
+		if (traitable == owner && trait is Suicidal) {
 			//gain catharsis
-			_owner.traitContainer.AddTrait(_owner, "Catharsis");
+			owner.traitContainer.AddTrait(owner, "Catharsis");
 			Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 			OnMentalBreakDone();
 		}
 	}
 	private void TriggerLossOfControl() {
-		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, _owner);
+		owner.interruptComponent.TriggerInterrupt(INTERRUPT.Loss_Of_Control, owner);
 		Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
 	}
 	private void CheckIfLossOfControlFinished(INTERRUPT interrupt, Character character) {
-		if (interrupt == INTERRUPT.Loss_Of_Control && character == _owner) {
+		if (interrupt == INTERRUPT.Loss_Of_Control && character == owner) {
 			Messenger.RemoveListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);	
 			OnMentalBreakDone();
 		}
@@ -343,10 +353,10 @@ public class MoodComponent {
 	#region Minor Mental Break
 	// private void CheckForMinorMentalBreak() {
 	// 	IncreaseMinorMentalBreakChance();
-	// 	if (_owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
+	// 	if (owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
 	// 		float roll = Random.Range(0f, 100f);
 	// 		Debug.Log(
-	// 			$"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
+	// 			$"<color=green>{GameManager.Instance.TodayLogString()}{owner.name} is checking for <b>MINOR</b> mental break. Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
 	// 		if (roll <= currentLowMoodEffectChance) {
 	// 			//Trigger Minor Mental Break.
 	// 			TriggerMinorMentalBreak();
@@ -354,8 +364,8 @@ public class MoodComponent {
 	// 	}
 	// }
 	private void AdjustMinorMentalBreakChance(float amount) {
-		_currentLowMoodEffectChance = currentLowMoodEffectChance + amount;
-		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
+		currentLowMoodEffectChance = currentLowMoodEffectChance + amount;
+		currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
 		if (currentLowMoodEffectChance <= 0f) {
 			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
 		}
@@ -380,15 +390,15 @@ public class MoodComponent {
 		return (100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f)) * -1f; //because there are 24 hours in a day
 	}
 	// private void ResetMinorMentalBreakChance() {
-	// 	Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} reset minor mental break chance.</color>");
+	// 	Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} reset minor mental break chance.</color>");
 	// 	SetMinorMentalBreakChance(0f);
 	// }
 	// private void TriggerMinorMentalBreak() {
 	// 	if (_isInMinorMentalBreak) {
-	// 		throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a minor mental break, but is trying to trigger another one!");
+	// 		throw new Exception($"{GameManager.Instance.TodayLogString()}{owner.name} is already in a minor mental break, but is trying to trigger another one!");
 	// 	}
 	// 	int roll = Random.Range(0, 2);
-	// 	string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered minor mental break.";
+	// 	string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} triggered minor mental break.";
 	// 	_isInMinorMentalBreak = true;
 	// 	if (roll == 0) {
 	// 		summary += "Chosen break is <b>Hide at Home</b>";
@@ -397,38 +407,38 @@ public class MoodComponent {
 	// 		summary += "Chosen break is <b>dazed</b>";
 	// 		TriggerDazed();
 	// 	}
-	// 	_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
+	// 	owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, owner);
 	// 	Debug.Log($"<color=red>{summary}</color>");
 	// 	//StopCheckingForMinorMentalBreak();
 	// }
 	// private void TriggerHideAtHome() {
-	// 	if (_owner.traitContainer.AddTrait(_owner, "Hiding")) {
+	// 	if (owner.traitContainer.AddTrait(owner, "Hiding")) {
 	// 		mentalBreakName = "Desires Isolation";
 	// 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);	
 	// 	} else {
-	// 		Debug.LogWarning($"{_owner.name} triggered hide at home mental break but could not add hiding trait to its traits!");
+	// 		Debug.LogWarning($"{owner.name} triggered hide at home mental break but could not add hiding trait to its traits!");
 	// 	}
 	// }
 	// private void CheckIfHidingLost(ITraitable traitable, Trait trait, Character removedBy) {
-	// 	if (traitable == _owner && trait is Hiding) {
+	// 	if (traitable == owner && trait is Hiding) {
 	// 		//gain catharsis
-	// 		_owner.traitContainer.AddTrait(_owner, "Catharsis");
+	// 		owner.traitContainer.AddTrait(owner, "Catharsis");
 	// 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);
 	// 		OnMentalBreakDone();
 	// 	}
 	// }
 	// private void TriggerDazed() {
-	// 	if (_owner.traitContainer.AddTrait(_owner, "Dazed")) {
+	// 	if (owner.traitContainer.AddTrait(owner, "Dazed")) {
 	// 		mentalBreakName = "Dazed";
 	// 		Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);	
 	// 	} else {
-	// 		Debug.LogWarning($"{_owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
+	// 		Debug.LogWarning($"{owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
 	// 	}
 	// }
 	// private void CheckIfDazedLost(ITraitable traitable, Trait trait, Character removedBy) {
-	// 	if (traitable == _owner && trait is Dazed) {
+	// 	if (traitable == owner && trait is Dazed) {
 	// 		//gain catharsis
-	// 		_owner.traitContainer.AddTrait(_owner, "Catharsis");
+	// 		owner.traitContainer.AddTrait(owner, "Catharsis");
 	// 		Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);
 	// 		OnMentalBreakDone();
 	// 	}
@@ -438,15 +448,15 @@ public class MoodComponent {
 	#region Mental Break Shared
 	private void OnMentalBreakDone() {
 		//_isInMinorMentalBreak = false;
-		_isInMajorMentalBreak = false;
+		isInMajorMentalBreak = false;
 		ResetMajorMentalBreakChance();
 		//ResetMinorMentalBreakChance();
 		// if (_isInLowMood) {
-		// 	Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} is still in low mood state after mental break, starting check for minor mental break again...");
+		// 	Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} is still in low mood state after mental break, starting check for minor mental break again...");
 		// 	StartCheckingForMinorMentalBreak();
 		// }else 
-		if (_isInCriticalMood) {
-			Debug.Log($"{GameManager.Instance.TodayLogString()}{_owner.name} is still in critical mood state after mental break, starting check for major mental break again...");
+		if (isInCriticalMood) {
+			Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} is still in critical mood state after mental break, starting check for major mental break again...");
 			StartCheckingForMajorMentalBreak();
 		}
 	}
@@ -457,13 +467,13 @@ public class MoodComponent {
 		MOOD_STATE lastMoodState = moodState;
 		switch (moodToEnter) {
 			case MOOD_STATE.Bad:
-				_isInLowMood = true;
+				isInLowMood = true;
 				break;
 			case MOOD_STATE.Normal:
-				_isInNormalMood = true;
+				isInNormalMood = true;
 				break;
 			case MOOD_STATE.Critical:
-				_isInCriticalMood = true;
+				isInCriticalMood = true;
 				break;
 		}
 		switch (lastMoodState) {
@@ -485,13 +495,13 @@ public class MoodComponent {
 		if (moodModificationsSummary.ContainsKey(modificationKey) == false) {
 			moodModificationsSummary.Add(modificationKey, 0);
 		}
-		Debug.Log($"<color=blue>{_owner.name} Added mood modification {modificationKey} {modificationValue.ToString()}</color>");
+		Debug.Log($"<color=blue>{owner.name} Added mood modification {modificationKey} {modificationValue.ToString()}</color>");
 		moodModificationsSummary[modificationKey] += modificationValue;
 		Messenger.Broadcast(Signals.MOOD_SUMMARY_MODIFIED, this);
 	}
 	private void RemoveModificationFromSummary(string modificationKey, int modificationValue) {
 		if (moodModificationsSummary.ContainsKey(modificationKey)) {
-			Debug.Log($"<color=red>{_owner.name} Removed mood modification {modificationKey} {modificationValue.ToString()}</color>");
+			Debug.Log($"<color=red>{owner.name} Removed mood modification {modificationKey} {modificationValue.ToString()}</color>");
 			moodModificationsSummary[modificationKey] += modificationValue;
 			if (moodModificationsSummary[modificationKey] == 0) {
 				moodModificationsSummary.Remove(modificationKey);
@@ -500,4 +510,44 @@ public class MoodComponent {
 		}
 	}
 	#endregion
+}
+
+[System.Serializable]
+public class SaveDataMoodComponent : SaveData<MoodComponent> {
+    public int moodValue;
+    public bool isInNormalMood;
+    public bool isInLowMood;
+    public bool isInCriticalMood;
+    public float currentLowMoodEffectChance;
+    public float currentCriticalMoodEffectChance;
+    public bool executeMoodChangeEffects;
+    public bool isInMajorMentalBreak;
+    public bool isInMinorMentalBreak;
+
+    public bool hasMoodChanged;
+    public string mentalBreakName;
+
+    public Dictionary<string, int> moodModificationsSummary;
+
+    #region Overrides
+    public override void Save(MoodComponent data) {
+        moodValue = data.moodValue;
+        isInNormalMood = data.isInNormalMood;
+        isInLowMood = data.isInLowMood;
+        isInCriticalMood = data.isInCriticalMood;
+        currentLowMoodEffectChance = data.currentLowMoodEffectChance;
+        currentCriticalMoodEffectChance = data.currentCriticalMoodEffectChance;
+        executeMoodChangeEffects = data.executeMoodChangeEffects;
+        isInMajorMentalBreak = data.isInMajorMentalBreak;
+        isInMinorMentalBreak = data.isInMinorMentalBreak;
+        hasMoodChanged = data.hasMoodChanged;
+        mentalBreakName = data.mentalBreakName;
+        moodModificationsSummary = data.moodModificationsSummary;
+    }
+
+    public override MoodComponent Load() {
+        MoodComponent component = new MoodComponent(this);
+        return component;
+    }
+    #endregion
 }

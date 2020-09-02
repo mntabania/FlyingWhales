@@ -91,13 +91,13 @@ public class Faction : IJobOwner, ISavable {
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         factionType = data.factionType.Load();
 
-        SetName(data.name);
-        SetDescription(data.description);
-        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemName));
-        SetFactionColor(data.factionColor);
-        SetFactionActiveState(data.isActive);
-        SetIsMajorFaction(data.isMajorFaction);
-        SetNewLeaderDesignationChance(data.newLeaderDesignationChance);
+        name = data.name;
+        description = data.description;
+        emblem = FactionManager.Instance.GetFactionEmblem(data.emblemName);
+        factionColor = data.factionColor;
+        isActive = data.isActive;
+        isMajorFaction = data.isMajorFaction;
+        newLeaderDesignationChance = data.newLeaderDesignationChance;
 
 
         characters = new List<Character>();
@@ -982,6 +982,52 @@ public class Faction : IJobOwner, ISavable {
                 factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.location);
             }
             HeirloomSearch();
+        }
+    }
+    #endregion
+
+    #region Loading
+    public void LoadReferences(SaveDataFaction data) {
+        if (!data.isLeaderPlayer) {
+            if (data.leaderID != string.Empty) {
+                Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.leaderID);
+                leader = character;
+            }
+        }
+        for (int i = 0; i < data.characterIDs.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.characterIDs[i]);
+            characters.Add(character);
+        }
+        for (int i = 0; i < data.bannedCharacterIDs.Count; i++) {
+            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.bannedCharacterIDs[i]);
+            bannedCharacters.Add(character);
+        }
+
+        foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
+            Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
+            FactionRelationship rel = null;
+            if (GetRelationshipWith(faction2) == null) {
+                if (rel == null) {
+                    item.Value.Load();
+                }
+                AddNewRelationship(faction2, rel);
+            }
+            if (faction2.GetRelationshipWith(this) == null) {
+                if (rel == null) {
+                    item.Value.Load();
+                }
+                faction2.AddNewRelationship(this, rel);
+            }
+        }
+
+        for (int i = 0; i < data.history.Count; i++) {
+            Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.history[i]);
+            history.Add(log);
+        }
+
+        for (int i = 0; i < data.ownedSettlementIDs.Count; i++) {
+            BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ownedSettlementIDs[i]);
+            ownedSettlements.Add(settlement);
         }
     }
     #endregion

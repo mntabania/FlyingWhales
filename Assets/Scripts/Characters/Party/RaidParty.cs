@@ -10,11 +10,12 @@ public class RaidParty : Party {
     public BaseSettlement targetSettlement { get; private set; }
     //public LocationStructure targetStructure { get; private set; }
     public HexTile waitingArea { get; private set; }
-    private bool isRaiding;
+    public bool isRaiding { get; private set; }
 
     #region getters
     public override IPartyTarget target => targetSettlement;
     public override HexTile waitingHexArea => waitingArea;
+    public override System.Type serializedData => typeof(SaveDataRaidParty);
     #endregion
 
     public RaidParty() : base(PARTY_TYPE.Raid) {
@@ -22,6 +23,11 @@ public class RaidParty : Party {
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(RaidBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
+    }
+    public RaidParty(SaveDataParty data) : base(data) {
+        if (data is SaveDataRaidParty subData) {
+            isRaiding = subData.isRaiding;
+        }
     }
 
     #region Overrides
@@ -89,6 +95,43 @@ public class RaidParty : Party {
         if (isRaiding) {
             isRaiding = false;
             ProcessRaidOrDisbandment();
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if (data is SaveDataRaidParty subData) {
+            if (subData.targetSettlement != string.Empty) {
+                targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.targetSettlement);
+            }
+            if (subData.waitingArea != string.Empty) {
+                waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataRaidParty : SaveDataParty {
+    public string targetSettlement;
+    public string waitingArea;
+    public bool isRaiding;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if (data is RaidParty subData) {
+            isRaiding = subData.isRaiding;
+
+            if (subData.targetSettlement != null) {
+                targetSettlement = subData.targetSettlement.persistentID;
+            }
+            if (subData.waitingArea != null) {
+                waitingArea = subData.waitingArea.persistentID;
+            }
         }
     }
     #endregion

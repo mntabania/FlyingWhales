@@ -92,6 +92,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private HexTile _previousHexTileLocation;
     private CharacterMarkerNameplate _nameplate;
     private LocationGridTile _destinationTile;
+    public bool hasFleePath { get; private set; }
 
     public void SetCharacter(Character character) {
         base.Initialize(character);
@@ -390,7 +391,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         destinationTile = null;
         //onProcessCombat = null;
         _pauseAnimationCounter = 0;
-        character.combatComponent.SetOnProcessCombatAction(null);
+        //character.combatComponent.SetOnProcessCombatAction(null);
         SetMarkerColor(Color.white);
         if (_nameplate != null) {
             ObjectPoolManager.Instance.DestroyObject(_nameplate);    
@@ -959,7 +960,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             // ScheduleExpiry();
             SetCollidersState(false);
             //onProcessCombat = null;
-            character.combatComponent.SetOnProcessCombatAction(null);
+            //character.combatComponent.SetOnProcessCombatAction(null);
             pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
             UpdateActionIcon();
@@ -1539,7 +1540,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Flee
-    public bool hasFleePath { get; private set; }
     public void OnStartFlee() {
         if (character.combatComponent.avoidInRange.Count == 0) {
             return;

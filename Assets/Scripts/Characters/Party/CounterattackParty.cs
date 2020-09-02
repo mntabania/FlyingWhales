@@ -11,6 +11,8 @@ public class CounterattackParty : Party {
 
     #region getters
     public override IPartyTarget target => targetStructure;
+    public override System.Type serializedData => typeof(SaveDataCounterattackParty);
+
     //public override HexTile waitingHexArea => waitingArea;
     #endregion
 
@@ -19,6 +21,8 @@ public class CounterattackParty : Party {
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(AttackDemonicStructureBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
+    }
+    public CounterattackParty(SaveDataParty data) : base(data) {
     }
 
     #region Overrides
@@ -82,5 +86,32 @@ public class CounterattackParty : Party {
     //        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
     //    }
     //}
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataParty data) {
+        base.LoadReferences(data);
+        if(data is SaveDataCounterattackParty subData) {
+            if (subData.targetStructure != string.Empty) {
+                targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
+            }
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataCounterattackParty : SaveDataParty {
+    public string targetStructure;
+
+    #region Overrides
+    public override void Save(Party data) {
+        base.Save(data);
+        if(data is CounterattackParty subData) {
+            if(subData.targetStructure != null) {
+                targetStructure = subData.targetStructure.persistentID;
+            }
+        }
+    }
     #endregion
 }
