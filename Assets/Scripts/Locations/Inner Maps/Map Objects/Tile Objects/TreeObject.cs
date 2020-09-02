@@ -17,6 +17,7 @@ public class TreeObject : TileObject {
     private Ent _ent;
     private Character[] _users;
     private Occupied_State _occupiedState;
+    public override System.Type serializedData => typeof(SaveDataTreeObject);
 
     public TreeObject() {
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);

@@ -15,6 +15,7 @@ public class RavenousSpirit : TileObject {
     
     #region getters
     public int currentDuration => _currentDuration;
+    public override System.Type serializedData => typeof(SaveDataRavenousSpirit);
     #endregion
     
     public RavenousSpirit() {

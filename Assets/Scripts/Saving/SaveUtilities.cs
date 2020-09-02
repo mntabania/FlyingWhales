@@ -68,4 +68,25 @@ public static class SaveUtilities {
             return new SaveDataMultiJobNode();
         }
     }
+
+    #region Tile Objects
+    public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
+        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+            return obj;
+        }
+        return new SaveDataTileObject(); //if no special save data for tile object was found, then just use the generic one
+    }
+    public static SaveDataTileObject CreateNewSaveDataForArtifact(string tileObjectTypeString) {
+        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+            return obj;
+        }
+        return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
+    }
+    #endregion
 }

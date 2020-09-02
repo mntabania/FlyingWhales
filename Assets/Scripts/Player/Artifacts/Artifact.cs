@@ -11,6 +11,7 @@ public class Artifact : TileObject {
 
     #region getters/setters
     public ARTIFACT_TYPE type => data.type;
+    public override System.Type serializedData => typeof(SaveDataArtifact);
     #endregion
 
     public Artifact(ARTIFACT_TYPE type) {

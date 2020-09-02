@@ -10,7 +10,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public int id;
     public string name;
     public TILE_OBJECT_TYPE tileObjectType;
-    public int characterOwnerID;
+    public string characterOwnerID;
     public int regionLocationID;
     public string tileLocationID;
     public bool isPreplaced;
@@ -42,7 +42,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         id = data.id;
         name = data.name;
         tileObjectType = data.tileObjectType;
-        characterOwnerID = data.characterOwner?.id ?? -1;
+        characterOwnerID = data.characterOwner?.persistentID ?? string.Empty;
         if (data.gridTileLocation != null) {
             regionLocationID = data.gridTileLocation.parentMap.region.id;
             tileLocationID = data.gridTileLocation.persistentID;    
@@ -69,7 +69,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         existingJobsTargetingThis = new List<string>();
         for (int i = 0; i < data.allExistingJobsTargetingThis.Count; i++) {
             JobQueueItem jobQueueItem = data.allExistingJobsTargetingThis[i];
-            jobsTargetingThis.Add(jobQueueItem.persistentID);
+            existingJobsTargetingThis.Add(jobQueueItem.persistentID);
         }
         mapObjectState = data.mapObjectState;
         

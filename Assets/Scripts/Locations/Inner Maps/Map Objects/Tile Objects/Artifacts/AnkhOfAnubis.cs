@@ -7,7 +7,8 @@ using UnityEngine.Assertions;
 public class AnkhOfAnubis : Artifact {
 
     public bool isActivated { get; private set; }
-
+    public override System.Type serializedData => typeof(SaveDataAnkhOfAnubis);
+    
     public AnkhOfAnubis() : base(ARTIFACT_TYPE.Ankh_Of_Anubis) {
         maxHP = 700;
         currentHP = maxHP;

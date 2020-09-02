@@ -57,7 +57,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Tile_Object;
-    public Type serializedData => typeof(SaveDataTileObject);
+    public virtual Type serializedData => typeof(SaveDataTileObject);
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
     public virtual Vector3 worldPosition => mapVisual.transform.position;
     public virtual Vector2 selectableSize => Vector2Int.one;
@@ -141,15 +141,18 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         logComponent.LoadReferences(data.logComponent);
         for (int i = 0; i < data.jobsTargetingThis.Count; i++) {
             string jobID = data.jobsTargetingThis[i];
-            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
+            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
             AddJobTargetingThis(job);
         }
         for (int i = 0; i < data.existingJobsTargetingThis.Count; i++) {
             string jobID = data.existingJobsTargetingThis[i];
-            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
+            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
             AddExistingJobTargetingThis(job);
         }
         SetMapObjectState(data.mapObjectState);
+        if (!string.IsNullOrEmpty(data.characterOwnerID)) {
+            characterOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.characterOwnerID);    
+        }
     }
     #endregion
     

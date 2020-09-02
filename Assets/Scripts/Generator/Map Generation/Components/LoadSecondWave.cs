@@ -26,15 +26,16 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadLocationGridTileSecondWave(saveData));
         
         //Load Settlement data
-        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementData(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementJobs(saveData));
-        
-        //Load Characters
+        yield return MapGenerator.Instance.StartCoroutine(LoadNPCSettlementData(saveData));
 
         //Load Tile Objects
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjectTraits(saveData));
+        
+        //Load Characters
+        yield return MapGenerator.Instance.StartCoroutine(LoadCharacterReferences(saveData));
         
         //Load Structure Wall Traits
         yield return MapGenerator.Instance.StartCoroutine(LoadStructureWallTraits(saveData));
@@ -94,8 +95,6 @@ public class LoadSecondWave : MapGenerationComponent {
                 tileObject.OnPlacePOI();
                 tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
                 tileObject.LoadSecondWave(saveDataTileObject);
-            } else if (tileObject is Tombstone) {
-                //TODO:
             } else {
                 gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
                 if (tileObject.mapObjectVisual != null) {
@@ -178,7 +177,7 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     #region Settlements
-        private IEnumerator LoadSettlementOwners(SaveDataCurrentProgress saveData) {
+        private IEnumerator LoadSettlementData(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
@@ -208,7 +207,7 @@ public class LoadSecondWave : MapGenerationComponent {
         }
         yield return null;
     }
-    private IEnumerator LoadSettlementJobs(SaveDataCurrentProgress saveData) {
+    private IEnumerator LoadNPCSettlementData(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Settlement Jobs...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
@@ -216,6 +215,7 @@ public class LoadSecondWave : MapGenerationComponent {
                 NPCSettlement npcSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataNpcSettlement.persistentID) as NPCSettlement;
                 Assert.IsNotNull(npcSettlement);
                 npcSettlement.LoadJobs(saveDataNpcSettlement.jobIDs);
+                npcSettlement.LoadRuler(saveDataNpcSettlement.rulerID);
             }
             yield return null;
         }

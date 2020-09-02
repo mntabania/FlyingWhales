@@ -8,6 +8,9 @@ public class GenericTileObject : TileObject {
     private bool hasBeenInitialized { get; set; }
     public override LocationGridTile gridTileLocation => _owner;
     private LocationGridTile _owner;
+    
+    public override System.Type serializedData => typeof(SaveDataGenericTileObject);
+    
     public GenericTileObject(LocationGridTile locationGridTile) {
         _owner = locationGridTile;
     }

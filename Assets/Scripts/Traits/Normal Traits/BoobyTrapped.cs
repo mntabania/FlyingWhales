@@ -36,8 +36,9 @@ namespace Traits {
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            //TODO: Load aware characters
-            throw new NotImplementedException();
+            SaveDataBoobyTrapped saveDataBoobyTrapped = saveDataTrait as SaveDataBoobyTrapped;
+            Assert.IsNotNull(saveDataBoobyTrapped);
+            awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataBoobyTrapped.awareCharacterIDs));        
         }
         #endregion
         
@@ -118,13 +119,13 @@ namespace Traits {
 
 #region Save Data
 public class SaveDataBoobyTrapped : SaveDataTrait {
-    public List<string> awareCharactersIDs;
+    public List<string> awareCharacterIDs;
     public ELEMENTAL_TYPE elementalType;
     public override void Save(Trait trait) {
         base.Save(trait);
         BoobyTrapped boobyTrapped = trait as BoobyTrapped;
         Assert.IsNotNull(boobyTrapped);
-        awareCharactersIDs = SaveUtilities.ConvertSavableListToIDs(boobyTrapped.awareCharacters);
+        awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(boobyTrapped.awareCharacters);
         elementalType = boobyTrapped.elementalType;
     }
 }

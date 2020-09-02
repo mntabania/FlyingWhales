@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Ore : TileObject {
     public int yield { get; private set; }
+    public override System.Type serializedData => typeof(SaveDataOre);
     
     public Ore() {
         Initialize(TILE_OBJECT_TYPE.ORE, false);

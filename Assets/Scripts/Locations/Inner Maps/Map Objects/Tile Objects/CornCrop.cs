@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Locations.Tile_Features;
 
 public class CornCrop : Crops {
+    
+    public override System.Type serializedData => typeof(SaveDataCornCrop);
+    
     public CornCrop() : base() {
         Initialize(TILE_OBJECT_TYPE.CORN_CROP);
         AddAdvertisedAction(INTERACTION_TYPE.TEND);

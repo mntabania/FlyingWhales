@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
-
+using Traits;
+using UnityEngine.Assertions;
 namespace Traits {
     public class Criminal : Status {
 
@@ -12,6 +14,10 @@ namespace Traits {
         public List<Character> charactersThatAreAlreadyWorried { get; private set; }
         public bool isImprisoned { get; private set; }
 
+        #region getters
+        public override Type serializedData => typeof(SaveDataCriminal);
+        #endregion
+        
         public Criminal() {
             name = "Criminal";
             description = "Has been witnessed or accused of doing something illegal.";
@@ -23,6 +29,26 @@ namespace Traits {
             previousCrimes = new List<CrimeData>();
         }
 
+        #region Loading
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            SaveDataCriminal saveDataCriminal = saveDataTrait as SaveDataCriminal;
+            Assert.IsNotNull(saveDataCriminal);
+            for (int i = 0; i < saveDataCriminal.activeCrimeIDs.Count; i++) {
+                string crimeID = saveDataCriminal.activeCrimeIDs[i];
+                CrimeData crimeData = DatabaseManager.Instance.crimeDatabase.GetCrimeByPersistentID(crimeID);
+                activeCrimes.Add(crimeData);
+            }
+            for (int i = 0; i < saveDataCriminal.previousCrimeIDs.Count; i++) {
+                string crimeID = saveDataCriminal.previousCrimeIDs[i];
+                CrimeData crimeData = DatabaseManager.Instance.crimeDatabase.GetCrimeByPersistentID(crimeID);
+                previousCrimes.Add(crimeData);
+            }
+            charactersThatAreAlreadyWorried = SaveUtilities.ConvertIDListToCharacters(saveDataCriminal.alreadyWorriedCharacterIDs);
+            isImprisoned = saveDataCriminal.isImprisoned;
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
             base.OnAddTrait(sourcePOI);
@@ -237,4 +263,34 @@ namespace Traits {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataCriminal : SaveDataTrait {
+    public List<string> activeCrimeIDs;
+    public List<string> previousCrimeIDs;
+    public List<string> alreadyWorriedCharacterIDs;
+    public bool isImprisoned;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Criminal criminal = trait as Criminal;
+        Assert.IsNotNull(criminal);
+        activeCrimeIDs = new List<string>();
+        for (int i = 0; i < criminal.activeCrimes.Count; i++) {
+            CrimeData activeCrime = criminal.activeCrimes[i];
+            activeCrimeIDs.Add(activeCrime.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(activeCrime);
+        }
+        
+        previousCrimeIDs = new List<string>();
+        for (int i = 0; i < criminal.previousCrimes.Count; i++) {
+            CrimeData previousCrimes = criminal.previousCrimes[i];
+            previousCrimeIDs.Add(previousCrimes.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(previousCrimes);
+        }
+
+        alreadyWorriedCharacterIDs = SaveUtilities.ConvertSavableListToIDs(criminal.charactersThatAreAlreadyWorried);
+        isImprisoned = criminal.isImprisoned;
+    }
+}
+#endregion
 

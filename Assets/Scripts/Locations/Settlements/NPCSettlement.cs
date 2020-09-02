@@ -77,8 +77,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void LoadJobs(List<string> jobIDs) {
         for (int i = 0; i < jobIDs.Count; i++) {
             string jobID = jobIDs[i];
-            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithID(jobID);
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
             availableJobs.Add(jobQueueItem);
+        }
+    }
+    public void LoadRuler(string rulerID) {
+        if (!string.IsNullOrEmpty(rulerID)) {
+            ruler = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(rulerID);
+        } else {
+            ruler = null;
+            Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
         }
     }
     #endregion

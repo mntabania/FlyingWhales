@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GoapPlan {
 
@@ -33,24 +34,43 @@ public class GoapPlan {
         allNodes = nodes;
         //ConstructAllNodes();
     }
-    public GoapPlan(SaveDataGoapPlan saveDataGoapPlan) {
-        if (!string.IsNullOrEmpty(saveDataGoapPlan.poiTargetID)) {
-            if (saveDataGoapPlan.targetObjectType == OBJECT_TYPE.Character) {
-                target = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataGoapPlan.poiTargetID);
+    public GoapPlan(SaveDataGoapPlan data) {
+        if (!string.IsNullOrEmpty(data.poiTargetID)) {
+            if (data.targetObjectType == OBJECT_TYPE.Character) {
+                target = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.poiTargetID);
             } else {
                 //it is assumed that the target of the plan is a tile object if it is not a character.
-                target = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveDataGoapPlan.poiTargetID);
+                target = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.poiTargetID);
             }
         }
         //NOTE: Did not save isBeingRecalculated because, when loaded, it doesn't matter if the plan is being recalculated or not.
-        currentNodeIndex = saveDataGoapPlan.currentNodeIndex;
-        isEnd = saveDataGoapPlan.isEnd;
-        isPersonalPlan = saveDataGoapPlan.isPersonalPlan;
-        doNotRecalculate = saveDataGoapPlan.doNotRecalculate;
-        state = saveDataGoapPlan.state;
-        //TODO: Load Job Nodes
+        currentNodeIndex = data.currentNodeIndex;
+        isEnd = data.isEnd;
+        isPersonalPlan = data.isPersonalPlan;
+        doNotRecalculate = data.doNotRecalculate;
+        state = data.state;
+        allNodes = new List<JobNode>();
+        for (int i = 0; i < data.allNodes.Count; i++) {
+            SaveDataJobNode saveDataJobNode = data.allNodes[i];
+            allNodes.Add(saveDataJobNode.Load());
+        }
+        startingNode = GetJobNodeWithPersistentID(data.startingNodeID);
+        endNode = GetJobNodeWithPersistentID(data.endNodeID);
+        currentNode = GetJobNodeWithPersistentID(data.currentNodeID);
+        previousNode = GetJobNodeWithPersistentID(data.previousNodeID);
     }
 
+    private JobNode GetJobNodeWithPersistentID(string id) {
+        Assert.IsTrue(allNodes != null && allNodes.Count > 0);
+        for (int i = 0; i < allNodes.Count; i++) {
+            JobNode jobNode = allNodes[i];
+            if (jobNode.persistentID == id) {
+                return jobNode;
+            }
+        }
+        return null;
+    }
+    
     public void Reset(List<JobNode> nodes) {
         this.startingNode = nodes[0];
         this.endNode = nodes[nodes.Count - 1];

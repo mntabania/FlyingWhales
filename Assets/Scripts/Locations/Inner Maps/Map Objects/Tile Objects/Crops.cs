@@ -11,6 +11,7 @@ public abstract class Crops : TileObject {
     
     #region getters
     public int remainingRipeningTicks => _remainingRipeningTicks;
+    public override System.Type serializedData => typeof(SaveDataCrops);
     #endregion
     
     protected Crops() { }

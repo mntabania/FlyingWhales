@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Random = UnityEngine.Random;
 namespace Traits {
     public class Infected : Status {
 
@@ -15,6 +17,7 @@ namespace Traits {
         #region getters
         public override bool isPersistent => true;
         public bool hasAlreadyDied => _hasAlreadyDied;
+        public override Type serializedData => typeof(SaveDataInfected);
         #endregion
         
         public Infected() {
@@ -42,7 +45,9 @@ namespace Traits {
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            //TODO: Load is living
+            SaveDataInfected saveDataInfected = saveDataTrait as SaveDataInfected;
+            Assert.IsNotNull(saveDataInfected);
+            SetIsLiving(saveDataInfected.isLiving);
         }
         #endregion
 

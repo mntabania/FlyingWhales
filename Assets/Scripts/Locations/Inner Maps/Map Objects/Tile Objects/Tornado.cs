@@ -11,6 +11,7 @@ public class Tornado : MovingTileObject {
     private TornadoMapObjectVisual _tornadoMapObjectVisual;
     public override string neutralizer => "Wind Master";
     protected override int affectedRange => 2;
+    public override System.Type serializedData => typeof(SaveDataTornado);
     public Tornado() {
         Initialize(TILE_OBJECT_TYPE.TORNADO, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);

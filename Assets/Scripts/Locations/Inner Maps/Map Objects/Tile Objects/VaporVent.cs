@@ -9,6 +9,7 @@ public class VaporVent : TileObject {
     
     #region Getters
     public int activityCycle => _activityCycle;
+    public override System.Type serializedData => typeof(SaveDataVaporVent);
     #endregion
     
     public VaporVent() {

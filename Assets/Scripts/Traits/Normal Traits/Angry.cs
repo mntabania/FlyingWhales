@@ -14,6 +14,11 @@ namespace Traits {
 
         private readonly List<Character> _responsibleCharactersStack; //list of characters that have added this status to the owner, this can contain duplicates of a character
         public List<Character> responsibleCharactersStack => _responsibleCharactersStack;
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataAngry);
+        #endregion
+        
         public Angry() {
             name = "Angry";
             description = "Something or someone has made it mad!";
@@ -33,8 +38,9 @@ namespace Traits {
         #region Loading
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
-            //TODO: Load Characters
-            throw new NotImplementedException();
+            SaveDataAngry dataTrait = saveDataTrait as SaveDataAngry;
+            Assert.IsNotNull(dataTrait);
+            _responsibleCharactersStack.AddRange(SaveUtilities.ConvertIDListToCharacters(dataTrait.characterIDs));
         }
         #endregion
 

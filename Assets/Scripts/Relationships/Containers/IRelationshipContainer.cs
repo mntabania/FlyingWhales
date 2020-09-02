@@ -19,6 +19,7 @@ public interface IRelationshipContainer {
     #endregion
 
     #region Inquiry
+    bool HasRelationshipWith(int id);
     bool HasRelationshipWith(Relatable relatable);
     bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType);
     bool HasRelationshipWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType);
@@ -46,6 +47,7 @@ public interface IRelationshipContainer {
     void SetOpinion(Character owner, int targetID, string targetName, GENDER gender, string opinionText, int opinionValue, bool isInitial, string lastStrawReason = "");
     void RemoveOpinion(Character target, string opinionText);
     bool HasOpinion(Character target, string opinionText);
+    bool HasOpinion(int id, string opinionText);
     int GetTotalOpinion(Character target);
     OpinionData GetOpinionData(Character target);
     string GetOpinionLabel(Character target);

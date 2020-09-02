@@ -5,6 +5,7 @@ using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+[System.Serializable]
 public class BaseRelationshipContainer : IRelationshipContainer {
     
     private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend
@@ -16,6 +17,11 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public BaseRelationshipContainer() {
         relationships = new Dictionary<int, IRelationshipData>();
         charactersWithOpinion = new List<Character>();
+        Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
+    }
+    public BaseRelationshipContainer(SaveDataBaseRelationshipContainer data) {
+        relationships = new Dictionary<int, IRelationshipData>(data.relationships);
+        charactersWithOpinion = SaveUtilities.ConvertIDListToCharacters(data.charactersWithOpinion);
         Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnNewVillagerArrived);
     }
 
@@ -397,6 +403,12 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
+    public bool HasOpinion(int id, string opinionText) {
+        if (TryGetRelationshipDataWith(id, out var relationshipData)) {
+            return relationshipData.opinions.HasOpinion(opinionText);
+        }
+        return false;
+    }
     public int GetTotalOpinion(Character target) {
         return GetTotalOpinion(target.id);
     }
@@ -661,3 +673,18 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     }
     #endregion
 }
+
+#region Save Data
+public class SaveDataBaseRelationshipContainer : SaveData<BaseRelationshipContainer> {
+    public Dictionary<int, IRelationshipData> relationships;
+    public List<string> charactersWithOpinion;
+    public override void Save(BaseRelationshipContainer data) {
+        base.Save(data);
+        relationships = data.relationships;
+        charactersWithOpinion = SaveUtilities.ConvertSavableListToIDs(data.charactersWithOpinion);
+    }
+    public override BaseRelationshipContainer Load() {
+        return new BaseRelationshipContainer(this);
+    }
+}
+#endregion

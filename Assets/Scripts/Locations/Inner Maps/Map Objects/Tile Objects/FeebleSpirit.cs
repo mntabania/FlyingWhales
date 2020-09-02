@@ -15,6 +15,7 @@ public class FeebleSpirit : TileObject {
 
     #region getters
     public int currentDuration => _currentDuration;
+    public override System.Type serializedData => typeof(SaveDataFeebleSpirit);
     #endregion
     
     public FeebleSpirit() {

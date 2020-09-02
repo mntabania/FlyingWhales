@@ -15,6 +15,7 @@ public class ForlornSpirit : TileObject {
     
     #region getters
     public int currentDuration => _currentDuration;
+    public override System.Type serializedData => typeof(SaveDataForlornSpirit);
     #endregion
     
     public ForlornSpirit() {

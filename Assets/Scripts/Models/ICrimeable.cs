@@ -5,6 +5,7 @@ using UnityEngine;
 public interface ICrimeable : IReactable {
     //string name { get; }
     string persistentID { get; }
+    OBJECT_TYPE objectType { get; }
     CRIME_TYPE crimeType { get; }
     CRIMABLE_TYPE crimableType { get; }
 

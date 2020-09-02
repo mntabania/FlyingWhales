@@ -31,13 +31,14 @@ public class PlayerDataGeneration : MapGenerationComponent {
         data.portal = PlayerManager.Instance.player.portalTile;
         yield return null;
     }
+	#endregion
+	
+	#region Player
+	private IEnumerator LoadPlayerReferences(SaveDataCurrentProgress saveData) {
+		LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
+		saveData.LoadPlayerReferences();
+		yield return null;
+	}
     #endregion
 
-    #region Player
-    private IEnumerator LoadPlayerReferences(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
-        saveData.LoadPlayerReferences();
-        yield return null;
-    }
-    #endregion
 }

@@ -9,6 +9,8 @@ public class LocustSwarm : MovingTileObject {
     public override string neutralizer => "Beastmaster";
     public GameDate expiryDate { get; }
     
+    public override System.Type serializedData => typeof(SaveDataLocustSwarm);
+    
     public LocustSwarm() {
         Initialize(TILE_OBJECT_TYPE.LOCUST_SWARM, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);

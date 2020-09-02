@@ -23,6 +23,7 @@ public class Excalibur : TileObject {
     #region Getters
     public List<string> traitsGainedByCurrentOwner => _traitsGainedByCurrentOwner;
     public HashSet<int> finishedCharacters => _finishedCharacters;
+    public override System.Type serializedData => typeof(SaveDataExcalibur);
     #endregion
     
     public Excalibur() {

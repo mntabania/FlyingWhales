@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class BigTreeObject : TreeObject {
 	public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);
+	
+	public override System.Type serializedData => typeof(SaveDataBigTreeObject);
+	
 	public BigTreeObject() {
 		//advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
 		Initialize(TILE_OBJECT_TYPE.BIG_TREE_OBJECT, false);

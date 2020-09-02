@@ -48,4 +48,7 @@ public class SaveDataGoapPlan : SaveData<GoapPlan> {
         doNotRecalculate = data.doNotRecalculate;
         state = data.state;
     }
+    public override GoapPlan Load() {
+        return new GoapPlan(this);
+    }
 }
