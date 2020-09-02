@@ -4,7 +4,6 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataPlayerGame : SaveData<Player> {
-    //TODO: Player Faction, Player Settlement
     public string factionID;
     public string settlementID;
     public int mana;
@@ -14,9 +13,11 @@ public class SaveDataPlayerGame : SaveData<Player> {
 
     public PLAYER_ARCHETYPE archetype;
 
-    //TODO: Minions, Summons
     public List<string> minionIDs;
     public List<string> summonIDs;
+
+    public List<SaveDataActionIntel> actionIntels;
+    public List<SaveDataInterruptIntel> interruptIntels;
 
     //Components
     public SaveDataSeizeComponent seizeComponent;
@@ -45,6 +46,21 @@ public class SaveDataPlayerGame : SaveData<Player> {
         for (int i = 0; i < player.summons.Count; i++) {
             Summon summon = player.summons[i];
             summonIDs.Add(summon.persistentID);
+        }
+
+        actionIntels = new List<SaveDataActionIntel>();
+        interruptIntels = new List<SaveDataInterruptIntel>();
+        for (int i = 0; i < player.allIntel.Count; i++) {
+            IIntel intel = player.allIntel[i];
+            if(intel is ActionIntel actionIntel) {
+                SaveDataActionIntel saveIntel = new SaveDataActionIntel();
+                saveIntel.Save(actionIntel);
+                actionIntels.Add(saveIntel);
+            } else if (intel is InterruptIntel interruptIntel) {
+                SaveDataInterruptIntel saveIntel = new SaveDataInterruptIntel();
+                saveIntel.Save(interruptIntel);
+                interruptIntels.Add(saveIntel);
+            }
         }
 
         seizeComponent = new SaveDataSeizeComponent();

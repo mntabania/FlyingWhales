@@ -12,7 +12,7 @@ public class VengefulGhost : Summon {
     public VengefulGhost(string className) : base(SUMMON_TYPE.Vengeful_Ghost, className, RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public VengefulGhost(SaveDataCharacter data) : base(data) {
+    public VengefulGhost(SaveDataSummon data) : base(data) {
         visuals.SetHasBlood(false);
     }
 

@@ -7,6 +7,7 @@ public class MagicalAngel : Summon {
     
     public MagicalAngel() : base(SUMMON_TYPE.Magical_Angel, "Magical Angel", RACE.ANGEL, UtilityScripts.Utilities.GetRandomGender()) { }
     public MagicalAngel(string className) : base(SUMMON_TYPE.Magical_Angel, className, RACE.ANGEL, UtilityScripts.Utilities.GetRandomGender()) { }
+    public MagicalAngel(SaveDataSummon data) : base(data) { }
 
     #region Overrides
     public override void ConstructDefaultActions() {

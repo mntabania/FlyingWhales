@@ -15,7 +15,9 @@ public class GiantSpider : Summon {
     public GiantSpider(string className) : base(SUMMON_TYPE.Giant_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    public GiantSpider(SaveDataCharacter data) : base(data) { }
+    public GiantSpider(SaveDataSummon data) : base(data) {
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+    }
 
     #region Overrides
     public override void Initialize() {

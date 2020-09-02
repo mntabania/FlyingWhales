@@ -6,7 +6,7 @@ public class CharacterComponent {
     //Base class for all character components
     public Character owner { get; private set; }
 
-    public void SetOwner(Character owner) {
+    public virtual void SetOwner(Character owner) {
         this.owner = owner;
     }
 }

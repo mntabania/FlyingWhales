@@ -464,6 +464,11 @@ public class CharacterManager : BaseMonoBehaviour {
         data.SetHasBeenSpawned();
         return newCharacter;
     }
+    public SaveDataCharacter CreateNewSaveDataCharacter(Character character) {
+        SaveDataCharacter saveCharacter = Activator.CreateInstance(character.serializedData) as SaveDataCharacter;
+        saveCharacter.Save(character);
+        return saveCharacter;
+    }
     public void AddNewCharacter(Character character, bool broadcastSignal = true) {
         DatabaseManager.Instance.characterDatabase.AddCharacter(character);
         if (broadcastSignal) {
@@ -759,64 +764,18 @@ public class CharacterManager : BaseMonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Summon CreateNewSummon(SaveDataSummon data, Faction faction = null, BaseSettlement homeLocation = null,
-        Region homeRegion = null, LocationStructure homeStructure = null) {
-        Summon newCharacter = CreateNewSummonClassFromType(data.summonType, data.className) as Summon;
-        newCharacter.ChangeGender(data.gender);
-        newCharacter.AssignRace(data.race);
-        newCharacter.SetFirstAndLastName(data.firstName, data.surName);
-        newCharacter.Initialize();
-        if (faction != null) {
-            faction.JoinFaction(newCharacter);
+    public Summon CreateNewSummon(SaveDataSummon data) {
+        Summon newCharacter = CreateNewSummonClassFromType(data) as Summon;
+        if (newCharacter.isInLimbo) {
+            AddNewLimboCharacter(newCharacter);
         } else {
-            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+            AddNewCharacter(newCharacter);
         }
-        if (homeStructure != null) {
-            newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
-        } else if (homeLocation != null) {
-            newCharacter.MigrateHomeTo(homeLocation, null, false, true);
-            if (homeLocation is NPCSettlement homeNPCSettlement) {
-                homeNPCSettlement.region.AddCharacterToLocation(newCharacter);
-            } else if (homeRegion != null) {
-                homeRegion.AddResident(newCharacter);
-                homeRegion.AddCharacterToLocation(newCharacter);
-            }
-        } else if (homeRegion != null) {
-            homeRegion.AddResident(newCharacter);
-            homeRegion.AddCharacterToLocation(newCharacter);
-        }
-
-        //if (homeLocation != null) {
-        //    newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-        //}
-        //if (homeRegion != null) {
-        //    homeRegion.AddResident(newCharacter);
-        //    homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
-        //}
-        newCharacter.traitContainer.RemoveAllTraits(newCharacter);
-        if(data.traitNames != null && data.traitNames.Length > 0) {
-            for (int i = 0; i < data.traitNames.Length; i++) {
-                newCharacter.traitContainer.AddTrait(newCharacter, data.traitNames[i]);
-            }
-        }
-        AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    private Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
-        //switch (data.summonType) {
-        //    case SUMMON_TYPE.Wolf:
-        //        return new Wolf(data);
-        //    case SUMMON_TYPE.Skeleton:
-        //        return new Skeleton(data);
-        //    case SUMMON_TYPE.Succubus:
-        //        return new Succubus(data);
-        //    case SUMMON_TYPE.Incubus:
-        //        return new Incubus(data);
-        //    case SUMMON_TYPE.Golem:
-        //        return new Golem(data);
-        //}
-        return null;
+    private Summon CreateNewSummonClassFromType(SaveDataSummon data) {
+        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.summonType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"), data) as Summon;
     }
     private Summon CreateNewSummonClassFromType(SUMMON_TYPE summonType, string className) {
         var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(summonType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
@@ -1380,7 +1339,6 @@ public class CharacterManager : BaseMonoBehaviour {
         return newParty;
     }
     private SaveDataParty CreateNewParty(Party party) {
-        var typeName = $"SaveData{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(party.partyName)}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         SaveDataParty saveParty = Activator.CreateInstance(party.serializedData) as SaveDataParty;
         saveParty.Save(party);
         return saveParty;

@@ -11,7 +11,7 @@ public class Chicken : Animal {
     public Chicken(string className) : base(SUMMON_TYPE.Chicken, className, RACE.CHICKEN) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
-    public Chicken(SaveDataCharacter data) : base(data) {
+    public Chicken(SaveDataSummon data) : base(data) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     

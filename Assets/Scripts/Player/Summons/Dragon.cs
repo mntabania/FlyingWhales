@@ -7,14 +7,16 @@ using Inner_Maps.Location_Structures;
 
 public class Dragon : Summon {
     public override string raceClassName => "Dragon";
+    public override System.Type serializedData => typeof(SaveDataDragon);
 
     public bool isAwakened { get; private set; }
     public bool isAttackingPlayer { get; private set; }
     public bool willLeaveWorld { get; private set; }
     public LocationStructure targetStructure { get; private set; }
-    public override bool defaultDigMode => true;
-    private int _leaveWorldCounter;
+    public int leaveWorldCounter { get; private set; }
     private readonly int _leaveWorldTimer;
+
+    public override bool defaultDigMode => true;
 
     public Dragon() : base(SUMMON_TYPE.Dragon, "Dragon", RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
@@ -32,7 +34,14 @@ public class Dragon : Summon {
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
-    public Dragon(SaveDataCharacter data) : base(data) { }
+    public Dragon(SaveDataDragon data) : base(data) {
+        _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
+
+        isAwakened = data.isAwakened;
+        isAttackingPlayer = data.isAttackingPlayer;
+        willLeaveWorld = data.willLeaveWorld;
+        leaveWorldCounter = data.leaveWorldCounter;
+    }
 
     #region Overrides
     public override void Initialize() {
@@ -49,6 +58,14 @@ public class Dragon : Summon {
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
         RemovePlayerAction(SPELL_TYPE.SNATCH);
+    }
+    public override void LoadReferences(SaveDataCharacter data) {
+        if(data is SaveDataDragon savedData) {
+            if(savedData.targetStructure != string.Empty) {
+                targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(savedData.targetStructure);
+            }
+        }
+        base.LoadReferences(data);
     }
     #endregion
 
@@ -68,8 +85,8 @@ public class Dragon : Summon {
     }
 
     private void CheckLeaveWorld() {
-        _leaveWorldCounter++;
-        if(_leaveWorldCounter >= _leaveWorldTimer) {
+        leaveWorldCounter++;
+        if(leaveWorldCounter >= _leaveWorldTimer) {
             LeaveWorld();
         }
     }
@@ -128,4 +145,28 @@ public class Dragon : Summon {
     //        }
     //    }
     //}
+}
+
+[System.Serializable]
+public class SaveDataDragon : SaveDataSummon {
+    public bool isAwakened;
+    public bool isAttackingPlayer;
+    public bool willLeaveWorld;
+    public int leaveWorldCounter;
+
+    public string targetStructure;
+
+    public override void Save(Character data) {
+        base.Save(data);
+        if (data is Dragon summon) {
+            isAwakened = summon.isAwakened;
+            isAttackingPlayer = summon.isAttackingPlayer;
+            willLeaveWorld = summon.willLeaveWorld;
+            leaveWorldCounter = summon.leaveWorldCounter;
+
+            if(summon.targetStructure != null) {
+                targetStructure = summon.targetStructure.persistentID;
+            }
+        }
+    }
 }

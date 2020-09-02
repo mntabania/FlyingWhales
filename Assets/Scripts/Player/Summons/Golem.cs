@@ -19,7 +19,9 @@ public class Golem : Summon {
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Hibernating");
     }
-    public Golem(SaveDataCharacter data) : base(data) { }
+    public Golem(SaveDataSummon data) : base(data) {
+        visuals.SetHasBlood(false);
+    }
 
     #region Overrides
     public override string GetClassForRole(CharacterRole role) {

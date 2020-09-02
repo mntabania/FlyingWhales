@@ -12,6 +12,7 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
+using Interrupts;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -888,6 +889,21 @@ public class Player : ILeader, IObjectManipulator {
 
         Faction faction = FactionManager.Instance.GetFactionByPersistentID(data.factionID);
         SetPlayerFaction(faction);
+
+        playerSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.settlementID) as PlayerSettlement;
+
+        for (int i = 0; i < data.actionIntels.Count; i++) {
+            SaveDataActionIntel savedIntel = data.actionIntels[i];
+            ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(savedIntel.node);
+            ActionIntel actionIntel = new ActionIntel(node);
+            allIntel.Add(actionIntel);
+        }
+        for (int i = 0; i < data.interruptIntels.Count; i++) {
+            SaveDataInterruptIntel savedIntel = data.interruptIntels[i];
+            InterruptHolder interrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(savedIntel.interruptHolder);
+            InterruptIntel interruptIntel = new InterruptIntel(interrupt);
+            allIntel.Add(interruptIntel);
+        }
 
         PlayerUI.Instance.UpdateUI();
     }

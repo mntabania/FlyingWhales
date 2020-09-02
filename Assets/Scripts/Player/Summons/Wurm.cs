@@ -13,7 +13,7 @@ public class Wurm : Summon {
     public Wurm(string className) : base(SUMMON_TYPE.Wurm, className, RACE.WURM, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public Wurm(SaveDataCharacter data) : base(data) {
+    public Wurm(SaveDataSummon data) : base(data) {
         visuals.SetHasBlood(false);
     }
 

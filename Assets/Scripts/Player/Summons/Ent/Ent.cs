@@ -5,7 +5,8 @@ using Traits;
 public abstract class Ent : Summon {
 
     public override string raceClassName => "Ent";
-    
+    public override System.Type serializedData => typeof(SaveDataEnt);
+
     /// <summary>
     /// Is this ent pretending to be a tree
     /// </summary>
@@ -14,8 +15,9 @@ public abstract class Ent : Summon {
     protected Ent(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.ENT, UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    protected Ent(SaveDataCharacter data) : base(data) {
+    protected Ent(SaveDataEnt data) : base(data) {
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        isTree = data.isTree;
     }
     public override void Initialize() {
         base.Initialize();
@@ -67,4 +69,16 @@ public abstract class Ent : Summon {
         isTree = state;
     }
     #endregion
+}
+
+[System.Serializable]
+public class SaveDataEnt : SaveDataSummon {
+    public bool isTree;
+
+    public override void Save(Character data) {
+        base.Save(data);
+        if (data is Ent summon) {
+            isTree = summon.isTree;
+        }
+    }
 }

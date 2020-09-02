@@ -10,7 +10,7 @@ public class Sheep : Animal {
     public Sheep(string className) : base(SUMMON_TYPE.Sheep, className, RACE.SHEEP) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
-    public Sheep(SaveDataCharacter data) : base(data) {
+    public Sheep(SaveDataSummon data) : base(data) {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
     }
     

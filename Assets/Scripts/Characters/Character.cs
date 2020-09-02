@@ -134,7 +134,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region getters / setters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Character;
-    public Type serializedData => typeof(SaveDataCharacter);
+    public virtual Type serializedData => typeof(SaveDataCharacter);
     public virtual string name => _firstName;
     public virtual string raceClassName => GetDefaultRaceClassName();
     public override string relatableName => _firstName;
@@ -269,9 +269,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals = new CharacterVisuals(this);
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
+        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
     }
     public Character(string className, RACE race, GENDER gender) : this() {
-        persistentID = System.Guid.NewGuid().ToString();
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         _id = UtilityScripts.Utilities.SetID(this);
         _gender = gender;
         AssignClass(className, true);
@@ -281,6 +282,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals = new CharacterVisuals(this);
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
+        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
     }
     private Character() {
         SetIsDead(false);
@@ -328,7 +330,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         partyComponent = new PartyComponent(); partyComponent.SetOwner(this);
         tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
-        buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
 
         needsComponent.ResetSleepTicks();
     }
@@ -414,83 +415,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             _minion = data.minion.Load(this);
             visuals.CreateWholeImageMaterial();
         }
-    }
 
-    public void LoadReferences(SaveDataCharacter data) {
-        if (data.hasLycan) {
-            lycanData = data.lycanData.Load();
-        }
-        if (data.grave != string.Empty) {
-            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
-        }
-        if (data.ruledSettlement != string.Empty) {
-            ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
-        }
-        if (data.deathLog != string.Empty) {
-            deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
-        }
-        if (data.homeRegion != string.Empty) {
-            homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
-        }
-        if (data.homeSettlement != string.Empty) {
-            homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
-        }
-        if (data.homeStructure != string.Empty) {
-            homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
-        }
-        if (data.currentRegion != string.Empty) {
-            _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
-        }
-        if (data.currentStructure != string.Empty) {
-            _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
-        }
-        if (data.faction != string.Empty) {
-            _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
-        }
-        if (data.prevFaction != string.Empty) {
-            prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
-        }
-
-        for (int i = 0; i < data.territories.Count; i++) {
-            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
-            territories.Add(hex);
-        }
-        for (int i = 0; i < data.items.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
-            items.Add(obj);
-        }
-        for (int i = 0; i < data.ownedItems.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
-            ownedItems.Add(obj);
-        }
-
-        needsComponent.LoadReferences(data.needsComponent);
-        buildStructureComponent.LoadReferences(data.buildStructureComponent);
-        stateComponent.LoadReferences(data.stateComponent);
-        nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
-        interruptComponent.LoadReferences(data.interruptComponent);
-        behaviourComponent.LoadReferences(data.behaviourComponent);
-        moodComponent.LoadReferences(data.moodComponent);
-        jobComponent.LoadReferences(data.jobComponent);
-        reactionComponent.LoadReferences(data.reactionComponent);
-        logComponent.LoadReferences(data.logComponent);
-        combatComponent.LoadReferences(data.combatComponent);
-        rumorComponent.LoadReferences(data.rumorComponent);
-        assumptionComponent.LoadReferences(data.assumptionComponent);
-        movementComponent.LoadReferences(data.movementComponent);
-        stateAwarenessComponent.LoadReferences(data.stateAwarenessComponent);
-        carryComponent.LoadReferences(data.carryComponent);
-        partyComponent.LoadReferences(data.partyComponent);
-        tileObjectComponent.LoadReferences(data.tileObjectComponent);
-        crimeComponent.LoadReferences(data.crimeComponent);
-
-        //Place marker after loading references
         if (data.hasMarker) {
+            //Create marker in first wave loading, so that when loading references of character in second wave we can put carried characters/objects because the marker is already created
+            //This must be same as the Tile Object, visual of tile object must also be created on first wave
             CreateMarker();
-            marker.transform.position = data.worldPos;
-            marker.transform.localRotation = data.rotation;
         }
-        
     }
     /// <summary>
     /// Initialize data for this character that is not safe to put in the constructor.
@@ -622,6 +552,85 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Virtuals
     public virtual void OnSetIsHidden() { }
+    public virtual void LoadReferences(SaveDataCharacter data) {
+        if (data.hasLycan) {
+            lycanData = data.lycanData.Load();
+        }
+        if (data.grave != string.Empty) {
+            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
+        }
+        if (data.ruledSettlement != string.Empty) {
+            ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
+        }
+        if (data.deathLog != string.Empty) {
+            deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
+        }
+        if (data.homeRegion != string.Empty) {
+            homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
+        }
+        if (data.homeSettlement != string.Empty) {
+            homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
+        }
+        if (data.homeStructure != string.Empty) {
+            homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
+        }
+        if (data.currentRegion != string.Empty) {
+            _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
+        }
+        if (data.currentStructure != string.Empty) {
+            _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
+        }
+        if (data.faction != string.Empty) {
+            _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
+        }
+        if (data.prevFaction != string.Empty) {
+            prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
+        }
+
+        for (int i = 0; i < data.territories.Count; i++) {
+            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
+            territories.Add(hex);
+        }
+        for (int i = 0; i < data.items.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
+            items.Add(obj);
+        }
+        for (int i = 0; i < data.ownedItems.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
+            ownedItems.Add(obj);
+        }
+
+        needsComponent.LoadReferences(data.needsComponent);
+        buildStructureComponent.LoadReferences(data.buildStructureComponent);
+        stateComponent.LoadReferences(data.stateComponent);
+        nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
+        interruptComponent.LoadReferences(data.interruptComponent);
+        behaviourComponent.LoadReferences(data.behaviourComponent);
+        moodComponent.LoadReferences(data.moodComponent);
+        jobComponent.LoadReferences(data.jobComponent);
+        reactionComponent.LoadReferences(data.reactionComponent);
+        logComponent.LoadReferences(data.logComponent);
+        combatComponent.LoadReferences(data.combatComponent);
+        rumorComponent.LoadReferences(data.rumorComponent);
+        assumptionComponent.LoadReferences(data.assumptionComponent);
+        movementComponent.LoadReferences(data.movementComponent);
+        stateAwarenessComponent.LoadReferences(data.stateAwarenessComponent);
+        carryComponent.LoadReferences(data.carryComponent);
+        partyComponent.LoadReferences(data.partyComponent);
+        tileObjectComponent.LoadReferences(data.tileObjectComponent);
+        crimeComponent.LoadReferences(data.crimeComponent);
+
+        //Place marker after loading references
+        if (data.hasMarker) {
+            if (!marker) {
+                CreateMarker();
+            }
+            marker.transform.position = data.worldPos;
+            marker.transform.localRotation = data.rotation;
+        }
+        visuals.UpdateAllVisuals(this);
+
+    }
     #endregion
 
     #region Listeners

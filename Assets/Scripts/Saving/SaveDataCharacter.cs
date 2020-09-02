@@ -226,6 +226,6 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     }
     public override Character Load() {
         Character character = CharacterManager.Instance.CreateNewCharacter(this);
-        return base.Load();
+        return character;
     }
 }

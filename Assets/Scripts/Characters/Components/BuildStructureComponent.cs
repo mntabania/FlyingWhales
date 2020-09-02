@@ -11,8 +11,6 @@ public class BuildStructureComponent : CharacterComponent {
     //private const string Human_Survival_Structures = "Human Survival Structures"; //Warehouse/Cemetery/Prison/Smithy/Barracks/Apothecary
     //private const string Human_Utility_Structures = "Human Utility Structures"; //Granary/Miner's Camp/Inn
     //private const string Human_Combat_Structures = "Human Combat Structures"; //Raider's Camp/Assassin's Guild/Hunter's Lodge/Mage Quarters
-
-    public Character owner { get; private set; }
     public int currentIndex { get; private set; }
 
     public int startLoopIndex { get; private set; }
@@ -31,15 +29,19 @@ public class BuildStructureComponent : CharacterComponent {
         utilityStructures = new List<STRUCTURE_TYPE>();
         combatStructures = new List<STRUCTURE_TYPE>();
         missingStructures = new List<STRUCTURE_TYPE>();
-
-        ResetCategorizedStructures("Survival");
-        ResetCategorizedStructures("Utility");
-        ResetCategorizedStructures("Combat");
-        AssignBuildOrder();
     }
     public BuildStructureComponent(SaveDataBuildStructureComponent data) {
         currentIndex = data.currentIndex;
         startLoopIndex = data.startLoopIndex;
+    }
+    public override void SetOwner(Character owner) {
+        base.SetOwner(owner);
+        if(this.owner != null) {
+            ResetCategorizedStructures("Survival");
+            ResetCategorizedStructures("Utility");
+            ResetCategorizedStructures("Combat");
+            AssignBuildOrder();
+        }
     }
 
     #region General

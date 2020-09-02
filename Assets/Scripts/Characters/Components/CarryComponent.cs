@@ -35,9 +35,9 @@ public class CarryComponent : CharacterComponent {
             }
         }
     }
-    public bool CarryPOI(IPointOfInterest poi, bool isOwner = false) {
+    public bool CarryPOI(IPointOfInterest poi, bool isOwner = false, bool isFromSave = false) {
         if (poi is Character) {
-            return CarryCharacter(poi as Character, isOwner);
+            return CarryCharacter(poi as Character, isOwner, isFromSave);
         } else if (poi is TileObject) {
             return CarryTileObkect(poi as TileObject);
         }
@@ -64,42 +64,48 @@ public class CarryComponent : CharacterComponent {
         }
         return false;
     }
-    private bool CarryCharacter(Character character, bool isOwner) {
+    private bool CarryCharacter(Character character, bool isOwner, bool isFromSave) {
         if (carriedPOI == null) {
             carriedPOI = character;
             character.carryComponent.SetIsBeingCarriedBy(owner);
 
             character.SetGridTileLocation(owner.gridTileLocation);
             character.SetCurrentStructureLocation(owner.currentStructure);
+
+            if (!character.marker) {
+                character.CreateMarker();
+            }
+
             character.marker.transform.SetParent(owner.marker.visualsParent);
             character.marker.transform.localPosition = new Vector3(0f, 0.5f, 0f);
             character.marker.visualsParent.eulerAngles = Vector3.zero;
             character.marker.transform.eulerAngles = Vector3.zero;
             // character.marker.SetNameState(false);
 
-            if (!owner.traitContainer.HasTrait("Plagued")) {
-                Traits.Plagued targetPlagued = character.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
-                if (targetPlagued != null) {
-                    string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
-                    int roll = UnityEngine.Random.Range(0, 100);
-                    int carryInfectChance = targetPlagued.GetCarryInfectChance();
-                    plaguedSummary += $"\nRoll is: {roll.ToString()}, Chance is: {carryInfectChance.ToString()}";
-                    if (roll < carryInfectChance) {
-                        //carrier will be infected with plague
-                        plaguedSummary += $"\nWill infect {owner.name} with plague!";
-                        owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
-                        // if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
-                        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
-                        //     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        //     log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        //     log.AddLogToInvolvedObjects();
-                        // }
+            //We added isFromSave checker, because if the carrying happens because we loaded the game from save data, infecting should not happen
+            if (!isFromSave) {
+                if (!owner.traitContainer.HasTrait("Plagued") && character.traitContainer.HasTrait("Plagued")) {
+                    Traits.Plagued targetPlagued = character.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
+                    if (targetPlagued != null) {
+                        string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
+                        int roll = UnityEngine.Random.Range(0, 100);
+                        int carryInfectChance = targetPlagued.GetCarryInfectChance();
+                        plaguedSummary += $"\nRoll is: {roll.ToString()}, Chance is: {carryInfectChance.ToString()}";
+                        if (roll < carryInfectChance) {
+                            //carrier will be infected with plague
+                            plaguedSummary += $"\nWill infect {owner.name} with plague!";
+                            owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
+                            // if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
+                            //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                            //     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            //     log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            //     log.AddLogToInvolvedObjects();
+                            // }
+                        }
+                        Debug.Log(GameManager.Instance.TodayLogString() + plaguedSummary);
                     }
-                    Debug.Log(GameManager.Instance.TodayLogString() + plaguedSummary);
                 }
             }
-            
-            Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);
             return true;
         }
         return false;
@@ -206,8 +212,8 @@ public class CarryComponent : CharacterComponent {
             } else if (data.carriedPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 poi = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.carriedPOI);
             }
-            carriedPOI = poi;
-            //CarryPOI(poi);
+            //carriedPOI = poi;
+            CarryPOI(poi, isFromSave: true);
         }
         if (data.isBeingCarriedBy != null) {
             isBeingCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.isBeingCarriedBy);

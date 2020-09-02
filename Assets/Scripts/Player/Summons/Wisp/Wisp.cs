@@ -12,7 +12,8 @@ public abstract class Wisp : Summon {
         combatComponent.SetCombatMode(COMBAT_MODE.Passive);
         visuals.SetHasBlood(false);
     }
-    protected Wisp(SaveDataCharacter data) : base(data) {
+    protected Wisp(SaveDataSummon data) : base(data) {
+        combatComponent.SetCombatMode(COMBAT_MODE.Passive);
         visuals.SetHasBlood(false);
     }
 

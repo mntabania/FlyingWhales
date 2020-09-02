@@ -16,7 +16,7 @@ public class PathFindingThread : Multithread {
 	private HexTile _destinationTile;
 	private PATHFINDING_MODE _pathfindingMode;
 	//private CitizenAvatar _citizenAvatar;
-    private CharacterAvatar _characterAvatar;
+    //private CharacterAvatar _characterAvatar;
     //private BaseLandmark _landmark;
 
     private object _data;
@@ -30,14 +30,14 @@ public class PathFindingThread : Multithread {
  //       this._data = data;
 	//}
 
-    public PathFindingThread(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
-        receivedPath = new List<HexTile>();
-        this._startingTile = startingTile;
-        this._destinationTile = destinationTile;
-        this._pathfindingMode = pathfindingMode;
-        this._characterAvatar = characterAvatar;
-        this._data = data;
-    }
+    //public PathFindingThread(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
+    //    receivedPath = new List<HexTile>();
+    //    this._startingTile = startingTile;
+    //    this._destinationTile = destinationTile;
+    //    this._pathfindingMode = pathfindingMode;
+    //    this._characterAvatar = characterAvatar;
+    //    this._data = data;
+    //}
     public PathFindingThread(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
         receivedPath = new List<HexTile>();
         this._startingTile = startingTile;
@@ -90,7 +90,7 @@ public class PathFindingThread : Multithread {
 	}
 
 	public void ReturnPath(){
-        this._characterAvatar.ReceivePath(receivedPath, this);
+        //this._characterAvatar.ReceivePath(receivedPath, this);
         //if (_landmark != null) {
         //    this._landmark.ReceivePath(receivedPath);
         //} else {

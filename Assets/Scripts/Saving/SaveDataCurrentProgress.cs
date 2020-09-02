@@ -115,14 +115,12 @@ public class SaveDataCurrentProgress {
     public void SaveCharacters() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            SaveDataCharacter saveData = new SaveDataCharacter();
-            saveData.Save(character);
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
             AddToSaveHub(saveData, saveData.objectType);
         }
         for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
             Character character = CharacterManager.Instance.limboCharacters[i];
-            SaveDataCharacter saveData = new SaveDataCharacter();
-            saveData.Save(character);
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
             AddToSaveHub(saveData, saveData.objectType);
         }
     }

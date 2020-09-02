@@ -13,7 +13,7 @@ public class Incubus : SeducerSummon {
     public Incubus(string className) : base(SUMMON_TYPE.Incubus, GENDER.MALE, className) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Electric);
     }
-    public Incubus(SaveDataCharacter data) : base(data) {
+    public Incubus(SaveDataSummon data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Electric);
     }
     public override string GetClassForRole(CharacterRole role) {

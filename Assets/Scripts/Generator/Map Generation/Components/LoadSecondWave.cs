@@ -19,7 +19,6 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
-        yield return MapGenerator.Instance.StartCoroutine(LoadPlayerReferences(saveData));
         //Load Faction Related Extra Data
         yield return MapGenerator.Instance.StartCoroutine(LoadFactionReferences(saveData));
 
@@ -52,14 +51,6 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Second Wave Job data
         yield return MapGenerator.Instance.StartCoroutine(LoadJobsSecondWave(saveData));
     }
-
-    #region Player
-    private IEnumerator LoadPlayerReferences(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Player Data...");
-        saveData.LoadPlayerReferences();
-        yield return null;
-    }
-    #endregion
 
     #region Faction
     private IEnumerator LoadFactionReferences(SaveDataCurrentProgress saveData) {

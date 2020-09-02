@@ -11,17 +11,22 @@ public class Summon : Character {
 
 	public SUMMON_TYPE summonType { get; }
     private bool showNotificationOnDeath { get; set; }
+
+    #region getters
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
     public virtual COMBAT_MODE defaultCombatMode => COMBAT_MODE.Aggressive;
     public virtual bool defaultDigMode => false;
     public virtual string bredBehaviour => characterClass.traitNameOnTamedByPlayer;
+    public override Type serializedData => typeof(SaveDataSummon);
+    #endregion
 
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         showNotificationOnDeath = true;
     }
-    protected Summon(SaveDataCharacter data) : base(data) {
-        //this.summonType = data.summonType;
+    protected Summon(SaveDataSummon data) : base(data) {
+        summonType = data.summonType;
+        showNotificationOnDeath = true;
     }
 
     #region Overrides
@@ -304,4 +309,20 @@ public class SummonSlot {
     //    }
     //    Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
     //}
+}
+
+[System.Serializable]
+public class SaveDataSummon : SaveDataCharacter {
+    public SUMMON_TYPE summonType;
+
+    public override void Save(Character data) {
+        base.Save(data);
+        if(data is Summon summon) {
+            summonType = summon.summonType;
+        }
+    }
+    public override Character Load() {
+        Summon summon = CharacterManager.Instance.CreateNewSummon(this);
+        return summon;
+    }
 }

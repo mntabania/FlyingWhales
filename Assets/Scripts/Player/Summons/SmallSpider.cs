@@ -8,21 +8,26 @@ public class SmallSpider : Summon {
     public const string ClassName = "Small Spider";
     public override string raceClassName => $"Small Spider";
     public override SUMMON_TYPE adultSummonType => SUMMON_TYPE.Giant_Spider;
+    public override System.Type serializedData => typeof(SaveDataSmallSpider);
 
-    private GameDate _growUpDate;
-    private bool _shouldGrowUpOnUnSeize;
-    
+    public GameDate growUpDate { get; private set; }
+    public bool shouldGrowUpOnUnSeize { get; private set; }
+
     public SmallSpider() : base(SUMMON_TYPE.Small_Spider, ClassName, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
         combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
     public SmallSpider(string className) : base(SUMMON_TYPE.Small_Spider, className, RACE.SPIDER, UtilityScripts.Utilities.GetRandomGender()) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
     }
-    public SmallSpider(SaveDataCharacter data) : base(data) {
+    public SmallSpider(SaveDataSmallSpider data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Poison);
+        combatComponent.SetCombatMode(COMBAT_MODE.Aggressive);
+        growUpDate = data.growUpDate;
+        shouldGrowUpOnUnSeize = data.shouldGrowUpOnUnSeize;
     }
-    
+
     public override void Initialize() {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Small_Spider_Behaviour);
@@ -36,13 +41,13 @@ public class SmallSpider : Summon {
         if (traitContainer.HasTrait("Baby Infestor") == false) {
             //only grow up if spider is not a baby infestor
             //because growing up is handled by Baby Infestor trait
-            SchedulingManager.Instance.AddEntry(_growUpDate, GrowUp, this);
+            SchedulingManager.Instance.AddEntry(growUpDate, GrowUp, this);
         }
     }
     private void DetermineGrowUpDate() {
         GameDate date = GameManager.Instance.Today();
         date.AddDays(1);
-        _growUpDate = date;
+        growUpDate = date;
     }
     public override void OnSeizePOI() {
         base.OnSeizePOI();
@@ -51,9 +56,9 @@ public class SmallSpider : Summon {
     }
     public override void OnUnseizePOI(LocationGridTile tileLocation) {
         base.OnUnseizePOI(tileLocation);
-        if (_shouldGrowUpOnUnSeize) {
+        if (shouldGrowUpOnUnSeize) {
             //this should only happen when this spider is scheduled to grow up while it is being seized.
-            _shouldGrowUpOnUnSeize = false;
+            shouldGrowUpOnUnSeize = false;
             GrowUp();
         }
     }
@@ -66,7 +71,7 @@ public class SmallSpider : Summon {
         if (isBeingSeized && PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {
             //if spider is currently seized and is not being unseized when it should grow up,
             //set it to grow up when it is unseized.
-            _shouldGrowUpOnUnSeize = true;
+            shouldGrowUpOnUnSeize = true;
             return;
         }
         SetDestroyMarkerOnDeath(true);
@@ -96,6 +101,20 @@ public class SmallSpider : Summon {
         if (UIManager.Instance.characterInfoUI.isShowing && 
             UIManager.Instance.characterInfoUI.activeCharacter == this) {
             UIManager.Instance.characterInfoUI.CloseMenu();    
+        }
+    }
+}
+
+[System.Serializable]
+public class SaveDataSmallSpider : SaveDataSummon {
+    public GameDate growUpDate;
+    public bool shouldGrowUpOnUnSeize;
+
+    public override void Save(Character data) {
+        base.Save(data);
+        if (data is SmallSpider summon) {
+            growUpDate = summon.growUpDate;
+            shouldGrowUpOnUnSeize = summon.shouldGrowUpOnUnSeize;
         }
     }
 }

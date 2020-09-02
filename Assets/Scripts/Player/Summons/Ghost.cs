@@ -5,6 +5,8 @@ using UtilityScripts;
 using Random = UnityEngine.Random;
 
 public class Ghost : Summon {
+    public override System.Type serializedData => typeof(SaveDataGhost);
+
     public Character betrayedBy { get; private set; }
 
     public override string raceClassName => characterClass.className;
@@ -14,7 +16,7 @@ public class Ghost : Summon {
     public Ghost(string className) : base(SUMMON_TYPE.Ghost, className, RACE.GHOST, UtilityScripts.Utilities.GetRandomGender()) {
         visuals.SetHasBlood(false);
     }
-    public Ghost(SaveDataCharacter data) : base(data) {
+    public Ghost(SaveDataGhost data) : base(data) {
         visuals.SetHasBlood(false);
     }
 
@@ -28,6 +30,14 @@ public class Ghost : Summon {
         base.UnsubscribeSignals();
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+    }
+    public override void LoadReferences(SaveDataCharacter data) {
+        if (data is SaveDataGhost savedData) {
+            if (savedData.betrayedBy != string.Empty) {
+                betrayedBy = CharacterManager.Instance.GetCharacterByPersistentID(savedData.betrayedBy);
+            }
+        }
+        base.LoadReferences(data);
     }
     #endregion
 
@@ -75,6 +85,20 @@ public class Ghost : Summon {
                     log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToInvolvedObjects();
                 }
+            }
+        }
+    }
+}
+
+[System.Serializable]
+public class SaveDataGhost : SaveDataSummon {
+    public string betrayedBy;
+
+    public override void Save(Character data) {
+        base.Save(data);
+        if (data is Ghost summon) {
+            if(summon.betrayedBy != null) {
+                betrayedBy = summon.betrayedBy.persistentID;
             }
         }
     }

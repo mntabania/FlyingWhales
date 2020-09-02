@@ -11,7 +11,10 @@ public abstract class Nymph : Summon {
     protected Nymph(SUMMON_TYPE summonType, string className) : base(summonType, className, RACE.NYMPH, UtilityScripts.Utilities.GetRandomGender()) {
         combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
-    protected Nymph(SaveDataCharacter data) : base(data) { }
+    protected Nymph(SaveDataSummon data) : base(data) {
+        combatComponent.SetCombatMode(COMBAT_MODE.Defend);
+        ScheduleAOEEffect(Random.Range(20, 40)); //Did not save _currentEffectSchedule, instead redo schedule upon loading because we cannot save schedules right now
+    }
 
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {

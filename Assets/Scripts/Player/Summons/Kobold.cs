@@ -15,7 +15,7 @@ public class Kobold : Summon {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
         // combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }
-    public Kobold(SaveDataCharacter data) : base(data) {
+    public Kobold(SaveDataSummon data) : base(data) {
         //combatComponent.SetElementalType(ELEMENTAL_TYPE.Ice);
         // combatComponent.SetCombatMode(COMBAT_MODE.Defend);
     }

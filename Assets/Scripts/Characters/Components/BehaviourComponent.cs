@@ -99,9 +99,7 @@ public class BehaviourComponent : CharacterComponent {
         currentBehaviourComponents = new List<CharacterBehaviourComponent>();
         for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
             CharacterBehaviourComponent component = CharacterManager.Instance.GetCharacterBehaviourComponent(System.Type.GetType(data.currentBehaviourComponents[i]));
-            if (!currentBehaviourComponents.Contains(component)) {
-                currentBehaviourComponents.Add(component);
-            }
+            AddBehaviourComponentFromSave(component);
         }
         isAttackingDemonicStructure = data.isAttackingDemonicStructure;
         hasLayedAnEgg = data.hasLayedAnEgg;
@@ -134,6 +132,17 @@ public class BehaviourComponent : CharacterComponent {
         if (behaviourAdded) {
             component.OnAddBehaviourToCharacter(owner);
         }
+        return behaviourAdded;
+    }
+    private bool AddBehaviourComponentFromSave(CharacterBehaviourComponent component) {
+        if (component == null) {
+            throw new System.Exception(
+                $"{GameManager.Instance.TodayLogString()}{owner.name} is trying to add a new behaviour component but it is null!");
+        }
+        if (HasBehaviour(component.GetType())) {
+            return false;
+        }
+        bool behaviourAdded = AddBehaviourComponentInOrder(component);
         return behaviourAdded;
     }
     public bool AddBehaviourComponent(System.Type componentType) {

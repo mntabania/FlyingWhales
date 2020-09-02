@@ -8,17 +8,13 @@ using Inner_Maps.Location_Structures;
 public class Troll : Summon {
     public override string raceClassName => "Troll";
 
-    public bool isAwakened { get; private set; }
-    public bool isAttackingPlayer { get; private set; }
-    public bool willLeaveWorld { get; private set; }
-    public LocationStructure targetStructure { get; private set; }
     public override bool defaultDigMode => true;
 
     public Troll() : base(SUMMON_TYPE.Troll, "Troll", RACE.TROLL, UtilityScripts.Utilities.GetRandomGender()) {
     }
     public Troll(string className) : base(SUMMON_TYPE.Troll, className, RACE.TROLL, UtilityScripts.Utilities.GetRandomGender()) {
     }
-    public Troll(SaveDataCharacter data) : base(data) { }
+    public Troll(SaveDataSummon data) : base(data) { }
 
     #region Overrides
     public override void Initialize() {

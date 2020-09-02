@@ -16,6 +16,9 @@ public class ActionIntel : IIntel {
     public ActionIntel(ActualGoapNode node) {
         this.node = node;
     }
+    public ActionIntel(SaveDataActionIntel data) {
+        node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.node);
+    }
 }
 public class InterruptIntel : IIntel {
     //public Interrupt interrupt { get; private set; }
@@ -40,6 +43,9 @@ public class InterruptIntel : IIntel {
         interruptHolder.SetDisguisedActor(interrupt.disguisedActor);
         interruptHolder.SetDisguisedTarget(interrupt.disguisedTarget);
     }
+    public InterruptIntel(SaveDataInterruptIntel data) {
+        interruptHolder = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.interruptHolder);
+    }
 }
 
 public interface IIntel {
@@ -49,23 +55,36 @@ public interface IIntel {
     IPointOfInterest target { get; }
 }
 
-//[System.Serializable]
-//public class SaveDataIntel {
-//    public bool hasLog;
-//    public SaveDataLog intelLog;
-//    public string systemType;
+[System.Serializable]
+public class SaveDataActionIntel : SaveData<ActionIntel> {
+    public string node;
 
-//    public virtual void Save(Intel intel) {
-//        hasLog = intel.intelLog != null;
-//        systemType = intel.GetType().ToString();
-//        if (hasLog) {
-//            intelLog = new SaveDataLog();
-//            intelLog.Save(intel.intelLog);
-//        }
-//    }
+    #region Overrides
+    public override void Save(ActionIntel data) {
+        node = data.node.persistentID;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.node);
+    }
 
-//    public virtual Intel Load() {
-//        Intel intel = System.Activator.CreateInstance(System.Type.GetType(systemType), this) as Intel;
-//        return intel;
-//    }
-//}
+    public override ActionIntel Load() {
+        ActionIntel interrupt = new ActionIntel(this);
+        return interrupt;
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataInterruptIntel : SaveData<InterruptIntel> {
+    public string interruptHolder;
+
+    #region Overrides
+    public override void Save(InterruptIntel data) {
+        interruptHolder = data.interruptHolder.persistentID;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.interruptHolder);
+    }
+
+    public override InterruptIntel Load() {
+        InterruptIntel interrupt = new InterruptIntel(this);
+        return interrupt;
+    }
+    #endregion
+}
