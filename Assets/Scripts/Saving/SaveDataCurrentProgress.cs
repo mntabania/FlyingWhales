@@ -133,6 +133,9 @@ public class SaveDataCurrentProgress {
             AddToSaveHub(jobQueueItem);
         }
     }
+    #endregion
+
+    #region Tile Objects
     public void SaveTileObjects(List<TileObject> tileObjects) {
         //tile objects
         List<TileObject> finishedObjects = new List<TileObject>();
@@ -148,12 +151,12 @@ public class SaveDataCurrentProgress {
             }
             if (tileObject is Artifact artifact) {
                 string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
-                SaveDataTileObject saveDataTileObject = SaveUtilities.CreateNewSaveDataForArtifact(tileObjectTypeName);
+                SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
                 saveDataTileObject.Save(tileObject);
                 AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
             } else {
                 string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
-                SaveDataTileObject saveDataTileObject = SaveUtilities.CreateNewSaveDataForTileObject(tileObjectTypeName);
+                SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
                 saveDataTileObject.Save(tileObject);
                 AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
             }
@@ -164,6 +167,24 @@ public class SaveDataCurrentProgress {
         }
         finishedObjects.Clear();
         finishedObjects = null;
+    }
+    public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
+        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+            return obj;
+        }
+        return new SaveDataTileObject(); //if no special save data for tile object was found, then just use the generic one
+    }
+    private SaveDataTileObject createNewSaveDataForArtifact(string tileObjectTypeString) {
+        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+            return obj;
+        }
+        return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
     }
     #endregion
 
@@ -272,6 +293,7 @@ public class SaveDataCurrentProgress {
                 Dictionary<string, SaveDataCrimeData> saved = hub.hub;
                 foreach (SaveDataCrimeData data in saved.Values) {
                     CrimeData crime = data.Load();
+                    DatabaseManager.Instance.crimeDatabase.AddCrime(crime);
                 }
             }
         }
@@ -307,6 +329,11 @@ public class SaveDataCurrentProgress {
     public void LoadCharacterReferences() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
+            SaveDataCharacter saveData = GetFromSaveHub<SaveDataCharacter>(OBJECT_TYPE.Character, character.persistentID);
+            character.LoadReferences(saveData);
+        }
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
             SaveDataCharacter saveData = GetFromSaveHub<SaveDataCharacter>(OBJECT_TYPE.Character, character.persistentID);
             character.LoadReferences(saveData);
         }

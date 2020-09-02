@@ -60,4 +60,12 @@ public class DatabaseManager : MonoBehaviour {
         partyDatabase = new PartyDatabase();
         crimeDatabase = new CrimeDatabase();
     }
+
+    public void ClearVolatileDatabases() {
+        actionDatabase.allActions.Clear();
+        interruptDatabase.allInterrupts.Clear();
+        logDatabase.allLogs.Clear();
+        partyDatabase.allParties.Clear();
+        crimeDatabase.allCrimes.Clear();
+    }
 }
