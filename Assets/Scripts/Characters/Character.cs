@@ -350,8 +350,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
-        AssignClass(data.className, true);
-        AssignRace(data.race, true);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        RaceSetting rs = RaceManager.Instance.racesDictionary[data.race.ToString()];
+        _raceSetting = rs.CreateNewCopy();
         CreateTraitContainer();
 
         persistentID = data.persistentID;
@@ -416,11 +417,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             visuals.CreateWholeImageMaterial();
         }
 
-        if (data.hasMarker) {
-            //Create marker in first wave loading, so that when loading references of character in second wave we can put carried characters/objects because the marker is already created
-            //This must be same as the Tile Object, visual of tile object must also be created on first wave
-            CreateMarker();
-        }
+        //if (data.hasMarker) {
+        //    //Create marker in first wave loading, so that when loading references of character in second wave we can put carried characters/objects because the marker is already created
+        //    //This must be same as the Tile Object, visual of tile object must also be created on first wave
+        //    CreateMarker();
+        //}
     }
     /// <summary>
     /// Initialize data for this character that is not safe to put in the constructor.

@@ -35,9 +35,8 @@ public class CharacterVisuals {
     public CharacterVisuals(Character character, SaveDataCharacter data) {
         _owner = character;
         portraitSettings = data.portraitSettings;
-        _hasBlood = true;
         CreateHairMaterial();
-        UpdateMarkerAnimations(character);
+        markerAnimations = new Dictionary<string, Sprite>();
     }
 
     #region Listeners

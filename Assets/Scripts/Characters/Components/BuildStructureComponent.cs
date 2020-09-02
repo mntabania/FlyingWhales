@@ -33,6 +33,10 @@ public class BuildStructureComponent : CharacterComponent {
     public BuildStructureComponent(SaveDataBuildStructureComponent data) {
         currentIndex = data.currentIndex;
         startLoopIndex = data.startLoopIndex;
+        survivalStructures = new List<STRUCTURE_TYPE>();
+        utilityStructures = new List<STRUCTURE_TYPE>();
+        combatStructures = new List<STRUCTURE_TYPE>();
+        missingStructures = new List<STRUCTURE_TYPE>();
     }
     public override void SetOwner(Character owner) {
         base.SetOwner(owner);
