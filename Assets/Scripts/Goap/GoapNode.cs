@@ -938,16 +938,18 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (!string.IsNullOrEmpty(data.targetStructure)) {
             targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetStructure);
         }
-        if (data.targetPOIToGoTo != string.Empty) {
+        if (!string.IsNullOrEmpty(data.targetPOIToGoTo)) {
             if (data.targetPOIToGoToType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 targetPOIToGoTo = CharacterManager.Instance.GetCharacterByPersistentID(data.targetPOIToGoTo);
             } else if (data.targetPOIToGoToType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 targetPOIToGoTo = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetPOIToGoTo);
             }
         }
-        for (int i = 0; i < data.awareCharacters.Count; i++) {
-            Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacters[i]);
-            awareCharacters.Add(character);
+        if (data.awareCharacters != null) {
+            for (int i = 0; i < data.awareCharacters.Count; i++) {
+                Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacters[i]);
+                awareCharacters.Add(character);
+            }    
         }
         if (data.hasRumor) {
             rumor = data.rumor.Load();

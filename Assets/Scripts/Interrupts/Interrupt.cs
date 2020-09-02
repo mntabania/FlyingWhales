@@ -223,11 +223,13 @@ namespace Interrupts {
                 effectLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.effectLogID);
             }
 
-            if (data.awareCharacterIDs.Count > 0) {
-                for (int i = 0; i < data.awareCharacterIDs.Count; i++) {
-                    Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacterIDs[i]);
-                    awareCharacters.Add(character);
-                }
+            if (data.awareCharacterIDs != null) {
+                if (data.awareCharacterIDs.Count > 0) {
+                    for (int i = 0; i < data.awareCharacterIDs.Count; i++) {
+                        Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.awareCharacterIDs[i]);
+                        awareCharacters.Add(character);
+                    }
+                }    
             }
 
             if (data.hasRumor) {

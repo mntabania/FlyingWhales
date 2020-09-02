@@ -164,6 +164,9 @@ public class SaveDataLogComponent : SaveData<LogComponent> {
         for (int i = 0; i < data.history.Count; i++) {
             Log log = data.history[i];
             history.Add(log.persistentID);
+            if (log.node != null) {
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log.node);    
+            }
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log);
         }
     }

@@ -12,6 +12,8 @@ public class CrimeComponent : CharacterComponent {
         reportedCrimes = new List<CrimeData>();
     }
     public CrimeComponent(SaveDataCrimeComponent data) {
+        witnessedCrimes = new List<CrimeData>();
+        reportedCrimes = new List<CrimeData>();
     }
 
     #region Crimes

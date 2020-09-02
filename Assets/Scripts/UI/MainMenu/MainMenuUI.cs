@@ -107,6 +107,16 @@ public class MainMenuUI : MonoBehaviour {
     }
 
     #region Load Game
+    public void RedetermineSaveFiles() {
+        saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        if (saveFiles.Length > 0) {
+            LoadSavedGameItems();    
+        } else {
+            OnClickCloseLoadGame();
+        }
+        
+        UpdateButtonStates();
+    }
     public void OnClickLoadGame() {
         LoadSavedGameItems();
         loadGameWindow.gameObject.SetActive(true);

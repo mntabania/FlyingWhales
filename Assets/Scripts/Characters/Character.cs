@@ -602,6 +602,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             ownedItems.Add(obj);
         }
 
+        jobQueue.LoadReferences(data);
         SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
         needsComponent.LoadReferences(data.needsComponent);
         buildStructureComponent.LoadReferences(data.buildStructureComponent);
