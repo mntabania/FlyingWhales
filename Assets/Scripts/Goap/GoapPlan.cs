@@ -13,18 +13,12 @@ public class GoapPlan {
     public ActualGoapNode currentActualNode { get { return GetCurrentActualNode(); } }
     public List<JobNode> allNodes { get; private set; }
     public int currentNodeIndex { get; private set; }
-    //public ActualGoapNode currentActualNode { get; private set; }
-    //public GOAP_EFFECT_CONDITION[] goalEffects { get; private set; }
-    //public List<IPointOfInterest> goalCharacterTargets { get; private set; } ////Only characters in the same structure and characters in this list are allowed to advertise actions even if they are part of the awareness list of the actor
     public bool isEnd { get; private set; }
     public bool isBeingRecalculated { get; private set; }
     public bool isPersonalPlan { get; private set; }
     public bool doNotRecalculate { get; private set; }
-    //public bool hasShownNotification { get; private set; }
     public GOAP_PLAN_STATE state { get; private set; }
-    //public GOAP_CATEGORY category { get; private set; }
-    //public GoapPlanJob job { get; private set; }
-    //public bool isPriority { get; private set; }
+
     public GoapPlan(List<JobNode> nodes, IPointOfInterest target, bool isPersonalPlan = true) {
         this.startingNode = nodes[0];
         this.endNode = nodes[nodes.Count - 1];
@@ -38,6 +32,23 @@ public class GoapPlan {
         //hasShownNotification = false;
         allNodes = nodes;
         //ConstructAllNodes();
+    }
+    public GoapPlan(SaveDataGoapPlan saveDataGoapPlan) {
+        if (!string.IsNullOrEmpty(saveDataGoapPlan.poiTargetID)) {
+            if (saveDataGoapPlan.targetObjectType == OBJECT_TYPE.Character) {
+                target = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataGoapPlan.poiTargetID);
+            } else {
+                //it is assumed that the target of the plan is a tile object if it is not a character.
+                target = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveDataGoapPlan.poiTargetID);
+            }
+        }
+        //NOTE: Did not save isBeingRecalculated because, when loaded, it doesn't matter if the plan is being recalculated or not.
+        currentNodeIndex = saveDataGoapPlan.currentNodeIndex;
+        isEnd = saveDataGoapPlan.isEnd;
+        isPersonalPlan = saveDataGoapPlan.isPersonalPlan;
+        doNotRecalculate = saveDataGoapPlan.doNotRecalculate;
+        state = saveDataGoapPlan.state;
+        //TODO: Load Job Nodes
     }
 
     public void Reset(List<JobNode> nodes) {

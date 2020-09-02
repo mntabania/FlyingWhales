@@ -23,6 +23,7 @@ public class MapGenerationData {
 	public static int InnerMapElevationBatches = 200;
 	public static int TileObjectLoadingBatches = 300;
 	public static int JobLoadingBatches = 300;  
+	public static int LocationGridTileSecondaryWaveBatches = 300;
 	
 	//world map
 	public WorldMapTemplate chosenWorldMapTemplate;
@@ -35,16 +36,6 @@ public class MapGenerationData {
 	public int[,] habitabilityValues;
 	public HexTile portal;
 	public LocationStructure portalStructure;
-	
-	//family trees
-	public FamilyTreeDatabase familyTreeDatabase;
-	public Dictionary<RACE, List<FamilyTree>> familyTreesDictionary => familyTreeDatabase.allFamilyTreesDictionary;
-	
-	#region Family Trees
-	public void InitializeFamilyTrees() {
-		familyTreeDatabase = new FamilyTreeDatabase();
-	}
-	#endregion
 
 	#region Habitability
 	public int GetHabitabilityValue(HexTile hexTile) {

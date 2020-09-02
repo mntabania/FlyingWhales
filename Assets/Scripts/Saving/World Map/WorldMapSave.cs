@@ -6,6 +6,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class WorldMapSave {
+    public WorldSettingsData.World_Type worldType;
     public WorldMapTemplate worldMapTemplate;
     public List<SaveDataHextile> hextileSaves;
     public List<SaveDataRegion> regionSaves;
@@ -13,6 +14,8 @@ public class WorldMapSave {
     public List<SaveDataLocationStructure> structureSaves;
     
     public void SaveWorld(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, LocationStructureDatabase structureDatabase) {
+        //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
+        worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
         worldMapTemplate = _worldMapTemplate;
         SaveHexTiles(hexTileDatabase.allHexTiles);
         SaveRegions(regionDatabase.allRegions);

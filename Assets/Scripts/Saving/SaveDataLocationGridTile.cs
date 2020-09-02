@@ -20,6 +20,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public bool hasLandmine;
     public bool hasFreezingTrap;
     public bool hasSnareTrap;
+    public int meteorCount;
     public List<RACE> freezingTrapExclusions;
 
     //tilemap assets
@@ -39,6 +40,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         hasLandmine = gridTile.hasLandmine;
         hasFreezingTrap = gridTile.hasFreezingTrap;
         hasSnareTrap = gridTile.hasSnareTrap;
+        meteorCount = gridTile.meteorCount;
         freezingTrapExclusions = gridTile.freezingTrapExclusions;
         
         genericTileObjectID = gridTile.genericTileObject.persistentID;
@@ -60,16 +62,6 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         genericTileObject.SetTileOwner(tile);
         genericTileObject.ManualInitializeLoad(tile, saveDataTileObject);
         tile.LoadGenericTileObject(genericTileObject);
-
-        if (hasLandmine) {
-            tile.SetHasLandmine(true);
-        }
-        if (hasFreezingTrap) {
-            tile.SetHasFreezingTrap(true, freezingTrapExclusions?.ToArray());
-        }
-        if (hasSnareTrap) {
-            tile.SetHasSnareTrap(true);
-        }
         return tile;
     }
 

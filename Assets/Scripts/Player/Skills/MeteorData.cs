@@ -4,38 +4,6 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
-
-public class Meteor : PlayerSpell {
-
-    //private int abilityRadius;
-
-    public Meteor() : base(SPELL_TYPE.METEOR) {
-        SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
-        abilityRadius = 1;
-        tier = 1;
-    }
-
-    #region Overrides
-    public override void ActivateAction(LocationGridTile targetTile) {
-        base.ActivateAction(targetTile);
-        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Meteor_Strike);
-        //CreateMeteorStrikeAt(targetTile);
-    }
-    protected override void OnLevelUp() {
-        base.OnLevelUp();
-        abilityRadius++;
-    }
-    #endregion
-
-    //private void CreateMeteorStrikeAt(LocationGridTile tile) {
-    //    GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
-    //    meteorGO.transform.SetParent(tile.parentMap.structureParent);
-    //    meteorGO.transform.position = tile.centeredWorldLocation;
-    //    meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
-    //}
-}
-
 public class MeteorData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.METEOR;
     public override string name => "Meteor";
@@ -50,7 +18,8 @@ public class MeteorData : SpellData {
 
     public override void ActivateAbility(LocationGridTile targetTile) {
         //CreateMeteorStrikeAt(targetTile);
-        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Meteor_Strike);
+        targetTile.AddMeteor();
+        
         base.ActivateAbility(targetTile);
     }
     //private void CreateMeteorStrikeAt(LocationGridTile tile) {

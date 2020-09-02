@@ -112,7 +112,7 @@ public class RelationshipManager : BaseMonoBehaviour {
     public void ApplyPreGeneratedRelationships(MapGenerationData data, PreCharacterData characterData, Character character) {
         Assert.IsTrue(characterData.id == character.id, $"Provided character data and character are inconsistent {character.name}");
         foreach (var kvp in characterData.relationships) {
-            PreCharacterData targetCharacterData = data.familyTreeDatabase.GetCharacterWithID(kvp.Key);
+            PreCharacterData targetCharacterData = DatabaseManager.Instance.familyTreeDatabase.GetCharacterWithID(kvp.Key);
             IRelationshipData relationshipData = character.relationshipContainer.GetOrCreateRelationshipDataWith(character, targetCharacterData.id, 
                 targetCharacterData.firstName, targetCharacterData.gender);
 

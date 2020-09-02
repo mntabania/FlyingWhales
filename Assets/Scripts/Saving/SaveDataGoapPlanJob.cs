@@ -9,8 +9,7 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
     public INTERACTION_TYPE targetInteractionType;
     public Dictionary<INTERACTION_TYPE, SaveDataOtherData[]> otherData;
     public bool shouldBeCancelledOnDeath;
-
-    //TODO: Save GoapPlan
+    public SaveDataGoapPlan saveDataGoapPlan;
 
     public override void Save(JobQueueItem job) {
         base.Save(job);
@@ -31,6 +30,10 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
             otherData.Add(data.Key, otherDataSave);
         }
         shouldBeCancelledOnDeath = goapJob.shouldBeCancelledOnDeath;
+        if (goapJob.assignedPlan != null) {
+            saveDataGoapPlan = new SaveDataGoapPlan();
+            saveDataGoapPlan.Save(goapJob.assignedPlan);
+        }
     }
     public override JobQueueItem Load() {
         GoapPlanJob goapPlanJob = JobManager.Instance.CreateNewGoapPlanJob(this);

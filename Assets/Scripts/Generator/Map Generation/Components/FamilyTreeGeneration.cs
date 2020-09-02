@@ -10,17 +10,15 @@ public class FamilyTreeGeneration : MapGenerationComponent {
     #region Random Generation
     public override IEnumerator ExecuteRandomGeneration(MapGenerationData data) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Generating families...");
-        data.InitializeFamilyTrees();
-        
         //human family trees
         for (int i = 0; i < 15; i++) {
             FamilyTree familyTree = FamilyTreeGenerator.GenerateFamilyTree(RACE.HUMANS);
-            data.familyTreeDatabase.AddFamilyTree(familyTree);    
+            DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(familyTree);    
         }
         //elven family trees
         for (int i = 0; i < 15; i++) {
             FamilyTree familyTree = FamilyTreeGenerator.GenerateFamilyTree(RACE.ELVES);
-            data.familyTreeDatabase.AddFamilyTree(familyTree);    
+            DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(familyTree);    
         }
 
         GenerateAdditionalCouples(RACE.HUMANS, data);
@@ -28,7 +26,7 @@ public class FamilyTreeGeneration : MapGenerationComponent {
         yield return null;
     }
     private void GenerateAdditionalCouples(RACE race, MapGenerationData data) {
-        List<FamilyTree> families = data.familyTreesDictionary[race];
+        List<FamilyTree> families = DatabaseManager.Instance.familyTreeDatabase.allFamilyTreesDictionary[race];
         int pairCount = families.Count / 2;
 
         for (int i = 0; i < pairCount; i++) {
@@ -41,7 +39,7 @@ public class FamilyTreeGeneration : MapGenerationComponent {
             }
             PreCharacterData randomChildFromFirst = CollectionUtilities.GetRandomElement(firstFamily.children);
             PreCharacterData compatibleChildFromSecond =
-                GetCompatibleChildFromFamily(randomChildFromFirst, secondFamily, data.familyTreeDatabase);
+                GetCompatibleChildFromFamily(randomChildFromFirst, secondFamily, DatabaseManager.Instance.familyTreeDatabase);
 
             if (compatibleChildFromSecond != null) {
                 randomChildFromFirst.AddRelationship(RELATIONSHIP_TYPE.LOVER, compatibleChildFromSecond);
@@ -77,7 +75,8 @@ public class FamilyTreeGeneration : MapGenerationComponent {
     
     #region Saved World
     public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-        yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+        DatabaseManager.Instance.familyTreeDatabase.Load(saveData);
+        yield return null;
     }
     #endregion
 }

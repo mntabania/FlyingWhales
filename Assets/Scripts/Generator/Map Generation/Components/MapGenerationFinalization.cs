@@ -28,7 +28,6 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			region.GenerateOuterBorders();
 			region.HideBorders();
 		}
-		data.familyTreeDatabase.Save();
 	}
 
 	#region Events

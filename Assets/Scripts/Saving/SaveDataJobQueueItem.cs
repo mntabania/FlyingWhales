@@ -37,8 +37,14 @@ public abstract class SaveDataJobQueueItem : SaveData<JobQueueItem>, ISavableCou
         _objectType = job.objectType;
         id = job.id;
 
-        originalOwnerID = job.originalOwner.persistentID;
-        originalOwnerType = job.originalOwner.objectType;
+        if (job.originalOwner != null) {
+            originalOwnerID = job.originalOwner.persistentID;
+            originalOwnerType = job.originalOwner.objectType;    
+        } else {
+            originalOwnerID = string.Empty;
+            originalOwnerType = OBJECT_TYPE.Character;
+        }
+        
 
         assignedCharacterID = job.assignedCharacter == null ? string.Empty : job.assignedCharacter.persistentID;
         

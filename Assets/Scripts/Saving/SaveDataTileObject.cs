@@ -19,6 +19,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public POI_STATE poiState;
     public INTERACTION_TYPE[] advertisedActions;
     public List<string> jobsTargetingThis;
+    public List<string> existingJobsTargetingThis;
+    public MAP_OBJECT_STATE mapObjectState;
     
     //hp
     public int currentHP;
@@ -64,6 +66,13 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             JobQueueItem jobQueueItem = tileObject.allJobsTargetingThis[i];
             jobsTargetingThis.Add(jobQueueItem.persistentID);
         }
+        
+        existingJobsTargetingThis = new List<string>();
+        for (int i = 0; i < tileObject.allExistingJobsTargetingThis.Count; i++) {
+            JobQueueItem jobQueueItem = tileObject.allExistingJobsTargetingThis[i];
+            jobsTargetingThis.Add(jobQueueItem.persistentID);
+        }
+        mapObjectState = tileObject.mapObjectState;
         
         currentHP = tileObject.currentHP;
 

@@ -34,12 +34,18 @@ public class GoapPlanJob : JobQueueItem {
         this.goal = goal;
         this.targetPOI = targetPOI;
         shouldBeCancelledOnDeath = true;
+        if (targetPOI is TileObject tileObject) {
+            tileObject.AddExistingJobTargetingThis(this);
+        }
     }
     public void Initialize(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, IJobOwner owner) {
         Initialize(jobType, owner);
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
         shouldBeCancelledOnDeath = true;
+        if (targetPOI is TileObject tileObject) {
+            tileObject.AddExistingJobTargetingThis(this);
+        }
     }
     public void Initialize(SaveDataGoapPlanJob data) {
         base.Initialize(data);
@@ -67,6 +73,10 @@ public class GoapPlanJob : JobQueueItem {
                 loadedOtherData[i] = saved.Load();
             }
             otherData.Add(saveDataOtherData.Key, loadedOtherData);
+        }
+        if (data.saveDataGoapPlan != null) {
+            GoapPlan goapPlan = new GoapPlan(data.saveDataGoapPlan);
+            assignedPlan = goapPlan;
         }
     }
     #endregion
@@ -336,6 +346,9 @@ public class GoapPlanJob : JobQueueItem {
     #region Job Object Pool
     public override void Reset() {
         base.Reset();
+        if (targetPOI is TileObject tileObject) {
+            tileObject.RemoveExistingJobTargetingThis(this);
+        }
         goal.Reset();
         targetPOI = null;
         targetInteractionType = INTERACTION_TYPE.NONE;

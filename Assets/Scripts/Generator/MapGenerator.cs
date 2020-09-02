@@ -237,7 +237,7 @@ public class MapGenerator : MonoBehaviour {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), 
-            new WorldMapLandmarkGeneration(), new SettlementLoading(),
+            new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(),
             new LoadFirstWave(), new LoadSecondWave(), new MapGenerationFinalization(),
             new PlayerDataGeneration(),
@@ -309,7 +309,7 @@ public class MapGenerator : MonoBehaviour {
             //         }
             //     }
             // }
-            WorldSettings.Instance.worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom); //Always use Custom world type for Loading Save Data
+            // WorldSettings.Instance.worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom); //Always use Custom world type for Loading Save Data
             WorldConfigManager.Instance.mapGenerationData = data;
             // WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             AudioManager.Instance.TransitionToWorld();

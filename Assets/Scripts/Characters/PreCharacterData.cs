@@ -11,13 +11,13 @@ public class PreCharacterData {
     public string firstName { get; set; }
     public string surName { get; set; }
     public SEXUALITY sexuality { get; set; }
-    public UtilityScripts.SerializableDictionary<int, PreCharacterRelationship> relationships { get; set; }
+    public Dictionary<int, PreCharacterRelationship> relationships { get; set; }
     public bool hasBeenSpawned { get; set; }
 
     public string name => $"{firstName} {surName}";
     
     public PreCharacterData() {
-        relationships = new UtilityScripts.SerializableDictionary<int, PreCharacterRelationship>();
+        relationships = new Dictionary<int, PreCharacterRelationship>();
     }
     
     public PreCharacterData(RACE _race, GENDER _gender, WeightedDictionary<SEXUALITY> _sexualityWeights) : this() {

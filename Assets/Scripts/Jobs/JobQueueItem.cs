@@ -80,10 +80,12 @@ public abstract class JobQueueItem : ISavable {
 
     #region Loading
     public virtual void LoadSecondWave(SaveDataJobQueueItem data) {
-        if (data.originalOwnerType == OBJECT_TYPE.Settlement) {
-            originalOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.originalOwnerID) as NPCSettlement;
-        } else if (data.originalOwnerType == OBJECT_TYPE.Character) {
-            originalOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.originalOwnerID);
+        if (!string.IsNullOrEmpty(data.originalOwnerID)) {
+            if (data.originalOwnerType == OBJECT_TYPE.Settlement) {
+                originalOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.originalOwnerID) as NPCSettlement;
+            } else if (data.originalOwnerType == OBJECT_TYPE.Character) {
+                originalOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.originalOwnerID);
+            }    
         }
         assignedCharacter = string.IsNullOrEmpty(data.assignedCharacterID) ? null : DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.assignedCharacterID);
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {

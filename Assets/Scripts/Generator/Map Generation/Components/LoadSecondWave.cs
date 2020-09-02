@@ -24,6 +24,9 @@ public class LoadSecondWave : MapGenerationComponent {
         // yield return MapGenerator.Instance.StartCoroutine(LoadFactionCharacters(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadFactionLogs(saveData));
 
+        //load tile second wave
+        yield return MapGenerator.Instance.StartCoroutine(LoadLocationGridTileSecondWave(saveData));
+        
         //Load Settlement data
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
@@ -208,7 +211,7 @@ public class LoadSecondWave : MapGenerationComponent {
     }
     #endregion
 
-    #region Trais
+    #region Traits
     private IEnumerator LoadTraitsSecondWave(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading more trait data...");
         saveData.LoadTraitsSecondWave();
@@ -228,6 +231,27 @@ public class LoadSecondWave : MapGenerationComponent {
             if (batchCount == MapGenerationData.JobLoadingBatches) {
                 batchCount = 0;
                 yield return null;    
+            }
+        }
+        yield return null;
+    }
+    #endregion
+
+    #region Location Grid Tile
+    private IEnumerator LoadLocationGridTileSecondWave(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Map Data...");
+        int batchCount = 0;
+        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+            for (int j = 0; j < saveDataRegion.innerMapSave.tileSaves.Count; j++) {
+                SaveDataLocationGridTile saveDataLocationGridTile = saveDataRegion.innerMapSave.tileSaves[j];
+                LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataLocationGridTile.persistentID);
+                tile.LoadSecondWave(saveDataLocationGridTile);
+                batchCount++;
+                if (batchCount == MapGenerationData.LocationGridTileSecondaryWaveBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }
             }
         }
         yield return null;
