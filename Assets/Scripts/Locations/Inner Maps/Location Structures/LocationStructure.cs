@@ -97,6 +97,14 @@ namespace Inner_Maps.Location_Structures {
         public virtual void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
             residents = SaveUtilities.ConvertIDListToCharacters(saveDataLocationStructure.residentIDs);
             charactersHere = SaveUtilities.ConvertIDListToCharacters(saveDataLocationStructure.charactersHereIDs);
+
+            if (saveDataLocationStructure.structureRoomSaveData != null && rooms != null) {
+                for (int i = 0; i < rooms.Length; i++) {
+                    StructureRoom structureRoom = rooms[i];
+                    SaveDataStructureRoom saveDataStructureRoom = saveDataLocationStructure.structureRoomSaveData[i];
+                    structureRoom.LoadReferences(saveDataStructureRoom);
+                }    
+            }
         }
         #endregion
         

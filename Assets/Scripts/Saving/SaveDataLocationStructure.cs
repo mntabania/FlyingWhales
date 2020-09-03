@@ -21,6 +21,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string occupiedHexTileID;
     public string settlementLocationID;
     public bool isInterior;
+    public SaveDataStructureRoom[] structureRoomSaveData;
 
     public override void Save(LocationStructure structure) {
         persistentID = structure.persistentID;
@@ -64,6 +65,16 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         }
         
         isInterior = structure.isInterior;
+
+        if (structure.rooms != null) {
+            structureRoomSaveData = new SaveDataStructureRoom[structure.rooms.Length];
+            for (int i = 0; i < structure.rooms.Length; i++) {
+                StructureRoom structureRoom = structure.rooms[i];
+                SaveDataStructureRoom saveDataStructureRoom = SaveUtilities.CreateSaveDataForRoom(structureRoom);
+                saveDataStructureRoom.Save(structureRoom);
+                structureRoomSaveData[i] = saveDataStructureRoom;
+            }
+        }
     }
     public LocationStructure InitialLoad(Region region) {
         return LandmarkManager.Instance.LoadNewStructureAt(region, structureType, this);

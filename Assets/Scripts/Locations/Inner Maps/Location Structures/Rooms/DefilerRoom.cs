@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using Tutorial;
 using UnityEngine;
 using UtilityScripts;
@@ -9,10 +10,29 @@ namespace Inner_Maps.Location_Structures {
         
         public Character currentBrainwashTarget { get; private set; }
         
-        private Summon _skeleton;
+        public Summon skeleton { get; private set; }
 
         public DefilerRoom(List<LocationGridTile> tilesInRoom) : base("Defiler Room", tilesInRoom) { }
 
+        #region Loading
+        public override void LoadReferences(SaveDataStructureRoom saveDataStructureRoom) {
+            SaveDataDefilerRoom saveDataDefilerRoom = saveDataStructureRoom as SaveDataDefilerRoom;
+            if (!string.IsNullOrEmpty(saveDataDefilerRoom.brainwashTargetID)) {
+                currentBrainwashTarget = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataDefilerRoom.brainwashTargetID);
+            }
+            if (!string.IsNullOrEmpty(saveDataDefilerRoom.skeletonID)) {
+                skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataDefilerRoom.skeletonID) as Summon;
+            }
+            if (currentBrainwashTarget != null && skeleton == null) {
+                Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfBrainwashFinished);
+            }
+            if (skeleton != null) {
+                //if skeleton is not null then, listen for drop job to be finished
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
@@ -111,8 +131,7 @@ namespace Inner_Maps.Location_Structures {
                     && character.traitContainer.HasTrait("Cultist") == false;
         } 
         public void StartBrainwash() {
-            wasBrainwashStartedInTutorial =
-                TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
+            wasBrainwashStartedInTutorial = TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
             DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
             door?.Close();
             Character chosenTarget = CollectionUtilities.GetRandomElement(charactersInRoom.Where(x => IsValidBrainwashTarget(x)));
@@ -145,37 +164,37 @@ namespace Inner_Maps.Location_Structures {
                     chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
 
                     //spawn skeleton to carry target
-                    _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
-                    _skeleton.SetShowNotificationOnDeath(false);
-                    _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
-                    _skeleton.SetDestroyMarkerOnDeath(true);
-                    _skeleton.ClearPlayerActions();
+                    skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
+                    skeleton.SetShowNotificationOnDeath(false);
+                    skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                    skeleton.SetDestroyMarkerOnDeath(true);
+                    skeleton.ClearPlayerActions();
 
                     List<LocationGridTile> dropChoices = parentStructure.occupiedHexTile.hexTileOwner.locationGridTiles.Where(t => 
                         t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList();
                     
-                    CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, _skeleton);
+                    CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, chosenTarget, skeleton);
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
-                        _skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
+                        skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
                         CollectionUtilities.GetRandomElement(dropChoices)
                     });
                     job.SetCannotBePushedBack(true);
-                    _skeleton.jobQueue.AddJobInQueue(job);
+                    skeleton.jobQueue.AddJobInQueue(job);
                     
                     Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 }                
             }
         }
         private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
-            if (character == _skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
+            if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
                 Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 //close door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Close();
                 
                 //kill skeleton
-                _skeleton.Death();
+                skeleton.Death();
                 currentBrainwashTarget.traitContainer.RemoveTrait(currentBrainwashTarget, "Restrained");
                 currentBrainwashTarget.jobComponent.DisableReportStructure();
                 if (!currentBrainwashTarget.traitContainer.HasTrait("Paralyzed")) {
@@ -183,10 +202,23 @@ namespace Inner_Maps.Location_Structures {
                     currentBrainwashTarget.traitContainer.AddTrait(currentBrainwashTarget, "Dazed");    
                 }
                 
-                _skeleton = null;
+                skeleton = null;
                 BrainwashDone();
             }
         }
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataDefilerRoom : SaveDataStructureRoom {
+    public string brainwashTargetID;
+    public string skeletonID;
+    public override void Save(StructureRoom data) {
+        base.Save(data);
+        DefilerRoom defilerRoom = data as DefilerRoom;
+        brainwashTargetID = defilerRoom.currentBrainwashTarget == null ? string.Empty : defilerRoom.currentBrainwashTarget.persistentID;
+        skeletonID = defilerRoom.skeleton == null ? string.Empty : defilerRoom.skeleton.persistentID;
+    }
+}
+#endregion

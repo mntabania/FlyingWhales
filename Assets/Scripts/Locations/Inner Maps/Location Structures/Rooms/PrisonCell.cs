@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -8,7 +9,7 @@ namespace Inner_Maps.Location_Structures {
     public class PrisonCell : StructureRoom {
         
         public Character currentTortureTarget { get; private set; }
-        private Summon _skeleton;
+        public Summon skeleton { get; private set; }
         private AutoDestroyParticle _particleEffect;
 
         public PrisonCell(List<LocationGridTile> tilesInRoom) : base("Prison Cell", tilesInRoom) { }
@@ -18,6 +19,28 @@ namespace Inner_Maps.Location_Structures {
             AddPlayerAction(SPELL_TYPE.TORTURE);
         }
 
+        #region Loading
+        public override void LoadReferences(SaveDataStructureRoom saveDataStructureRoom) {
+            SaveDataPrisonCell saveData = saveDataStructureRoom as SaveDataPrisonCell;
+            if (!string.IsNullOrEmpty(saveData.tortureID)) {
+                currentTortureTarget = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.tortureID);
+            }
+            if (!string.IsNullOrEmpty(saveData.skeletonID)) {
+                skeleton = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveData.skeletonID) as Summon;
+            }
+            if (currentTortureTarget != null && skeleton == null) {
+                Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfTortureInterruptFinished);
+                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
+                LocationGridTile centerTile = GetCenterTile();
+                _particleEffect = GameManager.Instance.CreateParticleEffectAt(centerTile.worldLocation, centerTile.parentMap, PARTICLE_EFFECT.Torture_Cloud).GetComponent<AutoDestroyParticle>();
+            }
+            if (skeleton != null) {
+                //if skeleton is not null then, listen for drop job to be finished
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
+            }
+        }
+        #endregion
+        
         #region Seize
         public override bool CanUnseizeCharacterInRoom(Character character) {
             if (charactersInRoom.Count > 0) {
@@ -70,12 +93,11 @@ namespace Inner_Maps.Location_Structures {
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
                 door?.Open();
                 
-                _skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton,
-                    FactionManager.Instance.vagrantFaction, null, character.currentRegion, className: "Archer");
-                _skeleton.SetShowNotificationOnDeath(false);
-                _skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
-                _skeleton.SetDestroyMarkerOnDeath(true);
-                _skeleton.ClearPlayerActions();
+                skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, character.currentRegion, className: "Archer");
+                skeleton.SetShowNotificationOnDeath(false);
+                skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
+                skeleton.SetDestroyMarkerOnDeath(true);
+                skeleton.ClearPlayerActions();
                 
                 int modifiedX = tortureChamber.entrance.localPlace.x - 2;
                 modifiedX = Mathf.Max(modifiedX, 0);
@@ -85,19 +107,19 @@ namespace Inner_Maps.Location_Structures {
                     .GetTilesInRadius(7, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>
                          t.objHere == null && t.structure.structureType == STRUCTURE_TYPE.WILDERNESS).ToList(); //&& t.collectionOwner.partOfHextile != parentStructure.occupiedHexTile
                 
-                CharacterManager.Instance.PlaceSummon(_skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, _skeleton);
+                CharacterManager.Instance.PlaceSummon(skeleton, CollectionUtilities.GetRandomElement(tilesInRoom));
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP, character, skeleton);
                 job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {
-                    _skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
+                    skeleton.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), 
                     CollectionUtilities.GetRandomElement(dropChoices)
                 });
-                _skeleton.jobQueue.AddJobInQueue(job);
+                skeleton.jobQueue.AddJobInQueue(job);
                 
                 Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
         private void OnJobRemovedFromCharacter(JobQueueItem job, Character character) {
-            if (character == _skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
+            if (character == skeleton && job.jobType == JOB_TYPE.MOVE_CHARACTER) {
                 Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
                 //close door
                 DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
@@ -105,7 +127,7 @@ namespace Inner_Maps.Location_Structures {
                 
                 //kill skeleton
                 // GameManager.Instance.CreateParticleEffectAt(_skeleton.gridTileLocation, PARTICLE_EFFECT.Zombie_Transformation);
-                _skeleton.Death();
+                skeleton.Death();
                 currentTortureTarget.traitContainer.RemoveTrait(currentTortureTarget, "Restrained");
                 currentTortureTarget.jobComponent.DisableReportStructure();
                 if (!currentTortureTarget.traitContainer.HasTrait("Paralyzed")) {
@@ -114,10 +136,23 @@ namespace Inner_Maps.Location_Structures {
                 }
                 
                 
-                _skeleton = null;
+                skeleton = null;
                 StopTorture();
             }
         }
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataPrisonCell : SaveDataStructureRoom {
+    public string tortureID;
+    public string skeletonID;
+    public override void Save(StructureRoom data) {
+        base.Save(data);
+        PrisonCell prisonCell = data as PrisonCell;
+        tortureID = prisonCell.currentTortureTarget == null ? string.Empty : prisonCell.currentTortureTarget.persistentID;
+        skeletonID = prisonCell.skeleton == null ? string.Empty : prisonCell.skeleton.persistentID;
+    }
+}
+#endregion
