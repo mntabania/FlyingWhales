@@ -156,6 +156,9 @@ public class LoadSecondWave : MapGenerationComponent {
                 if (tileObject is BlockWall && tileObject.gridTileLocation.structure is DemonicStructure demonicStructure) {
                     //TODO: This is only a quick fix, so that loaded block walls will contribute to demonic structure damage
                     demonicStructure.AddObjectAsDamageContributor(tileObject);
+                } else if (tileObject is Eyeball && tileObject.gridTileLocation.structure is Eye eye) {
+                    //TODO: This is only a quick fix, so that loaded eyes will contribute to demonic structure damage
+                    eye.AddObjectAsDamageContributor(tileObject);
                 }
             }
             batchCount++;
