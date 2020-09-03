@@ -152,6 +152,11 @@ public class LoadSecondWave : MapGenerationComponent {
                     }    
                     tileObject.LoadSecondWave(saveDataTileObject);
                 }
+
+                if (tileObject is BlockWall && tileObject.gridTileLocation.structure is DemonicStructure demonicStructure) {
+                    //TODO: This is only a quick fix, so that loaded block walls will contribute to demonic structure damage
+                    demonicStructure.AddObjectAsDamageContributor(tileObject);
+                }
             }
             batchCount++;
             if (batchCount == MapGenerationData.TileObjectLoadingBatches) {

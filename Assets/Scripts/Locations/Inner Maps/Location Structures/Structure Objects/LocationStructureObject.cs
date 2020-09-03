@@ -260,7 +260,9 @@ public class LocationStructureObject : PooledObject {
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
-        RegisterWalls(innerMap, structure);
+        if (!(structure is DemonicStructure)) { //if structure is demonic structure then do not Register walls, since Loaded tile objects will become its walls
+            RegisterWalls(innerMap, structure);
+        }
         _groundTileMap.gameObject.SetActive(false);
         // //Only load preplaced structure tile object
         // RegisterPreplacedObjectsOfType(structure, innerMap, TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT);
@@ -414,12 +416,10 @@ public class LocationStructureObject : PooledObject {
             for (int i = 0; i < tiles.Length; i++) {
                 LocationGridTile tile = tiles[i];
                 //block walls
-                TileBase blockWallAsset = 
-                    _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
                 if (blockWallAsset != null) {
                     if (blockWallAsset.name.Contains("Wall")) {
-                        BlockWall blockWall =
-                            InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                        BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
                         blockWall.SetWallType(_blockWallType);
                         structure.AddPOI(blockWall, tile);
                         if (wallsContributeToDamage) {

@@ -180,17 +180,17 @@ public class SaveDataCurrentProgress {
     #region Tile Objects
     public void SaveTileObjects(List<TileObject> tileObjects) {
         //tile objects
-        List<TileObject> finishedObjects = new List<TileObject>();
+        // List<TileObject> finishedObjects = new List<TileObject>();
         for (int i = 0; i < tileObjects.Count; i++) {
             TileObject tileObject = tileObjects[i];
             // if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
             //     // Debug.LogWarning($"Grid tile location of {tileObject} is null! Not saving that...");
             //     continue; //skip tile objects without grid tile location that are not being carried.
             // }
-            if (finishedObjects.Contains(tileObject)) {
-                // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
-                continue; //skip    
-            }
+            // if (finishedObjects.Contains(tileObject)) {
+            //     // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
+            //     continue; //skip    
+            // }
             if (tileObject is Artifact artifact) {
                 string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
                 SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
@@ -205,26 +205,27 @@ public class SaveDataCurrentProgress {
             if (tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 Debug.Log($"Saved unbuilt object {tileObject}");
             }
-            finishedObjects.Add(tileObject);
+            // finishedObjects.Add(tileObject);
         }
-        finishedObjects.Clear();
-        finishedObjects = null;
+        // finishedObjects.Clear();
+        // finishedObjects = null;
     }
-    public IEnumerator SaveTileObjectsCoroutine(List<TileObject> tileObjects) {
+    public IEnumerator SaveTileObjectsCoroutine() {
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
         int batchCount = 0;
         //tile objects
-        HashSet<TileObject> finishedObjects = new HashSet<TileObject>();
-        for (int i = 0; i < tileObjects.Count; i++) {
-            TileObject tileObject = tileObjects[i];
+        // HashSet<TileObject> finishedObjects = new HashSet<TileObject>();
+        for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
+            TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             // if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
             //     // Debug.LogWarning($"Grid tile location of {tileObject} is null! Not saving that...");
             //     continue; //skip tile objects without grid tile location that are not being carried.
             // }
-            if (finishedObjects.Contains(tileObject)) {
-                // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
-                continue; //skip    
-            }
+            // if (finishedObjects.Contains(tileObject)) {
+            //     // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
+            //     continue; //skip    
+            // }
+            // finishedObjects.Add(tileObject);
             if (tileObject is Artifact artifact) {
                 string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
                 SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
@@ -239,15 +240,13 @@ public class SaveDataCurrentProgress {
             if (tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 Debug.Log($"Saved unbuilt object {tileObject}");
             }
-            finishedObjects.Add(tileObject);
+           
             batchCount++;
             if (batchCount >= SaveManager.TileObject_Save_Batches) {
                 batchCount = 0;
                 yield return null;    
             }
         }
-        finishedObjects.Clear();
-        finishedObjects = null;
     }
     public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
         var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
