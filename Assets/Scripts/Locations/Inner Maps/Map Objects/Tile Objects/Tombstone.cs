@@ -26,10 +26,13 @@ public class Tombstone : TileObject {
         _respawnCorpseOnDestroy = true;
     }
     public Tombstone(SaveDataTileObject data) {
+        _respawnCorpseOnDestroy = true;
+    }
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
         SaveDataTombstone saveDataTombstone = data as SaveDataTombstone;
         Assert.IsNotNull(saveDataTombstone);
         character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTombstone.characterID);
-        _respawnCorpseOnDestroy = true;
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
