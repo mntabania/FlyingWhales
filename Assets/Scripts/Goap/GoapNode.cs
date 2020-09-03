@@ -913,6 +913,20 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     #endregion
 
     #region Loading
+    public void DoActionUponLoadingSavedGame() {
+        if(actionStatus == ACTION_STATUS.STARTED) {
+            CheckAndMoveToDoAction(associatedJob);
+        } else if (actionStatus == ACTION_STATUS.PERFORMING) {
+            actor.marker.UpdateAnimation();
+            if (currentState.duration > 0) {
+                StartPerTickEffect();
+            } else if (currentState.duration != -1) {
+                EndPerTickEffect();
+            }
+        } else {
+            throw new System.Exception("Action " + action.name + " of " + actor.name + " is being done again after loading but the status is " + actionStatus.ToString());
+        }
+    }
     public void LoadReferences(SaveDataActualGoapNode data) {
         actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actor);
         if (data.poiTargetType == POINT_OF_INTEREST_TYPE.CHARACTER) {

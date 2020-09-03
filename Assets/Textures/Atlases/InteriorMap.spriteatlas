@@ -926,7 +926,7 @@ SpriteAtlas:
   - excalibur2
   - BRAZIER#1_LIT
   - shore11110101-00
-  - floorStone00
+  - floorStone12
   - magicCircle00
   - caveWallA-1001-00
   - laidWallA11100010-00
@@ -988,7 +988,7 @@ SpriteAtlas:
   - CAMPFIRE#1
   - tundraPlant01
   - demonWallA-11111010-00
-  - floorStone01
+  - floorStone13
   - boneGround02
   - road00
   - laidWallA00100000-00
@@ -1100,7 +1100,7 @@ SpriteAtlas:
   - wood_floorA000
   - table_weapons
   - BRAZIER#2
-  - floorStone02
+  - floorStone10
   - FOOD_PILE
   - caveWallA-10001110-00
   - demonWallA-00111010-00
@@ -1322,7 +1322,7 @@ SpriteAtlas:
   - boneGround_decor01
   - laidWallA11111010-00
   - boneRows00
-  - floorStone011
+  - floorStone14
   - shore01111111-00
   - floorStone03
   - poison01010101-00
@@ -1479,7 +1479,7 @@ SpriteAtlas:
   - water02
   - poison01111101-00
   - CHAINS#1
-  - floorStone03
+  - floorStone11
   - well03
   - caveWallA-0011-00
   - laidWallA11101000-00
