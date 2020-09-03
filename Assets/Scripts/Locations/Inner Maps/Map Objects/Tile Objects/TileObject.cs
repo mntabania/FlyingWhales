@@ -119,10 +119,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
-        for (int i = 0; i < data.advertisedActions.Length; i++) {
-            INTERACTION_TYPE interactionType = data.advertisedActions[i];
-            AddAdvertisedAction(interactionType);
+        if (data.advertisedActions != null) {
+            for (int i = 0; i < data.advertisedActions.Length; i++) {
+                INTERACTION_TYPE interactionType = data.advertisedActions[i];
+                AddAdvertisedAction(interactionType);
+            }    
+        } else {
+            advertisedActions = new List<INTERACTION_TYPE>();
         }
+        
         ConstructDefaultActions();
 
         logComponent = data.logComponent.Load();
