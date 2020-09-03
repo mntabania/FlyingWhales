@@ -237,6 +237,11 @@ public class SaveDataCarryComponent : SaveData<CarryComponent> {
         if(data.carriedPOI != null) {
             carriedPOI = data.carriedPOI.persistentID;
             carriedPOIType = data.carriedPOI.poiType;
+            if(data.carriedPOI is Character character) {
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(character);
+            } else if (data.carriedPOI is TileObject tileObject) {
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(tileObject);
+            }
         }
         if (data.isBeingCarriedBy != null) {
             isBeingCarriedBy = data.isBeingCarriedBy.persistentID;
