@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -959,6 +960,18 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             assumption = data.assumption.Load();
             assumption.SetAssumedAction(this);
         }
+        if (data.otherData != null) {
+            otherData = new OtherData[data.otherData.Length];
+            for (int i = 0; i < otherData.Length; i++) {
+                SaveDataOtherData d = data.otherData[i];
+                if (d != null) {
+                    otherData[i] = d.Load();
+                }
+            }
+        }
+        if (!string.IsNullOrEmpty(data.associatedJobID)) {
+            associatedJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.associatedJobID);
+        }
     }
     #endregion
 }
@@ -972,7 +985,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public string disguisedActor;
     public string disguisedTarget;
     public bool isStealth;
-    //public object[] otherData; TODO
+    public SaveDataOtherData[] otherData;
     public int cost;
 
     public INTERACTION_TYPE action;
@@ -985,7 +998,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
     public string targetPOIToGoTo;
     public POINT_OF_INTEREST_TYPE targetPOIToGoToType;
     public JOB_TYPE associatedJobType;
-    //public JobQueueItem associatedJob; TODO
+    public string associatedJobID;
 
 
     public string currentStateName;
@@ -1066,6 +1079,18 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
             hasAssumption = true;
             SaveDataAssumption savedAssumption = new SaveDataAssumption();
             savedAssumption.Save(data.assumption);
+        }
+        if (data.otherData != null) {
+            otherData = new SaveDataOtherData[data.otherData.Length];
+            for (int i = 0; i < otherData.Length; i++) {
+                OtherData d = data.otherData[i];
+                if (d != null) {
+                    otherData[i] = d.Save();
+                }
+            }
+        }
+        if (data.associatedJob != null) {
+            associatedJobID = data.associatedJob.persistentID;
         }
     }
 
