@@ -53,13 +53,15 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         
         isPreplaced = data.isPreplaced;
         poiState = data.state;
-        
-        advertisedActions = new INTERACTION_TYPE[data.advertisedActions.Count];
-        for (int i = 0; i < advertisedActions.Length; i++) {
-            INTERACTION_TYPE interactionType = data.advertisedActions[i];
-            advertisedActions[i] = interactionType;
+
+        if (data.advertisedActions != null) {
+            advertisedActions = new INTERACTION_TYPE[data.advertisedActions.Count];
+            for (int i = 0; i < advertisedActions.Length; i++) {
+                INTERACTION_TYPE interactionType = data.advertisedActions[i];
+                advertisedActions[i] = interactionType;
+            }    
         }
-        
+
         jobsTargetingThis = new List<string>();
         for (int i = 0; i < data.allJobsTargetingThis.Count; i++) {
             JobQueueItem jobQueueItem = data.allJobsTargetingThis[i];

@@ -189,6 +189,69 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     #endregion
 
+    #region Placement
+    /// <summary>
+    /// Used for placing a character for the first time.
+    /// </summary>
+    /// <param name="tile">The tile the character should be placed at.</param>
+    public void InitialPlaceMarkerAt(LocationGridTile tile) {
+        visionCollider.Initialize();
+        PlaceMarkerAt(tile);
+        pathfindingAI.UpdateMe();
+        character.movementComponent.UpdateSpeed();
+        _nameplate.UpdateActiveState();
+    }
+    /// <summary>
+    /// Used for placing the character for the first time after being loaded from
+    /// saved game.
+    /// </summary>
+    /// <param name="data">The saved data of this character</param>
+    /// <param name="region">The region that this character should be at.
+    /// Cannot access <see cref="Character.currentRegion"/> here because that takes into account if the character is carried or not,
+    /// which can be a problem if the data of this characters carrier hasn't been loaded yet.</param>
+    public void LoadMarkerPlacement(SaveDataCharacter data, Region region) {
+        visionCollider.Initialize();
+        SetCollidersState(true);
+        Transform thisTransform = transform;
+        thisTransform.SetParent(region.innerMap.objectsParent);
+        thisTransform.position = data.worldPos;
+        visualsParent.transform.localRotation = data.rotation;
+        UpdateActionIcon();
+    }
+    /// <summary>
+    /// Place this marker at a given tile location. 
+    /// </summary>
+    public void PlaceMarkerAt(LocationGridTile tile) {
+        gameObject.transform.SetParent(tile.parentMap.objectsParent);
+        //Always add to region characters now because in UpdatePosition, the character will be added to the structure characters at location list
+        //It will be inconsistent if the character is added to that list but will not be added to the region's characters at location list
+        tile.structure.location.AddCharacterToLocation(character);
+
+        //if (addToLocation) {
+        //    tile.structure.location.AddCharacterToLocation(character);
+        //}
+        SetActiveState(true);
+        UpdateAnimation();
+        pathfindingAI.Teleport(tile.centeredWorldLocation);
+        UpdatePosition();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        Assert.IsTrue(character.currentStructure == tile.structure,
+            $"{character.name} updated its position but the structure is not the same as the tile's structure. Current structure: { character.currentStructure?.name }, Tile structure: { tile.structure.name }");
+#else
+        character.currentStructure?.RemoveCharacterAtLocation(character);
+        tile.structure.AddCharacterAtLocation(character);
+#endif
+        //Removed this because character will be added already in the structure characters at location list in UpdatePosition
+        //if (addToLocation) {
+        //    tile.structure.AddCharacterAtLocation(character, tile);
+        //}
+        UpdateActionIcon();
+        SetCollidersState(true);
+        tile.structure.location.AddPendingAwareness(character);
+        character.reactionComponent.UpdateHiddenState();
+    }
+    #endregion
+    
     #region Pointer Functions
     protected override void OnPointerLeftClick(Character poi) {
         base.OnPointerLeftClick(poi);
@@ -239,8 +302,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character>(Signals.STARTED_TRAVELLING_IN_WORLD, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
-            OnTileObjectRemovedFromTile);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
     }
@@ -891,67 +953,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 }
             }
         }
-    }
-    /// <summary>
-    /// Used for placing a character for the first time.
-    /// </summary>
-    /// <param name="tile">The tile the character should be placed at.</param>
-    /// <param name="addToLocation">If the character should be added to the location or not?</param>
-    public void InitialPlaceMarkerAt(LocationGridTile tile) {
-        PlaceMarkerAt(tile);
-        pathfindingAI.UpdateMe();
-        //SetCollidersState(true); //Removed this, already called in PlaceMarkerAt
-        visionCollider.Initialize();
-        character.movementComponent.UpdateSpeed();
-        _nameplate.UpdateActiveState();
-    }
-    public void PlaceMarkerAt(LocationGridTile tile) { //, bool addToLocation = true
-        gameObject.transform.SetParent(tile.parentMap.objectsParent);
-        //Always add to region characters now because in UpdatePosition, the character will be added to the structure characters at location list
-        //It will be inconsistent if the character is added to that list but will not be added to the region's characters at location list
-        tile.structure.location.AddCharacterToLocation(character);
-
-        //if (addToLocation) {
-        //    tile.structure.location.AddCharacterToLocation(character);
-        //}
-        SetActiveState(true);
-        UpdateAnimation();
-        pathfindingAI.Teleport(tile.centeredWorldLocation);
-        UpdatePosition();
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        Assert.IsTrue(character.currentStructure == tile.structure,
-            $"{character.name} updated its position but the structure is not the same as the tile's structure. Current structure: { character.currentStructure?.name }, Tile structure: { tile.structure.name }");
-#else
-        character.currentStructure?.RemoveCharacterAtLocation(character);
-        tile.structure.AddCharacterAtLocation(character);
-#endif
-        //Removed this because character will be added already in the structure characters at location list in UpdatePosition
-        //if (addToLocation) {
-        //    tile.structure.AddCharacterAtLocation(character, tile);
-        //}
-        UpdateActionIcon();
-        SetCollidersState(true);
-        tile.structure.location.AddPendingAwareness(character);
-        character.reactionComponent.UpdateHiddenState();
-    }
-    public void PlaceMarkerAt(Vector3 worldPosition, Region region, bool addToLocation = true) {
-        Vector3 localPos = region.innerMap.grid.WorldToLocal(worldPosition);
-        Vector3Int coordinate = region.innerMap.grid.LocalToCell(localPos);
-        LocationGridTile tile = region.innerMap.map[coordinate.x, coordinate.y];
-        
-        this.gameObject.transform.SetParent(tile.parentMap.objectsParent);
-        pathfindingAI.Teleport(worldPosition);
-        if (addToLocation) {
-            tile.structure.location.AddCharacterToLocation(character);
-            tile.structure.AddCharacterAtLocation(character, tile);
-        }
-        SetActiveState(true);
-        UpdateAnimation();
-        UpdatePosition();
-        UpdateActionIcon();
-        SetCollidersState(true);
-        tile.structure.location.AddPendingAwareness(character);
-        character.reactionComponent.UpdateHiddenState();
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.minion != null || character.destroyMarkerOnDeath) {
