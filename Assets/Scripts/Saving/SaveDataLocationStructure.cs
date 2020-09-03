@@ -22,6 +22,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string settlementLocationID;
     public bool isInterior;
     public SaveDataStructureRoom[] structureRoomSaveData;
+    public bool hasBeenDestroyed;
 
     public override void Save(LocationStructure structure) {
         persistentID = structure.persistentID;
@@ -75,6 +76,8 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
                 structureRoomSaveData[i] = saveDataStructureRoom;
             }
         }
+
+        hasBeenDestroyed = structure.hasBeenDestroyed;
     }
     public LocationStructure InitialLoad(Region region) {
         return LandmarkManager.Instance.LoadNewStructureAt(region, structureType, this);

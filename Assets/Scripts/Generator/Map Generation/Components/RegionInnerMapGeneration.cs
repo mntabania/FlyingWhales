@@ -60,6 +60,9 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
         //place structures
         for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
             SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
+            if (saveDataLocationStructure.hasBeenDestroyed) {
+                continue; //do not place already destroyed structures.
+            }
             Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
             yield return MapGenerator.Instance.StartCoroutine(AssignTilesToStructures(saveDataLocationStructure, location));
             yield return MapGenerator.Instance.StartCoroutine(LoadStructureObject(saveDataLocationStructure, location));    
