@@ -1,4 +1,5 @@
-﻿using BayatGames.SaveGameFree.Types;
+﻿using System.Collections.Generic;
+using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -15,9 +16,11 @@ public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
     public STRUCTURE_TAG[] structureTags;
     public Point[] tileCoordinates;
     public int currentHP;
-    public string[] residentIDs;
+    public List<string> residentIDs;
+    public List<string> charactersHereIDs;
     public string occupiedHexTileID;
     public string settlementLocationID;
+    public bool isInterior;
 
     public override void Save(LocationStructure structure) {
         persistentID = structure.persistentID;
@@ -47,12 +50,11 @@ public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
         currentHP = structure.currentHP;
         
         //residents
-        residentIDs = new string[structure.residents.Count];
-        for (int i = 0; i < structure.residents.Count; i++) {
-            Character resident = structure.residents[i];
-            residentIDs[i] = resident.persistentID;
-        }
+        residentIDs = SaveUtilities.ConvertSavableListToIDs(structure.residents);
 
+        //characters here
+        charactersHereIDs = SaveUtilities.ConvertSavableListToIDs(structure.charactersHere);
+        
         //occupied hex tile
         if (structure.occupiedHexTile != null) {
             occupiedHexTileID = structure.occupiedHexTile.hexTileOwner.persistentID;    
@@ -60,6 +62,8 @@ public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
             occupiedHexTileID = string.Empty;
             Debug.Log($"{structure.name} has no occupied hextile!");
         }
+        
+        isInterior = structure.isInterior;
     }
     public LocationStructure InitialLoad(Region region) {
         return LandmarkManager.Instance.LoadNewStructureAt(region, structureType, this);

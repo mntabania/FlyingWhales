@@ -840,7 +840,7 @@ SpriteAtlas:
   - shore01010001-00
   - demonWallA-00111000-00
   - boneGround00
-  - TRASH#4
+  - TRASH#11
   - TABLE_SCROLLS#1
   - desertSand_v00
   - demonWallA-10111111-00
@@ -911,7 +911,7 @@ SpriteAtlas:
   - corruptedTreeSmall01
   - shore11010101-00
   - caveWallA-0010-00
-  - PLANT#1
+  - PLANT#8
   - grass_v00
   - TREE_OBJECT#2
   - demonCircle00
@@ -1017,12 +1017,12 @@ SpriteAtlas:
   - poison01000000-00
   - grass02
   - shore00000101-00
-  - TREE_OBJECT#4
+  - TREE_OBJECT#7
   - desertRock_h00
   - demonWallA-11100000-00
   - BANDAGES
   - CORN_CROP#2
-  - TRASH#5
+  - TRASH#10
   - goose_egg
   - CORN_CROP#1 Growing
   - demonWallA-11111110-00
@@ -1075,7 +1075,7 @@ SpriteAtlas:
   - demonWallA-10111011-00
   - GRAVE#2
   - laidWallA10111010-00
-  - TREE_OBJECT#1
+  - TREE_OBJECT#5
   - demonStone_v01
   - demonWallA-10001111-00
   - FLOWER#5
@@ -1146,7 +1146,7 @@ SpriteAtlas:
   - wood_floorA00
   - tundraDirt_h01
   - BARREL#3
-  - TREE_OBJECT#3
+  - TREE_OBJECT#8
   - poison00010100-00
   - floorStone02
   - corruptedGround04
@@ -1161,7 +1161,7 @@ SpriteAtlas:
   - laidWallA10101000-00
   - vent_vapor
   - tundraDirt02
-  - TRASH#3
+  - TRASH#12
   - corruptedGround02
   - demonPewLong00
   - FLOWER#1
@@ -1179,7 +1179,7 @@ SpriteAtlas:
   - demonBarsHorz00
   - wood_vertical_1
   - shelfDecor01
-  - TREE_OBJECT#2
+  - TREE_OBJECT#6
   - demonCage00
   - wood_pile
   - TopLeft
@@ -1514,7 +1514,7 @@ SpriteAtlas:
   - demonWallA-11101011-00
   - d_metal_vertical_1
   - demonWallA-10001010-00
-  - TRASH#2
+  - TRASH#13
   - poison11110101-00
   - Healing Potion
   - demonSigilPentagon04
@@ -1536,7 +1536,7 @@ SpriteAtlas:
   - portalGlow01
   - laidWallA00101000-00
   - demonWallA-10001000-01
-  - TRASH#1
+  - TRASH#14
   - wallA-1010-wall0100
   - CORN_CROP#1
   - shore11010111-00

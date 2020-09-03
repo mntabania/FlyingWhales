@@ -187,8 +187,6 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<Faction>(Signals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
         UpdateUI();
-        
-        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
         // && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona
     }
     private void TryUpdateFactionLog(Faction faction) {
@@ -209,6 +207,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnGameLoaded() {
         UpdateUI();
+        returnToWorldBtn.gameObject.SetActive(WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial);
     }
     private void HideMenus() {
         // poiTestingUI.HideUI();
@@ -351,6 +350,7 @@ public class UIManager : BaseMonoBehaviour {
     #region Options
     [Header("Options")]
     [SerializeField] private OptionsMenu _optionsMenu;
+    public OptionsMenu optionsMenu => _optionsMenu;
     public void ToggleOptionsMenu() {
         if (_optionsMenu.isShowing) {
             _optionsMenu.Close();

@@ -79,6 +79,27 @@ public class Region : ISavable {
         regionColor = data.regionColor;
     }
 
+    #region Loading
+    public void LoadReferences(SaveDataRegion saveDataRegion) {
+        string summary = $"Loading {name} references:";
+        summary = $"{summary}\nLoading Residents:";
+        for (int i = 0; i < saveDataRegion.residentIDs.Length; i++) {
+            string residentID = saveDataRegion.residentIDs[i];
+            Character resident = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(residentID);
+            residents.Add(resident);
+            summary = $"{summary}\n- {resident.name}";
+        }
+        summary = $"{summary}\nLoading characters at Location:";
+        for (int i = 0; i < saveDataRegion.charactersAtLocationIDs.Length; i++) {
+            string charactersAtLocationID = saveDataRegion.charactersAtLocationIDs[i];
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(charactersAtLocationID);
+            charactersAtLocation.Add(character);
+            summary = $"{summary}\n- {character.name}";
+        }
+        Debug.Log(summary);
+    }
+    #endregion
+
     #region Tiles
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
@@ -301,9 +322,9 @@ public class Region : ISavable {
         Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
+        character.SetRegionLocation(this);
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
-            character.SetRegionLocation(this);
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
         }
     }

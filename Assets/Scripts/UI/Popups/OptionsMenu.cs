@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using Settings;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionsMenu : PopupMenuBase {
+
+    [SerializeField] private GameObject saveLoadingGO;
+    [SerializeField] private TextMeshProUGUI saveLbl;
+    [SerializeField] private Button saveBtn;
     
     public override void Open() {
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         base.Open();
+        UpdateSaveBtnState();
     }
     public override void Close() {
         UIManager.Instance.ResumeLastProgressionSpeed();
@@ -24,13 +31,6 @@ public class OptionsMenu : PopupMenuBase {
     }
     public void ExitGame() {
         Application.Quit();
-    }
-    private void SaveCurrentProgress() {
-        if (SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {
-            SaveManager.Instance.saveCurrentProgressManager.DoManualSave();
-        } else {
-            PlayerUI.Instance.ShowGeneralConfirmation("Save Progress", "Cannot save while seizing.");
-        }
     }
     public void AbandonWorld() {
         UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50, showCover: true);
@@ -50,4 +50,26 @@ public class OptionsMenu : PopupMenuBase {
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);
     }
+
+    #region Saving
+    public void ShowSaveLoading() {
+        saveLoadingGO.SetActive(true);
+    }
+    public void HideSaveLoading() {
+        saveLoadingGO.SetActive(false);
+    }
+    public void UpdateSaveMessage(string message) {
+        saveLbl.text = message;
+    }
+    private void UpdateSaveBtnState() {
+        saveBtn.interactable = SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress();
+    }
+    private void SaveCurrentProgress() {
+        if (SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {
+            SaveManager.Instance.saveCurrentProgressManager.DoManualSave();
+        } else {
+            PlayerUI.Instance.ShowGeneralConfirmation("Save Progress", "Cannot save while seizing.");
+        }
+    }
+    #endregion
 }

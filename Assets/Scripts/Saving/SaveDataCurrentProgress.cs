@@ -108,6 +108,16 @@ public class SaveDataCurrentProgress {
             AddToSaveHub(saveData, saveData.objectType);
         }
     }
+    public IEnumerator SaveFactionsCoroutine() {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving factions...");
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            SaveDataFaction saveData = new SaveDataFaction();
+            saveData.Save(faction);
+            AddToSaveHub(saveData, saveData.objectType);
+            yield return null;
+        }
+    }
     public void SaveCharacters() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
@@ -120,10 +130,49 @@ public class SaveDataCurrentProgress {
             AddToSaveHub(saveData, saveData.objectType);
         }
     }
+    public IEnumerator SaveCharactersCoroutine() {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving characters...");
+        int batchCount = 0;
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
+            AddToSaveHub(saveData, saveData.objectType);
+            batchCount++;
+            if (batchCount >= SaveManager.Character_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
+        }
+        
+        batchCount = 0;
+        for (int i = 0; i < CharacterManager.Instance.limboCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.limboCharacters[i];
+            SaveDataCharacter saveData = CharacterManager.Instance.CreateNewSaveDataCharacter(character);
+            AddToSaveHub(saveData, saveData.objectType);
+            batchCount++;
+            if (batchCount >= SaveManager.Character_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
+        }
+    }
     public void SaveJobs() {
         for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
             AddToSaveHub(jobQueueItem);
+        }
+    }
+    public IEnumerator SaveJobsCoroutine() {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving jobs...");
+        int batchCount = 0;
+        for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
+            AddToSaveHub(jobQueueItem);
+            batchCount++;
+            if (batchCount >= SaveManager.Job_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
         }
     }
     #endregion
@@ -157,6 +206,45 @@ public class SaveDataCurrentProgress {
                 Debug.Log($"Saved unbuilt object {tileObject}");
             }
             finishedObjects.Add(tileObject);
+        }
+        finishedObjects.Clear();
+        finishedObjects = null;
+    }
+    public IEnumerator SaveTileObjectsCoroutine(List<TileObject> tileObjects) {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving Objects...");
+        int batchCount = 0;
+        //tile objects
+        HashSet<TileObject> finishedObjects = new HashSet<TileObject>();
+        for (int i = 0; i < tileObjects.Count; i++) {
+            TileObject tileObject = tileObjects[i];
+            // if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
+            //     // Debug.LogWarning($"Grid tile location of {tileObject} is null! Not saving that...");
+            //     continue; //skip tile objects without grid tile location that are not being carried.
+            // }
+            if (finishedObjects.Contains(tileObject)) {
+                // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
+                continue; //skip    
+            }
+            if (tileObject is Artifact artifact) {
+                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
+                SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
+                saveDataTileObject.Save(tileObject);
+                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            } else {
+                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
+                SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
+                saveDataTileObject.Save(tileObject);
+                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            }
+            if (tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
+                Debug.Log($"Saved unbuilt object {tileObject}");
+            }
+            finishedObjects.Add(tileObject);
+            batchCount++;
+            if (batchCount >= SaveManager.TileObject_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
         }
         finishedObjects.Clear();
         finishedObjects = null;

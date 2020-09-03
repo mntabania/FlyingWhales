@@ -11,22 +11,23 @@ public class Initializer : MonoBehaviour {
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
         DatabaseManager.Instance.Initialize();
+        yield return null;
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         TraitManager.Instance.Initialize();
+        yield return null;
         LandmarkManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();
         CrimeManager.Instance.Initialize();
+        yield return null;
         TimerHubUI.Instance.Initialize();
-
         WorldMapCameraMove.Instance.Initialize();
         InnerMapManager.Instance.Initialize();
+        yield return null;
         ObjectPoolManager.Instance.InitializeObjectPools();
-
         UIManager.Instance.InitializeUI();
-
         InteractionManager.Instance.Initialize();
-
+        yield return null;
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
         RandomNameGenerator.Initialize();

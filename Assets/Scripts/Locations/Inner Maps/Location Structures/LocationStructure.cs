@@ -89,10 +89,17 @@ namespace Inner_Maps.Location_Structures {
             residents = new List<Character>();
             SetMaxHP(3000);
             currentHP = data.currentHP;
-            SetInteriorState(structureType.IsInterior());
+            SetInteriorState(data.isInterior);
             maxResidentCapacity = 5;
         }
 
+        #region Loading
+        public virtual void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            residents = SaveUtilities.ConvertIDListToCharacters(saveDataLocationStructure.residentIDs);
+            charactersHere = SaveUtilities.ConvertIDListToCharacters(saveDataLocationStructure.charactersHereIDs);
+        }
+        #endregion
+        
         #region Virtuals
         /// <summary>
         /// Called when this structure is newly built.

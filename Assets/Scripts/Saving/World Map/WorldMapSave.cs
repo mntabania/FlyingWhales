@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Databases;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -22,6 +23,16 @@ public class WorldMapSave {
         SaveSettlements(settlementDatabase.allSettlements);
         SaveStructures(structureDatabase.allStructures);
     }
+    public IEnumerator SaveWorldCoroutine(WorldMapTemplate _worldMapTemplate, HexTileDatabase hexTileDatabase, RegionDatabase regionDatabase, SettlementDatabase settlementDatabase, LocationStructureDatabase structureDatabase) {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving world map...");
+        //if saved world is tutorial, set world type as custom, this is so that tutorials will not spawn again when loading from a map from the tutorial
+        worldType = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial ? WorldSettingsData.World_Type.Custom : WorldSettings.Instance.worldSettingsData.worldType;
+        worldMapTemplate = _worldMapTemplate;
+        yield return SaveManager.Instance.StartCoroutine(SaveHexTilesCoroutine(hexTileDatabase.allHexTiles));
+        yield return SaveManager.Instance.StartCoroutine(SaveRegionsCoroutine(regionDatabase.allRegions));
+        yield return SaveManager.Instance.StartCoroutine(SaveSettlementsCoroutine(settlementDatabase.allSettlements));
+        yield return SaveManager.Instance.StartCoroutine(SaveStructuresCoroutine(structureDatabase.allStructures));
+    }
 
     #region Hex Tiles
     public void SaveHexTiles(List<HexTile> tiles) {
@@ -31,6 +42,21 @@ public class WorldMapSave {
             SaveDataHextile newSaveData = new SaveDataHextile();
             newSaveData.Save(currTile);
             hextileSaves.Add(newSaveData);
+        }
+    }
+    public IEnumerator SaveHexTilesCoroutine(List<HexTile> tiles) {
+        int batchCount = 0;
+        hextileSaves = new List<SaveDataHextile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            SaveDataHextile newSaveData = new SaveDataHextile();
+            newSaveData.Save(currTile);
+            hextileSaves.Add(newSaveData);
+            batchCount++;
+            if (batchCount >= SaveManager.HexTile_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
         }
     }
     public SaveDataHextile[,] GetSaveDataMap() {
@@ -72,6 +98,21 @@ public class WorldMapSave {
             regionSaves.Add(saveDataRegion);
         }
     }
+    private IEnumerator SaveRegionsCoroutine(Region[] regions) {
+        int batchCount = 0;
+        regionSaves = new List<SaveDataRegion>();
+        for (int i = 0; i < regions.Length; i++) {
+            Region region = regions[i];
+            SaveDataRegion saveDataRegion = new SaveDataRegion();
+            saveDataRegion.Save(region);
+            regionSaves.Add(saveDataRegion);
+            batchCount++;
+            if (batchCount >= SaveManager.Region_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
+        }
+    }
     #endregion
     
     #region Settlements
@@ -82,6 +123,21 @@ public class WorldMapSave {
             SaveDataBaseSettlement saveDataBaseSettlement = CreateNewSettlementSaveData(settlement);
             saveDataBaseSettlement.Save(settlement);
             settlementSaves.Add(saveDataBaseSettlement);
+        }
+    }
+    public IEnumerator SaveSettlementsCoroutine(List<BaseSettlement> allSettlements) {
+        int batchCount = 0;
+        settlementSaves = new List<SaveDataBaseSettlement>();
+        for (int i = 0; i < allSettlements.Count; i++) {
+            BaseSettlement settlement = allSettlements[i];
+            SaveDataBaseSettlement saveDataBaseSettlement = CreateNewSettlementSaveData(settlement);
+            saveDataBaseSettlement.Save(settlement);
+            settlementSaves.Add(saveDataBaseSettlement);
+            batchCount++;
+            if (batchCount >= SaveManager.Settlement_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
         }
     }
     private SaveDataBaseSettlement CreateNewSettlementSaveData(BaseSettlement settlement) {
@@ -114,6 +170,22 @@ public class WorldMapSave {
             SaveDataLocationStructure saveDataLocationStructure = CreateNewSaveDataFor(structure);
             saveDataLocationStructure.Save(structure);
             structureSaves.Add(saveDataLocationStructure);
+        }
+    }
+    private IEnumerator SaveStructuresCoroutine(List<LocationStructure> structures) {
+        int batchCount = 0;
+        //structures
+        structureSaves = new List<SaveDataLocationStructure>();
+        for (int i = 0; i < structures.Count; i++) {
+            LocationStructure structure = structures[i];
+            SaveDataLocationStructure saveDataLocationStructure = CreateNewSaveDataFor(structure);
+            saveDataLocationStructure.Save(structure);
+            structureSaves.Add(saveDataLocationStructure);
+            batchCount++;
+            if (batchCount >= SaveManager.Structure_Save_Batches) {
+                batchCount = 0;
+                yield return null;    
+            }
         }
     }
     #endregion

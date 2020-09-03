@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
         
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
         protected ManMadeStructure(Region location, SaveDataLocationStructure data) : base(location, data) { }
-        
+
         #region Listeners
         protected override void SubscribeListeners() {
             Messenger.AddListener<StructureWallObject, int>(Signals.WALL_DAMAGED, OnWallDamaged);

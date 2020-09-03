@@ -9,15 +9,13 @@ namespace Inner_Maps.Location_Structures {
         //public List<Character> residents => null;
         //#endregion
 
-        public MonsterLair(Region location)
-            : base(STRUCTURE_TYPE.MONSTER_LAIR, location) {
+        public MonsterLair(Region location) : base(STRUCTURE_TYPE.MONSTER_LAIR, location) {
             AddStructureTag(STRUCTURE_TAG.Dangerous);
             AddStructureTag(STRUCTURE_TAG.Treasure);
             AddStructureTag(STRUCTURE_TAG.Monster_Spawner);
         }
 
-        public MonsterLair(Region location, SaveDataLocationStructure data)
-            : base(location, data) {
+        public MonsterLair(Region location, SaveDataLocationStructure data) : base(location, data) {
             AddStructureTag(STRUCTURE_TAG.Dangerous);
             AddStructureTag(STRUCTURE_TAG.Treasure);
             AddStructureTag(STRUCTURE_TAG.Monster_Spawner);

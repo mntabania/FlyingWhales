@@ -13,7 +13,8 @@ public class SaveDataRegion : SaveData<Region> {
     public int coreTileID;
     public ColorSave regionColor;
     public RegionTemplate regionTemplate;
-    public int[] residentIDs;
+    public string[] residentIDs;
+    public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
 
     public void Save(Region region) {
@@ -25,11 +26,19 @@ public class SaveDataRegion : SaveData<Region> {
         regionTemplate = region.regionTemplate;
         
         //residents
-        residentIDs = new int[region.residents.Count];
+        residentIDs = new string[region.residents.Count];
         for (int i = 0; i < region.residents.Count; i++) {
             Character character = region.residents[i];
-            residentIDs[i] = character.id;
+            residentIDs[i] = character.persistentID;
         }
+        
+        //characters at Location
+        charactersAtLocationIDs = new string[region.charactersAtLocation.Count];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            charactersAtLocationIDs[i] = character.persistentID;
+        }
+        
         innerMapSave = new SaveDataInnerMap();
         innerMapSave.Save(region.innerMap);
     }

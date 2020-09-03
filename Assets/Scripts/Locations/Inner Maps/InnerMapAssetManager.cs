@@ -78,6 +78,9 @@ namespace Inner_Maps {
         [Header("Materials")] 
         public Material burntMaterial;
         public Material defaultObjectMaterial;
+        
+        [Header("Demon")]
+        public TileBase demonStoneRuleTile;
 
         public TileBase GetOutsideFloorTile(Region location) {
             switch (location.coreTile.biomeType) {
@@ -159,6 +162,7 @@ namespace Inner_Maps {
             tileAssetDB.Add(stoneFloorTile.name, stoneFloorTile);
             tileAssetDB.Add(structureStoneFloor.name, structureStoneFloor);
             tileAssetDB.Add(ruinedStoneFloorTile.name, ruinedStoneFloorTile);
+            tileAssetDB.Add(demonStoneRuleTile.name, demonStoneRuleTile);
 
             return tileAssetDB;
         }
@@ -190,6 +194,7 @@ namespace Inner_Maps {
                 fullFilePath = fullFilePath.Replace(@"D:\Repositories\FlyingWhales\", "");
                 Sprite loadedSprite = (Sprite)UnityEditor.AssetDatabase.LoadAssetAtPath(fullFilePath, typeof(Sprite));
                 if (loadedSprite != null) {
+                    Debug.Log($"Loaded {loadedSprite.name} sprite.");
                     allTileObjectSprites.Add(loadedSprite.name, loadedSprite);
                 }
                 Debug.Log("Loaded all tile object assets");
