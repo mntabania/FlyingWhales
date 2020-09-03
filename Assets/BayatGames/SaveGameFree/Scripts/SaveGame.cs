@@ -372,7 +372,11 @@ namespace BayatGames.SaveGameFree
 #if UNITY_WSA || UNITY_WINRT
 					UnityEngine.Windows.File.WriteAllBytes ( filePath, encoding.GetBytes ( encoded ) );
 #else
-                    File.WriteAllText(filePath, encoded, encoding);
+                    //File.WriteAllText(filePath, encoded, encoding);
+                    using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8, 65536))
+                    {
+                        sw.WriteLine(encoded);
+                    }
 #endif
                 }
                 else
