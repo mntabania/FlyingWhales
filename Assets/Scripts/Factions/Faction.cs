@@ -6,6 +6,7 @@ using Factions.Faction_Types;
 using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public class Faction : IJobOwner, ISavable {
@@ -1006,19 +1007,22 @@ public class Faction : IJobOwner, ISavable {
 
         foreach (KeyValuePair<string, SaveDataFactionRelationship> item in data.relationships) {
             Faction faction2 = FactionManager.Instance.GetFactionByPersistentID(item.Key);
-            FactionRelationship rel = null;
-            if (GetRelationshipWith(faction2) == null) {
+            FactionRelationship rel = GetRelationshipWith(faction2); //check first if this faction has reference to relationship with faction 2
+            if (rel == null) {
+                rel = faction2.GetRelationshipWith(this); //if none, check if faction 2 has reference to relationship with faction 1
                 if (rel == null) {
-                    item.Value.Load();
+                    rel = item.Value.Load(); //if still none, then load new instance of relationship between the 2 factions
                 }
-                AddNewRelationship(faction2, rel);
             }
-            if (faction2.GetRelationshipWith(this) == null) {
-                if (rel == null) {
-                    item.Value.Load();
-                }
-                faction2.AddNewRelationship(this, rel);
-            }
+            Assert.IsNotNull(rel, $"Relationship between {name} and {faction2.name} is null!");
+            AddNewRelationship(faction2, rel);
+            faction2.AddNewRelationship(this, rel);
+            
+            // rel = faction2.GetRelationshipWith(this);
+            // if (rel == null) {
+            //     rel = item.Value.Load();
+            // }
+            // faction2.AddNewRelationship(this, rel);
         }
 
         for (int i = 0; i < data.history.Count; i++) {

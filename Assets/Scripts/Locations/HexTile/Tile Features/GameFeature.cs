@@ -13,7 +13,7 @@ namespace Locations.Tile_Features {
         private HexTile owner;
         private bool isGeneratingPerHour;
     
-        private SUMMON_TYPE animalTypeBeingSpawned;
+        public SUMMON_TYPE animalTypeBeingSpawned { get; private set; }
         public List<Animal> ownedAnimals { get; private set; } //list of animals that have been spawned by this feature
 
         public static readonly SUMMON_TYPE[] spawnChoices = new[] {
@@ -32,11 +32,22 @@ namespace Locations.Tile_Features {
         #region Overrides
         public override void GameStartActions(HexTile tile) {
             owner = tile;
-            //Spawn initial animals
-            //since max animals are spawned at start, starting per hour generation is unnecessary
-            //only when an animal is removed from the owned animals list, is the check for starting production performed
-            for (int i = 0; i < MaxAnimals; i++) {
-                SpawnNewAnimal();
+            List<Animal> animals = tile.GetAllCharactersInsideHex<Animal>();
+            if (animals != null) {
+                for (int i = 0; i < animals.Count; i++) {
+                    Animal animal = animals[i];
+                    AddOwnedAnimal(animal);
+                }
+            }
+
+            if (ownedAnimals.Count < MaxAnimals) {
+                int missingAnimals = MaxAnimals - ownedAnimals.Count;
+                //Spawn initial animals
+                //since max animals are spawned at start, starting per hour generation is unnecessary
+                //only when an animal is removed from the owned animals list, is the check for starting production performed
+                for (int i = 0; i < missingAnimals; i++) {
+                    SpawnNewAnimal();
+                }
             }
         }
         public override void OnRemoveFeature(HexTile tile) {
@@ -106,4 +117,24 @@ namespace Locations.Tile_Features {
 
         }
     }
+    
+    [System.Serializable]
+    public class SaveDataGameFeature : SaveDataTileFeature {
+
+        public SUMMON_TYPE summon;
+        private List<string> ownedAnimals;
+        public override void Save(TileFeature tileFeature) {
+            base.Save(tileFeature);
+            GameFeature gameFeature = tileFeature as GameFeature;
+            Assert.IsNotNull(gameFeature);
+            summon = gameFeature.animalTypeBeingSpawned;
+            ownedAnimals = SaveUtilities.ConvertSavableListToIDs(gameFeature.ownedAnimals);
+        }
+        public override TileFeature Load() {
+            GameFeature gameFeature = base.Load() as GameFeature;
+            Assert.IsNotNull(gameFeature);
+            gameFeature.SetSpawnType(summon);
+            return gameFeature;
+        }
+    } 
 }

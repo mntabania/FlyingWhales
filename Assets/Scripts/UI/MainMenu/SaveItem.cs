@@ -27,4 +27,11 @@ public class SaveItem : MonoBehaviour {
         SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(path);
         MainMenuManager.Instance.StartGame();
     }
+    public void OnClickDelete() {
+        MainMenuUI.Instance.yesNoConfirmation.ShowYesNoConfirmation("Delete Save", $"Are you sure you want to delete {saveNameLbl.text}?", OnConfirmDelete, showCover: true);
+    }
+    private void OnConfirmDelete() {
+        File.Delete(path);
+        MainMenuUI.Instance.RedetermineSaveFiles();
+    }
 }

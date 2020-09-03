@@ -53,9 +53,16 @@ public class SaveDataCurrentProgress {
 
     #region Hub
     public bool AddToSaveHub<T>(T data) where T : ISavable {
-        SaveData<T> obj = (SaveData<T>) System.Activator.CreateInstance(data.serializedData);
-        obj.Save(data);
-        return AddToSaveHub(obj, data.objectType);
+        if (objectHub.ContainsKey(data.objectType)) {
+            if (objectHub[data.objectType].GetData(data.persistentID) == null) {
+                //only save data if hub doesn't already have the saved data.
+                SaveData<T> obj = (SaveData<T>) System.Activator.CreateInstance(data.serializedData);
+                obj.Save(data);
+                return AddToSaveHub(obj, data.objectType);        
+            }
+            return false;
+        }
+        throw new System.NullReferenceException("Trying to add object type " + data.objectType.ToString() + " in Object Hub but there is no entry for it. Make sure you add it in ConstructObjectHub");
     }
     private bool AddToSaveHub<T>(T data, OBJECT_TYPE objectType) {
         if (objectHub.ContainsKey(objectType)) { //The object type must always be present in the object hub dictionary if it is not, add it in ConstructObjectHub
