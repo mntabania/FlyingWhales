@@ -420,6 +420,7 @@ public class CrimeData : ISavable {
     #endregion
 
     public CrimeData(CRIME_TYPE crimeType, CRIME_SEVERITY crimeSeverity, ICrimeable crime, Character criminal, IPointOfInterest target, Faction targetFaction) {
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         this.crimeType = crimeType;
         this.crimeSeverity = crimeSeverity;
         SetCrime(crime);

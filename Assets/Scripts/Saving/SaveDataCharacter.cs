@@ -154,7 +154,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.marker) {
             hasMarker = true;
             worldPos = data.marker.transform.position;
-            rotation = data.marker.transform.localRotation;
+            rotation = data.marker.visualsParent.transform.localRotation;
         }
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
         buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);

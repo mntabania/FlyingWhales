@@ -916,6 +916,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     #region Loading
     public void DoActionUponLoadingSavedGame() {
         if(actionStatus == ACTION_STATUS.STARTED) {
+            //TODO: Resume doing action
+            actor.SetCurrentActionNode(null, null, null);
             CheckAndMoveToDoAction(associatedJob);
         } else if (actionStatus == ACTION_STATUS.PERFORMING) {
             actor.marker.UpdateAnimation();
