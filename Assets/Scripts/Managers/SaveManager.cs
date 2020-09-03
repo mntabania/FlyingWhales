@@ -14,10 +14,10 @@ using UnityEditor;
 
 public class SaveManager : MonoBehaviour {
     public static SaveManager Instance;
-    public bool useSaveData;
     public SavePlayerManager savePlayerManager;
     public SaveCurrentProgressManager saveCurrentProgressManager;
 
+    public bool useSaveData { get; private set; }
 
     [Header("For Testing")] 
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
@@ -53,6 +53,9 @@ public class SaveManager : MonoBehaviour {
     }
     private void OnEditorQuit() {
         savePlayerManager.SavePlayerData();
+    }
+    public void SetUseSaveData(bool state) {
+        useSaveData = state;
     }
 
     #region Saving

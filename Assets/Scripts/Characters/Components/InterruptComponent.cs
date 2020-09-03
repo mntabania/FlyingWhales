@@ -331,11 +331,11 @@ public class SaveDataInterruptComponent : SaveData<InterruptComponent> {
     public override void Save(InterruptComponent data) {
         currentDuration = data.currentDuration;
         currentSimultaneousInterruptDuration = data.currentSimultaneousInterruptDuration;
-        if(data.currentInterrupt != null) {
+        if(data.currentInterrupt != null && data.currentInterrupt.interrupt != null) {
             currentInterruptID = data.currentInterrupt.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentInterrupt);
         }
-        if (data.triggeredSimultaneousInterrupt != null) {
+        if (data.triggeredSimultaneousInterrupt != null && data.triggeredSimultaneousInterrupt.interrupt != null) {
             triggeredSimultaneousInterruptID = data.triggeredSimultaneousInterrupt.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.triggeredSimultaneousInterrupt);
         }

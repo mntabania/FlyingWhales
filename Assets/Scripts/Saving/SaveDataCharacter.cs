@@ -176,7 +176,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
 
-        if(data.currentJob != null) {
+        if(data.currentJob != null && data.currentJob.jobType != JOB_TYPE.NONE) {
             currentJob = data.currentJob.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentJob);
         }

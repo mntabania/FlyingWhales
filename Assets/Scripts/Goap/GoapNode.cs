@@ -1105,7 +1105,7 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
                 }
             }
         }
-        if (data.associatedJob != null) {
+        if (data.associatedJob != null && data.associatedJob.jobType != JOB_TYPE.NONE) {
             associatedJobID = data.associatedJob.persistentID;
         }
     }

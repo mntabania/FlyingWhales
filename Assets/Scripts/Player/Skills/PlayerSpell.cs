@@ -325,8 +325,10 @@ public class SpellData : IPlayerSkill {
     public void OnLoadSpell() {
         Messenger.Broadcast(Signals.CHARGES_ADJUSTED, this);
         if (hasCooldown) {
-            Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
-            Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            if((hasCharges && charges < maxCharges) || currentCooldownTick < cooldown) {
+                Messenger.Broadcast(Signals.SPELL_COOLDOWN_STARTED, this);
+                Messenger.AddListener(Signals.TICK_STARTED, PerTickCooldown);
+            }
         }
     }
     public void OnExecuteSpellActionAffliction() {
@@ -362,7 +364,7 @@ public class SpellData : IPlayerSkill {
     private void PerTickCooldown() {
         currentCooldownTick++;
         // Assert.IsFalse(currentCooldownTick > cooldown, $"Cooldown tick became higher than cooldown in {name}. Cooldown is {cooldown.ToString()}. Cooldown Tick is {currentCooldownTick.ToString()}");
-        if(currentCooldownTick == cooldown) {
+        if(currentCooldownTick >= cooldown) {
             //SetCharges(maxCharges);
             if(hasCharges && charges < maxCharges) {
                 AdjustCharges(1);

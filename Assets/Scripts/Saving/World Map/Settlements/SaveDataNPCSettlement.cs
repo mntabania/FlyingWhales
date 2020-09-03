@@ -14,9 +14,11 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         Assert.IsNotNull(npcSettlement);
         jobIDs = new List<string>();
         for (int i = 0; i < npcSettlement.availableJobs.Count; i++) {
-            JobQueueItem job = npcSettlement.availableJobs[i];    
-            jobIDs.Add(job.persistentID);
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(job);
+            JobQueueItem job = npcSettlement.availableJobs[i];
+            if(job.jobType != JOB_TYPE.NONE) {
+                jobIDs.Add(job.persistentID);
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(job);
+            }
         }
         rulerID = npcSettlement.ruler?.persistentID ?? string.Empty;
         prisonID = npcSettlement.prison != null ? npcSettlement.prison.persistentID : string.Empty;

@@ -20,6 +20,7 @@ public class MapGenerator : MonoBehaviour {
 
     #region Random World
     internal IEnumerator InitializeWorld() {
+        SaveManager.Instance.SetUseSaveData(false);
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
@@ -125,6 +126,7 @@ public class MapGenerator : MonoBehaviour {
 
     #region Scenario World
     public IEnumerator InitializeScenarioWorld(ScenarioMapData scenarioMapData) {
+        SaveManager.Instance.SetUseSaveData(false);
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
@@ -226,6 +228,7 @@ public class MapGenerator : MonoBehaviour {
     
     #region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
+        SaveManager.Instance.SetUseSaveData(true);
         //MapGenerationComponent[] mapGenerationComponents = {
         //    new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
         //    new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
