@@ -136,6 +136,7 @@ public class MainMenuUI : MonoBehaviour {
             GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, loadGameScrollRect.content);
             SaveItem saveItem = saveItemGO.GetComponent<SaveItem>();
             saveItem.SetSaveFile(saveFile);
+            (saveItem.transform as RectTransform).SetAsFirstSibling();
         }
     }
     #endregion

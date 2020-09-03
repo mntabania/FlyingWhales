@@ -67,7 +67,9 @@ public abstract class Crops : TileObject {
             SetGrowthState(Growth_State.Ripe);
         }
         _remainingRipeningTicks = remainingRipeningTicks - _growthRate;
-        mapVisual.UpdateTileObjectVisual(this);
+        if (mapVisual != null) {
+            mapVisual.UpdateTileObjectVisual(this);    
+        }
     }
     public void SetGrowthRate(int growthRate) {
         _growthRate = growthRate;

@@ -141,6 +141,17 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             structure.OnDoneLoadStructure();
 
             yield return null;
+        } else if (structure is NaturalStructure naturalStructure && saveDataLocationStructure is SaveDataNaturalStructure saveDataNaturalStructure) {
+            //natural structures
+            if (naturalStructure is Cave cave && saveDataNaturalStructure is SaveDataCave saveDataCave) {
+                cave.LoadOccupiedHexTiles(saveDataCave);
+            } else {
+                if (!string.IsNullOrEmpty(saveDataLocationStructure.occupiedHexTileID)) {
+                    HexTile occupiedHexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataLocationStructure.occupiedHexTileID);
+                    structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
+                }
+            }
+            
         }
     }
     #endregion
