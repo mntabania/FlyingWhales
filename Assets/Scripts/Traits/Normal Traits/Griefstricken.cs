@@ -23,15 +23,19 @@ namespace Traits {
         public override void OnAddTrait(ITraitable sourcePOI) {
             if (sourcePOI is Character character) {
                 owner = character;
-                string description = "death";
-                if (!responsibleCharacter.isDead) {
-                    description = "presumed death";
+                if(responsibleCharacter != null) {
+                    //Right now responsible character will only be null upon loading from saved game because the references here is not yet loaded
+                    //So i added a null checker, since we also do not want to double the log addition of griefstricken
+                    string description = "death";
+                    if (!responsibleCharacter.isDead) {
+                        description = "presumed death";
+                    }
+                    Log log = new Log(GameManager.Instance.Today(), "Trait", name, "gain");
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(null, description, LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
                 }
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "gain");
-                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddToFillers(null, description, LOG_IDENTIFIER.STRING_1);
-                log.AddLogToInvolvedObjects();
             }
             base.OnAddTrait(sourcePOI);
         }

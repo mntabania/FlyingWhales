@@ -17,7 +17,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            interruptHolder.actor.DecreaseCanMove();
+            //interruptHolder.actor.DecreaseCanMove();
             overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break");
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
@@ -61,7 +61,7 @@ namespace Interrupts {
             return base.ExecuteInterruptStartEffect(interruptHolder, ref overrideEffectLog, goapNode);
         }
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            interruptHolder.actor.IncreaseCanMove();
+            //interruptHolder.actor.IncreaseCanMove();
             interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Catharsis");
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }

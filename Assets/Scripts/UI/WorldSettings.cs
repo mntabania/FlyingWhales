@@ -170,6 +170,9 @@ public class WorldSettings : MonoBehaviour {
             worldSettingsData.RemoveBiome(biome);
         }
     }
+    public void SetWorldSettingsData(WorldSettingsData data) {
+        worldSettingsData = data;
+    }
     #endregion
 
     #region UI References

@@ -46,7 +46,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Region homeRegion { get; protected set; }
     public NPCSettlement homeSettlement { get; protected set; }
     public LocationStructure homeStructure { get; protected set; }
-    public List<INTERACTION_TYPE> advertisedActions { get; }
+    public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     //public int supply { get; set; }
     //public int food { get; set; }
     public CharacterMarker marker { get; private set; }
@@ -83,7 +83,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasSubscribedToSignals { get; private set; }
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public Log deathLog { get; private set; }
-    public List<string> interestedItemNames { get; }
+    public List<string> interestedItemNames { get; private set; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territories { get; private set; }
@@ -636,6 +636,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         partyComponent.LoadReferences(data.partyComponent);
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
+        traitContainer.Load(this, data.saveDataTraitContainer);
+
+        //This must be reapplied after loading traits because when a trait is loaded the values will also be adjusted
+        //Example: perform value in saved data = 3, when a trait is loaded and it increases perform value the value will become 4
+        //Now it is already inconsistent since the saved value is not the same as the loaded value now
+        //So we must bring back the value to the saved one so that the character state when loaded is the same
+        canWitnessValue = data.canWitnessValue;
+        canMoveValue = data.canMoveValue;
+        canBeAttackedValue = data.canBeAttackedValue;
+        canPerformValue = data.canPerformValue;
+        canTakeJobsValue = data.canTakeJobsValue;
+        sociableValue = data.sociableValue;
+
+        if (traitContainer.HasTrait("Character Trait")) {
+            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+        }
+        if (traitContainer.HasTrait("Necromancer")) {
+            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
+        }
 
         //Place marker after loading references
         if (data.hasMarker) {
@@ -643,7 +662,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CreateMarker();
             }
             marker.SetCollidersState(true);
-            marker.transform.SetParent(_currentRegion.innerMap.objectsParent);
+            marker.transform.SetParent(currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
             marker.visualsParent.transform.localRotation = data.rotation;
             marker.UpdateActionIcon();
@@ -654,13 +673,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
             carryComponent.LoadCarryReference(data.carryComponent);
-        }
-        traitContainer.Load(this, data.saveDataTraitContainer);
-        if(traitContainer.HasTrait("Character Trait")) {
-            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
-        }
-        if (traitContainer.HasTrait("Necromancer")) {
-            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
+
+            if (currentActionNode != null && currentActionNode.poiTarget is TileObject target) {
+                target.OnDoActionToObject(currentActionNode);
+            }
         }
         visuals.UpdateAllVisuals(this);
         SubscribeToSignals();

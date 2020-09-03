@@ -229,6 +229,7 @@ public class MapGenerator : MonoBehaviour {
     #region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         SaveManager.Instance.SetUseSaveData(true);
+        WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         //MapGenerationComponent[] mapGenerationComponents = {
         //    new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
         //    new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 

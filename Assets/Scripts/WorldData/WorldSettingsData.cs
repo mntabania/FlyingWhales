@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class WorldSettingsData {
 
     public enum World_Type {
@@ -14,15 +15,15 @@ public class WorldSettingsData {
         Affatt,
         Icalawa,
     };
-    
-    public int numOfRegions { get; private set; }
-    public bool omnipotentMode { get; private set; }
-    public bool noThreatMode { get; private set; }
-    public bool chaosVictoryMode { get; private set; }
-    public List<RACE> races { get; private set; }
-    public List<BIOMES> biomes { get; private set; }
-    public World_Type worldType { get; private set; }
-    public List<SPELL_TYPE> disabledSpells { get; }
+
+    public int numOfRegions;
+    public bool omnipotentMode;
+    public bool noThreatMode;
+    public bool chaosVictoryMode;
+    public List<RACE> races;
+    public List<BIOMES> biomes;
+    public World_Type worldType;
+    public List<SPELL_TYPE> disabledSpells;
     
     public WorldSettingsData() {
         races = new List<RACE>();
