@@ -88,31 +88,31 @@ public class LoadSecondWave : MapGenerationComponent {
                 tileObject.LoadSecondWave(saveDataTileObject);
                 continue;
             }
-            LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
-            if (tileObject is MovingTileObject) {
-                SaveDataMovingTileObject saveDataMovingTileObject = saveDataTileObject as SaveDataMovingTileObject;
-                Assert.IsNotNull(saveDataMovingTileObject);
-                tileObject.SetGridTileLocation(gridTileLocation);
-                tileObject.OnPlacePOI();
-                tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
-                tileObject.LoadSecondWave(saveDataTileObject);
-            } else if (tileObject is Tombstone) {
-                //TODO:
-            } else {
-                gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
-                if (tileObject.mapObjectVisual != null) {
-                    if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
-                        tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);
-                        if (tileObject is Table) {
-                            tileObject.RevalidateTileObjectSlots();
+            if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
+                LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
+                if (tileObject is MovingTileObject) {
+                    SaveDataMovingTileObject saveDataMovingTileObject = saveDataTileObject as SaveDataMovingTileObject;
+                    Assert.IsNotNull(saveDataMovingTileObject);
+                    tileObject.SetGridTileLocation(gridTileLocation);
+                    tileObject.OnPlacePOI();
+                    tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
+                    tileObject.LoadSecondWave(saveDataTileObject);
+                } else {
+                    gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
+                    if (tileObject.mapObjectVisual != null) {
+                        if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
+                            tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);
+                            if (tileObject is Table) {
+                                tileObject.RevalidateTileObjectSlots();
+                            }
+                        } else {
+                            tileObject.mapObjectVisual.SetVisual(null);    
+                            // Debug.Log($"Could not find asset with name {saveDataTileObject.spriteName}");
                         }
-                    } else {
-                        tileObject.mapObjectVisual.SetVisual(null);    
-                        // Debug.Log($"Could not find asset with name {saveDataTileObject.spriteName}");
-                    }
-                    tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);    
-                }    
-                tileObject.LoadSecondWave(saveDataTileObject);
+                        tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);    
+                    }    
+                    tileObject.LoadSecondWave(saveDataTileObject);
+                }
             }
             batchCount++;
             if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
