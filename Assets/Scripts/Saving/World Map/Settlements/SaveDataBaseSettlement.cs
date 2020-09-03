@@ -7,7 +7,7 @@ using Locations.Settlements;
 using UnityEngine.Serialization;
 
 [System.Serializable]
-public abstract class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterpart {
+public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterpart {
     public string _persistentID;
     public int id;
     public LOCATION_TYPE locationType;

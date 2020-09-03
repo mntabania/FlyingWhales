@@ -821,6 +821,9 @@ public class Region : ISavable {
 
     #region Hex Tile Map
     private void DetermineHexTileMap() {
+        if(tiles.Count <= 0) {
+            return;
+        }
         int maxX = tiles.Max(t => t.data.xCoordinate);
         int minX = tiles.Min(t => t.data.xCoordinate);
         int maxY = tiles.Max(t => t.data.yCoordinate);

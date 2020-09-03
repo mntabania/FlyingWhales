@@ -74,6 +74,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public string faction;
     public string prevFaction;
 
+    public string currentJob;
+    public string currentActionNode;
+    public string previousCurrentActionNode;
+
     public List<string> territories;
     public List<string> items;
     public List<string> ownedItems;
@@ -150,7 +154,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.marker) {
             hasMarker = true;
             worldPos = data.marker.transform.position;
-            rotation = data.marker.transform.localRotation;
+            rotation = data.marker.visualsParent.transform.localRotation;
         }
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
         buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
@@ -171,6 +175,21 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         partyComponent = new SaveDataPartyComponent(); partyComponent.Save(data.partyComponent);
         tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
+
+        if(data.currentJob != null) {
+            currentJob = data.currentJob.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentJob);
+        }
+
+        if (data.currentActionNode != null) {
+            currentActionNode = data.currentActionNode.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentActionNode);
+        }
+
+        if (data.previousCurrentActionNode != null) {
+            previousCurrentActionNode = data.previousCurrentActionNode.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.previousCurrentActionNode);
+        }
 
         if (data.minion != null) {
             hasMinion = true;

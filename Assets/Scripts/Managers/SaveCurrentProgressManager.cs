@@ -35,29 +35,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
         return true;
     }
-    public void SaveCurrentProgress() {
-        currentSaveDataProgress = new SaveDataCurrentProgress();
-        currentSaveDataProgress.Initialize();
-        currentSaveDataProgress.SaveDate();
-        currentSaveDataProgress.SavePlayer();
-        currentSaveDataProgress.SaveFactions();
-        currentSaveDataProgress.SaveCharacters();
-        currentSaveDataProgress.SaveJobs();
-
-        //save world map
-        WorldMapSave worldMapSave = new WorldMapSave();
-        worldMapSave.SaveWorld(
-            WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
-            DatabaseManager.Instance.hexTileDatabase, 
-            DatabaseManager.Instance.regionDatabase, 
-            DatabaseManager.Instance.settlementDatabase,
-            DatabaseManager.Instance.structureDatabase
-        );
-        currentSaveDataProgress.worldMapSave = worldMapSave;
-        currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
-        currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
-        SaveGame.Save($"{UtilityScripts.Utilities.gameSavePath}{savedCurrentProgressFileName}.sav", currentSaveDataProgress);
-    }
     public void DoManualSave(string fileName = "") {
         StartCoroutine(SaveCoroutine(fileName));
         // Stopwatch loadingWatch = new Stopwatch();
@@ -115,7 +92,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         yield return StartCoroutine(currentSaveDataProgress.SaveFactionsCoroutine());
         yield return StartCoroutine(currentSaveDataProgress.SaveCharactersCoroutine());
         yield return StartCoroutine(currentSaveDataProgress.SaveJobsCoroutine());
-        
+
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
         yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.hexTileDatabase,
@@ -124,21 +101,19 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         yield return StartCoroutine(currentSaveDataProgress.SaveTileObjectsCoroutine(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList));
         currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
         
-        
+
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Finalizing...");
         if (string.IsNullOrEmpty(fileName)) {
             // fileName = savedCurrentProgressFileName;
             string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
             fileName = $"{timeStampStr}_{worldMapSave.worldType.ToString()}_Day{currentSaveDataProgress.day.ToString()}";
         }
-        
+
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
-        
-        // Directory.CreateDirectory(Path.GetDirectoryName(UtilityScripts.Utilities.gameSavePath));
-        // string json = JsonConvert.SerializeObject(currentSaveDataProgress, Formatting.Indented);
-        // File.WriteAllText(path, json);
+
         SaveGame.Save(path, currentSaveDataProgress);
-        
+        //SaveData(path, currentSaveDataProgress);
+
         Debug.Log($"Saved new game at {path}");
         loadingWatch.Stop();
         Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
@@ -160,6 +135,58 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     private SaveDataCurrentProgress GetSaveFileData(string path) {
         return SaveGame.Load<SaveDataCurrentProgress>(path);
+        //return LoadData<SaveDataCurrentProgress>(path);
+    }
+    #endregion
+
+    #region JSON Net
+    public void SaveData<T>(string identifier, T obj) {
+        if (string.IsNullOrEmpty(identifier)) {
+            throw new System.ArgumentNullException("identifier");
+        }
+        string filePath = "";
+        if (IsFilePath(identifier)) {
+            filePath = identifier;
+        } else {
+            throw new System.Exception("identifier is not a file path!");
+        }
+        if (obj == null) {
+            throw new System.Exception("Object to be saved is null!");
+        }
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+        string json = JsonConvert.SerializeObject(obj);
+
+        File.WriteAllText(filePath, json);
+
+    }
+    public T LoadData<T>(string identifier) {
+        if (string.IsNullOrEmpty(identifier)) {
+            throw new System.ArgumentNullException("identifier");
+        }
+        string filePath = "";
+        if (IsFilePath(identifier)) {
+            filePath = identifier;
+        } else {
+            throw new System.Exception("identifier is not a file path!");
+        }
+        string data = File.ReadAllText(filePath);
+
+        T convertedObj = JsonConvert.DeserializeObject<T>(data);
+
+        return convertedObj;
+    }
+    public bool IsFilePath(string str) {
+        bool result = false;
+        if (Path.IsPathRooted(str)) {
+            try {
+                Path.GetFullPath(str);
+                result = true;
+            } catch (System.Exception) {
+                result = false;
+            }
+        }
+        return result;
     }
     #endregion
 

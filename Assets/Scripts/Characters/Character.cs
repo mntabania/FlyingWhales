@@ -81,6 +81,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isWanderer { get; private set; }
     public bool hasRisen { get; private set; }
     public bool hasSubscribedToSignals { get; private set; }
+    public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; }
 
@@ -334,6 +335,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         needsComponent.ResetSleepTicks();
     }
     public Character(SaveDataCharacter data) {
+        shouldDoActionOnFirstTickUponLoadGame = true;
         advertisedActions = new List<INTERACTION_TYPE>();
         items = new List<TileObject>();
         ownedItems = new List<TileObject>();
@@ -588,7 +590,18 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.prevFaction)) {
             prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
         }
-
+        if (!string.IsNullOrEmpty(data.currentJob)) {
+            currentJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.currentJob);
+            if(currentJob is GoapPlanJob job && job.assignedPlan != null) {
+                currentPlan = job.assignedPlan;
+            }
+        }
+        if (!string.IsNullOrEmpty(data.currentActionNode)) {
+            currentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.currentActionNode);
+        }
+        if (!string.IsNullOrEmpty(data.previousCurrentActionNode)) {
+            previousCurrentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.previousCurrentActionNode);
+        }
         for (int i = 0; i < data.territories.Count; i++) {
             HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
             territories.Add(hex);
@@ -632,7 +645,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.SetCollidersState(true);
             marker.transform.SetParent(currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
-            marker.transform.localRotation = data.rotation;
+            marker.visualsParent.transform.localRotation = data.rotation;
             marker.UpdateActionIcon();
             
             //Do updating hidden state here because the marker must be created first
@@ -3178,9 +3191,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public void EndTickPerformJobs() {
-        if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
-            if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
-                PerformTopPriorityJob();
+        if (shouldDoActionOnFirstTickUponLoadGame) {
+            shouldDoActionOnFirstTickUponLoadGame = false;
+            if(currentActionNode != null) {
+                currentActionNode.DoActionUponLoadingSavedGame();
+            }
+        } else {
+            if (CanPerformEndTickJobs() && HasSameOrHigherPriorityJobThanBehaviour()) {
+                if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
+                    PerformTopPriorityJob();
+                }
             }
         }
     }

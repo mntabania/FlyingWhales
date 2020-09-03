@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 [System.Serializable]
-public abstract class SaveDataLocationStructure : SaveData<LocationStructure> {
+public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string persistentID;
     public int id;
     public string name;
