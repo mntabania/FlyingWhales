@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Traits;
 namespace Databases {
+    //This is the burning source database
     public class BurningSourceDatabase {
         public Dictionary<string, BurningSource> burningSourcesByID { get; }
         public List<BurningSource> burningSources { get; }
