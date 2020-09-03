@@ -205,21 +205,23 @@ public class CarryComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataCarryComponent data) {
+        if (!string.IsNullOrEmpty(data.isBeingCarriedBy)) {
+            isBeingCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.isBeingCarriedBy);
+        }
+        if (!string.IsNullOrEmpty(data.justGotCarriedBy)) {
+            justGotCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.justGotCarriedBy);
+        }
+    }
+    public void LoadCarryReference(SaveDataCarryComponent data) {
         if (!string.IsNullOrEmpty(data.carriedPOI)) {
             IPointOfInterest poi = null;
-            if(data.carriedPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            if (data.carriedPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 poi = CharacterManager.Instance.GetCharacterByPersistentID(data.carriedPOI);
             } else if (data.carriedPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 poi = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.carriedPOI);
             }
             //carriedPOI = poi;
             CarryPOI(poi, isFromSave: true);
-        }
-        if (!string.IsNullOrEmpty(data.isBeingCarriedBy)) {
-            isBeingCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.isBeingCarriedBy);
-        }
-        if (!string.IsNullOrEmpty(data.justGotCarriedBy)) {
-            justGotCarriedBy = CharacterManager.Instance.GetCharacterByPersistentID(data.justGotCarriedBy);
         }
     }
     #endregion

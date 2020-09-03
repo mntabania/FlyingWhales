@@ -641,11 +641,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.transform.SetParent(currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
             marker.transform.localRotation = data.rotation;
-            
+            marker.UpdateActionIcon();
             
             //Do updating hidden state here because the marker must be created first
             OnSetIsHidden();
             reactionComponent.UpdateHiddenState();
+
+            //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
+            carryComponent.LoadCarryReference(data.carryComponent);
         }
         visuals.UpdateAllVisuals(this);
         SubscribeToSignals();
