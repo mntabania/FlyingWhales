@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 using Scenario_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -38,6 +39,10 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             LocationStructure createdStructure = saveDataLocationStructure.InitialLoad(location);
             if (createdStructure != null) {
                 location.AddStructure(createdStructure);
+            }
+            if (!string.IsNullOrEmpty(saveDataLocationStructure.settlementLocationID)) {
+                BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataLocationStructure.settlementLocationID);
+                settlement.AddStructure(createdStructure);
             }
             saveDataLocationStructure.Load();
         }

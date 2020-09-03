@@ -17,6 +17,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public int currentHP;
     public string[] residentIDs;
     public string occupiedHexTileID;
+    public string settlementLocationID;
 
     public override void Save(LocationStructure structure) {
         persistentID = structure.persistentID;
@@ -25,6 +26,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         nameWithoutID = structure.nameWithoutID;
         structureType = structure.structureType;
         regionLocationID = structure.location.persistentID;
+        settlementLocationID = structure.settlementLocation?.persistentID ?? string.Empty;
         
         //structure tags
         structureTags = new STRUCTURE_TAG[structure.structureTags.Count];
