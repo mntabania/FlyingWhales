@@ -918,7 +918,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if(actionStatus == ACTION_STATUS.STARTED) {
             //TODO: Resume doing action
             actor.SetCurrentActionNode(null, null, null);
-            CheckAndMoveToDoAction(associatedJob);
+            //CheckAndMoveToDoAction(associatedJob);
         } else if (actionStatus == ACTION_STATUS.PERFORMING) {
             actor.marker.UpdateAnimation();
             if (currentState.duration > 0) {
