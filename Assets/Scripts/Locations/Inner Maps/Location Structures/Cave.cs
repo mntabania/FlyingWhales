@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class Cave : NaturalStructure {
@@ -27,6 +29,18 @@ namespace Inner_Maps.Location_Structures {
             resourceYield = GetRandomResourceYield();
             occupiedHexTiles = new List<InnerMapHexTile>();
         }
+
+        #region Loading
+        public void LoadOccupiedHexTiles(SaveDataCave saveDataCave) {
+            for (int i = 0; i < saveDataCave.occupiedHextiles.Count; i++) {
+                string hexTileID = saveDataCave.occupiedHextiles[i];
+                if (!string.IsNullOrEmpty(hexTileID)) {
+                    HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(hexTileID);
+                    occupiedHexTiles.Add(hexTile.innerMapHexTile);
+                }
+            }
+        }
+        #endregion
 
         private WeightedDictionary<string> GetRandomResourceYield() {
             WeightedDictionary<string> randomYield = new WeightedDictionary<string>();
@@ -90,3 +104,18 @@ namespace Inner_Maps.Location_Structures {
         }
     }
 }
+
+#region Save Data
+public class SaveDataCave : SaveDataNaturalStructure {
+    public List<string> occupiedHextiles;
+    public override void Save(LocationStructure structure) {
+        base.Save(structure);
+        Cave cave = structure as Cave;
+        occupiedHextiles = new List<string>();
+        for (int i = 0; i < cave.occupiedHexTiles.Count; i++) {
+            InnerMapHexTile innerMapHexTile = cave.occupiedHexTiles[i];
+            occupiedHextiles.Add(innerMapHexTile.hexTileOwner.persistentID);
+        }
+    }
+}
+#endregion

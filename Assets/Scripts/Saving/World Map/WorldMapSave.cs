@@ -98,6 +98,9 @@ public class WorldMapSave {
         if (structure is DemonicStructure) {
             return new SaveDataDemonicStructure();
         } else if (structure is NaturalStructure) {
+            if (structure is Cave) {
+                return new SaveDataCave();
+            }
             return new SaveDataNaturalStructure();
         } else {
             return new SaveDataManMadeStructure();
