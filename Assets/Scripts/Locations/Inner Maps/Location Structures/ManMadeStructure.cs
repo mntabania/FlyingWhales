@@ -20,12 +20,14 @@ namespace Inner_Maps.Location_Structures {
 
         #region Listeners
         protected override void SubscribeListeners() {
+            if (hasBeenDestroyed) { return; }
             Messenger.AddListener<StructureWallObject, int>(Signals.WALL_DAMAGED, OnWallDamaged);
             Messenger.AddListener<StructureWallObject, int>(Signals.WALL_REPAIRED, OnWallRepaired);
             Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
             Messenger.AddListener<IPointOfInterest, int>(Signals.OBJECT_REPAIRED, OnObjectRepaired);
         }
         protected override void UnsubscribeListeners() {
+            if (hasBeenDestroyed) { return; }
             Messenger.RemoveListener<StructureWallObject, int>(Signals.WALL_DAMAGED, OnWallDamaged);
             Messenger.RemoveListener<StructureWallObject, int>(Signals.WALL_REPAIRED, OnWallRepaired);
             Messenger.RemoveListener<IPointOfInterest, int>(Signals.OBJECT_DAMAGED, OnObjectDamaged);
