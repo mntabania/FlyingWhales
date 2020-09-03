@@ -19,6 +19,12 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
+        //Load region references
+        yield return MapGenerator.Instance.StartCoroutine(LoadRegionReferences(saveData));
+        
+        //Load structure references
+        yield return MapGenerator.Instance.StartCoroutine(LoadStructureReferences(saveData));
+        
         //Load Faction Related Extra Data
         yield return MapGenerator.Instance.StartCoroutine(LoadFactionReferences(saveData));
 
@@ -29,8 +35,6 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementJobs(saveData));
-        
-        //Load Characters
 
         //Load Tile Objects
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveData));
@@ -54,11 +58,36 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Second Wave Job data
         yield return MapGenerator.Instance.StartCoroutine(LoadJobsSecondWave(saveData));
 
+        //Load Characters
         yield return MapGenerator.Instance.StartCoroutine(LoadCharacterReferences(saveData));
         
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalTileObjectInfo(saveData));
     }
 
+    #region Region
+    private IEnumerator LoadRegionReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Region Data...");
+        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+            Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
+            region.LoadReferences(saveDataRegion);
+            yield return null;
+        }
+    }
+    #endregion
+    
+    #region Structure
+    private IEnumerator LoadStructureReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Structure Data...");
+        for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
+            SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
+            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
+            structure.LoadReferences(saveDataLocationStructure);
+            yield return null;
+        }
+    }
+    #endregion
+    
     #region Faction
     private IEnumerator LoadFactionReferences(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Faction Data...");
@@ -83,6 +112,10 @@ public class LoadSecondWave : MapGenerationComponent {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
+            if (saveDataTileObject == null) {
+                Debug.LogWarning($"Could not find save data for {tileObject}!");
+                continue;
+            }
             if (tileObject is GenericTileObject || string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
                 //the loaded object does not have a grid tile location, it will be loaded and in memory, but not placed in this section.
                 //if it in a character's inventory then it will be referenced by the character carrying it, when that character has been loaded.
@@ -119,6 +152,14 @@ public class LoadSecondWave : MapGenerationComponent {
                     }    
                     tileObject.LoadSecondWave(saveDataTileObject);
                 }
+
+                if (tileObject is BlockWall && tileObject.gridTileLocation.structure is DemonicStructure demonicStructure) {
+                    //TODO: This is only a quick fix, so that loaded block walls will contribute to demonic structure damage
+                    demonicStructure.AddObjectAsDamageContributor(tileObject);
+                } else if (tileObject is Eyeball && tileObject.gridTileLocation.structure is Eye eye) {
+                    //TODO: This is only a quick fix, so that loaded eyes will contribute to demonic structure damage
+                    eye.AddObjectAsDamageContributor(tileObject);
+                }
             }
             batchCount++;
             if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
@@ -149,19 +190,24 @@ public class LoadSecondWave : MapGenerationComponent {
         for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
-            if (tileObject is Tombstone) {
-                SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
-                if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
-                    LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
+            if (tileObject is Tombstone tombstone) {
+                if (tombstone.character == null) {
+                    Debug.LogWarning($"Character of tombstone {tombstone} is null, not loading it...");
+                    continue;
+                }
+                //load tombstones
+                SaveDataTombstone saveDataTombstone = saveData.GetFromSaveHub<SaveDataTombstone>(OBJECT_TYPE.Tile_Object, persistentID);
+                if (!string.IsNullOrEmpty(saveDataTombstone.tileLocationID)) {
+                    LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTombstone.tileLocationID);
                     gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {
-                        if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
-                            tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTileObject.spriteName]);
+                        if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTombstone.spriteName)) {
+                            tileObject.mapObjectVisual.SetVisual(InnerMapManager.Instance.assetManager.allTileObjectSprites[saveDataTombstone.spriteName]);
                         } else {
                             tileObject.mapObjectVisual.SetVisual(null);    
                             // Debug.Log($"Could not find asset with name {saveDataTileObject.spriteName}");
                         }
-                        tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);    
+                        tileObject.mapObjectVisual.SetRotation(saveDataTombstone.rotation);    
                     }
                 }
             }

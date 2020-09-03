@@ -23,7 +23,18 @@ public class SaveManager : MonoBehaviour {
     [SerializeField] private bool alwaysResetSpecialPopupsOnStartup;
     [SerializeField] private bool alwaysResetBonusTutorialsOnStartup;
     [SerializeField] private bool _unlockAllWorlds;
+    
 
+    #region Saving Batches
+    public const int HexTile_Save_Batches = 200;
+    public const int Region_Save_Batches = 200;
+    public const int Job_Save_Batches = 200;
+    public const int Character_Save_Batches = 200;
+    public const int TileObject_Save_Batches = 200;
+    public const int Settlement_Save_Batches = 200;
+    public const int Structure_Save_Batches = 200;
+    #endregion
+    
 
     #region getters
     public SaveDataPlayer currentSaveDataPlayer => savePlayerManager.currentSaveDataPlayer;

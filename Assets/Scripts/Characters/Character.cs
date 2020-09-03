@@ -636,14 +636,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         partyComponent.LoadReferences(data.partyComponent);
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
-        traitContainer.Load(this, data.saveDataTraitContainer);
-        
-        if(traitContainer.HasTrait("Character Trait")) {
-            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
-        }
-        if (traitContainer.HasTrait("Necromancer")) {
-            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
-        }
 
         //Place marker after loading references
         if (data.hasMarker) {
@@ -651,7 +643,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CreateMarker();
             }
             marker.SetCollidersState(true);
-            marker.transform.SetParent(currentRegion.innerMap.objectsParent);
+            marker.transform.SetParent(_currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
             marker.visualsParent.transform.localRotation = data.rotation;
             marker.UpdateActionIcon();
@@ -662,6 +654,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
             carryComponent.LoadCarryReference(data.carryComponent);
+        }
+        traitContainer.Load(this, data.saveDataTraitContainer);
+        if(traitContainer.HasTrait("Character Trait")) {
+            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+        }
+        if (traitContainer.HasTrait("Necromancer")) {
+            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
         }
         visuals.UpdateAllVisuals(this);
         SubscribeToSignals();

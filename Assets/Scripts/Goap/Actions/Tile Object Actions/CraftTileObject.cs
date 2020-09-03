@@ -43,6 +43,12 @@ public class CraftTileObject : GoapAction {
         base.Perform(goapNode);
         SetState("Craft Success", goapNode);
     }
+    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+        string stateName = "Target Missing";
+        GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName);
+        //craft cannot be invalid because all cases are handled by the requirements of the action
+        return goapActionInvalidity;
+    }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         TileObject obj = node.poiTarget as TileObject;

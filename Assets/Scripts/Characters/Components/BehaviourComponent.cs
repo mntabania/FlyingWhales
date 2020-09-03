@@ -957,7 +957,7 @@ public class BehaviourComponent : CharacterComponent {
             targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.targetMiningTile);
         }
         if (!string.IsNullOrEmpty(data.currentAbductTarget)) {
-            currentAbductTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);
+            currentAbductTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.currentAbductTarget);
         }
         if (!string.IsNullOrEmpty(data.invaderToFollow)) {
             invaderToFollow = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);

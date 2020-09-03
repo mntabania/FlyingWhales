@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UtilityScripts;
 namespace Inner_Maps.Location_Structures {
@@ -25,7 +26,23 @@ namespace Inner_Maps.Location_Structures {
             selectableSize = new Vector2((maxX - minX) + 1, (maxY - minY) + 1);
             Initialize();
         }
+        public StructureRoom(SaveDataStructureRoom data) {
+            this.name = data.name;
+            this.tilesInRoom = SaveUtilities.ConvertIDListToLocationGridTiles(data.tilesInRoom);
+            actions = new List<SPELL_TYPE>();
+            worldPosition = GetCenterTile().centeredWorldLocation;
+            int maxX = tilesInRoom.Max(t => t.localPlace.x);
+            int minX = tilesInRoom.Min(t => t.localPlace.x);
+            int maxY = tilesInRoom.Max(t => t.localPlace.y);
+            int minY = tilesInRoom.Min(t => t.localPlace.y);
+            selectableSize = new Vector2((maxX - minX) + 1, (maxY - minY) + 1);
+            Initialize();
+        }
 
+        #region Loading
+        public virtual void LoadReferences(SaveDataStructureRoom saveDataStructureRoom) { }
+        #endregion
+        
         #region Initialization
         public void Initialize() {
             ConstructDefaultActions();
@@ -95,3 +112,15 @@ namespace Inner_Maps.Location_Structures {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataStructureRoom : SaveData<StructureRoom> {
+    public string name;
+    public List<string> tilesInRoom;
+    public override void Save(StructureRoom data) {
+        base.Save(data);
+        name = data.name;
+        tilesInRoom = SaveUtilities.ConvertSavableListToIDs(data.tilesInRoom);
+    }
+}
+#endregion

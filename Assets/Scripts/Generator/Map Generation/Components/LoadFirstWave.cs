@@ -35,7 +35,6 @@ public class LoadFirstWave : MapGenerationComponent {
 
         //Load Traits
         yield return MapGenerator.Instance.StartCoroutine(LoadTraits(saveData));
-
     }
 
     private IEnumerator LoadFactions(SaveDataCurrentProgress saveData) {

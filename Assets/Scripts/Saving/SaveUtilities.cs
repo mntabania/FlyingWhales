@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
@@ -53,6 +54,15 @@ public static class SaveUtilities {
         }
         return objects;
     }
+    public static List<LocationGridTile> ConvertIDListToLocationGridTiles(List<string> ids) {
+        List<LocationGridTile> objects = new List<LocationGridTile>();
+        for (int i = 0; i < ids.Count; i++) {
+            string id = ids[i];
+            LocationGridTile tileObject = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(id);
+            objects.Add(tileObject);
+        }
+        return objects;
+    }
     public static List<LocationStructure> ConvertIDListToStructures(List<string> ids) {
         List<LocationStructure> objects = new List<LocationStructure>();
         for (int i = 0; i < ids.Count; i++) {
@@ -91,4 +101,13 @@ public static class SaveUtilities {
         return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
     }
     #endregion
+    
+    public static SaveDataStructureRoom CreateSaveDataForRoom(StructureRoom structureRoom) {
+        if (structureRoom is DefilerRoom) {
+            return new SaveDataDefilerRoom();
+        } else if (structureRoom is PrisonCell) {
+            return new SaveDataPrisonCell();
+        }
+        return new SaveDataStructureRoom();
+    }
 }
