@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Newtonsoft.Json;
@@ -79,6 +80,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         // Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         // loadingWatch = null;
     }
+    
     private IEnumerator SaveCoroutine(string fileName) {
         UIManager.Instance.optionsMenu.ShowSaveLoading();
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving current progress");
@@ -101,8 +103,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         yield return StartCoroutine(currentSaveDataProgress.SaveTileObjectsCoroutine());
         currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
         
-
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Finalizing...");
+        yield return new WaitForSeconds(0.5f);
+
         if (string.IsNullOrEmpty(fileName)) {
             // fileName = savedCurrentProgressFileName;
             string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
@@ -110,8 +113,15 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
 
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
+        filePath = path;
+        var thread = new Thread(SaveCurrentDataToFile);
+        thread.Start();
 
-        SaveGame.Save(path, currentSaveDataProgress);
+        while (thread.IsAlive) {
+            yield return null;
+        }
+        thread = null;
+        // SaveGame.Save(path, currentSaveDataProgress);
         //SaveData(path, currentSaveDataProgress);
 
         Debug.Log($"Saved new game at {path}");
@@ -120,6 +130,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         loadingWatch = null;
         yield return null;
         UIManager.Instance.optionsMenu.HideSaveLoading();
+    }
+    private string filePath;
+    private void SaveCurrentDataToFile() {
+        SaveGame.Save(filePath, currentSaveDataProgress);
     }
     #endregion
 

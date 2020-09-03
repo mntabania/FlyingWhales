@@ -167,6 +167,9 @@ public class SaveDataCurrentProgress {
         int batchCount = 0;
         for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
+            if (jobQueueItem.jobType == JOB_TYPE.NONE) {
+                continue; //skip
+            }
             AddToSaveHub(jobQueueItem);
             batchCount++;
             if (batchCount >= SaveManager.Job_Save_Batches) {
@@ -242,7 +245,7 @@ public class SaveDataCurrentProgress {
             }
            
             batchCount++;
-            if (batchCount >= SaveManager.TileObject_Save_Batches) {
+            if (batchCount >= SaveManager.TileObject_Save_Batches || i + 1 == DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count) {
                 batchCount = 0;
                 yield return null;    
             }
