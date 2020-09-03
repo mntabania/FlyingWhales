@@ -1049,8 +1049,8 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
             targetPOIToGoTo = data.targetPOIToGoTo.persistentID;
             targetPOIToGoToType = data.targetPOIToGoTo.poiType;
         }
+        awareCharacters = new List<string>();
         if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
-            awareCharacters = new List<string>();
             for (int i = 0; i < data.awareCharacters.Count; i++) {
                 awareCharacters.Add(data.awareCharacters[i].persistentID);
             }
