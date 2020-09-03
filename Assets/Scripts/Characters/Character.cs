@@ -435,35 +435,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         OnUpdateCharacterClass();
 
         moodComponent.SetMoodValue(50);
-        //CreateOwnParty();
 
         if (needsComponent.HasNeeds()) {
             needsComponent.Initialize();    
         }
-
-        //supply
-        //SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
     }
-    public virtual void InitialCharacterPlacement(LocationGridTile tile) {
+    public void InitialCharacterPlacement(LocationGridTile tile) {
         if (needsComponent.HasNeeds()) {
             needsComponent.InitialCharacterPlacement();    
         }
         
         ConstructInitialGoapAdvertisementActions();
-        marker.InitialPlaceMarkerAt(tile); //since normal characters are already placed in their areas.
-        //AddInitialAwareness();
-        SubscribeToSignals();
-        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-            traitContainer.allTraitsAndStatuses[i].OnOwnerInitiallyPlaced(this);
-        }
-    }
-    public void LoadInitialCharacterPlacement(LocationGridTile tile) {
-        ConstructInitialGoapAdvertisementActions();
-        //#if !WORLD_CREATION_TOOL
-        //        GameDate gameDate = GameManager.Instance.Today();
-        //        gameDate.AddTicks(1);
-        //        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
-        //#endif
         marker.InitialPlaceMarkerAt(tile); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
@@ -642,12 +624,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (!marker) {
                 CreateMarker();
             }
-            marker.SetCollidersState(true);
-            marker.transform.SetParent(_currentRegion.innerMap.objectsParent);
-            marker.transform.position = data.worldPos;
-            marker.visualsParent.transform.localRotation = data.rotation;
-            marker.UpdateActionIcon();
-            
+            marker.LoadMarkerPlacement(data, _currentRegion);
+
             //Do updating hidden state here because the marker must be created first
             OnSetIsHidden();
             reactionComponent.UpdateHiddenState();
