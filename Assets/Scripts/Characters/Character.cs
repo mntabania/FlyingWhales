@@ -643,7 +643,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CreateMarker();
             }
             marker.SetCollidersState(true);
-            marker.transform.SetParent(currentRegion.innerMap.objectsParent);
+            marker.transform.SetParent(_currentRegion.innerMap.objectsParent);
             marker.transform.position = data.worldPos;
             marker.visualsParent.transform.localRotation = data.rotation;
             marker.UpdateActionIcon();

@@ -187,7 +187,11 @@ public class LoadSecondWave : MapGenerationComponent {
         for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
-            if (tileObject is Tombstone) {
+            if (tileObject is Tombstone tombstone) {
+                if (tombstone.character == null) {
+                    Debug.LogWarning($"Character of tombstone {tombstone} is null, not loading it...");
+                    continue;
+                }
                 //load tombstones
                 SaveDataTombstone saveDataTombstone = saveData.GetFromSaveHub<SaveDataTombstone>(OBJECT_TYPE.Tile_Object, persistentID);
                 if (!string.IsNullOrEmpty(saveDataTombstone.tileLocationID)) {
