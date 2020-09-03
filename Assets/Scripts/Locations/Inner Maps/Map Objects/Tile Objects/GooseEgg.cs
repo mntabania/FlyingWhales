@@ -9,3 +9,5 @@
     #endregion
 
 }
+
+public class SaveDataGooseEgg : SaveDataMonsterEgg { }

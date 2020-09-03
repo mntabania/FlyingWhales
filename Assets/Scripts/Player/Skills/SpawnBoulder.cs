@@ -2,30 +2,6 @@
 using Inner_Maps;
 using UnityEngine;
 
-public class SpawnBoulder : PlayerSpell {
-
-    public SpawnBoulder() : base(SPELL_TYPE.SPAWN_BOULDER) {
-        SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
-        tier = 1;
-    }
-
-    #region Overrides
-    public override void ActivateAction(LocationGridTile targetTile) {
-        base.ActivateAction(targetTile);
-        BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
-        wall.SetWallType(WALL_TYPE.Demon_Stone);
-        targetTile.structure.AddPOI(wall, targetTile);
-    }
-    public virtual bool CanTarget(LocationGridTile tile) {
-        return tile.structure != null && tile.objHere == null;
-    }
-    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
-        return tile.structure != null && tile.objHere == null;
-    }
-    #endregion
-}
-
 public class SpawnBoulderData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.SPAWN_BOULDER;
     public override string name => "Spawn Boulder";

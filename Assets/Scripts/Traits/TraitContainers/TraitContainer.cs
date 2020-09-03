@@ -225,7 +225,7 @@ namespace Traits {
         }
         private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing, overrideDuration);
+                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName), characterResponsible, gainedFromDoing, overrideDuration);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
                 return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing, overrideDuration);
@@ -233,7 +233,7 @@ namespace Traits {
         }
         private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
+                trait = TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName);
                 return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing, overrideDuration);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");

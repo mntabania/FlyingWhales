@@ -14,6 +14,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     public const string savedCurrentProgressFileName = "SAVED_CURRENT_PROGRESS";
     public SaveDataCurrentProgress currentSaveDataProgress { get; private set; }
 
+    public bool isSaving { get; private set; }
     public string currentSaveDataPath { get; private set; }
     
     #region getters
@@ -25,7 +26,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress.AddToSaveHub(data);
     }
     public bool CanSaveCurrentProgress() {
-        if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
             return false;
         }
         if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial && !TutorialManager.Instance.hasCompletedImportantTutorials) {
@@ -82,6 +83,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     
     private IEnumerator SaveCoroutine(string fileName) {
+        isSaving = true;
         UIManager.Instance.optionsMenu.ShowSaveLoading();
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving current progress");
         Stopwatch loadingWatch = new Stopwatch();
@@ -130,6 +132,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         loadingWatch = null;
         yield return null;
         UIManager.Instance.optionsMenu.HideSaveLoading();
+        isSaving = false;
     }
     private string filePath;
     private void SaveCurrentDataToFile() {

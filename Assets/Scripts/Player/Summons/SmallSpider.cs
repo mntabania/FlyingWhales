@@ -28,6 +28,14 @@ public class SmallSpider : Summon {
         shouldGrowUpOnUnSeize = data.shouldGrowUpOnUnSeize;
     }
 
+    #region Loading
+    public override void LoadReferences(SaveDataCharacter data) {
+        base.LoadReferences(data);
+        //after all other references have been loaded, schedule small spider grow up
+        ScheduleGrowUp();
+    }
+    #endregion
+
     public override void Initialize() {
         base.Initialize();
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Small_Spider_Behaviour);

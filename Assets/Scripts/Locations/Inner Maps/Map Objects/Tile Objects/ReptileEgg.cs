@@ -10,3 +10,5 @@
     #endregion
 
 }
+
+public class SaveDataReptileEgg : SaveDataMonsterEgg { }

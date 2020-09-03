@@ -127,7 +127,7 @@ public class TraitManager : BaseMonoBehaviour {
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {
             string traitName = instancedTraits[i];
-            Trait trait = CreateNewInstancedTraitClass(traitName);
+            Trait trait = CreateNewInstancedTraitClass<Trait>(traitName);
             _allTraits.Add(traitName, trait);
         }
     }
@@ -153,15 +153,15 @@ public class TraitManager : BaseMonoBehaviour {
     public bool IsTraitElemental(string traitName) {
         return traitName == "Burning" || traitName == "Freezing" || traitName == "Poisoned" || traitName == "Wet" || traitName == "Zapped" || traitName == "Overheating";
     }
-    public Trait CreateNewInstancedTraitClass(string traitName) {
+    public T CreateNewInstancedTraitClass<T>(string traitName) where T : Trait {
         if (instancedSingletonTraits.ContainsKey(traitName)) {
-            return instancedSingletonTraits[traitName];
+            return instancedSingletonTraits[traitName] as T;
         } else {
             string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
             string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             Type type = System.Type.GetType(typeName);
             Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
-            Trait trait = System.Activator.CreateInstance(type) as Trait;
+            T trait = System.Activator.CreateInstance(type) as T;
             Assert.IsNotNull(trait);
             if (trait.isSingleton) {
                 instancedSingletonTraits.Add(traitName, trait);

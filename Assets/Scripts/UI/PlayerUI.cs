@@ -46,21 +46,6 @@ public class PlayerUI : BaseMonoBehaviour {
     
     [Header("Intervention Abilities")]
     [SerializeField] private GameObject actionBtnPrefab;
-    
-    [Header("Replace UI")]
-    public ReplaceUI replaceUI;
-
-    [Header("Level Up UI")]
-    public LevelUpUI levelUpUI;
-
-    [Header("New Ability UI")]
-    public NewAbilityUI newAbilityUI;
-
-    [Header("New Minion Ability UI")]
-    public NewMinionAbilityUI newMinionAbilityUI;
-
-    [Header("Research Intervention Ability UI")]
-    public ResearchAbilityUI researchInterventionAbilityUI;
 
     [Header("Unleash Summon UI")]
     public UnleashSummonUI unleashSummonUI;
@@ -451,9 +436,7 @@ public class PlayerUI : BaseMonoBehaviour {
         return false;
     }
     public bool IsMajorUIShowing() {
-        return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || 
-               newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || 
-               _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
+        return _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
                UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing || 
                UIManager.Instance.yesNoConfirmation.yesNoGO.activeInHierarchy;
     }
@@ -573,57 +556,6 @@ public class PlayerUI : BaseMonoBehaviour {
     #endregion
     
     #region Corruption and Threat
-    public void HideCorruptTileConfirmation() {
-        skirmishConfirmationGO.SetActive(false);
-    }
-    public void OnClickYesCorruption() {
-        HideCorruptTileConfirmation();
-        //if (PlayerManager.Instance.player.currentTileBeingCorrupted.region != null) {
-        //    InnerMapManager.Instance.TryShowLocationMap(PlayerManager.Instance.player.currentTileBeingCorrupted.region);
-        //} else {
-        //    //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
-        //    PlayerManager.Instance.player.InvadeATile();
-        //}
-
-
-        // if (tempCurrentMinionLeaderPicker != null) {
-        //     PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
-        // } else {
-        //     //If story event, randomize minion leader, if not, keep current minion leader
-        //     //if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
-        //     //    Minion minion = PlayerManager.Instance.player.GetRandomMinion();
-        //     //    PlayerManager.Instance.player.SetMinionLeader(minion);
-        //     //}
-        // }
-        //if (tempCurrentMinionLeaderPicker != null) {
-        //    PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
-        //    if (PlayerManager.Instance.player.currentTileBeingCorrupted.settlementOfTile == null) {
-        //        StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
-        //        if (e != null) {
-        //            Debug.Log("Will show event " + e.name);
-        //            storyEventUI.ShowEvent(e, true);
-        //            //if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
-        //            //    //show story event UI
-        //            //    storyEventUI.ShowEvent(e, true);
-        //            //} else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
-        //            //    int difference = Mathf.Abs(GameManager.Instance.Today().day - (GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration));
-        //            //    int day = UnityEngine.Random.Range(1, difference);
-        //            //    GameDate dueDate = GameManager.Instance.Today().AddDays(day);
-        //            //    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
-        //            //} else if (e.trigger == STORY_EVENT_TRIGGER.END) {
-        //            //    GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
-        //            //    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
-        //            //}
-        //        }
-        //    }
-        //}
-    }
-    public void OnClickNoCorruption() {
-        HideCorruptTileConfirmation();
-    }
-    //public void UpdateThreatMeter() {
-    //    threatMeter.value = PlayerManager.Instance.player.threat;
-    //}
     public void OnHoverEnterThreat() {
         string text =
             "The amount of threat you've generated in this world. Once this reaches 100, characters will start attacking your structures.";

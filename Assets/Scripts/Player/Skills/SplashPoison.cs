@@ -4,16 +4,6 @@ using Scriptable_Object_Scripts;
 using Traits;
 using UtilityScripts;
 
-public class SplashPoison : PlayerSpell {
-
-    public SplashPoison() : base(SPELL_TYPE.SPLASH_POISON) {
-        SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
-        tier = 1;
-    }
-    
-}
-
 public class SplashPoisonData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.SPLASH_POISON;
     public override string name => "Splash Poison";

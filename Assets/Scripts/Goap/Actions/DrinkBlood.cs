@@ -228,12 +228,10 @@ public class DrinkBlood : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 80) {
-            Lethargic lethargic = new Lethargic();
-            lethargic.InitializeInstancedTrait();
+            Lethargic lethargic = TraitManager.Instance.CreateNewInstancedTraitClass<Lethargic>("Lethargic");
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, lethargic, goapNode.actor, goapNode);
         } else {
-            Vampiric vampiric = new Vampiric();
-            vampiric.InitializeInstancedTrait();
+            Vampiric vampiric = TraitManager.Instance.CreateNewInstancedTraitClass<Vampiric>("Vampiric");
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, vampiric, goapNode.actor);
             Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode);
             if(goapNode != null) {
