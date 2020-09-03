@@ -134,10 +134,10 @@ public class SaveDataCurrentProgress {
         List<TileObject> finishedObjects = new List<TileObject>();
         for (int i = 0; i < tileObjects.Count; i++) {
             TileObject tileObject = tileObjects[i];
-            if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
-                // Debug.LogWarning($"Grid tile location of {tileObject} is null! Not saving that...");
-                continue; //skip tile objects without grid tile location that are not being carried.
-            }
+            // if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
+            //     // Debug.LogWarning($"Grid tile location of {tileObject} is null! Not saving that...");
+            //     continue; //skip tile objects without grid tile location that are not being carried.
+            // }
             if (finishedObjects.Contains(tileObject)) {
                 // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
                 continue; //skip    

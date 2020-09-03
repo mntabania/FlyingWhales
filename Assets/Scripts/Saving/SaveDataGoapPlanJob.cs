@@ -25,7 +25,9 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
             SaveDataOtherData[] otherDataSave = new SaveDataOtherData[data.Value.Length];
             for (int i = 0; i < data.Value.Length; i++) {
                 OtherData baseOtherData = data.Value[i];
-                otherDataSave[i] = baseOtherData.Save();
+                if (baseOtherData != null) {
+                    otherDataSave[i] = baseOtherData.Save();    
+                }
             }
             otherData.Add(data.Key, otherDataSave);
         }
