@@ -295,8 +295,8 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
             savedRumor.Save(data.rumor);
         }
 
+        awareCharacterIDs = new List<string>();
         if (data.awareCharacters != null && data.awareCharacters.Count > 0) {
-            awareCharacterIDs = new List<string>();
             for (int i = 0; i < data.awareCharacters.Count; i++) {
                 awareCharacterIDs.Add(data.awareCharacters[i].persistentID);
             }
