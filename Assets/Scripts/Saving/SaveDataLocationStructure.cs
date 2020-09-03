@@ -98,12 +98,18 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
         Assert.IsNotNull(manMadeStructure);
+
+        if (manMadeStructure.hasBeenDestroyed) {
+            structureTemplateName = string.Empty;
+            structureObjectWorldPosition = Vector3.zero;
+        } else {
+            //structure object
+            string templateName = manMadeStructure.structureObj.name;
+            templateName = templateName.Replace("(Clone)", "");
+            structureTemplateName = templateName;
+            structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;    
+        }
         
-        //structure object
-        string templateName = manMadeStructure.structureObj.name;
-        templateName = templateName.Replace("(Clone)", "");
-        structureTemplateName = templateName;
-        structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;
         
         //walls
         if (manMadeStructure.structureWalls != null) {
@@ -129,10 +135,15 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
         DemonicStructure demonicStructure = locationStructure as DemonicStructure;
         Assert.IsNotNull(demonicStructure);
         
-        //structure object
-        string templateName = demonicStructure.structureObj.name;
-        templateName = templateName.Replace("(Clone)", "");
-        structureTemplateName = templateName;
-        structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+        if (demonicStructure.hasBeenDestroyed) {
+            structureTemplateName = string.Empty;
+            structureObjectWorldPosition = Vector3.zero;
+        } else {
+            //structure object
+            string templateName = demonicStructure.structureObj.name;
+            templateName = templateName.Replace("(Clone)", "");
+            structureTemplateName = templateName;
+            structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+        }
     }
 }
