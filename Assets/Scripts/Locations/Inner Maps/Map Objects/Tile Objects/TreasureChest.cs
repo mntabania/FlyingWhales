@@ -8,9 +8,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class TreasureChest : TileObject {
-
-    private bool _hasBeenAwakened;
-
+    
     public IPointOfInterest objectInside { get; private set; }
     private Character[] _users;
     
@@ -35,7 +33,31 @@ public class TreasureChest : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.OPEN);
     }
-    public TreasureChest(SaveDataTreasureChest data) { }
+    public TreasureChest(SaveDataTreasureChest data) : base(data) { }
+
+    #region Loading
+    public override void LoadAdditionalInfo(SaveDataTileObject data) {
+        base.LoadAdditionalInfo(data);
+        SaveDataTreasureChest saveDataTreasureChest = data as SaveDataTreasureChest;
+        Assert.IsNotNull(saveDataTreasureChest);
+        if (!string.IsNullOrEmpty(saveDataTreasureChest.objectInsideID) && gridTileLocation != null) {
+            if (saveDataTreasureChest.objectInsideType == OBJECT_TYPE.Character) {
+                Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreasureChest.objectInsideID);
+                if (character != null) {
+                    SetObjectInside(character);
+                    if (character.marker != null) {
+                        character.marker.PlaceMarkerAt(gridTileLocation);
+                        character.DisableMarker();
+                    }    
+                }
+            } else if (saveDataTreasureChest.objectInsideType == OBJECT_TYPE.Tile_Object) {
+                TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveDataTreasureChest.objectInsideID);
+                SetObjectInside(tileObject);
+            }
+        }
+    }
+    #endregion
+    
     protected override string GenerateName() { return "Treasure Chest"; }
     public override void OnDoActionToObject(ActualGoapNode action) {
         if (action.goapType == INTERACTION_TYPE.OPEN) {
@@ -72,11 +94,10 @@ public class TreasureChest : TileObject {
             character.DisableMarker();
         }
     }
-
     #region Object Inside
     private void RollForItem(LocationGridTile locationGridTile) {
         if (objectInside != null) { return; } //already has object inside
-        if (GameUtilities.RollChance(5)) {
+        if (GameUtilities.RollChance(5)) { //5
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction, homeRegion: locationGridTile.parentMap.region);
             SetObjectInside(summon);
         } else {
@@ -100,6 +121,16 @@ public class TreasureChest : TileObject {
 
 #region Save Data
 public class SaveDataTreasureChest : SaveDataTileObject {
-    //TODO: Add save data for object inside.
+    public OBJECT_TYPE objectInsideType;
+    public string objectInsideID;
+    public override void Save(TileObject data) {
+        base.Save(data);
+        TreasureChest treasureChest = data as TreasureChest;
+        Assert.IsNotNull(treasureChest);
+        if (treasureChest.objectInside != null) {
+            objectInsideType = treasureChest.objectInside.objectType;
+            objectInsideID = treasureChest.objectInside.persistentID;    
+        }
+    }
 }
 #endregion

@@ -28,7 +28,7 @@ public class LoadSecondWave : MapGenerationComponent {
         //Load Settlement data
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementJobs(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadOtherSettlementData(saveData));
         
         //Load Characters
 
@@ -48,9 +48,6 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadPartyReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadCrimeReferences(saveData));
         
-        //Load Second wave trait data
-        yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
-        
         //Load Second Wave Job data
         yield return MapGenerator.Instance.StartCoroutine(LoadJobsSecondWave(saveData));
 
@@ -58,7 +55,9 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadCharacterReferences(saveData));
 
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalTileObjectInfo(saveData));
-
+        
+        //Load Second wave trait data
+        yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
     }
 
     #region Faction
@@ -146,13 +145,13 @@ public class LoadSecondWave : MapGenerationComponent {
         }
     }
     private IEnumerator LoadAdditionalTileObjectInfo(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading objects...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading other object info...");
         int batchCount = 0;
         for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
+            SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (tileObject is Tombstone) {
-                SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
                 if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
                     LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
                     gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
@@ -167,6 +166,7 @@ public class LoadSecondWave : MapGenerationComponent {
                     }
                 }
             }
+            tileObject.LoadAdditionalInfo(saveDataTileObject);
             
             batchCount++;
             if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
@@ -248,14 +248,16 @@ public class LoadSecondWave : MapGenerationComponent {
         }
         yield return null;
     }
-    private IEnumerator LoadSettlementJobs(SaveDataCurrentProgress saveData) {
+    private IEnumerator LoadOtherSettlementData(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Settlement Jobs...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
             if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement) {
                 NPCSettlement npcSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataNpcSettlement.persistentID) as NPCSettlement;
                 Assert.IsNotNull(npcSettlement);
-                npcSettlement.LoadJobs(saveDataNpcSettlement.jobIDs);
+                npcSettlement.Initialize();
+                npcSettlement.LoadJobs(saveDataNpcSettlement);
+                npcSettlement.LoadRuler(saveDataNpcSettlement.rulerID);
             }
             yield return null;
         }

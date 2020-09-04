@@ -22,12 +22,13 @@ public class StartupManager : MonoBehaviour {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
 
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
-
         if (!string.IsNullOrEmpty(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataPath)) {
-            SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgressBasedOnSetPath();
+            LevelLoaderManager.Instance.UpdateLoadingInfo("Reading save file...");
+            LevelLoaderManager.Instance.UpdateLoadingBar(0.4f, 8f);
+            yield return StartCoroutine(SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgressBasedOnSetPath());
             yield return StartCoroutine(mapGenerator.InitializeSavedWorld(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress));
         } else {
+            LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
             if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
                 ScenarioMapData scenarioMapData = null;
                 switch (WorldSettings.Instance.worldSettingsData.worldType) {

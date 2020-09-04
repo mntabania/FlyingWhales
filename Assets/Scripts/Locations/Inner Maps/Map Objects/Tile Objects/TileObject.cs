@@ -171,6 +171,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             characterOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.characterOwnerID);    
         }
     }
+    /// <summary>
+    /// Load more info, this is called after character markers have been created.
+    /// So this is a good place to load data that relies on that.
+    /// </summary>
+    public virtual void LoadAdditionalInfo(SaveDataTileObject data){}
     #endregion
     
     private void AddCommonAdvertisements() {

@@ -257,8 +257,8 @@ public class MapGenerator : MonoBehaviour {
         
         MapGenerationData data = new MapGenerationData();
         Stopwatch componentWatch = new Stopwatch();
-        float progressPerComponent = 1f / components.Length;
-        float currentProgress = 0f;
+        float progressPerComponent = 0.6f / components.Length;
+        float currentProgress = 0.4f;
         for (int i = 0; i < components.Length; i++) {
             MapGenerationComponent currComponent = components[i];
             componentWatch.Start();

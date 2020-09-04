@@ -74,11 +74,16 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
 
     #region Loading
-    public void LoadJobs(List<string> jobIDs) {
-        for (int i = 0; i < jobIDs.Count; i++) {
-            string jobID = jobIDs[i];
+    public void LoadJobs(SaveDataNPCSettlement data) {
+        for (int i = 0; i < data.jobIDs.Count; i++) {
+            string jobID = data.jobIDs[i];
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
             availableJobs.Add(jobQueueItem);
+        }
+        for (int i = 0; i < data.forceCancelJobIDs.Count; i++) {
+            string jobID = data.forceCancelJobIDs[i];
+            JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
+            forcedCancelJobsOnTickEnded.Add(jobQueueItem);
         }
     }
     public void LoadRuler(string rulerID) {

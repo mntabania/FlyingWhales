@@ -4,6 +4,7 @@ using UnityEngine.Assertions;
 
 public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public List<string> jobIDs;
+    public List<string> forceCancelJobIDs;
     public string prisonID;
     public string mainStorageID;
     public string rulerID;
@@ -18,6 +19,13 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
             if(job.jobType != JOB_TYPE.NONE) {
                 jobIDs.Add(job.persistentID);
                 SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(job);
+            }
+        }
+        forceCancelJobIDs = new List<string>();
+        for (int i = 0; i < npcSettlement.forcedCancelJobsOnTickEnded.Count; i++) {
+            JobQueueItem job = npcSettlement.forcedCancelJobsOnTickEnded[i];
+            if(job.jobType != JOB_TYPE.NONE) {
+                forceCancelJobIDs.Add(job.persistentID);
             }
         }
         rulerID = npcSettlement.ruler?.persistentID ?? string.Empty;

@@ -48,9 +48,22 @@
         }
         private void OnJobRemovedFromQueue(JobQueueItem job, Character character) {
             if (_owner == character && job.jobType == JOB_TYPE.DOUSE_FIRE && !job.finishedSuccessfully) {
+                bool hasFireInVision = false;
+                if (character.marker != null) {
+                    for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
+                        IPointOfInterest poi = character.marker.inVisionPOIs[i];
+                        if (poi.traitContainer.HasTrait("Burning")) {
+                            hasFireInVision = true;
+                            break;
+                        }
+                    }    
+                }
+                
                 //character failed to do a douse fire job
                 character.traitContainer.RemoveTrait(character, this);
-                character.interruptComponent.TriggerInterrupt(INTERRUPT.Panicking, character, reason: "FIRE!");
+                if (hasFireInVision) {
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Panicking, character, reason: "FIRE!");    
+                }
             }
         }
     }

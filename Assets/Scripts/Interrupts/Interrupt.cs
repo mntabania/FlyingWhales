@@ -203,12 +203,13 @@ namespace Interrupts {
         #region Loading
         public void LoadReferences(SaveDataInterruptHolder data) {
             actor = CharacterManager.Instance.GetCharacterByPersistentID(data.actorID);
-            if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                target = CharacterManager.Instance.GetCharacterByPersistentID(data.targetID);
-            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                target = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetID);
+            if (!string.IsNullOrEmpty(data.targetID)) {
+                if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    target = CharacterManager.Instance.GetCharacterByPersistentID(data.targetID);
+                } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    target = InnerMapManager.Instance.GetTileObjectByPersistentID(data.targetID);
+                }    
             }
-
             disguisedActor = null;
             disguisedTarget = null;
             if (!string.IsNullOrEmpty(data.disguisedActorID)) {
@@ -268,8 +269,10 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
         persistentID = data.persistentID;
         interruptType = data.interrupt.type;
         actorID = data.actor.persistentID;
-        targetID = data.target.persistentID;
-        targetPOIType = data.target.poiType;
+        if (data.target != null) {
+            targetID = data.target.persistentID;
+            targetPOIType = data.target.poiType;    
+        }
         identifier = data.identifier;
         reason = data.reason;
         crimeType = data.crimeType;

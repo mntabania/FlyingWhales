@@ -145,7 +145,15 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     public void SetCurrentSaveDataPath(string path) {
         currentSaveDataPath = path;
     }
-    public void LoadSaveDataCurrentProgressBasedOnSetPath() {
+    public IEnumerator LoadSaveDataCurrentProgressBasedOnSetPath() {
+        var thread = new Thread(() => LoadDataFromPath(currentSaveDataPath));
+        thread.Start();
+        while (thread.IsAlive) {
+            yield return null;
+        }
+        thread = null;
+    }
+    private void LoadDataFromPath(string path) {
         currentSaveDataProgress = GetSaveFileData(currentSaveDataPath);
     }
     public SaveDataCurrentProgress LoadSaveDataCurrentProgress(string path) {

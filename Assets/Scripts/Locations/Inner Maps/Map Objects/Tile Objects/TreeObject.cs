@@ -10,7 +10,7 @@ public class TreeObject : TileObject {
     public int yield { get; private set; }
     public override Character[] users => _users;
     
-    private enum Occupied_State { Undecided, Occupied, Unoccupied }
+    public enum Occupied_State { Undecided, Occupied, Unoccupied }
     /// <summary>
     /// If this has value, then an ent is occupying this tree, and should be awakened when this tree is damaged.
     /// </summary>
@@ -18,7 +18,9 @@ public class TreeObject : TileObject {
     private Character[] _users;
     private Occupied_State _occupiedState;
     public override System.Type serializedData => typeof(SaveDataTreeObject);
-
+    
+    public Occupied_State occupiedState => _occupiedState;
+    public Ent ent => _ent;
     public TreeObject() {
         Initialize(TILE_OBJECT_TYPE.TREE_OBJECT, false);
         AddAdvertisedAction(INTERACTION_TYPE.CHOP_WOOD);
@@ -27,7 +29,36 @@ public class TreeObject : TileObject {
         SetYield(100);
         _occupiedState = Occupied_State.Undecided;
     }
-    public TreeObject(SaveDataTreeObject data) { }
+    public TreeObject(SaveDataTreeObject data) : base(data) {
+        //SaveDataTreeObject saveDataTreeObject = data as SaveDataTreeObject;
+        Assert.IsNotNull(data);
+        yield = data.yield;
+        _occupiedState = data.occupiedState;
+    }
+
+    #region Loading
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
+        SaveDataTreeObject saveDataTreeObject = data as SaveDataTreeObject;
+        Assert.IsNotNull(saveDataTreeObject);
+        if (!string.IsNullOrEmpty(saveDataTreeObject.occupyingEntID) && gridTileLocation != null) {
+            Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreeObject.occupyingEntID);
+            if (character is Ent loadedEnt) {
+                SetOccupyingEnt(loadedEnt);
+            } else {
+                //no ent was found, make sure to set occupied state to undecided again, NOTE: doubt that this will ever happen
+                _occupiedState = Occupied_State.Undecided;
+            }    
+        }
+    }
+    public override void LoadAdditionalInfo(SaveDataTileObject data) {
+        base.LoadAdditionalInfo(data);
+        if (ent != null && ent.marker != null && gridTileLocation != null) {
+            ent.marker.PlaceMarkerAt(gridTileLocation);
+            ent.marker.SetVisualState(false);
+        }
+    }
+    #endregion
 
     #region Overrides
     public override string ToString() {
@@ -45,7 +76,7 @@ public class TreeObject : TileObject {
         base.AdjustHP(amount, elementalDamageType, triggerDeath, source, elementalTraitProcessor, showHPBar);
         if (CanBeDamaged() && amount < 0) {
             //check if can awaken an ent
-            switch (_occupiedState) {
+            switch (occupiedState) {
                 case Occupied_State.Occupied:
                     //there is an ent occupying this tree, awaken it.
                     AwakenOccupant(location);
@@ -62,9 +93,9 @@ public class TreeObject : TileObject {
     }
     public override void OnPlacePOI() {
         base.OnPlacePOI();
-        if (_ent != null) {
-            _ent.marker.PlaceMarkerAt(gridTileLocation);
-            _ent.marker.SetVisualState(false);
+        if (ent != null) {
+            ent.marker.PlaceMarkerAt(gridTileLocation);
+            ent.marker.SetVisualState(false);
         }
     }
     #endregion
@@ -89,7 +120,7 @@ public class TreeObject : TileObject {
         _users = new Character[] { ent };
     }
     private void RollForOccupant(LocationGridTile location) {
-        if (GameUtilities.RollChance(3)) {
+        if (GameUtilities.RollChance(3)) {//3
             //tree has occupant. Spawn Ent
             SUMMON_TYPE entType;
             if (location.isCorrupted) {
@@ -130,12 +161,12 @@ public class TreeObject : TileObject {
         }
     }
     private void AwakenOccupant(LocationGridTile location) {
-        Assert.IsNotNull(_ent);
-        _ent.marker.SetVisualState(true);
-        _ent.marker.PlaceMarkerAt(location);
-        _ent.SetIsTree(false);
+        Assert.IsNotNull(ent);
+        ent.marker.SetVisualState(true);
+        ent.marker.PlaceMarkerAt(location);
+        ent.SetIsTree(false);
         location.structure.RemovePOI(this);
-        TraitManager.Instance.CopyStatuses(this, _ent);
+        TraitManager.Instance.CopyStatuses(this, ent);
     }
     #endregion
 }
@@ -143,7 +174,8 @@ public class TreeObject : TileObject {
 #region Save Data
 public class SaveDataTreeObject : SaveDataTileObject {
     
-    //TODO: Add save data for occupying Ent if any.
+    public TreeObject.Occupied_State occupiedState;
+    public string occupyingEntID;
     public int yield;
     
     public override void Save(TileObject tileObject) {
@@ -151,12 +183,13 @@ public class SaveDataTreeObject : SaveDataTileObject {
         TreeObject treeObject = tileObject as TreeObject;
         Assert.IsNotNull(treeObject);
         yield = treeObject.yield;
+        occupiedState = treeObject.occupiedState;
+        if (treeObject.ent != null) {
+            occupyingEntID = treeObject.ent.persistentID;
+        }
     }
     public override TileObject Load() {
         TileObject tileObject = base.Load();
-        TreeObject treeObject = tileObject as TreeObject;
-        Assert.IsNotNull(treeObject);
-        treeObject.SetYield(yield);
         return tileObject;
     }
 }
