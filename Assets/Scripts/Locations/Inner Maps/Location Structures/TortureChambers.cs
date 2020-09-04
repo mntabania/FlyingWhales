@@ -41,7 +41,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
         
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell) {
+            if (structure == this && character.isNormalCharacter && IsTilePartOfARoom(character.gridTileLocation, out var room) && room is PrisonCell prisonCell && prisonCell.skeleton == null) {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
             }

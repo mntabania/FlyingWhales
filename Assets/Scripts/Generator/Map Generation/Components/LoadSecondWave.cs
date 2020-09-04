@@ -62,6 +62,9 @@ public class LoadSecondWave : MapGenerationComponent {
 
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalTileObjectInfo(saveData));
         
+        //Load additional structure references
+        yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalStructureReferences(saveData));
+        
         //Load Second wave trait data
         yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
     }
@@ -85,6 +88,15 @@ public class LoadSecondWave : MapGenerationComponent {
             SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
             LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
             structure.LoadReferences(saveDataLocationStructure);
+            yield return null;
+        }
+    }
+    private IEnumerator LoadAdditionalStructureReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading additional structure Data...");
+        for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
+            SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
+            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
+            structure.LoadAdditionalReferences(saveDataLocationStructure);
             yield return null;
         }
     }

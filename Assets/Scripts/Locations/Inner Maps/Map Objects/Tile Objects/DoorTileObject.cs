@@ -21,11 +21,13 @@ public class DoorTileObject : TileObject {
 
     public void Open() {
         if (mapVisual == null) { return; }
+        Debug.Log($"Opened door {this} at {structureLocation} {gridTileLocation}");
         mapVisual.SetVisualAlpha(0f);
         mapVisual.DestroyExistingGUS();
     }
     public void Close() {
         if (mapVisual == null) { return; }
+        Debug.Log($"Closed door {this} at {structureLocation} {gridTileLocation}");
         mapVisual.SetVisualAlpha(1f);
         mapVisual.InitializeGUS(Vector2.zero, Vector2.one);
     }

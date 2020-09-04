@@ -39,6 +39,14 @@ namespace Inner_Maps.Location_Structures {
                 Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromCharacter);
             }
         }
+        public override void LoadAdditionalReferences(SaveDataStructureRoom saveDataStructureRoom) {
+            base.LoadAdditionalReferences(saveDataStructureRoom);
+            if (skeleton != null) {
+                //if skeleton is not null then open door, just in case skeleton was saved inside room
+                DoorTileObject door = GetTileObjectInRoom<DoorTileObject>();
+                door?.Open();
+            }
+        }
         #endregion
         
         #region Seize

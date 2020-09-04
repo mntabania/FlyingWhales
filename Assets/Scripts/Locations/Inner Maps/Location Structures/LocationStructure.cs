@@ -107,6 +107,15 @@ namespace Inner_Maps.Location_Structures {
                 }    
             }
         }
+        public virtual void LoadAdditionalReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            if (saveDataLocationStructure.structureRoomSaveData != null && rooms != null) {
+                for (int i = 0; i < rooms.Length; i++) {
+                    StructureRoom structureRoom = rooms[i];
+                    SaveDataStructureRoom saveDataStructureRoom = saveDataLocationStructure.structureRoomSaveData[i];
+                    structureRoom.LoadAdditionalReferences(saveDataStructureRoom);
+                }    
+            }
+        }
         #endregion
         
         #region Virtuals

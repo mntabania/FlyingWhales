@@ -41,6 +41,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Loading
         public virtual void LoadReferences(SaveDataStructureRoom saveDataStructureRoom) { }
+        public virtual void LoadAdditionalReferences(SaveDataStructureRoom saveDataStructureRoom) { }
         #endregion
         
         #region Initialization
