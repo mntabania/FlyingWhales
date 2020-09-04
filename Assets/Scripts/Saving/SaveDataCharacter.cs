@@ -258,7 +258,10 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         forceCancelJobsOnTickEnded = new List<string>();
         for (int i = 0; i < data.forcedCancelJobsOnTickEnded.Count; i++) {
             JobQueueItem jobQueueItem = data.forcedCancelJobsOnTickEnded[i];
-            forceCancelJobsOnTickEnded.Add(jobQueueItem.persistentID);
+            if(jobQueueItem.jobType != JOB_TYPE.NONE) {
+                forceCancelJobsOnTickEnded.Add(jobQueueItem.persistentID);
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(jobQueueItem);
+            }
         }
         
         saveDataTraitContainer = new SaveDataTraitContainer();

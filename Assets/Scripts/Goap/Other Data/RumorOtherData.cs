@@ -1,4 +1,5 @@
 ﻿using UnityEngine.Assertions;
+using Interrupts;
 
 public class RumorOtherData : OtherData {
     public Rumor rumor { get; }
@@ -32,6 +33,12 @@ public class SaveDataRumorOtherData : SaveDataOtherData {
         Assert.IsNotNull(otherData);
         rumorableID = otherData.rumor.rumorable.persistentID;
         rumorableObjectType = otherData.rumor.rumorable.objectType;
+
+        if(otherData.rumor.rumorable is ActualGoapNode action) {
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(action);
+        } else if (otherData.rumor.rumorable is InterruptHolder interrupt) {
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(interrupt);
+        }
     }
     public override OtherData Load() {
         return new RumorOtherData(this);

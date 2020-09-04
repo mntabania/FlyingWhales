@@ -467,15 +467,19 @@ public class SaveDataCurrentProgress {
         }
     }
     public void LoadTraitsSecondWave() {
-        if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
-            if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
-                Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
-                foreach (SaveDataTrait data in saveDataTraits.Values) {
-                    Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
-                    trait.LoadSecondWaveInstancedTrait(data);
-                }
-            }
+        foreach (KeyValuePair<string, Trait> item in DatabaseManager.Instance.traitDatabase.traitsByGUID) {
+            SaveDataTrait saveData = GetFromSaveHub<SaveDataTrait>(OBJECT_TYPE.Trait, item.Key);
+            item.Value.LoadSecondWaveInstancedTrait(saveData);
         }
+        //if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
+        //    if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {
+        //        Dictionary<string, SaveDataTrait> saveDataTraits = hub.hub;
+        //        foreach (SaveDataTrait data in saveDataTraits.Values) {
+        //            Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(data.persistentID);
+        //            trait.LoadSecondWaveInstancedTrait(data);
+        //        }
+        //    }
+        //}
     }
     #endregion
 

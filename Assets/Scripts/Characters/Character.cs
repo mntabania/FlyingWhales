@@ -641,7 +641,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
             carryComponent.LoadCarryReference(data.carryComponent);
 
-            if (currentActionNode != null && currentActionNode.poiTarget is TileObject target) {
+            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && currentActionNode.poiTarget is TileObject target) {
                 target.OnDoActionToObject(currentActionNode);
             }
         }
