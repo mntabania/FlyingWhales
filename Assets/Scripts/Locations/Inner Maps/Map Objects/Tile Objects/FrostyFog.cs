@@ -21,11 +21,11 @@ public class FrostyFog : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public FrostyFog(SaveDataTileObject data) {
-        SaveDataFrostyFog saveDataFrostyFog = data as SaveDataFrostyFog;
-        Assert.IsNotNull(saveDataFrostyFog);
-        expiryDate = saveDataFrostyFog.expiryDate;
-        SetStacks(saveDataFrostyFog.stacks);
+    public FrostyFog(SaveDataFrostyFog data) {
+        //SaveDataFrostyFog saveDataFrostyFog = data as SaveDataFrostyFog;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
+        SetStacks(data.stacks);
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

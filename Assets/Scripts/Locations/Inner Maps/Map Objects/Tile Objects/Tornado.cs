@@ -18,11 +18,11 @@ public class Tornado : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         SetRadius(2);
     }
-    public Tornado(SaveDataTileObject data) {
-        SaveDataTornado saveDataTornado = data as SaveDataTornado;
-        Assert.IsNotNull(saveDataTornado);
-        expiryDate = saveDataTornado.expiryDate;
-        SetRadius(saveDataTornado.radius);
+    public Tornado(SaveDataTornado data) {
+        //SaveDataTornado saveDataTornado = data as SaveDataTornado;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
+        SetRadius(data.radius);
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

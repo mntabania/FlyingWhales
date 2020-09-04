@@ -10,7 +10,7 @@ public class Desk : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
         AddAdvertisedAction(INTERACTION_TYPE.PLAY_CARDS);
     }
-    public Desk(SaveDataTileObject data) {
+    public Desk(SaveDataTileObject data) : base(data) {
         
         AddAdvertisedAction(INTERACTION_TYPE.SIT);
         AddAdvertisedAction(INTERACTION_TYPE.PLAY_CARDS);

@@ -15,10 +15,10 @@ public class AnkhOfAnubis : Artifact {
         traitContainer.AddTrait(this, "Treasure");
         traitContainer.AddTrait(this, "Indestructible");
     }
-    public AnkhOfAnubis(SaveDataTileObject data) : base(data) {
-        SaveDataAnkhOfAnubis saveDataAnkhOfAnubis = data as SaveDataAnkhOfAnubis;
-        Assert.IsNotNull(saveDataAnkhOfAnubis);
-        isActivated = saveDataAnkhOfAnubis.isActivated;
+    public AnkhOfAnubis(SaveDataAnkhOfAnubis data) : base(data) {
+        //SaveDataAnkhOfAnubis saveDataAnkhOfAnubis = data as SaveDataAnkhOfAnubis;
+        Assert.IsNotNull(data);
+        isActivated = data.isActivated;
     }
 
     #region Overrides

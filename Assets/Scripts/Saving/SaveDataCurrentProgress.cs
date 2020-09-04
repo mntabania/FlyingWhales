@@ -200,17 +200,20 @@ public class SaveDataCurrentProgress {
                 // Debug.LogWarning($"{tileObject} has a duplicate value in tile object list!");
                 continue; //skip    
             }
-            if (tileObject is Artifact artifact) {
-                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
-                SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
-                saveDataTileObject.Save(tileObject);
-                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
-            } else {
-                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
-                SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
-                saveDataTileObject.Save(tileObject);
-                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
-            }
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+            //if (tileObject is Artifact artifact) {
+            //    string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
+            //    SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
+            //    saveDataTileObject.Save(tileObject);
+            //    AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            //} else {
+            //    string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
+            //    SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
+            //    saveDataTileObject.Save(tileObject);
+            //    AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            //}
             if (tileObject.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {
                 Debug.Log($"Saved unbuilt object {tileObject}");
             }
@@ -235,17 +238,21 @@ public class SaveDataCurrentProgress {
             //     continue; //skip    
             // }
             // finishedObjects.Add(tileObject);
-            if (tileObject is Artifact artifact) {
-                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
-                SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
-                saveDataTileObject.Save(tileObject);
-                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
-            } else {
-                string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
-                SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
-                saveDataTileObject.Save(tileObject);
-                AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
-            }
+            SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
+            saveDataTileObject.Save(tileObject);
+            AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+
+            //if (tileObject is Artifact artifact) {
+            //    string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifact.type.ToString());
+            //    SaveDataTileObject saveDataTileObject = createNewSaveDataForArtifact(tileObjectTypeName);
+            //    saveDataTileObject.Save(tileObject);
+            //    AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            //} else {
+            //    string tileObjectTypeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObject.tileObjectType.ToString());
+            //    SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObjectTypeName);
+            //    saveDataTileObject.Save(tileObject);
+            //    AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);    
+            //}
             
             batchCount++;
             if (batchCount >= SaveManager.TileObject_Save_Batches || i + 1 == DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count) {
@@ -254,24 +261,29 @@ public class SaveDataCurrentProgress {
             }
         }
     }
-    public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
-        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        System.Type type = System.Type.GetType(typeName);
-        if (type != null) {
-            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
-            return obj;
-        }
-        return new SaveDataTileObject(); //if no special save data for tile object was found, then just use the generic one
+    public static SaveDataTileObject CreateNewSaveDataForTileObject(TileObject tileObject) {
+        //var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        SaveDataTileObject obj = System.Activator.CreateInstance(tileObject.serializedData) as SaveDataTileObject;
+        return obj;
     }
-    private SaveDataTileObject createNewSaveDataForArtifact(string tileObjectTypeString) {
-        var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        System.Type type = System.Type.GetType(typeName);
-        if (type != null) {
-            SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
-            return obj;
-        }
-        return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
-    }
+    //public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
+    //    var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+    //    System.Type type = System.Type.GetType(typeName);
+    //    if (type != null) {
+    //        SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+    //        return obj;
+    //    }
+    //    return new SaveDataTileObject(); //if no special save data for tile object was found, then just use the generic one
+    //}
+    //private SaveDataTileObject createNewSaveDataForArtifact(string tileObjectTypeString) {
+    //    var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+    //    System.Type type = System.Type.GetType(typeName);
+    //    if (type != null) {
+    //        SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
+    //        return obj;
+    //    }
+    //    return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
+    //}
     #endregion
 
     #region First Wave Loading

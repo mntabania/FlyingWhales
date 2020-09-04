@@ -23,11 +23,11 @@ public class FeebleSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.FEEBLE_SPIRIT, false);
         traitContainer.AddTrait(this, "Feeble");
     }
-    public FeebleSpirit(SaveDataTileObject data) {
+    public FeebleSpirit(SaveDataFeebleSpirit data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        SaveDataFeebleSpirit saveDataFeebleSpirit = data as SaveDataFeebleSpirit;
-        Assert.IsNotNull(saveDataFeebleSpirit);
-        _currentDuration = saveDataFeebleSpirit.currentDuration;
+        //SaveDataFeebleSpirit saveDataFeebleSpirit = data as SaveDataFeebleSpirit;
+        Assert.IsNotNull(data);
+        _currentDuration = data.currentDuration;
     }
 
     #region Overrides

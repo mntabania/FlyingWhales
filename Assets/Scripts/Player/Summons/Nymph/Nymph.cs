@@ -63,4 +63,13 @@ public abstract class Nymph : Summon {
         ScheduleAOEEffect();
     }
     #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataCharacter data) {
+        base.LoadReferences(data);
+        if (isDead == false) {
+            ScheduleAOEEffect();
+        }
+    }
+    #endregion
 }

@@ -19,7 +19,7 @@ public abstract class ResourcePile : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
         this.providedResource = providedResource;
     }
-    public ResourcePile(SaveDataTileObject data, RESOURCE providedResource) {
+    public ResourcePile(SaveDataTileObject data, RESOURCE providedResource) : base(data) {
         this.providedResource = providedResource;
     }
 

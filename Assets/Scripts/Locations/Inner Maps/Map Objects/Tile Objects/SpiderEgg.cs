@@ -3,8 +3,10 @@ using Locations.Settlements;
 
 public class SpiderEgg : MonsterEgg {
 
+    public override System.Type serializedData => typeof(SaveDataSpiderEgg);
+
     public SpiderEgg() : base(TILE_OBJECT_TYPE.SPIDER_EGG, SUMMON_TYPE.Giant_Spider, GameManager.Instance.GetTicksBasedOnHour(1)) { }
-    public SpiderEgg(SaveDataTileObject data) : base(data) { }
+    public SpiderEgg(SaveDataSpiderEgg data) : base(data) { }
     
     #region Overrides
     public override string ToString() {

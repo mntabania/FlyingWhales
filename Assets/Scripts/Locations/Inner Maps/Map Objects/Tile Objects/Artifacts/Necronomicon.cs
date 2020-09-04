@@ -10,7 +10,7 @@ public class Necronomicon : Artifact {
         currentHP = maxHP;
         traitContainer.AddTrait(this, "Treasure");
     }
-    public Necronomicon(SaveDataTileObject data) : base(data) { }
+    public Necronomicon(SaveDataArtifact data) : base(data) { }
 
     #region Overrides
     public override void SetInventoryOwner(Character character) {

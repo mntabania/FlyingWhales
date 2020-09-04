@@ -18,7 +18,7 @@ public class BigTreeObject : TreeObject {
         SetYield(InnerMapManager.Big_Tree_Yield);
 		traitContainer.AddTrait(this, "Immovable");
 	}
-	public BigTreeObject(SaveDataTileObject data) { 
+	public BigTreeObject(SaveDataBigTreeObject data) : base(data) { 
 		SetYield(InnerMapManager.Big_Tree_Yield);
 	}
 

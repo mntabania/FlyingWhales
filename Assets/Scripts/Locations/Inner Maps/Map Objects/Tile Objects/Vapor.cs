@@ -21,11 +21,11 @@ public class Vapor : MovingTileObject {
         SetDoExpireEffect(true);
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public Vapor(SaveDataTileObject data) {
-        SaveDataVapor saveDataVapor = data as SaveDataVapor;
-        Assert.IsNotNull(saveDataVapor);
-        expiryDate = saveDataVapor.expiryDate;
-        SetStacks(saveDataVapor.stacks);
+    public Vapor(SaveDataVapor data) {
+        //SaveDataVapor saveDataVapor = data as SaveDataVapor;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
+        SetStacks(data.stacks);
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

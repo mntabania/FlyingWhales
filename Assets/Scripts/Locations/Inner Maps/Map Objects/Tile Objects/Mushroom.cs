@@ -11,7 +11,7 @@ public class Mushroom : Crops {
     public Mushroom() : base() {
         Initialize(TILE_OBJECT_TYPE.MUSHROOM);
     }
-    public Mushroom(SaveDataTileObject data) : base(data) { }
+    public Mushroom(SaveDataMushroom data) : base(data) { }
 
     #region Initialization
     protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {

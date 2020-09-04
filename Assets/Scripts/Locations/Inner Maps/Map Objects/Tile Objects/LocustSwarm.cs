@@ -17,10 +17,10 @@ public class LocustSwarm : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(6));
     }
-    public LocustSwarm(SaveDataTileObject data) {
-        SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
-        Assert.IsNotNull(saveDataLocustSwarm);
-        expiryDate = saveDataLocustSwarm.expiryDate;
+    public LocustSwarm(SaveDataLocustSwarm data) {
+        //SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

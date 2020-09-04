@@ -23,11 +23,11 @@ public class ForlornSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.FORLORN_SPIRIT, false);
         traitContainer.AddTrait(this, "Forlorn");
     }
-    public ForlornSpirit(SaveDataTileObject data) {
+    public ForlornSpirit(SaveDataForlornSpirit data) {
         _duration = GameManager.Instance.GetTicksBasedOnHour(1);
-        SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
-        Assert.IsNotNull(saveDataForlornSpirit);
-        _currentDuration = saveDataForlornSpirit.currentDuration;
+        //SaveDataForlornSpirit saveDataForlornSpirit = data as SaveDataForlornSpirit;
+        Assert.IsNotNull(data);
+        _currentDuration = data.currentDuration;
     }
     
     #region Overrides

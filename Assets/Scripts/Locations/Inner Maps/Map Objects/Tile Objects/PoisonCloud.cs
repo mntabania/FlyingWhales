@@ -23,10 +23,10 @@ public sealed class PoisonCloud : MovingTileObject {
         SetExpiryDate(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2)));
         SetDoExpireEffect(true);
     }
-    public PoisonCloud(SaveDataTileObject data) {
-        SaveDataPoisonCloud saveDataPoisonCloud = data as SaveDataPoisonCloud;
-        Assert.IsNotNull(saveDataPoisonCloud);
-        expiryDate = saveDataPoisonCloud.expiryDate;
+    public PoisonCloud(SaveDataPoisonCloud data) {
+        //SaveDataPoisonCloud saveDataPoisonCloud = data as SaveDataPoisonCloud;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
     }
 
     public void SetStacks(int stacks) {

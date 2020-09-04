@@ -16,10 +16,10 @@ public class PoisonVent : TileObject {
         Initialize(TILE_OBJECT_TYPE.POISON_VENT);
         _activityCycle = Random.Range(12, 61);
     }
-    public PoisonVent(SaveDataTileObject data) {
-        SaveDataPoisonVent saveDataPoisonVent = data as SaveDataPoisonVent;
-        Assert.IsNotNull(saveDataPoisonVent);
-        _activityCycle = saveDataPoisonVent.activityCycle;
+    public PoisonVent(SaveDataPoisonVent data) {
+        //SaveDataPoisonVent saveDataPoisonVent = data as SaveDataPoisonVent;
+        Assert.IsNotNull(data);
+        _activityCycle = data.activityCycle;
     }
 
     #region Overrides

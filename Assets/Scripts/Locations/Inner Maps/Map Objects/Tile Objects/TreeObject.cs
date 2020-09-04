@@ -27,7 +27,7 @@ public class TreeObject : TileObject {
         SetYield(100);
         _occupiedState = Occupied_State.Undecided;
     }
-    public TreeObject(SaveDataTileObject data) { }
+    public TreeObject(SaveDataTreeObject data) { }
 
     #region Overrides
     public override string ToString() {

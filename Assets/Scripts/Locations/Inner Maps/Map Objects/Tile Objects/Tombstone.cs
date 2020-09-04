@@ -19,13 +19,16 @@ public class Tombstone : TileObject {
         get { return new[] { character }; }
     }
     public Character character { get; private set; }
+
+    public override System.Type serializedData => typeof(SaveDataTombstone);
+
     public Tombstone() : base(){
         AddAdvertisedAction(INTERACTION_TYPE.REMEMBER_FALLEN);
         AddAdvertisedAction(INTERACTION_TYPE.SPIT);
         AddAdvertisedAction(INTERACTION_TYPE.RAISE_CORPSE);
         _respawnCorpseOnDestroy = true;
     }
-    public Tombstone(SaveDataTileObject data) {
+    public Tombstone(SaveDataTombstone data) {
         _respawnCorpseOnDestroy = true;
     }
     public override void LoadSecondWave(SaveDataTileObject data) {

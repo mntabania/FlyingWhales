@@ -12,6 +12,8 @@ public abstract class MonsterEgg : TileObject {
     public bool hasHatched { get; private set; }
     public bool hasInitiated { get; private set; }
 
+    public override System.Type serializedData => typeof(SaveDataMonsterEgg);
+
     protected MonsterEgg(TILE_OBJECT_TYPE tileObjectType, SUMMON_TYPE summonType, int hatchTime) {
         Initialize(tileObjectType, false);
         this.summonType = summonType;
@@ -19,12 +21,12 @@ public abstract class MonsterEgg : TileObject {
         //hence the immediate setting of hatch date. 
         hatchDate = GameManager.Instance.Today().AddTicks(hatchTime);
     }
-    public MonsterEgg(SaveDataTileObject data) {
-        SaveDataMonsterEgg saveDataMonsterEgg  = data as SaveDataMonsterEgg;
-        Assert.IsNotNull(saveDataMonsterEgg);
-        hatchDate = saveDataMonsterEgg.hatchDate;
-        hasHatched = saveDataMonsterEgg.hasHatched;
-        isSupposedToHatch = saveDataMonsterEgg.isSupposedToHatch;
+    public MonsterEgg(SaveDataMonsterEgg data) : base(data) {
+        //SaveDataMonsterEgg saveDataMonsterEgg  = data as SaveDataMonsterEgg;
+        Assert.IsNotNull(data);
+        hatchDate = data.hatchDate;
+        hasHatched = data.hasHatched;
+        isSupposedToHatch = data.isSupposedToHatch;
     }
 
     #region Loading

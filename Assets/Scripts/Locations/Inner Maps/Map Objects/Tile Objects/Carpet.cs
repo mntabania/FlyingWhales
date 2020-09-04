@@ -2,7 +2,7 @@
     public Carpet() {
         Initialize(TILE_OBJECT_TYPE.CARPET);
     }
-    public Carpet(SaveDataTileObject data) {
+    public Carpet(SaveDataTileObject data) : base(data) {
         
     }
 }

@@ -35,7 +35,7 @@ public class TreasureChest : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.OPEN);
     }
-    public TreasureChest(SaveDataTileObject data) { }
+    public TreasureChest(SaveDataTreasureChest data) { }
     protected override string GenerateName() { return "Treasure Chest"; }
     public override void OnDoActionToObject(ActualGoapNode action) {
         if (action.goapType == INTERACTION_TYPE.OPEN) {

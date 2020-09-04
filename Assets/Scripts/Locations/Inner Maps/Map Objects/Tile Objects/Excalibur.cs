@@ -32,11 +32,11 @@ public class Excalibur : TileObject {
         _traitsGainedByCurrentOwner = new List<string>();
         _finishedCharacters = new HashSet<int>();
     }
-    public Excalibur(SaveDataTileObject data) {
-        SaveDataExcalibur saveDataExcalibur = data as SaveDataExcalibur;
-        Assert.IsNotNull(saveDataExcalibur);
-        _traitsGainedByCurrentOwner = new List<string>(saveDataExcalibur.traitsGainedByCurrentOwner);
-        _finishedCharacters = new HashSet<int>(saveDataExcalibur.finishedCharacters);
+    public Excalibur(SaveDataExcalibur data) {
+        //SaveDataExcalibur saveDataExcalibur = data as SaveDataExcalibur;
+        Assert.IsNotNull(data);
+        _traitsGainedByCurrentOwner = data.traitsGainedByCurrentOwner; //new List<string>(data.traitsGainedByCurrentOwner);
+        _finishedCharacters = new HashSet<int>(data.finishedCharacters);
     }
 
     #region General

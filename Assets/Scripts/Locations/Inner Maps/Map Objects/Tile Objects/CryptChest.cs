@@ -2,7 +2,7 @@
     public CryptChest() {
         Initialize(TILE_OBJECT_TYPE.CRYPT_CHEST);
     }
-    public CryptChest(SaveDataTileObject data) {
+    public CryptChest(SaveDataTileObject data) : base(data) {
         
     }
 }

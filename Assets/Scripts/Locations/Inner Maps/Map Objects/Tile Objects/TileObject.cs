@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyTarget, ISavable {
-    public string persistentID { get; private set; }
+    public string persistentID { get; protected set; }
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
@@ -81,9 +81,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     #endregion
-    
+
+    public TileObject() {
+    }
+    public TileObject(SaveDataTileObject data) {
+    }
+
+
     protected virtual void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
-        persistentID = System.Guid.NewGuid().ToString();
+        persistentID = UtilityScripts.Utilities.GetNewUniqueID();
         id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
         name = GenerateName();
