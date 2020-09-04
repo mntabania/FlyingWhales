@@ -72,6 +72,23 @@ public class MoodComponent : CharacterComponent {
         moodModificationsSummary = data.moodModificationsSummary;
     }
 
+    //This is only used for reapplication of mood data from save
+    //When mood is loaded we need to reapply the data after the loading of traits so that the data will be consistent from when it was saved
+    public void SetSaveDataMoodComponent(SaveDataMoodComponent data) {
+        moodValue = data.moodValue;
+        isInNormalMood = data.isInNormalMood;
+        isInLowMood = data.isInLowMood;
+        isInCriticalMood = data.isInCriticalMood;
+        currentLowMoodEffectChance = data.currentLowMoodEffectChance;
+        currentCriticalMoodEffectChance = data.currentCriticalMoodEffectChance;
+        executeMoodChangeEffects = data.executeMoodChangeEffects;
+        isInMajorMentalBreak = data.isInMajorMentalBreak;
+        isInMinorMentalBreak = data.isInMinorMentalBreak;
+        hasMoodChanged = data.hasMoodChanged;
+        mentalBreakName = data.mentalBreakName;
+        moodModificationsSummary = data.moodModificationsSummary;
+    }
+
     #region Events
     public void OnCharacterBecomeMinionOrSummon() {
 		DisableMoodEffects();

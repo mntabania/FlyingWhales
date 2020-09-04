@@ -330,7 +330,7 @@ public class TheFingersUI : MonoBehaviour {
         List<Character> viableCharacters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if (character.isFriendlyFactionless && character.isStillConsideredAlive && character.IsAble()) {
+            if (character.isFriendlyFactionless && character.isNormalEvenLycanAndNotAlliedWithPlayer && character.IsAble()) {
                 viableCharacters.Add(character);
             }
         }

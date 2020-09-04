@@ -160,7 +160,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool canPerform => canPerformValue >= 0;
     public bool canTakeJobs => canTakeJobsValue >= 0;
     public bool isSociable => sociableValue >= 0;
-    public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
     /// <summary>
@@ -168,6 +167,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// Characters that are not monsters or minions.
     /// </summary>
     public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
+    public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
+    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || lycanData != null) && !faction.isPlayerFaction && !isAlliedWithPlayer;
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
@@ -630,6 +631,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canPerformValue = data.canPerformValue;
         canTakeJobsValue = data.canTakeJobsValue;
         sociableValue = data.sociableValue;
+        moodComponent.SetSaveDataMoodComponent(data.moodComponent);
 
         if (traitContainer.HasTrait("Character Trait")) {
             defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
@@ -656,6 +658,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         visuals.UpdateAllVisuals(this);
+        if (marker) {
+            marker.UpdateAnimation();
+        }
         SubscribeToSignals();
     }
     #endregion
@@ -2002,7 +2007,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return true;
     }
     public bool IsAble() {
-        return currentHP > 0 && !isDead && canPerform && !isDead && characterClass.className != "Zombie"; //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
+        return !isDead && characterClass.className != "Zombie"; //!traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
     }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;

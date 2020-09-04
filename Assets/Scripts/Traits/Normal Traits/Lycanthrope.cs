@@ -296,26 +296,26 @@ namespace Traits {
 
     [System.Serializable]
     public class SaveDataLycanthropeData : SaveData<LycanthropeData> {
-        public int activeFormID;
-        public int limboFormID;
+        public string activeForm;
+        public string limboForm;
 
-        public int lycanthropeFormID;
-        public int originalFormID;
+        public string lycanthropeForm;
+        public string originalForm;
 
         #region Overrides
         public override void Save(LycanthropeData data) {
-            activeFormID = data.activeForm.id;
-            limboFormID = data.limboForm.id;
+            activeForm = data.activeForm.persistentID;
+            limboForm = data.limboForm.persistentID;
 
-            lycanthropeFormID = data.lycanthropeForm.id;
-            originalFormID = data.originalForm.id;
+            lycanthropeForm = data.lycanthropeForm.persistentID;
+            originalForm = data.originalForm.persistentID;
         }
         public override LycanthropeData Load() {
-            Character origForm = CharacterManager.Instance.GetCharacterByID(originalFormID);
-            Character lycanForm = CharacterManager.Instance.GetCharacterByID(lycanthropeFormID);
+            Character origForm = CharacterManager.Instance.GetCharacterByPersistentID(originalForm);
+            Character lycanForm = CharacterManager.Instance.GetCharacterByPersistentID(lycanthropeForm);
             Character activeForm = origForm;
             Character limboForm = lycanForm;
-            if (activeFormID == lycanthropeFormID) {
+            if (this.activeForm == this.lycanthropeForm) {
                 activeForm = lycanForm;
                 limboForm = origForm;
             } else {

@@ -61,8 +61,10 @@ namespace Traits {
                         owner.relationshipContainer.AdjustOpinion(owner, otherCharacter, "Anger", -30);    
                     }
                 }
-                
-                character.marker.visionCollider.VoteToUnFilterVision();
+
+                if (character.marker) {
+                    character.marker.visionCollider.VoteToUnFilterVision();
+                }
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
             }
         }
@@ -75,7 +77,7 @@ namespace Traits {
                     RemoveOldestCharacterFromStackList();
                 }
                 owner = null;
-                if (character.marker != null) { //TODO: Find out why character.marker can be null in this situation. Bug happened when this trait was removed (by schedule) from a character that no longer has a marker 
+                if (character.marker) { //TODO: Find out why character.marker can be null in this situation. Bug happened when this trait was removed (by schedule) from a character that no longer has a marker 
                     character.marker.visionCollider.VoteToFilterVision();    
                 }
                 Messenger.RemoveListener(Signals.HOUR_STARTED, PerHourEffect);

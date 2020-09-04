@@ -84,7 +84,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private Toggle villagerTab;
     public RectTransform deadHeader;
     private List<CharacterNameplateItem> villagerItems;
-    private int unusedKillCountCharacterItems;
     private int allFilteredCharactersCount;
     
     [Header("Seize Object")]
@@ -204,7 +203,7 @@ public class PlayerUI : BaseMonoBehaviour {
 
         //currencies
         Messenger.AddListener<int>(Signals.PLAYER_ADJUSTED_MANA, OnManaAdjusted);
-        InitialUpdateKillCountCharacterItems();
+        InitialUpdateVillagerListCharacterItems();
         InitializeIntel();
         // UpdateIntel();
 #if UNITY_EDITOR
@@ -690,7 +689,6 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void LoadVillagerItems(int itemsToCreate) {
         allFilteredCharactersCount = 0;
-        unusedKillCountCharacterItems = 0;
         villagerItems = new List<CharacterNameplateItem>();
         for (int i = 0; i < itemsToCreate; i++) {
             CreateNewVillagerItem();
@@ -701,11 +699,10 @@ public class PlayerUI : BaseMonoBehaviour {
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         go.SetActive(false);
         villagerItems.Add(item);
-        unusedKillCountCharacterItems++;
         return item;
     }
-    private void InitialUpdateKillCountCharacterItems() {
-        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalCharacter && x.isDead == false).ToList();
+    private void InitialUpdateVillagerListCharacterItems() {
+        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer && x.IsAble()).ToList();
         int allVillagersCount = villagers.Count;
         LoadVillagerItems(allVillagersCount);
         
@@ -722,7 +719,6 @@ public class PlayerUI : BaseMonoBehaviour {
             item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
             item.gameObject.SetActive(true);
             allFilteredCharactersCount++;
-            unusedKillCountCharacterItems--;
             if (!character.IsAble()) {
                 dead.Add(item);
             } else {
@@ -744,24 +740,27 @@ public class PlayerUI : BaseMonoBehaviour {
         }
     }
     private void OnAddNewCharacter(Character character) {
-        if (!WillCharacterBeShownInKillCount(character)) {
+        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer) {
             //Do not show minions and summons
             return;
         }
         allFilteredCharactersCount++;
-        CharacterNameplateItem item = unusedKillCountCharacterItems > 0 ? GetUnusedCharacterNameplateItem() : CreateNewVillagerItem();
+        CharacterNameplateItem item = GetUnusedCharacterNameplateItem();
+        if(item == null) {
+            CreateNewVillagerItem();
+        }
         item.SetObject(character);
         item.SetAsButton();
         item.ClearAllOnClickActions();
         item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
         item.gameObject.SetActive(true);
-        unusedKillCountCharacterItems--;
         if (!character.IsAble()) {
-            if (allFilteredCharactersCount == villagerItems.Count) {
-                item.transform.SetAsLastSibling();
-            } else {
-                item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
-            }
+            //if (allFilteredCharactersCount == villagerItems.Count) {
+            //    item.transform.SetAsLastSibling();
+            //} else {
+            //    item.transform.SetSiblingIndex(allFilteredCharactersCount + 2);
+            //}
+            item.transform.SetAsLastSibling();
             item.SetIsActive(false);
         } else {
             item.transform.SetSiblingIndex(deadHeader.transform.GetSiblingIndex());
@@ -769,7 +768,7 @@ public class PlayerUI : BaseMonoBehaviour {
         }
     }
     private void TransferCharacterFromActiveToInactive(Character character) {
-        if (!WillCharacterBeShownInKillCount(character)) {
+        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer) {
             return;
         }
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
@@ -785,7 +784,7 @@ public class PlayerUI : BaseMonoBehaviour {
         //UpdateKillCount();
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
-        if (!WillCharacterBeShownInKillCount(character)) {
+        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer) {
             return;
         }
         CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);
@@ -802,14 +801,12 @@ public class PlayerUI : BaseMonoBehaviour {
         if (item != null) {
             item.gameObject.SetActive(false);
             allFilteredCharactersCount--;
-            unusedKillCountCharacterItems++;
             //UpdateKillCount();
         } else {
             item = GetInactiveCharacterNameplateItem(character);
             if (item != null) {
                 item.gameObject.SetActive(false);
                 allFilteredCharactersCount--;
-                unusedKillCountCharacterItems++;
                 //UpdateKillCount();
             }
         }
@@ -889,15 +886,6 @@ public class PlayerUI : BaseMonoBehaviour {
     //}
     public void ToggleKillSummary(bool isOn) {
         villagerGO.SetActive(isOn);
-    }
-    private bool WillCharacterBeShownInKillCount(Character character) {
-        return character.isStillConsideredAlive;
-        //if (character.minion != null || character is Summon || character.faction == PlayerManager.Instance.player.playerFaction
-        //    /*|| character.faction == FactionManager.Instance.friendlyNeutralFaction*/) {
-        //    //Do not show minions and summons
-        //    return false;
-        //}
-        //return true;
     }
     #endregion
 
