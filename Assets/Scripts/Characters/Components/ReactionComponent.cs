@@ -604,7 +604,9 @@ public class ReactionComponent : CharacterComponent {
                 if (disguisedActor.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
                     //If the source is harassing or defending, combat should not be lethal
                     //There is a special case, even if the source is defending if he/she is a demon and the target is an angel and vice versa, make the combat lethal
-                    bool isLethal = /*(!disguisedActor.behaviourComponent.isHarassing && !disguisedActor.behaviourComponent.isDefending) ||*/ ((disguisedActor.race == RACE.DEMON && disguisedTarget.race == RACE.ANGEL) || (disguisedActor.race == RACE.ANGEL && disguisedTarget.race == RACE.DEMON));
+                    // bool isLethal = /*(!disguisedActor.behaviourComponent.isHarassing && !disguisedActor.behaviourComponent.isDefending) || */ 
+                    //     ((disguisedActor.race == RACE.DEMON && disguisedTarget.race == RACE.ANGEL) || (disguisedActor.race == RACE.ANGEL && disguisedTarget.race == RACE.DEMON));
+                    bool isLethal = true;
                     bool isTopPrioJobLethal = actor.jobQueue.jobsInQueue.Count <= 0 || actor.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                     if (actor.jobQueue.jobsInQueue.Count > 0) {
                         debugLog = $"{debugLog}\n-{actor.jobQueue.jobsInQueue[0].jobType}";
