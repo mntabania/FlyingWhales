@@ -8,7 +8,6 @@ using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Tutorial;
-using GameDevWare.Serialization;
 using Debug = UnityEngine.Debug;
 
 public class SaveCurrentProgressManager : MonoBehaviour {
@@ -145,57 +144,57 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     #endregion
 
-    #region JSON Net
-    public void SaveData<T>(string identifier, T obj) {
-        if (string.IsNullOrEmpty(identifier)) {
-            throw new System.ArgumentNullException("identifier");
-        }
-        string filePath = "";
-        if (IsFilePath(identifier)) {
-            filePath = identifier;
-        } else {
-            throw new System.Exception("identifier is not a file path!");
-        }
-        if (obj == null) {
-            throw new System.Exception("Object to be saved is null!");
-        }
-        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-        var stream = new MemoryStream();
-        MsgPack.Serialize(obj, stream);
-
-        File.WriteAllBytes(filePath, stream.ToArray());
-
-    }
-    public T LoadData<T>(string identifier) {
-        if (string.IsNullOrEmpty(identifier)) {
-            throw new System.ArgumentNullException("identifier");
-        }
-        string filePath = "";
-        if (IsFilePath(identifier)) {
-            filePath = identifier;
-        } else {
-            throw new System.Exception("identifier is not a file path!");
-        }
-        MemoryStream data = new MemoryStream(File.ReadAllBytes(filePath));
-
-        //Stream stream;
-        T convertedObj = MsgPack.Deserialize<T>(data);
-
-        return convertedObj;
-    }
-    public bool IsFilePath(string str) {
-        bool result = false;
-        if (Path.IsPathRooted(str)) {
-            try {
-                Path.GetFullPath(str);
-                result = true;
-            } catch (System.Exception) {
-                result = false;
-            }
-        }
-        return result;
-    }
-    #endregion
+    // #region JSON Net
+    // public void SaveData<T>(string identifier, T obj) {
+    //     if (string.IsNullOrEmpty(identifier)) {
+    //         throw new System.ArgumentNullException("identifier");
+    //     }
+    //     string filePath = "";
+    //     if (IsFilePath(identifier)) {
+    //         filePath = identifier;
+    //     } else {
+    //         throw new System.Exception("identifier is not a file path!");
+    //     }
+    //     if (obj == null) {
+    //         throw new System.Exception("Object to be saved is null!");
+    //     }
+    //     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+    //
+    //     var stream = new MemoryStream();
+    //     // MsgPack.Serialize(obj, stream);
+    //
+    //     File.WriteAllBytes(filePath, stream.ToArray());
+    //
+    // }
+    // public T LoadData<T>(string identifier) {
+    //     if (string.IsNullOrEmpty(identifier)) {
+    //         throw new System.ArgumentNullException("identifier");
+    //     }
+    //     string filePath = "";
+    //     if (IsFilePath(identifier)) {
+    //         filePath = identifier;
+    //     } else {
+    //         throw new System.Exception("identifier is not a file path!");
+    //     }
+    //     MemoryStream data = new MemoryStream(File.ReadAllBytes(filePath));
+    //
+    //     //Stream stream;
+    //     // T convertedObj = MsgPack.Deserialize<T>(data);
+    //
+    //     return convertedObj;
+    // }
+    // public bool IsFilePath(string str) {
+    //     bool result = false;
+    //     if (Path.IsPathRooted(str)) {
+    //         try {
+    //             Path.GetFullPath(str);
+    //             result = true;
+    //         } catch (System.Exception) {
+    //             result = false;
+    //         }
+    //     }
+    //     return result;
+    // }
+    // #endregion
 
 }
