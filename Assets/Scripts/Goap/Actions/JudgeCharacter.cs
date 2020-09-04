@@ -36,13 +36,16 @@ public class JudgeCharacter : GoapAction {
 
         //TODO: Loop all through crime and get weight result of each, at the end the highest count result will be the ultimate punishment
         //Right now just get the first crime
-        List<CrimeData> allCrimesToFaction = criminalTrait.GetListOfUnpunishedCrimesWantedBy(actor.faction);
         CrimeData crimeData = null;
-        if(allCrimesToFaction != null && allCrimesToFaction.Count > 0) {
-            crimeData = allCrimesToFaction[0];
+        List<CrimeData> allCrimesToFaction = null;
+        if (criminalTrait != null) {
+            allCrimesToFaction = criminalTrait.GetListOfUnpunishedCrimesWantedBy(actor.faction);
+            if (allCrimesToFaction != null && allCrimesToFaction.Count > 0) {
+                crimeData = allCrimesToFaction[0];
+            }
         }
 
-        if(crimeData != null) {
+        if (crimeData != null) {
             string debugLog = $"{actor.name} is going to judge {targetCharacter.name}";
 
             int absolve = 0;
@@ -81,13 +84,13 @@ public class JudgeCharacter : GoapAction {
                 whip = Mathf.RoundToInt(whip * 1.5f);
                 debugLog += "\n-Same Faction: absolve = x1.5, whip = x1.5, kill = x1, exile = x1";
             } else {
-                if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
+                if (factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Neutral) {
                     absolve = Mathf.RoundToInt(absolve * 0.5f);
                     whip = Mathf.RoundToInt(whip * 0.5f);
                     kill = Mathf.RoundToInt(kill * 2f);
                     exile *= 2;
                     debugLog += "\n-Cold War Faction: absolve = x0.5, whip = x0.5, kill = x1.5, exile = x2";
-                } else if (factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
+                } else if (factionRelationship != null && factionRelationship.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile) {
                     absolve = Mathf.RoundToInt(absolve * 0.2f);
                     whip = Mathf.RoundToInt(whip * 0.5f);
                     kill *= 3;
@@ -148,10 +151,12 @@ public class JudgeCharacter : GoapAction {
                 decision = CRIME_STATUS.Exiled;
                 TargetExiled(goapNode);
             }
-            for (int i = 0; i < allCrimesToFaction.Count; i++) {
-                CrimeData crimeToFaction = allCrimesToFaction[i];
-                crimeToFaction.SetCrimeStatus(decision);
-                crimeToFaction.SetJudge(actor);
+            if(allCrimesToFaction != null) {
+                for (int i = 0; i < allCrimesToFaction.Count; i++) {
+                    CrimeData crimeToFaction = allCrimesToFaction[i];
+                    crimeToFaction.SetCrimeStatus(decision);
+                    crimeToFaction.SetJudge(actor);
+                }
             }
         }
 
