@@ -3,7 +3,5 @@
     public WaterCrystal() : base(ELEMENTAL_TYPE.Water) {
         Initialize(TILE_OBJECT_TYPE.WATER_CRYSTAL);
     }
-    public WaterCrystal(SaveDataTileObject data) : base(data) {
-        elementalType = ELEMENTAL_TYPE.Water;
-    }
+    public WaterCrystal(SaveDataTileObject data) : base(data, ELEMENTAL_TYPE.Water) { }
 }
