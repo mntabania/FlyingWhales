@@ -79,6 +79,10 @@ public class AbductorBehaviour : CharacterBehaviourComponent {
 		character.movementComponent.SetEnableDigging(false);
 		character.behaviourComponent.OnNoLongerAbductor();
 	}
+	public override void OnLoadBehaviourToCharacter(Character character) {
+		base.OnLoadBehaviourToCharacter(character);
+		character.behaviourComponent.OnBecomeAbductor();
+	}
 	#endregion
 	
 	private List<Character> GetValidAbductTargets(Character abductor) {

@@ -19,4 +19,8 @@ public class DazedBehaviour : CharacterBehaviourComponent {
         base.OnRemoveBehaviourFromCharacter(character);
         character.behaviourComponent.OnNoLongerDazed();
     }
+    public override void OnLoadBehaviourToCharacter(Character character) {
+        base.OnLoadBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeDazed();
+    }
 }

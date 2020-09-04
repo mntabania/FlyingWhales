@@ -56,6 +56,10 @@ namespace Characters.Behaviour {
             character.movementComponent.SetEnableDigging(false);
             character.behaviourComponent.OnNoLongerSnatcher();
         }
+        public override void OnLoadBehaviourToCharacter(Character character) {
+            base.OnLoadBehaviourToCharacter(character);
+            character.behaviourComponent.OnBecomeSnatcher();
+        }
         private HexTile GetNearestDemonicStructure(Character character) {
             if (character.hexTileLocation != null) {
                 HexTile nearest = null;

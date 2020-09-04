@@ -56,7 +56,10 @@ public class ArsonistBehaviour : CharacterBehaviourComponent {
         base.OnRemoveBehaviourFromCharacter(character);
         character.behaviourComponent.OnNoLongerArsonist();
     }
-    
+    public override void OnLoadBehaviourToCharacter(Character character) {
+        base.OnLoadBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeArsonist();
+    }
     private List<TileObject> GetArsonTargetChoices(Character arson) {
         List<TileObject> choices = null;
         List<LocationGridTile> area =

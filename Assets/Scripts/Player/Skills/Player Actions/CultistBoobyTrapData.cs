@@ -5,6 +5,7 @@ public class CultistBoobyTrapData : PlayerAction {
     public override string name => "Booby Trap Neighbor";
     public override string description => "This Action forces the character to Booby Trap an object owned by a specified target.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override bool canBeCastOnBlessed => true;
     
     public CultistBoobyTrapData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

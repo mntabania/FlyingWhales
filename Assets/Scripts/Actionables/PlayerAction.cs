@@ -5,6 +5,9 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 
 public class PlayerAction : SpellData {
+
+    public virtual bool canBeCastOnBlessed => false;
+    
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.PLAYER_ACTION; } }
 
     #region Virtuals
@@ -51,6 +54,12 @@ public class PlayerAction : SpellData {
             return CanPerformAbilityTowards(targetStructure);
         } else if (target is StructureRoom room) {
             return CanPerformAbilityTowards(room);
+        }
+        return CanPerformAbility();
+    }
+    public override bool CanPerformAbilityTowards(Character targetCharacter) {
+        if(!canBeCastOnBlessed && targetCharacter.traitContainer.HasTrait("Blessed")) {
+            return false;
         }
         return CanPerformAbility();
     }

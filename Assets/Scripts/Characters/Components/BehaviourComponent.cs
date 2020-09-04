@@ -989,6 +989,13 @@ public class BehaviourComponent : CharacterComponent {
                 arsonVillageTarget.Add(hex);
             }
         }
+        if (data.currentBehaviourComponents != null) {
+            for (int i = 0; i < data.currentBehaviourComponents.Count; i++) {
+                string behaviourStr = data.currentBehaviourComponents[i];
+                CharacterBehaviourComponent component = CharacterManager.Instance.GetCharacterBehaviourComponent(System.Type.GetType(behaviourStr));
+                component.OnLoadBehaviourToCharacter(owner);
+            }    
+        }
     }
     #endregion
 }

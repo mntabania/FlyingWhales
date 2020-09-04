@@ -20,6 +20,14 @@ public abstract class CharacterBehaviourComponent {
     /// </summary>
     /// <param name="character">The character concerned.</param>
     public virtual void OnRemoveBehaviourFromCharacter(Character character) { }
+
+    #region Loading
+    /// <summary>
+    /// Contains stuff to do to character when they LOAD this behaviour to their list of behaviours.
+    /// </summary>
+    /// <param name="character">The character concerned.</param>
+    public virtual void OnLoadBehaviourToCharacter(Character character) { }
+    #endregion
     
     #region Enabling/Disabling
     private void DisableFor(Character character) {

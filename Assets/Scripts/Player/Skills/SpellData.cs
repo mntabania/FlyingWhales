@@ -23,7 +23,7 @@ public class SpellData : IPlayerSkill {
     public bool hasCooldown => cooldown != -1;
     public bool hasManaCost => manaCost != -1;
     public virtual bool isInCooldown => hasCooldown && currentCooldownTick < cooldown;
-    
+
     protected SpellData() {
         charges = -1;
         manaCost = -1;
