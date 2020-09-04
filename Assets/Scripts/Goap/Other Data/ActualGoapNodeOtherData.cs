@@ -24,6 +24,7 @@ public class SaveDataActualGoapNodeOtherData : SaveDataOtherData {
         ActualGoapNodeOtherData actionData = data as ActualGoapNodeOtherData;
         Assert.IsNotNull(actionData);
         actionID = actionData.action.persistentID;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(actionData.action);
     }
     public override OtherData Load() {
         return new ActualGoapNodeOtherData(this);
