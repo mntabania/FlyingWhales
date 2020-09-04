@@ -540,8 +540,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void OnSetIsHidden() { }
     public virtual void LoadReferences(SaveDataCharacter data) {
         ConstructDefaultActions();
-        if (data.hasLycan) {
-            lycanData = data.lycanData.Load();
+        if (data.hasLycan && lycanData == null) {
+            LycanthropeData lycanData = data.lycanData.Load();
+
+            //Should only set 1 instance of lycan data even when loaded from save
+            lycanData.originalForm.SetLycanthropeData(lycanData);
+            lycanData.lycanthropeForm.SetLycanthropeData(lycanData);
         }
         if (!string.IsNullOrEmpty(data.grave)) {
             grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
