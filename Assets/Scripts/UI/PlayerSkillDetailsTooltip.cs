@@ -132,13 +132,12 @@ public class PlayerSkillDetailsTooltip : MonoBehaviour {
         currenciesText.text = currencyStr;
 
         additionalText.text = string.Empty;
-        if (spellData is PlayerAction || spellData.category == SPELL_CATEGORY.AFFLICTION) {
+        if (spellData is PlayerAction  || spellData.category == SPELL_CATEGORY.AFFLICTION) {
             IPointOfInterest activePOI = UIManager.Instance.GetCurrentlySelectedPOI();
             if (activePOI != null) {
                 if (activePOI is Character activeCharacter) {
                     if (spellData.CanPerformAbilityTowards(activeCharacter) == false) {
-                        //TODO: Move Snatched checking somewhere better, since snatch can be performed on blessed characters
-                        if (spellData.type != SPELL_TYPE.SNATCH && activeCharacter.traitContainer.HasTrait("Blessed")) {
+                        if (spellData is PlayerAction playerAction && !playerAction.canBeCastOnBlessed && activeCharacter.traitContainer.HasTrait("Blessed")) {
                             additionalText.text += $"<color=#FE3E83>Blessed Villagers are protected from your powers.</color>\n";
                         }
                         string wholeReason = spellData

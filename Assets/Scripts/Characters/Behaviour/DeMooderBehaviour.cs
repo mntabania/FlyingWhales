@@ -111,7 +111,10 @@ public class DeMooderBehaviour : CharacterBehaviourComponent {
         character.traitContainer.RemoveTrait(character, "Stealthy");
         character.behaviourComponent.OnNoLongerDeMooder();
     }
-
+    public override void OnLoadBehaviourToCharacter(Character character) {
+        base.OnLoadBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeDeMooder();
+    }
     private List<Character> GetTargetChoices(List<HexTile> tiles) {
         List<Character> characters = null;
         for (int i = 0; i < tiles.Count; i++) {

@@ -5,6 +5,7 @@ public class CultistPoisonData : PlayerAction {
     public override string name => "Poison Neighbor";
     public override string description => "This Action forces the character to Poison an object owned by a specified target.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.PLAYER_ACTION;
+    public override bool canBeCastOnBlessed => true;
     
     public CultistPoisonData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };

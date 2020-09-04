@@ -73,6 +73,10 @@ public class DisablerBehaviour : CharacterBehaviourComponent {
         character.traitContainer.RemoveTrait(character, "Stealthy");
         character.behaviourComponent.OnNoLongerDisabler();
     }
+    public override void OnLoadBehaviourToCharacter(Character character) {
+        base.OnLoadBehaviourToCharacter(character);
+        character.behaviourComponent.OnBecomeDisabler();
+    }
     #endregion
 
     

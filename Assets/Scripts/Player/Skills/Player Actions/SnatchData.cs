@@ -10,6 +10,7 @@ using UtilityScripts;
 public class SnatchData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.SNATCH;
     public override string name => "Snatch";
+    public override bool canBeCastOnBlessed => true;
     public override string description => $"This Action can be used to instruct an available Skeleton to abduct a target Villager or Monster. If successful, it will then bring it to an appropriate demonic structure - Defiler or Prison for Villagers, Kennel for Monsters.";
     public SnatchData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
