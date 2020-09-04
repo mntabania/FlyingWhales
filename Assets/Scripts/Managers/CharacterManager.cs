@@ -1365,6 +1365,10 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return minion;
     }
+    public Minion CreateNewMinion(Character character, SaveDataMinion data) {
+        Minion minion = new Minion(character, data);
+        return minion;
+    }
     private void InitializeMinion(Minion minion) { }
     #endregion
 

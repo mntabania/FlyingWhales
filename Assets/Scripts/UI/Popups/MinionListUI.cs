@@ -31,7 +31,14 @@ public class MinionListUI : PopupMenuBase {
         Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
         Messenger.AddListener<SPELL_TYPE>(Signals.ADDED_PLAYER_MINION_SKILL, OnGainPlayerMinionSkill);
     }
-
+    public void UpdateList() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            if (character.minion != null && character.faction != null && character.faction.isPlayerFaction && !character.isDead) {
+                CreateNewActiveMinionItem(character.minion);
+            }
+        }
+    }
     private void UpdateMinionPlayerSkillItems() {
         for (int i = 0; i < _minionItems.Count; i++) {
             _minionItems[i].UpdateData();

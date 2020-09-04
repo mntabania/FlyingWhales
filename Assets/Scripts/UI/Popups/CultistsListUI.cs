@@ -26,6 +26,14 @@ public class CultistsListUI : PopupMenuBase {
             cultistsToggle.gameObject.SetActive(false);
         }
     }
+    public void UpdateList() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            if (character.traitContainer.HasTrait("Cultist") && !character.isDead) {
+                CreateNewItemFor(character);
+            }
+        }
+    }
 
     #region General
     public void ToggleList(bool isOn) {

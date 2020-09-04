@@ -469,7 +469,9 @@ public class SaveDataCurrentProgress {
     public void LoadTraitsSecondWave() {
         foreach (KeyValuePair<string, Trait> item in DatabaseManager.Instance.traitDatabase.traitsByGUID) {
             SaveDataTrait saveData = GetFromSaveHub<SaveDataTrait>(OBJECT_TYPE.Trait, item.Key);
-            item.Value.LoadSecondWaveInstancedTrait(saveData);
+            if(saveData != null) {
+                item.Value.LoadSecondWaveInstancedTrait(saveData);
+            }
         }
         //if (objectHub.ContainsKey(OBJECT_TYPE.Trait)){
         //    if(objectHub[OBJECT_TYPE.Trait] is SaveDataTraitHub hub) {

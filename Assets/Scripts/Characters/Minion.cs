@@ -18,10 +18,8 @@ public class Minion {
     public bool isSummoned { get; private set; }
     public SPELL_TYPE minionPlayerSkillType { get; private set; }
 
-    private string _assignedDeadlySinName;
-
     #region getters
-    public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
+    public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(character.characterClass.className);
     #endregion
 
     public Minion(Character character, bool keepData) {
@@ -30,7 +28,6 @@ public class Minion {
         //traitsToAdd = new List<string>();
         character.SetMinion(this);
         //character.StartingLevel();
-        SetAssignedDeadlySinName(character.characterClass.className);
         if (!keepData) {
             character.SetName(RandomNameGenerator.GenerateMinionName());
         }
@@ -43,8 +40,13 @@ public class Minion {
         }
         character.visuals.UpdateAllVisuals(character);
     }
-    public void SetAssignedDeadlySinName(string name) {
-        _assignedDeadlySinName = name;
+    public Minion(Character character, SaveDataMinion data) {
+        this.character = character;
+        isSummoned = data.isSummoned;
+        minionPlayerSkillType = data.minionPlayerSkillType;
+        if (isSummoned) {
+            SubscribeListeners();
+        }
     }
     public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, 
         Log _deathLog = null, LogFiller[] deathLogFillers = null) {

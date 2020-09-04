@@ -16,7 +16,7 @@ public class SaveDataMinion : SaveData<Minion> {
     #endregion
 
     public Minion Load(Character character) {
-        Minion minion = CharacterManager.Instance.CreateNewMinion(character, keepData: true);
+        Minion minion = CharacterManager.Instance.CreateNewMinion(character, this);
         return minion;
     }
 }

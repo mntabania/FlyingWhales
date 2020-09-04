@@ -657,7 +657,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (marker) {
             marker.UpdateAnimation();
         }
-        if (!isDead) {
+        if (!isDead && minion == null) {
             //only subscribe to listeners if character is not dead, this is because we expect that dead characters are not listening to any of the normal signals
             SubscribeToSignals();    
         }
@@ -919,7 +919,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddItemAsInteresting(_characterClass.interestedItemNames);    
         }
         visuals.UpdateAllVisuals(this);
-        minion?.SetAssignedDeadlySinName(_characterClass.className);
+        //minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
