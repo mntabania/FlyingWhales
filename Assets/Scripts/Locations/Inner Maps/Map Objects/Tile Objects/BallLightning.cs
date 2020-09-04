@@ -18,10 +18,10 @@ public class BallLightning : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public BallLightning(SaveDataTileObject data) {
-        SaveDataBallLightning saveDataBallLightning = data as SaveDataBallLightning;
-        Assert.IsNotNull(saveDataBallLightning);
-        expiryDate = saveDataBallLightning.expiryDate;
+    public BallLightning(SaveDataBallLightning data) : base(data) {
+        //SaveDataBallLightning saveDataBallLightning = data as SaveDataBallLightning;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

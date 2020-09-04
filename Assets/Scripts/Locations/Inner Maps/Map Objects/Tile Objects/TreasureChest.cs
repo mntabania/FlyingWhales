@@ -33,7 +33,7 @@ public class TreasureChest : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         AddAdvertisedAction(INTERACTION_TYPE.OPEN);
     }
-    public TreasureChest(SaveDataTileObject data) { }
+    public TreasureChest(SaveDataTreasureChest data) : base(data) { }
 
     #region Loading
     public override void LoadAdditionalInfo(SaveDataTileObject data) {

@@ -10,7 +10,7 @@ public class BerryShrub : Crops {
     public BerryShrub() : base() {
         Initialize(TILE_OBJECT_TYPE.BERRY_SHRUB);
     }
-    public BerryShrub(SaveDataTileObject data) : base(data) { }
+    public BerryShrub(SaveDataBerryShrub data) : base(data) { }
 
     #region Overrides
     public override void ConstructDefaultActions() {

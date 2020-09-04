@@ -10,7 +10,7 @@ public class HeartOfTheWind : Artifact {
         maxHP = 700;
         currentHP = maxHP;
     }
-    public HeartOfTheWind(SaveDataTileObject data) : base(data) { }
+    public HeartOfTheWind(SaveDataArtifact data) : base(data) { }
 
     #region Overrides
     public override void ConstructDefaultActions() {

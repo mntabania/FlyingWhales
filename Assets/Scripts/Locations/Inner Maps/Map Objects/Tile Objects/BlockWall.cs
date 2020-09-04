@@ -23,7 +23,7 @@ public class BlockWall : TileObject {
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
     }
-    public BlockWall(SaveDataTileObject data) { }
+    public BlockWall(SaveDataBlockWall data) : base(data) { }
     public void SetWallType(WALL_TYPE _wallType) {
         wallType = _wallType;
     }

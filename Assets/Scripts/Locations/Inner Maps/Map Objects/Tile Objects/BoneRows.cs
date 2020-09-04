@@ -2,7 +2,7 @@
     public BoneRows() {
         Initialize(TILE_OBJECT_TYPE.BONE_ROWS);
     }
-    public BoneRows(SaveDataTileObject data) {
+    public BoneRows(SaveDataTileObject data) : base(data) {
         
     }
 }

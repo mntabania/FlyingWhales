@@ -23,10 +23,10 @@ public class RavenousSpirit : TileObject {
         Initialize(TILE_OBJECT_TYPE.RAVENOUS_SPIRIT, false);
         traitContainer.AddTrait(this, "Ravenous");
     }
-    public RavenousSpirit(SaveDataTileObject data) {
-        SaveDataRavenousSpirit saveDataRavenousSpirit = data as SaveDataRavenousSpirit;
-        Assert.IsNotNull(saveDataRavenousSpirit);
-        _currentDuration = saveDataRavenousSpirit.currentDuration;
+    public RavenousSpirit(SaveDataRavenousSpirit data) {
+        //SaveDataRavenousSpirit saveDataRavenousSpirit = data as SaveDataRavenousSpirit;
+        Assert.IsNotNull(data);
+        _currentDuration = data.currentDuration;
     }
 
     #region Overrides

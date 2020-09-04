@@ -3,7 +3,7 @@
     public Cage() {
         Initialize(TILE_OBJECT_TYPE.CAGE);
     }
-    public Cage(SaveDataTileObject data) {
+    public Cage(SaveDataTileObject data) : base(data) {
         
     }
 }

@@ -7,7 +7,7 @@ public class DoorTileObject : TileObject {
         Initialize(TILE_OBJECT_TYPE.DOOR_TILE_OBJECT);
         traitContainer.AddTrait(this, "Immovable");
     }
-    public DoorTileObject(SaveDataTileObject data) { }
+    public DoorTileObject(SaveDataTileObject data) : base(data) { }
     
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
         bool destroyTileSlots = true) {

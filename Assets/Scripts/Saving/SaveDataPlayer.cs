@@ -151,18 +151,18 @@ public class SaveDataPlayer {
     //}
     //#endregion
 
-    #region Tile Objects
-    public void SaveTileObjects(List<TileObject> tileObjects) {
-        if (cryptTileObjects == null) {
-            cryptTileObjects = new List<SaveDataTileObject>();
-        }
-        for (int i = 0; i < tileObjects.Count; i++) {
-            SaveDataTileObject saveDataTileObject = new SaveDataTileObject();
-            saveDataTileObject.Save(tileObjects[i]);
-            cryptTileObjects.Add(saveDataTileObject);
-        }
-    }
-    #endregion
+    //#region Tile Objects
+    //public void SaveTileObjects(List<TileObject> tileObjects) {
+    //    if (cryptTileObjects == null) {
+    //        cryptTileObjects = new List<SaveDataTileObject>();
+    //    }
+    //    for (int i = 0; i < tileObjects.Count; i++) {
+    //        SaveDataTileObject saveDataTileObject = new SaveDataTileObject();
+    //        saveDataTileObject.Save(tileObjects[i]);
+    //        cryptTileObjects.Add(saveDataTileObject);
+    //    }
+    //}
+    //#endregion
 
     #region Tutorials
     public void InitializeTutorialData() {

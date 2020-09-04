@@ -2,7 +2,7 @@
     public Diamond() {
         Initialize(TILE_OBJECT_TYPE.DIAMOND);
     }
-    public Diamond(SaveDataTileObject data) {
+    public Diamond(SaveDataTileObject data) : base(data) {
         
     }
 }

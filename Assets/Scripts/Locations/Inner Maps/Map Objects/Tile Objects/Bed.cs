@@ -19,7 +19,7 @@ public class Bed : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.NAP);
         bedUsers = new Character[2];
     }
-    public Bed(SaveDataTileObject data) {
+    public Bed(SaveDataTileObject data) : base(data) {
         bedUsers = new Character[2];
     }
 

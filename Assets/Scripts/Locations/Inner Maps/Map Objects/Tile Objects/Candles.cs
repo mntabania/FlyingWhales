@@ -4,7 +4,7 @@ public class Candles : TileObject{
     public Candles() {
         Initialize(TILE_OBJECT_TYPE.CANDLES);
     }
-    public Candles(SaveDataTileObject data) {
+    public Candles(SaveDataTileObject data) : base(data) {
         
     }
 }

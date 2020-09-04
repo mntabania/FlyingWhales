@@ -14,7 +14,7 @@ public class Artifact : TileObject {
     public override System.Type serializedData => typeof(SaveDataArtifact);
     #endregion
 
-    public Artifact(ARTIFACT_TYPE type) {
+    public Artifact(ARTIFACT_TYPE type) : base() {
         data = ScriptableObjectsManager.Instance.GetArtifactData(type);
         Initialize(TILE_OBJECT_TYPE.ARTIFACT, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -23,10 +23,10 @@ public class Artifact : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
     }
-    public Artifact(SaveDataTileObject saveData) {
-        SaveDataArtifact saveDataArtifact = saveData as SaveDataArtifact;
-        Assert.IsNotNull(saveDataArtifact);
-        data = ScriptableObjectsManager.Instance.GetArtifactData(saveDataArtifact.artifactType);
+    public Artifact(SaveDataArtifact data) : base(data) {
+        //SaveDataArtifact saveDataArtifact = saveData as SaveDataArtifact;
+        Assert.IsNotNull(data);
+        this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
     }
 
     #region Overrides
@@ -71,17 +71,17 @@ public class Artifact : TileObject {
 #region Save Data
 public class SaveDataArtifact : SaveDataTileObject {
     public ARTIFACT_TYPE artifactType;
-    public override TileObject Load() {
-        TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);
-        tileObject.Initialize(this);
-        return tileObject;
-    }
-    
+
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
         Artifact artifact = tileObject as Artifact;
         Assert.IsNotNull(artifact);
         artifactType = artifact.data.type;
+    }
+    public override TileObject Load() {
+        TileObject tileObject = InnerMapManager.Instance.LoadTileObject<TileObject>(this);
+        tileObject.Initialize(this);
+        return tileObject;
     }
 }
 #endregion

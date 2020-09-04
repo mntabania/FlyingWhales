@@ -4,7 +4,10 @@ using Traits;
 
 public abstract class ElementalCrystal : TileObject {
     private ELEMENTAL_TYPE elementalType { get; }
-    protected ElementalCrystal(ELEMENTAL_TYPE _elementalType) {
+    protected ElementalCrystal(ELEMENTAL_TYPE _elementalType) : base() {
+        elementalType = _elementalType;
+    }
+    public ElementalCrystal(SaveDataTileObject data, ELEMENTAL_TYPE _elementalType)  {
         elementalType = _elementalType;
     }
 
@@ -24,4 +27,3 @@ public abstract class ElementalCrystal : TileObject {
         traitable.AdjustHP(-50, elementalType, true, this, showHPBar: true);
     }
 }
-

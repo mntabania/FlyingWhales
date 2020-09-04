@@ -2,7 +2,7 @@
     public CorruptedPit() {
         Initialize(TILE_OBJECT_TYPE.CORRUPTED_PIT);
     }
-    public CorruptedPit(SaveDataTileObject data) {
+    public CorruptedPit(SaveDataTileObject data) : base(data) {
         
     }
 }

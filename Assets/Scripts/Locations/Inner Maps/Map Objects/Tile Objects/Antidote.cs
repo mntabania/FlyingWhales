@@ -15,5 +15,5 @@ public class Antidote : TileObject {
         // AddAdvertisedAction(INTERACTION_TYPE.STEAL);
     }
 
-    public Antidote(SaveDataTileObject data) { }
+    public Antidote(SaveDataTileObject data) : base(data) { }
 }

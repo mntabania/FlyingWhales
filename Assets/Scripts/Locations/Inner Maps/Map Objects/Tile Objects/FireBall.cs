@@ -18,10 +18,10 @@ public class FireBall : MovingTileObject {
         AddAdvertisedAction(INTERACTION_TYPE.RESOLVE_COMBAT);
         expiryDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(2));
     }
-    public FireBall(SaveDataTileObject data) {
-        SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
-        Assert.IsNotNull(saveDataFireBall);
-        expiryDate = saveDataFireBall.expiryDate;
+    public FireBall(SaveDataFireBall data) {
+        //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
+        Assert.IsNotNull(data);
+        expiryDate = data.expiryDate;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

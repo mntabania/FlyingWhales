@@ -3,7 +3,7 @@
     public CultistKit() {
         Initialize(TILE_OBJECT_TYPE.CULTIST_KIT);
     }
-    public CultistKit(SaveDataTileObject data) {
+    public CultistKit(SaveDataTileObject data) : base(data) {
         
     }
 

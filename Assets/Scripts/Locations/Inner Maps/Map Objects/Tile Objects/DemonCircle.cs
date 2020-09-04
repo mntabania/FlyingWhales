@@ -2,7 +2,7 @@
     public DemonCircle() {
         Initialize(TILE_OBJECT_TYPE.DEMON_CIRCLE);
     }
-    public DemonCircle(SaveDataTileObject data) {
+    public DemonCircle(SaveDataTileObject data) : base(data) {
         
     }
 }

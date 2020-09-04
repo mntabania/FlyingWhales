@@ -29,11 +29,11 @@ public class TreeObject : TileObject {
         SetYield(100);
         _occupiedState = Occupied_State.Undecided;
     }
-    public TreeObject(SaveDataTileObject data) {
-        SaveDataTreeObject saveDataTreeObject = data as SaveDataTreeObject;
-        Assert.IsNotNull(saveDataTreeObject);
-        yield = saveDataTreeObject.yield;
-        _occupiedState = saveDataTreeObject.occupiedState;
+    public TreeObject(SaveDataTreeObject data) : base(data) {
+        //SaveDataTreeObject saveDataTreeObject = data as SaveDataTreeObject;
+        Assert.IsNotNull(data);
+        yield = data.yield;
+        _occupiedState = data.occupiedState;
     }
 
     #region Loading

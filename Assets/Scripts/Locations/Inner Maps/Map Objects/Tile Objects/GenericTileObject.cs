@@ -11,10 +11,10 @@ public class GenericTileObject : TileObject {
     
     public override System.Type serializedData => typeof(SaveDataGenericTileObject);
     
-    public GenericTileObject(LocationGridTile locationGridTile) {
+    public GenericTileObject(LocationGridTile locationGridTile) : base() {
         _owner = locationGridTile;
     }
-    public GenericTileObject(SaveDataTileObject data) {
+    public GenericTileObject(SaveDataGenericTileObject data) : base(data) {
         
     }
 

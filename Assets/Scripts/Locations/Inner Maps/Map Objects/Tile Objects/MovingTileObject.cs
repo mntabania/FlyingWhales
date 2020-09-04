@@ -12,6 +12,9 @@ public abstract class MovingTileObject : TileObject {
     protected virtual int affectedRange => 1;
 
     public override System.Type serializedData => typeof(SaveDataMovingTileObject);
+
+    public MovingTileObject() : base() { }
+    public MovingTileObject(SaveDataMovingTileObject data) : base(data) { }
     
     protected virtual bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_mapVisual != null) {

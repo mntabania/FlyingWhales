@@ -15,7 +15,7 @@ public abstract class Crops : TileObject {
     #endregion
     
     protected Crops() { }
-    protected Crops(SaveDataTileObject data) { }
+    protected Crops(SaveDataCrops data) : base(data) { }
 
     #region Initialization
     protected override void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {
