@@ -21,9 +21,6 @@ namespace Inner_Maps.Location_Structures {
             SetMaxHPAndReset(3000);
             currentAttackers = new HashSet<Character>();
         }
-        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
-            base.LoadReferences(saveDataLocationStructure);
-        }
 
         #region Overrides
         protected override void DestroyStructure() {

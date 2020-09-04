@@ -19,6 +19,12 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     private IEnumerator Load(SaveDataCurrentProgress saveData) {
+        //Load region references
+        yield return MapGenerator.Instance.StartCoroutine(LoadRegionReferences(saveData));
+        
+        //Load structure references
+        yield return MapGenerator.Instance.StartCoroutine(LoadStructureReferences(saveData));
+        
         //Load Faction Related Extra Data
         yield return MapGenerator.Instance.StartCoroutine(LoadFactionReferences(saveData));
 
@@ -60,6 +66,30 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadTraitsSecondWave(saveData));
     }
 
+    #region Region
+    private IEnumerator LoadRegionReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Region Data...");
+        for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
+            SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
+            Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.persistentID);
+            region.LoadReferences(saveDataRegion);
+            yield return null;
+        }
+    }
+    #endregion
+    
+    #region Structure
+    private IEnumerator LoadStructureReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Structure Data...");
+        for (int i = 0; i < saveData.worldMapSave.structureSaves.Count; i++) {
+            SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
+            LocationStructure structure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataLocationStructure.persistentID);
+            structure.LoadReferences(saveDataLocationStructure);
+            yield return null;
+        }
+    }
+    #endregion
+    
     #region Faction
     private IEnumerator LoadFactionReferences(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Faction Data...");
@@ -119,6 +149,14 @@ public class LoadSecondWave : MapGenerationComponent {
                         tileObject.mapObjectVisual.SetRotation(saveDataTileObject.rotation);    
                     }    
                     tileObject.LoadSecondWave(saveDataTileObject);
+                }
+                
+                if (tileObject is BlockWall && tileObject.gridTileLocation.structure is DemonicStructure demonicStructure) {
+                    //TODO: This is only a quick fix, so that loaded block walls will contribute to demonic structure damage
+                    demonicStructure.AddObjectAsDamageContributor(tileObject);
+                } else if (tileObject is Eyeball && tileObject.gridTileLocation.structure is Eye eye) {
+                    //TODO: This is only a quick fix, so that loaded eyes will contribute to demonic structure damage
+                    eye.AddObjectAsDamageContributor(tileObject);
                 }
             }
             batchCount++;
