@@ -23,8 +23,8 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Chosen target is {chosenTarget.name}";
                     character.combatComponent.Fight(chosenTarget, CombatManager.Hostility);
                 } else {
-                    log += $"\n-No more valid targets, go home";
-                    return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    log += $"\n-No more valid targets, roam";
+                    return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
                 producedJob = null;
                 return true;
@@ -36,9 +36,9 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
                 return character.jobComponent.CreateGoToJob(targetTile, out producedJob);
             }    
         } else {
-            log += $"\n-character does not have an invade village target, will go home";
+            log += $"\n-character does not have an invade village target, roam";
             //character could not find a valid target settlement
-            return character.jobComponent.TriggerReturnTerritory(out producedJob);
+            return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
         }
     }
     private List<Character> GetTargetChoices(List<HexTile> tiles) {
