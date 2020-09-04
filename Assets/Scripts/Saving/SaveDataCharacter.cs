@@ -193,14 +193,14 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
 
         if (data.minion != null) {
             hasMinion = true;
-            SaveDataMinion saveMinion = new SaveDataMinion();
-            saveMinion.Save(data.minion);
+            minion = new SaveDataMinion();
+            minion.Save(data.minion);
+
         }
         if(data.lycanData != null) {
             hasLycan = true;
-            SaveDataLycanthropeData saveLycan = new SaveDataLycanthropeData();
-            saveLycan.Save(data.lycanData);
-            lycanData = saveLycan;
+            lycanData = new SaveDataLycanthropeData();
+            lycanData.Save(data.lycanData);
         }
 
         if(data.grave != null) {

@@ -58,18 +58,7 @@ public class MoodComponent : CharacterComponent {
 		isInNormalMood = true; //set as initially in normal mood
 	}
     public MoodComponent(SaveDataMoodComponent data) {
-        moodValue = data.moodValue;
-        isInNormalMood = data.isInNormalMood;
-        isInLowMood = data.isInLowMood;
-        isInCriticalMood = data.isInCriticalMood;
-        currentLowMoodEffectChance = data.currentLowMoodEffectChance;
-        currentCriticalMoodEffectChance = data.currentCriticalMoodEffectChance;
-        executeMoodChangeEffects = data.executeMoodChangeEffects;
-        isInMajorMentalBreak = data.isInMajorMentalBreak;
-        isInMinorMentalBreak = data.isInMinorMentalBreak;
-        hasMoodChanged = data.hasMoodChanged;
-        mentalBreakName = data.mentalBreakName;
-        moodModificationsSummary = data.moodModificationsSummary;
+        SetSaveDataMoodComponent(data);
     }
 
     //This is only used for reapplication of mood data from save

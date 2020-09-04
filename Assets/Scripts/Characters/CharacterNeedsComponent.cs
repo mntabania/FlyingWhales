@@ -101,6 +101,12 @@ public class CharacterNeedsComponent : CharacterComponent {
         //UpdateBaseStaminaDecreaseRate();
     }
     public CharacterNeedsComponent(SaveDataCharacterNeedsComponent data) {
+        SetSaveDataCharacterNeedsComponent(data);
+    }
+
+    //This is only used for reapplication of mood data from save
+    //When mood is loaded we need to reapply the data after the loading of traits so that the data will be consistent from when it was saved
+    public void SetSaveDataCharacterNeedsComponent(SaveDataCharacterNeedsComponent data) {
         doNotGetHungry = data.doNotGetHungry;
         doNotGetTired = data.doNotGetTired;
         doNotGetBored = data.doNotGetBored;
@@ -132,7 +138,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         forcedFullnessRecoveryTimeInWords = data.forcedFullnessRecoveryTimeInWords;
         forcedTirednessRecoveryTimeInWords = data.forcedTirednessRecoveryTimeInWords;
     }
-    
+
     #region Initialization
     public void SubscribeToSignals() {
         Messenger.AddListener(Signals.TICK_STARTED, DecreaseNeeds);
