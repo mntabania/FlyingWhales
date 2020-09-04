@@ -603,6 +603,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         jobQueue.LoadReferences(data);
+        for (int i = 0; i < data.forceCancelJobsOnTickEnded.Count; i++) {
+            string forceCanceledJob = data.forceCancelJobsOnTickEnded[i];
+            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(forceCanceledJob);
+            if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+                forcedCancelJobsOnTickEnded.Add(job);
+            }
+        }
+        
         needsComponent.LoadReferences(data.needsComponent);
         buildStructureComponent.LoadReferences(data.buildStructureComponent);
         stateComponent.LoadReferences(data.stateComponent);
@@ -5437,6 +5445,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!forcedCancelJobsOnTickEnded.Contains(job)) {
             forcedCancelJobsOnTickEnded.Add(job);
         }
+    }
+    public bool WillCancelJobOnTickEnded(JobQueueItem job) {
+        return forcedCancelJobsOnTickEnded.Contains(job);
     }
     public void ProcessForcedCancelJobsOnTickEnded() {
         if (forcedCancelJobsOnTickEnded.Count > 0) {

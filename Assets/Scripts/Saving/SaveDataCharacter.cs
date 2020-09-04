@@ -82,7 +82,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public List<string> items;
     public List<string> ownedItems;
     public List<string> jobs;
-
+    public List<string> forceCancelJobsOnTickEnded;
+    
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
@@ -252,6 +253,12 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         for (int i = 0; i < data.jobQueue.jobsInQueue.Count; i++) {
             JobQueueItem jobQueueItem = data.jobQueue.jobsInQueue[i];
             jobs.Add(jobQueueItem.persistentID);
+        }
+        
+        forceCancelJobsOnTickEnded = new List<string>();
+        for (int i = 0; i < data.forcedCancelJobsOnTickEnded.Count; i++) {
+            JobQueueItem jobQueueItem = data.forcedCancelJobsOnTickEnded[i];
+            forceCancelJobsOnTickEnded.Add(jobQueueItem.persistentID);
         }
         
         saveDataTraitContainer = new SaveDataTraitContainer();
