@@ -75,6 +75,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     #region Loading
     public void LoadJobs(SaveDataNPCSettlement data) {
+        for (int i = 0; i < availableJobs.Count; i++) {
+            JobQueueItem job = availableJobs[i];
+            job.ForceCancelJob(false);
+            i--;
+        }
         for (int i = 0; i < data.jobIDs.Count; i++) {
             string jobID = data.jobIDs[i];
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
