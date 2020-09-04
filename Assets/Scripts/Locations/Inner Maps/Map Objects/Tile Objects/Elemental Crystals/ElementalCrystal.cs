@@ -8,8 +8,8 @@ public abstract class ElementalCrystal : TileObject {
     protected ElementalCrystal(ELEMENTAL_TYPE _elementalType) : base() {
         elementalType = _elementalType;
     }
-    public ElementalCrystal(SaveDataTileObject data) : base(data)  {
-        elementalType = ELEMENTAL_TYPE.Normal;
+    public ElementalCrystal(SaveDataTileObject data, ELEMENTAL_TYPE _elementalType) : base(data)  {
+        elementalType = _elementalType;
     }
 
     #region Overrides
