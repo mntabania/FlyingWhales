@@ -41,10 +41,10 @@ public class TreeObject : TileObject {
         base.LoadSecondWave(data);
         SaveDataTreeObject saveDataTreeObject = data as SaveDataTreeObject;
         Assert.IsNotNull(saveDataTreeObject);
-        if (!string.IsNullOrEmpty(saveDataTreeObject.occupyingEntID)) {
+        if (!string.IsNullOrEmpty(saveDataTreeObject.occupyingEntID) && gridTileLocation != null) {
             Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreeObject.occupyingEntID);
             if (character is Ent loadedEnt) {
-                _ent = loadedEnt;
+                SetOccupyingEnt(loadedEnt);
             } else {
                 //no ent was found, make sure to set occupied state to undecided again, NOTE: doubt that this will ever happen
                 _occupiedState = Occupied_State.Undecided;
@@ -53,7 +53,7 @@ public class TreeObject : TileObject {
     }
     public override void LoadAdditionalInfo(SaveDataTileObject data) {
         base.LoadAdditionalInfo(data);
-        if (ent != null && ent.marker != null) {
+        if (ent != null && ent.marker != null && gridTileLocation != null) {
             ent.marker.PlaceMarkerAt(gridTileLocation);
             ent.marker.SetVisualState(false);
         }
@@ -120,7 +120,7 @@ public class TreeObject : TileObject {
         _users = new Character[] { ent };
     }
     private void RollForOccupant(LocationGridTile location) {
-        if (GameUtilities.RollChance(3)) {
+        if (GameUtilities.RollChance(3)) {//3
             //tree has occupant. Spawn Ent
             SUMMON_TYPE entType;
             if (location.isCorrupted) {

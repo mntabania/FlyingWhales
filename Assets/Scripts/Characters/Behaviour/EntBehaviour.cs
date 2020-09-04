@@ -11,9 +11,9 @@ public class EntBehaviour : CharacterBehaviourComponent {
 	public EntBehaviour() {
 		priority = 9;
 		_actionWeights = new WeightedDictionary<string>();
-        _actionWeights.AddElement("Roam", 50);
-        _actionWeights.AddElement("Stand", 20);
-        _actionWeights.AddElement("Revert", 5);
+        _actionWeights.AddElement("Roam", 50); //50
+        _actionWeights.AddElement("Stand", 20); //20
+        _actionWeights.AddElement("Revert", 5); //5
 	}
 	public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         log += $"\n-{character.name} is Ent";

@@ -40,16 +40,18 @@ public class TreasureChest : TileObject {
         base.LoadAdditionalInfo(data);
         SaveDataTreasureChest saveDataTreasureChest = data as SaveDataTreasureChest;
         Assert.IsNotNull(saveDataTreasureChest);
-        if (!string.IsNullOrEmpty(saveDataTreasureChest.objectInsideID)) {
+        if (!string.IsNullOrEmpty(saveDataTreasureChest.objectInsideID) && gridTileLocation != null) {
             if (saveDataTreasureChest.objectInsideType == OBJECT_TYPE.Character) {
-                Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreasureChest.persistentID);
-                SetObjectInside(character);
-                if (character.marker != null) {
-                    character.marker.PlaceMarkerAt(gridTileLocation);
-                    character.DisableMarker();
+                Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataTreasureChest.objectInsideID);
+                if (character != null) {
+                    SetObjectInside(character);
+                    if (character.marker != null) {
+                        character.marker.PlaceMarkerAt(gridTileLocation);
+                        character.DisableMarker();
+                    }    
                 }
             } else if (saveDataTreasureChest.objectInsideType == OBJECT_TYPE.Tile_Object) {
-                TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveDataTreasureChest.persistentID);
+                TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveDataTreasureChest.objectInsideID);
                 SetObjectInside(tileObject);
             }
         }
@@ -92,11 +94,10 @@ public class TreasureChest : TileObject {
             character.DisableMarker();
         }
     }
-
     #region Object Inside
     private void RollForItem(LocationGridTile locationGridTile) {
         if (objectInside != null) { return; } //already has object inside
-        if (GameUtilities.RollChance(5)) {
+        if (GameUtilities.RollChance(5)) { //5
             Summon summon = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Mimic, FactionManager.Instance.neutralFaction, homeRegion: locationGridTile.parentMap.region);
             SetObjectInside(summon);
         } else {
