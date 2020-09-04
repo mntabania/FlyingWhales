@@ -232,6 +232,16 @@ public class PlayerUI : BaseMonoBehaviour {
             SpellData skill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(skillType);
             skill.OnLoadSpell();
         }
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.playerActions.Count; i++) {
+            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.playerActions[i];
+            SpellData skill = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.afflictions.Count; i++) {
+            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.afflictions[i];
+            SpellData skill = PlayerSkillManager.Instance.GetAfflictionData(skillType);
+            skill.OnLoadSpell();
+        }
     }
 
     #region Listeners
@@ -634,7 +644,7 @@ public class PlayerUI : BaseMonoBehaviour {
         return item;
     }
     private void InitialUpdateVillagerListCharacterItems() {
-        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer && x.IsAble()).ToList();
+        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer).ToList();
         int allVillagersCount = villagers.Count;
         LoadVillagerItems(allVillagersCount);
         
