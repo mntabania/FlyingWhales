@@ -759,6 +759,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {
 			return; //already 4pm do not create tend job
 		}
+		if (_owner.HasJob(JOB_TYPE.TEND_FARM)) {
+			return; //already has tend job
+		}
 		List<LocationStructure> farms = _owner.GetStructuresOfType(STRUCTURE_TYPE.FARM);
 		if (farms != null) {
 			int untendedCornCrops = 0;
@@ -807,7 +810,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Mining
 	private void TryCreateMiningJob() {
-		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6) { //6
+		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) == 6 && !_owner.HasJob(JOB_TYPE.MINE)) { //6
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MINE, INTERACTION_TYPE.BEGIN_MINE, null, _owner);
 			_owner.AddToAvailableJobs(job);
 		}
