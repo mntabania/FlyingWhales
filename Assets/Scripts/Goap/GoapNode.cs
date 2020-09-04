@@ -1088,13 +1088,13 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         }
         if (data.rumor != null) {
             hasRumor = true;
-            SaveDataRumor savedRumor = new SaveDataRumor();
-            savedRumor.Save(data.rumor);
+            rumor = new SaveDataRumor();
+            rumor.Save(data.rumor);
         }
         if (data.assumption != null) {
             hasAssumption = true;
-            SaveDataAssumption savedAssumption = new SaveDataAssumption();
-            savedAssumption.Save(data.assumption);
+            assumption = new SaveDataAssumption();
+            assumption.Save(data.assumption);
         }
         if (data.otherData != null) {
             otherData = new SaveDataOtherData[data.otherData.Length];

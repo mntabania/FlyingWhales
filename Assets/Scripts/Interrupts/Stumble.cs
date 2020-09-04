@@ -12,8 +12,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             int randomHpToLose = UnityEngine.Random.Range(1, 6);
             float percentMaxHPToLose = randomHpToLose / 100f;
             int actualHPToLose = Mathf.CeilToInt(interruptHolder.actor.maxHP * percentMaxHPToLose);
