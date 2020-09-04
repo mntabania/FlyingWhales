@@ -1208,6 +1208,9 @@ namespace Inner_Maps {
         public bool IsNextToOrPartOfSettlement(out BaseSettlement settlement) {
             return IsPartOfSettlement(out settlement) || IsNextToSettlement(out settlement);
         }
+        public bool IsNextToOrPartOfSettlement() {
+            return IsPartOfSettlement() || IsNextToSettlement();
+        }
         public bool IsNextToOrPartOfSettlement(BaseSettlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
         }

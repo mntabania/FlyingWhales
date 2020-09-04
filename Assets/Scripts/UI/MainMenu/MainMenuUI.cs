@@ -35,10 +35,7 @@ public class MainMenuUI : MonoBehaviour {
     
     [Header("Load Game")]
     [SerializeField] private Button loadGameButton;
-    [SerializeField] private ScrollRect loadGameScrollRect;
-    [SerializeField] private GameObject saveItemPrefab;
-    [SerializeField] private GameObject loadGameWindow;
-    private string[] saveFiles;
+    [SerializeField] private LoadWindow loadWindow;
     
     private void Awake() {
         Instance = this;
@@ -50,9 +47,9 @@ public class MainMenuUI : MonoBehaviour {
         newGameButton.interactable = true;
         steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
         version.text = $"Version: {Application.version}";
-        saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
         SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(string.Empty); //Set current save data to null everytime this is loaded, this is so that the previous save file is not loaded if new game was clicked
         UpdateButtonStates();
+        Messenger.AddListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
     }
     public void ShowMenuButtons() {
         titleTween.OnValueChangedAnimation(true);
@@ -70,21 +67,7 @@ public class MainMenuUI : MonoBehaviour {
     }
     public void OnClickContinue() {
         //Load latest save
-        string latestFile = string.Empty;
-        for (int i = 0; i < saveFiles.Length; i++) {
-            string saveFile = saveFiles[i];
-            if (string.IsNullOrEmpty(latestFile)) {
-                latestFile = saveFile;
-            } else {
-                //compare times
-                DateTime writeTimeOfCurrentSave = System.IO.File.GetLastWriteTime(saveFile);
-                DateTime writeTimeOfLatestSave = System.IO.File.GetLastWriteTime(latestFile);
-                if (writeTimeOfCurrentSave > writeTimeOfLatestSave) {
-                    latestFile = saveFile;
-                }
-            }
-        }
-
+        string latestFile = SaveManager.Instance.saveCurrentProgressManager.GetLatestSaveFile();
         if (!string.IsNullOrEmpty(latestFile)) {
             SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(latestFile);
             MainMenuManager.Instance.StartGame();
@@ -101,43 +84,21 @@ public class MainMenuUI : MonoBehaviour {
         Application.OpenURL("http://discord.ruinarch.com/");
     }
     private void UpdateButtonStates() {
-        bool hasSaves = saveFiles != null && saveFiles.Length > 0;
+        bool hasSaves = SaveManager.Instance.saveCurrentProgressManager.HasAnySaveFiles();
         continueButton.interactable = hasSaves;
         loadGameButton.interactable = hasSaves;
     }
 
     #region Load Game
-    public void RedetermineSaveFiles() {
-        saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
-        if (saveFiles.Length > 0) {
-            LoadSavedGameItems();    
-        } else {
-            OnClickCloseLoadGame();
-        }
-        
+    private void OnSaveFileDeleted(string saveFileDeleted) {
         UpdateButtonStates();
+        if (!SaveManager.Instance.saveCurrentProgressManager.HasAnySaveFiles()) {
+            //automatically close load window when all saves have been deleted.
+            loadWindow.Close();
+        }
     }
     public void OnClickLoadGame() {
-        LoadSavedGameItems();
-        loadGameWindow.gameObject.SetActive(true);
-        // SaveManager.Instance.useSaveData = true;
-        // newGameButton.interactable = false;
-        // // loadGameButton.interactable = false;
-        // AudioManager.Instance.TransitionToLoading();
-        // MainMenuManager.Instance.LoadMainGameScene();
-    }
-    public void OnClickCloseLoadGame() {
-        loadGameWindow.gameObject.SetActive(false);
-    }
-    private void LoadSavedGameItems() {
-        UtilityScripts.Utilities.DestroyChildren(loadGameScrollRect.content);
-        for (int i = 0; i < saveFiles.Length; i++) {
-            string saveFile = saveFiles[i];
-            GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, loadGameScrollRect.content);
-            SaveItem saveItem = saveItemGO.GetComponent<SaveItem>();
-            saveItem.SetSaveFile(saveFile);
-            (saveItem.transform as RectTransform).SetAsFirstSibling();
-        }
+        loadWindow.Open();
     }
     #endregion
 }

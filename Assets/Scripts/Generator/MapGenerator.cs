@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Linq;
 using UnityEngine.SceneManagement;
@@ -230,14 +231,6 @@ public class MapGenerator : MonoBehaviour {
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
         SaveManager.Instance.SetUseSaveData(true);
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
-        //MapGenerationComponent[] mapGenerationComponents = {
-        //    new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
-        //    new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
-        //    new PlayerSettlementGeneration(), new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), 
-        //    new RegionInnerMapGeneration(), new SettlementGeneration(), new CharacterFinalization(), 
-        //    new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new RegionFeatureActivation(), 
-        //    new MonsterGeneration(), new MapGenerationFinalization(), new PlayerDataGeneration(),
-        //};
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), 
@@ -287,46 +280,24 @@ public class MapGenerator : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-
-            // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            //     Faction faction = FactionManager.Instance.allFactions[i];
-            //     if (faction.isMajorNonPlayer) {
-            //         faction.DesignateNewLeader(false);
-            //         faction.GenerateInitialOpinionBetweenMembers();
-            //     }
-            // }
-            // for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-            //     Region region = GridMap.Instance.allRegions[i];
-            //     region.UpdateAwareness();
-            //     for (int j = 0; j < region.tiles.Count; j++) {
-            //         HexTile tile = region.tiles[j];
-            //         if (!tile.isCorrupted
-            //             && tile.landmarkOnTile != null
-            //             && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
-            //                 || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-            //             && tile.settlementOnTile is NPCSettlement npcSettlement) {
-            //             if(npcSettlement.ruler == null) {
-            //                 npcSettlement.DesignateNewRuler(false);
-            //             }
-            //             npcSettlement.GenerateInitialOpinionBetweenResidents();
-            //         }
-            //     }
-            // }
-            // WorldSettings.Instance.worldSettingsData.SetWorldType(WorldSettingsData.World_Type.Custom); //Always use Custom world type for Loading Save Data
+            
             WorldConfigManager.Instance.mapGenerationData = data;
-            // WorldMapCameraMove.Instance.CenterCameraOn(data.portal.gameObject);
             AudioManager.Instance.TransitionToWorld();
             
             UIManager.Instance.initialWorldSetupMenu.Initialize();
-            // UIManager.Instance.initialWorldSetupMenu.Show();
 
             Messenger.Broadcast(Signals.GAME_LOADED);
             UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(saveData.playerSave.archetype);
-            // UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(PLAYER_ARCHETYPE.Ravager);
-            LevelLoaderManager.Instance.SetLoadingState(false);
 
             DatabaseManager.Instance.ClearVolatileDatabases();
+            SaveManager.Instance.saveCurrentProgressManager.CleanUpLoadedData();
+            GC.Collect();
+            var unloader = Resources.UnloadUnusedAssets();
+            while (!unloader.isDone) {
+                yield return null;
+            }
             yield return new WaitForSeconds(1f);
+            LevelLoaderManager.Instance.SetLoadingState(false);
         }
     }
     #endregion

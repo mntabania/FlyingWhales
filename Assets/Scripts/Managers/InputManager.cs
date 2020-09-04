@@ -282,7 +282,12 @@ namespace Ruinarch {
             // }
             UIManager.Instance.SetTempDisableShowInfoUI(false);
             if (UIManager.Instance.IsOptionsMenuShowing()) {
-                //if options menu is showing, then close it, and nothing else
+                //if options menu is showing, check if load window is showing, if it is close load window.
+                if (UIManager.Instance.optionsMenu.IsLoadWindowShowing()) {
+                    UIManager.Instance.optionsMenu.CloseLoadWindow();
+                    return true;
+                }
+                //if load window is not showing then close options menu
                 UIManager.Instance.CloseOptionsMenu();
                 return true;
             }

@@ -2055,8 +2055,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		        if (owner.currentSettlement == owner.homeSettlement) {
 			        //if current settlement is home settlement
 			        settlementToGoTo = owner.homeSettlement;    
-		        } else if (owner.currentSettlement is NPCSettlement npcSettlement && 
-		                   npcSettlement.owner != null && owner.faction != null && npcSettlement.owner == owner.faction) {
+		        } else if (owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.owner != null && owner.faction != null && npcSettlement.owner == owner.faction) {
 			        //if current settlement is owned by same faction as this character
 			        settlementToGoTo = npcSettlement;
 		        } else {

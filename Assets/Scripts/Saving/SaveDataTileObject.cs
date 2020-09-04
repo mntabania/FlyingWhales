@@ -14,8 +14,8 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public int regionLocationID;
     public string tileLocationID;
     public bool isPreplaced;
-    //public int[] resourceValues; //food, wood, stone, metal
-    public Dictionary<RESOURCE, int> storedResources;
+    public int[] resourceValues; //food, wood, stone, metal
+    // public Dictionary<RESOURCE, int> storedResources;
     public POI_STATE poiState;
     public List<INTERACTION_TYPE> advertisedActions;
     public List<string> jobsTargetingThis;
@@ -57,13 +57,13 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
 
         advertisedActions = data.advertisedActions;
 
-        //if (data.advertisedActions != null) {
-        //    advertisedActions = new INTERACTION_TYPE[data.advertisedActions.Count];
-        //    for (int i = 0; i < advertisedActions.Length; i++) {
-        //        INTERACTION_TYPE interactionType = data.advertisedActions[i];
-        //        advertisedActions[i] = interactionType;
-        //    }    
-        //}
+        if (data.advertisedActions != null) {
+            advertisedActions = new List<INTERACTION_TYPE>();
+            for (int i = 0; i < advertisedActions.Count; i++) {
+                INTERACTION_TYPE interactionType = data.advertisedActions[i];
+                advertisedActions[i] = interactionType;
+            }    
+        }
 
         jobsTargetingThis = new List<string>();
         for (int i = 0; i < data.allJobsTargetingThis.Count; i++) {
@@ -88,14 +88,14 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             rotation = data.mapObjectVisual.rotation;
         }
 
-        storedResources = data.storedResources;
+        // storedResources = data.storedResources;
 
-        //resourceValues = new int[data.storedResources.Count];
-        //int index = 0;
-        //foreach (var storedResource in data.storedResources) {
-        //    resourceValues[index] = storedResource.Value;
-        //    index++;
-        //}
+        resourceValues = new int[data.storedResources.Count];
+        int index = 0;
+        foreach (var storedResource in data.storedResources) {
+            resourceValues[index] = storedResource.Value;
+            index++;
+        }
         
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);

@@ -375,10 +375,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         attackPowerPercentMod = data.attackPowerPercentMod;
         speedPercentMod = data.speedPercentMod;
         maxHPPercentMod = data.maxHPPercentMod;
-        advertisedActions = data.advertisedActions;
+        advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
         canCombat = data.canCombat;
         deathStr = data.deathStr;
-        storedResources = data.storedResources;
+        storedResources = new Dictionary<RESOURCE, int>(data.storedResources);
         hasUnresolvedCrime = data.hasUnresolvedCrime;
         isInLimbo = data.isInLimbo;
         isLimboCharacter = data.isLimboCharacter;
@@ -605,6 +605,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         jobQueue.LoadReferences(data);
         for (int i = 0; i < data.forceCancelJobsOnTickEnded.Count; i++) {
             string forceCanceledJob = data.forceCancelJobsOnTickEnded[i];
+            
             JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(forceCanceledJob);
             if (!forcedCancelJobsOnTickEnded.Contains(job)) {
                 forcedCancelJobsOnTickEnded.Add(job);

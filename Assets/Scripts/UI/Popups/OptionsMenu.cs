@@ -11,6 +11,7 @@ public class OptionsMenu : PopupMenuBase {
     [SerializeField] private GameObject saveLoadingGO;
     [SerializeField] private TextMeshProUGUI saveLbl;
     [SerializeField] private Button saveBtn;
+    [SerializeField] private LoadWindow loadWindow;
     
     public override void Open() {
         UIManager.Instance.Pause();
@@ -28,6 +29,9 @@ public class OptionsMenu : PopupMenuBase {
     public void SaveGame() {
         SaveManager.Instance.savePlayerManager.SavePlayerData();
         SaveCurrentProgress();
+    }
+    public void OnClickLoadGame() {
+        loadWindow.Open();
     }
     public void ExitGame() {
         Application.Quit();
@@ -49,6 +53,25 @@ public class OptionsMenu : PopupMenuBase {
         Messenger.Cleanup();
         LevelLoaderManager.Instance.UpdateLoadingInfo(string.Empty);
         LevelLoaderManager.Instance.LoadLevel("MainMenu", true);
+    }
+    /// <summary>
+    /// Load the scene again after setting a file to load at
+    /// <see cref="LoadWindow.OnLoadFileChosen"/>.
+    /// </summary>
+    public void LoadSave() {
+        DOTween.Clear(true);
+        Messenger.Cleanup();
+        LevelLoaderManager.Instance.SetLoadingState(true);
+        AudioManager.Instance.TransitionToLoading();
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing data...");
+        LevelLoaderManager.Instance.UpdateLoadingBar(0.1f, 3f);
+        LevelLoaderManager.Instance.LoadLevel("Game");
+    }
+    public bool IsLoadWindowShowing() {
+        return loadWindow.isShowing;
+    }
+    public void CloseLoadWindow() {
+        loadWindow.Close();
     }
 
     #region Saving
