@@ -151,12 +151,8 @@ public class LoadSecondWave : MapGenerationComponent {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
-            if (tileObject is Tombstone tombstone) {
+            if (tileObject is Tombstone) {
                 if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
-                    if (tombstone.character == null) {
-                        Debug.LogWarning($"{tombstone} with persistent id {tombstone.persistentID} does not have a character inside it, but has a tile location. Not placing it to prevent errors, but this case should not happen!");
-                        continue;
-                    }
                     LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
                     gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {
@@ -262,6 +258,7 @@ public class LoadSecondWave : MapGenerationComponent {
                 npcSettlement.Initialize();
                 npcSettlement.LoadJobs(saveDataNpcSettlement);
                 npcSettlement.LoadRuler(saveDataNpcSettlement.rulerID);
+                npcSettlement.LoadResidents(saveDataNpcSettlement);
             }
             yield return null;
         }
@@ -304,9 +301,7 @@ public class LoadSecondWave : MapGenerationComponent {
         for (int i = 0; i < DatabaseManager.Instance.jobDatabase.allJobs.Count; i++) {
             JobQueueItem jobQueueItem = DatabaseManager.Instance.jobDatabase.allJobs[i];
             SaveDataJobQueueItem saveDataJobQueueItem = saveData.GetFromSaveHub<SaveDataJobQueueItem>(OBJECT_TYPE.Job, jobQueueItem.persistentID);
-            if (saveDataJobQueueItem != null) {
-                jobQueueItem.LoadSecondWave(saveDataJobQueueItem);    
-            }
+            jobQueueItem.LoadSecondWave(saveDataJobQueueItem);
             batchCount++;
             if (batchCount == MapGenerationData.JobLoadingBatches) {
                 batchCount = 0;

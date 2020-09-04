@@ -99,6 +99,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
         }
     }
+    public void LoadResidents(SaveDataBaseSettlement data) {
+        if(data.residents != null) {
+            for (int i = 0; i < data.residents.Count; i++) {
+                Character resident = CharacterManager.Instance.GetCharacterByPersistentID(data.residents[i]);
+                residents.Add(resident);
+            }
+        }
+    }
     #endregion
 
     #region Listeners

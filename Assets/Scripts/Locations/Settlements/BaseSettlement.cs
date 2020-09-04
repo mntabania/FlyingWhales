@@ -15,7 +15,7 @@ namespace Locations.Settlements {
         public string name { get; private set; }
         public Faction owner { get; private set; }
         public List<HexTile> tiles { get; }
-        public List<Character> residents { get; }
+        public List<Character> residents { get; protected set; }
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
