@@ -2,16 +2,6 @@
 using Inner_Maps;
 using Traits;
 
-public class WaterBomb : PlayerSpell {
-
-    public WaterBomb() : base(SPELL_TYPE.WATER_BOMB) {
-        SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
-        tier = 1;
-    }
-    
-}
-
 public class WaterBombData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.WATER_BOMB;
     public override string name => "Water Bomb";

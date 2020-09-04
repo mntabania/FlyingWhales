@@ -91,6 +91,7 @@ namespace Inner_Maps.Location_Structures {
             currentHP = data.currentHP;
             SetInteriorState(data.isInterior);
             maxResidentCapacity = 5;
+            hasBeenDestroyed = data.hasBeenDestroyed;
         }
 
         #region Loading

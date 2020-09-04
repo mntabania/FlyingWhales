@@ -63,13 +63,23 @@ public class MapGenerationFinalization : MapGenerationComponent {
 	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteFeatureInitialActions());
+		yield return MapGenerator.Instance.StartCoroutine(ExecuteLoadedFeatureInitialActions());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();
 			region.HideBorders();
 		}
 		yield return null;
+	}
+	private IEnumerator ExecuteLoadedFeatureInitialActions() {
+		for (int i = 0; i < GridMap.Instance.normalHexTiles.Count; i++) {
+			HexTile tile = GridMap.Instance.normalHexTiles[i];
+			for (int j = 0; j < tile.featureComponent.features.Count; j++) {
+				TileFeature feature = tile.featureComponent.features[j];
+				feature.LoadedGameStartActions(tile);
+			}
+			yield return null;
+		}
 	}
 	#endregion
 	

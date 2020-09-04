@@ -274,6 +274,9 @@ namespace Ruinarch {
             if (UIManager.Instance == null) {
                 return true;
             }
+            if (SaveManager.Instance != null && SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+                return true;
+            }
             // if (PlayerManager.Instance == null) {
             //     return true;
             // }

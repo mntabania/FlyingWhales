@@ -1,62 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Traits;
 using UnityEngine;
-
-public class Psychopathy : PlayerSpell {
-
-    public Psychopathy() : base(SPELL_TYPE.PSYCHOPATHY) {
-        tier = 1;
-        SetDefaultCooldownTime(24);
-        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
-        //abilityTags.Add(ABILITY_TAG.NONE);
-    }
-
-    #region Overrides
-    public override void ActivateAction(IPointOfInterest targetPOI) {
-        if (targetPOI is Character) {
-            Character currTarget = targetPOI as Character;
-            if (CanPerformActionTowards(currTarget)) {
-                Trait newTrait = new Psychopath();
-                newTrait.InitializeInstancedTrait();
-                currTarget.traitContainer.AddTrait(currTarget, newTrait);
-            }
-            base.ActivateAction(targetPOI);
-        }
-    }
-    protected override bool CanPerformActionTowards(Character targetCharacter) {
-        if (targetCharacter.isDead) {
-            return false;
-        }
-        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Beast") /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
-            return false;
-        }
-        if (targetCharacter.traitContainer.HasTrait("Psychopath")) {
-            return false;
-        }
-        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-        //    return false;
-        //}
-        return base.CanPerformActionTowards(targetCharacter);
-    }
-    #endregion
-
-    private bool CanTarget(Character targetCharacter) {
-        if (targetCharacter.isDead) {
-            return false;
-        }
-        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Beast") /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
-            return false;
-        }
-        if (targetCharacter.traitContainer.HasTrait("Psychopath")) {
-            return false;
-        }
-        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
-        //    return false;
-        //}
-        return true;
-    }
-}
 
 public class PsychopathyData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.PSYCHOPATHY;

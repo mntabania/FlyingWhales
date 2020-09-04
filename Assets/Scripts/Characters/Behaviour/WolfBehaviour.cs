@@ -94,8 +94,7 @@ public class WolfBehaviour : CharacterBehaviourComponent {
                 .ToList();
             if (choices.Count > 0) {
                 HexTile tileWithGameFeature = choices[0];
-                Hunting hunting = new Hunting();
-                hunting.InitializeInstancedTrait();
+                Hunting hunting = TraitManager.Instance.CreateNewInstancedTraitClass<Hunting>("Hunting");
                 hunting.SetTargetTile(tileWithGameFeature);
                 character.traitContainer.AddTrait(character, hunting);
                 log += $"\n-Found valid hunting spot at {tileWithGameFeature}";

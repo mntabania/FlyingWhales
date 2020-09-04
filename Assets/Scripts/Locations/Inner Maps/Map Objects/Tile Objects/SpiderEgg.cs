@@ -4,7 +4,6 @@ using Locations.Settlements;
 public class SpiderEgg : MonsterEgg {
 
     public SpiderEgg() : base(TILE_OBJECT_TYPE.SPIDER_EGG, SUMMON_TYPE.Giant_Spider, GameManager.Instance.GetTicksBasedOnHour(1)) { }
-
     public SpiderEgg(SaveDataTileObject data) : base(data) { }
     
     #region Overrides
@@ -39,3 +38,4 @@ public class SpiderEgg : MonsterEgg {
     #endregion
 
 }
+public class SaveDataSpiderEgg : SaveDataMonsterEgg { }

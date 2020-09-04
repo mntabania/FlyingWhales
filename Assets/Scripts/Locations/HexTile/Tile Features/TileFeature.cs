@@ -11,6 +11,12 @@
 		public virtual void GameStartActions(HexTile tile) { }
 		#endregion
 
+		#region Loading
+		public virtual void LoadedGameStartActions(HexTile tile) {
+			GameStartActions(tile); //by default features will behave the same as normal when loaded, override this if specific feature has a specific implementation for loading
+		}
+		#endregion
+
 	}
 	
 	public class SaveDataTileFeature {

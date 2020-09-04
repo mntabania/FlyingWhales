@@ -50,6 +50,9 @@ namespace Locations.Tile_Features {
                 }
             }
         }
+        public override void LoadedGameStartActions(HexTile tile) {
+            //Do not do anything when loading a saved game. Since animals are saved and loaded elsewhere.
+        }
         public override void OnRemoveFeature(HexTile tile) {
             base.OnRemoveFeature(tile);
             Messenger.RemoveListener(Signals.HOUR_STARTED, TryGeneratePerHour);

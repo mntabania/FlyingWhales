@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Newtonsoft.Json;
@@ -13,6 +14,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     public const string savedCurrentProgressFileName = "SAVED_CURRENT_PROGRESS";
     public SaveDataCurrentProgress currentSaveDataProgress { get; private set; }
 
+    public bool isSaving { get; private set; }
     public string currentSaveDataPath { get; private set; }
     
     #region getters
@@ -24,34 +26,89 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataProgress.AddToSaveHub(data);
     }
     public bool CanSaveCurrentProgress() {
-        return !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial || TutorialManager.Instance.hasCompletedImportantTutorials);
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
+            return false;
+        }
+        if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial && !TutorialManager.Instance.hasCompletedImportantTutorials) {
+            return false;
+        }
+        if (!GameManager.Instance.gameHasStarted) {
+            return false;
+        }
+        return true;
     }
     public void DoManualSave(string fileName = "") {
+        StartCoroutine(SaveCoroutine(fileName));
+        // isSaving = true;
+        // Stopwatch loadingWatch = new Stopwatch();
+        // loadingWatch.Start();
+        // currentSaveDataProgress = new SaveDataCurrentProgress();
+        // currentSaveDataProgress.Initialize();
+        // //date
+        // currentSaveDataProgress.SaveDate();
+        // currentSaveDataProgress.SaveWorldSettings();
+        // currentSaveDataProgress.SavePlayer();
+        // currentSaveDataProgress.SaveFactions();
+        // currentSaveDataProgress.SaveCharacters();
+        // currentSaveDataProgress.SaveJobs();
+        //
+        // //save world map
+        // WorldMapSave worldMapSave = new WorldMapSave();
+        // worldMapSave.SaveWorld(
+        //     WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
+        //     DatabaseManager.Instance.hexTileDatabase,
+        //     DatabaseManager.Instance.regionDatabase,
+        //     DatabaseManager.Instance.settlementDatabase,
+        //     DatabaseManager.Instance.structureDatabase
+        // );
+        // currentSaveDataProgress.worldMapSave = worldMapSave;
+        // currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
+        // currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
+        //
+        //
+        // if (string.IsNullOrEmpty(fileName)) {
+        //     // fileName = savedCurrentProgressFileName;
+        //     string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
+        //     fileName = $"{timeStampStr}_{worldMapSave.worldType.ToString()}_Day{currentSaveDataProgress.day.ToString()}";
+        // }
+        //
+        // string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
+        //
+        // SaveGame.Save(path, currentSaveDataProgress);
+        // //SaveData(path, currentSaveDataProgress);
+        //
+        // Debug.Log($"Saved new game at {path}");
+        // loadingWatch.Stop();
+        // Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+        // loadingWatch = null;
+        // isSaving = false;
+    }
+    private IEnumerator SaveCoroutine(string fileName) {
+        isSaving = true;
+        UIManager.Instance.optionsMenu.ShowSaveLoading();
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving current progress");
         Stopwatch loadingWatch = new Stopwatch();
         loadingWatch.Start();
         currentSaveDataProgress = new SaveDataCurrentProgress();
         currentSaveDataProgress.Initialize();
-        //date
         currentSaveDataProgress.SaveDate();
         currentSaveDataProgress.SaveWorldSettings();
         currentSaveDataProgress.SavePlayer();
-        currentSaveDataProgress.SaveFactions();
-        currentSaveDataProgress.SaveCharacters();
-        currentSaveDataProgress.SaveJobs();
+        yield return null;
+        yield return StartCoroutine(currentSaveDataProgress.SaveFactionsCoroutine());
+        yield return StartCoroutine(currentSaveDataProgress.SaveCharactersCoroutine());
+        yield return StartCoroutine(currentSaveDataProgress.SaveJobsCoroutine());
 
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();
-        worldMapSave.SaveWorld(
-            WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
-            DatabaseManager.Instance.hexTileDatabase,
-            DatabaseManager.Instance.regionDatabase,
-            DatabaseManager.Instance.settlementDatabase,
-            DatabaseManager.Instance.structureDatabase
-        );
+        yield return StartCoroutine(worldMapSave.SaveWorldCoroutine(WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate, DatabaseManager.Instance.hexTileDatabase,
+            DatabaseManager.Instance.regionDatabase, DatabaseManager.Instance.settlementDatabase, DatabaseManager.Instance.structureDatabase));
         currentSaveDataProgress.worldMapSave = worldMapSave;
-        currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
+        yield return StartCoroutine(currentSaveDataProgress.SaveTileObjectsCoroutine());
         currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
 
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Finalizing...");
+        yield return new WaitForSeconds(0.5f);
 
         if (string.IsNullOrEmpty(fileName)) {
             // fileName = savedCurrentProgressFileName;
@@ -60,14 +117,27 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
 
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
+        filePath = path;
+        var thread = new Thread(SaveCurrentDataToFile);
+        thread.Start();
 
-        SaveGame.Save(path, currentSaveDataProgress);
-        //SaveData(path, currentSaveDataProgress);
+        while (thread.IsAlive) {
+            yield return null;
+        }
+        thread = null;
+        
 
         Debug.Log($"Saved new game at {path}");
         loadingWatch.Stop();
         Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         loadingWatch = null;
+        yield return null;
+        UIManager.Instance.optionsMenu.HideSaveLoading();
+        isSaving = false;
+    }
+    private string filePath;
+    private void SaveCurrentDataToFile() {
+        SaveGame.Save(filePath, currentSaveDataProgress);
     }
     #endregion
 

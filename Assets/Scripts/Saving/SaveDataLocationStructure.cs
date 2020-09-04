@@ -22,6 +22,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string settlementLocationID;
     public bool isInterior;
     public SaveDataStructureRoom[] structureRoomSaveData;
+    public bool hasBeenDestroyed;
 
     public override void Save(LocationStructure structure) {
         persistentID = structure.persistentID;
@@ -75,6 +76,8 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
                 structureRoomSaveData[i] = saveDataStructureRoom;
             }
         }
+
+        hasBeenDestroyed = structure.hasBeenDestroyed;
     }
     public LocationStructure InitialLoad(Region region) {
         return LandmarkManager.Instance.LoadNewStructureAt(region, structureType, this);
@@ -95,12 +98,18 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
         Assert.IsNotNull(manMadeStructure);
+
+        if (manMadeStructure.hasBeenDestroyed) {
+            structureTemplateName = string.Empty;
+            structureObjectWorldPosition = Vector3.zero;
+        } else {
+            //structure object
+            string templateName = manMadeStructure.structureObj.name;
+            templateName = templateName.Replace("(Clone)", "");
+            structureTemplateName = templateName;
+            structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;    
+        }
         
-        //structure object
-        string templateName = manMadeStructure.structureObj.name;
-        templateName = templateName.Replace("(Clone)", "");
-        structureTemplateName = templateName;
-        structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;
         
         //walls
         if (manMadeStructure.structureWalls != null) {
@@ -126,10 +135,15 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
         DemonicStructure demonicStructure = locationStructure as DemonicStructure;
         Assert.IsNotNull(demonicStructure);
         
-        //structure object
-        string templateName = demonicStructure.structureObj.name;
-        templateName = templateName.Replace("(Clone)", "");
-        structureTemplateName = templateName;
-        structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+        if (demonicStructure.hasBeenDestroyed) {
+            structureTemplateName = string.Empty;
+            structureObjectWorldPosition = Vector3.zero;
+        } else {
+            //structure object
+            string templateName = demonicStructure.structureObj.name;
+            templateName = templateName.Replace("(Clone)", "");
+            structureTemplateName = templateName;
+            structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+        }
     }
 }

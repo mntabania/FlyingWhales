@@ -52,7 +52,7 @@ namespace Traits {
         public static bool CanAddTrait(ITraitable obj, string traitName, ITraitContainer traitContainer) {
             Trait trait;
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
+                trait = TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName);
             } else {
                 Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName),
                     $"No key for trait {traitName}");

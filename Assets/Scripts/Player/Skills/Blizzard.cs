@@ -3,15 +3,6 @@ using Inner_Maps;
 using Locations.Tile_Features;
 using UnityEngine;
 
-public class Blizzard : PlayerSpell {
-
-    public Blizzard() : base(SPELL_TYPE.BLIZZARD) {
-        SetDefaultCooldownTime(24);
-        targetTypes = new[] { SPELL_TARGET.HEX };
-        tier = 1;
-    }
-}
-
 public class BlizzardData : SpellData {
     public override SPELL_TYPE type => SPELL_TYPE.BLIZZARD;
     public override string name => "Blizzard";

@@ -25,7 +25,7 @@ namespace Traits {
             base.LoadInstancedTrait(saveDataTrait);
             SaveDataHunting saveDataHunting = saveDataTrait as SaveDataHunting;
             Assert.IsNotNull(saveDataHunting);
-            targetTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHunting.persistentID);
+            targetTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHunting.targetTileID);
         }
         #endregion
 

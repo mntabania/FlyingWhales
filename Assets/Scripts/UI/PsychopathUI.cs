@@ -174,7 +174,7 @@ public class PsychopathUI : PopupMenuBase {
         SetVictimType2(SERIAL_VICTIM_TYPE.None);
     }
     public void OnClickConfirm() {
-        Psychopath psychopathTrait = new Psychopath();
+        Psychopath psychopathTrait = TraitManager.Instance.CreateNewInstancedTraitClass<Psychopath>("Psychopath");
         character.traitContainer.AddTrait(character, psychopathTrait);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

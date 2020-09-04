@@ -139,6 +139,7 @@ namespace Inner_Maps {
             for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
                 SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];
                 LocationGridTile tile = saveDataLocationGridTile.InitialLoad(groundTilemap, this, saveData);
+                groundTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
                 tile.SetStructure(wilderness);
                 allTiles.Add(tile);
                 if (tile.IsAtEdgeOfWalkableMap()) {
