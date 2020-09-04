@@ -119,14 +119,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SetPOIState(data.poiState);
         CreateTraitContainer();
         LoadResources(data);
-        if (data.advertisedActions != null) {
-            for (int i = 0; i < data.advertisedActions.Length; i++) {
-                INTERACTION_TYPE interactionType = data.advertisedActions[i];
-                AddAdvertisedAction(interactionType);
-            }    
-        } else {
-            advertisedActions = new List<INTERACTION_TYPE>();
-        }
+
+        advertisedActions = data.advertisedActions;
+        //if (data.advertisedActions != null) {
+        //    for (int i = 0; i < data.advertisedActions.Length; i++) {
+        //        INTERACTION_TYPE interactionType = data.advertisedActions[i];
+        //        AddAdvertisedAction(interactionType);
+        //    }    
+        //} else {
+        //    advertisedActions = new List<INTERACTION_TYPE>();
+        //}
         
         ConstructDefaultActions();
 
@@ -1035,13 +1037,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         ConstructMaxResources();
     }
     public void LoadResources(SaveDataTileObject saveDataTileObject) {
-        Assert.IsTrue(saveDataTileObject.resourceValues.Length == 4, $"Resource values in {this} save data is inconsistent with actual resource dictionary");
-        storedResources = new Dictionary<RESOURCE, int>() {
-            { RESOURCE.FOOD, saveDataTileObject.resourceValues[0] },
-            { RESOURCE.WOOD, saveDataTileObject.resourceValues[1] },
-            { RESOURCE.STONE, saveDataTileObject.resourceValues[2] },
-            { RESOURCE.METAL, saveDataTileObject.resourceValues[3] },
-        };
+        storedResources = saveDataTileObject.storedResources;
+        //Assert.IsTrue(saveDataTileObject.resourceValues.Length == 4, $"Resource values in {this} save data is inconsistent with actual resource dictionary");
+        //storedResources = new Dictionary<RESOURCE, int>() {
+        //    { RESOURCE.FOOD, saveDataTileObject.resourceValues[0] },
+        //    { RESOURCE.WOOD, saveDataTileObject.resourceValues[1] },
+        //    { RESOURCE.STONE, saveDataTileObject.resourceValues[2] },
+        //    { RESOURCE.METAL, saveDataTileObject.resourceValues[3] },
+        //};
         ConstructMaxResources();
     }
     protected virtual void ConstructMaxResources() {
