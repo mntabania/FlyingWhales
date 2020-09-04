@@ -637,9 +637,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CreateMarker();
             }
             marker.LoadMarkerPlacement(data, _currentRegion);
-            //Do updating hidden state here because the marker must be created first
-            OnSetIsHidden();
-            reactionComponent.UpdateHiddenState();
 
             //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
             carryComponent.LoadCarryReference(data.carryComponent);
@@ -649,6 +646,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
         visuals.UpdateAllVisuals(this);
+        //Do updating hidden state here because the marker must be created first and visuals must be updated
+        OnSetIsHidden();
+        reactionComponent.UpdateHiddenState();
+
         //Load character traits after all references and visuals and objects of character has been placed since
         LoadCharacterTraitsFromSave(data);
         SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
