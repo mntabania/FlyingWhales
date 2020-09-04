@@ -599,7 +599,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
         jobQueue.LoadReferences(data);
-        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
         needsComponent.LoadReferences(data.needsComponent);
         buildStructureComponent.LoadReferences(data.buildStructureComponent);
         stateComponent.LoadReferences(data.stateComponent);
@@ -619,6 +618,34 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         partyComponent.LoadReferences(data.partyComponent);
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
+
+        //Place marker after loading references
+        if (data.hasMarker) {
+            if (!marker) {
+                CreateMarker();
+            }
+            marker.LoadMarkerPlacement(data, _currentRegion);
+            //Do updating hidden state here because the marker must be created first
+            OnSetIsHidden();
+            reactionComponent.UpdateHiddenState();
+
+            //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
+            carryComponent.LoadCarryReference(data.carryComponent);
+
+            if (currentActionNode != null && currentActionNode.poiTarget is TileObject target) {
+                target.OnDoActionToObject(currentActionNode);
+            }
+        }
+        visuals.UpdateAllVisuals(this);
+        //Load character traits after all references and visuals and objects of character has been placed since
+        LoadCharacterTraitsFromSave(data);
+        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
+        if (marker) {
+            marker.UpdateAnimation();
+        }
+        SubscribeToSignals();
+    }
+    protected void LoadCharacterTraitsFromSave(SaveDataCharacter data) {
         traitContainer.Load(this, data.saveDataTraitContainer);
 
         //This must be reapplied after loading traits because when a trait is loaded the values will also be adjusted
@@ -639,29 +666,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (traitContainer.HasTrait("Necromancer")) {
             necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
         }
-
-        //Place marker after loading references
-        if (data.hasMarker) {
-            if (!marker) {
-                CreateMarker();
-            }
-            marker.LoadMarkerPlacement(data, _currentRegion);
-            //Do updating hidden state here because the marker must be created first
-            OnSetIsHidden();
-            reactionComponent.UpdateHiddenState();
-
-            //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
-            carryComponent.LoadCarryReference(data.carryComponent);
-
-            if (currentActionNode != null && currentActionNode.poiTarget is TileObject target) {
-                target.OnDoActionToObject(currentActionNode);
-            }
-        }
-        visuals.UpdateAllVisuals(this);
-        if (marker) {
-            marker.UpdateAnimation();
-        }
-        SubscribeToSignals();
     }
     #endregion
 

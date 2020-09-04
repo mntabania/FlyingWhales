@@ -62,9 +62,7 @@ namespace Traits {
                     }
                 }
 
-                if (character.marker) {
-                    character.marker.visionCollider.VoteToUnFilterVision();
-                }
+                character.marker.visionCollider.VoteToUnFilterVision();
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
             }
         }

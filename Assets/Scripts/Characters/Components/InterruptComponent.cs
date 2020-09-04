@@ -315,6 +315,7 @@ public class InterruptComponent : CharacterComponent {
         }
         if (!string.IsNullOrEmpty(data.triggeredSimultaneousInterruptID)) {
             triggeredSimultaneousInterrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.triggeredSimultaneousInterruptID);
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
         }
     }
     #endregion
