@@ -92,11 +92,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     public void LoadRuler(string rulerID) {
-        if (!string.IsNullOrEmpty(rulerID)) {
-            ruler = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(rulerID);
-        } else {
-            ruler = null;
-            Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
+        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+            //only load rulers if location type is settlement
+            if (!string.IsNullOrEmpty(rulerID)) {
+                ruler = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(rulerID);
+            } else {
+                ruler = null;
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewRulerDesignation);
+            }    
         }
     }
     public void LoadResidents(SaveDataBaseSettlement data) {

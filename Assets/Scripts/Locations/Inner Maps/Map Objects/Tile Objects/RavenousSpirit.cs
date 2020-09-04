@@ -41,6 +41,7 @@ public class RavenousSpirit : TileObject {
         UpdateSpeed();
         _spiritGO.SetIsRoaming(true);
         GoToRandomTileInRadius();
+        _spiritGO.SetRegion(gridTileLocation.parentMap.region);
     }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();

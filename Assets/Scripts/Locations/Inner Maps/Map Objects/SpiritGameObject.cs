@@ -174,6 +174,12 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
             if (GameManager.Instance.isPaused) {
                 return;
             }
+            if (region == null) {
+                return;
+            }
+            if (GameManager.Instance.gameHasStarted == false) {
+                return;
+            }
             obj.SetGridTileLocation(GetLocationGridTileByXy(Mathf.FloorToInt(transform.localPosition.x), Mathf.FloorToInt(transform.localPosition.y)));
             
             float distCovered = (Time.time - _startTime) * speed;
