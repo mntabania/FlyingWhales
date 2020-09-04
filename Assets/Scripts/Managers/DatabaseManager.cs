@@ -68,12 +68,6 @@ public class DatabaseManager : MonoBehaviour {
         partyDatabase.allParties.Clear();
         crimeDatabase.allCrimes.Clear();
 
-        actionDatabase = null;
-        interruptDatabase = null;
-        logDatabase = null;
-        partyDatabase = null;
-        crimeDatabase = null;
-
         System.GC.Collect();
     }
 }
