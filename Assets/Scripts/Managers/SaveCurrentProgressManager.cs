@@ -7,8 +7,8 @@ using System.IO;
 using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
-using Newtonsoft.Json;
 using Tutorial;
+using GameDevWare.Serialization;
 using Debug = UnityEngine.Debug;
 
 public class SaveCurrentProgressManager : MonoBehaviour {
@@ -161,9 +161,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
         Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-        string json = JsonConvert.SerializeObject(obj);
+        var stream = new MemoryStream();
+        MsgPack.Serialize(obj, stream);
 
-        File.WriteAllText(filePath, json);
+        File.WriteAllBytes(filePath, stream.ToArray());
 
     }
     public T LoadData<T>(string identifier) {
@@ -176,9 +177,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         } else {
             throw new System.Exception("identifier is not a file path!");
         }
-        string data = File.ReadAllText(filePath);
+        MemoryStream data = new MemoryStream(File.ReadAllBytes(filePath));
 
-        T convertedObj = JsonConvert.DeserializeObject<T>(data);
+        //Stream stream;
+        T convertedObj = MsgPack.Deserialize<T>(data);
 
         return convertedObj;
     }

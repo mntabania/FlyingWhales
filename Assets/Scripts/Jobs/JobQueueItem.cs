@@ -116,6 +116,7 @@ public abstract class JobQueueItem : ISavable {
             if (canTakeJobChecker.CanTakeJob(character, this)) {
                 return CanTakeJob(character);
             }
+            return false;
         }
         // if(canTakeThis != null) {
         //     if (canTakeThis(character)) {

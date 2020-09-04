@@ -65,7 +65,7 @@ public class DropResource : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is ResourcePile) {
             return true;
         }

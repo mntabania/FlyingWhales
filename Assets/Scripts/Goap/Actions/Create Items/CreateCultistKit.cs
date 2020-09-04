@@ -35,10 +35,10 @@ public class CreateCultistKit : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool HasWood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasWood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) is ResourcePile pile && pile.resourceInPile >= TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).constructionCost; 
     }
-    private bool HasStone(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasStone(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && pile.resourceInPile >= TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.CULTIST_KIT).constructionCost; 
     }
     #endregion
