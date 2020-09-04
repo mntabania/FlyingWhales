@@ -55,11 +55,11 @@ namespace UtilityScripts {
                 _lastLandmarkID += 1;
                 return _lastLandmarkID;
             }
-            if (obj is Faction || obj is SampleSaveFaction) {
+            if (obj is Faction) {
                 _lastFactionID += 1;
                 return _lastFactionID;
             }
-            if (obj is Character || obj is PreCharacterData || obj is SampleSaveCharacter) {
+            if (obj is Character || obj is PreCharacterData) {
                 _lastCharacterID += 1;
                 return _lastCharacterID;
             }

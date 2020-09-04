@@ -66,7 +66,7 @@ public class RepairStructure : GoapAction {
     #endregion
     
     #region Preconditions
-    private bool HasResource(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasResource(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         StructureTileObject tileObj = poiTarget as StructureTileObject;
         Assert.IsNotNull(tileObj, $"Target of repair is not Structure Tile Object! {poiTarget}");
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);

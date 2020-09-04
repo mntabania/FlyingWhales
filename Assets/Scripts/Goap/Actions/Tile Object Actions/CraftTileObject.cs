@@ -139,15 +139,15 @@ public class CraftTileObject : GoapAction {
     private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, string itemName) {
         return actor.IsPOICarriedOrInInventory(itemName);
     }
-    private bool HasWood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasWood(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.WOOD_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
     }
-    private bool HasStone(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasStone(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.STONE_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
     }
-    private bool HasMetal(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool HasMetal(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return poiTarget is TileObject tileObject && actor.GetItem(TILE_OBJECT_TYPE.METAL_PILE) is ResourcePile pile && 
                pile.resourceInPile >= TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost; 
     }

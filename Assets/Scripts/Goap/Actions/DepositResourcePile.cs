@@ -144,7 +144,7 @@ public class DepositResourcePile : GoapAction {
     //private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    return actor.food > 0;
     //}
-    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.IsPOICarriedOrInInventory(poiTarget);
     }
     #endregion

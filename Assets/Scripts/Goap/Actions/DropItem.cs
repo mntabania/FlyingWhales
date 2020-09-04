@@ -66,7 +66,7 @@ public class DropItem : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
+    private bool IsItemInInventory(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
         return actor.HasItem(poiTarget as TileObject);
     }
     #endregion

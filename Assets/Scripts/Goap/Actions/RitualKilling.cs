@@ -138,24 +138,24 @@ public class RitualKilling : GoapAction {
         }
         return false;
     }
-    private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
+    private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         if(target is Character && otherData != null) {
             Character targetCharacter = target as Character;
             bool isSatisfied = false;
             if(otherData.Length == 1) {
-                if(otherData[0] is HexTile hex) {
-                    isSatisfied = targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex;
-                } else if (otherData[0] is LocationStructure structure) {
-                    isSatisfied = targetCharacter.currentStructure == structure;
-                } else if (otherData[0] is LocationGridTile gridTile) {
-                    isSatisfied = targetCharacter.gridTileLocation == gridTile;
+                if(otherData[0] is HexTileOtherData hex) {
+                    isSatisfied = targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex.hexTile;
+                } else if (otherData[0] is LocationStructureOtherData structure) {
+                    isSatisfied = targetCharacter.currentStructure == structure.locationStructure;
+                } else if (otherData[0] is LocationGridTileOtherData gridTile) {
+                    isSatisfied = targetCharacter.gridTileLocation == gridTile.tile;
                 }
             }
             return targetCharacter.carryComponent.IsNotBeingCarried() && targetCharacter.traitContainer.HasTrait("Restrained") && isSatisfied; //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
         }
         return false;
     }
-    private bool HasRestrained(Character actor, IPointOfInterest target, object[] otherData, JOB_TYPE jobType) {
+    private bool HasRestrained(Character actor, IPointOfInterest target, OtherData[] otherData, JOB_TYPE jobType) {
         return target.traitContainer.HasTrait("Restrained");
     }
     #endregion

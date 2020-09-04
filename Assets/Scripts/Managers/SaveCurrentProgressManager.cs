@@ -6,8 +6,8 @@ using System.IO;
 using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
-using Newtonsoft.Json;
 using Tutorial;
+using GameDevWare.Serialization;
 using Debug = UnityEngine.Debug;
 
 public class SaveCurrentProgressManager : MonoBehaviour {
@@ -39,49 +39,49 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     public void DoManualSave(string fileName = "") {
         StartCoroutine(SaveCoroutine(fileName));
-        // isSaving = true;
-        // Stopwatch loadingWatch = new Stopwatch();
-        // loadingWatch.Start();
-        // currentSaveDataProgress = new SaveDataCurrentProgress();
-        // currentSaveDataProgress.Initialize();
-        // //date
-        // currentSaveDataProgress.SaveDate();
-        // currentSaveDataProgress.SaveWorldSettings();
-        // currentSaveDataProgress.SavePlayer();
-        // currentSaveDataProgress.SaveFactions();
-        // currentSaveDataProgress.SaveCharacters();
-        // currentSaveDataProgress.SaveJobs();
-        //
-        // //save world map
-        // WorldMapSave worldMapSave = new WorldMapSave();
-        // worldMapSave.SaveWorld(
-        //     WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
-        //     DatabaseManager.Instance.hexTileDatabase,
-        //     DatabaseManager.Instance.regionDatabase,
-        //     DatabaseManager.Instance.settlementDatabase,
-        //     DatabaseManager.Instance.structureDatabase
-        // );
-        // currentSaveDataProgress.worldMapSave = worldMapSave;
-        // currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
-        // currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
-        //
-        //
-        // if (string.IsNullOrEmpty(fileName)) {
-        //     // fileName = savedCurrentProgressFileName;
-        //     string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
-        //     fileName = $"{timeStampStr}_{worldMapSave.worldType.ToString()}_Day{currentSaveDataProgress.day.ToString()}";
-        // }
-        //
-        // string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
-        //
-        // SaveGame.Save(path, currentSaveDataProgress);
-        // //SaveData(path, currentSaveDataProgress);
-        //
-        // Debug.Log($"Saved new game at {path}");
-        // loadingWatch.Stop();
-        // Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-        // loadingWatch = null;
-        // isSaving = false;
+        //// isSaving = true;
+        //Stopwatch loadingWatch = new Stopwatch();
+        //loadingWatch.Start();
+        //currentSaveDataProgress = new SaveDataCurrentProgress();
+        //currentSaveDataProgress.Initialize();
+        ////date
+        //currentSaveDataProgress.SaveDate();
+        //currentSaveDataProgress.SaveWorldSettings();
+        //currentSaveDataProgress.SavePlayer();
+        //currentSaveDataProgress.SaveFactions();
+        //currentSaveDataProgress.SaveCharacters();
+        //currentSaveDataProgress.SaveJobs();
+
+        ////save world map
+        //WorldMapSave worldMapSave = new WorldMapSave();
+        //worldMapSave.SaveWorld(
+        //    WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
+        //    DatabaseManager.Instance.hexTileDatabase,
+        //    DatabaseManager.Instance.regionDatabase,
+        //    DatabaseManager.Instance.settlementDatabase,
+        //    DatabaseManager.Instance.structureDatabase
+        //);
+        //currentSaveDataProgress.worldMapSave = worldMapSave;
+        //currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
+        //currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
+
+
+        //if (string.IsNullOrEmpty(fileName)) {
+        //    // fileName = savedCurrentProgressFileName;
+        //    string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
+        //    fileName = $"{timeStampStr}_{worldMapSave.worldType.ToString()}_Day{currentSaveDataProgress.day.ToString()}";
+        //}
+
+        //string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
+
+        ////SaveGame.Save(path, currentSaveDataProgress);
+        //SaveData(path, currentSaveDataProgress);
+
+        //Debug.Log($"Saved new game at {path}");
+        //loadingWatch.Stop();
+        //Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+        //loadingWatch = null;
+        //isSaving = false;
     }
     private IEnumerator SaveCoroutine(string fileName) {
         isSaving = true;
@@ -181,9 +181,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
         Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-        string json = JsonConvert.SerializeObject(obj);
+        var stream = new MemoryStream();
+        MsgPack.Serialize(obj, stream);
 
-        File.WriteAllText(filePath, json);
+        File.WriteAllBytes(filePath, stream.ToArray());
 
     }
     public T LoadData<T>(string identifier) {
@@ -196,9 +197,10 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         } else {
             throw new System.Exception("identifier is not a file path!");
         }
-        string data = File.ReadAllText(filePath);
+        MemoryStream data = new MemoryStream(File.ReadAllBytes(filePath));
 
-        T convertedObj = JsonConvert.DeserializeObject<T>(data);
+        //Stream stream;
+        T convertedObj = MsgPack.Deserialize<T>(data);
 
         return convertedObj;
     }
