@@ -25,11 +25,11 @@ public class PangatLooPortalAttackerBehaviour : CharacterBehaviourComponent {
                     return true;
                 } else {
                     log += "\n-No tile object that contribute damage/target structure is destroyed, go home";
-                    return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                    return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 }
             } else {
                 log += "\n-No tile object that contribute damage/target structure is destroyed, go home";
-                return character.jobComponent.PlanIdleReturnHome(out producedJob);
+                return character.jobComponent.TriggerRoamAroundStructure(out producedJob);
             }
         } else {
             log += $"\n-character is not yet at portal, will go there now...";

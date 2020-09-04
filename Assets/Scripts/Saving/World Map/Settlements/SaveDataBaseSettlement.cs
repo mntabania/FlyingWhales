@@ -14,6 +14,7 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
     public string name;
     public List<Point> tileCoordinates;
     public string factionOwnerID;
+    public List<string> residents;
 
     public string persistentID => _persistentID;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -23,6 +24,8 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
         id = baseSettlement.id;
         locationType = baseSettlement.locationType;
         name = baseSettlement.name;
+
+        residents = SaveUtilities.ConvertSavableListToIDs(baseSettlement.residents); 
 
         factionOwnerID = baseSettlement.owner != null ? baseSettlement.owner.persistentID : string.Empty;
         
