@@ -43,6 +43,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         hasStartedScreamCheck = data.hasStartedScreamCheck;
         doNotDoRecoverHPJob = data.doNotDoRecoverHPJob;
         canReportDemonicStructure = data.canReportDemonicStructure;
+        if (!canReportDemonicStructure) {
+	        //make character listen to this so that he/she can report again after reaching home
+	        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, TryEnableReportStructure);
+        }
     }
 
     public void SetOwner(Character owner) {
@@ -1716,7 +1720,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if(owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
             return CreateReportCrimeJob(crimeData, crime);
         } else {
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_not_report");
+            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
