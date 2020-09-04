@@ -6053,7 +6053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1883049411}
+  m_Material: {fileID: 1108883800}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -6063,7 +6063,7 @@ MonoBehaviour:
   m_fontAsset: {fileID: 11400000, guid: a0d8948b3ccafa2479b8a2f54583dc3e, type: 2}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 1883049411}
+  m_sharedMaterial: {fileID: 1108883800}
   m_isDefaultMaterial: 0
   m_padding: 0
   m_canvasRenderer: {fileID: 116444727}
@@ -9624,18 +9624,6 @@ MonoBehaviour:
         m_CallState: 2
   isHovering: 0
   wasHoveringPreviousFrame: 0
---- !u!114 &196280312 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114463785942511158, guid: 2be416cbf90dc404e83bfff8fb5062f8,
-    type: 3}
-  m_PrefabInstance: {fileID: 423183189}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2964bc60184463d419daae30e8448176, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &196280313 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224218994756624308, guid: 2be416cbf90dc404e83bfff8fb5062f8,
@@ -14275,7 +14263,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -37048,11 +37036,6 @@ MonoBehaviour:
   _generalConfirmation: {fileID: 426009156}
   actionBtnPrefab: {fileID: 1407515856224950, guid: 0c64f5050d08386459366dc1cbd0f055,
     type: 3}
-  replaceUI: {fileID: 145692321}
-  levelUpUI: {fileID: 1165945287}
-  newAbilityUI: {fileID: 196280312}
-  newMinionAbilityUI: {fileID: 1390232343}
-  researchInterventionAbilityUI: {fileID: 1691796424}
   unleashSummonUI: {fileID: 562917009}
   skirmishConfirmationGO: {fileID: 0}
   saveGameButton: {fileID: 1978547267}
@@ -41734,7 +41717,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -0.34991455, y: 381.62997}
-  m_SizeDelta: {x: -288.71, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &681767371
 MonoBehaviour:
@@ -66817,6 +66800,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5738f1e9fdc91244c837a12f979a58f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!21 &1108883800
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Eczar-SemiBold(Hinted Smooth 24) Material
+  m_Shader: {fileID: 4800000, guid: 128e987d567d4e2c824d754223b3f3b0, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _FaceTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 28746909829028236, guid: a0d8948b3ccafa2479b8a2f54583dc3e,
+          type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ColorMask: 15
+    - _DiffusePower: 1
+    - _MaskSoftnessX: 0
+    - _MaskSoftnessY: 0
+    - _Padding: 0
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _VertexOffsetX: 0
+    - _VertexOffsetY: 0
+    m_Colors:
+    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1110822095
 GameObject:
   m_ObjectHideFlags: 0
@@ -69945,18 +69973,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 991595470}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1165945287 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114157306850243506, guid: c7e053731e6c5a6409f32fd3a60cbdea,
-    type: 3}
-  m_PrefabInstance: {fileID: 991595470}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc1f4a7e3ec7794b8ad5bcbaaabb252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1170746755
 GameObject:
   m_ObjectHideFlags: 0
@@ -78149,7 +78165,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1291172670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91129,7 +91145,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -114568,7 +114584,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1787269773
 RectTransform:
   m_ObjectHideFlags: 0
@@ -120708,51 +120724,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1881547873}
   m_CullTransparentMesh: 0
---- !u!21 &1883049411
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Eczar-SemiBold(Hinted Smooth 24) Material
-  m_Shader: {fileID: 4800000, guid: 128e987d567d4e2c824d754223b3f3b0, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _FaceTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 28746909829028236, guid: a0d8948b3ccafa2479b8a2f54583dc3e,
-          type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _ColorMask: 15
-    - _DiffusePower: 1
-    - _MaskSoftnessX: 0
-    - _MaskSoftnessY: 0
-    - _Padding: 0
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _VertexOffsetX: 0
-    - _VertexOffsetY: 0
-    m_Colors:
-    - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1883263893
 GameObject:
   m_ObjectHideFlags: 0
