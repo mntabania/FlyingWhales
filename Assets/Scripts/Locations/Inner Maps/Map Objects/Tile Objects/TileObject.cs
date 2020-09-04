@@ -146,13 +146,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         logComponent.LoadReferences(data.logComponent);
         for (int i = 0; i < data.jobsTargetingThis.Count; i++) {
             string jobID = data.jobsTargetingThis[i];
-            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
-            AddJobTargetingThis(job);
+            if (!string.IsNullOrEmpty(jobID)) {
+                JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
+                AddJobTargetingThis(job);    
+            }
         }
         for (int i = 0; i < data.existingJobsTargetingThis.Count; i++) {
             string jobID = data.existingJobsTargetingThis[i];
-            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
-            AddExistingJobTargetingThis(job);
+            if (!string.IsNullOrEmpty(jobID)) {
+                JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(jobID);
+                AddExistingJobTargetingThis(job);
+            }
         }
         SetMapObjectState(data.mapObjectState);
         if (!string.IsNullOrEmpty(data.characterOwnerID)) {
