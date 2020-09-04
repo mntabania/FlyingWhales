@@ -1263,7 +1263,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void HideYesNoConfirmation() {
         yesNoConfirmation.HideYesNoConfirmation();
-        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen()) {
+        if (!PlayerUI.Instance.TryShowPendingUI() && !IsObjectPickerOpen() && !optionsMenu.isShowing) {
             ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
         }
     }

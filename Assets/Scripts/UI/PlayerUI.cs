@@ -689,7 +689,7 @@ public class PlayerUI : BaseMonoBehaviour {
         allFilteredCharactersCount++;
         CharacterNameplateItem item = GetUnusedCharacterNameplateItem();
         if(item == null) {
-            CreateNewVillagerItem();
+            item = CreateNewVillagerItem();
         }
         item.SetObject(character);
         item.SetAsButton();

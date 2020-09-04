@@ -235,7 +235,7 @@ public class GameManager : MonoBehaviour {
             Messenger.Broadcast(Signals.UPDATE_UI);
         }
     }
-    public static string ConvertTickToTime(int tick) {
+    public static string ConvertTickToTime(int tick, string timeSeparator = ":") {
         float floatConversion = tick / (float) ticksPerHour;
         int hour = (int) floatConversion;
         int minutes = Mathf.RoundToInt(((floatConversion - hour) * 12) * 5);
@@ -249,7 +249,7 @@ public class GameManager : MonoBehaviour {
         if(hour == 0) {
             hour = 12;
         }
-        return $"{hour}:{minutes:D2} {timeOfDay}";
+        return $"{hour}{timeSeparator}{minutes:D2} {timeOfDay}";
     }
     public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
         if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {

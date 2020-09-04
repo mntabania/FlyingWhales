@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -39,49 +40,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
     }
     public void DoManualSave(string fileName = "") {
         StartCoroutine(SaveCoroutine(fileName));
-        // isSaving = true;
-        // Stopwatch loadingWatch = new Stopwatch();
-        // loadingWatch.Start();
-        // currentSaveDataProgress = new SaveDataCurrentProgress();
-        // currentSaveDataProgress.Initialize();
-        // //date
-        // currentSaveDataProgress.SaveDate();
-        // currentSaveDataProgress.SaveWorldSettings();
-        // currentSaveDataProgress.SavePlayer();
-        // currentSaveDataProgress.SaveFactions();
-        // currentSaveDataProgress.SaveCharacters();
-        // currentSaveDataProgress.SaveJobs();
-        //
-        // //save world map
-        // WorldMapSave worldMapSave = new WorldMapSave();
-        // worldMapSave.SaveWorld(
-        //     WorldConfigManager.Instance.mapGenerationData.chosenWorldMapTemplate,
-        //     DatabaseManager.Instance.hexTileDatabase,
-        //     DatabaseManager.Instance.regionDatabase,
-        //     DatabaseManager.Instance.settlementDatabase,
-        //     DatabaseManager.Instance.structureDatabase
-        // );
-        // currentSaveDataProgress.worldMapSave = worldMapSave;
-        // currentSaveDataProgress.SaveTileObjects(DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList);
-        // currentSaveDataProgress.familyTreeDatabase = DatabaseManager.Instance.familyTreeDatabase;
-        //
-        //
-        // if (string.IsNullOrEmpty(fileName)) {
-        //     // fileName = savedCurrentProgressFileName;
-        //     string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
-        //     fileName = $"{timeStampStr}_{worldMapSave.worldType.ToString()}_Day{currentSaveDataProgress.day.ToString()}";
-        // }
-        //
-        // string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
-        //
-        // SaveGame.Save(path, currentSaveDataProgress);
-        // //SaveData(path, currentSaveDataProgress);
-        //
-        // Debug.Log($"Saved new game at {path}");
-        // loadingWatch.Stop();
-        // Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-        // loadingWatch = null;
-        // isSaving = false;
     }
     private IEnumerator SaveCoroutine(string fileName) {
         isSaving = true;
@@ -113,7 +71,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         if (string.IsNullOrEmpty(fileName)) {
             // fileName = savedCurrentProgressFileName;
             string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
-            fileName = $"{timeStampStr}_{worldMapSave.worldType.ToString()}_Day{currentSaveDataProgress.day.ToString()}";
+            fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.day.ToString()}_{GameManager.ConvertTickToTime(currentSaveDataProgress.tick, "-")}_{timeStampStr}";
         }
 
         string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
@@ -154,14 +112,36 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         thread = null;
     }
     private void LoadDataFromPath(string path) {
-        currentSaveDataProgress = GetSaveFileData(currentSaveDataPath);
-    }
-    public SaveDataCurrentProgress LoadSaveDataCurrentProgress(string path) {
-        return GetSaveFileData(path);
+        currentSaveDataProgress = GetSaveFileData(path);
     }
     private SaveDataCurrentProgress GetSaveFileData(string path) {
         return SaveGame.Load<SaveDataCurrentProgress>(path);
-        //return LoadData<SaveDataCurrentProgress>(path);
+    }
+    public bool HasAnySaveFiles() {
+        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        return saveFiles.Length > 0;
+    }
+    public string GetLatestSaveFile() {
+        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        string latestFile = string.Empty;
+        for (int i = 0; i < saveFiles.Length; i++) {
+            string saveFile = saveFiles[i];
+            if (string.IsNullOrEmpty(latestFile)) {
+                latestFile = saveFile;
+            } else {
+                //compare times
+                DateTime writeTimeOfCurrentSave = System.IO.File.GetLastWriteTime(saveFile);
+                DateTime writeTimeOfLatestSave = System.IO.File.GetLastWriteTime(latestFile);
+                if (writeTimeOfCurrentSave > writeTimeOfLatestSave) {
+                    latestFile = saveFile;
+                }
+            }
+        }
+        return latestFile;
+    }
+    public void CleanUpLoadedData() {
+        currentSaveDataProgress?.CleanUp();
+        currentSaveDataProgress = null;
     }
     #endregion
 

@@ -20,18 +20,27 @@ public class SaveItem : MonoBehaviour {
     }
 
     public void OnClickItem() {
-        MainMenuUI.Instance.yesNoConfirmation.ShowYesNoConfirmation("Load Game", $"Are you sure you want to load {saveNameLbl.text}?", OnConfirmLoad, showCover: true);
+        //TODO: Convert yesNoShow to Signal perhaps?
+        if (MainMenuUI.Instance != null) {
+            MainMenuUI.Instance.yesNoConfirmation.ShowYesNoConfirmation("Load Game", $"Are you sure you want to load {saveNameLbl.text}?", OnConfirmLoad, showCover: true, layer:50);    
+        } else if (UIManager.Instance != null) {
+            UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Load Game", $"Are you sure you want to load {saveNameLbl.text}?", OnConfirmLoad, showCover: true, layer:50);
+        }
     }
 
     private void OnConfirmLoad() {
-        SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(path);
-        MainMenuManager.Instance.StartGame();
+        Messenger.Broadcast(Signals.LOAD_SAVE_FILE, path);
     }
     public void OnClickDelete() {
-        MainMenuUI.Instance.yesNoConfirmation.ShowYesNoConfirmation("Delete Save", $"Are you sure you want to delete {saveNameLbl.text}?", OnConfirmDelete, showCover: true);
+        if (MainMenuUI.Instance != null) {
+            MainMenuUI.Instance.yesNoConfirmation.ShowYesNoConfirmation("Delete Save", $"Are you sure you want to delete {saveNameLbl.text}?", OnConfirmDelete, showCover: true, layer:50);    
+        } else if (UIManager.Instance != null) {
+            UIManager.Instance.yesNoConfirmation.ShowYesNoConfirmation("Delete Save", $"Are you sure you want to delete {saveNameLbl.text}?", OnConfirmDelete, showCover: true, layer:50);
+        }
     }
     private void OnConfirmDelete() {
         File.Delete(path);
-        MainMenuUI.Instance.RedetermineSaveFiles();
+        GameObject.Destroy(this.gameObject);
+        Messenger.Broadcast(Signals.SAVE_FILE_DELETED, path);
     }
 }

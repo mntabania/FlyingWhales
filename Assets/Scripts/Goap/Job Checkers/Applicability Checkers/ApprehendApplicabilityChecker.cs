@@ -1,4 +1,5 @@
-﻿using UnityEngine.Assertions;
+﻿using Inner_Maps.Location_Structures;
+using UnityEngine.Assertions;
 namespace Goap.Job_Checkers {
     public class ApprehendApplicabilityChecker : JobApplicabilityChecker {
         public override string key => JobManager.Apprehend_Applicability;
@@ -7,11 +8,9 @@ namespace Goap.Job_Checkers {
             Assert.IsNotNull(goapPlanJob);
             Character target = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(target);
-            NPCSettlement settlement = job.originalOwner as NPCSettlement;
-            Assert.IsNotNull(settlement);
-            
-            bool isApplicable = !target.traitContainer.HasTrait("Restrained") || target.currentStructure != settlement.prison;
-            return target.gridTileLocation != null && target.gridTileLocation.IsNextToSettlementAreaOrPartOfSettlement(settlement) && isApplicable;
+
+            bool isApplicable = !target.traitContainer.HasTrait("Restrained") || !(target.currentStructure is Prison);
+            return target.gridTileLocation != null && target.gridTileLocation.IsNextToOrPartOfSettlement() && isApplicable;
         }
     }
 }

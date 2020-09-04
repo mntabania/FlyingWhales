@@ -296,6 +296,14 @@ public static class Signals {
     /// Parameters: string buttonName
     /// </summary>
     public static string HOTKEY_CLICK = "OnHotKeyPressed";
+    /// <summary>
+    /// Parameters string deletedSavePath
+    /// </summary>
+    public static string SAVE_FILE_DELETED = "OnSaveFileDeleted";
+    /// <summary>
+    /// Parameters string fileToLoad
+    /// </summary>
+    public static string LOAD_SAVE_FILE = "OnLoadFileConfirmed";
     #endregion
 
     #region Quest Signals
@@ -787,6 +795,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnLoadoutSelected", objectType = typeof(StartupManager) },
         }},
     };
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

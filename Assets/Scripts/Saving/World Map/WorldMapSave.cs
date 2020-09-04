@@ -189,4 +189,20 @@ public class WorldMapSave {
         }
     }
     #endregion
+
+    #region Clean Up
+    public void CleanUp() {
+        hextileSaves.Clear();
+        hextileSaves = null;
+        
+        regionSaves.Clear();
+        regionSaves = null;
+        
+        settlementSaves.Clear();
+        settlementSaves = null;
+        
+        structureSaves.Clear();
+        structureSaves = null;
+    }
+    #endregion
 }

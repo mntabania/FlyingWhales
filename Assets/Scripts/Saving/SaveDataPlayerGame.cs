@@ -77,4 +77,13 @@ public class SaveDataPlayerGame : SaveData<Player> {
         return player;
     }
     #endregion
+
+    #region Clean Up
+    public void CleanUp() {
+        minionIDs.Clear();
+        summonIDs.Clear();
+        actionIntels.Clear();
+        interruptIntels.Clear();
+    }
+    #endregion
 }
