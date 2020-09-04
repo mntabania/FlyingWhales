@@ -67,7 +67,8 @@ public class DatabaseManager : MonoBehaviour {
         logDatabase.allLogs.Clear();
         partyDatabase.allParties.Clear();
         crimeDatabase.allCrimes.Clear();
-
+        locationGridTileDatabase.tileByGUID.Clear();
+        locationGridTileDatabase.LocationGridTiles.Clear();
         System.GC.Collect();
     }
 }
