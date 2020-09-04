@@ -200,6 +200,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
             hasLycan = true;
             SaveDataLycanthropeData saveLycan = new SaveDataLycanthropeData();
             saveLycan.Save(data.lycanData);
+            lycanData = saveLycan;
         }
 
         if(data.grave != null) {
