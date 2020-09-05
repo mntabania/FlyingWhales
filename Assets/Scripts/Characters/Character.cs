@@ -84,6 +84,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
+    public string previousClassName { get; private set; }
 
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
     public List<HexTile> territories { get; private set; }
@@ -290,6 +291,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetIsDead(false);
         //_overrideThoughts = new List<string>();
         _isAlliedWithPlayer = false;
+        previousClassName = string.Empty;
 
         //Traits
         CreateTraitContainer();
@@ -394,6 +396,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canTakeJobsValue = data.canTakeJobsValue;
         sociableValue = data.sociableValue;
         returnedToLife = data.returnedToLife;
+        previousClassName = data.previousClassName;
 
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
         buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
@@ -787,6 +790,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void AssignClass(CharacterClass characterClass, bool isInitial = false) {
         CharacterClass previousClass = _characterClass;
         if (previousClass != null) {
+            previousClassName = previousClass.className;
             //This means that the character currently has a class and it will be replaced with a new class
             for (int i = 0; i < previousClass.traitNames.Length; i++) {
                 traitContainer.RemoveTrait(this, previousClass.traitNames[i]); //Remove traits from class

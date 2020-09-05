@@ -19,6 +19,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public string className;
     public RACE race;
     public bool isAlliedWithPlayer;
+    public string previousClassName;
 
     public int currentHP;
     public int doNotRecoverHP;
@@ -151,6 +152,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         canTakeJobsValue = data.canTakeJobsValue;
         sociableValue = data.sociableValue;
         returnedToLife = data.returnedToLife;
+        previousClassName = data.previousClassName;
 
         if (data.marker) {
             hasMarker = true;
