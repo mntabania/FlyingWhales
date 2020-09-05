@@ -180,11 +180,21 @@ public class MonsterInfoUI : InfoUIBase {
             raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(summon.race)}";
             elementLbl.text = $"{summon.combatComponent.elementalDamage.type.ToString()}";
             behaviourLbl.text = $"<link=\"0\">{summon.bredBehaviour}</link>";    
+        } else {
+            hpLbl.text = $"{_activeMonster.currentHP.ToString()}/{_activeMonster.maxHP.ToString()}";
+            attackLbl.text = $"{_activeMonster.combatComponent.attack.ToString()}";
+            speedLbl.text = $"{_activeMonster.combatComponent.attackSpeed / 1000f}s";
+            raceLbl.text = $"{UtilityScripts.GameUtilities.GetNormalizedSingularRace(_activeMonster.race)}";
+            elementLbl.text = $"{_activeMonster.combatComponent.elementalDamage.type.ToString()}";
+            behaviourLbl.text = $"<link=\"0\">{_activeMonster.characterClass.traitNameOnTamedByPlayer}</link>";    
         }
     }
     public void OnHoverBehaviour(object obj) {
         if (_activeMonster is Summon summon && TraitManager.Instance.allTraits.ContainsKey(summon.bredBehaviour)) {
             Trait trait = TraitManager.Instance.allTraits[summon.bredBehaviour];
+            UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
+        } else if (TraitManager.Instance.allTraits.ContainsKey(_activeMonster.characterClass.traitNameOnTamedByPlayer)) {
+            Trait trait = TraitManager.Instance.allTraits[_activeMonster.characterClass.traitNameOnTamedByPlayer];
             UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
         }
     }
