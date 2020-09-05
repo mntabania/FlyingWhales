@@ -10,6 +10,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Tutorial;
 using UtilityScripts;
+using Prison = Inner_Maps.Location_Structures.Prison;
 using Random = System.Random;
 
 public class ReactionComponent : CharacterComponent {
@@ -708,7 +709,7 @@ public class ReactionComponent : CharacterComponent {
                     
                     //Wanted Criminal Reaction Code:
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && targetCriminalTrait.IsWantedBy(disguisedActor.faction)
-                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentSettlement != null && disguisedTarget.currentSettlement is NPCSettlement npcSettlement && disguisedTarget.currentStructure == npcSettlement.prison))) {
+                        && (!disguisedTarget.traitContainer.HasTrait("Restrained") || !(disguisedTarget.currentStructure is Prison))) { //if target is not restrained or not in prison, will create 
                         debugLog = $"{debugLog}\n-Target Character is a criminal";
                         bool cannotReactToCriminal = false;
                         if (actor.currentJob != null && actor.currentJob is GoapPlanJob planJob) {
