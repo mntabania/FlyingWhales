@@ -49,5 +49,21 @@ public class RaiseDeadData : PlayerAction {
         }
         return false;
     }
+    public override bool IsValid(IPlayerActionTarget target) {
+        Character character = null;
+        if (target is Tombstone tombstone) {
+            character = tombstone.character;
+        } else if (target is Character dead) {
+            character = dead;
+        }
+        if(character != null) {
+            if (!character.isDead) {
+                return false;
+            } else if (character.race != RACE.HUMANS && character.race != RACE.ELVES) {
+                return false;
+            }
+        }
+        return base.IsValid(target);
+    }
     #endregion
 }

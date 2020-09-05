@@ -237,7 +237,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(),
             new LoadFirstWave(), new LoadSecondWave(), new MapGenerationFinalization(),
-            new PlayerDataGeneration(),
+            new PlayerDataGeneration(), new LoadCharactersCurrentAction(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }
