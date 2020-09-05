@@ -162,8 +162,14 @@ namespace Traits {
             if (awareCharacters.Contains(character) == false) {
                 awareCharacters.Add(character);
                 if (traitable is TileObject tileObject) {
-                    //create remove poison job
-                    character.jobComponent.TriggerRemoveStatusTarget(tileObject, "Poisoned");
+                    if(responsibleCharacter != null) {
+                        if (character.traitContainer.HasTrait("Cultist") && responsibleCharacter.traitContainer.HasTrait("Cultist") && !tileObject.IsOwnedBy(character)) {
+                            //Do not remove poison if both the culprit and the witness are cultists and the poisoned object is not owned by the witness
+                        } else {
+                            //create remove poison job
+                            character.jobComponent.TriggerRemoveStatusTarget(tileObject, "Poisoned");
+                        }
+                    }
                 }
             }
         }

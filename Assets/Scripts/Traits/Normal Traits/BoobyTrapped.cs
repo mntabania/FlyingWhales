@@ -22,6 +22,7 @@ namespace Traits {
             description = "This object will explode with [Element] damage if someone interacts with it.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_TRAP, };
             awareCharacters = new List<Character>();
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
@@ -79,8 +80,14 @@ namespace Traits {
             if (awareCharacters.Contains(character) == false) {
                 awareCharacters.Add(character);
                 if (traitable is TileObject tileObject) {
-                    //create remove poison job
-                    character.jobComponent.TriggerRemoveStatusTarget(tileObject, "Poisoned");
+                    if (responsibleCharacter != null) {
+                        if (character.traitContainer.HasTrait("Cultist") && responsibleCharacter.traitContainer.HasTrait("Cultist") && !tileObject.IsOwnedBy(character)) {
+                            //Do not remove booby trap if both the culprit and the witness are cultists and the poisoned object is not owned by the witness
+                        } else {
+                            //create remove booby trap job
+                            character.jobComponent.TriggerRemoveStatusTarget(tileObject, "Booby Trapped");
+                        }
+                    }
                 }
             }
         }
