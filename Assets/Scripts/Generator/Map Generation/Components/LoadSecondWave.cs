@@ -174,6 +174,9 @@ public class LoadSecondWave : MapGenerationComponent {
                 } else if (tileObject is Eyeball && tileObject.gridTileLocation.structure is Eye eye) {
                     //TODO: This is only a quick fix, so that loaded eyes will contribute to demonic structure damage
                     eye.AddObjectAsDamageContributor(tileObject);
+                } else if (tileObject is PortalTileObject && tileObject.gridTileLocation.structure is ThePortal portal) {
+                    //TODO: This is only a quick fix, so that loaded portal will contribute to demonic structure damage
+                    portal.AddObjectAsDamageContributor(tileObject);
                 }
             }
             batchCount++;

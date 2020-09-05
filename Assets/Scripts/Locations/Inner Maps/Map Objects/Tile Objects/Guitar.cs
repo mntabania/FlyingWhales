@@ -10,8 +10,6 @@ public class Guitar : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PLAY_GUITAR);
     }
     public Guitar(SaveDataTileObject data) {
-        
-        AddAdvertisedAction(INTERACTION_TYPE.PLAY_GUITAR);
     }
     public override string ToString() {
         return $"Guitar {id}";

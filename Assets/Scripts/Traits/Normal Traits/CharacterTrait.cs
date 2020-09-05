@@ -17,6 +17,20 @@ namespace Traits {
         public List<Character> charactersAlreadySawForHope { get; private set; }
         public HashSet<Character> charactersThatHaveReactedToThis { get; private set; }
         public Character owner { get; private set; }
+        /// <summary>
+        /// Has this character been abducted by the wild monster faction?
+        /// NOTE: This is used in <see cref="ReactionComponent.ReactTo(IPointOfInterest,ref string)"/> to determine
+        /// whether or not a wild monster will attack (On vision) the character that owns this.
+        /// Example: Character that has been abducted by a Giant Spider
+        /// </summary>
+        public bool hasBeenAbductedByWildMonster { get; private set; }
+        /// <summary>
+        /// Has this character been abducted by the player faction?
+        /// NOTE: This is used in <see cref="ReactionComponent.ReactTo(IPointOfInterest,ref string)"/> to determine
+        /// whether or not a member of the player faction will attack (On vision) the character that owns this.
+        /// Example: Character that has been abducted by an Abductor Monster
+        /// </summary>
+        public bool hasBeenAbductedByPlayerMonster { get; private set; }
 
         #region getters
         public override Type serializedData => typeof(SaveDataCharacterTrait);
@@ -28,6 +42,8 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             isHidden = true;
+            hasBeenAbductedByWildMonster = false;
+            hasBeenAbductedByPlayerMonster = false;
             alreadyInspectedTileObjects = new List<TileObject>();
             charactersAlreadySawForHope = new List<Character>();
             charactersThatHaveReactedToThis = new HashSet<Character>();
@@ -43,6 +59,8 @@ namespace Traits {
             alreadyInspectedTileObjects = SaveUtilities.ConvertIDListToTileObjects(saveDataCharacterTrait.alreadyInspectedTileObjects);
             charactersAlreadySawForHope.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersAlreadySawForHope));
             charactersThatHaveReactedToThis = new HashSet<Character>(SaveUtilities.ConvertIDListToCharacters(saveDataCharacterTrait.charactersThatHaveReactedToThis));
+            hasBeenAbductedByPlayerMonster = saveDataCharacterTrait.hasBeenAbductedByPlayerMonster;
+            hasBeenAbductedByWildMonster = saveDataCharacterTrait.hasBeenAbductedByWildMonster;
         }
         #endregion
         
@@ -301,6 +319,13 @@ namespace Traits {
             return false;
         }
         #endregion
+
+        public void SetHasBeenAbductedByPlayerMonster(bool state) {
+            hasBeenAbductedByPlayerMonster = state;
+        }
+        public void SetHasBeenAbductedByWildMonster(bool state) {
+            hasBeenAbductedByWildMonster = state;
+        }
     }
 }
 
@@ -310,6 +335,8 @@ public class SaveDataCharacterTrait : SaveDataTrait {
     public List<string> alreadyInspectedTileObjects;
     public List<string> charactersAlreadySawForHope;
     public List<string> charactersThatHaveReactedToThis;
+    public bool hasBeenAbductedByPlayerMonster;
+    public bool hasBeenAbductedByWildMonster;
     
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -318,6 +345,8 @@ public class SaveDataCharacterTrait : SaveDataTrait {
         alreadyInspectedTileObjects = SaveUtilities.ConvertSavableListToIDs(characterTrait.alreadyInspectedTileObjects);
         charactersAlreadySawForHope = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersAlreadySawForHope);
         charactersThatHaveReactedToThis = SaveUtilities.ConvertSavableListToIDs(characterTrait.charactersThatHaveReactedToThis.ToList());
+        hasBeenAbductedByPlayerMonster = characterTrait.hasBeenAbductedByPlayerMonster;
+        hasBeenAbductedByWildMonster = characterTrait.hasBeenAbductedByWildMonster;
     }
 }
 #endregion

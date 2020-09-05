@@ -1,6 +1,7 @@
 ﻿using System;
 using Inner_Maps;
 using Traits;
+using UnityEngine;
 
 public class GiantSpider : Summon {
 
@@ -48,8 +49,9 @@ public class GiantSpider : Summon {
 
     #region Listeners
     private void OnCharacterFinishedJobSuccessfully(Character character, GoapPlanJob job) {
-        if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT) {
-            job.targetPOI.traitContainer.AddTrait(job.targetPOI, "Webbed", this);
+        if (character == this && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
+            job.targetPOI.traitContainer.AddTrait(targetCharacter, "Webbed", this);
+            targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(true);
         }
     }
     private void OnRemovedJobFromQueue(JobQueueItem job, Character character) {

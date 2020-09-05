@@ -8,11 +8,7 @@ public class WurmHole : TileObject{
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Fireproof");
     }
-    public WurmHole(SaveDataTileObject data) {
-        
-        traitContainer.AddTrait(this, "Indestructible");
-        traitContainer.AddTrait(this, "Fireproof");
-    }
+    public WurmHole(SaveDataTileObject data) { }
 
     public void SetWurmHoleConnection(WurmHole wurmHole) {
         wurmHoleConnection = wurmHole;

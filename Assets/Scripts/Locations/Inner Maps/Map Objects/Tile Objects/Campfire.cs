@@ -10,8 +10,6 @@ public class Campfire : TileObject{
         timer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public Campfire(SaveDataTileObject data) : base(data) {
-        
-        AddAdvertisedAction(INTERACTION_TYPE.WARM_UP);
         timer = GameManager.Instance.GetTicksBasedOnHour(8);
     }
 
