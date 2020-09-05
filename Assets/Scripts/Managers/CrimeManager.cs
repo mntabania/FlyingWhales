@@ -677,6 +677,11 @@ public class SaveDataCrimeData : SaveData<CrimeData>, ISavableCounterpart {
         if (data.crime != null) {
             crime = data.crime.persistentID;
             crimableType = data.crime.crimableType;
+            if (data.crime is ActualGoapNode action) {
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(action);
+            } else if (data.crime is InterruptHolder interrupt) {
+                SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(interrupt);
+            }
         }
         if (data.criminal != null) {
             criminal = data.criminal.persistentID;

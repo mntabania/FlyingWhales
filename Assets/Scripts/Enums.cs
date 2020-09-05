@@ -494,6 +494,7 @@ public enum INTERACTION_TYPE {
     EVANGELIZE = 194,
     FLEE_TO_TILE = 195,
     HUNT_HEIRLOOM = 196,
+    REMOVE_TRAP = 197,
 }
 public enum INTERRUPT {
     None,

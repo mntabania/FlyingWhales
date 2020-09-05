@@ -982,7 +982,7 @@ public class ReactionComponent : CharacterComponent {
                     }
                 }
 
-                if (targetCharacter.marker) {
+                if (targetCharacter.marker && targetCharacter.isNormalCharacter) {
                     if (targetCharacter.carryComponent.isCarryingAnyPOI && targetCharacter.carryComponent.carriedPOI is Character carriedCharacter) {
                         debugLog = $"{debugLog}\n-Target is carrying a character";
                         if(carriedCharacter.traitContainer.HasTrait("Restrained", "Unconscious") && !carriedCharacter.isDead && !carriedCharacter.IsWantedBy(actor.faction)) {

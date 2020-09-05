@@ -1,4 +1,5 @@
 ﻿using UnityEngine.Assertions;
+using Interrupts;
 
 public class CrimeDataOtherData : OtherData {
     public CrimeData crimeData { get; }
@@ -25,6 +26,7 @@ public class SaveDataCrimeDataOtherData : SaveDataOtherData {
         CrimeDataOtherData crimeDataOtherData = data as CrimeDataOtherData;
         Assert.IsNotNull(crimeDataOtherData);
         crimeDataID = crimeDataOtherData.crimeData.persistentID;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(crimeDataOtherData.crimeData);
     }
     public override OtherData Load() {
         return new CrimeDataOtherData(this);
