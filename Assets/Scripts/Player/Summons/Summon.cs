@@ -164,10 +164,11 @@ public class Summon : Character {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
             }
 
-            Dead dead = new Dead();
-            dead.InitializeInstancedTrait();
-            dead.AddCharacterResponsibleForTrait(responsibleCharacter);
-            traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
+            // Dead dead = new Dead();
+            // dead.InitializeInstancedTrait();
+            // dead.AddCharacterResponsibleForTrait(responsibleCharacter);
+            // traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
+            traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
             behaviourComponent.OnDeath();
