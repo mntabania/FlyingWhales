@@ -16,6 +16,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public bool isPreplaced;
     public int[] resourceValues; //food, wood, stone, metal
     // public Dictionary<RESOURCE, int> storedResources;
+    public string isBeingCarriedByID;
     public POI_STATE poiState;
     public List<INTERACTION_TYPE> advertisedActions;
     public List<string> jobsTargetingThis;
@@ -51,7 +52,6 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             regionLocationID = -1;
             tileLocationID = string.Empty;
         }
-        
         isPreplaced = data.isPreplaced;
         poiState = data.state;
         
@@ -79,15 +79,15 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
             spriteName = data.mapObjectVisual.usedSprite.name;
             rotation = data.mapObjectVisual.rotation;
         }
-
-        // storedResources = data.storedResources;
-
+        
         resourceValues = new int[data.storedResources.Count];
         int index = 0;
         foreach (var storedResource in data.storedResources) {
             resourceValues[index] = storedResource.Value;
             index++;
         }
+
+        isBeingCarriedByID = data.isBeingCarriedBy != null ? data.isBeingCarriedBy.persistentID : string.Empty;
         
         saveDataTraitContainer = new SaveDataTraitContainer();
         saveDataTraitContainer.Save(data.traitContainer);
