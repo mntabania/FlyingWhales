@@ -398,6 +398,12 @@ public class SaveDataCurrentProgress {
         //    }
         //}
     }
+    public void LoadCharactersCurrentAction() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            character.LoadCurrentlyDoingAction();
+        }
+    }
     #endregion
 
     #region Clean Up

@@ -538,152 +538,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Virtuals
     public virtual void OnSetIsHidden() { }
-    public virtual void LoadReferences(SaveDataCharacter data) {
-        ConstructDefaultActions();
-        if (data.hasLycan && lycanData == null) {
-            LycanthropeData lycanData = data.lycanData.Load();
-
-            //Should only set 1 instance of lycan data even when loaded from save
-            lycanData.originalForm.SetLycanthropeData(lycanData);
-            lycanData.lycanthropeForm.SetLycanthropeData(lycanData);
-        }
-        if (!string.IsNullOrEmpty(data.grave)) {
-            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
-        }
-        if (!string.IsNullOrEmpty(data.ruledSettlement)) {
-            ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
-        }
-        if (!string.IsNullOrEmpty(data.deathLog)) {
-            deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
-        }
-        if (!string.IsNullOrEmpty(data.homeRegion)) {
-            homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
-        }
-        if (!string.IsNullOrEmpty(data.homeSettlement)) {
-            homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
-        }
-        if (!string.IsNullOrEmpty(data.homeStructure)) {
-            homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
-        }
-        if (!string.IsNullOrEmpty(data.currentRegion)) {
-            _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
-        }
-        if (!string.IsNullOrEmpty(data.currentStructure)) {
-            _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
-        }
-        if (!string.IsNullOrEmpty(data.faction)) {
-            _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
-        }
-        if (!string.IsNullOrEmpty(data.prevFaction)) {
-            prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
-        }
-        if (!string.IsNullOrEmpty(data.currentJob)) {
-            currentJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.currentJob);
-            if(currentJob is GoapPlanJob job && job.assignedPlan != null) {
-                currentPlan = job.assignedPlan;
-            }
-        }
-        if (!string.IsNullOrEmpty(data.currentActionNode)) {
-            currentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.currentActionNode);
-        }
-        if (!string.IsNullOrEmpty(data.previousCurrentActionNode)) {
-            previousCurrentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.previousCurrentActionNode);
-        }
-        for (int i = 0; i < data.territories.Count; i++) {
-            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
-            territories.Add(hex);
-        }
-        for (int i = 0; i < data.items.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
-            items.Add(obj);
-        }
-        for (int i = 0; i < data.ownedItems.Count; i++) {
-            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
-            ownedItems.Add(obj);
-        }
-
-        jobQueue.LoadReferences(data);
-        for (int i = 0; i < data.forceCancelJobsOnTickEnded.Count; i++) {
-            string forceCanceledJob = data.forceCancelJobsOnTickEnded[i];
-            
-            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(forceCanceledJob);
-            if (!forcedCancelJobsOnTickEnded.Contains(job)) {
-                forcedCancelJobsOnTickEnded.Add(job);
-            }
-        }
-        
-        needsComponent.LoadReferences(data.needsComponent);
-        buildStructureComponent.LoadReferences(data.buildStructureComponent);
-        stateComponent.LoadReferences(data.stateComponent);
-        nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
-        interruptComponent.LoadReferences(data.interruptComponent);
-        behaviourComponent.LoadReferences(data.behaviourComponent);
-        moodComponent.LoadReferences(data.moodComponent);
-        jobComponent.LoadReferences(data.jobComponent);
-        reactionComponent.LoadReferences(data.reactionComponent);
-        logComponent.LoadReferences(data.logComponent);
-        combatComponent.LoadReferences(data.combatComponent);
-        rumorComponent.LoadReferences(data.rumorComponent);
-        assumptionComponent.LoadReferences(data.assumptionComponent);
-        movementComponent.LoadReferences(data.movementComponent);
-        stateAwarenessComponent.LoadReferences(data.stateAwarenessComponent);
-        carryComponent.LoadReferences(data.carryComponent);
-        partyComponent.LoadReferences(data.partyComponent);
-        tileObjectComponent.LoadReferences(data.tileObjectComponent);
-        crimeComponent.LoadReferences(data.crimeComponent);
-
-        //Place marker after loading references
-        if (data.hasMarker) {
-            if (!marker) {
-                CreateMarker();
-            }
-            marker.LoadMarkerPlacement(data, _currentRegion);
-
-            //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
-            carryComponent.LoadCarryReference(data.carryComponent);
-
-            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && currentActionNode.poiTarget is TileObject target) {
-                target.OnDoActionToObject(currentActionNode);
-            }
-        }
-        visuals.UpdateAllVisuals(this);
-        //Do updating hidden state here because the marker must be created first and visuals must be updated
-        OnSetIsHidden();
-        reactionComponent.UpdateHiddenState();
-
-        //Load character traits after all references and visuals and objects of character has been placed since
-        LoadCharacterTraitsFromSave(data);
-        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
-        if (marker) {
-            marker.UpdateAnimation();
-        }
-        if (!isDead && minion == null) {
-            //only subscribe to listeners if character is not dead, this is because we expect that dead characters are not listening to any of the normal signals
-            SubscribeToSignals();    
-        }
-    }
-    protected void LoadCharacterTraitsFromSave(SaveDataCharacter data) {
-        traitContainer.Load(this, data.saveDataTraitContainer);
-
-        //This must be reapplied after loading traits because when a trait is loaded the values will also be adjusted
-        //Example: perform value in saved data = 3, when a trait is loaded and it increases perform value the value will become 4
-        //Now it is already inconsistent since the saved value is not the same as the loaded value now
-        //So we must bring back the value to the saved one so that the character state when loaded is the same
-        canWitnessValue = data.canWitnessValue;
-        canMoveValue = data.canMoveValue;
-        canBeAttackedValue = data.canBeAttackedValue;
-        canPerformValue = data.canPerformValue;
-        canTakeJobsValue = data.canTakeJobsValue;
-        sociableValue = data.sociableValue;
-        moodComponent.SetSaveDataMoodComponent(data.moodComponent);
-
-        if (traitContainer.HasTrait("Character Trait")) {
-            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
-        }
-        if (traitContainer.HasTrait("Necromancer")) {
-            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
-        }
-    }
     #endregion
 
     #region Listeners
@@ -5530,6 +5384,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 AddPlayerAction(SPELL_TYPE.AFFLICT);
                 AddPlayerAction(SPELL_TYPE.ZAP);
                 AddPlayerAction(SPELL_TYPE.TRIGGER_FLAW);
+                AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
             }
             AddPlayerAction(SPELL_TYPE.SEIZE_CHARACTER);
             AddPlayerAction(SPELL_TYPE.SNATCH);
@@ -5660,17 +5515,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetIsDead(bool isDead) {
         if (_isDead != isDead) {
             _isDead = isDead;
-            if (_isDead) {
-                if (race == RACE.HUMANS || race == RACE.ELVES) {
-                    //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
-                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
-                    //    , null
-                    //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
-                    AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
-                }
-            } else {
-                RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
-            }
+            //if (_isDead) {
+            //    if (race == RACE.HUMANS || race == RACE.ELVES) {
+            //        //PlayerAction raiseAction = new PlayerAction(PlayerDB.Raise_Skeleton_Action
+            //        //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].CanPerformAbilityTowards(this)
+            //        //    , null
+            //        //    , () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.RAISE_DEAD].ActivateAbility(this));
+            //        AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
+            //    }
+            //} else {
+            //    RemovePlayerAction(SPELL_TYPE.RAISE_DEAD);
+            //}
         }
     }
     public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
@@ -6002,6 +5857,167 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return criminalTrait.IsWantedBy(faction);
         }
         return false;
+    }
+    #endregion
+
+    #region Loading
+    public virtual void LoadReferences(SaveDataCharacter data) {
+        ConstructDefaultActions();
+        if (data.hasLycan && lycanData == null) {
+            LycanthropeData lycanData = data.lycanData.Load();
+
+            //Should only set 1 instance of lycan data even when loaded from save
+            lycanData.originalForm.SetLycanthropeData(lycanData);
+            lycanData.lycanthropeForm.SetLycanthropeData(lycanData);
+        }
+        if (!string.IsNullOrEmpty(data.grave)) {
+            grave = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.grave) as Tombstone;
+        }
+        if (!string.IsNullOrEmpty(data.ruledSettlement)) {
+            ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
+        }
+        if (!string.IsNullOrEmpty(data.deathLog)) {
+            deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
+        }
+        if (!string.IsNullOrEmpty(data.homeRegion)) {
+            homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
+        }
+        if (!string.IsNullOrEmpty(data.homeSettlement)) {
+            homeSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.homeSettlement) as NPCSettlement;
+        }
+        if (!string.IsNullOrEmpty(data.homeStructure)) {
+            homeStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.homeStructure);
+        }
+        if (!string.IsNullOrEmpty(data.currentRegion)) {
+            _currentRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.currentRegion);
+        }
+        if (!string.IsNullOrEmpty(data.currentStructure)) {
+            _currentStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.currentStructure);
+        }
+        if (!string.IsNullOrEmpty(data.faction)) {
+            _faction = FactionManager.Instance.GetFactionByPersistentID(data.faction);
+        }
+        if (!string.IsNullOrEmpty(data.prevFaction)) {
+            prevFaction = FactionManager.Instance.GetFactionByPersistentID(data.prevFaction);
+        }
+        if (!string.IsNullOrEmpty(data.currentJob)) {
+            currentJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.currentJob);
+            if (currentJob is GoapPlanJob job && job.assignedPlan != null) {
+                currentPlan = job.assignedPlan;
+            }
+        }
+        if (!string.IsNullOrEmpty(data.currentActionNode)) {
+            currentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.currentActionNode);
+        }
+        if (!string.IsNullOrEmpty(data.previousCurrentActionNode)) {
+            previousCurrentActionNode = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.previousCurrentActionNode);
+        }
+        for (int i = 0; i < data.territories.Count; i++) {
+            HexTile hex = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.territories[i]);
+            territories.Add(hex);
+        }
+        for (int i = 0; i < data.items.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.items[i]);
+            items.Add(obj);
+        }
+        for (int i = 0; i < data.ownedItems.Count; i++) {
+            TileObject obj = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(data.ownedItems[i]);
+            ownedItems.Add(obj);
+        }
+
+        jobQueue.LoadReferences(data);
+        for (int i = 0; i < data.forceCancelJobsOnTickEnded.Count; i++) {
+            string forceCanceledJob = data.forceCancelJobsOnTickEnded[i];
+
+            JobQueueItem job = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(forceCanceledJob);
+            if (!forcedCancelJobsOnTickEnded.Contains(job)) {
+                forcedCancelJobsOnTickEnded.Add(job);
+            }
+        }
+
+        needsComponent.LoadReferences(data.needsComponent);
+        buildStructureComponent.LoadReferences(data.buildStructureComponent);
+        stateComponent.LoadReferences(data.stateComponent);
+        nonActionEventsComponent.LoadReferences(data.nonActionEventsComponent);
+        interruptComponent.LoadReferences(data.interruptComponent);
+        behaviourComponent.LoadReferences(data.behaviourComponent);
+        moodComponent.LoadReferences(data.moodComponent);
+        jobComponent.LoadReferences(data.jobComponent);
+        reactionComponent.LoadReferences(data.reactionComponent);
+        logComponent.LoadReferences(data.logComponent);
+        combatComponent.LoadReferences(data.combatComponent);
+        rumorComponent.LoadReferences(data.rumorComponent);
+        assumptionComponent.LoadReferences(data.assumptionComponent);
+        movementComponent.LoadReferences(data.movementComponent);
+        stateAwarenessComponent.LoadReferences(data.stateAwarenessComponent);
+        carryComponent.LoadReferences(data.carryComponent);
+        partyComponent.LoadReferences(data.partyComponent);
+        tileObjectComponent.LoadReferences(data.tileObjectComponent);
+        crimeComponent.LoadReferences(data.crimeComponent);
+
+        //Place marker after loading references
+        if (data.hasMarker) {
+            if (!marker) {
+                CreateMarker();
+            }
+            marker.LoadMarkerPlacement(data, _currentRegion);
+
+            //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
+            carryComponent.LoadCarryReference(data.carryComponent);
+
+            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && currentActionNode.poiTarget is TileObject target) {
+                target.OnDoActionToObject(currentActionNode);
+            }
+        }
+        visuals.UpdateAllVisuals(this);
+        //Do updating hidden state here because the marker must be created first and visuals must be updated
+        OnSetIsHidden();
+        reactionComponent.UpdateHiddenState();
+
+        //Load character traits after all references and visuals and objects of character has been placed since
+        LoadCharacterTraitsFromSave(data);
+        SetRelationshipContainer(data.saveDataBaseRelationshipContainer.Load());
+        if (marker) {
+            marker.UpdateAnimation();
+        }
+        if (!isDead && minion == null) {
+            //only subscribe to listeners if character is not dead, this is because we expect that dead characters are not listening to any of the normal signals
+            SubscribeToSignals();
+        }
+    }
+    public void LoadCurrentlyDoingAction() {
+        if (currentActionNode != null) {
+            if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {
+                SetCurrentActionNode(null, null, null);
+            }
+        }
+        if (CanPerformEndTickJobs()) {
+            if (jobQueue.jobsInQueue[0].ProcessJob() == false && jobQueue.jobsInQueue.Count > 0) {
+                PerformTopPriorityJob();
+            }
+        }
+    }
+    protected void LoadCharacterTraitsFromSave(SaveDataCharacter data) {
+        traitContainer.Load(this, data.saveDataTraitContainer);
+
+        //This must be reapplied after loading traits because when a trait is loaded the values will also be adjusted
+        //Example: perform value in saved data = 3, when a trait is loaded and it increases perform value the value will become 4
+        //Now it is already inconsistent since the saved value is not the same as the loaded value now
+        //So we must bring back the value to the saved one so that the character state when loaded is the same
+        canWitnessValue = data.canWitnessValue;
+        canMoveValue = data.canMoveValue;
+        canBeAttackedValue = data.canBeAttackedValue;
+        canPerformValue = data.canPerformValue;
+        canTakeJobsValue = data.canTakeJobsValue;
+        sociableValue = data.sociableValue;
+        moodComponent.SetSaveDataMoodComponent(data.moodComponent);
+
+        if (traitContainer.HasTrait("Character Trait")) {
+            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+        }
+        if (traitContainer.HasTrait("Necromancer")) {
+            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
+        }
     }
     #endregion
 
