@@ -1,5 +1,6 @@
 ﻿using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
 
 public class SpellData : IPlayerSkill {
     public virtual SPELL_TYPE type => SPELL_TYPE.NONE;
@@ -230,6 +231,7 @@ public class SpellData : IPlayerSkill {
     }
     public void SetIsInUse(bool state) {
         isInUse = state;
+        // Debug.Log($"Set spell {name} in use to {isInUse.ToString()}");
     }
     #endregion
 }

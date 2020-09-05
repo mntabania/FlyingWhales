@@ -33,6 +33,7 @@ public class Initializer : MonoBehaviour {
         RandomNameGenerator.Initialize();
         WorldEventManager.Instance.Initialize();
         yield return null;
+        PlayerSkillManager.Instance.ResetSpellsInUse();
     }
 
     public void InitializeDataAfterWorldCreation() {

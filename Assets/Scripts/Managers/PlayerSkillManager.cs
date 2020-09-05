@@ -295,6 +295,12 @@ public class PlayerSkillManager : MonoBehaviour {
         }
         return allSkillLoadouts[selectedArchetype];
     }
+    public void ResetSpellsInUse() {
+        for (int i = 0; i < allPlayerSkillsData.Values.Count; i++) {
+            SpellData spellData = allPlayerSkillsData.Values.ElementAt(i);
+            spellData.SetIsInUse(false);
+        }
+    }
     #endregion
 
     #region Assets
