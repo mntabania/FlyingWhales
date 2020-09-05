@@ -50,7 +50,7 @@ namespace Inner_Maps.Location_Structures {
         
         #region Seize
         public override bool CanUnseizeCharacterInRoom(Character character) {
-            if (charactersInRoom.Count > 0) {
+            if (charactersInRoom.Count(c => !c.isDead) > 0) {
                 return false;
             }
             return character.isNormalCharacter && character.isDead == false && character.isAlliedWithPlayer == false;

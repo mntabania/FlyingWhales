@@ -24,15 +24,33 @@ public class SacrificeData : PlayerAction {
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         bool canPerform = base.CanPerformAbilityTowards(targetCharacter);
         if (canPerform) {
-            return (targetCharacter is Summon) && !targetCharacter.isDead && targetCharacter.gridTileLocation != null && 
-                   targetCharacter.gridTileLocation.structure != null && targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL;
+            if (targetCharacter is Summon) {
+                if (!targetCharacter.isDead && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null) {
+                    if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL) {
+                        return true;
+                    } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+                        return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                    } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+                        return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                    }
+                }
+            }
+            return false;
         }
         return false;
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if(target is Summon targetCharacter) {
-            return targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null && 
-                   targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL;
+            if (targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.structure != null) {
+                if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.KENNEL) {
+                    return true;
+                } else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.TORTURE_CHAMBERS) {
+                    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                }else if (targetCharacter.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DEFILER) {
+                    return targetCharacter.gridTileLocation.structure.IsTilePartOfARoom(targetCharacter.gridTileLocation, out var room);
+                }
+            }
+            return false;
         }
         return false;
     }
