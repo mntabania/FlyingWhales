@@ -46,7 +46,7 @@ SpriteAtlas:
     - {fileID: 102900000, guid: ff095aad844e46e488c1fae9e2f9b3e2, type: 3}
     - {fileID: 102900000, guid: b422e43e82f411843a77c74a9708c2aa, type: 3}
     - {fileID: 102900000, guid: 081cbc1d8bd888147aa1d93cd708500d, type: 3}
-    totalSpriteSurfaceArea: 7085985
+    totalSpriteSurfaceArea: 7087009
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -144,6 +144,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 896b9e64b8b9bf742a5398c84e545bb8, type: 3}
   - {fileID: 21300000, guid: ffea6c7456045d04593708f96b6426bd, type: 3}
   - {fileID: 21300000, guid: f7ee7c945d0975e428753db44b1f9b00, type: 3}
+  - {fileID: 21300000, guid: 525c14a4aa549ab47a008d43ec314ca4, type: 3}
   - {fileID: 21300000, guid: 7860c0b467a4d234eb6b0a78ba29bb45, type: 3}
   - {fileID: 21300000, guid: 2c1013c4b982dc649989041c17e0a36d, type: 3}
   - {fileID: 21300000, guid: cdb2a4c432b13754a997895e873d5a4a, type: 3}
@@ -430,6 +431,7 @@ SpriteAtlas:
   - Normal-Border-Gray
   - button_psychopathdetail_clicked
   - Icon-Ravager3
+  - Black_square
   - minion_tab_traits_disabled
   - log_button_default
   - faction_ui_resident_hover

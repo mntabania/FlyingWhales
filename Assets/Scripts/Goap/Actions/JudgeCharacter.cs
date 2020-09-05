@@ -136,7 +136,8 @@ public class JudgeCharacter : GoapAction {
             debugLog += $"\n\n{chosen}";
             actor.logComponent.PrintLogIfActive(debugLog);
 
-            CreateJudgeLog(goapNode, chosen);
+            goapNode.descriptionLog.AddToFillers(null, chosen.ToLower(), LOG_IDENTIFIER.STRING_1);
+            //CreateJudgeLog(goapNode, chosen);
             CRIME_STATUS decision = CRIME_STATUS.Absolved;
             if (chosen == "Absolve") {
                 decision = CRIME_STATUS.Absolved;
