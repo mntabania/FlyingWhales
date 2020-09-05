@@ -83,8 +83,16 @@ public class CharacterVisuals {
 
     #region Utilities
     public void UpdateAllVisuals(Character character, bool regeneratePortrait = false) {
-        if (character.characterClass.className == "Zombie") { return; } //if character is a zombie do not update visuals, use default.
-        UpdateMarkerAnimations(character);
+        string classToUse = "";
+        if (character.characterClass.className == "Zombie") {
+            //if character is a zombie use previous class to update visuals,
+            if (!string.IsNullOrEmpty(character.previousClassName)) {
+                classToUse = character.previousClassName;    
+            } else {
+                classToUse = "Peasant"; //just a failsafe
+            }
+        }
+        UpdateMarkerAnimations(character, classToUse);
         if (regeneratePortrait) {
             RegeneratePortrait(character);
         } else {
@@ -103,11 +111,15 @@ public class CharacterVisuals {
     #endregion
 
     #region Animations
-    private void UpdateMarkerAnimations(Character character) {
+    private void UpdateMarkerAnimations(Character character, string classOverride = "") {
         if (character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
         }
-        CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.characterClass.className);
+        string classToUse = classOverride;
+        if (string.IsNullOrEmpty(classToUse)) {
+            classToUse = character.characterClass.className;
+        }
+        CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, classToUse);
         defaultSprite = assets.defaultSprite;
         float size = defaultSprite.rect.width / 100f;
         if (character is Troll) {
