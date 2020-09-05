@@ -48,9 +48,11 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if(addTo is Character character) {
                 owner = character;
+                if (!character.isDead) {
+                    Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+                    Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnPerformAction);
+                }
             }
-            Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
-            Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnPerformAction);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);

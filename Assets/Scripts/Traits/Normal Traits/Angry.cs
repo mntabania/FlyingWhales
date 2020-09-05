@@ -70,8 +70,10 @@ namespace Traits {
             base.LoadTraitOnLoadTraitContainer(addTo);
             if (addTo is Character character) {
                 owner = character;
-                character.marker.visionCollider.VoteToUnFilterVision();
-                Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
+                if (character.marker) {
+                    character.marker.visionCollider.VoteToUnFilterVision();
+                    Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);    
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {

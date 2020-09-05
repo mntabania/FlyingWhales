@@ -14,7 +14,7 @@
         }
         public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
             base.LoadTraitOnLoadTraitContainer(addTo);
-            if (addTo is Character character) {
+            if (addTo is Character character && character.marker) {
                 //add webbed visual to character
                 character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);
             }
