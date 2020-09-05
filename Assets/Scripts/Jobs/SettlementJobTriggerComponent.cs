@@ -393,7 +393,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		    && target.currentStructure.settlementLocation == _owner
             && _owner.owner != null) {
             NPCSettlement npcSettlement = target.currentStructure.settlementLocation as NPCSettlement;
-            if(npcSettlement.prison == target.currentStructure) {
+            if(npcSettlement.prison == target.currentStructure && !npcSettlement.HasJob(JOB_TYPE.JUDGE_PRISONER, target)) {
                 if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
                     Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
                     if (criminalTrait.IsWantedBy(_owner.owner)) {
@@ -414,8 +414,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
                 Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
                 if (criminalTrait.IsWantedBy(_owner.owner)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP,
-                    target, _owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, _owner);
                     job.SetCanTakeThisJobChecker(JobManager.Can_Take_Apprehend);
                     job.SetStillApplicableChecker(JobManager.Apprehend_Settlement_Applicability);
                     job.SetShouldBeRemovedFromSettlementWhenUnassigned(true);
