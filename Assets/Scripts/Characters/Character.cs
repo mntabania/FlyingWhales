@@ -919,7 +919,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddItemAsInteresting(_characterClass.interestedItemNames);    
         }
         visuals.UpdateAllVisuals(this);
-        minion?.SetAssignedDeadlySinName(_characterClass.className);
+        //minion?.SetAssignedDeadlySinName(_characterClass.className);
         UpdateCanCombatState();
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090

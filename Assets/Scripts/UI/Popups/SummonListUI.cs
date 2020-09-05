@@ -33,6 +33,14 @@ public class SummonListUI : PopupMenuBase {
         Messenger.AddListener<SPELL_TYPE>(Signals.ADDED_PLAYER_SUMMON_SKILL, OnGainPlayerSummonSkill);
         Messenger.AddListener<SpellData>(Signals.CHARGES_ADJUSTED, OnChargesAdjusted);
     }
+    public void UpdateList() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            if (character is Summon summon && character.faction != null && character.faction.isPlayerFaction && !character.isDead) {
+                CreateNewActiveSummonItem(summon);
+            }
+        }
+    }
     private void OnChargesAdjusted(SpellData spellData) {
         if (spellData is SummonPlayerSkill summonPlayerSkill) {
             SummonMinionPlayerSkillNameplateItem nameplateItem = GetSummonMinionPlayerSkillNameplateItem(spellData);

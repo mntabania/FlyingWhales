@@ -209,6 +209,11 @@ public class PlayerUI : BaseMonoBehaviour {
         CreateInitialSpells();
         _buildListUI.Initialize();
         cultistsList.Initialize();
+
+        cultistsList.UpdateList();
+        minionList.UpdateList();
+        summonList.UpdateList();
+
         OnThreatUpdated();
     }
     public void OnLoadSaveData() {
