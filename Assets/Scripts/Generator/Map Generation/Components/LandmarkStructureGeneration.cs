@@ -17,14 +17,11 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		for (int i = 0; i < landmarks.Count; i++) {
 			BaseLandmark landmark = landmarks[i];
 			if (landmark.specificLandmarkType == LANDMARK_TYPE.MONSTER_LAIR) {
-				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
-					landmark.specificLandmarkType.GetStructureType());
+				LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region, landmark.specificLandmarkType.GetStructureType());
 				landmark.tileLocation.settlementOnTile.GenerateStructures(structure);
-				yield return MapGenerator.Instance.StartCoroutine(
-					GenerateMonsterLair(landmark.tileLocation, structure));
+				yield return MapGenerator.Instance.StartCoroutine(GenerateMonsterLair(landmark.tileLocation, structure));
 			} else if (landmark.specificLandmarkType != LANDMARK_TYPE.VILLAGE) {
-				yield return MapGenerator.Instance.StartCoroutine(
-					LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(landmark.tileLocation.settlementOnTile, 
+				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceBuiltStructuresForSettlement(landmark.tileLocation.settlementOnTile, 
 						landmark.tileLocation.region.innerMap, RESOURCE.NONE, landmark.specificLandmarkType.GetStructureType()));
 			}
 		}

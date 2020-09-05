@@ -18,6 +18,17 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                character.AddPlayerAction(SPELL_TYPE.CULTIST_TRANSFORM);
+                character.AddPlayerAction(SPELL_TYPE.CULTIST_POISON);
+                character.AddPlayerAction(SPELL_TYPE.CULTIST_BOOBY_TRAP);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);

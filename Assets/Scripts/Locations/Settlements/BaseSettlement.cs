@@ -277,6 +277,7 @@ namespace Locations.Settlements {
             }
         }
         public void AddStructure(LocationStructure structure) {
+            Debug.Assert(!structure.hasBeenDestroyed, $"Structure {structure} has been destroyed but is being added to {name}");
             if (!structures.ContainsKey(structure.structureType)) {
                 structures.Add(structure.structureType, new List<LocationStructure>());
             }

@@ -17,8 +17,7 @@ public class PatrolBehaviour : CharacterBehaviourComponent {
             chosenStructure = character.currentRegion.GetRandomStructure();
         }
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
-        GoapPlanJob job =
-            JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.PATROL, character, character);
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PATROL, INTERACTION_TYPE.PATROL, character, character);
         job.AddOtherData(INTERACTION_TYPE.PATROL, new object[]{ chosenTile });
         job.SetCannotBePushedBack(true);
         producedJob = job;    

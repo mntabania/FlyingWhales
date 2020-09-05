@@ -537,6 +537,7 @@ public class Region : ISavable {
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS);
     }
     public void AddStructure(LocationStructure structure) {
+        Debug.Assert(!structure.hasBeenDestroyed, $"Structure {structure} has been destroyed but is being added to {name}");
         if (!structures.ContainsKey(structure.structureType)) {
             structures.Add(structure.structureType, new List<LocationStructure>());
         }

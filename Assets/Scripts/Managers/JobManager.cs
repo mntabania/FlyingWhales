@@ -90,7 +90,7 @@ public class JobManager : BaseMonoBehaviour {
             {Repair_Applicability, new RepairApplicabilityChecker()},
             {Haul_Applicability, new HaulApplicabilityChecker()},
             {Judge_Applicability, new JudgeApplicabilityChecker()},
-            {Apprehend_Settlement_Applicability, new ApprehendApplicabilityChecker()},
+            {Apprehend_Settlement_Applicability, new ApprehendSettlementApplicabilityChecker()},
             {Obtain_Personal_Food_Applicability, new ObtainPersonalFoodApplicabilityChecker()},
             {Combine_Stockpile_Applicability, new CombineStockpileApplicabilityChecker()},
             {Restrain_Applicability, new RestrainApplicabilityChecker()},

@@ -127,6 +127,10 @@ public class LoadSecondWave : MapGenerationComponent {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
+            if (saveDataTileObject == null) {
+                Debug.LogWarning($"{tileObject} with persistentID {tileObject.persistentID} does not have any save data.");
+                continue;
+            }
             if (tileObject is GenericTileObject || string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
                 //the loaded object does not have a grid tile location, it will be loaded and in memory, but not placed in this section.
                 //if it in a character's inventory then it will be referenced by the character carrying it, when that character has been loaded.
@@ -203,11 +207,11 @@ public class LoadSecondWave : MapGenerationComponent {
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (tileObject is Tombstone tombstone) {
-                if (tombstone.character == null) {
-                    Debug.LogWarning($"{tombstone} with persistent id {tombstone.persistentID} does not have a character inside it, but has a tile location. Not placing it to prevent errors, but this case should not happen!");
-                    continue;
-                }
                 if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
+                    if (tombstone.character == null || tombstone.character.marker == null) {
+                        Debug.LogWarning($"{tombstone} with persistent id {tombstone.persistentID} does not have a character inside it, but has a tile location. Not placing it to prevent errors, but this case should not happen!");
+                        continue;
+                    }
                     LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
                     gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {

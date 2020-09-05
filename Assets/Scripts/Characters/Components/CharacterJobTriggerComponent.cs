@@ -1808,8 +1808,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void TriggerBuryMe() {
 	    if (owner.minion == null && !(owner is Animal) && owner.gridTileLocation != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(out var settlement)
 	        && settlement is NPCSettlement npcSettlement) {
-		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ??
-		                                        npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		    LocationStructure targetStructure = npcSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY) ?? owner.gridTileLocation.parentMap.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
 		    GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, owner, npcSettlement);
 		    buryJob.SetCanTakeThisJobChecker(JobManager.Can_Take_Bury_Job);
 		    buryJob.AddOtherData(INTERACTION_TYPE.BURY_CHARACTER, new object[]{ targetStructure });

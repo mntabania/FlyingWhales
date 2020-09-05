@@ -51,7 +51,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 
 			NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, settlementTiles.ToArray());
-			npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+			// npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 			LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 			List<StructureSetting> structureTypes;
 			if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
@@ -61,8 +61,7 @@ public class SettlementGeneration : MapGenerationComponent {
 					new StructureSetting(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE)
 				};
-			}
-			else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
 				structureTypes = new List<StructureSetting>() {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.CEMETERY, RESOURCE.STONE),
@@ -70,8 +69,7 @@ public class SettlementGeneration : MapGenerationComponent {
 					new StructureSetting(STRUCTURE_TYPE.PRISON, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.HUNTER_LODGE, RESOURCE.STONE),
 				};
-			}
-			else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
+			} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
 				structureTypes = new List<StructureSetting>() {
 					new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
 					new StructureSetting(STRUCTURE_TYPE.TAVERN, RESOURCE.STONE),
@@ -131,7 +129,7 @@ public class SettlementGeneration : MapGenerationComponent {
 				LOCATION_TYPE locationType = GetLocationTypeForRace(faction.race);
 			
 				NPCSettlement npcSettlement = LandmarkManager.Instance.CreateNewSettlement(region, locationType, tilesInSettlement);
-				npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+				// npcSettlement.AddStructure(region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
 				LandmarkManager.Instance.OwnSettlement(faction, npcSettlement);
 				
 				StructureSetting[] structureSettings = settlementTemplate.structureSettings;

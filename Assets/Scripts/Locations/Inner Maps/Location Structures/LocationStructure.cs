@@ -138,6 +138,7 @@ namespace Inner_Maps.Location_Structures {
 
         #region Initialization
         public virtual void Initialize() {
+            Debug.Assert(!hasBeenDestroyed, $"Destroyed structure {this} is being initialized!");
             SubscribeListeners();
             ConstructDefaultActions();
         }

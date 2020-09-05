@@ -43,7 +43,7 @@ namespace Generator.Map_Generation.Components {
                 validCharacters = CollectionUtilities.Shuffle(validCharacters);
                 for (int i = 0; i < validCharacters.Count; i++) {
                     Character character = validCharacters[i];
-                    IcalawaCharacterRandomInitialTraits(i, character);
+                    IcalawaCharacterRandomInitialTraits(i, character, validCharacters.Count);
                 }
             } else {
                 yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
@@ -117,17 +117,17 @@ namespace Generator.Map_Generation.Components {
         #endregion
 
         #region Icalawa
-        private void IcalawaCharacterRandomInitialTraits(int index, Character character) {
-            if (index < 6) {
+        private void IcalawaCharacterRandomInitialTraits(int index, Character character, int totalCharacters) {
+            if (index < totalCharacters/2) {
                 //half of villagers are robust
                 character.traitContainer.AddTrait(character, "Robust");
             }
-            if (index < 11) {
-                //all non evil characters are blessed
-                character.traitContainer.AddTrait(character, "Blessed");
-            } else {
+            if (index + 1 == totalCharacters) {
                 //last villager is Evil.
                 character.traitContainer.AddTrait(character, "Evil");
+            } else {
+                //all non evil characters are blessed
+                character.traitContainer.AddTrait(character, "Blessed");
             }
             List<string> buffTraits = new List<string>(TraitManager.Instance.buffTraitPool);
             buffTraits.Remove("Blessed");

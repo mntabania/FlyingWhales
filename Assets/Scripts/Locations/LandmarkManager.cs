@@ -413,8 +413,10 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         if (type != null) {
             var structure = Activator.CreateInstance(type, location, saveDataLocationStructure) as LocationStructure;
             Assert.IsNotNull(structure, $"Structure at {location.name} is null {structureType}");
-            location.AddStructure(structure);
-            structure.Initialize();
+            if (!structure.hasBeenDestroyed) {
+                //Do not initialize structures that have been destroyed.
+                structure.Initialize();    
+            }
             DatabaseManager.Instance.structureDatabase.RegisterStructure(structure);
             return structure;
         }

@@ -37,12 +37,13 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             SaveDataLocationStructure saveDataLocationStructure = saveData.worldMapSave.structureSaves[i];
             Region location = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataLocationStructure.regionLocationID);
             LocationStructure createdStructure = saveDataLocationStructure.InitialLoad(location);
-            if (createdStructure != null) {
+            if (createdStructure != null && !createdStructure.hasBeenDestroyed) {
+                //only add undestroyed structures to location.
                 location.AddStructure(createdStructure);
-            }
-            if (!string.IsNullOrEmpty(saveDataLocationStructure.settlementLocationID)) {
-                BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataLocationStructure.settlementLocationID);
-                settlement.AddStructure(createdStructure);
+                if (!string.IsNullOrEmpty(saveDataLocationStructure.settlementLocationID)) {
+                    BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataLocationStructure.settlementLocationID);
+                    settlement.AddStructure(createdStructure);
+                }
             }
             saveDataLocationStructure.Load();
         }
@@ -75,6 +76,15 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
             yield return MapGenerator.Instance.StartCoroutine(location.innerMap.LoadTileVisuals(this, saveDataRegion.innerMapSave, tileAssetDB));
         }
         tileAssetDB.Clear();
+        
+        // //add wilderness to all village settlements
+        // //NOTE: This is needed because some actions reference the settlement and check which structures of the settlement are valid targets (i.e Bury Character)
+        // for (int i = 0; i < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; i++) {
+        //     NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[i];
+        //     if (settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+        //         settlement.AddStructure(settlement.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));        
+        //     }
+        // }
         
         for (int i = 0; i < InnerMapManager.Instance.innerMaps.Count; i++) {
             InnerTileMap innerTileMap = InnerMapManager.Instance.innerMaps[i];
