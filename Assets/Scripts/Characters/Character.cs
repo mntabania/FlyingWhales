@@ -5969,8 +5969,26 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //Loading carried object should be after creating marker because we need the character marker in order for the eobject to be carried
             carryComponent.LoadCarryReference(data.carryComponent);
 
-            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && currentActionNode.poiTarget is TileObject target) {
-                target.OnDoActionToObject(currentActionNode);
+            if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING) {
+                if(currentActionNode.poiTarget is TileObject target) {
+                    target.OnDoActionToObject(currentActionNode);
+                } else if (currentActionNode.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                    Character actor = currentActionNode.actor;
+                    Character targetCharacter = currentActionNode.poiTarget as Character;
+                    Bed bed = null;
+                    if (actor.tileObjectComponent.primaryBed != null) {
+                        if (actor.tileObjectComponent.primaryBed.gridTileLocation != null
+                            && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation))) {
+                            bed = actor.tileObjectComponent.primaryBed;
+                        }
+                    } else if (targetCharacter.tileObjectComponent.primaryBed != null) {
+                        if (targetCharacter.tileObjectComponent.primaryBed.gridTileLocation != null
+                            && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation))) {
+                            bed = targetCharacter.tileObjectComponent.primaryBed;
+                        }
+                    }
+                    bed.OnDoActionToObject(currentActionNode);
+                }
             }
         }
         visuals.UpdateAllVisuals(this);

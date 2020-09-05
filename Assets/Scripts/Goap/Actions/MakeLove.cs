@@ -251,16 +251,19 @@ public class MakeLove : GoapAction {
 
     #region Effects
     public void PreMakeLoveSuccess(ActualGoapNode goapNode) {
+        Character actor = goapNode.actor;
         Character targetCharacter = goapNode.poiTarget as Character;
         Assert.IsNotNull(targetCharacter, $"Target character of Make Love Action by {goapNode.actor.name} is not a character!");
-        Bed bed = goapNode.actor.gridTileLocation.objHere as Bed;
-        if (bed == null) {
-            //check neighbours
-            for (int i = 0; i < goapNode.actor.gridTileLocation.neighbourList.Count; i++) {
-                LocationGridTile neighbour = goapNode.actor.gridTileLocation.neighbourList[i];
-                if (neighbour.objHere is Bed targetBed) {
-                    bed = targetBed;
-                }
+        Bed bed = null;
+        if (actor.tileObjectComponent.primaryBed != null) {
+            if(actor.tileObjectComponent.primaryBed.gridTileLocation != null 
+                && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation))) {
+                bed = actor.tileObjectComponent.primaryBed;
+            }
+        } else if (targetCharacter.tileObjectComponent.primaryBed != null) {
+            if (targetCharacter.tileObjectComponent.primaryBed.gridTileLocation != null
+                && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation))) {
+                bed = targetCharacter.tileObjectComponent.primaryBed;
             }
         }
         Assert.IsNotNull(bed, $"Target bed of Make Love Action by {goapNode.actor.name} targeting {goapNode.poiTarget.name} is null!");
@@ -286,16 +289,29 @@ public class MakeLove : GoapAction {
         //targetCharacter.needsComponent.AdjustStamina(1f);
     }
     public void AfterMakeLoveSuccess(ActualGoapNode goapNode) {
-        Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
-        bed.OnDoneActionToObject(goapNode);
+        Character actor = goapNode.actor;
         Character targetCharacter = goapNode.poiTarget as Character;
+        Bed bed = null;
+        if (actor.tileObjectComponent.primaryBed != null) {
+            if (actor.tileObjectComponent.primaryBed.gridTileLocation != null
+                && (actor.gridTileLocation == actor.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(actor.tileObjectComponent.primaryBed.gridTileLocation))) {
+                bed = actor.tileObjectComponent.primaryBed;
+            }
+        } else if (targetCharacter.tileObjectComponent.primaryBed != null) {
+            if (targetCharacter.tileObjectComponent.primaryBed.gridTileLocation != null
+                && (actor.gridTileLocation == targetCharacter.tileObjectComponent.primaryBed.gridTileLocation || actor.gridTileLocation.IsNeighbour(targetCharacter.tileObjectComponent.primaryBed.gridTileLocation))) {
+                bed = targetCharacter.tileObjectComponent.primaryBed;
+            }
+        }
+        //Bed bed = goapNode.actor.gridTileLocation.structure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).FirstOrDefault() as Bed;
+        bed?.OnDoneActionToObject(goapNode);
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
         targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Affairs, they both gain Ashamed trait.
-        if (goapNode.actor is SeducerSummon) {
+        if (actor is SeducerSummon) {
             //kill the target character
-            targetCharacter.Death("seduced", goapNode, goapNode.actor);
+            targetCharacter.Death("seduced", goapNode, actor);
         }
 
         //if (goapNode.actor.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER)) {
