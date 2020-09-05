@@ -146,11 +146,13 @@ public class LoadSecondWave : MapGenerationComponent {
                 LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
                 if (tileObject is MovingTileObject) {
                     SaveDataMovingTileObject saveDataMovingTileObject = saveDataTileObject as SaveDataMovingTileObject;
-                    Assert.IsNotNull(saveDataMovingTileObject);
-                    tileObject.SetGridTileLocation(gridTileLocation);
-                    tileObject.OnPlacePOI();
-                    tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
-                    tileObject.LoadSecondWave(saveDataTileObject);
+                    if (!saveDataMovingTileObject.hasExpired) {
+                        Assert.IsNotNull(saveDataMovingTileObject);
+                        tileObject.SetGridTileLocation(gridTileLocation);
+                        tileObject.OnPlacePOI();
+                        tileObject.mapObjectVisual.SetWorldPosition(saveDataMovingTileObject.mapVisualWorldPosition);
+                        tileObject.LoadSecondWave(saveDataTileObject);    
+                    }
                 } else {
                     gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {

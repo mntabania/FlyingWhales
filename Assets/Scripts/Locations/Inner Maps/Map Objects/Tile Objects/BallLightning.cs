@@ -22,6 +22,7 @@ public class BallLightning : MovingTileObject {
         //SaveDataBallLightning saveDataBallLightning = data as SaveDataBallLightning;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
+        hasExpired = data.hasExpired;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

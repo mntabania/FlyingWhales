@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public abstract class MovingTileObject : TileObject {
     public sealed override LocationGridTile gridTileLocation => TryGetGridTileLocation(out var tile) ? tile : base.gridTileLocation;
@@ -64,11 +65,15 @@ public abstract class MovingTileObject : TileObject {
 #region Save Data
 public class SaveDataMovingTileObject : SaveDataTileObject {
     public Vector3 mapVisualWorldPosition;
+    public bool hasExpired;
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
+        MovingTileObject movingTileObject = tileObject as MovingTileObject;
+        Assert.IsNotNull(movingTileObject);
         if (tileObject.mapObjectVisual != null) {
             mapVisualWorldPosition = tileObject.mapObjectVisual.transform.position;
         }
+        hasExpired = movingTileObject.hasExpired;
     }
 }
 #endregion

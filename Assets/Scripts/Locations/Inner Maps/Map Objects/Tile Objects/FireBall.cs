@@ -22,6 +22,7 @@ public class FireBall : MovingTileObject {
         //SaveDataFireBall saveDataFireBall = data as SaveDataFireBall;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
+        hasExpired = data.hasExpired;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

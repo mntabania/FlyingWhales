@@ -23,6 +23,7 @@ public class Tornado : MovingTileObject {
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
         SetRadius(data.radius);
+        hasExpired = data.hasExpired;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();

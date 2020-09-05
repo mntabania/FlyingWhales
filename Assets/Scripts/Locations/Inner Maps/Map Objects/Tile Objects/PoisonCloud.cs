@@ -27,6 +27,7 @@ public sealed class PoisonCloud : MovingTileObject {
         //SaveDataPoisonCloud saveDataPoisonCloud = data as SaveDataPoisonCloud;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
+        hasExpired = data.hasExpired;
     }
 
     public void SetStacks(int stacks) {

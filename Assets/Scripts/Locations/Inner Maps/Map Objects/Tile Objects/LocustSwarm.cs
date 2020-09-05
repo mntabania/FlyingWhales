@@ -21,6 +21,7 @@ public class LocustSwarm : MovingTileObject {
         //SaveDataLocustSwarm saveDataLocustSwarm = data as SaveDataLocustSwarm;
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
+        hasExpired = data.hasExpired;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
