@@ -10,9 +10,7 @@ public class CornCrop : Crops {
         Initialize(TILE_OBJECT_TYPE.CORN_CROP);
         AddAdvertisedAction(INTERACTION_TYPE.TEND);
     }
-    public CornCrop(SaveDataCornCrop data) : base(data) {
-        AddAdvertisedAction(INTERACTION_TYPE.TEND);
-    }
+    public CornCrop(SaveDataCornCrop data) : base(data) { }
 
     #region Growth State
     public override int GetRipeningTicks() {

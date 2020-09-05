@@ -611,16 +611,26 @@ public class ReactionComponent : CharacterComponent {
                     if (actor.jobQueue.jobsInQueue.Count > 0) {
                         debugLog = $"{debugLog}\n-{actor.jobQueue.jobsInQueue[0].jobType}";
                     }
-                    //NOTE: Added checking for webbed so that spiders won't attack characters that they've webbed up
-                    if (disguisedActor.race == RACE.SPIDER && targetCharacter.traitContainer.HasTrait("Webbed")) {
-                        debugLog = $"{debugLog}\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
+                    
+                    if (targetCharacter.defaultCharacterTrait.hasBeenAbductedByWildMonster && disguisedActor.faction.factionType.type == FACTION_TYPE.Wild_Monsters) {
+                        debugLog = $"{debugLog}\nActor is a wild monster and target has been abducted by a wild monster, did not trigger Fight or Flight response.";
                         return;
                     }
+                    if (targetCharacter.defaultCharacterTrait.hasBeenAbductedByPlayerMonster && disguisedActor.faction.isPlayerFaction) {
+                        debugLog = $"{debugLog}\nActor is part if player faction and target has been abducted by player faction, did not trigger Fight or Flight response.";
+                        return;
+                    }
+                    // //NOTE: Added checking for webbed so that spiders won't attack characters that they've webbed up
+                    // if (disguisedActor.race == RACE.SPIDER && targetCharacter.traitContainer.HasTrait("Webbed")) {
+                    //     debugLog = $"{debugLog}\nActor is a spider and target is webbed, did not trigger Fight or Flight response.";
+                    //     return;
+                    // }
                     //NOTE: Added checking for minions/skeletons owned by the player so that they won't attack characters that have just been tortured/brainwashed (aka. Dazed)
                     if (disguisedActor.faction.isPlayerFaction && targetCharacter.traitContainer.HasTrait("Dazed")) {
                         debugLog = $"{debugLog}\nActor is part of player faction and target character is dazed, do not combat!.";
                         return;
                     }
+                    
                     
                     //If the target is already unconscious (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {

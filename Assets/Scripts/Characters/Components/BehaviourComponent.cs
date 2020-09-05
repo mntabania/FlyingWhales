@@ -715,11 +715,18 @@ public class BehaviourComponent : CharacterComponent {
         Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
         Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
         Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+        Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
     }
     public void OnNoLongerAbductor() {
         Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, CheckIfMonsterAte);
         Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnAbductorAddedJobToQueue);
         Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnAbductorRemovedJobFromQueue);
+        Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnAbductorFinishedJobSuccessfully);
+    }
+    private void OnAbductorFinishedJobSuccessfully(Character character, GoapPlanJob job) {
+        if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT && job.targetPOI is Character targetCharacter) {
+            targetCharacter.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(true);
+        }
     }
     private void OnAbductorRemovedJobFromQueue(JobQueueItem job, Character character) {
         if (character == owner && job.jobType == JOB_TYPE.MONSTER_ABDUCT) {

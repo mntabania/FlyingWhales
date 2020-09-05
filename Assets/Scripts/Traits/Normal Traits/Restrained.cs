@@ -85,6 +85,10 @@ namespace Traits {
                 //    PlayerManager.Instance.player.ShowNotification(logNotif);
                 //}
                 character.traitContainer.RemoveTrait(character, "Webbed"); //always remove webbed trait after restrained has been removed
+                
+                //always set character as un-abducted by anyone after they lose restrain trait. 
+                character.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(false);
+                character.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(false);
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
