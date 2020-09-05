@@ -169,6 +169,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (!string.IsNullOrEmpty(data.characterOwnerID)) {
             characterOwner = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.characterOwnerID);    
         }
+        if (!string.IsNullOrEmpty(data.isBeingCarriedByID)) {
+            isBeingCarriedBy = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(data.isBeingCarriedByID);
+        }
     }
     /// <summary>
     /// Load more info, this is called after character markers have been created.
