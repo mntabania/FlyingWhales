@@ -558,8 +558,12 @@ namespace Inner_Maps {
                 //Booby trapped Rug should explode on contact
                 //https://trello.com/c/rveaE94E/1942-booby-trapped-rug-should-explode-on-contact
                 if(rug.traitContainer.HasTrait("Booby Trapped")) {
-                    BoobyTrapped boobyTrapped = rug.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
-                    boobyTrapped.DamageTargetByTrap(character);
+                    if(character.currentActionNode != null && character.currentActionNode.target == rug && character.currentActionNode.goapType == INTERACTION_TYPE.REMOVE_TRAP) {
+                        //Should not activate booby trap if character is removing it
+                    } else {
+                        BoobyTrapped boobyTrapped = rug.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                        boobyTrapped.DamageTargetByTrap(character);
+                    }
                 }
             }
             if (hasFreezingTrap && (freezingTrapExclusions == null || !freezingTrapExclusions.Contains(character.race))) {
