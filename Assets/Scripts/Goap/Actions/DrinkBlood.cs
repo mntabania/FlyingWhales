@@ -201,7 +201,7 @@ public class DrinkBlood : GoapAction {
             //    return false;
             //}
             if(poiTarget is Character targetCharacter) {
-                return actor != targetCharacter && actor.traitContainer.HasTrait("Vampiric") && !targetCharacter.isDead && targetCharacter.carryComponent.isBeingCarriedBy == null;
+                return actor != targetCharacter && actor.traitContainer.HasTrait("Vampiric") && !targetCharacter.isDead && targetCharacter.carryComponent.IsNotBeingCarried();
             }
             return actor != poiTarget && actor.traitContainer.HasTrait("Vampiric");
         }
