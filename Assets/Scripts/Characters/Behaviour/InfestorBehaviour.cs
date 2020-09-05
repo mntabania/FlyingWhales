@@ -21,7 +21,7 @@ public class InfestorBehaviour : CharacterBehaviourComponent {
             if(character.gridTileLocation != null && character.gridTileLocation.objHere == null && (character.IsInHomeSettlement() || character.isAtHomeStructure || character.IsInTerritory())) {
                 int roll = UnityEngine.Random.Range(0, 100);
                 log += $"\n-Roll: {roll}";
-                if(roll < 1) {
+                if(roll < 2) {
                     int currentCapacity = 0;
                     if(character.homeSettlement != null) {
                         currentCapacity = character.homeSettlement.GetNumOfResidentsThatMeetCriteria(c => c.race == character.race && c.characterClass.className == character.characterClass.className);
