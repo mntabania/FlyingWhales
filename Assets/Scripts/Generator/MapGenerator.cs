@@ -237,7 +237,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(),
             new LoadFirstWave(), new LoadSecondWave(), new MapGenerationFinalization(),
-            new PlayerDataGeneration(), new LoadCharactersCurrentAction(),
+            new PlayerDataGeneration(), new LoadAwarenessGeneration(), new LoadCharactersCurrentAction(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));
     }
@@ -280,12 +280,6 @@ public class MapGenerator : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
             loadingWatch.Stop();
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-            
-            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
-                Region region = GridMap.Instance.allRegions[i];
-                region.UpdateAwareness();
-                yield return null;
-            }
             
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();

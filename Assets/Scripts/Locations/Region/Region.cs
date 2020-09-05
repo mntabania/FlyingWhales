@@ -480,6 +480,9 @@ public class Region : ISavable {
         pendingRemoveAwareness.Clear();
     }
     private bool AddAwareness(IPointOfInterest pointOfInterest) {
+        if(pointOfInterest == null) {
+            return false;
+        }
         if (!HasAwareness(pointOfInterest)) {
             if (!awareness.ContainsKey(pointOfInterest.poiType)) {
                 awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
