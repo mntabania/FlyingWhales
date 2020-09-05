@@ -43,7 +43,7 @@ namespace Interrupts {
                     int acceptWeight = 20;
                     int rejectWeight = 10;
                     Character targetLover = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
-                    if ((targetLover != null && targetLover != actor) || targetCharacter.relationshipContainer.HasRelationship(RELATIONSHIP_TYPE.LOVER)) {
+                    if (targetLover != null && targetLover != actor) {
                         //Target has a different lover
                         debugLog += $"\n-Target has different lover";
                         acceptWeight = 0;
