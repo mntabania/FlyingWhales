@@ -293,7 +293,7 @@ public class MapGenerator : MonoBehaviour {
             UIManager.Instance.initialWorldSetupMenu.Initialize();
 
             Messenger.Broadcast(Signals.GAME_LOADED);
-            UIManager.Instance.initialWorldSetupMenu.loadOutMenu.SkipLoadout(saveData.playerSave.archetype);
+            UIManager.Instance.initialWorldSetupMenu.loadOutMenu.LoadLoadout(saveData.playerSave.archetype);
 
             DatabaseManager.Instance.ClearVolatileDatabases();
             SaveManager.Instance.saveCurrentProgressManager.CleanUpLoadedData();

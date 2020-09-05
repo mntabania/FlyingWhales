@@ -122,6 +122,13 @@ public class GameManager : MonoBehaviour {
             UIManager.Instance.ShowStartDemoScreen();
         }
     }
+    public void LoadProgression(){
+        _gameHasStarted = true;
+        UIManager.Instance.Pause();
+        lastProgressionBeforePausing = "paused";
+        SchedulingManager.Instance.StartScheduleCalls ();
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
+    }
     public GameDate Today() {
         return new GameDate(today.month, today.day, today.year, today.tick);
     }
