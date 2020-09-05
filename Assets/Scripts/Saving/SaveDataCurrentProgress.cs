@@ -409,7 +409,6 @@ public class SaveDataCurrentProgress {
     #region Clean Up
     public void CleanUp() {
         worldMapSave?.CleanUp();
-        worldSettingsData = null;
         familyTreeDatabase = null;
         playerSave?.CleanUp();
         objectHub?.Clear();
