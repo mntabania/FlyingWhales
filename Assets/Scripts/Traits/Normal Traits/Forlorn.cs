@@ -20,8 +20,14 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is ForlornSpirit) {
-                owner = addedTo as ForlornSpirit;
+            if (addedTo is ForlornSpirit spirit) {
+                owner = spirit;
+            }
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is ForlornSpirit spirit) {
+                owner = spirit;
             }
         }
         public override bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) {

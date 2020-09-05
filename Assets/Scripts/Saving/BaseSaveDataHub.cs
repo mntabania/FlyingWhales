@@ -208,6 +208,7 @@ public class SaveDataTraitHub : BaseSaveDataHub {
     public override bool AddToSave<T>(T data) {
         if (data is SaveDataTrait save) {
             if (!_hub.ContainsKey(save.persistentID)) {
+                // Debug.Log($"<b>{save.name}</b> with persistent ID {save.persistentID} was added to save hub");
                 _hub.Add(save.persistentID, save);
                 return true;
             }
@@ -220,9 +221,9 @@ public class SaveDataTraitHub : BaseSaveDataHub {
         }
         return false;
     }
-    public override ISavableCounterpart GetData(string persistendID) {
-        if (_hub.ContainsKey(persistendID)) {
-            return _hub[persistendID];
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
         }
         return default;
     }

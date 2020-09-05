@@ -15,20 +15,9 @@ namespace Traits {
             canBeTriggered = true;
             hasReactedThisTick = false;
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
-            //effects = new List<TraitEffect>();
         }
 
         #region Overrides
-        //protected override void OnChangeLevel() {
-        //    base.OnChangeLevel();
-        //if(level == 1) {
-        //    daysDuration = 50;
-        //} else if (level == 2) {
-        //    daysDuration = 70;
-        //} else if (level == 3) {
-        //    daysDuration = 90;
-        //}
-        //}
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {

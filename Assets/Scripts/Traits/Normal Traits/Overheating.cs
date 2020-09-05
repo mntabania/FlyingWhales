@@ -36,13 +36,21 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataOverheating saveDataOverheating = saveDataTrait as SaveDataOverheating;
             Assert.IsNotNull(saveDataOverheating);
             excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(saveDataOverheating.excludedStructuresInSeekingShelter);
             if (!string.IsNullOrEmpty(saveDataOverheating.currentShelterStructure)) {
                 currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataOverheating.currentShelterStructure);    
+            }
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            traitable = addTo;
+            if (addTo is Character character) {
+                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                _overheatingEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Overheating);
             }
         }
         #endregion

@@ -34,11 +34,19 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataCatatonic saveDataCatatonic = saveDataTrait as SaveDataCatatonic;
             Assert.IsNotNull(saveDataCatatonic);
             _chanceToRemove = saveDataCatatonic.chanceToRemove;
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckRemovalChance);
+                Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+            }
         }
         #endregion
         

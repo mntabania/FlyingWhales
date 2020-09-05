@@ -21,11 +21,18 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataHunting saveDataHunting = saveDataTrait as SaveDataHunting;
             Assert.IsNotNull(saveDataHunting);
             targetTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(saveDataHunting.targetTileID);
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                _owner = character;
+                Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
+            }
         }
         #endregion
 

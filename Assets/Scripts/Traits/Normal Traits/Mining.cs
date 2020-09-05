@@ -12,6 +12,18 @@
             isHidden = true;
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                _owner = character;
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_ADDED_TO_QUEUE, OnJobAddedToQueue);
+                Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
+                Messenger.AddListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnMineJobRemoved);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

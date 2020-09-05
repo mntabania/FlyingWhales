@@ -6,6 +6,7 @@ using UnityEngine;
 using Inner_Maps;
 using Traits;
 using UnityEngine.Assertions;
+using Debug = System.Diagnostics.Debug;
 namespace Traits {
     public class TraitContainer : ITraitContainer {
 
@@ -768,16 +769,55 @@ namespace Traits {
         #endregion
 
         #region Loading
+        private bool LoadUnInstancedTrait(ITraitable addTo, string traitName) {
+            Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No trait named {traitName} in all traits");
+            Trait trait = TraitManager.Instance.allTraits[traitName];
+            if (trait.IsUnique()) {
+                //if uninstanced trait is unique then do not add it if object already has it.
+                if (addTo.traitContainer.HasTrait(trait.name)) {
+                    return false;
+                }
+            }
+            return LoadTraitRoot(addTo, trait);
+        }
+        private bool LoadInstancedTrait(ITraitable addTo, Trait trait) {
+            return LoadTraitRoot(addTo, trait);
+        }
+        private bool LoadTraitRoot(ITraitable addTo, Trait trait) {
+            if(trait is Status status) {
+                statuses.Add(status);
+            } else {
+                traits.Add(trait);
+            }
+            trait.LoadTraitOnLoadTraitContainer(addTo);
+            allTraitsAndStatuses.Add(trait);
+            
+            if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
+                for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
+                    string identifier = trait.traitOverrideFunctionIdentifiers[i];
+                    AddTraitOverrideFunction(identifier, trait);
+                }
+            }
+            
+            return true;
+        }
+        /// <summary>
+        /// Load all the traits of this trait container.
+        /// IMPORTANT NOTE: This assumes that the ITraitable has already been placed in the world.
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <param name="saveDataTraitContainer"></param>
         public void Load(ITraitable owner, SaveDataTraitContainer saveDataTraitContainer) {
+            Debug.Assert(owner.gridTileLocation != null, $"{owner} gridTileLocation != null");
             for (int i = 0; i < saveDataTraitContainer.nonInstancedTraits.Count; i++) {
                 string nonInstancedTraitName = saveDataTraitContainer.nonInstancedTraits[i];
                 //add trait to container, bue set duration as 0, since the traits removal will be handled when loading the schedule tickets
-                TraitAddition(owner, nonInstancedTraitName, null, null, 0);
+                LoadUnInstancedTrait(owner, nonInstancedTraitName);
             }
             for (int i = 0; i < saveDataTraitContainer.instancedTraitsIDs.Count; i++) {
                 string persistentID = saveDataTraitContainer.instancedTraitsIDs[i];
                 Trait trait = DatabaseManager.Instance.traitDatabase.GetTraitByPersistentID(persistentID);
-                TraitAddition(owner, trait, null, null, 0);
+                LoadInstancedTrait(owner, trait);
             }
             stacks.Clear();
             foreach (var stack in saveDataTraitContainer.stacks) {
@@ -789,6 +829,10 @@ namespace Traits {
                     string ticketID = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(owner, ticket.Key), this);
                     AddScheduleTicket(ticket.Key, ticketID, removeDate);
                 }
+            }
+            traitSwitches.Clear();
+            foreach (var pair in saveDataTraitContainer.traitSwitches) {
+                traitSwitches.Add(pair.Key, pair.Value);
             }
         }
         #endregion
@@ -826,6 +870,8 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
     public List<string> instancedTraitsIDs; //list of persistent ids per instanced trait
     public Dictionary<string, int> stacks;
     public Dictionary<string, List<GameDate>> scheduleTickets;
+    public Dictionary<string, bool> traitSwitches;
+    
     public override void Save(ITraitContainer data) {
         base.Save(data);
         nonInstancedTraits = new List<string>();
@@ -849,6 +895,7 @@ public class SaveDataTraitContainer : SaveData<ITraitContainer> {
                 scheduleTickets[schedule.Key].Add(removeSchedule.removeDate);
             }
         }
+        traitSwitches = data.traitSwitches;
     }
 }
 #endregion

@@ -22,25 +22,18 @@ namespace Traits {
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
-            if (sourceCharacter is Character) {
-                owner = sourceCharacter as Character;
-                //AlterEgoData lycanthropeAlterEgo = _character.CreateNewAlterEgo("Lycanthrope");
-
-                ////setup all alter ego data
-                //lycanthropeAlterEgo.SetFaction(FactionManager.Instance.neutralFaction);
-                //lycanthropeAlterEgo.SetRace(RACE.WOLF);
-                //lycanthropeAlterEgo.SetRole(CharacterRole.BEAST);
-                //lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
-                //lycanthropeAlterEgo.SetLevel(level);
-                //lycanthropeAlterEgo.AddTrait(new Nocturnal());
-
+            if (sourceCharacter is Character character) {
+                owner = character;
             }
-
             base.OnAddTrait(sourceCharacter);
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+            }
+        }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            //originalForm.RemoveAlterEgo("Lycanthrope");
-            //originalForm = null;
             base.OnRemoveTrait(sourceCharacter, removedBy);
             owner.lycanData.EraseThisDataWhenTraitIsRemoved(owner);
         }

@@ -35,13 +35,23 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataFreezing saveDataFreezing = saveDataTrait as SaveDataFreezing;
             Assert.IsNotNull(saveDataFreezing);
             excludedStructuresInSeekingShelter = SaveUtilities.ConvertIDListToStructures(saveDataFreezing.excludedStructuresInSeekingShelter);
             if (!string.IsNullOrEmpty(saveDataFreezing.currentShelterStructure)) {
                 currentShelterStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataFreezing.currentShelterStructure);    
+            }
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            traitable = addTo;
+            if (addTo is Character character) {
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Freezing);
+                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            } else if (addTo is IPointOfInterest poi) {
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Freezing_Object);
             }
         }
         #endregion

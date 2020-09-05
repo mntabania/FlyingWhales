@@ -22,6 +22,15 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is IPointOfInterest poi) {
+                owner = poi;
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

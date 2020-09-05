@@ -17,8 +17,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
             base.OnAddTrait(sourcePOI);
-            if (sourcePOI is Character) {
-                Character character = sourcePOI as Character;
+            if (sourcePOI is Character character) {
                 character.behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Baby_Infestor_Behaviour);
             }
         }

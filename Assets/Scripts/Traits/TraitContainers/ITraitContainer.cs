@@ -17,6 +17,7 @@ namespace Traits {
         Dictionary<string, List<Trait>> traitOverrideFunctions { get; }
         Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; }
         Dictionary<string, int> stacks { get; }
+        Dictionary<string, bool> traitSwitches { get; }
         //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
 

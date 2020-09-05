@@ -26,6 +26,14 @@ namespace Traits {
                 }
             }
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                if (character.marker) {
+                    character.marker.BerserkedMarker();
+                }
+            }
+        }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {

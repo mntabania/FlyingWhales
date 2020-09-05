@@ -25,6 +25,10 @@ namespace Traits {
             base.OnAddTrait(sourceCharacter);
             traitOwner = sourceCharacter as Character;
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            traitOwner = addTo as Character;
+        }
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {

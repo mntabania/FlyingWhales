@@ -14,6 +14,16 @@ namespace Traits {
 			isHidden = true;
 		}
 
+		#region Loading
+		public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+			base.LoadTraitOnLoadTraitContainer(addTo);
+			if (addTo is Character character) {
+				_owner = character;
+				StartCheckingForCowering();
+			}
+		}
+		#endregion
+		
 		#region Overrides
 		public override void OnAddTrait(ITraitable addedTo) {
 			base.OnAddTrait(addedTo);

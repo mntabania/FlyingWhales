@@ -281,6 +281,12 @@ public class MapGenerator : MonoBehaviour {
             loadingWatch.Stop();
             Debug.Log($"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
             
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                region.UpdateAwareness();
+                yield return null;
+            }
+            
             WorldConfigManager.Instance.mapGenerationData = data;
             AudioManager.Instance.TransitionToWorld();
             

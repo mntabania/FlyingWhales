@@ -151,7 +151,7 @@ public class BehaviourComponent : CharacterComponent {
     private bool RemoveBehaviourComponent(CharacterBehaviourComponent component) {
         bool wasRemoved = currentBehaviourComponents.Remove(component);
         if (wasRemoved) {
-            Debug.Log($"{owner.name} removed character behaviour {component}");
+            // Debug.Log($"{owner.name} removed character behaviour {component}");
             component.OnRemoveBehaviourFromCharacter(owner);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_BEHAVIOUR, owner, component);
         }

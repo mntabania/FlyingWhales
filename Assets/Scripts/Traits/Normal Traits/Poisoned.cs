@@ -5,17 +5,19 @@ using Inner_Maps;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Debug = System.Diagnostics.Debug;
 namespace Traits {
     public class Poisoned : Status {
 
         public List<Character> awareCharacters { get; } //characters that know about this trait
         private ITraitable traitable { get; set; } //poi that has the poison
         public Character cleanser { get; private set; }
+        public bool isVenomous { get; private set; }
         
         private Character characterOwner;
         private StatusIcon _statusIcon;
         private GameObject _poisonedEffect;
-        private bool _isVenomous;
+        
 
         #region getters
         public override Type serializedData => typeof(SaveDataPoisoned);
@@ -42,11 +44,25 @@ namespace Traits {
         }
 
         #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataPoisoned saveDataPoisoned = saveDataTrait as SaveDataPoisoned;
+            Debug.Assert(saveDataPoisoned != null, nameof(saveDataPoisoned) + " != null");
+            isVenomous = saveDataPoisoned.isVenomous;
+        }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
             SaveDataPoisoned saveDataPoisoned = saveDataTrait as SaveDataPoisoned;
             Assert.IsNotNull(saveDataPoisoned);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataPoisoned.awareCharacterIDs));
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            traitable = addTo;
+            UpdateVisualsOnAdd(addTo);
+            if(traitable is Character character) {
+                characterOwner = character;
+            }
         }
         #endregion
         
@@ -54,11 +70,11 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             traitable = addedTo;
-            _isVenomous = addedTo.traitContainer.HasTrait("Venomous");
+            isVenomous = addedTo.traitContainer.HasTrait("Venomous");
             UpdateVisualsOnAdd(addedTo);
             if(traitable is Character character) {
                 characterOwner = character;
-                if (!_isVenomous) {
+                if (!isVenomous) {
                     characterOwner.AdjustDoNotRecoverHP(1);
                 }
             } else if (addedTo is TileObject) {
@@ -85,7 +101,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             UpdateVisualsOnRemove(removedFrom);
-            if (!_isVenomous) {
+            if (!isVenomous) {
                 characterOwner?.AdjustDoNotRecoverHP(-1);
             }
             if (traitable is GenericTileObject genericTileObject) {
@@ -109,7 +125,7 @@ namespace Traits {
         }
         public override void OnTickStarted(ITraitable traitable1) {
             base.OnTickStarted(traitable);
-            if (!_isVenomous) {
+            if (!isVenomous) {
                 characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.005f * characterOwner.traitContainer.stacks[name])),
                 ELEMENTAL_TYPE.Normal, true, showHPBar: true);
             }
@@ -158,8 +174,8 @@ namespace Traits {
 
         //This is only called if there is already a Poisoned status before adding the Venomous trait
         public void SetIsVenomous() {
-            if (!_isVenomous) {
-                _isVenomous = true;
+            if (!isVenomous) {
+                isVenomous = true;
                 characterOwner.AdjustDoNotRecoverHP(1);
             }
         }
@@ -212,12 +228,14 @@ namespace Traits {
 #region Save Data
 public class SaveDataPoisoned : SaveDataTrait {
     public List<string> awareCharacterIDs;
+    public bool isVenomous;
 
     public override void Save(Trait trait) {
         base.Save(trait);
         Poisoned poisoned = trait as Poisoned;
         Assert.IsNotNull(poisoned);
         awareCharacterIDs = SaveUtilities.ConvertSavableListToIDs(poisoned.awareCharacters);
+        isVenomous = poisoned.isVenomous;
     }
 }
 #endregion

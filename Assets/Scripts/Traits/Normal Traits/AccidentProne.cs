@@ -25,6 +25,12 @@ namespace Traits {
                 owner = sourceCharacter as Character;
             }
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+            }
+        }
         public override bool PerTickOwnerMovement() {
             int stumbleChance = UnityEngine.Random.Range(0, 100);
             //bool hasCreatedJob = false;

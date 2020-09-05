@@ -18,14 +18,16 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                owner = addedTo as Character;
+            if (addedTo is Character character) {
+                owner = character;
             }
         }
-        // public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        //     base.OnRemoveTrait(removedFrom, removedBy);
-        //     owner.SetIsLazy(false);
-        // }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+            }
+        }
         public override string TriggerFlaw(Character character) {
             //Will drop current action and will perform Happiness Recovery.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {

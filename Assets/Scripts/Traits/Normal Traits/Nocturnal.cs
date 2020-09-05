@@ -12,7 +12,6 @@ namespace Traits {
             type = TRAIT_TYPE.NEUTRAL;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
-            //effects = new List<TraitEffect>();
         }
 
         #region Overrides

@@ -24,6 +24,12 @@ namespace Traits {
                 owner = addedTo as RavenousSpirit;
             }
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is RavenousSpirit) {
+                owner = addTo as RavenousSpirit;
+            }
+        }
         public override bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) {
             if (collidedWith is Character) {
                 Character target = collidedWith as Character;

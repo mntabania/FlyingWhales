@@ -21,28 +21,16 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is IPointOfInterest) {
-                IPointOfInterest poi = addedTo as IPointOfInterest;
+            if (addedTo is IPointOfInterest poi) {
                 owner = poi;
-                //if (poi is Mushroom) {
-                //    fullnessProvided = 520;
-                //} else if (poi is EdiblePlant) {
-                //    fullnessProvided = 520;
-                //} else if (poi is Table) {
-                //    fullnessProvided = 585;
-                //} else if (poi is SmallAnimal) {
-                //    fullnessProvided = 520;
-                //}
-
             }
         }
-        //public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        //    base.OnRemoveTrait(removedFrom, removedBy);
-        //    if (removedFrom is IPointOfInterest) {
-        //        IPointOfInterest poi = removedFrom as IPointOfInterest;
-        //        poi.RemoveAdvertisedAction(INTERACTION_TYPE.EAT);
-        //    }
-        //}
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is IPointOfInterest poi) {
+                owner = poi;
+            }
+        }
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPreEffects(action, goapNode);
             if (action == INTERACTION_TYPE.EAT) {
@@ -68,12 +56,6 @@ namespace Traits {
                 }
             }
         }
-        //public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
-        //    base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
-        //    if (action == INTERACTION_TYPE.EAT) {
-        //        OnDoneEating(goapNode);
-        //    }
-        //}
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.EAT) {
@@ -110,14 +92,7 @@ namespace Traits {
             }
         }
         #endregion
-
-        //private void OnDoneEating(ActualGoapNode goapNode) {
-        //    if (owner is Table) {
-        //        //**Per Tick Effect 2**: Reduce Dwelling Table Food by 20/Duration
-        //        Table table = owner as Table;
-        //        table.AdjustFood(-(20 * goapNode.currentState.duration));
-        //    }
-        //}
+        
 
         private string GetEdibleType() {
             if (owner is Crops) {

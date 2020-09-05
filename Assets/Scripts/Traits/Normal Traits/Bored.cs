@@ -15,15 +15,10 @@ namespace Traits {
 			ticksDuration = 0;
 			moodEffect = -8;
             AddTraitOverrideFunctionIdentifier(TraitManager.Hour_Started_Trait);
-            //effects = new List<TraitEffect>();
         }
 
         #region Overrides
-  //      public override void OnAddTrait(ITraitable addedTo) {
-		//	base.OnAddTrait(addedTo);
-		//	owner = addedTo as Character;
-		//}
-		public override void OnHourStarted(ITraitable traitable) {
+        public override void OnHourStarted(ITraitable traitable) {
 			base.OnHourStarted(traitable);
             if(traitable is Character character) {
                 if (!character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {

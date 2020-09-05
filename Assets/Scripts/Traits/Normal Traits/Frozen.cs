@@ -25,6 +25,18 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo.gridTileLocation == null) {
+                return;
+            }
+            if(addTo is IPointOfInterest poi && poi is GenericTileObject == false) {
+                _frozenEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Frozen, false);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

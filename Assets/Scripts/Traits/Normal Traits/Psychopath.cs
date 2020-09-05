@@ -33,11 +33,12 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataPsychopath saveDataPsychopath = saveDataTrait as SaveDataPsychopath;
             Assert.IsNotNull(saveDataPsychopath);
             victim1Requirement = saveDataPsychopath.victim1Requirement;
+            opinionCopy = saveDataPsychopath.opinionCopy;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
@@ -46,7 +47,6 @@ namespace Traits {
             if (!string.IsNullOrEmpty(saveDataPsychopath.targetVictimID)) {
                 targetVictim = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(saveDataPsychopath.targetVictimID);
             }
-            opinionCopy = saveDataPsychopath.opinionCopy;
         }
         #endregion
 
@@ -65,6 +65,12 @@ namespace Traits {
                 //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
                 //Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
                 character.behaviourComponent.AddBehaviourComponent(typeof(PsychopathBehaviour));
+            }
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character addedTo) {
+                character = addedTo;
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {

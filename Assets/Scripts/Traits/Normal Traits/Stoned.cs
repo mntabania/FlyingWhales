@@ -24,6 +24,17 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if(addTo is Character character && character.marker) {
+                character.marker.PauseAnimation();
+                _stonedGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Stoned);
+                _stonedGO.GetComponent<StonedEffect>().PlayEffect(character.marker.usedSprite);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

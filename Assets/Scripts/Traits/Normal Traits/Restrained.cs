@@ -27,6 +27,15 @@ namespace Traits {
             hindersPerform = true;
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character) {
+                owner = addTo as Character;
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override string GetToolTipText() {
             if (responsibleCharacter == null) {

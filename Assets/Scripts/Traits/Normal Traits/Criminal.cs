@@ -47,6 +47,12 @@ namespace Traits {
             charactersThatAreAlreadyWorried = SaveUtilities.ConvertIDListToCharacters(saveDataCriminal.alreadyWorriedCharacterIDs);
             isImprisoned = saveDataCriminal.isImprisoned;
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character) {
+                owner = addTo as Character;
+            }
+        }
         #endregion
         
         #region Overrides

@@ -17,22 +17,12 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is Character) {
-                Character targetCharacter = targetPOI as Character;
-                if(targetCharacter.canPerform
-                    //&& targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
-                    //&& !targetCharacter.returnedToLife
-                    ) {
+            if (targetPOI is Character targetCharacter) {
+                if(targetCharacter.canPerform) {
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < 4) {
-                        if (targetCharacter.relationshipContainer.HasEnemyCharacter()
-                            && !characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
+                        if (targetCharacter.relationshipContainer.HasEnemyCharacter() && !characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Reduce_Conflict, targetCharacter);
-                            //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.RESOLVE_CONFLICT)) {
-                            //    GoapPlanJob resolveConflictJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESOLVE_CONFLICT, INTERACTION_TYPE.RESOLVE_CONFLICT, targetCharacter, characterThatWillDoJob);
-                            //    characterThatWillDoJob.jobQueue.AddJobInQueue(resolveConflictJob);
-                            //}
-
                         }
                     }
                 }

@@ -18,6 +18,15 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                _transformRevertEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Transform_Revert, false);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

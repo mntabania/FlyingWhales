@@ -73,9 +73,7 @@ public class TraitManager : BaseMonoBehaviour {
     private Dictionary<string, Trait> instancedSingletonTraits;
 
     #region getters/setters
-    public Dictionary<string, Trait> allTraits {
-        get { return _allTraits; }
-    }
+    public Dictionary<string, Trait> allTraits => _allTraits;
     #endregion
 
     void Awake() {
@@ -126,8 +124,16 @@ public class TraitManager : BaseMonoBehaviour {
     private void AddInstancedTraits() {
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {
+            //Create new instances of instanced traits, but do not register them to the database.
+            //This is because INSTANCED traits contained in the _allTraits list should only be used for inquiry
+            //and should NEVER be used by any ITraitable
             string traitName = instancedTraits[i];
-            Trait trait = CreateNewInstancedTraitClass<Trait>(traitName);
+            string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
+            string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            Type type = System.Type.GetType(typeName);
+            Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
+            Trait trait = System.Activator.CreateInstance(type) as Trait;
+            Assert.IsNotNull(trait);
             _allTraits.Add(traitName, trait);
         }
     }
@@ -177,10 +183,13 @@ public class TraitManager : BaseMonoBehaviour {
         Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
         Trait trait = System.Activator.CreateInstance(type) as Trait;
         Assert.IsNotNull(trait);
-        if (trait.isSingleton && !instancedSingletonTraits.ContainsKey(saveDataTrait.name)) {
+        if (trait.isSingleton) {
+            if (instancedSingletonTraits.ContainsKey(saveDataTrait.name)) {
+                Debug.LogError($"Singleton trait {saveDataTrait.name} was loaded more than once!");
+            }
             instancedSingletonTraits.Add(saveDataTrait.name, trait);
         }
-        trait.LoadInstancedTrait(saveDataTrait);
+        trait.LoadFirstWaveInstancedTrait(saveDataTrait);
         return trait;
     }
     public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {

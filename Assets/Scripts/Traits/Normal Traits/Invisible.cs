@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
+using Traits;
 namespace Traits {
     public class Invisible : Status {
 
         private IPointOfInterest _owner;
-        private COMBAT_MODE _originalCombatMode;
-        
+        public COMBAT_MODE originalCombatMode { get; private set; }
+        public override Type serializedData => typeof(SaveDataInvisible);
         public Invisible() {
             name = "Invisible";
             description = "You can't see me.";
@@ -13,6 +15,30 @@ namespace Traits {
             ticksDuration = 0;
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
         }
+
+        #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataInvisible saveDataInvisible = saveDataTrait as SaveDataInvisible;
+            originalCombatMode = saveDataInvisible.originalCombatMode;
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is IPointOfInterest poi) {
+                _owner = poi;
+                if (poi.mapObjectVisual != null) {
+                    poi.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(false);
+                    poi.mapObjectVisual.SetVisualAlpha(0.45f);
+                }
+                if (poi is Character character) {
+                    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+                    Messenger.AddListener<Character, int, object>(Signals.CHARACTER_ADJUSTED_HP, OnCharacterAdjustedHP);
+                    Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+                    Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
+                }
+            }
+        }
+        #endregion
 
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
@@ -24,7 +50,7 @@ namespace Traits {
                     poi.mapObjectVisual.SetVisualAlpha(0.45f);
                 }
                 if (poi is Character character) {
-                    _originalCombatMode = character.combatComponent.combatMode;
+                    originalCombatMode = character.combatComponent.combatMode;
                     character.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                     Messenger.AddListener<Character, int, object>(Signals.CHARACTER_ADJUSTED_HP, OnCharacterAdjustedHP);
@@ -42,7 +68,7 @@ namespace Traits {
                     poi.mapObjectVisual.SetVisualAlpha(1f);
                 }
                 if (poi is Character character) {
-                    character.combatComponent.SetCombatMode(_originalCombatMode);
+                    character.combatComponent.SetCombatMode(originalCombatMode);
                     Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
                     Messenger.RemoveListener<Character, int, object>(Signals.CHARACTER_ADJUSTED_HP, OnCharacterAdjustedHP);
                     Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
@@ -89,3 +115,15 @@ namespace Traits {
         #endregion
     }
 }
+
+#region Save Data
+public class SaveDataInvisible : SaveDataTrait {
+    public COMBAT_MODE originalCombatMode;
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Invisible invisible = trait as Invisible;
+        Debug.Assert(invisible != null, nameof(invisible) + " != null");
+        originalCombatMode = invisible.originalCombatMode;
+    }
+}
+#endregion

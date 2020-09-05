@@ -66,6 +66,14 @@ namespace Traits {
                 Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
             }
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+                character.marker.visionCollider.VoteToUnFilterVision();
+                Messenger.AddListener(Signals.HOUR_STARTED, PerHourEffect);
+            }
+        }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {

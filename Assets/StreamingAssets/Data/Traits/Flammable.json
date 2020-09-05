@@ -1,1 +1,15 @@
-{"name":"Flammable","description":"This can be burned.","thoughtText":"","type":3,"effect":0,"advertisedInteractions":[168],"ticksDuration":0,"level":0,"moodEffect":0,"isHidden":true,"mutuallyExclusive":[],"canBeTriggered":false,"elementalType":0}
+{
+  "name": "Flammable",
+  "description": "This can be burned.",
+  "thoughtText": "",
+  "type": 3,
+  "effect": 0,
+  "advertisedInteractions": [168],
+  "ticksDuration": 0,
+  "level": 0,
+  "moodEffect": 0,
+  "isHidden": true,
+  "mutuallyExclusive": [],
+  "canBeTriggered": false,
+  "elementalType": 0
+}

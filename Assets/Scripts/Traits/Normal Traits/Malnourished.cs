@@ -25,11 +25,15 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataMalnourished saveDataMalnourished = saveDataTrait as SaveDataMalnourished;
             Assert.IsNotNull(saveDataMalnourished);
             _currentDeathDuration = saveDataMalnourished.currentDeathDuration;
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            owner = addTo as Character;
         }
         #endregion
         

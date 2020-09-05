@@ -40,7 +40,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
         //Load Tile Objects
         yield return MapGenerator.Instance.StartCoroutine(LoadTileObjects(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadTileObjectTraits(saveData));
+        
         
         //Load Structure Wall Traits
         yield return MapGenerator.Instance.StartCoroutine(LoadStructureWallTraits(saveData));
@@ -61,6 +61,7 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadCharacterReferences(saveData));
 
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalTileObjectInfo(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadTileObjectTraits(saveData));
         
         //Load additional structure references
         yield return MapGenerator.Instance.StartCoroutine(LoadAdditionalStructureReferences(saveData));

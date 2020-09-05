@@ -15,7 +15,7 @@ public class TileFeatureComponent {
 	public void AddFeature(TileFeature feature, HexTile tile) {
 		if (!features.Contains(feature)) {
 			features.Add(feature);
-			Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was added to {tile}");
+			// Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was added to {tile}");
 			feature.OnAddFeature(tile);
 		}
 	}
@@ -24,7 +24,7 @@ public class TileFeatureComponent {
 	}
 	public bool RemoveFeature(TileFeature feature, HexTile tile) {
 		if (features.Remove(feature)) {
-			Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was removed from {tile}");
+			// Debug.Log($"{GameManager.Instance.TodayLogString()}{feature.name} was removed from {tile}");
 			feature.OnRemoveFeature(tile);
 			return true;
 		}

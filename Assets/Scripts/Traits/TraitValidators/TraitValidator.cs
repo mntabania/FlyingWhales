@@ -54,8 +54,7 @@ namespace Traits {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass<Trait>(traitName);
             } else {
-                Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName),
-                    $"No key for trait {traitName}");
+                Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName), $"No key for trait {traitName}");
                 trait = TraitManager.Instance.allTraits[traitName];
             }
             return CanAddTrait(obj, trait, traitContainer);

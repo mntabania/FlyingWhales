@@ -28,8 +28,8 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataBoobyTrapped saveDataBoobyTrapped = saveDataTrait as SaveDataBoobyTrapped;
             Assert.IsNotNull(saveDataBoobyTrapped);
             _element = saveDataBoobyTrapped.elementalType;
@@ -39,6 +39,10 @@ namespace Traits {
             SaveDataBoobyTrapped saveDataBoobyTrapped = saveDataTrait as SaveDataBoobyTrapped;
             Assert.IsNotNull(saveDataBoobyTrapped);
             awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataBoobyTrapped.awareCharacterIDs));        
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            traitable = addTo;
         }
         #endregion
         

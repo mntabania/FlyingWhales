@@ -27,19 +27,6 @@ namespace Traits {
                 }
             }
         }
-        //public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        //    base.OnRemoveTrait(sourcePOI);
-        //}
-        protected override void OnChangeLevel() {
-            base.OnChangeLevel();
-            //if (level == 1) {
-            //    daysDuration = GameManager.Instance.GetTicksBasedOnHour(3);
-            //} else if (level == 2) {
-            //    daysDuration = GameManager.Instance.GetTicksBasedOnHour(6);
-            //} else if (level == 3) {
-            //    daysDuration = GameManager.Instance.GetTicksBasedOnHour(9);
-            //}
-        }
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
             IPointOfInterest poi = GetPOIToTransformToFood(character);

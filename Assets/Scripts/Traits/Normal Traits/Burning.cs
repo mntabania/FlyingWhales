@@ -39,12 +39,22 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataBurning saveDataBurning = saveDataTrait as SaveDataBurning;
             Assert.IsNotNull(saveDataBurning);
             BurningSource burningSource = DatabaseManager.Instance.burningSourceDatabase.GetOrCreateBurningSourceWithID(saveDataBurning.persistentID);
             LoadSourceOfBurning(burningSource);
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            owner = addTo;
+            if (addTo is IPointOfInterest poi) {
+                burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
+            } else if (addTo is StructureWallObject structureWallObject) {
+                burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
+            }
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
         }
         #endregion
         

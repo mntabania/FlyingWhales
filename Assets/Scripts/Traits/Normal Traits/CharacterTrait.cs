@@ -51,6 +51,10 @@ namespace Traits {
                 alreadyInspectedTileObjects.Add(to);
             }
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            owner = addTo as Character;
+        }
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             owner = addedTo as Character;

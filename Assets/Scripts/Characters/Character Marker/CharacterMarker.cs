@@ -217,6 +217,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         thisTransform.position = data.worldPos;
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
+        region.AddPendingAwareness(character);
     }
     /// <summary>
     /// Place this marker at a given tile location. 

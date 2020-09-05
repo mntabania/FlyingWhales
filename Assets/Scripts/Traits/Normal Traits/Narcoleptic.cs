@@ -11,7 +11,6 @@ namespace Traits {
             description = "Randomly plops down to sleep.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
-            //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.NARCOLEPTIC_NAP };
             ticksDuration = 0;
             canBeTriggered = true;
         }
@@ -19,20 +18,20 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);
-            if (sourceCharacter is Character) {
-                owner = sourceCharacter as Character;
+            if (sourceCharacter is Character character) {
+                owner = character;
+            }
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
             }
         }
         public override bool PerTickOwnerMovement() {
             int napChance = UnityEngine.Random.Range(0, 100);
-            //bool hasCreatedJob = false;
             if (napChance < 4) {
                 return DoNarcolepticNap();
-                //if (owner.currentActionNode == null || (owner.currentActionNode.action.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
-                //    DoNarcolepticNap();
-
-                //    hasCreatedJob = true;
-                //}
             }
             return false;
         }
@@ -41,8 +40,6 @@ namespace Traits {
             return base.TriggerFlaw(character);
         }
         private bool DoNarcolepticNap() {
-            //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INTERRUPTION, INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
-            //owner.jobQueue.AddJobInQueue(job);
             return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Narcoleptic_Attack, owner);
         }
         #endregion

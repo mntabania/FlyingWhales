@@ -46,7 +46,7 @@ namespace Traits {
             persistentID = UtilityScripts.Utilities.GetNewUniqueID();
             DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
         }
-        public virtual void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
+        public virtual void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             persistentID = saveDataTrait.persistentID;
             Assert.IsFalse(string.IsNullOrEmpty(persistentID), $"Trait {saveDataTrait.name} does not have a persistent ID!");
             DatabaseManager.Instance.traitDatabase.RegisterTrait(this);
@@ -80,6 +80,12 @@ namespace Traits {
                 DatabaseManager.Instance.traitDatabase.UnRegisterTrait(this);    
             }
         }
+        /// <summary>
+        /// Load version of <see cref="OnAddTrait"/>. Content of this function will almost always be the same as OnAddTrait.
+        /// Only difference is stuff that we do not want to apply when loading this trait. (i.e. opinion changes, needs changes, stat changes, etc.)
+        /// </summary>
+        /// <param name="addTo"></param>
+        public virtual void LoadTraitOnLoadTraitContainer(ITraitable addTo) { }
         public virtual void OnRemoveStatusBySchedule(ITraitable removedFrom) { }
         public virtual string GetToolTipText() { return string.Empty; }
         public virtual bool IsUnique() { return true; }
@@ -246,6 +252,8 @@ namespace Traits {
             return false;
         }
         #endregion
+
+        
     }
 }
 

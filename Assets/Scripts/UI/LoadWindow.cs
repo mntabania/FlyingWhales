@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -36,6 +37,7 @@ public class LoadWindow : PopupMenuBase  {
     private void LoadSavedGameItems() {
         UtilityScripts.Utilities.DestroyChildren(loadGameScrollRect.content);
         string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        saveFiles = saveFiles.OrderBy(System.IO.File.GetLastWriteTime).ToArray();
         for (int i = 0; i < saveFiles.Length; i++) {
             string saveFile = saveFiles[i];
             GameObject saveItemGO = GameObject.Instantiate(saveItemPrefab, loadGameScrollRect.content);

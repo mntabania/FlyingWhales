@@ -29,8 +29,8 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataNecromancer saveDataNecromancer = saveDataTrait as SaveDataNecromancer;
             Assert.IsNotNull(saveDataNecromancer);
             if (!string.IsNullOrEmpty(saveDataNecromancer.lairStructureID)) {
@@ -63,6 +63,13 @@ namespace Traits {
             owner.jobQueue.CancelAllJobs();
             owner.movementComponent.SetEnableDigging(true);
             owner.movementComponent.SetAvoidSettlements(true);
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+                CharacterManager.Instance.SetNecromancerInTheWorld(owner);
+            }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);

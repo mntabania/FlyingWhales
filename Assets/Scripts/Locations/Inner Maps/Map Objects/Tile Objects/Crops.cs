@@ -12,6 +12,7 @@ public abstract class Crops : TileObject {
     #region getters
     public int remainingRipeningTicks => _remainingRipeningTicks;
     public override System.Type serializedData => typeof(SaveDataCrops);
+    public int growthRate => _growthRate;
     #endregion
     
     protected Crops() { }
@@ -66,7 +67,7 @@ public abstract class Crops : TileObject {
         if (remainingRipeningTicks <= 0) {
             SetGrowthState(Growth_State.Ripe);
         }
-        _remainingRipeningTicks = remainingRipeningTicks - _growthRate;
+        _remainingRipeningTicks = remainingRipeningTicks - growthRate;
         if (mapVisual != null) {
             mapVisual.UpdateTileObjectVisual(this);    
         }
@@ -96,7 +97,7 @@ public abstract class Crops : TileObject {
     public override string GetAdditionalTestingData() {
         string data = base.GetAdditionalTestingData();
         data += $"\n\tGrowth State {currentGrowthState.ToString()}";
-        data += $"\n\tGrowth Rate {_growthRate.ToString()}";
+        data += $"\n\tGrowth Rate {growthRate.ToString()}";
         data += $"\n\tRipening ticks: {GetRipeningTicks().ToString()}";
         data += $"\n\tRemaining ticks until ripe: {remainingRipeningTicks.ToString()}";
         return data;
@@ -109,6 +110,7 @@ public class SaveDataCrops : SaveDataTileObject {
 
     public Crops.Growth_State growthState;
     public int remainingRipeningTicks;
+    public int growthRate;
     
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
@@ -116,6 +118,7 @@ public class SaveDataCrops : SaveDataTileObject {
         Assert.IsNotNull(crop);
         growthState = crop.currentGrowthState;
         remainingRipeningTicks = crop.remainingRipeningTicks;
+        growthRate = crop.growthRate;
     }
     public override TileObject Load() {
         TileObject tileObject = base.Load();
@@ -123,6 +126,7 @@ public class SaveDataCrops : SaveDataTileObject {
         Assert.IsNotNull(crops);
         crops.SetGrowthState(growthState);
         crops.SetRemainingRipeningTicks(remainingRipeningTicks);
+        crops.SetGrowthRate(growthRate);
         return tileObject;
     }
 } 

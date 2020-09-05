@@ -22,6 +22,15 @@ namespace Traits {
             pukeChance = 5f;
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character) {
+                owner = addTo as Character;
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);

@@ -27,8 +27,8 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataAlcoholic saveDataAlcoholic = saveDataTrait as SaveDataAlcoholic;
             Assert.IsNotNull(saveDataAlcoholic);
             _hasDrankWithinTheDay = saveDataAlcoholic.hasDrankWithinTheDay;
@@ -44,9 +44,17 @@ namespace Traits {
             Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
             Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnPerformAction);
         }
-        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if(addTo is Character character) {
+                owner = character;
+            }
             Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
             Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnPerformAction);
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+            Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnPerformAction);
             base.OnRemoveTrait(removedFrom, removedBy);
         }
         public override string TriggerFlaw(Character character) {

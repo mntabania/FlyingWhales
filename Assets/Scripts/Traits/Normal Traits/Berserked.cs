@@ -32,6 +32,16 @@ namespace Traits {
                 character.behaviourComponent.AddBehaviourComponent(typeof(BerserkBehaviour));
             }
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                _owner = character;
+                if (character.marker) {
+                    character.marker.BerserkedMarker();
+                    character.marker.visionCollider.VoteToUnFilterVision();
+                }
+            }
+        }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {

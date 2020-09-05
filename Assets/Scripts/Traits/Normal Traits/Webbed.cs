@@ -12,6 +12,13 @@
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                //add webbed visual to character
+                character.marker.ShowAdditionalEffect(CharacterManager.Instance.webbedEffect);
+            }
+        }
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if (addedTo is Character character) {

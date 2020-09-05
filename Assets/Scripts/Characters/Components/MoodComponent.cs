@@ -247,15 +247,15 @@ public class MoodComponent : CharacterComponent {
 		return (100f / (EditableValuesManager.Instance.majorMentalBreakHourThreshold * 24f)) * -1f; //because there are 24 hours in a day
 	}
 	private void ResetMajorMentalBreakChance() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} reset major mental break chance.</color>");
+		// Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} reset major mental break chance.</color>");
 		SetMajorMentalBreakChance(0f);
 	}
 	private void StopCheckingForMajorMentalBreak() {
-		Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped checking for major mental break.</color>");
+		// Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{owner.name} has stopped checking for major mental break.</color>");
 		Messenger.RemoveListener(Signals.TICK_STARTED, CheckForMajorMentalBreak);
 	}
 	private void StartCheckingForMajorMentalBreak() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} has started checking for major mental break.</color>");
+		// Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{owner.name} has started checking for major mental break.</color>");
 		Messenger.AddListener(Signals.TICK_STARTED, CheckForMajorMentalBreak);
 	}
 	#endregion

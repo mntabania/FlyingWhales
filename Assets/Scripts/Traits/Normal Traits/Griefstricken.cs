@@ -19,6 +19,15 @@ namespace Traits {
             hindersSocials = true;
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is Character character) {
+                owner = character;
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
             if (sourcePOI is Character character) {

@@ -20,6 +20,29 @@ namespace Traits {
             //effects = new List<TraitEffect>();
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if (addTo is BaseMapObject mapObject && mapObject.baseMapObjectVisual != null) {
+                if (mapObject is GenericTileObject genericTileObject) {
+                    LocationGridTile tile = genericTileObject.gridTileLocation;
+                    Sprite floorSprite = tile.parentMap.groundTilemap.GetSprite(tile.localPlace);
+                    mapObject.baseMapObjectVisual.SetVisual(floorSprite);
+                    tile.parentTileMap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                    tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
+                }
+                if (addTo is IPointOfInterest poi) {
+                    _burntEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burnt);
+                }
+                mapObject.baseMapObjectVisual.SetMaterial(InnerMapManager.Instance.assetManager.burntMaterial);
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);

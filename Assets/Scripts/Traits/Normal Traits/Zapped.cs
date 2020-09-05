@@ -22,6 +22,18 @@ namespace Traits {
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
         }
 
+        #region Loading
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if(addTo is IPointOfInterest poi) {
+                electricEffectGO = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Electric);
+            }
+            if (addTo.gridTileLocation != null) {
+                _audioObject = AudioManager.Instance.TryCreateAudioObject(AudioManager.Instance.GetRandomZapAudio(), addTo.gridTileLocation, 1, false, true);    
+            }
+        }
+        #endregion
+        
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
             if(sourcePOI is IPointOfInterest poi) {

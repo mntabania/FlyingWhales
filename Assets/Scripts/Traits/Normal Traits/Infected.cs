@@ -37,8 +37,8 @@ namespace Traits {
         }
 
         #region Loading
-        public override void LoadInstancedTrait(SaveDataTrait saveDataTrait) {
-            base.LoadInstancedTrait(saveDataTrait);
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
             SaveDataInfected saveDataInfected = saveDataTrait as SaveDataInfected;
             Assert.IsNotNull(saveDataInfected);
             _hasAlreadyDied = saveDataInfected.hasAlreadyDied;
@@ -48,6 +48,14 @@ namespace Traits {
             SaveDataInfected saveDataInfected = saveDataTrait as SaveDataInfected;
             Assert.IsNotNull(saveDataInfected);
             SetIsLiving(saveDataInfected.isLiving);
+        }
+        public override void LoadTraitOnLoadTraitContainer(ITraitable addTo) {
+            base.LoadTraitOnLoadTraitContainer(addTo);
+            if(addTo is Character character) {
+                owner = character;
+                Messenger.AddListener(Signals.HOUR_STARTED, HourlyCheck);
+                _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
+            }
         }
         #endregion
 
