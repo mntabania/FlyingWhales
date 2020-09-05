@@ -26,6 +26,7 @@ public class Vapor : MovingTileObject {
         Assert.IsNotNull(data);
         expiryDate = data.expiryDate;
         SetStacks(data.stacks);
+        hasExpired = data.hasExpired;
     }
     protected override void CreateMapObjectVisual() {
         base.CreateMapObjectVisual();
