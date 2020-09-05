@@ -6014,7 +6014,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             bed = targetCharacter.tileObjectComponent.primaryBed;
                         }
                     }
-                    bed.OnDoActionToObject(currentActionNode);
+                    if(bed != null) {
+                        bed.OnDoActionToObject(currentActionNode);
+                    } else {
+                        //If there is no bed to make love, just remove the action itself so that there will be no errors
+                        SetCurrentActionNode(null, null, null);
+                    }
                 }
             }
         }
