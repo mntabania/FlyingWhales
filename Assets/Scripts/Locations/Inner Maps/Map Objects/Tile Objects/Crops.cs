@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System.Diagnostics;
+using Inner_Maps;
 using UnityEngine.Assertions;
 
 public abstract class Crops : TileObject {
@@ -26,6 +27,23 @@ public abstract class Crops : TileObject {
     }
     #endregion
 
+    #region Loading
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
+        SaveDataCrops saveDataDrCrops = data as SaveDataCrops;
+        Debug.Assert(saveDataDrCrops != null, nameof(saveDataDrCrops) + " != null");
+        currentGrowthState = saveDataDrCrops.growthState;
+        SetRemainingRipeningTicks(saveDataDrCrops.remainingRipeningTicks);
+        SetGrowthRate(saveDataDrCrops.growthRate);
+    }
+    public override void LoadAdditionalInfo(SaveDataTileObject data) {
+        base.LoadAdditionalInfo(data);
+        if (mapVisual != null) {
+            mapVisual.UpdateTileObjectVisual(this);    
+        }
+    }
+    #endregion
+
     #region Growth
     public virtual void SetGrowthState(Growth_State growthState) {
         currentGrowthState = growthState;
@@ -38,7 +56,9 @@ public abstract class Crops : TileObject {
             _remainingRipeningTicks = 0;
             StopPerTickGrowth();
             AddAdvertisedAction(INTERACTION_TYPE.HARVEST_PLANT);
-            traitContainer.AddTrait(this, "Edible");
+            if (!traitContainer.HasTrait("Edible")) {
+                traitContainer.AddTrait(this, "Edible");    
+            }
         }
         if (mapVisual != null) {
             mapVisual.UpdateTileObjectVisual(this);    
@@ -122,11 +142,6 @@ public class SaveDataCrops : SaveDataTileObject {
     }
     public override TileObject Load() {
         TileObject tileObject = base.Load();
-        Crops crops = tileObject as Crops;
-        Assert.IsNotNull(crops);
-        crops.SetGrowthState(growthState);
-        crops.SetRemainingRipeningTicks(remainingRipeningTicks);
-        crops.SetGrowthRate(growthRate);
         return tileObject;
     }
 } 
