@@ -23,7 +23,7 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private float _baseFullnessDecreaseRate;
 	[SerializeField] private float _baseTirednessDecreaseRate;
 	[SerializeField] private float _baseHappinessDecreaseRate;
-	[SerializeField] private float _baseStaminaDecreaseRate;
+	//[SerializeField] private float _baseStaminaDecreaseRate;
 
 	[Header("Mana")] 
 	[SerializeField] private int _startingMana;

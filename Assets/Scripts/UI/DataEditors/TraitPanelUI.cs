@@ -52,6 +52,9 @@ public class TraitPanelUI : MonoBehaviour {
     [NonSerialized] public TraitEffectButton currentSelectedTraitEffectButton;
     [NonSerialized] public RequirementButton currentSelectedRequirementButton;
 
+    //Hinders
+    public Toggle hindersSocialsToggle;
+
     //Stack
     public Toggle isStackingToggle;
     public GameObject stackGroupGO;
@@ -168,6 +171,7 @@ public class TraitPanelUI : MonoBehaviour {
         isHiddenToggle.isOn = false;
         isTangibleToggle.isOn = false;
         isStackingToggle.isOn = false;
+        hindersSocialsToggle.isOn = false;
 
         _effects.Clear();
         _requirements.Clear();
@@ -227,6 +231,7 @@ public class TraitPanelUI : MonoBehaviour {
                 //effects = _effects,
                 isHidden = isHiddenToggle.isOn,
                 isTangible = isTangibleToggle.isOn,
+                hindersSocials = hindersSocialsToggle.isOn,
                 mutuallyExclusive = GetMutuallyExclusiveTraits(),
                 advertisedInteractions = _advertisedInteractions,
                 moodEffect = int.Parse(moodInput.text),
@@ -310,6 +315,7 @@ public class TraitPanelUI : MonoBehaviour {
         _advertisedInteractions = status.advertisedInteractions;
         moodInput.text = status.moodEffect.ToString();
         isHiddenToggle.isOn = status.isHidden;
+        hindersSocialsToggle.isOn = status.hindersSocials;
         isTangibleToggle.isOn = status.isTangible;
         isStackingToggle.isOn = status.isStacking;
         stackLimitInput.text = status.stackLimit.ToString();

@@ -649,7 +649,7 @@ public class PlayerUI : BaseMonoBehaviour {
         return item;
     }
     private void InitialUpdateVillagerListCharacterItems() {
-        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer).ToList();
+        List<Character> villagers = CharacterManager.Instance.allCharacters.Where(x => x.isNormalEvenLycanAndNotAlliedWithPlayer && !x.isPreplaced).ToList();
         int allVillagersCount = villagers.Count;
         LoadVillagerItems(allVillagersCount);
         
@@ -687,7 +687,7 @@ public class PlayerUI : BaseMonoBehaviour {
         }
     }
     private void OnAddNewCharacter(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer) {
+        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
             //Do not show minions and summons
             return;
         }
@@ -715,7 +715,7 @@ public class PlayerUI : BaseMonoBehaviour {
         }
     }
     private void TransferCharacterFromActiveToInactive(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer) {
+        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
             return;
         }
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
@@ -731,7 +731,7 @@ public class PlayerUI : BaseMonoBehaviour {
         //UpdateKillCount();
     }
     private void TransferCharacterFromInactiveToActive(Character character) {
-        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer) {
+        if (!character.isNormalEvenLycanAndNotAlliedWithPlayer || character.isPreplaced) {
             return;
         }
         CharacterNameplateItem item = GetInactiveCharacterNameplateItem(character);

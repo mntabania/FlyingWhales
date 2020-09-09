@@ -29,7 +29,7 @@ public class CultistsListUI : PopupMenuBase {
     public void UpdateList() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if (character.traitContainer.HasTrait("Cultist") && !character.isDead) {
+            if (character.traitContainer.HasTrait("Cultist") && !character.isDead && !character.isPreplaced) {
                 CreateNewItemFor(character);
             }
         }

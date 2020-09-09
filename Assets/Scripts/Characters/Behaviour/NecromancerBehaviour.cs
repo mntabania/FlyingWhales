@@ -34,9 +34,14 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                 if(deadCharacter != null) {
                     log += $"\n-Character saw a dead character, has a 80% chance to raise corpse";
                     if (UnityEngine.Random.Range(0, 100) < 80) {
-                        log += $"\n-Character will raise corpse";
-                        character.jobComponent.TriggerRaiseCorpse(deadCharacter, out producedJob);
-                        return true;
+                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
+                        if(followersInRegion > 25) {
+                            log += $"\n-Character will no longer raise corpse because the number of followers in region is above 25";
+                        } else {
+                            log += $"\n-Character will raise corpse";
+                            character.jobComponent.TriggerRaiseCorpse(deadCharacter, out producedJob);
+                            return true;
+                        }
                     }
                 } else {
                     Tombstone tomb = null;
@@ -54,9 +59,14 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     if (tomb != null) {
                         log += $"\n-Character saw a tombstone, has a 80% chance to raise corpse";
                         if (UnityEngine.Random.Range(0, 100) < 80) {
-                            log += $"\n-Character will raise corpse";
-                            character.jobComponent.TriggerRaiseCorpse(tomb, out producedJob);
-                            return true;
+                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
+                            if (followersInRegion > 25) {
+                                log += $"\n-Character will no longer raise corpse because the number of followers in region is above 25";
+                            } else {
+                                log += $"\n-Character will raise corpse";
+                                character.jobComponent.TriggerRaiseCorpse(tomb, out producedJob);
+                                return true;
+                            }
                         }
                     }
                 }
@@ -99,58 +109,68 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                                 return true;
                             }
                         } else {
-                            log += $"\n-50% chance to visit Ancient Graveyard/Cemetery if there's any, Otherwise, Create skeletons";
-                            int roll = UnityEngine.Random.Range(0, 100);
-                            log += $"\n-Roll: " + roll;
-                            if (roll < 50) {
-                                log += $"\n-65% chance to visit an Ancient Graveyard, Otherwise visit Cemetery";
-                                roll = UnityEngine.Random.Range(0, 100);
+                            int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
+                            if (followersInRegion > 25) {
+                                log += $"\n-Character will no longer visit Graveyards/Cemeteries because the number of followers in region is above 25";
+                            } else {
+                                log += $"\n-50% chance to visit Ancient Graveyard/Cemetery if there's any, Otherwise, Create skeletons";
+                                int roll = UnityEngine.Random.Range(0, 100);
                                 log += $"\n-Roll: " + roll;
-                                STRUCTURE_TYPE structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
-                                if (roll < 65) {
-                                    structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
-                                }
-                                LocationStructure chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
-                                if (chosenStructure != null) {
-                                    log += $"\n-Will visit " + chosenStructure.name;
-                                    LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
-                                    character.jobComponent.CreateGoToJob(targetTile, out producedJob);
-                                    return true;
-                                } else {
-                                    log += $"\n-No structure " + structureTypeToVisit.ToString() + ", will try to visit the other one";
-                                    if (structureTypeToVisit == STRUCTURE_TYPE.CEMETERY) {
+                                if (roll < 50) {
+                                    log += $"\n-65% chance to visit an Ancient Graveyard, Otherwise visit Cemetery";
+                                    roll = UnityEngine.Random.Range(0, 100);
+                                    log += $"\n-Roll: " + roll;
+                                    STRUCTURE_TYPE structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
+                                    if (roll < 65) {
                                         structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
-                                    } else {
-                                        structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
                                     }
-                                    chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
+                                    LocationStructure chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
                                     if (chosenStructure != null) {
                                         log += $"\n-Will visit " + chosenStructure.name;
                                         LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
                                         character.jobComponent.CreateGoToJob(targetTile, out producedJob);
                                         return true;
+                                    } else {
+                                        log += $"\n-No structure " + structureTypeToVisit.ToString() + ", will try to visit the other one";
+                                        if (structureTypeToVisit == STRUCTURE_TYPE.CEMETERY) {
+                                            structureTypeToVisit = STRUCTURE_TYPE.ANCIENT_GRAVEYARD;
+                                        } else {
+                                            structureTypeToVisit = STRUCTURE_TYPE.CEMETERY;
+                                        }
+                                        chosenStructure = character.currentRegion.GetRandomStructureOfTypeThatMeetCriteria(s => s.HasTileObjectOfType(TILE_OBJECT_TYPE.TOMBSTONE), structureTypeToVisit);
+                                        if (chosenStructure != null) {
+                                            log += $"\n-Will visit " + chosenStructure.name;
+                                            LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(chosenStructure.passableTiles);
+                                            character.jobComponent.CreateGoToJob(targetTile, out producedJob);
+                                            return true;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                    
-                    log += $"\n-Not enough skeleton followers, will try to create more";
+                    log += $"\n-Will try to create more skeletons";
                     bool hasCreated = false;
                     if (character.necromancerTrait.energy > 0) {
                         //hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
-                        if (character.necromancerTrait.lifeAbsorbed <= 0) {
-                            log += $"\n-Life absorbed is none, will try to absorb life";
-                            hasCreated = character.jobComponent.TriggerAbsorbLife(out producedJob);
+                        int followersInRegion = character.necromancerTrait.numOfSkeletonFollowersInSameRegion;
+                        if (followersInRegion > 15) {
+                            log += $"\n-Character will no longer visit create skeletons because the number of followers in region is above 15";
                         } else {
-                            log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
-                            if (UnityEngine.Random.Range(0, 100) < 10) {
-                                log += $"\n-Absorb life";
+                            if (character.necromancerTrait.lifeAbsorbed <= 0) {
+                                log += $"\n-Life absorbed is none, will try to absorb life";
                                 hasCreated = character.jobComponent.TriggerAbsorbLife(out producedJob);
                             } else {
-                                log += $"\n-Spawn skeleton";
-                                //Create Skeleton
-                                hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
+                                log += $"\n-There is life absorbed, 80% to create skeleton follower, 20% chance to absorb more life";
+                                if (UnityEngine.Random.Range(0, 100) < 10) {
+                                    log += $"\n-Absorb life";
+                                    hasCreated = character.jobComponent.TriggerAbsorbLife(out producedJob);
+                                } else {
+                                    log += $"\n-Spawn skeleton";
+                                    //Create Skeleton
+                                    hasCreated = character.jobComponent.TriggerSpawnSkeleton(out producedJob);
+                                }
                             }
                         }
                     } else {

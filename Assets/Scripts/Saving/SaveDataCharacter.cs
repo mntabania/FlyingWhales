@@ -48,6 +48,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public bool destroyMarkerOnDeath;
     public bool isWanderer;
     public bool hasRisen;
+    public bool isPreplaced;
     public List<string> interestedItemNames;
 
     public POI_STATE state;
@@ -153,6 +154,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         sociableValue = data.sociableValue;
         returnedToLife = data.returnedToLife;
         previousClassName = data.previousClassName;
+        isPreplaced = data.isPreplaced;
 
         if (data.marker) {
             hasMarker = true;

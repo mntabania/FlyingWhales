@@ -36,7 +36,7 @@ public class SummonListUI : PopupMenuBase {
     public void UpdateList() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if (character is Summon summon && character.faction != null && character.faction.isPlayerFaction && !character.isDead) {
+            if (character is Summon summon && character.faction != null && character.faction.isPlayerFaction && !character.isDead && !character.isPreplaced) {
                 CreateNewActiveSummonItem(summon);
             }
         }
