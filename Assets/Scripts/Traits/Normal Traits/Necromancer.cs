@@ -15,7 +15,8 @@ namespace Traits {
         public int energy { get; private set; }
 
         #region getters
-        public int numOfSkeletonFollowers { get { return GetNumOfSkeletonFollowers(); } }
+        public int numOfSkeletonFollowers => GetNumOfSkeletonFollowers();
+        public int numOfSkeletonFollowersInSameRegion => GetNumOfSkeletonFollowersInSameRegion();
         public override Type serializedData => typeof(SaveDataNecromancer);
         #endregion
 
@@ -98,6 +99,16 @@ namespace Traits {
             int count = 0;
             for (int i = 0; i < owner.faction.characters.Count; i++) {
                 if(owner.faction.characters[i].race == RACE.SKELETON) {
+                    count++;
+                }
+            }
+            return count;
+        }
+        private int GetNumOfSkeletonFollowersInSameRegion() {
+            int count = 0;
+            for (int i = 0; i < owner.faction.characters.Count; i++) {
+                Character member = owner.faction.characters[i];
+                if (member.race == RACE.SKELETON && member.currentRegion == owner.currentRegion) {
                     count++;
                 }
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
+    [System.Serializable]
     public class Status : Trait {
         public bool hindersWitness; //if a character has this trait, and this is true, then he/she cannot witness events
         public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move

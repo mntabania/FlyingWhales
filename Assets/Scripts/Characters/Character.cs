@@ -82,6 +82,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool hasRisen { get; private set; }
     public bool hasSubscribedToSignals { get; private set; }
     public bool shouldDoActionOnFirstTickUponLoadGame { get; private set; } //This should not be saved. Upon loading the game, this is always set to true so that if the character has a saved current action, it should resume on first tick
+    public bool isPreplaced { get; private set; }
     public Log deathLog { get; private set; }
     public List<string> interestedItemNames { get; private set; }
     public string previousClassName { get; private set; }
@@ -397,6 +398,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         sociableValue = data.sociableValue;
         returnedToLife = data.returnedToLife;
         previousClassName = data.previousClassName;
+        isPreplaced = data.isPreplaced;
 
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
         buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
@@ -1958,6 +1960,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool IsInDanger() {
         return traitContainer.HasTrait("Restrained") && !IsInHomeSettlement();
+    }
+    public void SetIsPreplaced(bool state) {
+        isPreplaced = state;
     }
     #endregion    
 

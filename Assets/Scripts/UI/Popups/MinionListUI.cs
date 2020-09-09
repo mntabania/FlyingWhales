@@ -34,7 +34,7 @@ public class MinionListUI : PopupMenuBase {
     public void UpdateList() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
-            if (character.minion != null && character.faction != null && character.faction.isPlayerFaction && !character.isDead) {
+            if (character.minion != null && character.faction != null && character.faction.isPlayerFaction && !character.isDead && !character.isPreplaced) {
                 CreateNewActiveMinionItem(character.minion);
             }
         }

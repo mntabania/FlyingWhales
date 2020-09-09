@@ -19,8 +19,8 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            moodEffect = -5;
-            deathDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+            moodEffect = -8;
+            deathDuration = GameManager.Instance.GetTicksBasedOnHour(36);
             AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Started_Trait);
         }
 

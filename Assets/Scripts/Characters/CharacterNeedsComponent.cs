@@ -51,7 +51,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     private float fullnessLowerBound; //how low can this characters fullness go
     public const float FULLNESS_DEFAULT = 100f;
     public const float STARVING_UPPER_LIMIT = 20f;
-    public const float HUNGRY_UPPER_LIMIT = 40f;
+    public const float HUNGRY_UPPER_LIMIT = 50f;
     public const float FULL_LOWER_LIMIT = 91f;
 
     //Happiness
@@ -60,7 +60,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     private float happinessLowerBound; //how low can this characters happiness go
     public const float HAPPINESS_DEFAULT = 100f;
     public const float SULKING_UPPER_LIMIT = 20f;
-    public const float BORED_UPPER_LIMIT = 40f;
+    public const float BORED_UPPER_LIMIT = 50f;
     public const float ENTERTAINED_LOWER_LIMIT = 91f;
 
     //Stamina
@@ -70,7 +70,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     private float staminaLowerBound; //how low can this characters happiness go
     public const float STAMINA_DEFAULT = 100f;
     public const float DRAINED_UPPER_LIMIT = 20f;
-    public const float SPENT_UPPER_LIMIT = 40f;
+    public const float SPENT_UPPER_LIMIT = 50f;
     public const float SPRIGHTLY_LOWER_LIMIT = 91f;
 
     //Hope

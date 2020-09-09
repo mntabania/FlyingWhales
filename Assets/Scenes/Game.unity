@@ -5780,7 +5780,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1712332734}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -18813,7 +18813,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1479440304}
   m_HandleRect: {fileID: 1479440302}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -80617,10 +80617,9 @@ MonoBehaviour:
   _criticalMoodHighThreshold: 10
   _majorMentalBreakHourThreshold: 2
   _minorMentalBreakDayThreshold: 1
-  _baseFullnessDecreaseRate: 0.42
-  _baseTirednessDecreaseRate: 0.34
+  _baseFullnessDecreaseRate: 0.34
+  _baseTirednessDecreaseRate: 0.17
   _baseHappinessDecreaseRate: 0.21
-  _baseStaminaDecreaseRate: 7.5
   _startingMana: 200
   _maximumMana: 500
   _summonMinionManaCost: 80
