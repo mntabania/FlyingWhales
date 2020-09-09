@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Inner_Maps;
+using UnityEngine;
 
 public class LocationGridTileDatabase {
     
@@ -21,6 +22,10 @@ public class LocationGridTileDatabase {
             return tileByGUID[id];
         }
         throw new Exception($"There is no Location Grid Tile with id {id}");
+    }
+    public LocationGridTile GetTileBySavedData(TileLocationSave tileLocationSave) {
+        Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(tileLocationSave.regionPersistentID);
+        return region.innerMap.GetTileFromMapCoordinates(tileLocationSave.xPos, tileLocationSave.yPos);
     }
     
 }

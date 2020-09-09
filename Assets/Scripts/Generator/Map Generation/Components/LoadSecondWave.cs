@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
@@ -128,10 +129,10 @@ public class LoadSecondWave : MapGenerationComponent {
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (saveDataTileObject == null) {
-                Debug.LogWarning($"{tileObject} with persistentID {tileObject.persistentID} does not have any save data.");
+                // Debug.LogWarning($"{tileObject} with persistentID {tileObject.persistentID} does not have any save data.");
                 continue;
             }
-            if (tileObject is GenericTileObject || string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
+            if (tileObject is GenericTileObject || !saveDataTileObject.tileLocationID.hasValue) {
                 //the loaded object does not have a grid tile location, it will be loaded and in memory, but not placed in this section.
                 //if it in a character's inventory then it will be referenced by the character carrying it, when that character has been loaded.
                 //Also do not load generic tile objects, since they are loaded in RegionInnerMapGeneration.
@@ -142,8 +143,8 @@ public class LoadSecondWave : MapGenerationComponent {
                 tileObject.LoadSecondWave(saveDataTileObject);
                 continue;
             }
-            if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
-                LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
+            if (saveDataTileObject.tileLocationID.hasValue) {
+                LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveDataTileObject.tileLocationID);
                 if (tileObject is MovingTileObject) {
                     SaveDataMovingTileObject saveDataMovingTileObject = saveDataTileObject as SaveDataMovingTileObject;
                     if (!saveDataMovingTileObject.hasExpired) {
@@ -195,12 +196,14 @@ public class LoadSecondWave : MapGenerationComponent {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
-            SaveDataTraitContainer saveDataTraitContainer = saveDataTileObject.saveDataTraitContainer;
-            tileObject.traitContainer.Load(tileObject, saveDataTraitContainer);
-            batchCount++;
-            if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
-                batchCount = 0;
-                yield return null;    
+            if (saveDataTileObject != null) {
+                SaveDataTraitContainer saveDataTraitContainer = saveDataTileObject.saveDataTraitContainer;
+                tileObject.traitContainer.Load(tileObject, saveDataTraitContainer);
+                batchCount++;
+                if (batchCount == MapGenerationData.TileObjectLoadingBatches) {
+                    batchCount = 0;
+                    yield return null;    
+                }    
             }
         }
     }
@@ -212,12 +215,12 @@ public class LoadSecondWave : MapGenerationComponent {
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (tileObject is Tombstone tombstone) {
-                if (!string.IsNullOrEmpty(saveDataTileObject.tileLocationID)) {
+                if (!saveDataTileObject.tileLocationID.hasValue) {
                     if (tombstone.character == null || tombstone.character.marker == null) {
                         Debug.LogWarning($"{tombstone} with persistent id {tombstone.persistentID} does not have a character inside it, but has a tile location. Not placing it to prevent errors, but this case should not happen!");
                         continue;
                     }
-                    LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataTileObject.tileLocationID);
+                    LocationGridTile gridTileLocation = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveDataTileObject.tileLocationID);
                     gridTileLocation.structure.AddPOI(tileObject, gridTileLocation);
                     if (tileObject.mapObjectVisual != null) {
                         if (InnerMapManager.Instance.assetManager.allTileObjectSprites.ContainsKey(saveDataTileObject.spriteName)) {
@@ -383,8 +386,8 @@ public class LoadSecondWave : MapGenerationComponent {
         int batchCount = 0;
         for (int i = 0; i < saveData.worldMapSave.regionSaves.Count; i++) {
             SaveDataRegion saveDataRegion = saveData.worldMapSave.regionSaves[i];
-            for (int j = 0; j < saveDataRegion.innerMapSave.tileSaves.Count; j++) {
-                SaveDataLocationGridTile saveDataLocationGridTile = saveDataRegion.innerMapSave.tileSaves[j];
+            for (int j = 0; j < saveDataRegion.innerMapSave.tileSaves.Values.Count; j++) {
+                SaveDataLocationGridTile saveDataLocationGridTile = saveDataRegion.innerMapSave.tileSaves.Values.ElementAt(j);
                 LocationGridTile tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveDataLocationGridTile.persistentID);
                 tile.LoadSecondWave(saveDataLocationGridTile);
                 batchCount++;

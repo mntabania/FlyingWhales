@@ -628,7 +628,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (vectorPath != null && vectorPath.Count > 0) {
                 Vector3 lastPositionInPath = vectorPath.Last();
                 //lastPositionInPath = new Vector3(Mathf.Round(lastPositionInPath.x), Mathf.Round(lastPositionInPath.y), lastPositionInPath.z);
-                attainedDestinationTile = character.currentRegion.innerMap.GetTile(lastPositionInPath);
+                attainedDestinationTile = character.currentRegion.innerMap.GetTileFromWorldPos(lastPositionInPath);
             } else {
                 attainedDestinationTile = character.gridTileLocation;
             }

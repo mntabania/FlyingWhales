@@ -960,8 +960,8 @@ public class BehaviourComponent : CharacterComponent {
         if (!string.IsNullOrEmpty(data.dryingTilesForSettlement)) {
             dryingTilesForSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.dryingTilesForSettlement) as NPCSettlement;
         }
-        if (!string.IsNullOrEmpty(data.targetMiningTile)) {
-            targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.targetMiningTile);
+        if (data.targetMiningTile.hasValue) {
+            targetMiningTile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.targetMiningTile);
         }
         if (!string.IsNullOrEmpty(data.currentAbductTarget)) {
             currentAbductTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.currentAbductTarget);
@@ -969,8 +969,8 @@ public class BehaviourComponent : CharacterComponent {
         if (!string.IsNullOrEmpty(data.invaderToFollow)) {
             invaderToFollow = CharacterManager.Instance.GetCharacterByPersistentID(data.invaderToFollow);
         }
-        if (!string.IsNullOrEmpty(data.nest)) {
-            nest = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(data.nest);
+        if (data.nest.hasValue) {
+            nest = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(data.nest);
         }
         if (!string.IsNullOrEmpty(data.abominationTarget)) {
             abominationTarget = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(data.abominationTarget);
@@ -1026,7 +1026,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     //cleanse tiles
     public string dryingTilesForSettlement;
     //mining
-    public string targetMiningTile;
+    public TileLocationSave targetMiningTile;
 
     //Abduct
     public string currentAbductTarget;
@@ -1044,7 +1044,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
     public string invaderToFollow;
 
     //abductor
-    public string nest;
+    public TileLocationSave nest;
     public bool hasEatenInTheMorning;
     public bool hasEatenInTheNight;
 
@@ -1100,7 +1100,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
             dryingTilesForSettlement = data.dryingTilesForSettlement.persistentID;
         }
         if (data.targetMiningTile != null) {
-            targetMiningTile = data.targetMiningTile.persistentID;
+            targetMiningTile = new TileLocationSave(data.targetMiningTile);
         }
         if (data.currentAbductTarget != null) {
             currentAbductTarget = data.currentAbductTarget.persistentID;
@@ -1109,7 +1109,7 @@ public class SaveDataBehaviourComponent : SaveData<BehaviourComponent> {
             invaderToFollow = data.invaderToFollow.persistentID;
         }
         if (data.nest != null) {
-            nest = data.nest.persistentID;
+            nest = new TileLocationSave(data.nest);
         }
         if (data.abominationTarget != null) {
             abominationTarget = data.abominationTarget.persistentID;

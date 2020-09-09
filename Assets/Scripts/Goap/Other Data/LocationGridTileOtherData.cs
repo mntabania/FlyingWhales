@@ -9,7 +9,7 @@ public class LocationGridTileOtherData : OtherData {
         this.tile = tile;
     }
     public LocationGridTileOtherData(SaveDataLocationGridTileOtherData saveData) {
-        tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileByPersistentID(saveData.tileID);
+        tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData.tileID);
     }
     
     public override SaveDataOtherData Save() {
@@ -21,12 +21,12 @@ public class LocationGridTileOtherData : OtherData {
 
 #region Save Data
 public class SaveDataLocationGridTileOtherData : SaveDataOtherData {
-    public string tileID;
+    public TileLocationSave tileID;
     public override void Save(OtherData data) {
         base.Save(data);
         LocationGridTileOtherData otherData = data as LocationGridTileOtherData;
         Assert.IsNotNull(otherData);
-        tileID = otherData.tile.persistentID;
+        tileID = new TileLocationSave(otherData.tile);
     }
     public override OtherData Load() {
         return new LocationGridTileOtherData(this);

@@ -24,7 +24,7 @@ namespace Inner_Maps {
             Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh, Structure_Stone,
             Ruined_Stone
         }
-
+        
         public string persistentID { get; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -37,16 +37,12 @@ namespace Inner_Maps {
         public Tile_State tileState { get; private set; }
         public Ground_Type groundType { get; private set; }
         public LocationStructure structure { get; private set; }
-        private Dictionary<GridNeighbourDirection, LocationGridTile> neighbours { get; set; }
-        private Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours { get; set; }
         public List<LocationGridTile> neighbourList { get; private set; }
         public IPointOfInterest objHere { get; private set; }
         public List<Character> charactersHere { get; private set; }
-        public bool hasBlueprint { get; private set; }
         public GenericTileObject genericTileObject { get; private set; }
         public List<StructureWallObject> walls { get; private set; }
         public LocationGridTileCollection collectionOwner { get; private set; }
-        public bool isCorrupted => groundType == Ground_Type.Corrupted;
         public bool hasLandmine { get; private set; }
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
@@ -54,27 +50,39 @@ namespace Inner_Maps {
         /// The generated perlin noise sample of this tile.
         /// </summary>
         public float floorSample { get; private set; }
-
+        public List<RACE> freezingTrapExclusions { get; private set; }
+        /// <summary>
+        /// Is this tile using the default settings (i.e. No Traits other than Flammable, No Jobs targeting its Generic Tile Object, etc.)
+        /// </summary>
+        public bool isDefault { get; private set; }
+        /// <summary>
+        /// Initial Ground Type of this tile.
+        /// NOTE: This is not saved because this is determined every start up depending on the saved seed.
+        /// <see cref="InnerTileMap.GroundPerlin"/>
+        /// </summary>
+        public Ground_Type initialGroundType { get; private set; }
+        
         private GameObject _landmineEffect;
         private GameObject _freezingTrapEffect;
         private GameObject _snareTrapEffect;
-
-        public List<RACE> freezingTrapExclusions { get; private set; }
+        private Dictionary<GridNeighbourDirection, LocationGridTile> _neighbours;
+        private Dictionary<GridNeighbourDirection, LocationGridTile> _fourNeighbours;
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
         public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
+        public bool isCorrupted => groundType == Ground_Type.Corrupted;
         #endregion
         
         #region Pathfinding
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> CaveInterconnectionTiles { get { return FourNeighbours().Where(o => o.structure == structure && !o.HasDifferentStructureNeighbour()).ToList() ; } } //
-        public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
+        public List<LocationGridTile> UnoccupiedNeighbours { get { return _neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighboursWithinHex {
             get {
-                return neighbours.Values.Where(o =>
+                return _neighbours.Values.Where(o =>
                         !o.isOccupied && o.charactersHere.Count <= 0 && o.structure == structure &&
                         o.collectionOwner.isPartOfParentRegionMap &&
                         o.collectionOwner.partOfHextile.hexTileOwner == collectionOwner.partOfHextile.hexTileOwner)
@@ -96,6 +104,7 @@ namespace Inner_Maps {
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
+            isDefault = true;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
@@ -111,6 +120,7 @@ namespace Inner_Maps {
             tileState = data.tileState;
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
+            isDefault = data.isDefault;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
@@ -155,7 +165,7 @@ namespace Inner_Maps {
         public void SetCollectionOwner(LocationGridTileCollection _collectionOwner) {
             collectionOwner = _collectionOwner;
         }
-        private void SetGroundType(Ground_Type newGroundType) {
+        private void SetGroundType(Ground_Type newGroundType, bool isInitial = false) {
             Ground_Type previousType = this.groundType;
             this.groundType = newGroundType;
             if (genericTileObject != null) {
@@ -182,6 +192,11 @@ namespace Inner_Maps {
                 dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
                 SchedulingManager.Instance.AddEntry(dueDate, RevertBackToSnow, this);
             }
+            if (!isInitial) {
+                if (initialGroundType != newGroundType) {
+                    SetIsDefault(false);
+                }    
+            }
         }
         private void RevertBackToSnow() {
             SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.snowTile, true);
@@ -192,15 +207,15 @@ namespace Inner_Maps {
         }
         public List<LocationGridTile> FourNeighbours() {
             List<LocationGridTile> fn = new List<LocationGridTile>();
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _fourNeighbours) {
                 fn.Add(keyValuePair.Value);
             }
             return fn;
         }
-        private Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() { return fourNeighbours; }
+        private Dictionary<GridNeighbourDirection, LocationGridTile> FourNeighboursDictionary() { return _fourNeighbours; }
         public void FindNeighbours(LocationGridTile[,] map) {
-            fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
-            neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+            _fourNeighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+            _neighbours = new Dictionary<GridNeighbourDirection, LocationGridTile>();
             neighbourList = new List<LocationGridTile>();
             int mapUpperBoundX = map.GetUpperBound(0);
             int mapUpperBoundY = map.GetUpperBound(1);
@@ -212,10 +227,10 @@ namespace Inner_Maps {
                 if (UtilityScripts.Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
                     UtilityScripts.Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                     LocationGridTile tile = map[result.X, result.Y];
-                    neighbours.Add(currDir, tile);
+                    _neighbours.Add(currDir, tile);
                     neighbourList.Add(tile);
                     if (currDir.IsCardinalDirection()) {
-                        fourNeighbours.Add(currDir, tile);
+                        _fourNeighbours.Add(currDir, tile);
                     }
                 }
 
@@ -224,39 +239,43 @@ namespace Inner_Maps {
         #endregion
         
         #region Visuals
+        public void SetInitialGroundType(Ground_Type groundType) {
+            initialGroundType = groundType;
+        }
         public void SetFloorSample(float floorSample) {
             this.floorSample = floorSample;
         }
-        public void UpdateGroundTypeBasedOnAsset() {
+        private Ground_Type GetGroundTypeBasedOnCurrentAsset() {
             Sprite groundAsset = parentMap.groundTilemap.GetSprite(localPlace);
             Sprite structureAsset = parentMap.structureTilemap.GetSprite(localPlace);
             if (ReferenceEquals(structureAsset, null) == false) {
                 string assetName = structureAsset.name.ToLower();
                 if (assetName.Contains("dungeon") || assetName.Contains("cave") || assetName.Contains("laid")) {
-                    SetGroundType(Ground_Type.Cave);
+                    return Ground_Type.Cave;
                 } else if (assetName.Contains("water") || assetName.Contains("pond") || assetName.Contains("shore")) {
-                    SetGroundType(Ground_Type.Water);
+                    return Ground_Type.Water;
                 } 
-            } else if (ReferenceEquals(groundAsset, null) == false) {
+            }
+            if (ReferenceEquals(groundAsset, null) == false) {
                 string assetName = groundAsset.name.ToLower();
                 if (assetName.Contains("desert")) {
                     if (assetName.Contains("grass")) {
-                        SetGroundType(Ground_Type.Desert_Grass);
+                        return Ground_Type.Desert_Grass;
                     } else if (assetName.Contains("sand")) {
-                        SetGroundType(Ground_Type.Sand);
+                        return Ground_Type.Sand;
                     } else if (assetName.Contains("rocks")) {
-                        SetGroundType(Ground_Type.Desert_Stone);
+                        return Ground_Type.Desert_Stone;
                     }
                 } else if (assetName.Contains("corruption") || assetName.Contains("corrupted")) {
-                    SetGroundType(Ground_Type.Corrupted);
+                    return Ground_Type.Corrupted;
                 } else if (assetName.Contains("bone")) {
-                    SetGroundType(Ground_Type.Bone);
+                    return Ground_Type.Bone;
                 } else if (assetName.Contains("structure floor") || assetName.Contains("wood")) {
-                    SetGroundType(Ground_Type.Wood);
+                    return Ground_Type.Wood;
                 } else if (assetName.Contains("cobble")) {
-                    SetGroundType(Ground_Type.Cobble);
+                    return Ground_Type.Cobble;
                 } else if (assetName.Contains("water") || assetName.Contains("pond")) {
-                    SetGroundType(Ground_Type.Water);
+                    return Ground_Type.Water;
                 } else if (assetName.Contains("dirt") || assetName.Contains("soil") || assetName.Contains("outside") || assetName.Contains("snow")) {
                     BIOMES biomeType = parentMap.region.coreTile.biomeType;
                     if (collectionOwner.isPartOfParentRegionMap) {
@@ -264,52 +283,65 @@ namespace Inner_Maps {
                     }
                     if (biomeType == BIOMES.SNOW || biomeType == BIOMES.TUNDRA) {
                         if (assetName.Contains("dirtsnow")) {
-                            SetGroundType(Ground_Type.Snow_Dirt);
+                            return Ground_Type.Snow_Dirt;
                         } else if (assetName.Contains("snow")) {
-                            SetGroundType(Ground_Type.Snow);
+                            return Ground_Type.Snow;
                         } else {
-                            SetGroundType(Ground_Type.Tundra);
                             //override tile to use tundra soil
-                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);    
+                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                            return Ground_Type.Tundra;
                         }
                     } else if (biomeType == BIOMES.DESERT) {
                         if (structure != null && (structure.structureType == STRUCTURE_TYPE.CAVE || structure.structureType == STRUCTURE_TYPE.MONSTER_LAIR)) {
-                            SetGroundType(Ground_Type.Stone);
                             //override tile to use stone
-                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);    
+                            parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.stoneTile);
+                            return Ground_Type.Stone;
                         } else {
-                            SetGroundType(Ground_Type.Sand);
                             //override tile to use sand
                             parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.desertSandTile);
+                            return Ground_Type.Sand;
                         }
                         
                     } else {
-                        SetGroundType(Ground_Type.Soil);
+                        return Ground_Type.Soil;
                     }
                 } else if (assetName.Contains("stone") || assetName.Contains("road")) {
                     if (assetName.Contains("demon")) {
-                        SetGroundType(Ground_Type.Demon_Stone);   
+                        return Ground_Type.Demon_Stone;   
                     } else if (assetName.Contains("floor")) {
-                        SetGroundType(Ground_Type.Structure_Stone);
+                        return Ground_Type.Structure_Stone;
                     } else {
-                        SetGroundType(Ground_Type.Stone);    
+                        return Ground_Type.Stone;    
                     }
                 } else if (assetName.Contains("ruins")) {
-                    SetGroundType(Ground_Type.Ruined_Stone);
+                    return Ground_Type.Ruined_Stone;
                 } else if (assetName.Contains("grass")) {
-                    SetGroundType(Ground_Type.Grass);
+                    return Ground_Type.Grass;
                 } else if (assetName.Contains("tundra")) {
-                    SetGroundType(Ground_Type.Tundra);
                     //override tile to use tundra soil
                     parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                    return Ground_Type.Tundra;
                 } else if (assetName.Contains("flesh")) {
-                    SetGroundType(Ground_Type.Flesh);
+                    return Ground_Type.Flesh;
                 }
             }
+            throw new Exception($"There is no ground type for ground asset: {groundAsset} or structure asset: {structureAsset}");
         }
-        public TileBase previousGroundVisual { get; private set; }
+        public void UpdateGroundTypeBasedOnAsset() {
+            Ground_Type determinedGroundType = GetGroundTypeBasedOnCurrentAsset();
+            SetGroundType(determinedGroundType);
+        }
+        /// <summary>
+        /// Update this tiles initial ground type based on its given asset.
+        /// NOTE: This should only be used on initial Map Generation
+        /// <see cref="InnerTileMap.GroundPerlin"/> 
+        /// </summary>
+        public void InitialUpdateGroundTypeBasedOnAsset() {
+            Ground_Type determinedGroundType = GetGroundTypeBasedOnCurrentAsset();
+            SetGroundType(determinedGroundType, true);
+            SetInitialGroundType(determinedGroundType);
+        }
         public void SetGroundTilemapVisual(TileBase tileBase, bool updateEdges = false) {
-            SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
             parentMap.groundTilemap.RefreshTile(localPlace);
             if (genericTileObject.mapObjectVisual != null && genericTileObject.mapObjectVisual.usedSprite != null) {
@@ -326,15 +358,6 @@ namespace Inner_Maps {
             parentMap.structureTilemap.SetTile(localPlace, tileBase);
             UpdateGroundTypeBasedOnAsset();
         }
-        public void SetPreviousGroundVisual(TileBase tileBase) {
-            previousGroundVisual = tileBase;
-        }
-        public void RevertToPreviousGroundVisual() {
-            if (previousGroundVisual != null) {
-                SetGroundTilemapVisual(previousGroundVisual);
-            }
-            CreateSeamlessEdgesForSelfAndNeighbours();
-        }
         public void CreateSeamlessEdgesForSelfAndNeighbours() {
             CreateSeamlessEdgesForTile(parentMap);
             for (int i = 0; i < neighbourList.Count; i++) {
@@ -343,10 +366,7 @@ namespace Inner_Maps {
             }
         }
         public void CreateSeamlessEdgesForTile(InnerTileMap map) {
-            // string summary = $"Creating seamless edges for tile {ToString()}";
-            Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
-            if (HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
-                // summary += $"\nHas Neighbour of different ground type. Checking neighbours {neighbours.Count.ToString()}";
+            if (HasCardinalNeighbourOfDifferentGroundType()) {
                 BIOMES thisBiome = GetBiomeOfGroundType(groundType);
                 Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours = FourNeighboursDictionary();
                 foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
@@ -360,8 +380,7 @@ namespace Inner_Maps {
                             createEdge = true;
                         }
                     } else {
-                        // summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
-                        if (this.groundType != Ground_Type.Cave && groundType != Ground_Type.Structure_Stone && currNeighbour.groundType == Ground_Type.Cave) {
+                        if (groundType != Ground_Type.Cave && groundType != Ground_Type.Structure_Stone && currNeighbour.groundType == Ground_Type.Cave) {
                             createEdge = true;
                         } else if (currNeighbour.tileType == Tile_Type.Wall) {
                             createEdge = false;
@@ -401,7 +420,6 @@ namespace Inner_Maps {
                         }
                     }
                     
-                    // summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
                     Tilemap mapToUse;
                     switch (keyValuePair.Key) {
                         case GridNeighbourDirection.North:
@@ -430,7 +448,6 @@ namespace Inner_Maps {
                         mapToUse.SetTile(localPlace, null);
                     }
                 }
-                // Debug.Log(summary);    
             }
             else {
                 map.northEdgeTilemap.SetTile(localPlace, null);
@@ -462,7 +479,6 @@ namespace Inner_Maps {
         public void RevertTileToOriginalPerlin() {
              TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(floorSample, parentMap.region.coreTile.biomeType);
              SetGroundTilemapVisual(groundTile);
-             SetPreviousGroundVisual(null);
         }
         public void DetermineNextGroundTypeAfterDestruction() {
             TileBase nextGroundAsset;
@@ -663,8 +679,8 @@ namespace Inner_Maps {
                 objHere.SetGridTileLocation(null);
                 objHere = null;
                 SetTileState(Tile_State.Empty);
-                if (removedObj.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    (removedObj as TileObject).OnRemoveTileObject(null, gridTile, false, false);
+                if (removedObj is TileObject tileObject) {
+                    tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
                 return removedObj;
@@ -678,8 +694,7 @@ namespace Inner_Maps {
                 objHere.SetGridTileLocation(null);
                 objHere = null;
                 SetTileState(Tile_State.Empty);
-                if (removedObj.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    TileObject removedTileObj = removedObj as TileObject;
+                if (removedObj is TileObject removedTileObj) {
                     removedTileObj.OnRemoveTileObject(null, gridTile, false, false);
                     removedTileObj.DestroyMapVisualGameObject();
                 }
@@ -693,29 +708,29 @@ namespace Inner_Maps {
 
         #region Utilities
         public LocationGridTile GetNeighbourAtDirection(GridNeighbourDirection dir) {
-            if (neighbours.ContainsKey(dir)) {
-                return neighbours[dir];
+            if (_neighbours.ContainsKey(dir)) {
+                return _neighbours[dir];
             }
             return null;
         }
         public List<LocationGridTile> GetCrossNeighbours() {
             List<LocationGridTile> crossNeighbours = new List<LocationGridTile>();
-            if (neighbours.ContainsKey(GridNeighbourDirection.North)) {
-                crossNeighbours.Add(neighbours[GridNeighbourDirection.North]);
+            if (_neighbours.ContainsKey(GridNeighbourDirection.North)) {
+                crossNeighbours.Add(_neighbours[GridNeighbourDirection.North]);
             }
-            if (neighbours.ContainsKey(GridNeighbourDirection.South)) {
-                crossNeighbours.Add(neighbours[GridNeighbourDirection.South]);
+            if (_neighbours.ContainsKey(GridNeighbourDirection.South)) {
+                crossNeighbours.Add(_neighbours[GridNeighbourDirection.South]);
             }
-            if (neighbours.ContainsKey(GridNeighbourDirection.East)) {
-                crossNeighbours.Add(neighbours[GridNeighbourDirection.East]);
+            if (_neighbours.ContainsKey(GridNeighbourDirection.East)) {
+                crossNeighbours.Add(_neighbours[GridNeighbourDirection.East]);
             }
-            if (neighbours.ContainsKey(GridNeighbourDirection.West)) {
-                crossNeighbours.Add(neighbours[GridNeighbourDirection.West]);
+            if (_neighbours.ContainsKey(GridNeighbourDirection.West)) {
+                crossNeighbours.Add(_neighbours[GridNeighbourDirection.West]);
             }
             return crossNeighbours;
         }
         public bool TryGetNeighbourDirection(LocationGridTile tile, out GridNeighbourDirection dir) {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
                 if (keyValuePair.Value == tile) {
                     dir = keyValuePair.Key;
                     return true;
@@ -727,7 +742,7 @@ namespace Inner_Maps {
         public bool IsAtEdgeOfMap() {
             GridNeighbourDirection[] dirs = CollectionUtilities.GetEnumValues<GridNeighbourDirection>();
             for (int i = 0; i < dirs.Length; i++) {
-                if (!neighbours.ContainsKey(dirs[i])) {
+                if (!_neighbours.ContainsKey(dirs[i])) {
                     return true;
                 }
             }
@@ -737,7 +752,7 @@ namespace Inner_Maps {
         /// Does this tile have a neighbour that is part of a different structure, or is part of the outside map?
         /// </summary>
         public bool HasDifferentDwellingOrOutsideNeighbour() {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in neighbours) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in _neighbours) {
                 if (kvp.Value.structure != structure) {
                     return true;
                 }
@@ -779,25 +794,25 @@ namespace Inner_Maps {
             return hasUnoccupied;
         }
         public bool HasNeighbourOfElevation(ELEVATION elevation, bool useFourNeighbours = false) {
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner &&
-                    neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner.elevationType == elevation) {
+                if (_neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner &&
+                    _neighbours.Values.ElementAt(i).collectionOwner.partOfHextile.hexTileOwner.elevationType == elevation) {
                     return true;
                 }
             }
             return false;
         }
         public bool HasNeighbourOfType(Tile_Type type, bool useFourNeighbours = false) {
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).tileType == type) {
+                if (_neighbours.Values.ElementAt(i).tileType == type) {
                     return true;
                 }
             }
@@ -805,43 +820,43 @@ namespace Inner_Maps {
         }
         public int GetCountNeighboursOfType(Tile_Type type, bool useFourNeighbours = false) {
             int count = 0;
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).tileType == type) {
+                if (_neighbours.Values.ElementAt(i).tileType == type) {
                     count++;
                 }
             }
             return count;
         }
         public bool HasNeighbourOfType(Ground_Type type, bool useFourNeighbours = false) {
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).groundType == type) {
+                if (_neighbours.Values.ElementAt(i).groundType == type) {
                     return true;
                 }
             }
             return false;
         }
         public bool HasNeighbourNotInList(List<LocationGridTile> list, bool useFourNeighbours = false) {
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (list.Contains(neighbours.Values.ElementAt(i)) == false) {
+                if (list.Contains(_neighbours.Values.ElementAt(i)) == false) {
                     return true;
                 }
             }
             return false;
         }
         public bool HasDifferentStructureNeighbour(bool useFourNeighbours = false) {
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
@@ -854,7 +869,7 @@ namespace Inner_Maps {
             return false;
         }
         public bool IsNeighbour(LocationGridTile tile) {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
                 if (keyValuePair.Value == tile) {
                     return true;
                 }
@@ -862,7 +877,7 @@ namespace Inner_Maps {
             return false;
         }
         public bool IsAdjacentTo(Type type) {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
                 if ((keyValuePair.Value.objHere != null && keyValuePair.Value.objHere.GetType() == type)) {
                     return true;
                 }
@@ -870,7 +885,7 @@ namespace Inner_Maps {
             return false;
         }
         public bool HasNeighbouringWalledStructure() {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in _neighbours) {
                 if (keyValuePair.Value.structure != null && keyValuePair.Value.structure.structureType.IsOpenSpace() == false) {
                     return true;
                 }
@@ -1042,17 +1057,14 @@ namespace Inner_Maps {
             }
             return false;
         }
-        private bool HasCardinalNeighbourOfDifferentGroundType(out Dictionary<GridNeighbourDirection, LocationGridTile> differentTiles) {
-            bool hasDiff = false;
-            differentTiles = new Dictionary<GridNeighbourDirection, LocationGridTile>();
+        private bool HasCardinalNeighbourOfDifferentGroundType() {
             Dictionary<GridNeighbourDirection, LocationGridTile> cardinalNeighbours = FourNeighboursDictionary();
             foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in cardinalNeighbours) {
                 if (keyValuePair.Value.groundType != groundType) {
-                    hasDiff = true;
-                    differentTiles.Add(keyValuePair.Key, keyValuePair.Value);
+                    return true;
                 }
             }
-            return hasDiff;
+            return false;
         }
         public List<ITraitable> GetTraitablesOnTile() {
             List<ITraitable> traitables = new List<ITraitable>();
@@ -1062,7 +1074,7 @@ namespace Inner_Maps {
                 traitables.Add(structureWallObject);
             }
             if (objHere != null) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
+                if ((objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT)) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
                     traitables.Add(objHere);
                 }
             }
@@ -1108,8 +1120,8 @@ namespace Inner_Maps {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();
             pois.Add(genericTileObject);
             if (objHere != null) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
-                    pois.Add(objHere);
+                if ((objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                    pois.Add(tileObject);
                 }
             }
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -1121,8 +1133,8 @@ namespace Inner_Maps {
         public void AddTraitToAllPOIsOnTile(string traitName) {
             genericTileObject.traitContainer.AddTrait(genericTileObject, traitName);
             if (objHere != null) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
-                    objHere.traitContainer.AddTrait(objHere, traitName);
+                if ((objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                    tileObject.traitContainer.AddTrait(objHere, traitName);
                 }
             }
             for (int i = 0; i < charactersHere.Count; i++) {
@@ -1132,12 +1144,12 @@ namespace Inner_Maps {
         }
         public int GetNeighbourOfTypeCount(Ground_Type type, bool useFourNeighbours = false) {
             int count = 0;
-            Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;
+            Dictionary<GridNeighbourDirection, LocationGridTile> n = _neighbours;
             if (useFourNeighbours) {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).groundType == type) {
+                if (_neighbours.Values.ElementAt(i).groundType == type) {
                     count++;
                 }
             }
@@ -1256,19 +1268,9 @@ namespace Inner_Maps {
             }
             return tiles;
         }
-        //public void SetIsOuterTile(bool state) {
-        //    isOuterTile = state;
-        //}
         public bool IsPassable() {
             return (objHere == null || !(objHere is BlockWall)) && groundType != Ground_Type.Water;
         }
-        #endregion
-
-        #region Building
-        public void SetHasBlueprint(bool hasBlueprint) {
-            this.hasBlueprint = hasBlueprint;
-        }
-      
         #endregion
 
         #region Walls
@@ -1472,15 +1474,22 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Saving
+        public void SetIsDefault(bool state) {
+            isDefault = state;
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Is Default state of {this} set to: {isDefault.ToString()}");
+        }
+        #endregion
+
         #region Clean Up
         public void CleanUp() {
             parentMap = null;
             parentTileMap = null;
             structure = null;
-            neighbours?.Clear();
-            neighbours = null;
-            fourNeighbours?.Clear();
-            fourNeighbours = null;
+            _neighbours?.Clear();
+            _neighbours = null;
+            _fourNeighbours?.Clear();
+            _fourNeighbours = null;
             neighbourList?.Clear();
             neighbourList = null;
             objHere = null;

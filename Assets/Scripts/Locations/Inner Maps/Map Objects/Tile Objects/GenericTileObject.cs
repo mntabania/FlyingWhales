@@ -12,11 +12,9 @@ public class GenericTileObject : TileObject {
     public override System.Type serializedData => typeof(SaveDataGenericTileObject);
     
     public GenericTileObject(LocationGridTile locationGridTile) : base() {
-        _owner = locationGridTile;
+        SetTileOwner(locationGridTile);
     }
-    public GenericTileObject(SaveDataGenericTileObject data) : base(data) {
-        
-    }
+    public GenericTileObject(SaveDataGenericTileObject data) : base(data) { }
 
     #region Override
     public override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
@@ -36,9 +34,9 @@ public class GenericTileObject : TileObject {
         SetPOIState(POI_STATE.INACTIVE);
     }
     public override void RemoveTileObject(Character removedBy) {
-        LocationGridTile previousTile = this.gridTileLocation;
+        LocationGridTile previousTileLocation = gridTileLocation;
         DisableGameObject();
-        OnRemoveTileObject(removedBy, previousTile);
+        OnRemoveTileObject(removedBy, previousTileLocation);
         SetPOIState(POI_STATE.INACTIVE);
     }
     public override bool IsValidCombatTargetFor(IPointOfInterest source) {
@@ -58,8 +56,13 @@ public class GenericTileObject : TileObject {
                     //and gained a trait that should not make the tile visible.
                     return;
                 }
-                
             }
+        }
+        if (trait.name != "Flammable") {
+            //Whenever a generic tile object gains a trait that is NOT flammable, then set it as not Default
+            //This checking is necessary because the tile's flammability is determined by it's ground type, and it being flammable
+            //could be its default, so that case is handled by changes in ground type.
+            _owner.SetIsDefault(false);
         }
         base.OnTileObjectGainedTrait(trait);
     }
@@ -71,6 +74,11 @@ public class GenericTileObject : TileObject {
     }
     public override string ToString() {
         return $"Generic Obj at tile {gridTileLocation}";
+    }
+    public override void AddExistingJobTargetingThis(JobQueueItem job) {
+        base.AddExistingJobTargetingThis(job);
+        //Set this tile as no longer default since a job might need it when loading
+        _owner.SetIsDefault(false);
     }
     public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false,
         object source = null, CombatManager.ElementalTraitProcessor elementalTraitProcessor = null, bool showHPBar = false) {
@@ -113,6 +121,10 @@ public class GenericTileObject : TileObject {
     public override bool CanBeSelected() {
         return false;
     }
+    public override void OnReferencedInALog() {
+        base.OnReferencedInALog();
+        _owner.SetIsDefault(false);
+    }
     #endregion
 
     public BaseMapObjectVisual GetOrCreateMapVisual() {
@@ -154,9 +166,6 @@ public class GenericTileObject : TileObject {
         hasBeenInitialized = true;
         Initialize(saveDataTileObject);
         SetGridTileLocation(tile);
-        AddAdvertisedAction(INTERACTION_TYPE.PLACE_FREEZING_TRAP);
-        AddAdvertisedAction(INTERACTION_TYPE.GO_TO_TILE);
-        AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
     }
 }
 

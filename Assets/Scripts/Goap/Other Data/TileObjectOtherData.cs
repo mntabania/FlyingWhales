@@ -6,6 +6,9 @@ public class TileObjectOtherData : OtherData {
     
     public TileObjectOtherData(TileObject tileObject) {
         this.tileObject = tileObject;
+        if (tileObject is GenericTileObject genericTileObject) {
+            genericTileObject.gridTileLocation.SetIsDefault(false);
+        }
     }
     public TileObjectOtherData(SaveDataTileObjectOtherData saveData) {
         this.tileObject = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(saveData.tileObjectID);

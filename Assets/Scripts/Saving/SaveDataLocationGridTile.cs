@@ -9,7 +9,8 @@ using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public string persistentID;
-    public Vector3Save localPlace; //this is the id
+    public bool isDefault;
+    public Vector3Save localPlace;
     public Vector3Save worldLocation;
     public Vector3Save centeredWorldLocation;
     public Vector3Save localLocation;
@@ -30,6 +31,8 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
 
     public override void Save(LocationGridTile gridTile) {
         persistentID = gridTile.persistentID;
+        isDefault = gridTile.isDefault;
+        Assert.IsFalse(isDefault, $"{gridTile} is being saved but its default toggle is on!");
         localPlace = new Vector3Save(gridTile.localPlace);
         worldLocation = gridTile.worldLocation;
         centeredWorldLocation = gridTile.centeredWorldLocation;
@@ -42,7 +45,6 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         hasSnareTrap = gridTile.hasSnareTrap;
         meteorCount = gridTile.meteorCount;
         freezingTrapExclusions = gridTile.freezingTrapExclusions;
-        
         genericTileObjectID = gridTile.genericTileObject.persistentID;
 
         //tilemap assets

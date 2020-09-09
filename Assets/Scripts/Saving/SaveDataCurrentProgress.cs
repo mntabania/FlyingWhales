@@ -167,6 +167,10 @@ public class SaveDataCurrentProgress {
 
         for (int i = 0; i < DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList.Count; i++) {
             TileObject tileObject = DatabaseManager.Instance.tileObjectDatabase.allTileObjectsList[i];
+            if (tileObject is GenericTileObject genericTileObject && genericTileObject.gridTileLocation.isDefault) {
+                //if tile object is a Generic Tile Object and its parent tile is set as default then do not save it.
+                continue;
+            }
             SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
             saveDataTileObject.Save(tileObject);
             AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
@@ -181,24 +185,6 @@ public class SaveDataCurrentProgress {
         SaveDataTileObject obj = System.Activator.CreateInstance(tileObject.serializedData) as SaveDataTileObject;
         return obj;
     }
-    //public static SaveDataTileObject CreateNewSaveDataForTileObject(string tileObjectTypeString) {
-    //    var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-    //    System.Type type = System.Type.GetType(typeName);
-    //    if (type != null) {
-    //        SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
-    //        return obj;
-    //    }
-    //    return new SaveDataTileObject(); //if no special save data for tile object was found, then just use the generic one
-    //}
-    //private SaveDataTileObject createNewSaveDataForArtifact(string tileObjectTypeString) {
-    //    var typeName = $"SaveData{tileObjectTypeString}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-    //    System.Type type = System.Type.GetType(typeName);
-    //    if (type != null) {
-    //        SaveDataTileObject obj = System.Activator.CreateInstance(type) as SaveDataTileObject;
-    //        return obj;
-    //    }
-    //    return new SaveDataArtifact(); //if no special save data for tile object was found, then just use the generic one
-    //}
     #endregion
 
     #region First Wave Loading

@@ -9,17 +9,11 @@ using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 namespace Inner_Maps {
     public class RegionInnerTileMap : InnerTileMap {
-        private Region region { get; set; }
         private Dictionary<Region, Transform> otherRegionObjects { get; set; } //dictionary of objects to show which direction other regions are from this one.
 
         [SerializeField] private GameObject regionDirectionPrefab;
         private Bounds groundMapLocalBounds;
         
-        
-        public override void Initialize(Region location) {
-            base.Initialize(location);
-            region = location as Region;
-        }
         public IEnumerator GenerateMap(MapGenerationComponent mapGenerationComponent) {
             name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
@@ -45,7 +39,15 @@ namespace Inner_Maps {
             InitializeTileCollections(mapGenerationComponent);
             ConnectHexTilesToTileCollections(mapGenerationComponent);
             SetFogOfWar();
-            // yield return StartCoroutine(LoadTileVisuals(mapGenerationComponent, saveDataInnerMap, tileAssetDB));
+            
+            int minX = allTiles.Min(t => t.localPlace.x);
+            int maxX = allTiles.Max(t => t.localPlace.x);
+            int minY = allTiles.Min(t => t.localPlace.y);
+            int maxY = allTiles.Max(t => t.localPlace.y);
+            int xSize = maxX - minX;
+            int ySize = maxY - minY;
+            
+            yield return StartCoroutine(GroundPerlin(allTiles, xSize, ySize, saveDataInnerMap.xSeed, saveDataInnerMap.ySeed));
             groundMapLocalBounds = groundTilemap.localBounds;
         }
 
