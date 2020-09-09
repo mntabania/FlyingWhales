@@ -1312,6 +1312,7 @@ namespace Inner_Maps {
         #region Landmine
         public void SetHasLandmine(bool state) {
             if(hasLandmine != state) {
+                SetIsDefault(false);
                 hasLandmine = state;
                 if (hasLandmine) {
                     _landmineEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Landmine, InnerMapManager.DetailsTilemapSortingOrder - 1);
@@ -1359,6 +1360,7 @@ namespace Inner_Maps {
         #region Freezing Trap
         public void SetHasFreezingTrap(bool state, params RACE[] freezingTrapExclusions) {
             if (hasFreezingTrap != state) {
+                SetIsDefault(false);
                 hasFreezingTrap = state;
                 if (hasFreezingTrap) {
                     if (collectionOwner.isPartOfParentRegionMap) {
@@ -1393,6 +1395,7 @@ namespace Inner_Maps {
         #region Freezing Trap
         public void SetHasSnareTrap(bool state) {
             if (hasSnareTrap != state) {
+                SetIsDefault(false);
                 hasSnareTrap = state;
                 if (hasSnareTrap) {
                     _snareTrapEffect = GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Snare_Trap, InnerMapManager.DetailsTilemapSortingOrder - 1);
@@ -1466,6 +1469,7 @@ namespace Inner_Maps {
         #region Meteor
         public int meteorCount { get; private set; }
         public void AddMeteor() {
+            SetIsDefault(false);
             meteorCount++;
             GameManager.Instance.CreateParticleEffectAt(this, PARTICLE_EFFECT.Meteor_Strike);
         }

@@ -88,6 +88,7 @@ public class GenericTileObject : TileObject {
         CombatManager.Instance.DamageModifierByElements(ref amount, elementalDamageType, this);
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+        _owner.SetIsDefault(false);
         if (amount < 0) {
             Character responsibleCharacter = null;
             if (source is Character character) {
