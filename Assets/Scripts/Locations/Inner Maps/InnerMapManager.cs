@@ -352,6 +352,8 @@ namespace Inner_Maps {
             
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
+            summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
+            summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
             summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode.Area.ToString()}";
             summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
@@ -362,12 +364,7 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
             summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
-            summary = $"{summary} <b>Previous Tile Asset:</b>{(tile.previousGroundVisual?.name ?? "Null")}";
-            summary =
-                $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
-            // if (tile.hasFurnitureSpot) {
-            //     summary = $"{summary} <b>Furniture Spot:</b>{tile.furnitureSpot.ToString()}";
-            // }
+            summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
             summary = $"{summary}\nTile Traits: ";
             if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
                 summary = $"{summary}\n";
@@ -379,6 +376,7 @@ namespace Inner_Maps {
             IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
+                summary = $"{summary}\nPUID: {poi.persistentID}";
                 summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
                 summary = $"{summary}<b>Object State:</b> {poi.state.ToString()}";
                 summary = $"{summary}<b>Is Available:</b> {poi.IsAvailable().ToString()}";
@@ -498,12 +496,6 @@ namespace Inner_Maps {
         /// <returns>The list of slot settings</returns>
         public List<TileObjectSlotSetting> GetTileObjectSlotSettings(Sprite asset) {
             return tileObjectSlotSettings[asset];
-        }
-        public void AddTileObject(TileObject to) {
-            DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(to);
-        }
-        public void RemoveTileObject(TileObject to) {
-            DatabaseManager.Instance.tileObjectDatabase.UnRegisterTileObject(to);
         }
         public TileObject GetTileObject(TILE_OBJECT_TYPE type, int id) {
             return DatabaseManager.Instance.tileObjectDatabase.GetTileObject(type, id);

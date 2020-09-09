@@ -117,7 +117,10 @@ public class GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+        if (log.DoesLogUseIdentifier(LOG_IDENTIFIER.TARGET_CHARACTER)) {
+            //only automatically add Target Character log filler to log if the log actually needs it. This is to optimize saving so that unnecessary objects won't be included in log saves.
+            log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.    
+        }
         if (targetStructure != null) {
             log.AddToFillers(targetStructure, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         } else {

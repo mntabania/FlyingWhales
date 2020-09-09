@@ -55,9 +55,9 @@ namespace Inner_Maps {
         [SerializeField] protected GameObject tileCollectionPrefab;
         
         [Header("Perlin Noise")]
-        [SerializeField] protected float offsetX;
-        [SerializeField] protected float offsetY;
-        
+        [SerializeField] private float _xSeed;
+        [SerializeField] private float _ySeed;
+
         [Header("For Testing")]
         [SerializeField] protected LineRenderer pathLineRenderer;
         [SerializeField] protected BoundDrawer _boundDrawer;
@@ -73,11 +73,18 @@ namespace Inner_Maps {
         public GameObject centerGo { get; private set; }
         public List<BurningSource> activeBurningSources { get; private set; }
         public LocationGridTileCollection[,] locationGridTileCollections { get; protected set; }
+        
+        #region getters
         public bool isShowing => InnerMapManager.Instance.currentlyShowingMap == this;
+        public float xSeed => _xSeed;
+        public float ySeed => _ySeed;
+        #endregion
 
         #region Generation
-        public virtual void Initialize(Region location) {
-            this.region = location;
+        public virtual void Initialize(Region location, float xSeed, float ySeed) {
+            region = location;
+            _xSeed = xSeed;
+            _ySeed = ySeed;
             activeBurningSources = new List<BurningSource>();
             
             //set tile map sorting orders
@@ -136,30 +143,40 @@ namespace Inner_Maps {
             int batchCount = 0;
             
             LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
-                SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];
-                LocationGridTile tile = saveDataLocationGridTile.InitialLoad(groundTilemap, this, saveData);
-                groundTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
-                tile.SetStructure(wilderness);
-                allTiles.Add(tile);
-                if (tile.IsAtEdgeOfWalkableMap()) {
-                    allEdgeTiles.Add(tile);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    SaveDataLocationGridTile existingSaveData = saveDataInnerMap.GetSaveDataForTile(new Point(x, y));
+                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(region));
+                    LocationGridTile tile;
+                    if (existingSaveData != null) {
+                        //has existing save data
+                        tile = existingSaveData.InitialLoad(groundTilemap, this, saveData);
+                    } else {
+                        tile = new LocationGridTile(x, y, groundTilemap, this);
+                        tile.CreateGenericTileObject();    
+                    }
+                    tile.SetStructure(wilderness);
+                    allTiles.Add(tile);
+                    if (tile.IsAtEdgeOfWalkableMap()) {
+                        allEdgeTiles.Add(tile);
+                    }
+                    map[x, y] = tile;
                 }
-                map[tile.localPlace.x, tile.localPlace.y] = tile;
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
                     batchCount = 0;
                     yield return null;    
                 }
             }
+            
             allTiles.ForEach(x => x.FindNeighbours(map));
             stopwatch.Stop();
             mapGenerationComponent.AddLog($"{region.name} Load Grid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         public IEnumerator LoadTileVisuals(MapGenerationComponent mapGenerationComponent, SaveDataInnerMap saveDataInnerMap, Dictionary<string, TileBase> tileAssetDB) {
             int batchCount = 0;
-            for (int i = 0; i < saveDataInnerMap.tileSaves.Count; i++) {
-                SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves[i];
+            for (int i = 0; i < saveDataInnerMap.tileSaves.Values.Count; i++) {
+                SaveDataLocationGridTile saveDataLocationGridTile = saveDataInnerMap.tileSaves.Values.ElementAt(i);
                 LocationGridTile tile = map[(int)saveDataLocationGridTile.localPlace.x, (int)saveDataLocationGridTile.localPlace.y];
                 //load tile assets
                 if (!string.IsNullOrEmpty(saveDataLocationGridTile.groundTileMapAssetName)) {
@@ -410,11 +427,18 @@ namespace Inner_Maps {
         private void HidePath() {
             pathLineRenderer.gameObject.SetActive(false);
         }
-        public LocationGridTile GetTile(Vector3 worldPosition) {
+        public LocationGridTile GetTileFromWorldPos(Vector3 worldPosition) {
             Vector3Int cell = groundTilemap.WorldToCell(worldPosition);
             if (UtilityScripts.Utilities.IsInRange(cell.x, 0, width) &&
                 UtilityScripts.Utilities.IsInRange(cell.y, 0, height)) {
                 return map[cell.x, cell.y];    
+            }
+            return null;
+        }
+        public LocationGridTile GetTileFromMapCoordinates(int xPos, int yPos) {
+            if (UtilityScripts.Utilities.IsInRange(xPos, 0, width) &&
+                UtilityScripts.Utilities.IsInRange(yPos, 0, height)) {
+                return map[xPos, yPos];    
             }
             return null;
         }
@@ -486,18 +510,28 @@ namespace Inner_Maps {
             }
             return tiles;
         }
-        private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles) {
-            offsetX = Random.Range(0f, 99999f);
-            offsetY = Random.Range(0f, 99999f);
-            int minX = tiles.Min(t => t.localPlace.x);
-            int maxX = tiles.Max(t => t.localPlace.x);
-            int minY = tiles.Min(t => t.localPlace.y);
-            int maxY = tiles.Max(t => t.localPlace.y);
-
+        protected IEnumerator GenerateDetails(MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            //Generate details for the outside map
+            // List<LocationGridTile> tilesToPerlin = allTiles.Where(x =>
+            //     x.objHere == null
+            //     && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS)
+            //     && x.tileType != LocationGridTile.Tile_Type.Wall
+            //     && !x.IsAdjacentTo(typeof(MagicCircle))
+            // ).ToList();
+            int minX = allTiles.Min(t => t.localPlace.x);
+            int maxX = allTiles.Max(t => t.localPlace.x);
+            int minY = allTiles.Min(t => t.localPlace.y);
+            int maxY = allTiles.Max(t => t.localPlace.y);
             int xSize = maxX - minX;
             int ySize = maxY - minY;
-
-            int batchCount = 0;
+            
+            yield return StartCoroutine(MapPerlinDetails(allTiles, xSize, ySize, xSeed, ySeed));
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
+        }
+        public IEnumerator GroundPerlin(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
             Vector3Int[] positionArray = new Vector3Int[tiles.Count];
             TileBase[] groundTilesArray = new TileBase[tiles.Count];
             
@@ -507,30 +541,29 @@ namespace Inner_Maps {
                 if(currTile.collectionOwner != null && currTile.collectionOwner.isPartOfParentRegionMap) {
                     hex = currTile.collectionOwner.partOfHextile.hexTileOwner;
                 }
-                float xCoord = (float)currTile.localPlace.x / xSize * 11f + offsetX;
-                float yCoord = (float)currTile.localPlace.y / ySize * 11f + offsetY;
+                float xCoord = (float)currTile.localPlace.x / xSize * 11f + xSeed;
+                float yCoord = (float)currTile.localPlace.y / ySize * 11f + ySeed;
 
                 float floorSample = Mathf.PerlinNoise(xCoord, yCoord);
                 positionArray[i] = currTile.localPlace;
                 currTile.SetFloorSample(floorSample);
-                //ground
                 groundTilesArray[i] = GetGroundAssetPerlin(floorSample, hex.biomeType);
-                currTile.SetPreviousGroundVisual(null);
-                
-                // batchCount++;
-                // if (batchCount == MapGenerationData.InnerMapDetailBatches) {
-                //     batchCount = 0;
-                //     yield return null;    
-                // }
             }
 
-            MassSetGroundTileMapVisuals(positionArray, groundTilesArray);
-            
-            batchCount = 0;
+            //Mass Update tiles
+            groundTilemap.SetTiles(positionArray, groundTilesArray);
+            for (int i = 0; i < positionArray.Length; i++) {
+                LocationGridTile tile = map[positionArray[i].x, positionArray[i].y];
+                tile.InitialUpdateGroundTypeBasedOnAsset();
+            }
+            yield return null;
+        }
+        private IEnumerator MapPerlinDetails(List<LocationGridTile> tiles, int xSize, int ySize, float xSeed, float ySeed) {
+            yield return StartCoroutine(GroundPerlin(tiles, xSize, ySize, xSeed, ySeed));
+            int batchCount = 0;
             //flower, rock and garbage
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
-                
                 if (ReferenceEquals(currTile.collectionOwner.partOfHextile, null) == false) {
                     if ((currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.MOUNTAIN 
                          || currTile.collectionOwner.partOfHextile.hexTileOwner.elevationType == ELEVATION.WATER)) {
@@ -542,8 +575,8 @@ namespace Inner_Maps {
                     }
                 }
                 
-                float xCoordDetail = (float)currTile.localPlace.x / xSize * 8f + offsetX;
-                float yCoordDetail = (float)currTile.localPlace.y / ySize * 8f + offsetY;
+                float xCoordDetail = (float)currTile.localPlace.x / xSize * 8f + xSeed;
+                float yCoordDetail = (float)currTile.localPlace.y / ySize * 8f + ySeed;
                 float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
                 
                 //trees and shrubs
@@ -586,27 +619,6 @@ namespace Inner_Maps {
                     batchCount = 0;
                     yield return null;    
                 }
-            }
-        }
-        protected IEnumerator GenerateDetails(MapGenerationComponent mapGenerationComponent) {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            //Generate details for the outside map
-            List<LocationGridTile> tilesToPerlin = allTiles.Where(x =>
-                x.objHere == null
-                && (x.structure == null || x.structure.structureType == STRUCTURE_TYPE.WILDERNESS)
-                && x.tileType != LocationGridTile.Tile_Type.Wall
-                && !x.IsAdjacentTo(typeof(MagicCircle))
-            ).ToList();
-            yield return StartCoroutine(MapPerlinDetails(tilesToPerlin));
-            stopwatch.Stop();
-            mapGenerationComponent.AddLog($"{region.name} GenerateDetails took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
-        }
-        private void MassSetGroundTileMapVisuals(Vector3Int[] tilePositions, TileBase[] groundAssets) {
-            groundTilemap.SetTiles(tilePositions, groundAssets);
-            for (int i = 0; i < tilePositions.Length; i++) {
-                LocationGridTile tile = map[tilePositions[i].x, tilePositions[i].y];
-                tile.UpdateGroundTypeBasedOnAsset();
             }
         }
         public static TileBase GetGroundAssetPerlin(float floorSample, BIOMES biomeType) {

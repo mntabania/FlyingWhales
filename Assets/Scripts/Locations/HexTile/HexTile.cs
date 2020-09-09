@@ -1737,9 +1737,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             if (currTile.structure.isInterior || currTile.isCorrupted) {
                 //set the previous tile to the new biome, so that when the structure is destroyed
                 //it will revert to the right asset
-                currTile.SetPreviousGroundVisual(groundTile);
             } else {
-                currTile.SetPreviousGroundVisual(null);
                 currTile.parentMap.groundTilemap.SetTile(position, groundTile);
                 currTile.UpdateGroundTypeBasedOnAsset();
                 if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
@@ -1762,18 +1760,16 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             Vector3Int position = currTile.localPlace;
             TileBase groundTile = InnerTileMap.GetGroundAssetPerlin(currTile.floorSample, biomeType);
             if (currTile.structure.isInterior || currTile.isCorrupted) {
-                //set the previous tile to the new biome, so that when the structure is destroyed
-                //it will revert to the right asset
-                currTile.SetPreviousGroundVisual(groundTile);
-            } else {
-                currTile.SetPreviousGroundVisual(null);
-                currTile.parentMap.groundTilemap.SetTile(position, groundTile);
-                currTile.UpdateGroundTypeBasedOnAsset();
-                if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
-                    tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
-                }
-                currTile.CreateSeamlessEdgesForSelfAndNeighbours();
+                //do not change tiles of interior or corrupted structures.
+                continue;
             }
+            
+            currTile.parentMap.groundTilemap.SetTile(position, groundTile);
+            currTile.UpdateGroundTypeBasedOnAsset();
+            if (currTile.objHere != null && currTile.objHere.mapObjectVisual && currTile.objHere is TileObject tileObject) {
+                tileObject.mapVisual.UpdateTileObjectVisual(tileObject);
+            }
+            currTile.CreateSeamlessEdgesForSelfAndNeighbours();
             yield return null;
         }
         onFinishChangeAction.Invoke();

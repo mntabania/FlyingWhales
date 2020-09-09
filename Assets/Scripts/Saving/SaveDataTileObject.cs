@@ -12,7 +12,7 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
     public TILE_OBJECT_TYPE tileObjectType;
     public string characterOwnerID;
     public int regionLocationID;
-    public string tileLocationID;
+    public TileLocationSave tileLocationID;
     public bool isPreplaced;
     public int[] resourceValues; //food, wood, stone, metal
     // public Dictionary<RESOURCE, int> storedResources;
@@ -47,10 +47,10 @@ public class SaveDataTileObject : SaveData<TileObject>, ISavableCounterpart {
         characterOwnerID = data.characterOwner?.persistentID ?? string.Empty;
         if (data.gridTileLocation != null) {
             regionLocationID = data.gridTileLocation.parentMap.region.id;
-            tileLocationID = data.gridTileLocation.persistentID;    
+            tileLocationID = new TileLocationSave(data.gridTileLocation);    
         } else {
             regionLocationID = -1;
-            tileLocationID = string.Empty;
+            tileLocationID = new TileLocationSave();
         }
         isPreplaced = data.isPreplaced;
         poiState = data.state;

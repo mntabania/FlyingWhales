@@ -107,7 +107,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         ConstructDefaultActions();
         logComponent = new LogComponent(); logComponent.SetOwner(this);
-        InnerMapManager.Instance.AddTileObject(this);
+        DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
     public void Initialize(SaveDataTileObject data) {
@@ -126,21 +126,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         CreateTraitContainer();
         LoadResources(data);
         advertisedActions = new List<INTERACTION_TYPE>(data.advertisedActions);
-        //if (data.advertisedActions != null) {
-        //    for (int i = 0; i < data.advertisedActions.Length; i++) {
-        //        INTERACTION_TYPE interactionType = data.advertisedActions[i];
-        //        AddAdvertisedAction(interactionType);
-        //    }    
-        //} else {
-        //    advertisedActions = new List<INTERACTION_TYPE>();
-        //}
-        
         ConstructDefaultActions();
 
         logComponent = data.logComponent.Load();
         logComponent.SetOwner(this);
 
-        InnerMapManager.Instance.AddTileObject(this);
+        DatabaseManager.Instance.tileObjectDatabase.RegisterTileObject(this);
         SubscribeListeners();
     }
 
@@ -466,7 +457,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
-    public void AddExistingJobTargetingThis(JobQueueItem job) {
+    public virtual void AddExistingJobTargetingThis(JobQueueItem job) {
         allExistingJobsTargetingThis.Add(job);
     }
     public bool RemoveExistingJobTargetingThis(JobQueueItem job) {
@@ -1130,6 +1121,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool CanBeSelected() {
         return true;
     }
+    #endregion
+
+    #region Logs
+    /// <summary>
+    /// Called when this object has been added as a filler in a log.
+    /// </summary>
+    public virtual void OnReferencedInALog() { }
     #endregion
 }
 

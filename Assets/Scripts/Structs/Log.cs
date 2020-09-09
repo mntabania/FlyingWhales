@@ -25,9 +25,6 @@ public class Log : ISavable {
 
     //private bool lockFillers;
 
-    public string logCallStack;
-
-
 
     //When this log is processed through the LogReplacer for the first time, the resulting text will be stored in this so that every time the text of this log is needed,
     //it will not go through the LogReplacer processing again, which saves cpu power
@@ -57,7 +54,6 @@ public class Log : ISavable {
         this.fillers = new List<LogFiller>();
         //this.lockFillers = false;
         logText = string.Empty;
-        //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
     public Log(GameDate date, string message, ActualGoapNode goapAction = null) {
@@ -72,7 +68,6 @@ public class Log : ISavable {
         this.fillers = new List<LogFiller>();
         //this.lockFillers = false;
         logText = string.Empty;
-        //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
     public Log(SaveDataLog data) {
@@ -96,11 +91,11 @@ public class Log : ISavable {
     }
 
     internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
-        //if (lockFillers) {
-        //    return;
-        //}
         if (replaceExisting && HasFillerForIdentifier(identifier)) {
             fillers.Remove(GetFillerForIdentifier(identifier));
+        }
+        if (obj is TileObject tileObject) {
+            tileObject.OnReferencedInALog();
         }
 		this.fillers.Add (new LogFiller (obj, value, identifier));
 	}
@@ -113,10 +108,17 @@ public class Log : ISavable {
             AddToFillers(filler);
         }
     }
+    public bool DoesLogUseIdentifier(LOG_IDENTIFIER logIdentifier) {
+        if (UtilityScripts.Utilities.logIdentifierStrings.ContainsKey(logIdentifier)) {
+            string logString = UtilityScripts.Utilities.logIdentifierStrings[logIdentifier];
+            string unFilledLog = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+            if (unFilledLog.Contains(logString)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void SetFillers(List<LogFiller> fillers) {
-        //if (lockFillers) {
-        //    return;
-        //}
         this.fillers = fillers;
     }
     public void AddLogToInvolvedObjects() {
