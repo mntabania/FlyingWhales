@@ -2082,8 +2082,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
     #region Sabotage
     public bool TryCreateSabotageNeighbourJob(Character target, out JobQueueItem producedJob) {
+        producedJob = null;
 	    //create predetermined plan and job
-	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, owner);
 	    List<JobNode> jobNodes = new List<JobNode>();
 	    if (owner.HasItem(TILE_OBJECT_TYPE.CULTIST_KIT) == false) {
 		    //Pick up cultist kit at home
@@ -2092,17 +2092,28 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    ActualGoapNode pickupNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], owner, cultistKitAtHome, null, 0);
 		    jobNodes.Add(new SingleJobNode(pickupNode));
 	    }
-	    
-	    ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], owner, target, null, 0);
-	    jobNodes.Add(new SingleJobNode(removeBuffNode));
-	    
-	    GoapPlan goapPlan = new GoapPlan(jobNodes, target);
-	    goapPlan.SetDoNotRecalculate(true);
-	    job.SetCannotBePushedBack(true);
-	    job.SetAssignedPlan(goapPlan);
-	    
-	    producedJob = job;
-	    return true;
+
+        string buffToBeRemoved = string.Empty;
+        List<Trait> buffs = target.traitContainer.GetAllTraitsOf(TRAIT_TYPE.BUFF);
+        if(buffs != null && buffs.Count > 0) {
+            Trait randomBuff = CollectionUtilities.GetRandomElement(buffs);
+            if (randomBuff != null) {
+                buffToBeRemoved = randomBuff.name;
+            }
+        }
+        if(buffToBeRemoved != string.Empty) {
+            ActualGoapNode removeBuffNode = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.REMOVE_BUFF], owner, target, new OtherData[] { new StringOtherData(buffToBeRemoved) }, 0);
+            jobNodes.Add(new SingleJobNode(removeBuffNode));
+            GoapPlan goapPlan = new GoapPlan(jobNodes, target);
+            goapPlan.SetDoNotRecalculate(true);
+
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SABOTAGE_NEIGHBOUR, INTERACTION_TYPE.REMOVE_BUFF, target, owner);
+            job.SetCannotBePushedBack(true);
+            job.SetAssignedPlan(goapPlan);
+            producedJob = job;
+            return true;
+        }
+        return false;
     }
     private bool IsValidSabotageNeighbourTarget(Character character) {
 	    AWARENESS_STATE awarenessState = owner.relationshipContainer.GetAwarenessState(character);
@@ -2239,10 +2250,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
                 exclusions = overheating.excludedStructuresInSeekingShelter;
             }
             LocationStructure nearestInteriorStructure = owner.gridTileLocation.GetNearestInteriorStructureFromThisExcept(exclusions);
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEEK_SHELTER, INTERACTION_TYPE.TAKE_SHELTER, owner, owner);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_SHELTER, new object[] { nearestInteriorStructure });
-            owner.jobQueue.AddJobInQueue(job);
-            return true;
+            if(nearestInteriorStructure != null) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SEEK_SHELTER, INTERACTION_TYPE.TAKE_SHELTER, owner, owner);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_SHELTER, new object[] { nearestInteriorStructure });
+                owner.jobQueue.AddJobInQueue(job);
+                return true;
+            }
         }
         return false;
     }

@@ -530,13 +530,12 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
     }
     private bool IsActionStealth(JobQueueItem job) {
-        //Temporarily remove this for Demo, actions are not stealth
-        //if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
-        //    return true;
-        //} else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
-        //    return true;
-        //}
         if (action.goapType == INTERACTION_TYPE.REMOVE_BUFF) {
+            return true;
+        }
+        if (action.goapType == INTERACTION_TYPE.STEAL || action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
+            return true;
+        } else if (action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER && job.jobType != JOB_TYPE.APPREHEND) {
             return true;
         }
         return false;
@@ -572,6 +571,18 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             descriptionLog.SetLogType(LOG_TYPE.Action);
             action.AddFillersToLog(descriptionLog, this);
             descriptionLog.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
+
+            actor.marker.UpdateAnimation();
+
+            //When a character is vigilant and an action has started performing do not let it perform the action even if the action has duration
+            //Go to End Effect immediately
+            //Because we do not want the actor to wait standing if the target is vigilant, the reaction should be instantaneous
+            //So we need to bypass the duration and assume that the action will end already
+            if (currentState.duration != -1) {
+                currentStateDuration = currentState.duration;
+                EndPerTickEffect();
+            }
+
         } else {
             CreateDescriptionLog(currentState);
             currentState.preEffect?.Invoke(this);
@@ -589,17 +600,19 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     trait.ExecuteActionPreEffects(action.goapType, this);
                 }
             }
+
+            actor.marker.UpdateAnimation();
+            //parentAction.SetExecutionDate(GameManager.Instance.Today());
+
+            if (currentState.duration > 0) {
+                currentStateDuration = 0;
+                StartPerTickEffect();
+            } else if (currentState.duration != -1) {
+                EndPerTickEffect();
+            }
         }
 
-        actor.marker.UpdateAnimation();
-        //parentAction.SetExecutionDate(GameManager.Instance.Today());
 
-        if (currentState.duration > 0) {
-            currentStateDuration = 0;
-            StartPerTickEffect();
-        } else if (currentState.duration != -1) {
-            EndPerTickEffect();
-        }
     }
     private void StartPerTickEffect() {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
@@ -616,6 +629,14 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (actionStatus == ACTION_STATUS.FAIL || actionStatus == ACTION_STATUS.SUCCESS) { //This means that the action is already finished
             return;
         }
+        //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
+        if(isStealth && target.traitContainer.HasTrait("Vigilant")) {
+            EndEffectVigilant();
+        } else {
+            EndEffectNormal(shouldDoAfterEffect);
+        }
+    }
+    private void EndEffectNormal(bool shouldDoAfterEffect) {
         if (shouldDoAfterEffect) {
             if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
                 //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
@@ -624,8 +645,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     if (!cannotBeStoredAsIntel) {
                         PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this) as IIntel);
                     }
-                } else if (action.goapType == INTERACTION_TYPE.EXPLORE || action.goapType == INTERACTION_TYPE.COUNTERATTACK_ACTION 
-                    || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID 
+                } else if (action.goapType == INTERACTION_TYPE.EXPLORE || action.goapType == INTERACTION_TYPE.COUNTERATTACK_ACTION
+                    || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID
                     || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(descriptionLog);
                 }
@@ -636,15 +657,15 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         ActionResult(currentState);
 
         IPointOfInterest target = poiTarget;
-        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+        if (poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
             TileObject item = poiTarget as TileObject;
-            if(item.isBeingCarriedBy != null) {
+            if (item.isBeingCarriedBy != null) {
                 target = item.isBeingCarriedBy;
             }
         }
 
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
-        if (shouldDoAfterEffect && !(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
+        if (shouldDoAfterEffect) { // && !(isStealth && target.traitContainer.HasTrait("Vigilant"))
             currentState.afterEffect?.Invoke(this);
             bool isRemoved = false;
             List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_After_Effect_Trait);
@@ -674,6 +695,26 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //    action.AfterAfterEffect();
         //}
     }
+    private void EndEffectVigilant() {
+        if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+            descriptionLog.AddLogToInvolvedObjects();
+            if(actor.currentRegion != null) {
+                PlayerManager.Instance.player.ShowNotificationFrom(actor.currentRegion, descriptionLog);
+            }
+        }
+        JobQueueItem currentJob = actor.currentJob;
+        //Result of the action will be "successful" but only in writing
+        //It's as if the action is successful but in reality it is not
+        //The reason for this is for the action to go through proper flow in ActionResult, so that action done will not be broken and all action detachments and unassigning will be done
+        GoapActionState currentState = action.states[currentStateName];
+        ActionResult(currentState);
+
+        //If there is still job after processing results, we need to cancel it here because if the target is vigilant the actio has failed in reality, so the job must be cancelled
+        if(currentJob != null && currentJob.jobType != JOB_TYPE.NONE && !currentJob.hasBeenReset) {
+            //Checking if job type must not be none, because if it is none, the job is not used anymore
+            currentJob.CancelJob(false);
+        }
+    }
     private void PerTickEffect() {
         GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
@@ -690,7 +731,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             InnerMapManager.Instance.FaceTarget(actor, target);
         }
 
-        if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
+        //if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.perTickEffect?.Invoke(this);
 
             List<Trait> actorTraitOverrideFunctions = actor.traitContainer.GetTraitOverrideFunctions(TraitManager.Execute_Per_Tick_Effect_Trait);
@@ -707,7 +748,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     trait.ExecuteActionPerTickEffects(action.goapType, this);
                 }
             }
-        }
+        //}
         if (currentStateDuration >= currentState.duration) {
             EndPerTickEffect();
         }

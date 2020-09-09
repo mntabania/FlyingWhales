@@ -243,6 +243,8 @@ public class GoapPlanJob : JobQueueItem {
                 convertedData = new RumorOtherData(rumor);
             } else if (obj is Character character) {
                 convertedData = new CharacterOtherData(character);
+            } else if (obj is string str) {
+                convertedData = new StringOtherData(str);
             }
             if (convertedData != null) {
                 convertedDataArray[i] = convertedData;    

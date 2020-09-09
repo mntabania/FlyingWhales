@@ -47,14 +47,16 @@ public class POITestingUI : MonoBehaviour {
 
     #region Character Testing
     public void KnockoutThisCharacter() {
-        activeCharacter.combatComponent.Fight(poi as Character, CombatManager.Hostility);
-        //if(poi is Character) {
-        //    CreateKnockoutJob(activeCharacter, poi as Character);
-        //} else if (poi is Bed) {
+        //activeCharacter.combatComponent.Fight(poi as Character, CombatManager.Hostility);
+        if (poi is Character) {
+            CreateKnockoutJob(activeCharacter, poi as Character);
+        } 
+        
+        //else if (poi is Bed) {
         //    Bed bed = poi as Bed;
-        //    if(bed.users[0] != null) {
+        //    if (bed.users[0] != null) {
         //        CreateKnockoutJob(activeCharacter, bed.users[0]);
-        //    }else if (bed.users[1] != null) {
+        //    } else if (bed.users[1] != null) {
         //        CreateKnockoutJob(activeCharacter, bed.users[1]);
         //    }
         //} else {

@@ -50,18 +50,18 @@ public class RitualKilling : GoapAction {
         }
         return base.GetPreconditions(actor, target, otherData);
     }
-    public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
-        GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
-        Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-        if (goapActionInvalidity.isInvalid == false) {
-            if (actor.marker.CanDoStealthActionToTarget(poiTarget) == false) {
-                goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.stateName = "Killing Fail";
-            }
-        }
-        return goapActionInvalidity;
-    }
+    //public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
+    //    GoapActionInvalidity goapActionInvalidity = base.IsInvalid(node);
+    //    Character actor = node.actor;
+    //    IPointOfInterest poiTarget = node.poiTarget;
+    //    if (goapActionInvalidity.isInvalid == false) {
+    //        if (actor.marker.CanDoStealthActionToTarget(poiTarget) == false) {
+    //            goapActionInvalidity.isInvalid = true;
+    //            goapActionInvalidity.stateName = "Killing Fail";
+    //        }
+    //    }
+    //    return goapActionInvalidity;
+    //}
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);

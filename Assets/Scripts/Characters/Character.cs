@@ -2080,23 +2080,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!canWitness) {
             return;
         }
-        if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.STARTED && currentActionNode.isStealth) {
-            if (currentActionNode.poiTarget == poiTarget) {
-                //Upon seeing the target while performing a stealth job action, check if it can do the action
-                if (!marker.CanDoStealthActionToTarget(poiTarget)) {
-                    bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
-                    currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
-                }
-            } else {
-                //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
-                if (poiTarget is Character seenCharacter && seenCharacter.isNormalCharacter) {
-                    if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
-                        bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
-                        currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
-                    }
-                }
-            }
-        }
+        //if (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.STARTED && currentActionNode.isStealth) {
+        //    if (currentActionNode.poiTarget == poiTarget) {
+        //        //Upon seeing the target while performing a stealth job action, check if it can do the action
+        //        if (!marker.CanDoStealthActionToTarget(poiTarget)) {
+        //            bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
+        //            currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
+        //        }
+        //    } else {
+        //        //Upon seeing other characters while target of stealth action is already in vision, automatically cancel job
+        //        if (poiTarget is Character seenCharacter && seenCharacter.isNormalCharacter) {
+        //            if (marker.inVisionCharacters.Contains(currentActionNode.poiTarget)) {
+        //                bool shouldDoAfterEffect = currentActionNode.action.goapType != INTERACTION_TYPE.REMOVE_BUFF;
+        //                currentJob.CancelJob(reason: "There is a witness around", shouldDoAfterEffect: shouldDoAfterEffect);
+        //            }
+        //        }
+        //    }
+        //}
 
         //React To Actions
         ActualGoapNode targetCharacterCurrentActionNode = null;
@@ -4143,14 +4143,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             return;
                         }
                     }
-                    if (currentNode.poiTarget != this && currentNode.isStealth) {
-                        //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-                        if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
-                            log = $"{log}\n - Action is stealth and character cannot do stealth action right now...";
-                            logComponent.PrintLogIfActive(log);
-                            return;
-                        }
-                    }
+                    //if (currentNode.poiTarget != this && currentNode.isStealth) {
+                    //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+                    //    if (marker.inVisionPOIs.Contains(currentNode.poiTarget) && !marker.CanDoStealthActionToTarget(currentNode.poiTarget)) {
+                    //        log = $"{log}\n - Action is stealth and character cannot do stealth action right now...";
+                    //        logComponent.PrintLogIfActive(log);
+                    //        return;
+                    //    }
+                    //}
                     if(traitContainer.HasTrait("Lazy")) {
                         log = $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a settlement job...";
                         if (currentTopPrioJob.originalOwner != null && currentTopPrioJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT) {

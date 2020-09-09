@@ -28,8 +28,15 @@ public class RemoveBuff : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
+    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+        base.AddFillersToLog(log, node);
+        OtherData[] otherData = node.otherData;
+        if(otherData != null && otherData.Length == 1 && otherData[0] is StringOtherData stringOtherData) {
+            log.AddToFillers(null, stringOtherData.str, LOG_IDENTIFIER.STRING_1);
+        }
+    }
     #endregion
-    
+
     #region Preconditions
     private bool HasCultistKit(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
         return actor.HasItem("Cultist Kit");
@@ -48,13 +55,20 @@ public class RemoveBuff : GoapAction {
     
     #region State Effects
     public void AfterRemoveBuffSuccess(ActualGoapNode goapNode) {
-        List<Trait> buffs = goapNode.target.traitContainer.GetAllTraitsOf(TRAIT_TYPE.BUFF);
-        Trait randomBuff = CollectionUtilities.GetRandomElement(buffs);
-        goapNode.target.traitContainer.RemoveTrait(goapNode.target, randomBuff, goapNode.actor);
-        goapNode.descriptionLog.AddToFillers(null, randomBuff.name, LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.UpdateLogInInvolvedObjects();
-        goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
-        Messenger.Broadcast(Signals.UPDATE_ALL_NOTIFICATION_LOGS, goapNode.descriptionLog);
+        OtherData[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0] is StringOtherData stringOtherData) {
+            string traitName = stringOtherData.str;
+            goapNode.target.traitContainer.RemoveTrait(goapNode.target, traitName, goapNode.actor);
+            goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
+        }
+
+        //List<Trait> buffs = goapNode.target.traitContainer.GetAllTraitsOf(TRAIT_TYPE.BUFF);
+        //Trait randomBuff = CollectionUtilities.GetRandomElement(buffs);
+        //goapNode.target.traitContainer.RemoveTrait(goapNode.target, randomBuff, goapNode.actor);
+        //goapNode.descriptionLog.AddToFillers(null, randomBuff.name, LOG_IDENTIFIER.STRING_1);
+        //goapNode.descriptionLog.UpdateLogInInvolvedObjects();
+        //goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.CULTIST_KIT);
+        //Messenger.Broadcast(Signals.UPDATE_ALL_NOTIFICATION_LOGS, goapNode.descriptionLog);
     }
     #endregion
 
