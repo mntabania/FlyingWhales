@@ -122,8 +122,6 @@ public class Player : ILeader, IObjectManipulator {
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-
-        Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
     }
     #endregion
 
@@ -720,11 +718,6 @@ public class Player : ILeader, IObjectManipulator {
         int tier = PlayerManager.Instance.GetSpellTier(ability);
         return PlayerManager.Instance.GetManaCostForSpell(tier);
     }
-    private void RegenManaProcess() {
-        if(mana < 20) {
-            AdjustMana(25);
-        }
-    }
     #endregion
 
     //#region Archetype
@@ -761,9 +754,6 @@ public class Player : ILeader, IObjectManipulator {
                || PlayerManager.Instance.player.currentActiveIntel != null
                || PlayerManager.Instance.player.currentActiveItem != TILE_OBJECT_TYPE.NONE
                || PlayerManager.Instance.player.currentActiveArtifact != ARTIFACT_TYPE.None;
-    }
-    private void OnHourStarted() {
-        RegenManaProcess();
     }
     #endregion
 

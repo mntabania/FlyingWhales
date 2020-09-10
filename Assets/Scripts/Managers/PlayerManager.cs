@@ -249,6 +249,15 @@ public class PlayerManager : BaseMonoBehaviour {
     }
     private void OnCharacterDidActionSuccess(Character character, ActualGoapNode actionNode) {
         if (character.isNormalCharacter) {
+            if (actionNode.action.goapType == INTERACTION_TYPE.ASSAULT || actionNode.action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
+                //https://trello.com/c/koET4MUl/2167-assault-should-not-produce-chaos-orbs-if-part-of-drink-blood-or-psychopathic-ritual
+                if (actionNode.actor.traitContainer.HasTrait("Vampiric") && (actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || actionNode.associatedJobType == JOB_TYPE.TRIGGER_FLAW)) {
+                    return;
+                }
+                if (actionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING) {
+                    return;
+                }
+            }
             CRIME_SEVERITY crimeType = CrimeManager.Instance.GetCrimeTypeConsideringAction(actionNode);
             if (crimeType != CRIME_SEVERITY.None) {
                 int orbsToCreate;
