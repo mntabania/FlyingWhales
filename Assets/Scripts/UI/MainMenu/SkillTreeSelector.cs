@@ -69,6 +69,8 @@ public class SkillTreeSelector : MonoBehaviour {
             //add 1 charge of skeleton marauder to lich
             SummonPlayerSkill summonPlayerSkill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(RACE.SKELETON, "Marauder");
             PlayerManager.Instance.player.playerSkillComponent.AddCharges(summonPlayerSkill.type, 1);
+            //Set undead faction as friendly with player faction
+            PlayerManager.Instance.player.playerFaction.SetRelationshipFor(FactionManager.Instance.undeadFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
         }
         
         Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);

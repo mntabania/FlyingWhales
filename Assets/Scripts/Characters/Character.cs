@@ -107,7 +107,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //misc
     public bool returnedToLife { get; private set; }
     public Tombstone grave { get; private set; }
-    //private readonly List<string> _overrideThoughts;
 
     //For Testing
     public List<string> locationHistory { get; }

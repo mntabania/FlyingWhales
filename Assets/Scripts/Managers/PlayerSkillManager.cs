@@ -33,6 +33,7 @@ public class PlayerSkillManager : MonoBehaviour {
     public Dictionary<SPELL_TYPE, MinionPlayerSkill> allMinionPlayerSkillsData { get; private set; }
     public Dictionary<SPELL_TYPE, SummonPlayerSkill> allSummonPlayerSkillsData { get; private set; }
     public Dictionary<SPELL_TYPE, SpellData> allPlayerSkillsData { get; private set; }
+    public Dictionary<PASSIVE_SKILL, PassiveSkill> passiveSkillsData { get; private set; }
 
     #region getters
     public PlayerSkillDataDictionary playerSkillDataDictionary => _playerSkillDataDictionary;
@@ -95,6 +96,9 @@ public class PlayerSkillManager : MonoBehaviour {
     SPELL_TYPE.SKELETON_ARCHER, SPELL_TYPE.SKELETON_BARBARIAN, SPELL_TYPE.SKELETON_CRAFTSMAN, SPELL_TYPE.SKELETON_DRUID, SPELL_TYPE.SKELETON_HUNTER, SPELL_TYPE.SKELETON_MAGE, SPELL_TYPE.SKELETON_KNIGHT, SPELL_TYPE.SKELETON_MINER, SPELL_TYPE.SKELETON_NOBLE, SPELL_TYPE.SKELETON_PEASANT, SPELL_TYPE.SKELETON_SHAMAN, SPELL_TYPE.SKELETON_STALKER,
     SPELL_TYPE.VENGEFUL_GHOST, SPELL_TYPE.WURM, SPELL_TYPE.TROLL, SPELL_TYPE.REVENANT, };
 
+    [NonSerialized]
+    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Enemies_Chaos_Orb, PASSIVE_SKILL.Monster_Chaos_Orb, PASSIVE_SKILL.Undead_Chaos_Orb };
+    
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -116,6 +120,7 @@ public class PlayerSkillManager : MonoBehaviour {
         ConstructAllDemonicStructureSkillsData();
         ConstructAllMinionPlayerSkillsData();
         ConstructAllSummonPlayerSkillsData();
+        ConstructPassiveSkills();
     }
 
     #region Utilities
@@ -203,10 +208,8 @@ public class PlayerSkillManager : MonoBehaviour {
         for (int i = 0; i < allSummonPlayerSkills.Length; i++) {
             SPELL_TYPE spellType = allSummonPlayerSkills[i];
             if (spellType != SPELL_TYPE.NONE) {
-                var typeName =
-                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-                SummonPlayerSkill summonPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ??
-                   throw new Exception($"Problem with creating spell data for {typeName}")) as SummonPlayerSkill;
+                var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+                SummonPlayerSkill summonPlayerSkill = System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as SummonPlayerSkill;
                 allSummonPlayerSkillsData.Add(spellType, summonPlayerSkill);
                 allPlayerSkillsData.Add(spellType, summonPlayerSkill);
             }
@@ -309,6 +312,24 @@ public class PlayerSkillManager : MonoBehaviour {
             return _playerSkillDataDictionary[spellType] as T;    
         }
         return null;
+    }
+    #endregion
+
+    #region Passive Skills
+    private void ConstructPassiveSkills() {
+        passiveSkillsData = new Dictionary<PASSIVE_SKILL, PassiveSkill>();
+        for (int i = 0; i < allPassiveSkillTypes.Length; i++) {
+            PASSIVE_SKILL passiveSkillType = allPassiveSkillTypes[i];
+            var typeName = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(passiveSkillType.ToString())}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            PassiveSkill passiveSkill = Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"Problem with creating spell data for {typeName}")) as PassiveSkill;
+            passiveSkillsData.Add(passiveSkillType, passiveSkill);
+        }
+    }
+    public PassiveSkill GetPassiveSkill(PASSIVE_SKILL passiveSkill) {
+        if (passiveSkillsData.ContainsKey(passiveSkill)) {
+            return passiveSkillsData[passiveSkill];
+        }
+        throw new Exception($"Could not find class for passive skill {passiveSkill.ToString()}");
     }
     #endregion
 }

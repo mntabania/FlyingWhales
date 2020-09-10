@@ -1023,6 +1023,10 @@ public enum OBJECT_TYPE {
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21
 }
 
+public enum PASSIVE_SKILL {
+    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb,
+}
+
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
