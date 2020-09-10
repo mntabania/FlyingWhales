@@ -54,9 +54,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
-    private string _destroySchedule;
-    private List<HexTile> hexInWildernessForFlee;
-
+    
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> inVisionPOIsButDiffStructure { get; private set; } //POI's in this characters vision collider
@@ -74,6 +72,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public LocationGridTile destinationTile { get; private set; }
     public float progressionSpeedMultiplier { get; private set; }
     public bool isMoving { get; private set; }
+    public bool hasFleePath { get; private set; }
+    private float attackSpeedMeter { get; set; }
     public LocationGridTile previousGridTile {
         get => _previousGridTile;
         set {
@@ -83,17 +83,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } 
     }
-    public bool isMainVisualActive => mainImg.gameObject.activeSelf;
-    public CharacterMarkerAnimationListener animationListener => _animationListener;
-    public int sortingOrder => mainImg.sortingOrder;
-    private LocationGridTile _previousGridTile;
     public bool useCanTraverse;
-    private float attackSpeedMeter { get; set; }
+    
+    private LocationGridTile _previousGridTile;
     private HexTile _previousHexTileLocation;
     private CharacterMarkerNameplate _nameplate;
     private LocationGridTile _destinationTile;
-    public bool hasFleePath { get; private set; }
+    private string _destroySchedule;
+    private GameDate _destroyDate;
+    private List<HexTile> hexInWildernessForFlee;
 
+    #region Getters
+    public GameDate destroyDate => _destroyDate;
+    public bool hasExpiry => !string.IsNullOrEmpty(_destroySchedule);
+    public bool isMainVisualActive => mainImg.gameObject.activeSelf;
+    public CharacterMarkerAnimationListener animationListener => _animationListener;
+    public int sortingOrder => mainImg.sortingOrder;
+    #endregion
+    
     public void SetCharacter(Character character) {
         base.Initialize(character);
         name = $"{character.name}'s Marker";
@@ -218,6 +225,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
         region.AddPendingAwareness(character);
+        if (data.hasExpiry) {
+            ScheduleExpiry(data.markerExpiryDate);
+        }
     }
     /// <summary>
     /// Place this marker at a given tile location. 
@@ -452,7 +462,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #region Object Pool
     public override void Reset() {
         base.Reset(); 
-        // TryCancelExpiry();
+        TryCancelExpiry();
         destinationTile = null;
         //onProcessCombat = null;
         _pauseAnimationCounter = 0;
@@ -961,7 +971,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {
-            // ScheduleExpiry();
+            ScheduleExpiry();
             SetCollidersState(false);
             //onProcessCombat = null;
             //character.combatComponent.SetOnProcessCombatAction(null);
@@ -1755,9 +1765,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnUnseize() {
         buttonCollider.enabled = true;
-        // if (character.isDead) {
-        //     ScheduleExpiry();
-        // }
     }
     #endregion
 
@@ -1770,13 +1777,39 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void ScheduleExpiry() {
         if (String.IsNullOrEmpty(_destroySchedule)) {
-            GameDate date = GameManager.Instance.Today();
-            date.AddDays(3);
-            _destroySchedule = SchedulingManager.Instance.AddEntry(date, Expire, character);    
+            _destroyDate = GameManager.Instance.Today();
+            _destroyDate.AddDays(3);
+            Debug.Log($"{character.name}'s marker will expire at {_destroyDate.ConvertToContinuousDaysWithTime()}");
+            _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, character);    
         }
     }
+    private void ScheduleExpiry(GameDate gameDate) {
+        if (String.IsNullOrEmpty(_destroySchedule)) {
+            _destroyDate = gameDate;
+            _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, character);    
+        }
+    }
+    private void TryExpire() {
+        bool canExpire = !(character.numOfActionsBeingPerformedOnThis > 0);
+        if (character.isBeingCarriedBy != null) {
+            canExpire = false;
+        }
+        if (character.isBeingSeized) {
+            canExpire = false;
+        }
+        if (canExpire) {
+            Expire();    
+        } else {
+            //reschedule expiry to next hour.
+            _destroyDate = GameManager.Instance.Today();
+            _destroyDate.AddTicks(GameManager.ticksPerHour);
+            _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, character);    
+        }
+        
+    }
     private void Expire() {
-        character.DestroyMarker();
+        Debug.Log($"{character.name}'s marker has expired.");
+        character?.DestroyMarker();
     }
     #endregion
 

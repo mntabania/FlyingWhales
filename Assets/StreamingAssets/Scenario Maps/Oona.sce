@@ -1260,7 +1260,11 @@
         "temperature": 0.6353801,
         "biomeType": "DESERT",
         "elevationType": "PLAIN",
-        "tileFeatureSaveData": [],
+        "tileFeatureSaveData": [
+    	  {
+            "tileFeatureName": "InhabitedFeature"
+          }
+        ],
         "landmarkType": "NONE"
       },
       {
@@ -1669,6 +1673,10 @@
         {
           "X": 9,
           "Y": 5
+        },
+        {
+          "X": 9,
+          "Y": 6
         }
       ],
       "structureSettings": [
@@ -1692,6 +1700,10 @@
           "resource": "STONE",
           "structureType": "HUNTER_LODGE"
         }
+        {
+          "resource": "STONE",
+          "structureType": "BARRACKS"
+        },
       ],
       "minimumVillagerCount": 0,
       "factionRace": "HUMANS"

@@ -41,6 +41,7 @@ public class Tombstone : TileObject {
         base.OnPlacePOI();
         character.marker.PlaceMarkerAt(gridTileLocation);
         character.DisableMarker();
+        character.marker.TryCancelExpiry();
         character.SetGrave(this);
         if (character.race == RACE.HUMANS || character.race == RACE.ELVES) {
             AddPlayerAction(SPELL_TYPE.RAISE_DEAD);
@@ -53,6 +54,7 @@ public class Tombstone : TileObject {
         if (_respawnCorpseOnDestroy) {
             if(previousTile != null) {
                 character.EnableMarker();
+                character.marker.ScheduleExpiry();
                 character.marker.PlaceMarkerAt(previousTile);
                 character.SetGrave(null);
                 character.jobComponent.TriggerBuryMe();
