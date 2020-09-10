@@ -5,6 +5,7 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using UnityEngine.Assertions;
 
 public class SaveDataCurrentProgress {
     public System.DateTime timeStamp;
@@ -405,17 +406,48 @@ public class SaveDataCurrentProgress {
 
 [System.Serializable]
 public class SaveDataNotification {
-    public SaveDataLog log;
+    public string logID;
     public int tickShown;
 
-    public void Save(PlayerNotificationItem notif) {
-        log = new SaveDataLog();
-        log.Save(notif.shownLog);
+    public bool isIntel;
+    public bool isActionIntel;
+    public SaveDataActionIntel actionIntel;
+    public SaveDataInterruptIntel interruptIntel;
 
+    public void Save(PlayerNotificationItem notif) {
+        logID = notif.shownLog.persistentID;
         tickShown = notif.tickShown;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog);
+
+        if(notif is IntelNotificationItem intelNotif) {
+            isIntel = true;
+            if(intelNotif.intel is ActionIntel action) {
+                isActionIntel = true;
+                actionIntel = new SaveDataActionIntel();
+                actionIntel.Save(action);
+            } else if (intelNotif.intel is InterruptIntel interrupt) {
+                isActionIntel = false;
+                interruptIntel = new SaveDataInterruptIntel();
+                interruptIntel.Save(interrupt);
+            }
+        }
     }
 
     public void Load() {
-        UIManager.Instance.ShowPlayerNotification(log.Load(), tickShown);
+        Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(logID);
+        if (isIntel) {
+            IIntel intel = null;
+            if (isActionIntel) {
+                ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(actionIntel.node);
+                intel = new ActionIntel(node);
+            } else {
+                InterruptHolder interrupt = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(interruptIntel.interruptHolder);
+                intel = new InterruptIntel(interrupt);
+            }
+            Assert.IsNotNull(intel, $"Intel Notification for loading is null!");
+            UIManager.Instance.ShowPlayerNotification(intel, log, tickShown);
+        } else {
+            UIManager.Instance.ShowPlayerNotification(log, tickShown);
+        }
     }
 }

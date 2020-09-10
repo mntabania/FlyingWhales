@@ -904,6 +904,9 @@ public class Player : ILeader, IObjectManipulator {
             InterruptIntel interruptIntel = new InterruptIntel(interrupt);
             allIntel.Add(interruptIntel);
         }
+        for (int i = 0; i < data.allNotifs.Count; i++) {
+            data.allNotifs[i].Load();
+        }
 
         PlayerUI.Instance.UpdateUI();
     }

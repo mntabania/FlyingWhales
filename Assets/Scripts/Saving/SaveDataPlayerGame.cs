@@ -19,6 +19,8 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public List<SaveDataActionIntel> actionIntels;
     public List<SaveDataInterruptIntel> interruptIntels;
 
+    public List<SaveDataNotification> allNotifs;
+
     //Components
     public SaveDataSeizeComponent seizeComponent;
     public SaveDataThreatComponent threatComponent;
@@ -63,6 +65,14 @@ public class SaveDataPlayerGame : SaveData<Player> {
             }
         }
 
+        allNotifs = new List<SaveDataNotification>();
+        for (int i = 0; i < UIManager.Instance.activeNotifications.Count; i++) {
+            PlayerNotificationItem notifItem = UIManager.Instance.activeNotifications[i];
+            SaveDataNotification notif = new SaveDataNotification();
+            notif.Save(notifItem);
+            allNotifs.Add(notif);
+        }
+
         seizeComponent = new SaveDataSeizeComponent();
         seizeComponent.Save(player.seizeComponent);
 
@@ -84,6 +94,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
         summonIDs.Clear();
         actionIntels.Clear();
         interruptIntels.Clear();
+        allNotifs.Clear();
     }
     #endregion
 }

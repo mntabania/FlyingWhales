@@ -19,6 +19,10 @@ public class IntelNotificationItem : PlayerNotificationItem {
         this.intel = intel;
         base.Initialize(intel.log, hasExpiry, onDestroyAction);
     }
+    public void Initialize(IIntel intel, Log log, int tick, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
+        this.intel = intel;
+        base.Initialize(log, tick, hasExpiry, onDestroyAction);
+    }
     public void GetIntel() {
         Vector3 pos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(getIntelBtn.transform.position);
         pos.z = 0f;
