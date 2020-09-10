@@ -241,6 +241,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             return;
         }
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
+        string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
             Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
             psychopath.AdjustOpinion(target, opinionText, opinionValue);
@@ -260,6 +261,14 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             }
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
+        string opinionLabelAfterChange = GetOpinionLabel(target);
+        if (opinionLabelBeforeChange != opinionLabelAfterChange && opinionValue < 0) {
+            //Only broadcast this signal when an opinion label has changed because of decrease in opinion.
+            //This is so that we do not catch cases when Rival Characters become enemies when we expect that
+            //this signal will only broadcast when characters change from enemies to rivals
+            Messenger.Broadcast(Signals.OPINION_LABEL_DECREASED, owner, target, opinionLabelAfterChange);
+        }
+        
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
             target.relationshipContainer.CreateNewRelationship(target, owner);
         }
@@ -270,6 +279,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             return;
         }
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
+        string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(
@@ -283,6 +293,13 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         } else if (opinionValue < 0) {
             CreateJobsOnOpinionReduced(owner, target, lastStrawReason, opinionValue);
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
+        }
+        string opinionLabelAfterChange = GetOpinionLabel(target);
+        if (opinionLabelBeforeChange != opinionLabelAfterChange && opinionValue < 0) {
+            //Only broadcast this signal when an opinion label has changed because of decrease in opinion.
+            //This is so that we do not catch cases when Rival Characters become enemies when we expect that
+            //this signal will only broadcast when characters change from enemies to rivals
+            Messenger.Broadcast(Signals.OPINION_LABEL_DECREASED, owner, target, opinionLabelAfterChange);
         }
         if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
             target.relationshipContainer.CreateNewRelationship(target, owner);

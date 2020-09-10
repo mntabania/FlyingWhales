@@ -12,6 +12,7 @@ public class PlayerSkillComponent {
     public List<SPELL_TYPE> demonicStructuresSkills { get; protected set; }
     public List<SPELL_TYPE> minionsSkills { get; protected set; }
     public List<SPELL_TYPE> summonsSkills { get; protected set; }
+    public List<PASSIVE_SKILL> passiveSkills { get; protected set; }
     //public List<Summon> summons { get; protected set; }
     //public bool canTriggerFlaw { get; protected set; }
     //public bool canRemoveTraits { get; protected set; }
@@ -25,6 +26,7 @@ public class PlayerSkillComponent {
         demonicStructuresSkills = new List<SPELL_TYPE>();
         minionsSkills = new List<SPELL_TYPE>();
         summonsSkills = new List<SPELL_TYPE>();
+        passiveSkills = new List<PASSIVE_SKILL>();
         //summons = new List<Summon>();
         //canTriggerFlaw = true;
         //canRemoveTraits = true;
@@ -36,6 +38,7 @@ public class PlayerSkillComponent {
         demonicStructuresSkills = new List<SPELL_TYPE>();
         minionsSkills = new List<SPELL_TYPE>();
         summonsSkills = new List<SPELL_TYPE>();
+        passiveSkills = new List<PASSIVE_SKILL>();
     }
     public void SetPlayer(Player player) {
         this.player = player;
@@ -81,6 +84,7 @@ public class PlayerSkillComponent {
             PopulateAllSkills(loadout.minions.fixedSkills);
             PopulateAllSkills(loadout.structures.fixedSkills);
             PopulateAllSkills(loadout.miscs.fixedSkills);
+            PopulatePassiveSkills(loadout.passiveSkills);
             
             LoadoutSaveData loadoutSaveData = save.GetLoadout(PlayerSkillManager.Instance.selectedArchetype);
             if (loadoutSaveData != null) {
@@ -280,9 +284,58 @@ public class PlayerSkillComponent {
             case SUMMON_TYPE.Incubus:
                 return "Summon a succubus that will seduce a female character and eliminate her.";
             default:
-                return
-                    $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";
+                return $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";
         }
+    }
+    #endregion
+
+    #region Passive Skills
+    private void PopulatePassiveSkills(PASSIVE_SKILL[] passiveSkills) {
+        for (int i = 0; i < passiveSkills.Length; i++) {
+            PASSIVE_SKILL passiveSkillType = passiveSkills[i];
+            PassiveSkill passiveSkill = PlayerSkillManager.Instance.GetPassiveSkill(passiveSkillType);
+            passiveSkill.ActivateSkill();
+            this.passiveSkills.Add(passiveSkillType);
+            Debug.Log($"{GameManager.Instance.TodayLogString()}Activated passive skill {passiveSkillType.ToString()}.");
+        }
+    }
+    #endregion
+
+    #region Loading
+    public void OnLoadSaveData() {
+        for (int i = 0; i < spells.Count; i++) {
+            SPELL_TYPE skillType = spells[i];
+            SpellData skill = PlayerSkillManager.Instance.GetSpellData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < demonicStructuresSkills.Count; i++) {
+            SPELL_TYPE skillType = demonicStructuresSkills[i];
+            SpellData skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < minionsSkills.Count; i++) {
+            SPELL_TYPE skillType = minionsSkills[i];
+            SpellData skill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < summonsSkills.Count; i++) {
+            SPELL_TYPE skillType = summonsSkills[i];
+            SpellData skill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < playerActions.Count; i++) {
+            SPELL_TYPE skillType = playerActions[i];
+            SpellData skill = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
+            skill.OnLoadSpell();
+        }
+        for (int i = 0; i < afflictions.Count; i++) {
+            SPELL_TYPE skillType = afflictions[i];
+            SpellData skill = PlayerSkillManager.Instance.GetAfflictionData(skillType);
+            skill.OnLoadSpell();
+        }
+        //did not save passive skills since I expect that passive skills will always be constant per loadout.
+        PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();
+        PopulatePassiveSkills(loadout.passiveSkills);
     }
     #endregion
 }

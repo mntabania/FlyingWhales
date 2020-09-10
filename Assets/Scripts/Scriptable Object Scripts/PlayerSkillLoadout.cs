@@ -10,6 +10,7 @@ public class PlayerSkillLoadout : ScriptableObject {
     public PlayerSkillLoadoutData minions;
     public PlayerSkillLoadoutData structures;
     public PlayerSkillLoadoutData miscs;
+    public PASSIVE_SKILL[] passiveSkills;
 
     public SPELL_TYPE[] availableSpells;
     public SPELL_TYPE[] availableAfflictions;

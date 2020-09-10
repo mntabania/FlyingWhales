@@ -216,38 +216,6 @@ public class PlayerUI : BaseMonoBehaviour {
 
         OnThreatUpdated();
     }
-    public void OnLoadSaveData() {
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.spells.Count; i++) {
-            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.spells[i];
-            SpellData skill = PlayerSkillManager.Instance.GetSpellData(skillType);
-            skill.OnLoadSpell();
-        }
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills.Count; i++) {
-            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.demonicStructuresSkills[i];
-            SpellData skill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(skillType);
-            skill.OnLoadSpell();
-        }
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.minionsSkills.Count; i++) {
-            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.minionsSkills[i];
-            SpellData skill = PlayerSkillManager.Instance.GetMinionPlayerSkillData(skillType);
-            skill.OnLoadSpell();
-        }
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.summonsSkills.Count; i++) {
-            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.summonsSkills[i];
-            SpellData skill = PlayerSkillManager.Instance.GetSummonPlayerSkillData(skillType);
-            skill.OnLoadSpell();
-        }
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.playerActions.Count; i++) {
-            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.playerActions[i];
-            SpellData skill = PlayerSkillManager.Instance.GetPlayerActionData(skillType);
-            skill.OnLoadSpell();
-        }
-        for (int i = 0; i < PlayerManager.Instance.player.playerSkillComponent.afflictions.Count; i++) {
-            SPELL_TYPE skillType = PlayerManager.Instance.player.playerSkillComponent.afflictions[i];
-            SpellData skill = PlayerSkillManager.Instance.GetAfflictionData(skillType);
-            skill.OnLoadSpell();
-        }
-    }
 
     #region Listeners
     private void OnInnerMapOpened(Region location) {

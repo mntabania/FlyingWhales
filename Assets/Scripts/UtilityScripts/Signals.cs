@@ -151,6 +151,10 @@ public static class Signals {
     public static string OPINION_ADDED = "OnOpinionAdded";
     public static string OPINION_REMOVED = "OnOpinionRemoved";
     /// <summary>
+    /// Parameters (Character actor, Character targetCharacter, string newOpinionLabel)
+    /// </summary>
+    public static string OPINION_LABEL_DECREASED = "OnOpinionLabelDecreased";
+    /// <summary>
     /// Parameters (Character character, Hextile enteredTile)
     /// </summary>
     public static string CHARACTER_ENTERED_HEXTILE = "OnCharacterEnteredHexTile";

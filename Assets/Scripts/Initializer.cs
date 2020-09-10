@@ -49,7 +49,7 @@ public class Initializer : MonoBehaviour {
         }
         PlayerUI.Instance.InitializeAfterLoadOutPicked();
         if (SaveManager.Instance.useSaveData) {
-            PlayerUI.Instance.OnLoadSaveData();
+            PlayerManager.Instance.player.playerSkillComponent.OnLoadSaveData();
         }
         TutorialManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterLoadoutPicked();
