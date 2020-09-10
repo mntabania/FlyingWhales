@@ -996,6 +996,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdatePosition();
     }
     public void OnReturnToLife() {
+        TryCancelExpiry();
         gameObject.SetActive(true);
         SetCollidersState(true);
         UpdateAnimation();
