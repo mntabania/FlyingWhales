@@ -44,6 +44,15 @@ public class PlayerNotificationItem : PooledObject {
         this.onDestroyAction = onDestroyAction;
         StartCoroutine(TweenHeight());
     }
+    public void Initialize(Log log, int tick, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
+        shownLog = log;
+        tickShown = tick;
+        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
+        logItem.SetLog(log);
+        Messenger.AddListener<Log>(Signals.UPDATE_ALL_NOTIFICATION_LOGS, TryUpdateLog);
+        this.onDestroyAction = onDestroyAction;
+        StartCoroutine(TweenHeight());
+    }
     private void TryUpdateLog(Log log) {
         if (shownLog == log) {
             logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
@@ -56,10 +65,6 @@ public class PlayerNotificationItem : PooledObject {
         yield return null;
         _layoutElement.DOPreferredSize(new Vector2(0f, (logLbl.transform as RectTransform).sizeDelta.y), 0.5f);
         //_layoutElement.preferredHeight = (logLbl.transform as RectTransform).sizeDelta.y;
-    }
-    public void SetTickShown(int tick) {
-        tickShown = tick;
-        logLbl.SetText($"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(shownLog)}");
     }
     private void CheckForExpiry() {
         if (ticksAlive == Expiration_Ticks) {

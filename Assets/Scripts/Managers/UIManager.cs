@@ -1148,9 +1148,16 @@ public class UIManager : BaseMonoBehaviour {
     public void ShowPlayerNotification(Log log, int tick) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
-        newItem.Initialize(log, true, OnNotificationDestroyed);
+        newItem.Initialize(log, tick, true, OnNotificationDestroyed);
         newItem.SetHoverPosition(notificationHoverPos);
-        newItem.SetTickShown(tick);
+        newIntelGO.transform.localScale = Vector3.one;
+        PlaceNewNotification(newItem);
+    }
+    public void ShowPlayerNotification(IIntel intel, Log log, int tick) {
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
+        IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
+        newItem.Initialize(intel, true, OnNotificationDestroyed);
+        newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem);
     }
