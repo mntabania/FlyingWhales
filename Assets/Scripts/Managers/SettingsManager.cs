@@ -28,6 +28,7 @@ namespace Settings {
         [Header("Gameplay Settings UI")] 
         [SerializeField] private Toggle edgePanningToggle;
         [SerializeField] private Toggle skipTutorialsToggle;
+        [SerializeField] private Toggle confineCursorToggle;
         [SerializeField] private Toggle vsyncToggle;
         [SerializeField] private Toggle showVideosToggle;
         [SerializeField] private GameObject miscParentGO;
@@ -119,6 +120,7 @@ namespace Settings {
         }
         private void UpdateUI() {
             edgePanningToggle.isOn = settings.useEdgePanning;
+            confineCursorToggle.SetIsOnWithoutNotify(settings.confineCursor);
             skipTutorialsToggle.SetIsOnWithoutNotify(settings.skipTutorials);
             miscParentGO.SetActive(SceneManager.GetActiveScene().name == "MainMenu");
 
@@ -152,6 +154,7 @@ namespace Settings {
                      graphicsQuality = 2,
                      resolution = $"{Screen.currentResolution.width.ToString()}x{Screen.currentResolution.height.ToString()}",
                      useEdgePanning = false,
+                     confineCursor = false,
                      musicVolume = AudioManager.Maximum_Volume_Level,
                      masterVolume = AudioManager.Maximum_Volume_Level,
                      isVsyncOn = false,
@@ -161,6 +164,7 @@ namespace Settings {
                  QualitySettings.SetQualityLevel(settings.graphicsQuality);
             }
             SetVsync(_settings.isVsyncOn);
+            SetConfineCursor(_settings.confineCursor);
         }
         #endregion
 
@@ -174,7 +178,9 @@ namespace Settings {
             _settings.skipTutorials = skipTutorialsToggle.isOn;
             _settings.isVsyncOn = vsyncToggle.isOn;
             _settings.doNotShowVideos = !showVideosToggle.isOn;
-
+            _settings.confineCursor = confineCursorToggle.isOn;
+            ApplyConfineCursorSetting();
+            
             //resolution
             Screen.fullScreen = settings.fullscreen;
             string[] dimensionsStr = settings.resolution.Split('x');
@@ -239,6 +245,23 @@ namespace Settings {
             } else {
                 // Turn on v-sync
                 QualitySettings.vSyncCount = 0;
+            }
+        }
+        #endregion
+
+        #region Cursor
+        public void OnToggleConfineCursor(bool state) {
+            SetConfineCursor(state);
+        }
+        private void SetConfineCursor(bool state) {
+            _settings.confineCursor = state;
+            ApplyConfineCursorSetting();
+        }
+        private void ApplyConfineCursorSetting() {
+            if (_settings.confineCursor) {
+                Cursor.lockState = CursorLockMode.Confined;
+            } else {
+                Cursor.lockState = CursorLockMode.None;
             }
         }
         #endregion

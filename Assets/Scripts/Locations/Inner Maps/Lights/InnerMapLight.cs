@@ -14,7 +14,7 @@ public class InnerMapLight : MonoBehaviour{
 
     private float randomOnValue;
     private void Awake() {
-        randomOnValue = 0.8f;  //UnityEngine.Random.Range(0.9f, 0.95f);
+        randomOnValue = 0.85f;  //UnityEngine.Random.Range(0.9f, 0.95f);
     }
     private void OnEnable() {
         InstantUpdateLightBasedOnGlobalLight(LightingManager.Instance.isTransitioning ? LightingManager.Instance.transitioningTo : LightingManager.Instance.currentGlobalLightState);

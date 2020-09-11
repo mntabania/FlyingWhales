@@ -76,6 +76,18 @@ public class MoodComponent : CharacterComponent {
         hasMoodChanged = data.hasMoodChanged;
         mentalBreakName = data.mentalBreakName;
         moodModificationsSummary = data.moodModificationsSummary;
+
+        if (!string.IsNullOrEmpty(mentalBreakName)) {
+	        if (mentalBreakName == "Loss of Control") {
+		        Messenger.AddListener<INTERRUPT, Character>(Signals.INTERRUPT_FINISHED, CheckIfLossOfControlFinished);
+	        } else if (mentalBreakName == "Berserked") {
+		        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
+	        } else if (mentalBreakName == "Catatonia") {
+		        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
+	        } else if (mentalBreakName == "Suicidal") {
+		        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
+	        }
+        }
     }
 
     #region Events
@@ -456,6 +468,7 @@ public class MoodComponent : CharacterComponent {
 		//_isInMinorMentalBreak = false;
 		isInMajorMentalBreak = false;
 		ResetMajorMentalBreakChance();
+		mentalBreakName = string.Empty;
 		//ResetMinorMentalBreakChance();
 		// if (_isInLowMood) {
 		// 	Debug.Log($"{GameManager.Instance.TodayLogString()}{owner.name} is still in low mood state after mental break, starting check for minor mental break again...");
