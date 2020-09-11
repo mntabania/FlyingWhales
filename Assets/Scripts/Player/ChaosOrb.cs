@@ -34,7 +34,18 @@ public class ChaosOrb : PooledObject {
 		_collider.enabled = true;
 		_trail.enabled = false;
 	}
-	private IEnumerator GoTo(Vector3 targetPos, float smoothTime, System.Action onReachAction = null) {
+    public void Initialize(Vector3 pos, Region location) {
+        this.location = location;
+        GameDate expiry = GameManager.Instance.Today();
+        expiry = expiry.AddTicks(GameManager.Instance.GetTicksBasedOnHour(ExpiryInHours));
+        expiryKey = SchedulingManager.Instance.AddEntry(expiry, Expire, this);
+
+        randomPos = pos;
+        transform.position = pos;
+        _collider.enabled = true;
+        _trail.enabled = false;
+    }
+    private IEnumerator GoTo(Vector3 targetPos, float smoothTime, System.Action onReachAction = null) {
 		while (Mathf.Approximately(transform.position.x, targetPos.x) == false && 
 		       Mathf.Approximately(transform.position.y, targetPos.y) == false) {
 			transform.position = Vector3.SmoothDamp(transform.position, targetPos,  ref velocity, smoothTime);
@@ -92,4 +103,20 @@ public class ChaosOrb : PooledObject {
 		_collider.enabled = true;
 		positionCoroutine = null;
 	}
+}
+
+[System.Serializable]
+public class SaveDataChaosOrb {
+    public Vector3 pos;
+    public string regionID;
+
+    public void Save(ChaosOrb orb) {
+        pos = orb.transform.position;
+        regionID = orb.location.persistentID;
+    }
+
+    public void Load() {
+        Region region = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(regionID);
+        PlayerManager.Instance.CreateChaosOrbFromSave(pos, region);
+    }
 }

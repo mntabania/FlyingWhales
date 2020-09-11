@@ -232,6 +232,13 @@ public class PlayerManager : BaseMonoBehaviour {
 
     #region Chaos Orbs
     public List<ChaosOrb> availableChaosOrbs;
+    public void CreateChaosOrbFromSave(Vector3 worldPos, Region region) {
+        GameObject chaosOrbGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(chaosOrbPrefab.name, Vector3.zero, Quaternion.identity, region.innerMap.objectsParent);
+        chaosOrbGO.transform.position = worldPos;
+        ChaosOrb chaosOrb = chaosOrbGO.GetComponent<ChaosOrb>();
+        chaosOrb.Initialize(worldPos, region);
+        availableChaosOrbs.Add(chaosOrb);
+    }
     private void CreateChaosOrbsAt(Vector3 worldPos, int amount, InnerTileMap mapLocation) {
         StartCoroutine(ChaosOrbCreationCoroutine(worldPos, amount, mapLocation));
     }

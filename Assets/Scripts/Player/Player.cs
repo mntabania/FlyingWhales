@@ -897,7 +897,9 @@ public class Player : ILeader, IObjectManipulator {
         for (int i = 0; i < data.allNotifs.Count; i++) {
             data.allNotifs[i].Load();
         }
-
+        for (int i = 0; i < data.allChaosOrbs.Count; i++) {
+            data.allChaosOrbs[i].Load();
+        }
         PlayerUI.Instance.UpdateUI();
     }
     #endregion

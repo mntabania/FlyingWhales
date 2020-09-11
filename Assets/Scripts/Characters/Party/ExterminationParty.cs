@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class ExterminationParty : Party {
 
@@ -62,7 +63,7 @@ public class ExterminationParty : Party {
 
     #region General
     private void ProcessExterminationOrDisbandment() {
-        if (!targetStructure.settlementLocation.HasAliveResidentInsideSettlement()) {
+        if (!HasAliveResidentInsideSettlementThatIsHostileWith(leader.faction, targetStructure.settlementLocation)) {
             DisbandParty();
         } else {
             StartExterminationTimer();
@@ -81,6 +82,19 @@ public class ExterminationParty : Party {
     }
     private void SetWaitingArea() {
         waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+    }
+    private bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction, BaseSettlement settlement) {
+        for (int i = 0; i < settlement.residents.Count; i++) {
+            Character resident = settlement.residents[i];
+            if (!resident.isDead
+                && resident.gridTileLocation != null
+                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation.IsPartOfSettlement(settlement)
+                && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

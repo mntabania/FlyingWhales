@@ -2,6 +2,7 @@
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Locations.Settlements;
 
 public class ExterminateBehaviour : CharacterBehaviourComponent {
     public ExterminateBehaviour() {
@@ -32,7 +33,7 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is not waiting";
             if(character.currentStructure == exterminateParty.target) {
                 log += $"\n-Character is already in target structure";
-                Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlement();
+                Character target = GetRandomAliveResidentInsideSettlementThatIsHostileWith(character.faction, character.currentStructure.settlementLocation);
                 if (target != null) {
                     log += $"\n-Chosen target is {target.name}";
                     character.combatComponent.Fight(target, CombatManager.Hostility);
@@ -52,5 +53,24 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
             producedJob.SetIsThisAPartyJob(true);
         }
         return true;
+    }
+
+    private Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Faction faction, BaseSettlement settlement) {
+        List<Character> choices = null;
+        for (int i = 0; i < settlement.residents.Count; i++) {
+            Character resident = settlement.residents[i];
+            if (!resident.isDead
+                && resident.gridTileLocation != null
+                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation.IsPartOfSettlement(settlement)
+                && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
+                if (choices == null) { choices = new List<Character>(); }
+                choices.Add(resident);
+            }
+        }
+        if (choices != null && choices.Count > 0) {
+            return choices[UnityEngine.Random.Range(0, choices.Count)];
+        }
+        return null;
     }
 }
