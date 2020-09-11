@@ -27,8 +27,22 @@ public class OptionsMenu : PopupMenuBase {
         SettingsManager.Instance.OpenSettings();
     }
     public void SaveGame() {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+            //prevent saving if player is already saving
+            return;
+        }
         SaveManager.Instance.savePlayerManager.SavePlayerData();
         SaveCurrentProgress();
+    }
+    public void QuickSave() {
+        if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+            //prevent saving if player is already saving
+            return;
+        }
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
+        SaveManager.Instance.savePlayerManager.SavePlayerData();
+        SaveCurrentProgress(saveCallback: UIManager.Instance.ResumeLastProgressionSpeed);
     }
     public void OnClickLoadGame() {
         loadWindow.Open();
@@ -87,9 +101,9 @@ public class OptionsMenu : PopupMenuBase {
     private void UpdateSaveBtnState() {
         saveBtn.interactable = SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress();
     }
-    private void SaveCurrentProgress() {
+    private void SaveCurrentProgress(string fileName = "", System.Action saveCallback = null) {
         if (SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {
-            SaveManager.Instance.saveCurrentProgressManager.DoManualSave();
+            SaveManager.Instance.saveCurrentProgressManager.DoManualSave(fileName, saveCallback);
         } else {
             PlayerUI.Instance.ShowGeneralConfirmation("Save Progress", "Cannot save while seizing.");
         }

@@ -192,24 +192,37 @@ namespace Ruinarch {
                 }
                 // CancelActionsByPriority();
             } else if (Input.GetKeyDown(KeyCode.F1)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Spells Tab");
+                BroadcastHotkeyPress("Spells Tab");
             } else if (Input.GetKeyDown(KeyCode.F2)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Demons Tab");
+                BroadcastHotkeyPress("Demons Tab");
             } else if (Input.GetKeyDown(KeyCode.F3)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Monsters Tab");
+                BroadcastHotkeyPress("Monsters Tab");
             } else if (Input.GetKeyDown(KeyCode.F4)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Intel Tab");
+                BroadcastHotkeyPress("Intel Tab");
             } else if (Input.GetKeyDown(KeyCode.F5)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Villagers Tab");
+                BroadcastHotkeyPress("Villagers Tab");
             } else if (Input.GetKeyDown(KeyCode.F6)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Build Tab");
+                BroadcastHotkeyPress("Build Tab");
             } else if (Input.GetKeyDown(KeyCode.F7)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "Cultist Tab");
+                BroadcastHotkeyPress("Cultist Tab");
             } else if (Input.GetKeyDown(KeyCode.M)) {
-                Messenger.Broadcast(Signals.HOTKEY_CLICK, "ToggleMapBtn");
+                BroadcastHotkeyPress("ToggleMapBtn");
+            } else if (Input.GetKeyDown(KeyCode.F9)) {
+                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.F9);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
+                if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+                    //Do not allow hotkeys while saving
+                    return;
+                }
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Tab);
             }
+        }
+        private void BroadcastHotkeyPress(string buttonToActivate) {
+            if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
+                //Do not allow hotkeys while saving
+                return;
+            }
+            Messenger.Broadcast(Signals.HOTKEY_CLICK, buttonToActivate);
         }
         #endregion
 

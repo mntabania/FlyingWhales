@@ -37,11 +37,13 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
         return true;
     }
-    public void DoManualSave(string fileName = "") {
-        StartCoroutine(SaveCoroutine(fileName));
+    public void DoManualSave(string fileName = "", Action saveCallback = null) {
+        StartCoroutine(SaveCoroutine(fileName, saveCallback));
     }
-    private IEnumerator SaveCoroutine(string fileName) {
+    private IEnumerator SaveCoroutine(string fileName, Action saveCallback = null) {
         isSaving = true;
+        WorldMapCameraMove.Instance.DisableMovement();
+        InnerMapCameraMove.Instance.DisableMovement();
         UIManager.Instance.optionsMenu.ShowSaveLoading();
         UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving current progress");
         Stopwatch loadingWatch = new Stopwatch();
@@ -91,6 +93,9 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         yield return null;
         UIManager.Instance.optionsMenu.HideSaveLoading();
         isSaving = false;
+        WorldMapCameraMove.Instance.EnableMovement();
+        InnerMapCameraMove.Instance.EnableMovement();
+        saveCallback?.Invoke();
     }
     private string filePath;
     private void SaveCurrentDataToFile() {

@@ -225,15 +225,8 @@ public class PlayerUI : BaseMonoBehaviour {
         UpdateRegionNameState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.Escape) {
-            // if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-            //     PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-            //     InputManager.Instance.ClearLeftClickActions();
-            // } else {
-                //only toggle options menu if doing nothing else
-                // UIManager.Instance.ToggleOptionsMenu();
-            // }
-            // UIManager.Instance.TryOpenOptionsMenu();
+        if (pressedKey == KeyCode.F9) {
+            UIManager.Instance.optionsMenu.QuickSave();
         }
     }
     private void OnCharacterDied(Character character) {
