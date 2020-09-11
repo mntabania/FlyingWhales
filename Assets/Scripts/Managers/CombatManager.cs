@@ -51,7 +51,6 @@ public class CombatManager : BaseMonoBehaviour {
                 out Trait trait, characterResponsible); //, out trait
             if (hasSuccessfullyAdded) {
                 if (elementalType == ELEMENTAL_TYPE.Electric) {
-                    //StartChainElectricDamage(target, damage, characterResponsible, target);
                     ChainElectricDamage(target, damage, characterResponsible, target);
                 }
                 elementalTraitProcessor?.Invoke(target, trait);
@@ -242,27 +241,21 @@ public class CombatManager : BaseMonoBehaviour {
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water, true, showHPBar: true);
     }
     public void ChainElectricDamage(ITraitable traitable, int damage, Character characterResponsible, ITraitable origin) {
-        damage = Mathf.RoundToInt(damage * 0.8f);
-        if (damage >= 0) {
-            damage = -1;
-        }
         if (characterResponsible == null) {
             Messenger.Broadcast(Signals.ELECTRIC_CHAIN_TRIGGERED_BY_PLAYER);
         }
-        if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
-            traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
-            StartCoroutine(ChainElectricDamageCoroutine(traitable.gridTileLocation.neighbourList, damage, characterResponsible, origin));
 
-            //List<LocationGridTile> tiles = traitable.gridTileLocation.neighbourList;
-            //for (int i = 0; i < tiles.Count; i++) {
-            //    LocationGridTile tile = tiles[i];
-            //    if (tile.genericTileObject.traitContainer.HasTrait("Wet") && tile.genericTileObject.traitContainer.HasTrait("Zapped", "Chained Electric")) {
-            //    }
-            //}
-            //if (affectedTiles.Count > 0) {
-            //    StartCoroutine(ChainElectricDamageCoroutine(affectedTiles, damage, characterResponsible, origin));
-            //}
+        if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+            Trait trait = null;
+            traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric", out trait, characterResponsible: characterResponsible);
+            ChainedElectric chainedElectric = trait as ChainedElectric;
+            chainedElectric.SetDamage(damage);
         }
+
+        //if (traitable.gridTileLocation != null && !traitable.gridTileLocation.genericTileObject.traitContainer.HasTrait("Chained Electric")) {
+        //    traitable.gridTileLocation.genericTileObject.traitContainer.AddTrait(traitable, "Chained Electric");
+        //    StartCoroutine(ChainElectricDamageCoroutine(traitable.gridTileLocation.neighbourList, damage, characterResponsible, origin));
+        //}
     }
     private IEnumerator ChainElectricDamageCoroutine(LocationGridTile tile, int damage, Character characterResponsible, ITraitable origin) {
         yield return new WaitForSeconds(0.1f * GameManager.Instance.progressionSpeed);
