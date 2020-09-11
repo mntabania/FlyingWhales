@@ -218,11 +218,13 @@ public class Minion {
         SetIsSummoned(false);
 
         //If a minion is unsummoned remove it from the region/structure list of characters
-        Region deathLocation = character.currentRegion;
-        LocationStructure deathStructure = character.currentStructure;
+        //Region deathLocation = character.currentRegion;
+        //LocationStructure deathStructure = character.currentStructure;
         character.currentRegion?.RemoveCharacterFromLocation(character);
-        character.SetRegionLocation(deathLocation);
-        character.SetCurrentStructureLocation(deathStructure, false);
+        character.MigrateHomeStructureTo(null);
+        character.homeRegion?.RemoveResident(character);
+        //character.SetRegionLocation(deathLocation);
+        //character.SetCurrentStructureLocation(deathStructure, false);
 
         character.behaviourComponent.SetIsHarassing(false, null);
         character.behaviourComponent.SetIsDefending(false, null);

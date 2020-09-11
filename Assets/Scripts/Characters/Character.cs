@@ -2669,13 +2669,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else {
                 //If migrating to the same settlement, do not process anymore, just process the home structure migration not the settlement because the settlement will not change
-                if(this.homeStructure != homeStructure) {
+                if (this.homeStructure != homeStructure) {
                     newHomeSettlement.AssignCharacterToDwellingInArea(this, homeStructure);
                 }
                 return true;
             }
-
-
             if(previousHome is NPCSettlement previousNPCSettlement) {
                 if(newHomeSettlement != null && newHomeSettlement is NPCSettlement newNPCSettlement && previousNPCSettlement.region == newNPCSettlement.region) {
                     sameRegionLocationAlready = true;
@@ -2704,7 +2702,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void MigrateHomeStructureTo(LocationStructure dwelling, bool broadcast = true, bool addToRegionResidents = true, bool affectSettlement = true) {
         if(dwelling == null) {
             if (affectSettlement) {
-                MigrateHomeTo(null);
+                if(homeSettlement != null) {
+                    MigrateHomeTo(null);
+                } else {
+                    ChangeHomeStructure(dwelling);
+                }
             } else {
                 ChangeHomeStructure(dwelling);
             }

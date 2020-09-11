@@ -443,8 +443,9 @@ public class CrimeData : ISavable {
         crimeStatus = data.crimeStatus;
         isRemoved = data.isRemoved;
 
-        SubscribeToListeners();
-        DatabaseManager.Instance.crimeDatabase.AddCrime(this);
+        if (!isRemoved) {
+            SubscribeToListeners();
+        }
     }
 
     private void SetCrime(ICrimeable crime) {
@@ -472,6 +473,9 @@ public class CrimeData : ISavable {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
     private void OnCharacterDied(Character character) {
+        if (isRemoved) {
+            return;
+        }
         if (IsWitness(character)) {
             if (!HasWanted()) {
                 if (AreAllWitnessesDead()) {
@@ -538,9 +542,8 @@ public class CrimeData : ISavable {
     }
     public void OnCrimeAdded() { }
     public void OnCrimeRemoved() {
-        UnsubscribeFromListeners();
         isRemoved = true;
-
+        UnsubscribeFromListeners();
         //IMPORTANT NOTE: This has inconsistency since we are removing the crime in the witness list but the crime does not remove the witness from the list
         //This is because we still need the list of witnesses in previous crimes but the witness should not report the witnessed crime
         //for (int i = 0; i < witnesses.Count; i++) {

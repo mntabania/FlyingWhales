@@ -20,6 +20,7 @@ public class SaveDataPlayerGame : SaveData<Player> {
     public List<SaveDataInterruptIntel> interruptIntels;
 
     public List<SaveDataNotification> allNotifs;
+    public List<SaveDataChaosOrb> allChaosOrbs;
 
     //Components
     public SaveDataSeizeComponent seizeComponent;
@@ -71,6 +72,14 @@ public class SaveDataPlayerGame : SaveData<Player> {
             SaveDataNotification notif = new SaveDataNotification();
             notif.Save(notifItem);
             allNotifs.Add(notif);
+        }
+
+        allChaosOrbs = new List<SaveDataChaosOrb>();
+        for (int i = 0; i < PlayerManager.Instance.availableChaosOrbs.Count; i++) {
+            ChaosOrb orb = PlayerManager.Instance.availableChaosOrbs[i];
+            SaveDataChaosOrb saveOrb = new SaveDataChaosOrb();
+            saveOrb.Save(orb);
+            allChaosOrbs.Add(saveOrb);
         }
 
         seizeComponent = new SaveDataSeizeComponent();
