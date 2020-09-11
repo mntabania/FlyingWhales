@@ -21,15 +21,28 @@ public class CharacterVisuals {
     public Dictionary<string, Sprite> markerAnimations { get; private set; }
     public Sprite defaultSprite { get; private set; }
     public Vector2 selectableSize { get; private set; }
+    public string classToUseForVisuals {
+        get {
+            if (_owner.characterClass.className == "Zombie") {
+                //if character class is a zombie, then use previous class for any visuals to use
+                //this is so we do not need to create special sprites and special cases for every race that can become a zombie
+                if (!string.IsNullOrEmpty(_owner.previousClassName)) {
+                    return _owner.previousClassName;    
+                } else {
+                    return "Peasant"; //just a failsafe
+                }
+            }
+            return _owner.characterClass.className;
+        }
+    }
     
     private bool _hasBlood;
 
     public CharacterVisuals(Character character) {
         _owner = character;
-        portraitSettings = CharacterManager.Instance.GeneratePortrait(character);
         _hasBlood = true;
         CreateHairMaterial();
-        UpdateMarkerAnimations(character);
+        markerAnimations = new Dictionary<string, Sprite>();
     }
    
     public CharacterVisuals(Character character, SaveDataCharacter data) {
@@ -38,6 +51,13 @@ public class CharacterVisuals {
         CreateHairMaterial();
         markerAnimations = new Dictionary<string, Sprite>();
     }
+
+    #region Initialization
+    public void Initialize() {
+        portraitSettings = CharacterManager.Instance.GeneratePortrait(_owner);
+        UpdateMarkerAnimations(_owner);
+    }
+    #endregion
 
     #region Listeners
     public void SubscribeListeners() {
@@ -83,16 +103,7 @@ public class CharacterVisuals {
 
     #region Utilities
     public void UpdateAllVisuals(Character character, bool regeneratePortrait = false) {
-        string classToUse = "";
-        if (character.characterClass.className == "Zombie") {
-            //if character is a zombie use previous class to update visuals,
-            if (!string.IsNullOrEmpty(character.previousClassName)) {
-                classToUse = character.previousClassName;    
-            } else {
-                classToUse = "Peasant"; //just a failsafe
-            }
-        }
-        UpdateMarkerAnimations(character, classToUse);
+        UpdateMarkerAnimations(character);
         if (regeneratePortrait) {
             RegeneratePortrait(character);
         } else {
@@ -111,15 +122,11 @@ public class CharacterVisuals {
     #endregion
 
     #region Animations
-    private void UpdateMarkerAnimations(Character character, string classOverride = "") {
+    private void UpdateMarkerAnimations(Character character) {
         if (character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
         }
-        string classToUse = classOverride;
-        if (string.IsNullOrEmpty(classToUse)) {
-            classToUse = character.characterClass.className;
-        }
-        CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, classToUse);
+        CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.visuals.classToUseForVisuals);
         defaultSprite = assets.defaultSprite;
         float size = defaultSprite.rect.width / 100f;
         if (character is Troll) {

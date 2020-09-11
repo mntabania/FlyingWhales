@@ -58,6 +58,7 @@ public class ChaosOrb : PooledObject {
 	}
 	
 	private void Expire() {
+		Messenger.Broadcast(Signals.CHAOS_ORB_EXPIRED, this);
 		Destroy();
 	}
 	private void Destroy() {

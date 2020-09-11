@@ -119,8 +119,8 @@ namespace Traits {
                 } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && !characterThatWillDoJob.traitContainer.HasTrait("Vampiric") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
                     characterThatWillDoJob.jobComponent.CreateEatJob(item);
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))) {
-                    if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) 
-                        && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
+                    if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false && characterThatWillDoJob.canMove) {
+                        //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
                             int chance = 100;

@@ -97,7 +97,8 @@ public class PlayerSkillManager : MonoBehaviour {
     SPELL_TYPE.VENGEFUL_GHOST, SPELL_TYPE.WURM, SPELL_TYPE.TROLL, SPELL_TYPE.REVENANT, };
 
     [NonSerialized]
-    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Enemies_Chaos_Orb, PASSIVE_SKILL.Monster_Chaos_Orb, PASSIVE_SKILL.Undead_Chaos_Orb };
+    public PASSIVE_SKILL[] allPassiveSkillTypes = { PASSIVE_SKILL.Enemies_Chaos_Orb, PASSIVE_SKILL.Monster_Chaos_Orb, PASSIVE_SKILL.Undead_Chaos_Orb, PASSIVE_SKILL.Auto_Absorb_Chaos_Orb, 
+        PASSIVE_SKILL.Passive_Mana_Regen };
     
     private void Awake() {
         if (Instance == null) {

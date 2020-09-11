@@ -157,7 +157,7 @@ public class TraitManager : BaseMonoBehaviour {
         return false;
     }
     public bool IsTraitElemental(string traitName) {
-        return traitName == "Burning" || traitName == "Freezing" || traitName == "Poisoned" || traitName == "Wet" || traitName == "Zapped" || traitName == "Overheating";
+        return traitName == "Burning" || traitName == "Freezing" || traitName == "Poisoned" || traitName == "Wet" || traitName == "Zapped" || traitName == "Overheating" || traitName == "Frozen";
     }
     public T CreateNewInstancedTraitClass<T>(string traitName) where T : Trait {
         if (instancedSingletonTraits.ContainsKey(traitName)) {

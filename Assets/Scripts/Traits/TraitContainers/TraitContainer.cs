@@ -309,6 +309,11 @@ namespace Traits {
                         chance = 15;
                     }
                 }
+            } else if (traitName == "Frozen") {
+                chance = 100;
+                if (HasTrait("Cold Blooded", "Burning")) {
+                    chance = 0;
+                }
             }
             return chance;
         }

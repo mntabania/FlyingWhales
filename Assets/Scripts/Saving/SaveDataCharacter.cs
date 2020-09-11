@@ -33,6 +33,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public Vector3 worldPos;
     public Quaternion rotation;
     public bool hasMarker;
+    public bool hasExpiry;
+    public GameDate markerExpiryDate;
 
     public PortraitSettings portraitSettings;
     public SaveDataMinion minion;
@@ -160,6 +162,11 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
             hasMarker = true;
             worldPos = data.marker.transform.position;
             rotation = data.marker.visualsParent.transform.localRotation;
+
+            if (data.marker.hasExpiry) {
+                hasExpiry = true;
+                markerExpiryDate = data.marker.destroyDate;
+            }
         }
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
         buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);

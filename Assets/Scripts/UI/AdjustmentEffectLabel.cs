@@ -12,12 +12,11 @@ public class AdjustmentEffectLabel : PooledObject {
 
     public void PlayEffect(string text, Vector2 animationDirection) {
         label.text = text;
-        
         label.alpha = 1f;
+        label.rectTransform.anchoredPosition = new Vector2(label.rectTransform.anchoredPosition.x + animationDirection.x, label.rectTransform.anchoredPosition.y);
         
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(label.rectTransform.DOAnchorPos(
-            label.rectTransform.anchoredPosition + animationDirection, 1f));
+        sequence.Append(label.rectTransform.DOAnchorPosY(label.rectTransform.anchoredPosition.y + animationDirection.y, 1f));
         sequence.Join(label.DOFade(0f, 1.2f).SetEase(Ease.InQuint));
         sequence.OnComplete(OnComplete);
         sequence.Play();

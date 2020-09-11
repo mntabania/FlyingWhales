@@ -225,15 +225,8 @@ public class PlayerUI : BaseMonoBehaviour {
         UpdateRegionNameState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.Escape) {
-            // if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-            //     PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
-            //     InputManager.Instance.ClearLeftClickActions();
-            // } else {
-                //only toggle options menu if doing nothing else
-                // UIManager.Instance.ToggleOptionsMenu();
-            // }
-            // UIManager.Instance.TryOpenOptionsMenu();
+        if (pressedKey == KeyCode.F9) {
+            UIManager.Instance.optionsMenu.QuickSave();
         }
     }
     private void OnCharacterDied(Character character) {
@@ -333,7 +326,7 @@ public class PlayerUI : BaseMonoBehaviour {
         var text = $"<color=\"red\">+{amount.ToString()}</color>";
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", threatLbl.transform.position,
             Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-0.5f, 0.5f), -70f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
         DoThreatPunchEffect();
     }
     private Tweener _currentThreatPunchTween;
@@ -346,7 +339,7 @@ public class PlayerUI : BaseMonoBehaviour {
         var text = $"<color=\"green\">-{ThreatComponent.MAX_THREAT.ToString()}</color>";
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", threatLbl.transform.position,
             Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-0.5f, 0.5f), -70f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
         DoThreatPunchEffect();
     }
     #endregion
@@ -394,7 +387,7 @@ public class PlayerUI : BaseMonoBehaviour {
         var text = adjustmentAmount > 0 ? $"<color=\"green\">+{adjustmentAmount.ToString()}</color>" : $"<color=\"red\">{adjustmentAmount.ToString()}</color>";
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("AdjustmentEffectLbl", manaLbl.transform.position,
             Quaternion.identity, transform, true);
-        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-0.5f, 0.5f), -70f));
+        effectGO.GetComponent<AdjustmentEffectLabel>().PlayEffect(text, new Vector2(Random.Range(-25, 25), -70f));
     }
     #endregion
 

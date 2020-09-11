@@ -215,7 +215,7 @@ public class LoadSecondWave : MapGenerationComponent {
             string persistentID = tileObject.persistentID;
             SaveDataTileObject saveDataTileObject = saveData.GetFromSaveHub<SaveDataTileObject>(OBJECT_TYPE.Tile_Object, persistentID);
             if (tileObject is Tombstone tombstone) {
-                if (!saveDataTileObject.tileLocationID.hasValue) {
+                if (saveDataTileObject.tileLocationID.hasValue) {
                     if (tombstone.character == null || tombstone.character.marker == null) {
                         Debug.LogWarning($"{tombstone} with persistent id {tombstone.persistentID} does not have a character inside it, but has a tile location. Not placing it to prevent errors, but this case should not happen!");
                         continue;

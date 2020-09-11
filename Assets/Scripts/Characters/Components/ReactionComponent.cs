@@ -1289,9 +1289,8 @@ public class ReactionComponent : CharacterComponent {
                     log.AddLogToInvolvedObjects();
                 }
             }
-            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && 
-               !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && 
-               targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP)) {
+            if(targetTileObject.tileObjectType.IsTileObjectAnItem() && !actor.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM, targetTileObject) && targetTileObject.Advertises(INTERACTION_TYPE.PICK_UP) && actor.canMove) {
+                //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
                 actor.jobComponent.CreateTakeItemJob(targetTileObject);
             }
         }

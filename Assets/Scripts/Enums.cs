@@ -1025,6 +1025,8 @@ public enum OBJECT_TYPE {
 
 public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb,
+    Auto_Absorb_Chaos_Orb,
+    Passive_Mana_Regen
 }
 
 

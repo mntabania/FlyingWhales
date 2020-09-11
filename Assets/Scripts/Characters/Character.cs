@@ -270,6 +270,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
         visuals = new CharacterVisuals(this);
+        visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);
@@ -283,6 +284,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
         visuals = new CharacterVisuals(this);
+        visuals.Initialize();
         needsComponent.UpdateBaseStaminaDecreaseRate();
         combatComponent.UpdateBasicData(true);
         buildStructureComponent = new BuildStructureComponent(); buildStructureComponent.SetOwner(this);

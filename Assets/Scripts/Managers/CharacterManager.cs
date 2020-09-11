@@ -994,8 +994,7 @@ public class CharacterManager : BaseMonoBehaviour {
         return ps;
     }
     public PortraitSettings GeneratePortrait(Character character) {
-        return GeneratePortrait(character.race, character.gender, character.characterClass.className,
-            character.isFactionLeader || character.isSettlementRuler);
+        return GeneratePortrait(character.race, character.gender, character.visuals.classToUseForVisuals, character.isFactionLeader || character.isSettlementRuler);
     }
     public PortraitFrame GetPortraitFrame(CHARACTER_ROLE role) {
         if (portraitFrames.ContainsKey(role)) {

@@ -76,6 +76,7 @@ public class PlayerSkillComponent {
     public void LoadPlayerSkillTreeOrLoadout(SaveDataPlayer save) {
         if (PlayerSkillManager.Instance.unlockAllSkills) {
             PopulateDevModeSkills();
+            PopulatePassiveSkills(PlayerSkillManager.Instance.allPassiveSkillTypes);
         } else {
             //PopulateAllSkills(save.learnedSkills);
             PlayerSkillLoadout loadout = PlayerSkillManager.Instance.GetSelectedLoadout();

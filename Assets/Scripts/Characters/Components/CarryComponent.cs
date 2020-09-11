@@ -75,7 +75,7 @@ public class CarryComponent : CharacterComponent {
             if (!character.marker) {
                 character.CreateMarker();
             }
-
+            
             character.marker.transform.SetParent(owner.marker.visualsParent);
             character.marker.transform.localPosition = new Vector3(0f, 0.5f, 0f);
             character.marker.visualsParent.eulerAngles = Vector3.zero;
