@@ -40,7 +40,7 @@ public class SeizeComponent {
                 poi.mapObjectVisual.SetVisual(_seizedPOISprite);
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
                 _seizedPOIVisionTriggerVotes = poi.mapObjectVisual.visionTrigger.filterVotes;
-                _seizedPOIColor = poi.mapObjectVisual.objectSpriteRenderer.color;
+                // _seizedPOIColor = poi.mapObjectVisual.objectSpriteRenderer.color;    
                 if (seizedPOI is Character character) {
                     _seizedCharacterVisionVotes = character.marker.visionCollider.filterVotes;
                 }
@@ -106,7 +106,7 @@ public class SeizeComponent {
             seizedPOI.mapObjectVisual.SetVisual(_seizedPOISprite);    
             seizedPOI.mapObjectVisual.visionTrigger.SetFilterVotes(_seizedPOIVisionTriggerVotes);
             seizedPOI.mapObjectVisual.visionTrigger.SetVisionTriggerCollidersState(_seizedPOIVisionTriggerState);
-            seizedPOI.mapObjectVisual.SetColor(_seizedPOIColor);
+            // seizedPOI.mapObjectVisual.SetColor(_seizedPOIColor);    
         }
         if (seizedPOI is Character character) {
             character.marker.visionCollider.SetFilterVisionVotes(_seizedCharacterVisionVotes);

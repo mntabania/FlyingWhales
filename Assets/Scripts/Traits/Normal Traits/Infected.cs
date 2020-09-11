@@ -98,6 +98,9 @@ namespace Traits {
                     _infectedEffectGO = null;
                 }
                 _infectedEffectGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Infected, false);
+                if (isLiving) {
+                    owner.marker.SetMarkerColor(Color.grey);
+                }
             }
         }
         public override void OnDestroyMapObjectVisual(ITraitable traitable) {
