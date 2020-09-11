@@ -1009,7 +1009,7 @@ public class ReactionComponent : CharacterComponent {
             if(targetTileObject is BallLightning || targetTileObject.traitContainer.HasTrait("Lightning Remnant")) {
                 actor.combatComponent.Flight(targetTileObject, "saw something frightening");
             } else if(targetTileObject is WoodPile || targetTileObject is StonePile || targetTileObject is MetalPile || targetTileObject is Gold || targetTileObject is Diamond) {
-                if (targetTileObject.gridTileLocation.structure != actor.homeStructure && !actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
+                if (actor.homeStructure != null && targetTileObject.gridTileLocation.structure != actor.homeStructure && !actor.jobQueue.HasJob(JOB_TYPE.DROP_ITEM)) {
                     actor.jobComponent.CreateHoardItemJob(targetTileObject, actor.homeStructure, true);
                 }
             }
