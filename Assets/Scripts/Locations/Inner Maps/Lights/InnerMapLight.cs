@@ -14,7 +14,7 @@ public class InnerMapLight : MonoBehaviour{
 
     private float randomOnValue;
     private void Awake() {
-        randomOnValue = 0.9f;  //UnityEngine.Random.Range(0.9f, 0.95f);
+        randomOnValue = 0.8f;  //UnityEngine.Random.Range(0.9f, 0.95f);
     }
     private void OnEnable() {
         InstantUpdateLightBasedOnGlobalLight(LightingManager.Instance.isTransitioning ? LightingManager.Instance.transitioningTo : LightingManager.Instance.currentGlobalLightState);
@@ -40,6 +40,7 @@ public class InnerMapLight : MonoBehaviour{
         _light.intensity = intensity;
         //only enable light if intensity is greater than X, because of alpha overlap option
         //alpha overlap option was toggled on to prevent additive brightness when lights overlap.
+        // _light.blendStyleIndex = intensity >= randomOnValue ? 0 : 1;
         _light.enabled = intensity >= randomOnValue;
     }
 }
