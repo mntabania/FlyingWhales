@@ -20,7 +20,7 @@ PrefabInstance:
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_PointLightOuterRadius
-      value: 4
+      value: 2.8
       objectReference: {fileID: 0}
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
@@ -35,12 +35,17 @@ PrefabInstance:
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_PointLightInnerRadius
-      value: 1
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_Color.b
       value: 0.46666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
+        type: 3}
+      propertyPath: m_LightOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
@@ -100,7 +105,7 @@ PrefabInstance:
     - target: {fileID: 8344555944224439899, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: _brightestIntensity
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1f23643fbdff744db95ec146ba780e4, type: 3}

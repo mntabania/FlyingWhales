@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 public class LocationGridTileOtherData : OtherData {
@@ -7,9 +8,14 @@ public class LocationGridTileOtherData : OtherData {
     
     public LocationGridTileOtherData(LocationGridTile tile) {
         this.tile = tile;
+        if (tile == null) {
+            Debug.LogWarning($"New LocationGridTileOtherData was created but provided tile was null, this is handled but weird.");
+        }
     }
     public LocationGridTileOtherData(SaveDataLocationGridTileOtherData saveData) {
-        tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData.tileID);
+        if (saveData.tileID.hasValue) {
+            tile = DatabaseManager.Instance.locationGridTileDatabase.GetTileBySavedData(saveData.tileID);    
+        }
     }
     
     public override SaveDataOtherData Save() {
@@ -26,7 +32,10 @@ public class SaveDataLocationGridTileOtherData : SaveDataOtherData {
         base.Save(data);
         LocationGridTileOtherData otherData = data as LocationGridTileOtherData;
         Assert.IsNotNull(otherData);
-        tileID = new TileLocationSave(otherData.tile);
+        if (otherData.tile != null) {
+            //Need this because there are times that the provided tile can be null (i.e. Roam)
+            tileID = new TileLocationSave(otherData.tile);    
+        }
     }
     public override OtherData Load() {
         return new LocationGridTileOtherData(this);

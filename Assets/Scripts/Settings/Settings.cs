@@ -5,6 +5,7 @@
         //Controls
         public bool useEdgePanning;
         public bool skipTutorials;
+        public bool confineCursor;
         
         //Graphics
         public string resolution;

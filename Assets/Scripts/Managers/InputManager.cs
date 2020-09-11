@@ -228,9 +228,6 @@ namespace Ruinarch {
 
         #region Initialization
         private void Initialize() {
-#if !UNITY_EDITOR
-            Cursor.lockState = CursorLockMode.Confined;
-#endif
             buttonsToHighlight = new List<string>();
             Messenger.MarkAsPermanent(Signals.SHOW_SELECTABLE_GLOW);
             Messenger.MarkAsPermanent(Signals.HIDE_SELECTABLE_GLOW);

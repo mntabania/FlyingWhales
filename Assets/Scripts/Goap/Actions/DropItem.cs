@@ -37,7 +37,7 @@ public class DropItem : GoapAction {
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         OtherData[] otherData = node.otherData;
-        return otherData[0].obj as LocationStructure;
+        return otherData[0]?.obj as LocationStructure;
     }
     public override void OnActionStarted(ActualGoapNode node) {
         node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);
