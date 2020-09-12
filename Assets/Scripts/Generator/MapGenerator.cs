@@ -229,6 +229,8 @@ public class MapGenerator : MonoBehaviour {
     
     #region Saved World
     public IEnumerator InitializeSavedWorld(SaveDataCurrentProgress saveData) {
+        //Note: In the Save World, the TileFeatureGeneration is done after the second wave is done loading because there are tile features thats needs the references when it is added
+        //Example: The HeatWave feature function PopulateInitialCharactersOutside is called when it is added, inside the GetAllCharactersInsideHexThatMeetCriteria is called, where the innermaphextile is needed, so we must have the references before loading the tile features
         SaveManager.Instance.SetUseSaveData(true);
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         MapGenerationComponent[] mapGenerationComponents = {

@@ -25,7 +25,12 @@ namespace Interrupts {
             string randomNegativeTrait = GetRandomValidNegativeTrait(interruptHolder.actor);
             string randomNegativeStatus = GetRandomValidNegativeStatus(interruptHolder.actor);
 
-            if(string.IsNullOrEmpty(randomNegativeTrait) || string.IsNullOrEmpty(randomNegativeStatus)) {
+            //At some point, if a character is tortured again and again, statuses/traits can no longer be added to him because in CanAddTrait checking if a status/trait is not stacking and it already has that status. it cannot be added anymore
+            //So there will come a time that there will be no more status/trait that can be added to the character
+            //So we need to check if it can no longer find a random negative trait/status to add
+            //If not, add a dfferent log
+            //https://trello.com/c/8sAgvnbE/2210-torture-argumentexception
+            if (string.IsNullOrEmpty(randomNegativeTrait) || string.IsNullOrEmpty(randomNegativeStatus)) {
                 Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "cannot_torture");
                 log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);

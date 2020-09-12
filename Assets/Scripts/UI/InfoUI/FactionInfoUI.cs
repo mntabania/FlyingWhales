@@ -109,6 +109,8 @@ public class FactionInfoUI : InfoUIBase {
         UtilityScripts.Utilities.DestroyChildren(charactersScrollView.content);
         _characterItems.Clear();
 
+        //Angels should not show in the characters list of faction in UI
+        //https://trello.com/c/SGow0hA0/2234-angels-on-list
         for (int i = 0; i < activeFaction.characters.Count; i++) {
             Character currCharacter = activeFaction.characters[i];
             if(currCharacter.race != RACE.ANGEL) {
@@ -150,6 +152,8 @@ public class FactionInfoUI : InfoUIBase {
         }
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
+        //Angels should not show in the characters list of faction in UI
+        //https://trello.com/c/SGow0hA0/2234-angels-on-list
         if (isShowing && activeFaction.id == faction.id && character.race != RACE.ANGEL) {
             CreateNewCharacterItem(character);
         }
