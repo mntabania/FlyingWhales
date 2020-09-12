@@ -233,10 +233,10 @@ public class MapGenerator : MonoBehaviour {
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
-            new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), 
+            new WorldMapOuterGridGeneration(),
             new WorldMapLandmarkGeneration(), new SettlementLoading(), new FamilyTreeGeneration(),
             new RegionInnerMapGeneration(),
-            new LoadFirstWave(), new LoadSecondWave(), new MapGenerationFinalization(),
+            new LoadFirstWave(), new LoadSecondWave(), new TileFeatureGeneration(), new MapGenerationFinalization(),
             new PlayerDataGeneration(), new LoadAwarenessGeneration(), new LoadCharactersCurrentAction(),
         };
         yield return StartCoroutine(InitializeSavedWorldCoroutine(mapGenerationComponents, saveData));

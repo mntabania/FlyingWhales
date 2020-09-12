@@ -111,7 +111,9 @@ public class FactionInfoUI : InfoUIBase {
 
         for (int i = 0; i < activeFaction.characters.Count; i++) {
             Character currCharacter = activeFaction.characters[i];
-            CreateNewCharacterItem(currCharacter, false);
+            if(currCharacter.race != RACE.ANGEL) {
+                CreateNewCharacterItem(currCharacter, false);
+            }
         }
         OrderCharacterItems();
     }
@@ -148,7 +150,7 @@ public class FactionInfoUI : InfoUIBase {
         }
     }
     private void OnCharacterAddedToFaction(Character character, Faction faction) {
-        if (isShowing && activeFaction.id == faction.id) {
+        if (isShowing && activeFaction.id == faction.id && character.race != RACE.ANGEL) {
             CreateNewCharacterItem(character);
         }
     }
