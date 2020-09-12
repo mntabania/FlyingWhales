@@ -39,6 +39,9 @@ public class OptionsMenu : PopupMenuBase {
             //prevent saving if player is already saving
             return;
         }
+        if (!SaveManager.Instance.saveCurrentProgressManager.CanSaveCurrentProgress()) {
+            return;
+        }
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         SaveManager.Instance.savePlayerManager.SavePlayerData();

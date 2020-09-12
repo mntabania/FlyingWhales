@@ -344,6 +344,16 @@ PrefabInstance:
       propertyPath: m_FalloffIntensity
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
+        type: 3}
+      propertyPath: m_AlphaBlendOnOverlap
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1391234838246578817, guid: a1f23643fbdff744db95ec146ba780e4,
+        type: 3}
+      propertyPath: m_LightOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2106505769903706223, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -402,7 +412,7 @@ PrefabInstance:
     - target: {fileID: 8344555944224439899, guid: a1f23643fbdff744db95ec146ba780e4,
         type: 3}
       propertyPath: _brightestIntensity
-      value: 2
+      value: 0.9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1f23643fbdff744db95ec146ba780e4, type: 3}
