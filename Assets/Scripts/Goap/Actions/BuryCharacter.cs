@@ -113,7 +113,7 @@ public class BuryCharacter : GoapAction {
         //Note: Added this because it is stated in the Bury Job document that all other bury jobs must be cancelled instantaneously when the character is buried
         //This might cause some problems because it is a bad form to call cancelling jobs whenever an action of the same type is being done
         //The other solution is to just let the other systems handle the bury job that is still lingering. It might not be instantaneous, but at least it is not prone to errors
-        targetCharacter.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
+        targetCharacter.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.BURY);
     }
     #endregion
 

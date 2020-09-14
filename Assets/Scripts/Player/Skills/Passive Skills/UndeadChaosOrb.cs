@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UtilityScripts;
 
 public class UndeadChaosOrb : PassiveSkill {
     public override string name => "Chaos Orbs on Undead Death";
@@ -9,7 +10,15 @@ public class UndeadChaosOrb : PassiveSkill {
     }
     private void OnCharacterDied(Character character) {
         if (character.faction != null && character.faction.factionType.type == FACTION_TYPE.Undead && character.marker != null) {
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.worldPosition, Random.Range(2, 6), character.currentRegion.innerMap);
+            bool shouldCreateChaosOrbs = true;
+            if (character.characterClass.className == "Zombie") {
+                //Note: add chance to create chaos orbs when character is Zombie, because this passive skill can become OP
+                //if chaos orbs are created every time a Zombie dies since Zombies can reanimate, then die again.
+                shouldCreateChaosOrbs = GameUtilities.RollChance(35);
+            }
+            if (shouldCreateChaosOrbs) {
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.currentRegion.innerMap);    
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character) {
                 Character owner = removedFrom as Character;
-                owner.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
+                owner.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.BURY);
             }
         }
         public override string GetToolTipText() {

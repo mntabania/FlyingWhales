@@ -125,7 +125,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 
             character.UncarryPOI();
             if (character.traitContainer.HasTrait("Unconscious")) {
-                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+                character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
             Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, owner as IPlayerActionTarget);
             //_owner.behaviourComponent.SetIsHarassing(false, null);

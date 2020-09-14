@@ -258,8 +258,18 @@ public class PlayerManager : BaseMonoBehaviour {
         if (character.isNormalCharacter) {
             if (actionNode.action.goapType == INTERACTION_TYPE.ASSAULT || actionNode.action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
                 //https://trello.com/c/koET4MUl/2167-assault-should-not-produce-chaos-orbs-if-part-of-drink-blood-or-psychopathic-ritual
-                if (actionNode.actor.traitContainer.HasTrait("Vampiric") && (actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || actionNode.associatedJobType == JOB_TYPE.TRIGGER_FLAW)) {
-                    return;
+                if (actionNode.actor.traitContainer.HasTrait("Vampiric")) {
+                    if (actionNode.associatedJob is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null && goapPlanJob.assignedPlan.HasNodeWithAction(INTERACTION_TYPE.DRINK_BLOOD)) {
+                        //first check if actions associated job has drink blood as part of the plan, if it does then do no create chaos orbs for it.
+                        return;
+                    }
+                    if (actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_NORMAL || actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT || 
+                         actionNode.associatedJobType == JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT || actionNode.associatedJobType == JOB_TYPE.TRIGGER_FLAW) {
+                        //If in case associated job is null, just check job type. Nasty side effect of relying on this checking is other jobs that use the TRIGGER_FLAW job type
+                        //will also not create Chaos Orbs if that job uses Assault or Knockout. So it would be ideal that the above checking should always be used.
+                        //This only serves as a failsafe.
+                        return;
+                    }
                 }
                 if (actionNode.associatedJobType == JOB_TYPE.RITUAL_KILLING) {
                     return;
