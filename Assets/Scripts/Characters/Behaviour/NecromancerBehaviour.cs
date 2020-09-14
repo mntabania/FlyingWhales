@@ -93,7 +93,7 @@ public class NecromancerBehaviour : CharacterBehaviourComponent {
                     log += $"\n-Skeleton followers are more than 5, attack village";
                     //Attack
                     //character.faction.ClearAllDeadCharactersFromFaction();
-                    NPCSettlement attackVillageTarget = LandmarkManager.Instance.GetFirstVillageSettlementInRegionWithAliveResident(character.currentRegion);
+                    NPCSettlement attackVillageTarget = LandmarkManager.Instance.GetFirstVillageSettlementInRegionWithAliveResident(character.currentRegion, character.faction);
                     if(attackVillageTarget != null) {
                         character.necromancerTrait.SetAttackVillageTarget(attackVillageTarget);
                         character.interruptComponent.TriggerInterrupt(INTERRUPT.Order_Attack, character);
