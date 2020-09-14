@@ -33,7 +33,7 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is not waiting";
             if(character.currentStructure == exterminateParty.target) {
                 log += $"\n-Character is already in target structure";
-                Character target = GetRandomAliveResidentInsideSettlementThatIsHostileWith(character.faction, character.currentStructure.settlementLocation);
+                Character target = GetRandomAliveResidentInsideSettlementThatIsHostileWith(character, character.currentStructure.settlementLocation);
                 if (target != null) {
                     log += $"\n-Chosen target is {target.name}";
                     character.combatComponent.Fight(target, CombatManager.Hostility);
@@ -55,15 +55,16 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
         return true;
     }
 
-    private Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Faction faction, BaseSettlement settlement) {
+    private Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Character character, BaseSettlement settlement) {
         List<Character> choices = null;
         for (int i = 0; i < settlement.residents.Count; i++) {
             Character resident = settlement.residents[i];
-            if (!resident.isDead
+            if (character != resident 
+                && !resident.isDead
                 && resident.gridTileLocation != null
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
-                && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
+                && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
                 if (choices == null) { choices = new List<Character>(); }
                 choices.Add(resident);
             }

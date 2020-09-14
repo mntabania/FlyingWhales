@@ -22,7 +22,7 @@ public class AttackVillageBehaviour : CharacterBehaviourComponent {
                 Character chosenCombatantTarget = null;
                 for (int i = 0; i < settlement.residents.Count; i++) {
                     Character resident = settlement.residents[i];
-                    if (!resident.isDead && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(settlement)) {
+                    if (character != resident && !resident.isDead && resident.gridTileLocation != null && resident.gridTileLocation.IsPartOfSettlement(settlement)) {
                         if (resident.traitContainer.HasTrait("Combatant")) {
                             chosenCombatantTarget = resident;
                             break;

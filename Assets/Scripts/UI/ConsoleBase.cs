@@ -89,6 +89,7 @@ public class ConsoleBase : InfoUIBase {
             {"/cancel_job", CancelJob },
             {"/save_scenario", SaveScenarioMap },
             {"/save_manual", SaveManual },
+            {"/find", FindTileObject },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1363,6 +1364,26 @@ public class ConsoleBase : InfoUIBase {
             }
         } else {
             AddErrorMessage($"There is no tile object of type {typeParameterString}");
+        }
+    }
+    private void FindTileObject(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of FindTileObject");
+            return;
+        }
+        string nameParameterString = parameters[0];
+        Region currentRegion = InnerMapManager.Instance.currentlyShowingLocation;
+        if(currentRegion != null) {
+            List<LocationStructure> structures = currentRegion.allStructures;
+            for (int i = 0; i < structures.Count; i++) {
+                LocationStructure structure = structures[i];
+                TileObject tileObj = structure.GetFirstTileObjectOfTypeThatMeetCriteria<TileObject>(t => t.name == nameParameterString);
+
+                if (tileObj != null) {
+                    UIManager.Instance.ShowTileObjectInfo(tileObj);
+                }
+            }
         }
     }
     #endregion

@@ -77,9 +77,11 @@ public class SaveDataPlayerGame : SaveData<Player> {
         allChaosOrbs = new List<SaveDataChaosOrb>();
         for (int i = 0; i < PlayerManager.Instance.availableChaosOrbs.Count; i++) {
             ChaosOrb orb = PlayerManager.Instance.availableChaosOrbs[i];
-            SaveDataChaosOrb saveOrb = new SaveDataChaosOrb();
-            saveOrb.Save(orb);
-            allChaosOrbs.Add(saveOrb);
+            if(orb.location != null) {
+                SaveDataChaosOrb saveOrb = new SaveDataChaosOrb();
+                saveOrb.Save(orb);
+                allChaosOrbs.Add(saveOrb);
+            }
         }
 
         seizeComponent = new SaveDataSeizeComponent();

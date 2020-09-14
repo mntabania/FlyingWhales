@@ -401,8 +401,9 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                     }
 
                     Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorOrNegativeInfoTarget, targetCharacter);
-                    owner.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor);
-                    return;
+                    if(rumor != null) {
+                        owner.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor);
+                    }
                 }
             }
         }

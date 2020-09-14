@@ -66,7 +66,7 @@ public class ChaosOrb : PooledObject {
 			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);	
 		}
 		ObjectPoolManager.Instance.DestroyObject(this);
-		PlayerManager.Instance.RemoveChaosOrbFromAvailability(this);
+		//PlayerManager.Instance.RemoveChaosOrbFromAvailability(this);
 	}
 	public void OnPointerEnter(BaseEventData data) {
 		if (positionCoroutine != null) {
@@ -98,7 +98,8 @@ public class ChaosOrb : PooledObject {
 	}
 	public override void Reset() {
 		base.Reset();
-		location = null;
+        PlayerManager.Instance.RemoveChaosOrbFromAvailability(this);
+        location = null;
 		_trail.Clear();
 		_collider.enabled = true;
 		positionCoroutine = null;

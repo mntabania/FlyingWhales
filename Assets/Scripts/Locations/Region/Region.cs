@@ -640,7 +640,7 @@ public class Region : ISavable {
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
             if (!currStructure.IsOccupied()) {
-                if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.structureType != STRUCTURE_TYPE.OCEAN) {
+                if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
                     if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
                     specialStructures.Add(currStructure);
                 }
@@ -655,7 +655,7 @@ public class Region : ISavable {
         List<LocationStructure> specialStructures = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
-            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.structureType != STRUCTURE_TYPE.OCEAN) {
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
                 if (specialStructures == null) { specialStructures = new List<LocationStructure>(); }
                 specialStructures.Add(currStructure);
             }
@@ -669,7 +669,7 @@ public class Region : ISavable {
         List<LocationStructure> specialStructures = null;
         for (int i = 0; i < allStructures.Count; i++) {
             LocationStructure currStructure = allStructures[i];
-            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.structureType != STRUCTURE_TYPE.OCEAN) {
+            if (currStructure.settlementLocation != null && currStructure.settlementLocation.locationType == LOCATION_TYPE.DUNGEON && currStructure.passableTiles.Count > 0) {
                 if(exceptions.Contains(currStructure)) { continue; }
                 if(specialStructures == null) { specialStructures = new List<LocationStructure>(); }
                 specialStructures.Add(currStructure);
