@@ -157,6 +157,9 @@ public class HeirloomHuntParty : Party {
             if (!string.IsNullOrEmpty(subData.regionToSearch)) {
                 regionToSearch = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionToSearch);
             }
+            if (isWaitTimeOver && !isDisbanded) {
+                Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHex);
+            }
         }
     }
     #endregion

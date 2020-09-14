@@ -85,8 +85,15 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
                     if(targetTile != null) {
                         character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                     } else {
-                        throw new System.Exception("No passable tiles for exploring " + targetStructure.name + " of " + character.name);
+                        if(exploreParty is ExplorationParty party) {
+                            if(party.targetStructure == null || party.targetStructure.hasBeenDestroyed || party.targetStructure.tiles.Count <= 0) {
+                                party.ProcessSettingTargetStructure();
+                            }
+                        }
                     }
+                    //else {
+                    //    throw new System.Exception("No passable tiles for exploring " + targetStructure.name + " of " + character.name);
+                    //}
                 }
             }
         }

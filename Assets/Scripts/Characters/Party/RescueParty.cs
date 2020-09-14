@@ -108,6 +108,9 @@ public class RescueParty : Party {
             if (!string.IsNullOrEmpty(subData.targetCharacter)) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByPersistentID(subData.targetCharacter);
             }
+            if (isWaitTimeOver && !isDisbanded) {
+                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            }
         }
     }
     #endregion
