@@ -1430,6 +1430,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public List<T> GetAllCharactersInsideHexThatMeetCriteria<T>(System.Func<Character, bool> validityChecker) where T : Character {
         List<T> characters = null;
+        if(innerMapHexTile == null) {
+            return characters;
+        }
         LocationGridTile lowerLeftCornerTile = innerMapHexTile.gridTileCollections[0].tilesInTerritory[0];
         int xMin = lowerLeftCornerTile.localPlace.x;
         int yMin = lowerLeftCornerTile.localPlace.y;

@@ -25,23 +25,34 @@ namespace Interrupts {
             string randomNegativeTrait = GetRandomValidNegativeTrait(interruptHolder.actor);
             string randomNegativeStatus = GetRandomValidNegativeStatus(interruptHolder.actor);
 
-            List<string> tortureTexts =
+            //At some point, if a character is tortured again and again, statuses/traits can no longer be added to him because in CanAddTrait checking if a status/trait is not stacking and it already has that status. it cannot be added anymore
+            //So there will come a time that there will be no more status/trait that can be added to the character
+            //So we need to check if it can no longer find a random negative trait/status to add
+            //If not, add a dfferent log
+            //https://trello.com/c/8sAgvnbE/2210-torture-argumentexception
+            if (string.IsNullOrEmpty(randomNegativeTrait) || string.IsNullOrEmpty(randomNegativeStatus)) {
+                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "cannot_torture");
+                log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+            } else {
+                List<string> tortureTexts =
                 LocalizationManager.Instance.GetKeysLike("Interrupt", "Being Tortured", "torture");
-            string chosenTortureKey = CollectionUtilities.GetRandomElement(tortureTexts);
-            Log randomTorture = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey);
-            randomTorture.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text");
-            log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(randomTorture), LOG_IDENTIFIER.APPEND);
-            log.AddToFillers(randomTorture.fillers);
-            log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);
-            interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                string chosenTortureKey = CollectionUtilities.GetRandomElement(tortureTexts);
+                Log randomTorture = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey);
+                randomTorture.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text");
+                log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(randomTorture), LOG_IDENTIFIER.APPEND);
+                log.AddToFillers(randomTorture.fillers);
+                log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);
+                interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
 
-            interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeStatus);
-            interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeTrait);
+                interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeStatus);
+                interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeTrait);
+
+                Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, UnityEngine.Random.Range(2, 4), interruptHolder.actor.currentRegion.innerMap);
+            }
             
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, UnityEngine.Random.Range(2, 4), interruptHolder.actor.currentRegion.innerMap);
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }
         #endregion

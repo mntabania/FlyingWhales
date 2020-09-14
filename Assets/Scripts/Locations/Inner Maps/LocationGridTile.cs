@@ -1011,14 +1011,14 @@ namespace Inner_Maps {
             return null;
         }
         public LocationGridTile GetNearestEdgeTileFromThis() {
-            if (IsAtEdgeOfWalkableMap() && structure != null) {
+            if (IsAtEdgeOfWalkableMap()) {
                 return this;
             }
 
             LocationGridTile nearestEdgeTile = null;
             List<LocationGridTile> neighbours = neighbourList;
             for (int i = 0; i < neighbours.Count; i++) {
-                if (neighbours[i].IsAtEdgeOfWalkableMap() && neighbours[i].structure != null) {
+                if (neighbours[i].IsAtEdgeOfWalkableMap()) {
                     nearestEdgeTile = neighbours[i];
                     break;
                 }
@@ -1029,7 +1029,33 @@ namespace Inner_Maps {
                     LocationGridTile currTile = parentMap.allEdgeTiles[i];
                     float dist = Vector2.Distance(currTile.localLocation, localLocation);
                     if (nearestDist == -999f || dist < nearestDist) {
-                        if (currTile.structure != null) {
+                        nearestEdgeTile = currTile;
+                        nearestDist = dist;
+                    }
+                }
+            }
+            return nearestEdgeTile;
+        }
+        public LocationGridTile GetNearestEdgeTileFromThis(DIRECTION direction) {
+            if (IsInEdgeOfDirection(direction)) {
+                return this;
+            }
+
+            LocationGridTile nearestEdgeTile = null;
+            List<LocationGridTile> neighbours = neighbourList;
+            for (int i = 0; i < neighbours.Count; i++) {
+                if (neighbours[i].IsInEdgeOfDirection(direction)) {
+                    nearestEdgeTile = neighbours[i];
+                    break;
+                }
+            }
+            if (nearestEdgeTile == null) {
+                float nearestDist = -999f;
+                for (int i = 0; i < parentMap.allEdgeTiles.Count; i++) {
+                    LocationGridTile currTile = parentMap.allEdgeTiles[i];
+                    if (currTile.IsInEdgeOfDirection(direction)) {
+                        float dist = Vector2.Distance(currTile.localLocation, localLocation);
+                        if (nearestDist == -999f || dist < nearestDist) {
                             nearestEdgeTile = currTile;
                             nearestDist = dist;
                         }
@@ -1037,6 +1063,30 @@ namespace Inner_Maps {
                 }
             }
             return nearestEdgeTile;
+        }
+        public bool IsInEdgeOfDirection(DIRECTION direction) {
+            if(direction == DIRECTION.RIGHT) {
+                return localPlace.x == (parentMap.width - 1);
+            } else if (direction == DIRECTION.LEFT) {
+                return localPlace.x == 0;
+            } else if (direction == DIRECTION.UP) {
+                return localPlace.y == (parentMap.height - 1);
+            } else if (direction == DIRECTION.DOWN) {
+                return localPlace.y == 0;
+            }
+            return false;
+        }
+        public DIRECTION GetDirection() {
+            if (localPlace.x == (parentMap.width - 1)) {
+                return DIRECTION.RIGHT;
+            } else if (localPlace.x == 0) {
+                return DIRECTION.LEFT;
+            } else if (localPlace.y == (parentMap.height - 1)) {
+                return DIRECTION.UP;
+            } else if (localPlace.y == 0) {
+                return DIRECTION.DOWN;
+            }
+            throw new Exception("Cannot get the direction of " + ToString() + " in " + structure.location + " because this is not an edge tile");
         }
         public LocationGridTile GetRandomUnoccupiedNeighbor() {
             List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;
