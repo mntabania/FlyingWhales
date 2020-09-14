@@ -20,8 +20,8 @@ public class LoadWindow : PopupMenuBase  {
         isFetchingSaves = false;
         fetchSavesCover.gameObject.SetActive(false);
         base.Open();
-        StartCoroutine(LoadSaveGamesCoroutine());
-        
+        // StartCoroutine(LoadSaveGamesCoroutine());
+        LoadSavedGameItems();
     }
     public override void Close() {
         if (isFetchingSaves) {
@@ -35,8 +35,8 @@ public class LoadWindow : PopupMenuBase  {
         // Messenger.RemoveListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
     }
     private void OnSaveFileDeleted(string deleted) {
-        // LoadSavedGameItems();
-        StartCoroutine(LoadSaveGamesCoroutine());
+        LoadSavedGameItems();
+        // StartCoroutine(LoadSaveGamesCoroutine());
     }
     private void OnLoadFileChosen(string path) {
         SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(path);

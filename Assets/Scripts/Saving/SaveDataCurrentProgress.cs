@@ -418,6 +418,9 @@ public class SaveDataNotification {
         logID = notif.shownLog.persistentID;
         tickShown = notif.tickShown;
         SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog);
+        if (notif.shownLog.node != null) {
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog.node);
+        }
 
         if(notif is IntelNotificationItem intelNotif) {
             isIntel = true;

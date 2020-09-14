@@ -835,10 +835,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void ForceCancelAllJobsTargetingThisCharacter() {
+    public void ForceCancelAllJobsTargetingThisCharacter(bool shouldDoAfterEffect) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
-            if (job.ForceCancelJob()) {
+            if (job.ForceCancelJob(shouldDoAfterEffect)) {
                 i--;
             }
         }

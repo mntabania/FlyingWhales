@@ -1810,7 +1810,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void Expire() {
         Debug.Log($"{character.name}'s marker has expired.");
-        character.ForceCancelAllJobsTargetingThisCharacter();
+        character.ForceCancelAllJobsTargetingThisCharacter(false);
         character?.DestroyMarker();
     }
     #endregion

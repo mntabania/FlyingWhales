@@ -52,9 +52,9 @@ public class RaiseCorpse : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget is Character targetCharacter) {
-                return targetCharacter.isDead && !(targetCharacter is Summon) && !targetCharacter.hasRisen;
+                return targetCharacter.isDead && !(targetCharacter is Summon) && !targetCharacter.hasRisen && targetCharacter.marker != null;
             } else if (poiTarget is Tombstone tombstone) {
-                return tombstone.gridTileLocation != null && tombstone.mapObjectVisual && !(tombstone.character is Summon) && !tombstone.character.hasRisen;
+                return tombstone.gridTileLocation != null && tombstone.mapObjectVisual && !(tombstone.character is Summon) && !tombstone.character.hasRisen && tombstone.character.marker != null;
             }
         }
         return false;
@@ -70,7 +70,11 @@ public class RaiseCorpse : GoapAction {
         } else if (targetPOI is Tombstone) {
             target = (targetPOI as Tombstone).character;
         }
-        CharacterManager.Instance.RaiseFromDeath(target, FactionManager.Instance.undeadFaction, className: target.characterClass.className);
+        if (target != null && target.marker != null) {
+            CharacterManager.Instance.RaiseFromDeath(target, FactionManager.Instance.undeadFaction, className: target.characterClass.className);    
+        } else {
+            Debug.LogWarning($"Could not raise {target?.name} because it's marker is null!");
+        }
     }
     #endregion
 
