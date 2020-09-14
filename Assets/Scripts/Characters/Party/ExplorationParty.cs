@@ -152,6 +152,7 @@ public class ExplorationParty : Party {
     private void OnStructureDestroyed(LocationStructure structure) {
         if (targetStructure == structure) {
             ProcessSettingTargetStructure();
+            alreadyExplored.Remove(structure);
         }
     }
     #endregion
