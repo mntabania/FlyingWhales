@@ -82,10 +82,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     #endregion
 
-    public TileObject() {
-    }
-    public TileObject(SaveDataTileObject data) {
-    }
+    public TileObject() { }
+    public TileObject(SaveDataTileObject data) { }
 
 
     protected virtual void Initialize(TILE_OBJECT_TYPE tileObjectType, bool shouldAddCommonAdvertisements = true) {

@@ -158,9 +158,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
 		if (_owner.tiles.Contains(tile)) {
-			if (character.traitContainer.HasTrait("Criminal")) {
-				TryCreateApprehend(character);
-			}
+			TryCreateApprehend(character);
 		}
 	}
 	private void OnFoodInDwellingChanged(Table table) {
@@ -410,7 +408,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Apprehend
 	public void TryCreateApprehend(Character target) {
-		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal")) {
+		if (target.currentSettlement == _owner && _owner.owner != null && target.traitContainer.HasTrait("Criminal") && !target.isDead && target.currentStructure != _owner.prison) {
 			if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
                 Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
                 if (criminalTrait.IsWantedBy(_owner.owner)) {

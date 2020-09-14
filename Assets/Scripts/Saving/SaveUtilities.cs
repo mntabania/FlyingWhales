@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Newtonsoft.Json;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -110,4 +112,25 @@ public static class SaveUtilities {
         }
         return new SaveDataStructureRoom();
     }
+
+    #region Save File
+    public static string GetGameVersionOfSaveFile(string json) {
+        var reader = new JsonTextReader(new StringReader(json));
+        string currentProperty = string.Empty;
+        string saveFileVersion = string.Empty;
+        while (reader.Read()) {
+            if (reader.Value != null) {
+                if (reader.TokenType == JsonToken.PropertyName) {
+                    currentProperty = reader.Value.ToString();
+                }
+                if (currentProperty == "gameVersion") {
+                    if (reader.TokenType == JsonToken.String) {
+                        return reader.Value.ToString();
+                    }
+                }
+            }
+        }
+        return string.Empty;
+    }
+    #endregion
 }

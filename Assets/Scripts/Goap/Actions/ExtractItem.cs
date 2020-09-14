@@ -130,7 +130,8 @@ public class ExtractItem : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && (poiTarget.traitContainer.HasTrait("Wet", "Burning", "Frozen") || poiTarget is SnowMound);
+            //added checker for target gridTileLocation for the case that a character is carrying an object and it advertises this action. If we do not check for null an error at GetTargetStructure will occur.
+            return actor != poiTarget && poiTarget.gridTileLocation != null && (poiTarget.traitContainer.HasTrait("Wet", "Burning", "Frozen") || poiTarget is SnowMound);
         }
         return false;
     }

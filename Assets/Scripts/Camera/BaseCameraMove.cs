@@ -43,7 +43,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
 
 
     public Transform lastCenteredTarget { get; private set; }
-    private bool isMovementDisabled;
+    protected bool isMovementDisabled;
 
     public bool allowSmoothCameraFollow;
     public float smoothFollowSpeed;
