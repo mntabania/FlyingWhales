@@ -41,6 +41,7 @@ public class ExplorationParty : Party {
         base.OnWaitTimeOver();
         currentChance = 100;
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         ProcessExplorationOrDisbandment();
         for (int i = 0; i < members.Count; i++) {
             Character member = members[i];
@@ -66,6 +67,9 @@ public class ExplorationParty : Party {
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {
             Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         }
+        if (Messenger.eventTable.ContainsKey(Signals.STRUCTURE_DESTROYED)) {
+            Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
+        }
     }
     protected override void OnSetLeader() {
         base.OnSetLeader();
@@ -83,7 +87,7 @@ public class ExplorationParty : Party {
             DisbandParty();
         }
     }
-    private void ProcessSettingTargetStructure() {
+    public void ProcessSettingTargetStructure() {
         List<Region> adjacentRegions = regionRefForGettingNewStructure.AdjacentRegions();
         LocationStructure target = null;
         if (adjacentRegions != null) {
@@ -145,6 +149,12 @@ public class ExplorationParty : Party {
             }
         }
     }
+    private void OnStructureDestroyed(LocationStructure structure) {
+        if (targetStructure == structure) {
+            ProcessSettingTargetStructure();
+            alreadyExplored.Remove(structure);
+        }
+    }
     #endregion
 
     #region Loading
@@ -160,6 +170,10 @@ public class ExplorationParty : Party {
             }
             if (!string.IsNullOrEmpty(subData.regionRefForGettingNewStructure)) {
                 regionRefForGettingNewStructure = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionRefForGettingNewStructure);
+            }
+            if(isWaitTimeOver && !isDisbanded) {
+                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+                Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             }
         }
     }

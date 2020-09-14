@@ -122,6 +122,9 @@ public class MonsterInvadeParty : Party {
             if (!string.IsNullOrEmpty(subData.hexForJoining)) {
                 hexForJoining = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.hexForJoining);
             }
+            if (isWaitTimeOver && !isDisbanded) {
+                Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
+            }
         }
     }
     #endregion
