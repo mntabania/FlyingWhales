@@ -809,11 +809,37 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void UpdateOwners() {
         if (gridTileLocation.structure is Dwelling dwelling) {
-            //owners.Clear();
-            //owners.AddRange(dwelling.residents);
             //update character owner if object's current character owner is null or is not a resident of the dwelling that it is currently in.
-            if (dwelling.residents.Count > 0 && dwelling.residents.Contains(characterOwner) == false) {
-                SetCharacterOwner(CollectionUtilities.GetRandomElement(dwelling.residents));    
+            if (characterOwner != null && dwelling.residents.Count > 0 && dwelling.residents.Contains(characterOwner) == false) {
+                //Characters that are not part of major factions should not own items inside houses
+                //To avoid this we need to check if the resident is part of a major faction
+                //The easiest way to do this is to create a separate list containing residents of major factions and then randomize between them
+                //But this would mean that we will have to create a new list every time UpdateOwners is called
+                //This will probably consume memory and will result in memory fragmentation
+                //So I decided to create a randomization using loop
+                //This is not a perfect random, but I think it will do the trick
+                Character randomFinalResident = null;
+                Character chosenResident = null;
+                for (int i = 0; i < dwelling.residents.Count; i++) {
+                    Character resident = dwelling.residents[i];
+                    if(resident.faction != null && resident.faction.isMajorFaction) {
+                        if (GameUtilities.RollChance(50)) {
+                            chosenResident = resident;
+                            break;
+                        } else if (randomFinalResident == null) {
+                            randomFinalResident = resident;
+                        }
+                    }
+                }
+                if(chosenResident == null) {
+                    if(randomFinalResident != null) {
+                        SetCharacterOwner(randomFinalResident);
+                    } else {
+                        SetCharacterOwner(null);
+                    }
+                } else {
+                    SetCharacterOwner(chosenResident);
+                }
             }
         }    
         

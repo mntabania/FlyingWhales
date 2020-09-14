@@ -352,11 +352,13 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region) {
+    public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region, Faction faction) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
             if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.SETTLEMENT)
-                && settlement.HasAliveResident()) {
+                && settlement.HasAliveResident()
+                && (settlement.owner == null || faction == null || !faction.IsFriendlyWith(settlement.owner))
+                && (settlement.owner != faction || (settlement.owner == null && faction == null))) {
                 return settlement;
             }
         }

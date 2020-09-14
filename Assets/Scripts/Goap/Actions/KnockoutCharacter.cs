@@ -92,6 +92,21 @@ public class KnockoutCharacter : GoapAction {
         }
         return response;
     }
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(actor, target, node, status);
+        if (target is Character targetCharacter) {
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status, node);
+            if (targetCharacter.traitContainer.HasTrait("Hothead")) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, targetCharacter, actor, status, node);
+            }
+            if (node.associatedJobType != JOB_TYPE.APPREHEND || node.associatedJobType != JOB_TYPE.RESTRAIN) {
+                if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
+                    CrimeManager.Instance.ReactToCrime(targetCharacter, actor, target, target.factionOwner, node.crimeType, node, status);
+                }
+            }
+        }
+        return response;
+    }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }

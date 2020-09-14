@@ -453,6 +453,13 @@ public class Faction : IJobOwner, ISavable {
         FactionRelationship rel = GetRelationshipWith(faction);
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Hostile;
     }
+    public bool IsFriendlyWith(Faction faction) {
+        if (faction.id == this.id) {
+            return false;
+        }
+        FactionRelationship rel = GetRelationshipWith(faction);
+        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.Friendly;
+    }
     public override string ToString() {
         return name;
     }

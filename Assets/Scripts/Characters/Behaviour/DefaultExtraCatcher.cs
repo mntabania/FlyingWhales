@@ -23,53 +23,54 @@ public class DefaultExtraCatcher : CharacterBehaviourComponent {
             log += $"\n{character.name} has characters in vision and has not conversed in at least 10 minutes.";
             List<Character> validChoices =
                 character.marker.GetInVisionCharactersThatMeetCriteria((c) => HasCharacterNotConversedInMinutes(c, 10) && c.isNormalCharacter && !c.isDead);
-            if (validChoices != null) {
+            if (validChoices != null && validChoices.Count > 0) {
                 Character chosenTarget = CollectionUtilities.GetRandomElement(validChoices);
-                log += $"\n{character.name} has characters in vision that have not conversed in at least 10 minutes. Chosen target is {chosenTarget.name}. Rolling chat chance";
-                if (GameUtilities.RollChance(20, ref log)) {
-                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenTarget);
-                    return true;
-                }
-                else {
-                    log += $"\nChat roll failed.";
-                    if (character.moodComponent.moodState == MOOD_STATE.Normal && 
-                        RelationshipManager.IsSexuallyCompatible(character.sexuality, chosenTarget.sexuality, 
-                            character.gender, chosenTarget.gender) && 
-                        character.relationshipContainer.IsFamilyMember(chosenTarget) == false && character.isSociable) {
-                        log += "\nCharacter is in normal mood and is sexually compatible with target and target is not from same family tree and character is not Angry at Target";
-                        
-                        if (character.relationshipContainer.HasRelationshipWith(chosenTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                            || character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
-                            || character.traitContainer.HasTrait("Unfaithful")) {
-                            log += "\nCharacter does not have a lover or target is the lover or affair of character or character is unfaithful.";
-                            
-                            log += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
-                            int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, chosenTarget);
-                            int baseChance = 1;
-                            if (character.moodComponent.moodState == MOOD_STATE.Normal) {
-                                log += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
-                                baseChance += 2;
-                            }
+                if (character.nonActionEventsComponent.CanInteract(chosenTarget)) {
+                    log += $"\n{character.name} has characters in vision that have not conversed in at least 10 minutes. Chosen target is {chosenTarget.name}. Rolling chat chance";
+                    if (GameUtilities.RollChance(20, ref log)) {
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenTarget);
+                        return true;
+                    } else {
+                        log += $"\nChat roll failed.";
+                        if (character.moodComponent.moodState == MOOD_STATE.Normal &&
+                            RelationshipManager.IsSexuallyCompatible(character.sexuality, chosenTarget.sexuality,
+                                character.gender, chosenTarget.gender) &&
+                            character.relationshipContainer.IsFamilyMember(chosenTarget) == false && character.isSociable) {
+                            log += "\nCharacter is in normal mood and is sexually compatible with target and target is not from same family tree and character is not Angry at Target";
 
-                            int flirtChance;
-                            if (compatibility != -1) {
-                                //has compatibility value
-                                flirtChance = baseChance * compatibility;
-                                log += $"\n-Chance: {flirtChance.ToString()}";
-                            } else {
-                                //has NO compatibility value
-                                flirtChance = baseChance * 2;
-                                log += $"\n-Chance: {flirtChance.ToString()} (No Compatibility)";
-                            }
-                            
-                            if (GameUtilities.RollChance(flirtChance, ref log)) {
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, chosenTarget);
-                                return true;
+                            if (character.relationshipContainer.HasRelationshipWith(chosenTarget, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
+                                || character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
+                                || character.traitContainer.HasTrait("Unfaithful")) {
+                                log += "\nCharacter does not have a lover or target is the lover or affair of character or character is unfaithful.";
+
+                                log += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
+                                int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, chosenTarget);
+                                int baseChance = 1;
+                                if (character.moodComponent.moodState == MOOD_STATE.Normal) {
+                                    log += "\n-Flirt has +2% chance to trigger because character is in a normal mood";
+                                    baseChance += 2;
+                                }
+
+                                int flirtChance;
+                                if (compatibility != -1) {
+                                    //has compatibility value
+                                    flirtChance = baseChance * compatibility;
+                                    log += $"\n-Chance: {flirtChance.ToString()}";
+                                } else {
+                                    //has NO compatibility value
+                                    flirtChance = baseChance * 2;
+                                    log += $"\n-Chance: {flirtChance.ToString()} (No Compatibility)";
+                                }
+
+                                if (GameUtilities.RollChance(flirtChance, ref log)) {
+                                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, chosenTarget);
+                                    return true;
+                                } else {
+                                    log += "\n-Flirt did not trigger";
+                                }
                             } else {
                                 log += "\n-Flirt did not trigger";
                             }
-                        } else {
-                            log += "\n-Flirt did not trigger";
                         }
                     }
                 }

@@ -38,7 +38,7 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
                             x => !x.combatComponent.isInCombat && x.canPerform && x.canWitness && !x.isDead &&
                                  x != character
                         );
-                        if (chosenCharacter != null) {
+                        if (chosenCharacter != null && character.nonActionEventsComponent.CanInteract(chosenCharacter)) {
                             hasJob = character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, chosenCharacter);
                         }
                     } else if (roll >= 70 && roll < 85) {
