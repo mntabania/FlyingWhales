@@ -117,7 +117,6 @@ public static class SaveUtilities {
     public static string GetGameVersionOfSaveFile(string json) {
         var reader = new JsonTextReader(new StringReader(json));
         string currentProperty = string.Empty;
-        string saveFileVersion = string.Empty;
         while (reader.Read()) {
             if (reader.Value != null) {
                 if (reader.TokenType == JsonToken.PropertyName) {

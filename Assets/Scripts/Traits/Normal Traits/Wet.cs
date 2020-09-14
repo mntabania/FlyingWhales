@@ -81,8 +81,7 @@ namespace Traits {
                 _statusIcon = character.marker.AddStatusIcon(this.name);
             } else if (addedTo is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
-                        InnerMapManager.Instance.assetManager.shoreTile, 0.5f);
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, InnerMapManager.Instance.assetManager.shoreTile, 0.5f);
                 } else if (tileObject.tileObjectType != TILE_OBJECT_TYPE.WATER_WELL && _statusIcon == null && addedTo.mapObjectVisual != null){
                     //add water icon above object
                     _statusIcon = addedTo.mapObjectVisual.AddStatusIcon(this.name);
@@ -90,12 +89,11 @@ namespace Traits {
             }
         }
         private void UpdateVisualsOnRemove(ITraitable removedFrom) {
-            if (removedFrom is Character) {
+            if (removedFrom is Character character && character.marker != null) {
                 ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);
             } else if (removedFrom is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
-                        null);
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, null);
                 } else {
                     if (_statusIcon != null) {
                         ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);    

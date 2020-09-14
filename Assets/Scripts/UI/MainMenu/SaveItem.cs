@@ -19,10 +19,12 @@ public class SaveItem : MonoBehaviour {
         DateTime lastWriteTime = System.IO.File.GetLastWriteTime(path);
         timeStampLbl.text = lastWriteTime.ToString("yyyy-MM-dd HH:mm");
         saveNameLbl.text = Path.GetFileNameWithoutExtension(path);
-        json = File.ReadAllText(path);
     }
 
     public void OnClickItem() {
+        if (string.IsNullOrEmpty(json)) {
+            json = File.ReadAllText(path);
+        }
         string saveFileVersion = SaveUtilities.GetGameVersionOfSaveFile(json);
         if (saveFileVersion != Application.version) {
             //TODO: Make a system for incompatible saves?
