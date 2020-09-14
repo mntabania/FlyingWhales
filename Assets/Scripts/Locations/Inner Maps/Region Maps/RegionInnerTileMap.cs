@@ -195,7 +195,7 @@ namespace Inner_Maps {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region otherRegion = GridMap.Instance.allRegions[i];
                 if (otherRegion != region) {
-                    Vector3 directionToRegion = (otherRegion.coreTile.transform.position - region.coreTile.transform.position).normalized * 60f;
+                    Vector3 directionToRegion = (otherRegion.coreTile.transform.position - region.coreTile.transform.position).normalized * (height + width);
                     GameObject regionDirectionGO = Instantiate(regionDirectionPrefab, centerGo.transform, true);
                     regionDirectionGO.name = $"{otherRegion.name} direction";
                     regionDirectionGO.transform.localPosition = directionToRegion;
