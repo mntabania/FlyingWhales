@@ -808,7 +808,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void UpdateOwners() {
         if (gridTileLocation.structure is Dwelling dwelling) {
             //update character owner if object's current character owner is null or is not a resident of the dwelling that it is currently in.
-            if (characterOwner != null && dwelling.residents.Count > 0 && dwelling.residents.Contains(characterOwner) == false) {
+            if (dwelling.residents.Count > 0 && (characterOwner == null || (characterOwner != null && dwelling.residents.Contains(characterOwner) == false))) {
                 //Characters that are not part of major factions should not own items inside houses
                 //To avoid this we need to check if the resident is part of a major faction
                 //The easiest way to do this is to create a separate list containing residents of major factions and then randomize between them
