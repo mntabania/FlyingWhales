@@ -103,6 +103,7 @@ public class InnerMapCameraMove : BaseCameraMove {
         MoveCamera(tile.worldPosition);
     }
     private void Zooming() {
+        if (isMovementDisabled) { return; }
         if (!allowZoom) { return; }
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X)) {
             float axis = -0.1f;

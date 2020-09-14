@@ -1791,7 +1791,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void TryExpire() {
-        bool canExpire = !(character.numOfActionsBeingPerformedOnThis > 0);
+        bool canExpire = character.numOfActionsBeingPerformedOnThis <= 0;
         if (character.isBeingCarriedBy != null) {
             canExpire = false;
         }
