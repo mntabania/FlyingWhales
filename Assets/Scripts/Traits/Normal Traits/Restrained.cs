@@ -63,8 +63,8 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (sourceCharacter is Character character) {
-                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
-                character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
+                character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.FEED);
+                character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
                 // if(!(removedBy != null && removedBy.currentActionNode.action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER && removedBy.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
                 //     character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGE_PRISONER);
                 // }

@@ -90,7 +90,7 @@ namespace Ruinarch.Custom_UI {
         }
         private void OnQuestStepActivated(QuestStep questStep) {
             if (questStep is ToggleTurnedOnStep turnedOnStep) {
-                if (turnedOnStep.neededToggleName.Equals(name)) {
+                if (turnedOnStep.DoesToggleMatchIdentifier(this)) {
                     FireToggleShownSignal();
                 }
             }

@@ -76,7 +76,7 @@ namespace Tutorial {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
                     new ClickOnCharacterStep("Find a newly Infected character", IsCharacterValid).SetObjectsToCenter(_targetCharacter),
-                    new ToggleTurnedOnStep("CharacterInfo_Logs", "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
+                    new ToggleTurnedOnStep(new List<string>(){ "CharacterInfo_Logs", "MonsterInfo_Logs" }, "Click on Log tab", () => UIManager.Instance.GetCurrentlySelectedPOI() == _targetCharacter),
                     new LogHistoryItemClicked("Click on Infected source", IsClickedLogObjectValid)
                         .SetHoverOverAction(OnHoverInfectionLog)
                         .SetHoverOutAction(UIManager.Instance.HideSmallInfo)
