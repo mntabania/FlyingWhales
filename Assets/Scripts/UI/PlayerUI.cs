@@ -69,7 +69,6 @@ public class PlayerUI : BaseMonoBehaviour {
     [SerializeField] private Toggle villagerTab;
     public RectTransform deadHeader;
     private List<CharacterNameplateItem> villagerItems;
-    private int allFilteredCharactersCount;
     
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
@@ -182,6 +181,7 @@ public class PlayerUI : BaseMonoBehaviour {
         Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
         Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
         Messenger.AddListener<Character>(Signals.NEW_VILLAGER_ARRIVED, OnAddNewCharacter);
+        Messenger.AddListener<Character>(Signals.NECROMANCER_SPAWNED, OnNecromancerSpawned);
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
@@ -262,7 +262,7 @@ public class PlayerUI : BaseMonoBehaviour {
         //if (faction == FactionManager.Instance.neutralFaction) {
         //    TransferCharacterFromActiveToInactive(character);
         //} else 
-        if (faction.isPlayerFaction /*|| faction == FactionManager.Instance.friendlyNeutralFaction*/) {
+        if (faction.isPlayerFaction || faction == FactionManager.Instance.undeadFaction) {
             OnCharacterBecomesMinionOrSummon(character);
         } else {
             TransferCharacterFromInactiveToActive(character);
@@ -305,6 +305,9 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     private void CharacterBecomesNonMinionOrSummon(Character character) {
         OnCharacterBecomesNonMinionOrSummon(character);
+    }
+    private void OnNecromancerSpawned(Character character) {
+        OnCharacterBecomesNecromancer(character);
     }
     private void OnMenuOpened(InfoUIBase @base) {
         if (@base is CharacterInfoUI || @base is TileObjectInfoUI) {
@@ -596,7 +599,6 @@ public class PlayerUI : BaseMonoBehaviour {
         villagerTab.SetIsOnWithoutNotify(false);
     }
     private void LoadVillagerItems(int itemsToCreate) {
-        allFilteredCharactersCount = 0;
         villagerItems = new List<CharacterNameplateItem>();
         for (int i = 0; i < itemsToCreate; i++) {
             CreateNewVillagerItem();
@@ -626,7 +628,6 @@ public class PlayerUI : BaseMonoBehaviour {
             item.ClearAllOnClickActions();
             item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, true));
             item.gameObject.SetActive(true);
-            allFilteredCharactersCount++;
             if (!character.IsAble()) {
                 dead.Add(item);
             } else {
@@ -652,7 +653,6 @@ public class PlayerUI : BaseMonoBehaviour {
             //Do not show minions and summons
             return;
         }
-        allFilteredCharactersCount++;
         CharacterNameplateItem item = GetUnusedCharacterNameplateItem();
         if(item == null) {
             item = CreateNewVillagerItem();
@@ -708,19 +708,23 @@ public class PlayerUI : BaseMonoBehaviour {
         CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
         if (item != null) {
             item.gameObject.SetActive(false);
-            allFilteredCharactersCount--;
             //UpdateKillCount();
         } else {
             item = GetInactiveCharacterNameplateItem(character);
             if (item != null) {
                 item.gameObject.SetActive(false);
-                allFilteredCharactersCount--;
                 //UpdateKillCount();
             }
         }
     }
     private void OnCharacterBecomesNonMinionOrSummon(Character character) {
         // OnAddNewCharacter(character);
+    }
+    private void OnCharacterBecomesNecromancer(Character character) {
+        CharacterNameplateItem item = GetActiveCharacterNameplateItem(character);
+        if (item != null) {
+            item.gameObject.SetActive(false);
+        }
     }
     private CharacterNameplateItem GetUnusedCharacterNameplateItem() {
         int killCountCharacterItemsCount = villagerItems.Count;

@@ -1320,7 +1320,7 @@ public class CharacterManager : BaseMonoBehaviour {
             necromancerInTheWorld = character;
             if (necromancerInTheWorld != null) {
                 hasSpawnedNecromancerOnce = true;
-                Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, character);
+                Messenger.Broadcast(Signals.NECROMANCER_SPAWNED, necromancerInTheWorld);
             }
         }
         

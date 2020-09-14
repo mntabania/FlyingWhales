@@ -169,7 +169,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// </summary>
     public bool isNormalCharacter => (this is Summon) == false && minion == null && faction != FactionManager.Instance.undeadFaction;
     public bool isNormalAndNotAlliedWithPlayer => isNormalCharacter && !faction.isPlayerFaction && !isAlliedWithPlayer;
-    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || lycanData != null) && !faction.isPlayerFaction && !isAlliedWithPlayer;
+    public bool isNormalEvenLycanAndNotAlliedWithPlayer => (isNormalCharacter || lycanData != null) && necromancerTrait == null && !faction.isPlayerFaction && !isAlliedWithPlayer;
 
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;

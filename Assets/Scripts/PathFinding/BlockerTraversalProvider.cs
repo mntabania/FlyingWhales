@@ -23,7 +23,8 @@ public class BlockerTraversalProvider : ITraversalProvider {
     }
 
     public uint GetTraversalCost(Path path, GraphNode node) {
-        uint additionalPenalty = _marker.pathfindingAI.GetNodePenaltyForSettlements(path, (Vector3) node.position);
+        uint additionalPenalty = 0;
+        //uint additionalPenalty = _marker.pathfindingAI.GetNodePenaltyForSettlements(path, (Vector3) node.position);
 
         //if (!_marker.pathfindingAI.IsNodeWalkable((Vector3) node.position)) {
         //    additionalPenalty = 5000000;
