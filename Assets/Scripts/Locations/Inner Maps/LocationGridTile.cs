@@ -1531,7 +1531,7 @@ namespace Inner_Maps {
         #region Saving
         public void SetIsDefault(bool state) {
             isDefault = state;
-            Debug.Log($"{GameManager.Instance.TodayLogString()}Is Default state of {this} set to: {isDefault.ToString()}");
+            // Debug.Log($"{GameManager.Instance.TodayLogString()}Is Default state of {this} set to: {isDefault.ToString()}");
         }
         #endregion
 
