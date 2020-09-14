@@ -9,7 +9,7 @@ public class UndeadChaosOrb : PassiveSkill {
     }
     private void OnCharacterDied(Character character) {
         if (character.faction != null && character.faction.factionType.type == FACTION_TYPE.Undead && character.marker != null) {
-            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.worldPosition, Random.Range(2, 6), character.currentRegion.innerMap);
+            Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.worldPosition, 1, character.currentRegion.innerMap);
         }
     }
 }

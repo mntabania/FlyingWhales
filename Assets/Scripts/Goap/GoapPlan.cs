@@ -103,6 +103,24 @@ public class GoapPlan {
             return currentNode.multiNode[currentNode.currentNodeIndex];
         }
     }
+    public bool HasNodeWithAction(INTERACTION_TYPE actionType) {
+        if (allNodes != null) {
+            for (int i = 0; i < allNodes.Count; i++) {
+                JobNode jobNode = allNodes[i];
+                if (jobNode.singleNode != null && jobNode.singleNode.goapType == actionType) {
+                    return true;
+                } else if (jobNode.multiNode != null) {
+                    for (int j = 0; j < jobNode.multiNode.Length; j++) {
+                        ActualGoapNode currNode = jobNode.multiNode[i];
+                        if (currNode != null && currNode.goapType == actionType) {
+                            return true;
+                        }
+                    }
+                }
+            }    
+        }
+        return false;
+    }
     public void EndPlan() {
         isEnd = true;
         startingNode = null;

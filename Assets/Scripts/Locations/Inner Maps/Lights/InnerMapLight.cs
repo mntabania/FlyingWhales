@@ -41,6 +41,10 @@ public class InnerMapLight : MonoBehaviour{
         //only enable light if intensity is greater than X, because of alpha overlap option
         //alpha overlap option was toggled on to prevent additive brightness when lights overlap.
         // _light.blendStyleIndex = intensity >= randomOnValue ? 0 : 1;
-        _light.enabled = intensity >= randomOnValue;
+        if (_light.alphaBlendOnOverlap) {
+            _light.enabled = intensity >= randomOnValue;    
+        } else {
+            _light.enabled = true;
+        }
     }
 }
