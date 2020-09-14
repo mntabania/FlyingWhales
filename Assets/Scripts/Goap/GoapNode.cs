@@ -630,7 +630,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return;
         }
         //Separate calls for end effect if target is vigilang and the action is stealth because there are things that will be called in normal effect that does not apply to vigilant
-        if(isStealth && target.traitContainer.HasTrait("Vigilant")) {
+        if(isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false) {
             EndEffectVigilant();
         } else {
             EndEffectNormal(shouldDoAfterEffect);

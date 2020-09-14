@@ -835,7 +835,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         return false;
     }
-    public void ForceCancelAllJobsTargetingThisCharacter() {
+    public void ForceCancelAllJobsTargettingThisCharacter() {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
             if (job.ForceCancelJob()) {
@@ -843,7 +843,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE jobType) {
+    public void ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargetingThis.Count; i++) {
             JobQueueItem job = allJobsTargetingThis[i];
             if (job.jobType == jobType) {
@@ -977,7 +977,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return null;
     }
     private void CheckApprehendRelatedJobsOnLeaveLocation() {
-        ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.APPREHEND);
+        ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
         jobQueue.CancelAllJobs(JOB_TYPE.APPREHEND);
         //All apprehend jobs that are being done by this character must be unassigned
         //for (int i = 0; i < allGoapPlans.Count; i++) {
@@ -989,7 +989,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
     }
     public void CancelOrUnassignRemoveTraitRelatedJobs() {
-        ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.REMOVE_STATUS);
+        ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_STATUS);
         jobQueue.CancelAllJobs(JOB_TYPE.REMOVE_STATUS);
         //TODO:
         //All remove trait jobs that are being done by this character must be unassigned
@@ -3490,7 +3490,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if(homeStructure != null) {
             for (int i = 0; i < homeStructure.residents.Count; i++) {
                 Character resident = homeStructure.residents[i];
-                if(resident != this) {
+                if(resident != this && resident.faction != null && resident.faction.isMajorFaction) {
                     if (potentialOwners == null) { potentialOwners = new List<Character>(); }
                     potentialOwners.Add(resident);
                 }
@@ -3521,7 +3521,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (structure != null) {
             for (int i = 0; i < structure.residents.Count; i++) {
                 Character resident = structure.residents[i];
-                if (resident != this) {
+                if (resident != this && resident.faction != null && resident.faction.isMajorFaction) {
                     if (potentialOwners == null) { potentialOwners = new List<Character>(); }
                     potentialOwners.Add(resident);
                 }

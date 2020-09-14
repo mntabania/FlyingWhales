@@ -42,18 +42,7 @@ public class NonActionEventsComponent : CharacterComponent {
             || !disguisedActor.canWitness
             || !disguisedTarget.canWitness
             || disguisedActor is Summon
-            || disguisedTarget is Summon
-            //|| UtilityScripts.GameUtilities.IsRaceBeast(target.race)
-            //|| UtilityScripts.GameUtilities.IsRaceBeast(owner.race)
-            //|| target.faction.isPlayerFaction
-            //|| owner.faction.isPlayerFaction
-            //|| target.characterClass.className == "Zombie"
-            //|| owner.characterClass.className == "Zombie"
-            //|| (owner.currentActionNode != null && owner.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            //|| (target.currentActionNode != null && target.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
-            //|| owner.isChatting
-            //|| target.isChatting
-            ) {
+            || disguisedTarget is Summon) {
             return false;
         }
         return true;
