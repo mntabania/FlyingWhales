@@ -24,7 +24,7 @@ public class SaveItem : MonoBehaviour {
 
     public void OnClickItem() {
         string saveFileVersion = SaveUtilities.GetGameVersionOfSaveFile(json);
-        if (saveFileVersion == "0.33.10") {
+        if (saveFileVersion != Application.version) {
             //TODO: Make a system for incompatible saves?
             //no longer compatible
             if (MainMenuUI.Instance != null) {
