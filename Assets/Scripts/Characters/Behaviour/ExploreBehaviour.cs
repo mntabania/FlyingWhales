@@ -82,7 +82,11 @@ public class ExploreBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Character is not in target structure, go to it";
                 if (exploreParty.target is LocationStructure targetStructure) {
                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                    character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+                    if(targetTile != null) {
+                        character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+                    } else {
+                        throw new System.Exception("No passable tiles for exploring " + targetStructure.name + " of " + character.name);
+                    }
                 }
             }
         }

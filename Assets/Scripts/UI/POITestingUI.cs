@@ -141,7 +141,9 @@ public class POITestingUI : MonoBehaviour {
                     }
                 }
                 Rumor rumor = activeCharacter.rumorComponent.GenerateNewRandomRumor(targetCharacter, rumoredCharacter);
-                activeCharacter.jobComponent.CreateSpreadRumorJob(targetCharacter, rumor);
+                if (rumor != null) {
+                    activeCharacter.jobComponent.CreateSpreadRumorJob(targetCharacter, rumor);
+                }
             }
         } else {
             Debug.LogError($"{poi.name} is not a character!");
