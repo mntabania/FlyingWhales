@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
+[System.Obsolete("This is no longer advertised by anything.")]
 public class Accident : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
@@ -41,7 +42,7 @@ public class Accident : GoapAction {
     #region State Effects
     public void PreAccidentSuccess(ActualGoapNode goapNode) {
         GoapAction actionToDo = goapNode.otherData[0].obj as GoapAction;
-        goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
+        // goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     public void AfterAccidentSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured", gainedFromDoing: goapNode);

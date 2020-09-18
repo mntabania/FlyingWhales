@@ -44,7 +44,7 @@ public class BerserkOrb : Artifact {
         Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Berserk Orb", "inspect");
         log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
 
         if (GameUtilities.RollChance(30)) {
             gridTileLocation.structure.RemovePOI(this, inspector);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Logs;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -156,9 +157,10 @@ public class Evangelize : GoapAction {
     public void AfterEvangelizeSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         Assert.IsNotNull(targetCharacter, $"Target of Evangelize is not a character! Actor: {goapNode.actor.name}. Target: {goapNode.poiTarget?.name ?? "Null"}");
-        if (goapNode.descriptionLog.key == "evangelize success_description") {
+        //TODO: Use something else rather than the description log of the action, because this can easily be forgotten in case the log of this action changes.
+        if (goapNode.descriptionLog.logText.Contains("effective")) {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Cultist");
-        } else if (goapNode.descriptionLog.key == "crime") {
+        } else if (goapNode.descriptionLog.logText.Contains("accused")) {
             // CrimeManager.Instance.MakeCharacterACriminal(CRIME_TYPE.Demon_Worship, 
             //     CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode), 
             //     goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));

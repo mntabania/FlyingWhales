@@ -148,7 +148,6 @@ public class Steal : GoapAction {
     //    //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
     //    //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     //    //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget as SpecialToken, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //    //TODO: currentState.SetIntelReaction(State1Reactions);
     //}
     public void AfterStealSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject);

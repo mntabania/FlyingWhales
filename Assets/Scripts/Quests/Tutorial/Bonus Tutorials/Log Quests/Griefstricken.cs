@@ -37,19 +37,15 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
-            Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetCharacter && log.file.Equals("Griefstricken")) {
-                //check if target character still has any logs about griefstricken
-                if (poi.logComponent.GetLogsInCategory("Griefstricken").Count == 0) {
-                    //consider this quest as failed if all griefstricken logs of this character has been deleted.
-                    TutorialManager.Instance.FailTutorialQuest(this); 
-                }
+        private void OnLogRemoved(Log log) {
+            if (log.IsInvolved(_targetCharacter) && log.file.Equals("Griefstricken")) {
+                TutorialManager.Instance.FailTutorialQuest(this); 
             }
         }
         #endregion
@@ -72,9 +68,8 @@ namespace Tutorial {
         private bool IsCharacterValid(Character character) {
             return character == _targetCharacter;
         }
-        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
-            if (owner == _targetCharacter && obj is Character clickedCharacter && clickedCharacter != _targetCharacter
-                && log.file.Equals("Griefstricken") && log.key.Equals("gain")) {
+        private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
+            if (owner == _targetCharacter && obj is Character clickedCharacter && clickedCharacter != _targetCharacter && log.Contains("has become Griefstricken")) {
                 return true;
             }
             return false;

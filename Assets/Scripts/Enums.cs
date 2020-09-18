@@ -1022,11 +1022,11 @@ public enum OBJECT_TYPE {
     Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21
 }
-
 public enum PASSIVE_SKILL {
-    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb,
-    Auto_Absorb_Chaos_Orb,
-    Passive_Mana_Regen
+    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
+}
+public enum LOG_TAG {
+    Life_Changes, Social, Needs, Work, Combat_Tag, Crimes, Witnessed, Informed, Party, Misc, Assumption
 }
 
 

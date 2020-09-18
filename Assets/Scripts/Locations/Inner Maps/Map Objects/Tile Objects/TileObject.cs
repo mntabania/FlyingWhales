@@ -9,6 +9,7 @@ using UnityEngine.Assertions;
 using UtilityScripts;
 using UnityEngine.EventSystems;
 using Locations.Settlements;
+using Logs;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -139,7 +140,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// </summary>
     /// <param name="data">Saved data</param>
     public virtual void LoadSecondWave(SaveDataTileObject data) {
-        logComponent.LoadReferences(data.logComponent);
+        // logComponent.LoadReferences(data.logComponent);
         for (int i = 0; i < data.jobsTargetingThis.Count; i++) {
             string jobID = data.jobsTargetingThis[i];
             if (!string.IsNullOrEmpty(jobID)) {

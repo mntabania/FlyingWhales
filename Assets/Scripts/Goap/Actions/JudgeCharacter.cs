@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -183,10 +184,10 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     private void CreateJudgeLog(ActualGoapNode goapNode, string result) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode);
-        if (goapNode != null) {
-            log.SetLogType(LOG_TYPE.Action);
-        }
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, LOG_TAG.Crimes, LOG_TAG.Life_Changes);
+        // if (goapNode != null) {
+        //     log.SetLogType(LOG_TYPE.Action);
+        // }
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(null, result, LOG_IDENTIFIER.STRING_1);

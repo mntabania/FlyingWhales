@@ -38,21 +38,12 @@ namespace Traits {
                 //CheckToApplyRestrainJob();
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
-                if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
-                    character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
-                } 
-                //else {
-                    //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
-                    //addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    //addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-
-
-                    //if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
-                    //    gainedFromDoing.states["Target Knocked Out"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
-                    //} else if (gainedFromDoing.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
-                    //    gainedFromDoing.states["Knockout Success"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
-                    //}
-                //}
+                if (gainedFromDoing == null) {
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
+                    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddLogToDatabase();
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -62,7 +53,10 @@ namespace Traits {
                 }
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.RemoveTraitNeededToBeRemoved(this);
-                character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait");
+                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToDatabase();
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

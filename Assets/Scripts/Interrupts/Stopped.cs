@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -34,7 +35,7 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (actor == target) {
-                return null; //do not create log if actor was stopped by itself.
+                return default; //do not create log if actor was stopped by itself.
             }
             return base.CreateEffectLog(actor, target);
         }

@@ -68,12 +68,12 @@ public class Excalibur : TileObject {
                 inspector.traitContainer.HasTrait("Evil", "Treacherous") == false) {
                 Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_success");
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
                 UnlockSword(inspector);
             } else {
                 Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_fail");
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
             }
         }
     }

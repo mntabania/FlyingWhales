@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class LogItem : MonoBehaviour{
 
-    protected Log _log;
-
-    #region getters/setters
-    public Log log {
-        get { return _log; }
-    }
-    #endregion
-
-    public virtual void SetLog(Log log) {
-        _log = log;
-    }
+    // protected Log _log;
+    //
+    // #region getters/setters
+    // public Log log {
+    //     get { return _log; }
+    // }
+    // #endregion
+    //
+    // public virtual void SetLog(Log log) {
+    //     _log = log;
+    // }
 }

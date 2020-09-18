@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -26,7 +27,7 @@ namespace Interrupts {
                 effectLog.AddToFillers(null, adjective, LOG_IDENTIFIER.STRING_1);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         #endregion
     }

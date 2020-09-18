@@ -14,15 +14,12 @@ public class LogHistoryItem : LogItem {
     [SerializeField] private EnvelopContentUnityUI envelopContent;
     [SerializeField] private EventLabel eventLabel;
     private UIHoverPosition _hoverPosition;
-
-    //private bool _isInspected;
-
-    public override void SetLog(Log log) {
-        base.SetLog(log);
-        this.name = log.id.ToString();
-        dateLbl.text = log.date.ConvertToContinuousDaysWithTime();
-        this.logLbl.text = _log.fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(_log) 
-            : LocalizationManager.Instance.GetLocalizedValue(_log.category, _log.file, _log.key);
+    
+    public void SetLog(in Log log) {
+        name = log.persistentID;
+        dateLbl.text = log.gameDate.ConvertToContinuousDaysWithTime();
+        logLbl.text = log.logText;
+        // log.fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(log) : LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
         eventLabel.SetOnClickAction(OnClickObjectInLog);
         EnvelopContentExecute();
     }
@@ -36,29 +33,17 @@ public class LogHistoryItem : LogItem {
     private void OnClickObjectInLog(object obj) {
         IPointOfInterest pointOfInterest = UIManager.Instance.GetCurrentlySelectedPOI();
         if (pointOfInterest != null) {
-            Messenger.Broadcast(Signals.LOG_HISTORY_OBJECT_CLICKED, obj, log, pointOfInterest);    
+            Messenger.Broadcast(Signals.LOG_HISTORY_OBJECT_CLICKED, obj, logLbl.text, pointOfInterest);    
         }
         UIManager.Instance.OpenObjectUI(obj);
     }
-    
-    
-    public void SetLogColor(Color color) {
-        //logBG.color = color;
-    }
-
     public void OnHoverOverLog(object obj) {
-        if (obj is string indexText) {
-            int index = Int32.Parse(indexText);
-            if (index >= 0 && index < log.fillers.Count) {
-                LogFiller logFiller = log.fillers[index];
-                if (logFiller.obj is Character character && _hoverPosition != null) {
-                    Character characterToShow = character;
-                    if(character.lycanData != null) {
-                        characterToShow = character.lycanData.activeForm;
-                    }
-                    UIManager.Instance.ShowCharacterNameplateTooltip(characterToShow, _hoverPosition);
-                }    
+        if (obj is Character character && _hoverPosition != null) {
+            Character characterToShow = character;
+            if(character.lycanData != null) {
+                characterToShow = character.lycanData.activeForm;
             }
+            UIManager.Instance.ShowCharacterNameplateTooltip(characterToShow, _hoverPosition);
         }
     }
     public void OnHoverOutLog() {

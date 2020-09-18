@@ -237,7 +237,7 @@ namespace Traits {
 
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn");
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
             }
         }
 

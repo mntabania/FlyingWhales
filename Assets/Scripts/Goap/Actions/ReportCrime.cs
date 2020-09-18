@@ -5,6 +5,7 @@ using Traits;
 using Interrupts;
 using UnityEngine.Assertions;
 using Crime_System;
+using Logs;
 
 public class ReportCrime : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -27,8 +28,8 @@ public class ReportCrime : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         OtherData[] otherData = node.otherData;
@@ -117,7 +118,7 @@ public class ReportCrime : GoapAction {
             log.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.CHARACTER_3);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
             return;
         }
 
@@ -200,7 +201,7 @@ public class ReportCrime : GoapAction {
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);
-                believeLog.AddLogToInvolvedObjects();
+                believeLog.AddLogToDatabase();
             }
         }
     }

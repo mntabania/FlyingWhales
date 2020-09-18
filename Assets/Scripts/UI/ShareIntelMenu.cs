@@ -44,7 +44,7 @@ public class ShareIntelMenu : PopupMenuBase {
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, UtilityScripts.Utilities.LogReplacer(intelToShare.log), DialogItem.Position.Right);
+        actorItem.SetData(actor, intelToShare.log.logText, DialogItem.Position.Right);
 
         DirectlyShowIntelReaction(intelToShare);
     }

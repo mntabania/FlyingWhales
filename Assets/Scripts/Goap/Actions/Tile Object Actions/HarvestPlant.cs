@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Logs;
 using UnityEngine;  
 using Traits;
 using UtilityScripts;
@@ -36,8 +37,8 @@ public class HarvestPlant : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         log.AddToFillers(null, GetTargetString(node.poiTarget), LOG_IDENTIFIER.STRING_2);
     }
     #endregion

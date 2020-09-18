@@ -10,6 +10,7 @@ public class Initializer : MonoBehaviour {
     public IEnumerator InitializeDataBeforeWorldCreation() {
         LocalizationManager.Instance.Initialize();
         GameManager.Instance.Initialize();
+        SaveManager.Instance.PrepareTempDirectory();
         DatabaseManager.Instance.Initialize();
         yield return null;
         CharacterManager.Instance.Initialize();

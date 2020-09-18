@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
-
+using Logs;
 namespace Interrupts {
     public class SetHome : Interrupt {
         public SetHome() : base(INTERRUPT.Set_Home) {
@@ -39,7 +39,7 @@ namespace Interrupts {
             return true;
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
-            Log log = null;
+            Log log = default;
             if (actor.homeStructure != null) {
                 log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

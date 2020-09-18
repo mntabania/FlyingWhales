@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using Traits;
 
 public class GoapAction {
@@ -112,7 +113,7 @@ public class GoapAction {
     protected virtual int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 0;
     }
-    public virtual void AddFillersToLog(Log log, ActualGoapNode node) {
+    public virtual void AddFillersToLog(ref Log log, ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;
@@ -123,9 +124,10 @@ public class GoapAction {
         }
         if (targetStructure != null) {
             log.AddToFillers(targetStructure, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        } else {
-            log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         }
+        // else {
+        //     log.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+        // }
     }
     public virtual bool IsInvalidOnVision(ActualGoapNode node) {
         Character actor = node.actor;
@@ -312,22 +314,18 @@ public class GoapAction {
         return 1; //Math.Max(basePreconditions.Count * 2, 1);
     }
     public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node) {
-        Log log = null;
         string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
         if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
-            log = new Log(GameManager.Instance.Today(), "GoapAction", name, invalidKey);
-            AddFillersToLog(log, node);
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", name, invalidKey);
+            AddFillersToLog(ref log, node);
+            log.AddLogToDatabase();
         } else {
-            log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
+            log.AddLogToDatabase();
         }
-        //log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
-        // PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
     }
     #endregion
 

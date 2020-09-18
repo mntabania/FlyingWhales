@@ -46,7 +46,7 @@ public class FactionInfoUI : InfoUIBase {
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
     [SerializeField] private UIHoverPosition logHoverPosition;
-    private LogHistoryItem[] logHistoryItems;
+    private List<LogHistoryItem> logHistoryItems;
     
     internal Faction currentlyShowingFaction => _data as Faction;
     private Faction activeFaction { get; set; }
@@ -64,9 +64,10 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
         Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
-        Messenger.AddListener<Faction>(Signals.FACTION_LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
-        InitializeLogsMenu();
+        logHistoryItems = new List<LogHistoryItem>();
     }
     public override void OpenMenu() {
         Faction previousArea = activeFaction;
@@ -352,33 +353,33 @@ public class FactionInfoUI : InfoUIBase {
     #endregion
     
     #region History
-    private void InitializeLogsMenu() {
-        logHistoryItems = new LogHistoryItem[Faction.MAX_HISTORY_LOGS];
-        for (int i = 0; i < Faction.MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-            newLogItem.transform.localScale = Vector3.one;
-            newLogItem.SetActive(true);
-        }
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            logHistoryItems[i].gameObject.SetActive(false);
-        }
-    }
-    private void UpdateHistory(Faction faction) {
-        if (isShowing && faction == activeFaction) {
+    private void UpdateHistory(Log log) {
+        if (isShowing && log.IsInvolved(activeFaction)) {
             UpdateAllHistoryInfo();
         }
     }
+    private LogHistoryItem CreateNewLogHistoryItem() {
+        GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
+        newLogItem.transform.localScale = Vector3.one;
+        newLogItem.SetActive(true);
+        LogHistoryItem logHistoryItem = newLogItem.GetComponent<LogHistoryItem>();
+        logHistoryItems.Add(logHistoryItem);
+        return logHistoryItem;
+    }
     public void UpdateAllHistoryInfo() {
-        int historyCount = activeFaction.history.Count;
+        List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsMentioning(activeFaction.persistentID);
+        int historyCount = logs.Count;
         int historyLastIndex = historyCount - 1;
-        for (int i = 0; i < logHistoryItems.Length; i++) {
+        int missingItems = historyCount - logHistoryItems.Count;
+        for (int i = 0; i < missingItems; i++) {
+            CreateNewLogHistoryItem();
+        }
+        for (int i = 0; i < logHistoryItems.Count; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             if(i < historyCount) {
-                Log currLog = activeFaction.history[historyLastIndex - i];
+                Log currLog = logs[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
-                currItem.SetHoverPosition(logHoverPosition);
             } else {
                 currItem.gameObject.SetActive(false);
             }

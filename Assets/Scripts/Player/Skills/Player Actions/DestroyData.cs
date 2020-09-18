@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Logs;
 
 public class DestroyData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.DESTROY;
@@ -21,7 +22,7 @@ public class DestroyData : PlayerAction {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
         GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Destroy_Explosion);

@@ -344,7 +344,7 @@ public class NonActionEventsComponent : CharacterComponent {
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
 
-        Log log = null;
+        Log log;
         if (reason != string.Empty) {
             log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason");
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);

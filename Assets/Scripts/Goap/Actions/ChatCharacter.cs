@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
+[System.Obsolete("Use Chat Interrupt instead")]
 public class ChatCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -243,12 +244,12 @@ public class ChatCharacter : GoapAction {
 
     private void CreateChatLog(ActualGoapNode goapNode, string logKey) {
         Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode);
-        if (goapNode != null) {
-            log.SetLogType(LOG_TYPE.Action);
-        }
+        // if (goapNode != null) {
+        //     log.SetLogType(LOG_TYPE.Action);
+        // }
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        goapNode.OverrideDescriptionLog(log);
+        // goapNode.OverrideDescriptionLog(log);
     }
 
     //    #region Intel Reactions

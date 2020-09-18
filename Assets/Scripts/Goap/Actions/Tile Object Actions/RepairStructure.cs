@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -41,8 +42,8 @@ public class RepairStructure : GoapAction {
         }
         return p;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         log.AddToFillers(node.poiTarget.gridTileLocation.structure, node.poiTarget.gridTileLocation.structure.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public override void Perform(ActualGoapNode goapNode) {

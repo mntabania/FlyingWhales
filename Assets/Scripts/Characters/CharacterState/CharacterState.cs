@@ -281,7 +281,7 @@ public class CharacterState {
             //if(targetNpcSettlement != null) {
             //    log.AddToFillers(targetNpcSettlement, targetNpcSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
             //}
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
 
             // PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
         }

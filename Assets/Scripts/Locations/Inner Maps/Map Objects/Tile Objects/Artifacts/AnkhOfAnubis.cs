@@ -59,7 +59,7 @@ public class AnkhOfAnubis : Artifact {
                 Log log = new Log(GameManager.Instance.Today(), "Artifact", "Ankh Of Anubis", "spawn_vengeful_ghost");
                 log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, characterThatDied.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
                 if(gridTileLocation != null) {
                     PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation.structure.location, log);
                 }

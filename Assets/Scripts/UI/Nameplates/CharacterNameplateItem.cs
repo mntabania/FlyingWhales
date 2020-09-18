@@ -123,7 +123,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     #region Sub Text
     private void UpdateText() {
         mainLbl.text = character.visuals.GetNameplateName();
-        supportingLbl.text = character.visuals.GetThoughtBubble(out _);
+        supportingLbl.text = character.visuals.GetThoughtBubble();
         SetSupportingLabelState(true);
     }
     #endregion

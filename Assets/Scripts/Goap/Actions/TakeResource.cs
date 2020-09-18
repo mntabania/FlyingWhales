@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using Logs;
 
 public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
@@ -90,8 +91,8 @@ public class TakeResource : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         ResourcePile resourcePile = node.poiTarget as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }

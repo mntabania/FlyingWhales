@@ -4,11 +4,12 @@ using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Logs;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyTarget, ISavable {
+    public abstract class BaseSettlement : IPartyTarget, ISavable, ILogFiller {
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }

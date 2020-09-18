@@ -24,7 +24,7 @@ public abstract class Nymph : Summon {
         ScheduleAOEEffect(Random.Range(20, 40));
     }
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
-        Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
+        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         base.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers, interrupt);
         CancelAOEEffect();
     }

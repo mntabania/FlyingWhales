@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class RecallAttack : Interrupt {
         public RecallAttack() : base(INTERRUPT.Recall_Attack) {

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -30,12 +31,11 @@ public class AssumptionComponent : CharacterComponent {
             }
         }
 
-        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction);
-        assumptionLog.SetLogType(LOG_TYPE.Assumption);
+        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction, LOG_TAG.Assumption);
         assumptionLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
-        assumptionLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(newAssumption.informationLog), LOG_IDENTIFIER.APPEND);
+        assumptionLog.AddToFillers(null, newAssumption.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
         assumptionLog.AddToFillers(newAssumption.informationLog.fillers);
-        assumptionLog.AddLogToInvolvedObjects();
+        assumptionLog.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFrom(owner, assumptionLog);
         //owner.logComponent.AddHistory(assumptionLog);
 

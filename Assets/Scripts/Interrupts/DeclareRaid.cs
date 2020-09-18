@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class DeclareRaid : Interrupt {
         public DeclareRaid() : base(INTERRUPT.Declare_Raid) {
@@ -24,7 +24,7 @@ namespace Interrupts {
                 effectLog.AddToFillers(actor.interruptComponent.raidTargetSettlement, actor.interruptComponent.raidTargetSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         #endregion
     }

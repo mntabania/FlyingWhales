@@ -37,7 +37,7 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
                             Log historyLog = new Log(GameManager.Instance.Today(), "Trait", "Subterranean", "burrow");
                             historyLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             historyLog.AddToFillers(chosenCave, chosenCave.GetNameRelativeTo(character), LOG_IDENTIFIER.LANDMARK_1);
-                            historyLog.AddLogToInvolvedObjects();
+                            historyLog.AddLogToDatabase();
                             return true;
                         } else {
                             log += $"\n-No passable tile in cave, will stay";

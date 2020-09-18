@@ -26,10 +26,6 @@ namespace Traits {
                     character.needsComponent.PlanTirednessRecoveryActions(character);
                 }
             }
-            if (!character.canPerform) {
-                //when a character gains a negative disabler trait, drop all location jobs that this character is assigned to
-                //TODO: //character.jobQueue.UnassignAllJobsTakenBy(character);
-            }
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
             Messenger.Broadcast(Signals.CHARACTER_TRAIT_ADDED, character, trait);
         }

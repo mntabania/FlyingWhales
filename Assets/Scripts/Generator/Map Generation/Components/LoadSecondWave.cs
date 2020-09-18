@@ -51,7 +51,7 @@ public class LoadSecondWave : MapGenerationComponent {
 
         yield return MapGenerator.Instance.StartCoroutine(LoadActionReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadLogReferences(saveData));
+        // yield return MapGenerator.Instance.StartCoroutine(LoadLogReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadPartyReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadCrimeReferences(saveData));
         
@@ -267,11 +267,11 @@ public class LoadSecondWave : MapGenerationComponent {
         saveData.LoadInterruptReferences();
         yield return null;
     }
-    private IEnumerator LoadLogReferences(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Log Data...");
-        saveData.LoadLogReferences();
-        yield return null;
-    }
+    // private IEnumerator LoadLogReferences(SaveDataCurrentProgress saveData) {
+    //     LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Log Data...");
+    //     saveData.LoadLogReferences();
+    //     yield return null;
+    // }
     private IEnumerator LoadPartyReferences(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Party Data...");
         saveData.LoadPartyReferences();

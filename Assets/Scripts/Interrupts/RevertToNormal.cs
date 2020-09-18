@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Crime_System;
-
+using Logs;
 namespace Interrupts {
     public class RevertToNormal : Interrupt {
         public RevertToNormal() : base(INTERRUPT.Revert_To_Normal) {

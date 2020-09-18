@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
+using Logs;
 
-public class ActionIntel : IIntel {
+public class ActionIntel : IIntel, IDisposable {
     public ActualGoapNode node { get; private set; }
 
     #region getters
@@ -15,12 +17,31 @@ public class ActionIntel : IIntel {
 
     public ActionIntel(ActualGoapNode node) {
         this.node = node;
+        DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
     }
     public ActionIntel(SaveDataActionIntel data) {
         node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(data.node);
     }
+    public void OnIntelRemoved() {
+        //set is intel in database to false, so that it can be overwritten.
+        DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, false);
+    }
+
+    #region Clean Up
+    ~ActionIntel() {
+        ReleaseUnmanagedResources();
+    }
+    private void ReleaseUnmanagedResources() {
+        //release unmanaged resources here
+        node = null;
+    }
+    public void Dispose() {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+    #endregion
 }
-public class InterruptIntel : IIntel {
+public class InterruptIntel : IIntel, IDisposable {
     //public Interrupt interrupt { get; private set; }
     //public Character actor { get; private set; }
     //public IPointOfInterest target { get; private set; }
@@ -42,10 +63,30 @@ public class InterruptIntel : IIntel {
         //This is set because the interrupt intel must copy the data of the interrupt
         interruptHolder.SetDisguisedActor(interrupt.disguisedActor);
         interruptHolder.SetDisguisedTarget(interrupt.disguisedTarget);
+        
+        DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, true);
     }
     public InterruptIntel(SaveDataInterruptIntel data) {
         interruptHolder = DatabaseManager.Instance.interruptDatabase.GetInterruptByPersistentID(data.interruptHolder);
     }
+    public void OnIntelRemoved() {
+        //set is intel in database to false, so that it can be overwritten.
+        DatabaseManager.Instance.mainSQLDatabase.SetLogIntelState(log.persistentID, false);
+    }
+    
+    #region Clean Up
+    ~InterruptIntel() {
+        ReleaseUnmanagedResources();
+    }
+    private void ReleaseUnmanagedResources() {
+        //release unmanaged resources here
+        interruptHolder = null;
+    }
+    public void Dispose() {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+    #endregion
 }
 
 public interface IIntel {
@@ -53,6 +94,11 @@ public interface IIntel {
     Log log { get; }
     Character actor { get; }
     IPointOfInterest target { get; }
+
+    /// <summary>
+    /// Called whenever this intel is used up by the player or the notification it belongs to expires.
+    /// </summary>
+    void OnIntelRemoved();
 }
 
 [System.Serializable]

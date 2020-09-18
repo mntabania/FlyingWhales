@@ -33,7 +33,7 @@ namespace Traits {
                     
                     Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider");
                     growUpLog.AddToFillers(adult, adult.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    growUpLog.AddLogToInvolvedObjects();
+                    growUpLog.AddLogToDatabase();
                     
                     for (int i = 0; i < summon.territories.Count; i++) {
                         adult.AddTerritory(summon.territories[i]);

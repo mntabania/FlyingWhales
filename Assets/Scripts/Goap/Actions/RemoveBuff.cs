@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Logs;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
@@ -28,8 +29,8 @@ public class RemoveBuff : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         OtherData[] otherData = node.otherData;
         if(otherData != null && otherData.Length == 1 && otherData[0] is StringOtherData stringOtherData) {
             log.AddToFillers(null, stringOtherData.str, LOG_IDENTIFIER.STRING_1);

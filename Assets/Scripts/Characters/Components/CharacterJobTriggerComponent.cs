@@ -1480,7 +1480,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine");
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        owner.logComponent.AddHistory(log);
+        log.AddLogToDatabase();
+        // owner.logComponent.AddHistory(log);
         return true;
     }
     private bool CreatePlaceTrapPOIJob(IPointOfInterest target, JOB_TYPE jobType = JOB_TYPE.PLACE_TRAP) {
@@ -1724,7 +1725,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-            addLog.AddLogToInvolvedObjects();
+            addLog.AddLogToDatabase();
             owner.crimeComponent.AddReportedCrime(crimeData);
         }
         return false;

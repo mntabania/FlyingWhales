@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class SetLair : Interrupt {
         public SetLair() : base(INTERRUPT.Set_Lair) {

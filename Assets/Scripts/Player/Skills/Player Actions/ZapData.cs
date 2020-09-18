@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using Traits;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ public class ZapData : PlayerAction {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }

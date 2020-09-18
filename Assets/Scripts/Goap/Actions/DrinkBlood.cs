@@ -234,12 +234,12 @@ public class DrinkBlood : GoapAction {
             Vampiric vampiric = TraitManager.Instance.CreateNewInstancedTraitClass<Vampiric>("Vampiric");
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, vampiric, goapNode.actor);
             Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode);
-            if(goapNode != null) {
-                log.SetLogType(LOG_TYPE.Action);
-            }
+            // if(goapNode != null) {
+            //     log.SetLogType(LOG_TYPE.Action);
+            // }
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(goapNode.actor, log);
         }
 

@@ -43,7 +43,7 @@ namespace Traits {
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(null, description, LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToInvolvedObjects();
+                    log.AddLogToDatabase();
                 }
             }
             base.OnAddTrait(sourcePOI);

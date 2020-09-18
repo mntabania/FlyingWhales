@@ -47,7 +47,8 @@ public class MainMenuUI : MonoBehaviour {
         newGameButton.interactable = true;
         steamName.text = $"Logged in as: <b>{SteamworksManager.Instance.GetSteamName()}</b>";
         version.text = $"Version: {Application.version}";
-        SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(string.Empty); //Set current save data to null everytime this is loaded, this is so that the previous save file is not loaded if new game was clicked
+        //Set current save data to null everytime this is loaded, this is so that the previous save file is not loaded if new game was clicked
+        SaveManager.Instance.saveCurrentProgressManager.SetCurrentSaveDataPath(string.Empty); 
         UpdateButtonStates();
         Messenger.AddListener<string>(Signals.SAVE_FILE_DELETED, OnSaveFileDeleted);
     }

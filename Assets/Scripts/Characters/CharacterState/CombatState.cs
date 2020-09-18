@@ -666,7 +666,7 @@ public class CombatState : CharacterState {
     }
     private void CreateNewCombatTargetLog() {
         CombatData combatData = stateComponent.owner.combatComponent.GetCombatData(currentClosestHostile);
-        Log log = null;
+        Log log;
         string key = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
         if (key != string.Empty && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
             log = new Log(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target_with_reason");

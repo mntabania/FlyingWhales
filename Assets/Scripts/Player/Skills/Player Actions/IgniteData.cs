@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -24,6 +25,7 @@ public class IgniteData : PlayerAction {
         burning.SetSourceOfBurning(bs, targetPOI);
         targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class OrderAttack : Interrupt {
         public OrderAttack() : base(INTERRUPT.Order_Attack) {
@@ -30,7 +30,7 @@ namespace Interrupts {
                 effectLog.AddToFillers(actor.necromancerTrait.attackVillageTarget, actor.necromancerTrait.attackVillageTarget.name, LOG_IDENTIFIER.LANDMARK_1);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         #endregion
     }

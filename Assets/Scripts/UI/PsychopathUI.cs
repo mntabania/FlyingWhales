@@ -179,7 +179,7 @@ public class PsychopathUI : PopupMenuBase {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         // PlayerManager.Instance.player.ShowNotificationFrom(log);
         if(victimType1 == SERIAL_VICTIM_TYPE.None) {
             victimDescription1 = string.Empty;

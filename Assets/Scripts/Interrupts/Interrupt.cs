@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Interrupts;
-
+using Logs;
 namespace Interrupts {
     public class Interrupt {
         public INTERRUPT type { get; protected set; }
@@ -28,8 +28,7 @@ namespace Interrupts {
 
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) { return false; }
-        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, 
-            ActualGoapNode goapNode = null) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) { return false; }
 
         public virtual string ReactionToActor(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
@@ -41,7 +40,7 @@ namespace Interrupts {
                 effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, key)) {
@@ -50,7 +49,7 @@ namespace Interrupts {
                 effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         public virtual void AddAdditionalFillersToThoughtLog(Log log, Character actor){ }
         public virtual CRIME_TYPE GetCrimeType(Character actor, IPointOfInterest target, InterruptHolder crime) {
@@ -186,7 +185,7 @@ namespace Interrupts {
             target = null;
             disguisedActor = null;
             disguisedTarget = null;
-            effectLog = null;
+            effectLog = default;
             rumor = null;
             identifier = string.Empty;
             crimeType = CRIME_TYPE.Unset;
@@ -219,9 +218,9 @@ namespace Interrupts {
                 disguisedTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedTargetID);
             }
 
-            effectLog = null;
-            if (!string.IsNullOrEmpty(data.effectLogID)) {
-                effectLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.effectLogID);
+            effectLog = default;
+            if (data.effectLog.hasValue) {
+                effectLog = data.effectLog;
             }
 
             if (data.awareCharacterIDs != null) {
@@ -252,7 +251,7 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
     public POINT_OF_INTEREST_TYPE targetPOIType;
     public string disguisedActorID;
     public string disguisedTargetID;
-    public string effectLogID;
+    public Log effectLog;
     public string identifier;
     public SaveDataRumor rumor;
     public bool hasRumor;
@@ -286,11 +285,14 @@ public class SaveDataInterruptHolder : SaveData<InterruptHolder>, ISavableCounte
             disguisedTargetID = data.disguisedTarget.persistentID;
         }
 
-        effectLogID = string.Empty;
-        if (data.effectLog != null) {
-            effectLogID = data.effectLog.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.effectLog);
+        effectLog = default;
+        if (data.effectLog.hasValue) {
+            effectLog = data.effectLog;
         }
+        // if (data.effectLog != null) {
+        //     effectLog = data.effectLog.persistentID;
+        //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.effectLog);
+        // }
 
         if (data.rumor != null) {
             hasRumor = true;

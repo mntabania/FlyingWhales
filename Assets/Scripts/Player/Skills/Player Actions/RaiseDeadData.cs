@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 public class RaiseDeadData : PlayerAction {
@@ -23,7 +24,7 @@ public class RaiseDeadData : PlayerAction {
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.CloseMenu();

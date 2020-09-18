@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -120,8 +121,8 @@ public class DepositResourcePile : GoapAction {
         //}
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(log, goapNode);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(ref log, goapNode);
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
     }

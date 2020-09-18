@@ -84,7 +84,7 @@ public class CrimeManager : BaseMonoBehaviour {
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
             //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
-            addLog.AddLogToInvolvedObjects();
+            addLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(criminal, addLog);
         }
 
@@ -148,7 +148,7 @@ public class CrimeManager : BaseMonoBehaviour {
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-            addLog.AddLogToInvolvedObjects();
+            addLog.AddLogToDatabase();
         }
         return key == "wanted";
     }
@@ -269,7 +269,7 @@ public class CrimeManager : BaseMonoBehaviour {
                             log.AddToFillers(witness, witness.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                             log.AddToFillers(null, UtilityScripts.Utilities.GetFirstFewEmotionsAndComafy(emotions, 2), LOG_IDENTIFIER.STRING_1);
-                            log.AddLogToInvolvedObjects();
+                            log.AddLogToDatabase();
                         }
                     }
 
@@ -484,7 +484,7 @@ public class CrimeData : ISavable {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses");
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
-                    addLog.AddLogToInvolvedObjects();
+                    addLog.AddLogToDatabase();
                 }
             }
         }

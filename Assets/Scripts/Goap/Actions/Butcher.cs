@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -158,8 +159,8 @@ public class Butcher : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         if(node.poiTarget is Tombstone) {
             poiTarget = (node.poiTarget as Tombstone).character;

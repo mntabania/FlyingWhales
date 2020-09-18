@@ -134,7 +134,6 @@ public class PlayGuitar : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        //TODO: currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6f);

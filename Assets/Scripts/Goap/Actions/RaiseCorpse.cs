@@ -1,6 +1,7 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -32,8 +33,8 @@ public class RaiseCorpse : GoapAction {
         //raise corpse cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         IPointOfInterest targetPOI = node.poiTarget;
         Character target = null;
         if (targetPOI is Character) {

@@ -26,14 +26,14 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
-            Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetAction.actor && log == _targetAction.descriptionLog) {
+        private void OnLogRemoved(Log log) {
+            if (log.IsInvolved(_targetAction.actor) && log.persistentID == _targetAction.descriptionLog.persistentID) {
                 //consider this quest as failed if log associated with action was removed from the target object
                 TutorialManager.Instance.FailTutorialQuest(this);
             }
@@ -68,9 +68,9 @@ namespace Tutorial {
         #endregion
 
         #region Step Helpers
-        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
+        private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
             if (owner == _targetAction.actor && obj is Character clickedCharacter && clickedCharacter == _targetAction.poiTarget
-                && log.file.Equals("Share Information") && log.key.Equals("share success_description")) {
+                && log.Contains("shared")) {
                 return true;
             }
             return false;

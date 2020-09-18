@@ -41,7 +41,7 @@ namespace Interrupts {
                 Log randomTorture = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey);
                 randomTorture.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text");
-                log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(randomTorture), LOG_IDENTIFIER.APPEND);
+                log.AddToFillers(null, randomTorture.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddToFillers(randomTorture.fillers);
                 log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
                 log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);

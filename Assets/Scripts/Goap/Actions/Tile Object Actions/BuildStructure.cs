@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;
 
 public class BuildStructure : GoapAction {
@@ -25,8 +26,8 @@ public class BuildStructure : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(log, goapNode);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(ref log, goapNode);
         StructureTileObject target = goapNode.poiTarget as StructureTileObject;
         // log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }

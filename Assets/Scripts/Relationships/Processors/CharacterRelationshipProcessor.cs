@@ -67,6 +67,6 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", key);
         log.AddToFillers(character1, character1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(character2, character2.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
     }
 }

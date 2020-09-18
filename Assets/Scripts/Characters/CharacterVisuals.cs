@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using UtilityScripts;
 using Object = UnityEngine.Object;
@@ -180,8 +181,7 @@ public class CharacterVisuals {
         // }
         return name;
     }
-    public string GetThoughtBubble(out Log log) {
-        log = null;
+    public string GetThoughtBubble() {
         // if (_owner.minion != null) {
         //     return string.Empty;
         // }
@@ -189,30 +189,26 @@ public class CharacterVisuals {
         //    return _owner.overrideThoughts[0];
         //}
         if (_owner.isDead) {
-            if (_owner.deathLog != null) {
-                log = _owner.deathLog;
-                return UtilityScripts.Utilities.LogReplacer(_owner.deathLog);
+            if (_owner.deathLog.hasValue) {
+                return _owner.deathLog.logText;
             } else {
                 return $"{GetCharacterStringIcon()}<b>{_owner.name}</b> has died.";    
             }
         }
         //Interrupt
-        if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog != null) {
-            log = _owner.interruptComponent.thoughtBubbleLog;
-            return UtilityScripts.Utilities.LogReplacer(_owner.interruptComponent.thoughtBubbleLog);
+        if (_owner.interruptComponent.isInterrupted && _owner.interruptComponent.thoughtBubbleLog.hasValue) {
+            return _owner.interruptComponent.thoughtBubbleLog.logText;
         }
 
         //Action
         if (_owner.currentActionNode != null) {
             Log currentLog = _owner.currentActionNode.GetCurrentLog();
-            log = currentLog;
-            return UtilityScripts.Utilities.LogReplacer(currentLog);
+            return currentLog.logText;
         }
 
         //Character State
         if (_owner.stateComponent.currentState != null) {
-            log = _owner.stateComponent.currentState.thoughtBubbleLog;
-            return UtilityScripts.Utilities.LogReplacer(_owner.stateComponent.currentState.thoughtBubbleLog);
+            return _owner.stateComponent.currentState.thoughtBubbleLog.logText;
         }
         //fleeing
         if (_owner.marker && _owner.marker.hasFleePath) {

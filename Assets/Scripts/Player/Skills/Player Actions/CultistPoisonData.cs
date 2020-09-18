@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Logs;
 
 public class CultistPoisonData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.CULTIST_POISON;
@@ -53,13 +54,13 @@ public class CultistPoisonData : PlayerAction {
             Log instructedLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_poison");
             instructedLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             instructedLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            actor.logComponent.RegisterLog(instructedLog);
+            instructedLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog);
             
             if (actor.jobComponent.CreatePoisonFoodJob(targetCharacter, JOB_TYPE.CULTIST_POISON) == false) {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cultist_no_poison_target");
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                actor.logComponent.RegisterLog(log);
+                log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             }
             base.ActivateAbility(actor);

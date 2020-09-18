@@ -189,7 +189,7 @@ public class Eat : GoapAction {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
         }
     }
     //public void PreEatFail(ActualGoapNode goapNode) {

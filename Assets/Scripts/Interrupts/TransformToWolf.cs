@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Crime_System;
-
+using Logs;
 namespace Interrupts {
     public class TransformToWolf : Interrupt {
         public TransformToWolf() : base(INTERRUPT.Transform_To_Wolf) {

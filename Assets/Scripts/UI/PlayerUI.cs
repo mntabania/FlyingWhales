@@ -756,22 +756,6 @@ public class PlayerUI : BaseMonoBehaviour {
         }
         return null;
     }
-    private void UpdateKillCount() {
-        // int aliveCount = 0;
-        // //TODO: Optimize this
-        // for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-        //     Character character = CharacterManager.Instance.allCharacters[i];
-        //     if (/*!character.isFactionless &&*/ character.IsAble() && WillCharacterBeShownInKillCount(character)) {
-        //         aliveCount++;
-        //     }
-        // }
-        // if (aliveCount <= 0) {
-        //     //player has won
-        //     UIManager.Instance.Pause();
-        //     UIManager.Instance.SetSpeedTogglesState(false);
-        //     SuccessfulAreaCorruption();
-        // }
-    }
     //private void OrderKillSummaryItems() {
     //    CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
     //    List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();

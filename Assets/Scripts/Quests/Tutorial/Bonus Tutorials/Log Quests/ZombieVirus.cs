@@ -54,16 +54,15 @@ namespace Tutorial {
         public override void Activate() {
             base.Activate();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
             Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
-            Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetCharacter && log.key.Equals("contracted_zombie") 
-                && log.GetFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER).obj == _targetCharacter) {
+        private void OnLogRemoved(Log log) {
+            if (log.IsInvolved(_targetCharacter) && log.key.Equals("contracted_zombie")) {
                 //if log about contracting zombie virus was removed from the target character, consider this quest as failed.
                 TutorialManager.Instance.FailTutorialQuest(this); 
                 
@@ -90,9 +89,8 @@ namespace Tutorial {
         private bool IsCharacterValid(Character character) {
             return character == _targetCharacter;
         }
-        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
-            if (owner == _targetCharacter && obj is Character clickedCharacter && clickedCharacter != _targetCharacter
-                && log.file.Equals("NonIntel") && log.key.Equals("contracted_zombie")) {
+        private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
+            if (owner == _targetCharacter && obj is Character clickedCharacter && clickedCharacter != _targetCharacter && log.Contains("zombie virus")) {
                 return true;
             }
             return false;

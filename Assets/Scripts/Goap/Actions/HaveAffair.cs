@@ -332,10 +332,6 @@ public class HaveAffairData : GoapActionData {
         if (actor == poiTarget) {
             return false;
         }
-        // Character targetCharacter = poiTarget as Character;
-        // if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter, TODO, TODO) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
-        //     return true;
-        // }
         return false;
     }
 }

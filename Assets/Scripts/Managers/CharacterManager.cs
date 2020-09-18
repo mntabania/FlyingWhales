@@ -592,7 +592,7 @@ public class CharacterManager : BaseMonoBehaviour {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile");
                     log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToInvolvedObjects();
+                    log.AddLogToDatabase();
                 }
 
                 foodPile.SetResourceInPile(food);

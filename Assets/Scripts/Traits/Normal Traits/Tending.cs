@@ -40,7 +40,7 @@
                 if (_hasTendedAtLeastOnce) {
                     Log endLog = new Log(GameManager.Instance.Today(), "Behaviour", "TendFarmBehaviour", "end");
                     endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    endLog.AddLogToInvolvedObjects();    
+                    endLog.AddLogToDatabase();    
                 }
 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(TendFarmBehaviour));

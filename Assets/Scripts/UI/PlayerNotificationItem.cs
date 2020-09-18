@@ -6,57 +6,42 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Logs;
+using UnityEngine.Assertions;
 
 public class PlayerNotificationItem : PooledObject {
-
-    private const int Expiration_Ticks = 10;
-    private int ticksAlive = 0;
-
-    public Log shownLog { get; private set; }
+    
     public int tickShown { get; private set; }
-
-    //[SerializeField] private EnvelopContentUnityUI mainEnvelopContent;
-    //[SerializeField] private EnvelopContentUnityUI logEnvelopContent;
+    public string fromActionID { get; private set; }
+    public string logPersistentID { get; private set; }
+    
     [SerializeField] private TextMeshProUGUI logLbl;
     [SerializeField] private LogItem logItem;
     [SerializeField] private RectTransform _container;
     [SerializeField] private LayoutElement _layoutElement;
     private UIHoverPosition _hoverPosition;
 
-    private System.Action<PlayerNotificationItem> onDestroyAction;
+    private Action<PlayerNotificationItem> onDestroyAction;
 
-
-    public void Initialize(Log log, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
-        shownLog = log;
+    public void Initialize(in Log log, Action<PlayerNotificationItem> onDestroyAction = null) {
+        logPersistentID = log.persistentID;
         tickShown = GameManager.Instance.Today().tick;
-        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
-        logItem.SetLog(log);
-        Messenger.AddListener<Log>(Signals.UPDATE_ALL_NOTIFICATION_LOGS, TryUpdateLog);
-        //logEnvelopContent.Execute();
-        //mainEnvelopContent.Execute();
-
-        //NOTE: THIS IS REMOVED BECAUSE NOTIFICATIONS NO LONGER HAVE TIMERS, INSTEAD THEY WILL JUST BE REPLACED IF NEW ONES ARE ADDED
-        //if (hasExpiry) {
-        //    //schedule expiry
-        //    Messenger.AddListener(Signals.TICK_ENDED, CheckForExpiry);
-        //}
-
+        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {log.logText}";
+        fromActionID = log.actionID;
         this.onDestroyAction = onDestroyAction;
         StartCoroutine(TweenHeight());
+        
+        Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
     }
-    public void Initialize(Log log, int tick, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
-        shownLog = log;
+    public void Initialize(in Log log, int tick, Action<PlayerNotificationItem> onDestroyAction = null) {
+        logPersistentID = log.persistentID;
         tickShown = tick;
-        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
-        logItem.SetLog(log);
-        Messenger.AddListener<Log>(Signals.UPDATE_ALL_NOTIFICATION_LOGS, TryUpdateLog);
+        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {log.logText}";
+        fromActionID = log.actionID;
         this.onDestroyAction = onDestroyAction;
         StartCoroutine(TweenHeight());
-    }
-    private void TryUpdateLog(Log log) {
-        if (shownLog == log) {
-            logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {UtilityScripts.Utilities.LogReplacer(log)}";
-        }
+        
+        Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
     }
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
         _hoverPosition = hoverPosition;
@@ -66,31 +51,12 @@ public class PlayerNotificationItem : PooledObject {
         _layoutElement.DOPreferredSize(new Vector2(0f, (logLbl.transform as RectTransform).sizeDelta.y), 0.5f);
         //_layoutElement.preferredHeight = (logLbl.transform as RectTransform).sizeDelta.y;
     }
-    private void CheckForExpiry() {
-        if (ticksAlive == Expiration_Ticks) {
-            DeleteNotification();
-        } else {
-            ticksAlive++;
-        }
-    }
-    protected virtual void OnExpire() {
-        DeleteNotification();
-        //getIntelBtn.interactable = false;
-    }
-    public override void Reset() {
-        base.Reset();
-        //getIntelBtn.interactable = true;
-        _container.anchoredPosition = Vector2.zero;
-        ticksAlive = 0;
-        this.transform.localScale = Vector3.one;
-        Messenger.RemoveListener<Log>(Signals.UPDATE_ALL_NOTIFICATION_LOGS, TryUpdateLog);
-    }
     public void DeleteNotification() {
-        //if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
-        //    Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiry);
-        //}
         onDestroyAction?.Invoke(this);
         ObjectPoolManager.Instance.DestroyObject(this);
+    }
+    public virtual void DeleteOldestNotification() {
+        DeleteNotification();
     }
     public void TweenIn() {
         _container.anchoredPosition = new Vector2(450f, 0f);
@@ -98,15 +64,32 @@ public class PlayerNotificationItem : PooledObject {
     }
     
     public void OnHoverOverLog(object obj) {
-        if (obj is string indexText) {
-            int index = Int32.Parse(indexText);
-            LogFiller logFiller = logItem.log.fillers[index];
-            if (logFiller.obj is Character character && _hoverPosition != null) {
-                UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
-            }
+        if (obj is Character character && _hoverPosition != null) {
+            UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
         }
     }
     public void OnHoverOutLog() {
         UIManager.Instance.HideCharacterNameplateTooltip();
     }
+
+    #region Listeners
+    private void OnLogRemovedFromDatabase(Log log) {
+        if (log.persistentID == logPersistentID) {
+            Assert.IsFalse(this is IntelNotificationItem, $"Intel log was removed from database! This should never happen! {logPersistentID}");
+            //if log in this notification is removed from database, then destroy it.
+            DeleteNotification();
+        }
+    }
+    #endregion
+
+    #region Object Pool
+    public override void Reset() {
+        base.Reset();
+        _container.anchoredPosition = Vector2.zero;
+        transform.localScale = Vector3.one;
+        fromActionID = string.Empty;
+        logPersistentID = string.Empty;
+        Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
+    }
+    #endregion
 }

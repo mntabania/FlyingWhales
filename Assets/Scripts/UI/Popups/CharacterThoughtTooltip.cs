@@ -38,6 +38,6 @@ public class CharacterThoughtTooltip : MonoBehaviour {
         rectTransform.position = screenPoint;
     }
     private void UpdateText([NotNull]Character character) {
-        thoughtLbl.text = character.visuals.GetThoughtBubble(out var log);
+        thoughtLbl.text = character.visuals.GetThoughtBubble();
     }
 }

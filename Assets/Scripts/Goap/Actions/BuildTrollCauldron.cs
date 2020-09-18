@@ -52,7 +52,7 @@ public class BuildTrollCauldron : GoapAction {
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         TrollCauldron cauldron = InnerMapManager.Instance.CreateNewTileObject<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
         goapNode.actor.gridTileLocation.structure.AddPOI(cauldron, goapNode.actor.gridTileLocation);
-        cauldron.logComponent.AddHistory(goapNode.descriptionLog);
+        // cauldron.logComponent.AddHistory(goapNode.descriptionLog);
     }
     #endregion
 }

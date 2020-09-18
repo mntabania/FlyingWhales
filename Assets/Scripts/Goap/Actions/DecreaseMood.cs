@@ -44,7 +44,7 @@ public class DecreaseMood : GoapAction {
             Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Decrease Mood", "effect");
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
         }
     }
     #endregion

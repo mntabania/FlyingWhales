@@ -40,7 +40,7 @@ public class GorgonEye : Artifact {
         Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Gorgon Eye", "inspect");
         log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
 
         if (GameUtilities.RollChance(30)) {
             gridTileLocation.structure.RemovePOI(this, inspector);

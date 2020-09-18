@@ -39,14 +39,15 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private GameObject logParentGO;
     [SerializeField] private GameObject logHistoryPrefab;
     [SerializeField] private ScrollRect historyScrollView;
-    private LogHistoryItem[] logHistoryItems;
+    private List<LogHistoryItem> logHistoryItems;
 
     public TileObject activeTileObject { get; private set; }
 
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<IPointOfInterest>(Signals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.ADD_TILE_OBJECT_USER, UpdateUsersFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.REMOVE_TILE_OBJECT_USER, UpdateUsersFromSignal);
         Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_ADDED, UpdateTraitsFromSignal);
@@ -57,7 +58,7 @@ public class TileObjectInfoUI : InfoUIBase {
         ownerEventLbl.SetOnClickAction(OnClickOwner);
         carriedByEventLbl.SetOnClickAction(OnClickCarriedBy);
 
-        InitializeLogsMenu();
+        logHistoryItems = new List<LogHistoryItem>();
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -201,12 +202,17 @@ public class TileObjectInfoUI : InfoUIBase {
         }
     }
     public void UpdateLogs() {
-        int historyCount = activeTileObject.logComponent.history.Count;
+        List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsMentioning(activeTileObject.persistentID);
+        int historyCount = logs.Count;
         int historyLastIndex = historyCount - 1;
-        for (int i = 0; i < logHistoryItems.Length; i++) {
+        int missingItems = historyCount - logHistoryItems.Count;
+        for (int i = 0; i < missingItems; i++) {
+            CreateNewLogHistoryItem();
+        }
+        for (int i = 0; i < logHistoryItems.Count; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            if (i < historyCount) {
-                Log currLog = activeTileObject.logComponent.history[historyLastIndex - i];
+            if(i < historyCount) {
+                Log currLog = logs[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
             } else {
@@ -214,11 +220,19 @@ public class TileObjectInfoUI : InfoUIBase {
             }
         }
     }
+    private LogHistoryItem CreateNewLogHistoryItem() {
+        GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
+        newLogItem.transform.localScale = Vector3.one;
+        newLogItem.SetActive(true);
+        LogHistoryItem logHistoryItem = newLogItem.GetComponent<LogHistoryItem>();
+        logHistoryItems.Add(logHistoryItem);
+        return logHistoryItem;
+    }
     #endregion
 
     #region Listeners
-    private void UpdateLogsFromSignal(IPointOfInterest poi) {
-        if(isShowing && poi == activeTileObject) {
+    private void UpdateLogsFromSignal(Log log) {
+        if(isShowing && log.IsInvolved(activeTileObject)) {
             UpdateLogs();
         }
     }
@@ -268,22 +282,9 @@ public class TileObjectInfoUI : InfoUIBase {
 
     #region Logs
     private void ClearLogs() {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
+        for (int i = 0; i < logHistoryItems.Count; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
             currItem.gameObject.SetActive(false);
-        }
-    }
-    private void InitializeLogsMenu() {
-        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
-        //populate history logs table
-        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-            newLogItem.transform.localScale = Vector3.one;
-            newLogItem.SetActive(true);
-        }
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            logHistoryItems[i].gameObject.SetActive(false);
         }
     }
     private void ResetAllScrollPositions() {

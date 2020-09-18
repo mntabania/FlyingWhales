@@ -52,7 +52,7 @@ public class LoadWindow : PopupMenuBase  {
         isFetchingSaves = true;
         fetchSavesCover.gameObject.SetActive(true);
         UtilityScripts.Utilities.DestroyChildren(loadGameScrollRect.content);
-        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.zip");
         saveFiles = saveFiles.OrderBy(System.IO.File.GetLastWriteTime).ToArray();
         for (int i = 0; i < saveFiles.Length; i++) {
             string saveFile = saveFiles[i];
@@ -68,7 +68,7 @@ public class LoadWindow : PopupMenuBase  {
     
     private void LoadSavedGameItems() {
         UtilityScripts.Utilities.DestroyChildren(loadGameScrollRect.content);
-        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.zip");
         saveFiles = saveFiles.OrderBy(System.IO.File.GetLastWriteTime).ToArray();
         for (int i = 0; i < saveFiles.Length; i++) {
             string saveFile = saveFiles[i];

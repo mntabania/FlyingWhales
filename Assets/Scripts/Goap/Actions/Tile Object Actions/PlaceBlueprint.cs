@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 public class PlaceBlueprint : GoapAction {
@@ -19,8 +20,8 @@ public class PlaceBlueprint : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 3;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(log, goapNode);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(ref log, goapNode);
         STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0].obj;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
     }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Inner_Maps;
+using Logs;
 
+[System.Obsolete]
 public class Watch : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -36,23 +38,23 @@ public class Watch : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         OtherData[] otherData = node.otherData;
-        if (otherData.Length == 1) {
-            if (otherData[0].obj is GoapAction) {
-                GoapAction actionBeingWatched = otherData[0].obj as GoapAction;
-                //actionIconString = actionBeingWatched.actionIconString;
-                log.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
-            } else if (otherData[0].obj is CombatState) {
-                CharacterState stateBeingWatched = otherData[0].obj as CombatState;
-                log.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
-            } else if (otherData[0].obj is DouseFireState) {
-                CharacterState stateBeingWatched = otherData[0].obj as DouseFireState;
-                log.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
-                log.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
-            }
-        }
+        // if (otherData.Length == 1) {
+        //     if (otherData[0].obj is GoapAction) {
+        //         GoapAction actionBeingWatched = otherData[0].obj as GoapAction;
+        //         //actionIconString = actionBeingWatched.actionIconString;
+        //         log.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
+        //     } else if (otherData[0].obj is CombatState) {
+        //         CharacterState stateBeingWatched = otherData[0].obj as CombatState;
+        //         log.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+        //     } else if (otherData[0].obj is DouseFireState) {
+        //         CharacterState stateBeingWatched = otherData[0].obj as DouseFireState;
+        //         log.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
+        //         log.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
+        //     }
+        // }
     }
     //public override void OnStopWhilePerforming() {
     //    base.OnStopWhilePerforming();
@@ -71,15 +73,15 @@ public class Watch : GoapAction {
     public void PreWatchSuccess(ActualGoapNode goapNode) {
         GoapAction actionBeingWatched = goapNode.otherData[0].obj as GoapAction;
         CharacterState stateBeingWatched = goapNode.otherData[0].obj as CharacterState;
-        if (actionBeingWatched != null) {
-            goapNode.descriptionLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
-        }else if (stateBeingWatched != null) {
-            if (stateBeingWatched is CombatState) {
-                goapNode.descriptionLog.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
-            } else if (stateBeingWatched is DouseFireState) {
-                goapNode.descriptionLog.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
-            }
-        }
+        // if (actionBeingWatched != null) {
+        //     goapNode.descriptionLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
+        // }else if (stateBeingWatched != null) {
+        //     if (stateBeingWatched is CombatState) {
+        //         goapNode.descriptionLog.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+        //     } else if (stateBeingWatched is DouseFireState) {
+        //         goapNode.descriptionLog.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
+        //     }
+        // }
     }
     public void PerTickWatchSuccess(ActualGoapNode goapNode) {
         Character _targetCharacter = goapNode.poiTarget as Character;

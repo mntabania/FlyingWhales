@@ -22,6 +22,7 @@ public class MapGenerator : MonoBehaviour {
     #region Random World
     internal IEnumerator InitializeWorld() {
         SaveManager.Instance.SetUseSaveData(false);
+        DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
@@ -128,6 +129,7 @@ public class MapGenerator : MonoBehaviour {
     #region Scenario World
     public IEnumerator InitializeScenarioWorld(ScenarioMapData scenarioMapData) {
         SaveManager.Instance.SetUseSaveData(false);
+        DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new SupportingFactionGeneration(), new WorldMapRegionGeneration(), 
             new WorldMapOuterGridGeneration(), new TileFeatureGeneration(), new RegionFeatureGeneration(), 
@@ -233,6 +235,7 @@ public class MapGenerator : MonoBehaviour {
         //Example: The HeatWave feature function PopulateInitialCharactersOutside is called when it is added, inside the GetAllCharactersInsideHexThatMeetCriteria is called, where the innermaphextile is needed, so we must have the references before loading the tile features
         SaveManager.Instance.SetUseSaveData(true);
         WorldSettings.Instance.SetWorldSettingsData(saveData.worldSettingsData);
+        DatabaseManager.Instance.mainSQLDatabase.InitializeDatabase(); //Initialize main SQL database
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapRegionGeneration(),
             new WorldMapOuterGridGeneration(),
@@ -303,97 +306,4 @@ public class MapGenerator : MonoBehaviour {
         }
     }
     #endregion
-    
-    public void InitializeWorld(SaveDataCurrentProgress data) {
-        StartCoroutine(InitializeWorldCoroutine(data));
-    }
-    private IEnumerator InitializeWorldCoroutine(SaveDataCurrentProgress data) {
-        // System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
-        // //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
-        // loadingWatch.Start();
-        //
-        // LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
-        // GridMap.Instance.SetupInitialData(data.width, data.height);
-        // yield return null;
-        // WorldMapCameraMove.Instance.Initialize();
-        // InnerMapManager.Instance.Initialize();
-        // InteractionManager.Instance.Initialize();
-        // ObjectPoolManager.Instance.InitializeObjectPools();
-        // yield return null;
-        // GridMap.Instance.GenerateGrid(data);
-        // yield return null;
-        // GridMap.Instance.GenerateOuterGrid(data);
-        // yield return null;
-        // Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        // yield return null;
-        // data.LoadRegions();
-        // data.LoadPlayerArea();
-        // data.LoadNonPlayerAreas();
-        // data.LoadFactions();
-        // data.LoadCharacters();
-        // // data.LoadSpecialObjects();
-        // //data.LoadTileObjects();
-        // yield return null;
-        // data.LoadCharacterRelationships();
-        // data.LoadCharacterTraits();
-        // yield return null;
-        // data.LoadLandmarks();
-        // data.LoadRegionCharacters();
-        // data.LoadRegionAdditionalData();
-        // yield return null;
-        //
-        // // CameraMove.Instance.CalculateCameraBounds();
-        // UIManager.Instance.InitializeUI();
-        // LevelLoaderManager.Instance.UpdateLoadingInfo("Starting Game...");
-        // yield return null;
-        //
-        // // TokenManager.Instance.Initialize();
-        // //CharacterManager.Instance.GenerateRelationships();
-        //
-        // yield return null;
-        // //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
-        // data.LoadAreaMaps();
-        // data.LoadAreaStructureEntranceTiles();
-        // //data.LoadTileObjectsPreviousTileAndCurrentTile();
-        // data.LoadAreaMapsObjectHereOfTiles();
-        // data.LoadAreaMapsTileTraits();
-        // //data.LoadTileObjectTraits();
-        // data.LoadCharacterHomeStructures();
-        // data.LoadCurrentDate(); //Moved this because some jobs use current date
-        // data.LoadCharacterInitialPlacements();
-        // //data.LoadPlayer();
-        //
-        // data.LoadAllJobs();
-        // //data.LoadTileObjectsDataAfterLoadingAreaMap();
-        //
-        // //Note: Loading npcSettlement items is after loading the inner map because LocationStructure and LocationGridTile is required
-        // data.LoadPlayerAreaItems();
-        // data.LoadNonPlayerAreaItems();
-        // yield return null;
-        // data.LoadCharacterHistories();
-        //
-        // data.LoadCharacterCurrentStates();
-        //
-        //
-        // data.LoadNotifications();
-        //
-        // loadingWatch.Stop();
-        // Debug.Log($"Total loading time is {loadingWatch.ElapsedMilliseconds.ToString()} ms");
-        // LevelLoaderManager.Instance.SetLoadingState(false);
-        // //TODO:
-        // // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerNpcSettlement.coreTile.gameObject);
-        // AudioManager.Instance.TransitionToWorld();
-        // yield return new WaitForSeconds(1f);
-        // GameManager.Instance.StartProgression();
-        // UIManager.Instance.SetSpeedTogglesState(true);
-        // Messenger.Broadcast(Signals.UPDATE_UI);
-        // yield return null;
-        // UIManager.Instance.Unpause();
-        // yield return null;
-        // UIManager.Instance.Pause();
-        // Messenger.Broadcast(Signals.GAME_LOADED);
-        // //data.LoadInvasion();
-        // //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
-        yield return null;
-    }
 }

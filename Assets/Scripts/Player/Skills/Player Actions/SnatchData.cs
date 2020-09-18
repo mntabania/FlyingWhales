@@ -5,6 +5,7 @@ using Characters.Behaviour;
 using Inner_Maps;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UtilityScripts;
 
 public class SnatchData : PlayerAction {
@@ -57,6 +58,7 @@ public class SnatchData : PlayerAction {
                 log.AddToFillers(availableSkeleton, availableSkeleton.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(structure, structure.nameplateName, LOG_IDENTIFIER.LANDMARK_1);
+                log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
             }

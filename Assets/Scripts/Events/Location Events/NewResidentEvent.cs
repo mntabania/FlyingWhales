@@ -14,8 +14,6 @@ public class NewResidentEvent : LocationEvent {
 
     private bool Condition(NPCSettlement location) {
         return false;
-        //TODO:
-        // return !location.region.coreTile.isCorrupted && !location.IsResidentsFull();
     }
 
     #region Overrides

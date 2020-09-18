@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;
 
 public class AttackDemonicStructure : GoapAction {
@@ -46,7 +47,7 @@ public class AttackDemonicStructure : GoapAction {
 		//This must return null so that the GetTargetTileToGoTo will be triggered
 		return null;
 	}
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;

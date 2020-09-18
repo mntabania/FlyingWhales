@@ -143,7 +143,7 @@ public class RelationshipManager : BaseMonoBehaviour {
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "Affair");
             log.AddToFillers(rel1 as Character, rel1.relatableName, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(rel2 as Character, rel2.relatableName, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
@@ -271,12 +271,11 @@ public class RelationshipManager : BaseMonoBehaviour {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         // PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         hasDegraded = true;
         
         // string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
-        //TODO:
         //if (cause != null && cause.IsFromApprehendJob()) {
         //    //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
         //    summary += "Relationship degradation was caused by an action in an apprehend job. Skipping degredation...";

@@ -19,7 +19,7 @@ public abstract class Wisp : Summon {
 
     #region Overrides
     public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null,
-        Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
+        Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (isDead) {
             return;
         }

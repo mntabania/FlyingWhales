@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using Interrupts;
+using Logs;
 using UnityEngine.Assertions;
 
 public class ShareInformation : GoapAction {
@@ -26,8 +27,8 @@ public class ShareInformation : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
 
@@ -61,7 +62,7 @@ public class ShareInformation : GoapAction {
             }
             string actionDescription = articleWord + " " + reactable.classificationName.ToLower();
             if (information == string.Empty) {
-                information = UtilityScripts.Utilities.LogReplacer(reactable.informationLog);
+                information = reactable.informationLog.logText;
             }
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.OTHER);
             log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.OTHER_2);
@@ -256,7 +257,7 @@ public class ShareInformation : GoapAction {
             believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);
-            believeLog.AddLogToInvolvedObjects();
+            believeLog.AddLogToDatabase();
         }
         //if (reactable is ActualGoapNode || reactable is InterruptHolder) {
         //    if (reactable.actor != recipient) {

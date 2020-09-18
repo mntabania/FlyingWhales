@@ -61,7 +61,7 @@ namespace Traits {
                     characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
                     Log log = new Log(GameManager.Instance.Today(), "Trait", "Agoraphobic", "on_see_first");
                     log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToInvolvedObjects();
+                    log.AddLogToDatabase();
                     hasReactedThisTick = true;
 
                     GameDate date = GameManager.Instance.Today();

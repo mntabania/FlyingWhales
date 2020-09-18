@@ -70,7 +70,8 @@ public class BuildCampfire : GoapAction {
         }
         Campfire campfire = InnerMapManager.Instance.CreateNewTileObject<Campfire>(TILE_OBJECT_TYPE.CAMPFIRE);
         goapNode.actor.gridTileLocation.structure.AddPOI(campfire, targetTile);
-        campfire.logComponent.AddHistory(goapNode.descriptionLog);
+        goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
+        // campfire.logComponent.AddHistory(goapNode.descriptionLog);
     }
     #endregion
 }

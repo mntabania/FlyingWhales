@@ -23,15 +23,15 @@ public class IntelItem : MonoBehaviour {
         ClearClickActions();
         SetClickedState(false);
         if (intel != null) {
-            infoLbl.text = UtilityScripts.Utilities.LogReplacer(intel.log);
+            infoLbl.text = intel.log.logText;
             shareToggle.interactable = true;
             shareToggle.gameObject.SetActive(true);
-            logItem.SetLog(intel.log);
+            // logItem.SetLog(intel.log);
         } else {
             infoLbl.text = "";
             shareToggle.interactable = false;
             shareToggle.gameObject.SetActive(false);
-            logItem.SetLog(null);
+            // logItem.SetLog(null);
         }
     }
     public void SetClickAction(OnClickAction clickAction) {

@@ -37,17 +37,14 @@ namespace Traits {
                 character.AddTraitNeededToBeRemoved(this);
                 //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(5);
 
-                if (gainedFromDoing == null) {
-                    character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
-                } else {
-                    if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT) {
-                        Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
-                        if(gainedFromDoing != null) {
-                            addLog.SetLogType(LOG_TYPE.Action);
-                        }
-                        addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    }
+                if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.ASSAULT) {
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
+                    // if(gainedFromDoing != null) {
+                    //     addLog.SetLogType(LOG_TYPE.Action);
+                    // }
+                    addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    addLog.AddLogToDatabase();
                 }
                 //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
             }
@@ -58,7 +55,10 @@ namespace Traits {
                 character.movementComponent.AdjustSpeedModifier(0.15f);
                 character.RemoveTraitNeededToBeRemoved(this);
                 //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(-5);
-                character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
+                Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait");
+                addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                addLog.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                addLog.AddLogToDatabase();
             }
             base.OnRemoveTrait(traitable, removedBy);
         }

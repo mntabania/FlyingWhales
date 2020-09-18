@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -17,8 +18,8 @@ public class ReplaceTileObject : GoapAction {
     }
 
     #region Overrides
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         OtherData[] otherData = node.otherData;
         TileObject tileObjectToReplace = otherData[0].obj as TileObject;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);

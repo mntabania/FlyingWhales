@@ -8,6 +8,7 @@ using Factions;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
+using Logs;
 using Ruinarch;
 using TMPro;
 using UnityEngine.Assertions;
@@ -1121,8 +1122,6 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject defaultNotificationPrefab;
     [SerializeField] private Button notifExpandButton;
     [SerializeField] private UIHoverPosition notificationHoverPos;
-
-    //public ScrollRect playerNotifScrollView;
     public GameObject playerNotifGO;
     public RectTransform playerNotificationScrollRectTransform;
     public ScrollRect playerNotifScrollRect;
@@ -1132,74 +1131,62 @@ public class UIManager : BaseMonoBehaviour {
     private void ShowPlayerNotification(IIntel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
-        newItem.Initialize(intel, true, OnNotificationDestroyed);
+        newItem.Initialize(intel, OnNotificationDestroyed);
         newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
-        PlaceNewNotification(newItem);
+        PlaceNewNotification(newItem, intel.log);
     }
     private void ShowPlayerNotification(Log log) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
-        newItem.Initialize(log, true, OnNotificationDestroyed);
+        newItem.Initialize(log, OnNotificationDestroyed);
         newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
-        PlaceNewNotification(newItem);        
+        PlaceNewNotification(newItem, log);        
     }
-    public void ShowPlayerNotification(Log log, int tick) {
+    public void ShowPlayerNotification(in Log log, int tick) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
-        newItem.Initialize(log, tick, true, OnNotificationDestroyed);
+        newItem.Initialize(log, tick, OnNotificationDestroyed);
         newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
-        PlaceNewNotification(newItem);
+        PlaceNewNotification(newItem, log);
     }
-    public void ShowPlayerNotification(IIntel intel, Log log, int tick) {
+    public void ShowPlayerNotification(IIntel intel, in Log log, int tick) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
-        newItem.Initialize(intel, true, OnNotificationDestroyed);
+        newItem.Initialize(intel, OnNotificationDestroyed);
         newItem.SetHoverPosition(notificationHoverPos);
         newIntelGO.transform.localScale = Vector3.one;
-        PlaceNewNotification(newItem);
+        PlaceNewNotification(newItem, log);
     }
-    private void PlaceNewNotification(PlayerNotificationItem newNotif) {
+    private void PlaceNewNotification(PlayerNotificationItem newNotif, in Log shownLog) {
         //check if the log used is from a GoapAction
-        //then check all other currently showing notifications, if it is from the same goap action and the active character of both logs are the same.
+        //then check all other currently showing notifications, if it is from the same goap action
         //replace that log with this new one
         PlayerNotificationItem itemToReplace = null;
-        if (newNotif.shownLog != null && newNotif.shownLog.category == "GoapAction") {
+        if (shownLog.hasValue && !string.IsNullOrEmpty(shownLog.actionID)) {
             for (int i = 0; i < activeNotifications.Count; i++) {
                 PlayerNotificationItem currItem = activeNotifications[i];
-                if (currItem.shownLog.category == "GoapAction" && currItem.shownLog.file == newNotif.shownLog.file
-                    && currItem.shownLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER) && newNotif.shownLog.HasFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER)
-                    && currItem.shownLog.GetFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER).obj == newNotif.shownLog.GetFillerForIdentifier(LOG_IDENTIFIER.ACTIVE_CHARACTER).obj) {
+                if (!string.IsNullOrEmpty(currItem.fromActionID) && shownLog.actionID == currItem.fromActionID) {
                     itemToReplace = currItem;
                     break;
                 }
             }
         }
-
         if (itemToReplace != null) {
-            //newNotif.SetTickShown(itemToReplace.tickShown);
-            //int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
-            //(newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
         }
-        //else {
-        //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();
-        //}
         activeNotifications.Add(newNotif);
-        //if (!notifExpandButton.gameObject.activeSelf) {
-        //    //notifExpandButton.gameObject.SetActive(true);
-        //}
         if (activeNotifications.Count > maxPlayerNotif) {
-            activeNotifications[0].DeleteNotification();
+            activeNotifications[0].DeleteOldestNotification();
         }
         newNotif.TweenIn();
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
         if(activeNotifications.Count <= 0) {
-            //notifExpandButton.gameObject.SetActive(false);
+            
         }
     }
     public void OnClickExpand() {

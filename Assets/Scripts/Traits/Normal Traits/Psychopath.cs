@@ -150,7 +150,7 @@ namespace Traits {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
         public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {

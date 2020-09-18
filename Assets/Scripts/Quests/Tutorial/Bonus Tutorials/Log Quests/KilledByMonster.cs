@@ -44,12 +44,12 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
-            Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
             Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_MARKER_DESTROYED, OnCharacterMarkerDestroyed);
             _targetCharacter = null;
         }
@@ -75,8 +75,8 @@ namespace Tutorial {
         private bool IsCharacterValid(Character character) {
             return character == _targetCharacter;
         }
-        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
-            if (owner == _targetCharacter && obj is Summon && log.key.Equals("death_attacked")) {
+        private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
+            if (owner == _targetCharacter && obj is Summon && log.Contains("killed")) {
                 return true;
             }
             return false;
@@ -96,13 +96,10 @@ namespace Tutorial {
                 FailQuest();
             }
         }
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetCharacter && log.key.Equals("death_attacked")) {
+        private void OnLogRemoved(Log log) {
+            if (log.IsInvolved(_targetCharacter) && log.key.Equals("death_attacked")) {
                 //check if target character still has any logs about being killed by a monster
-                if (poi.logComponent.GetLogsInCategory("Generic").Count(x => x.HasFillerThatMeetsRequirement(o => o is Summon)) == 0) {
-                    //consider this quest as failed if all logs of this character regarding being killed by a monster  has been deleted.
-                    TutorialManager.Instance.FailTutorialQuest(this); 
-                }
+                TutorialManager.Instance.FailTutorialQuest(this); 
             }
         }
         protected override void FailQuest() {

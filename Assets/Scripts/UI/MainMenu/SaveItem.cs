@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.IO.Compression;
 using TMPro;
 using UnityEngine;
 
@@ -16,14 +13,23 @@ public class SaveItem : MonoBehaviour {
     private string json;
     public void SetSaveFile(string path) {
         this.path = path;
-        DateTime lastWriteTime = System.IO.File.GetLastWriteTime(path);
+        DateTime lastWriteTime = File.GetLastWriteTime(path);
         timeStampLbl.text = lastWriteTime.ToString("yyyy-MM-dd HH:mm");
         saveNameLbl.text = Path.GetFileNameWithoutExtension(path);
     }
 
     public void OnClickItem() {
         if (string.IsNullOrEmpty(json)) {
-            json = File.ReadAllText(path);
+            using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read)) {
+                foreach (ZipArchiveEntry entry in zip.Entries) {
+                    if (entry.Name == "mainSave.sav") {
+                        using (StreamReader reader = new StreamReader(entry.Open())) {
+                            json = reader.ReadToEnd();
+                        }
+                        break;
+                    }
+                }
+            }
         }
         string saveFileVersion = SaveUtilities.GetGameVersionOfSaveFile(json);
         if (saveFileVersion != Application.version) {
@@ -57,7 +63,11 @@ public class SaveItem : MonoBehaviour {
     }
     private void OnConfirmDelete() {
         File.Delete(path);
-        GameObject.Destroy(this.gameObject);
+        Destroy(gameObject);
         Messenger.Broadcast(Signals.SAVE_FILE_DELETED, path);
+    }
+    private void OnDestroy() {
+        path = string.Empty;
+        json = string.Empty;
     }
 }
