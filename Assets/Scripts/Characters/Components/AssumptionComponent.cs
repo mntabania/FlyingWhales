@@ -31,7 +31,15 @@ public class AssumptionComponent : CharacterComponent {
             }
         }
 
-        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction, LOG_TAG.Assumption);
+        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction, LOG_TAG.Social);
+        if (reactionStatus == REACTION_STATUS.INFORMED) {
+            assumptionLog.AddTag(LOG_TAG.Informed);
+        } else if (reactionStatus == REACTION_STATUS.WITNESSED) {
+            assumptionLog.AddTag(LOG_TAG.Witnessed);
+        }
+        if (newAssumption.assumedAction.crimeType != CRIME_TYPE.None) {
+            assumptionLog.AddTag(LOG_TAG.Crimes);
+        }
         assumptionLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.PARTY_1); //Used Party 1 identifier so there will be no conflict if reactable.informationLog is a Rumor
         assumptionLog.AddToFillers(null, newAssumption.informationLog.unReplacedText, LOG_IDENTIFIER.APPEND);
         assumptionLog.AddToFillers(newAssumption.informationLog.fillers);

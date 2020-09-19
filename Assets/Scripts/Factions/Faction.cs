@@ -942,7 +942,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     debugLog += $"\nChance for war met, setting {name} and {targetFaction.name} as Hostile.";
                     if (SetRelationshipFor(targetFaction, FACTION_RELATIONSHIP_STATUS.Hostile)) {
                         debugLog += $"\nSuccessfully set {name} and {targetFaction.name} as Hostile.";
-                        Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war");
+                        Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                         log.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
                         log.AddToFillers(crime.descriptionLog.fillers);

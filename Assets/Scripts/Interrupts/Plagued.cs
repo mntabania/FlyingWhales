@@ -9,13 +9,14 @@ namespace Interrupts {
 			duration = 0;
 			isSimulateneous = true;
 			interruptIconString = GoapActionStateDB.No_Icon;
+			logTags = new[] {LOG_TAG.Life_Changes};
 		}
 
 		#region Overrides
 		public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
 			ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 			if (interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Plagued")) {
-				overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
+				overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract", null, logTags);
 				overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 				//log.AddLogToInvolvedObjects();
 				return true;

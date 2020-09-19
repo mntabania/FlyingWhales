@@ -16,6 +16,7 @@ public class ReportCrime : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         doesNotStopTargetCharacter = true;
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Crimes};
     }
 
     #region Overrides
@@ -114,7 +115,7 @@ public class ReportCrime : GoapAction {
 
         if (actor.isDead) {
             //Report crime is still a success but will recipient will not do anything since criminal is already dead
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", name, "dead_criminal");
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", name, "dead_criminal", providedTags: LOG_TAG.Crimes);
             log.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.CHARACTER_3);
@@ -197,7 +198,7 @@ public class ReportCrime : GoapAction {
                 CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, recipient, sharer, REACTION_STATUS.INFORMED, crime as ActualGoapNode);
 
                 //Will only log on not believe because the log for believe report crime is already in the crime system
-                Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
+                Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result, providedTags: LOG_TAG.Crimes);
                 believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 believeLog.AddToFillers(null, "crime", LOG_IDENTIFIER.STRING_1);

@@ -78,7 +78,7 @@ public class Party : ISavable {
 
     }
     protected virtual void OnDisbandParty() {
-        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband");
+        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
         log.AddToFillers(leader, leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();

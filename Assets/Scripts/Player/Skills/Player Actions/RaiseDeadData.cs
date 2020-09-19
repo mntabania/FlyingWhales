@@ -22,7 +22,7 @@ public class RaiseDeadData : PlayerAction {
         CharacterManager.Instance.RaiseFromDeath(target, PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
         //target.RaiseFromDeath(1, faction: PlayerManager.Instance.player.playerFaction, className: target.characterClass.className);
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);

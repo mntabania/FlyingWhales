@@ -12,6 +12,7 @@ public class JudgeCharacter : GoapAction {
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes, LOG_TAG.Crimes};
     }
 
     #region Overrides
@@ -184,7 +185,7 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     private void CreateJudgeLog(ActualGoapNode goapNode, string result) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, LOG_TAG.Crimes, LOG_TAG.Life_Changes);
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, LOG_TAG.Crimes, LOG_TAG.Life_Changes, LOG_TAG.Work);
         // if (goapNode != null) {
         //     log.SetLogType(LOG_TYPE.Action);
         // }

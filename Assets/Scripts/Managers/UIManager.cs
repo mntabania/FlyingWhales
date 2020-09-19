@@ -117,6 +117,10 @@ public class UIManager : BaseMonoBehaviour {
     [Space(10)]
     [Header("Quest UI")]
     public QuestUI questUI;
+    
+    [Space(10)]
+    [Header("Logs")]
+    public LogTagSpriteDictionary logTagSpriteDictionary;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
     public PopupMenuBase latestOpenedPopup { get; private set; }
@@ -1467,5 +1471,14 @@ public class UIManager : BaseMonoBehaviour {
 
     #region Bottom Notification
     public BottomNotification bottomNotification;
+    #endregion
+
+    #region Logs
+    public Sprite GetLogTagSprite(LOG_TAG tag) {
+        if (logTagSpriteDictionary.ContainsKey(tag)) {
+            return logTagSpriteDictionary[tag];
+        }
+        throw new System.Exception($"No Log tag sprite for tag {tag.ToString()}");
+    }
     #endregion
 }

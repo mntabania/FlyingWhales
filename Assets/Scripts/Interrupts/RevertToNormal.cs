@@ -12,6 +12,7 @@ namespace Interrupts {
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Player};
         }
 
         #region Overrides

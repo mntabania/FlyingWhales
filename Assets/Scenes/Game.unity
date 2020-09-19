@@ -9143,7 +9143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 195919683}
   allowClickAction: 1
   hoverAction:
@@ -12807,7 +12806,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 262844871}
   allowClickAction: 1
   hoverAction:
@@ -14068,7 +14066,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -109.99988}
+  m_AnchoredPosition: {x: 0, y: -110}
   m_SizeDelta: {x: 684.73926, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &290647383
@@ -14449,7 +14447,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -21613,7 +21610,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 438714915}
   allowClickAction: 1
   hoverAction:
@@ -21699,7 +21695,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 439343313}
   allowClickAction: 1
   hoverAction:
@@ -28431,7 +28426,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 464695947}
   allowClickAction: 1
   hoverAction:
@@ -32699,7 +32693,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -55840,6 +55833,26 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5237779836964446511, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5237943189198884197, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5237943189198884197, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5452098763816498437, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8, type: 3}
 --- !u!1 &944105664
@@ -75446,6 +75459,80 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1303512307}
   m_CullTransparentMesh: 0
+--- !u!1 &1305188122
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1305188123}
+  - component: {fileID: 1305188125}
+  - component: {fileID: 1305188124}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1305188123
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305188122}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1538653384}
+  m_RootOrder: 48
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1305188124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305188122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.25490198}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 7ec37af777e271141a17369ad2daf52f, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1305188125
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305188122}
+  m_CullTransparentMesh: 0
 --- !u!1 &1307245793
 GameObject:
   m_ObjectHideFlags: 0
@@ -77642,7 +77729,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1334812013}
   allowClickAction: 1
   hoverAction:
@@ -81875,7 +81961,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1403969436}
   allowClickAction: 1
   hoverAction:
@@ -84298,7 +84383,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1443323026}
   allowClickAction: 1
   hoverAction:
@@ -85183,7 +85267,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -109.99988}
+  m_AnchoredPosition: {x: 0, y: -110}
   m_SizeDelta: {x: 588.4303, y: 66.16171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1455444293
@@ -87009,7 +87093,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1478251721}
   allowClickAction: 1
   hoverAction:
@@ -93283,6 +93366,7 @@ RectTransform:
   - {fileID: 85761049}
   - {fileID: 768646805}
   - {fileID: 1455444292}
+  - {fileID: 1305188123}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -93359,6 +93443,21 @@ MonoBehaviour:
   psychopathUI: {fileID: 2009634779}
   customDropdownList: {fileID: 1361932167}
   questUI: {fileID: 509764151}
+  logTagSpriteDictionary:
+    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b000000
+    m_values:
+    - {fileID: 21300000, guid: 68052aebd08ec7545bf281dc7a4a8078, type: 3}
+    - {fileID: 21300000, guid: 6da4931288c87ee439f3d3382f24c078, type: 3}
+    - {fileID: 21300000, guid: 0fddf22645329ee4f8d3ba928593b56a, type: 3}
+    - {fileID: 21300000, guid: dab4c18375ee22f418b1ffdd102d973a, type: 3}
+    - {fileID: 21300000, guid: 8c3b9fe0286ff244d911afc079a4f232, type: 3}
+    - {fileID: 21300000, guid: 62572a4ab34e7934799f8663b9d27fcc, type: 3}
+    - {fileID: 21300000, guid: 1f9183ef5eee83c44bfcc98f7274c048, type: 3}
+    - {fileID: 21300000, guid: 3145af3f181558e47b5e936e34f9fc18, type: 3}
+    - {fileID: 21300000, guid: 0485ac1d8c6fa3f45a9c6e5912d51cba, type: 3}
+    - {fileID: 21300000, guid: d9a7d8c892a22b94c91ae6fc45a4e4b4, type: 3}
+    - {fileID: 21300000, guid: b9f5f2ede50974a49ac1e41cfa208d94, type: 3}
+    - {fileID: 21300000, guid: fb10f4935a328d1419578994df66cbc5, type: 3}
   _optionsMenu: {fileID: 1720977191}
   factionInfoUI: {fileID: 1485930123}
   characterInfoUI: {fileID: 572338040}
@@ -95885,7 +95984,7 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1538653384}
     m_Modifications:
-    - target: {fileID: 1239099528323172, guid: 806752206f775b240af4069999713824, type: 3}
+    - target: {fileID: 1300351494739672, guid: 806752206f775b240af4069999713824, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -95897,58 +95996,19 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1478060357875210, guid: 806752206f775b240af4069999713824, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114117123734177570, guid: 806752206f775b240af4069999713824,
+    - target: {fileID: 224464590622524146, guid: 806752206f775b240af4069999713824,
         type: 3}
-      propertyPath: m_Enabled
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114171283734189860, guid: 806752206f775b240af4069999713824,
+    - target: {fileID: 224557442848911032, guid: 806752206f775b240af4069999713824,
         type: 3}
-      propertyPath: m_Enabled
+      propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114285401316646062, guid: 806752206f775b240af4069999713824,
+    - target: {fileID: 224557442848911032, guid: 806752206f775b240af4069999713824,
         type: 3}
-      propertyPath: m_text
-      value: Trust
-      objectReference: {fileID: 0}
-    - target: {fileID: 114285401316646062, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114299929288733550, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114616487807409680, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114676258155469292, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114713734186290214, guid: 806752206f775b240af4069999713824,
-        type: 3}
-      propertyPath: m_Enabled
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
@@ -96055,6 +96115,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224649621890996670, guid: 806752206f775b240af4069999713824,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -5.0269165
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 806752206f775b240af4069999713824, type: 3}
@@ -96215,7 +96280,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1603081964}
   allowClickAction: 1
   hoverAction:
@@ -96610,7 +96674,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1608515032}
   allowClickAction: 1
   hoverAction:
@@ -103006,7 +103069,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1699059518}
   allowClickAction: 1
   hoverAction:
@@ -103944,7 +104006,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -107177,7 +107238,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1739531751}
   allowClickAction: 1
   hoverAction:
@@ -109077,7 +109137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1768371835}
   allowClickAction: 1
   hoverAction:
@@ -120549,7 +120608,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1979070286}
   allowClickAction: 1
   hoverAction:
@@ -132534,7 +132592,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 2144444159}
   allowClickAction: 1
   hoverAction:

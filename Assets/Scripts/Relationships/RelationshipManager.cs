@@ -140,7 +140,7 @@ public class RelationshipManager : BaseMonoBehaviour {
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
         if (rel == RELATIONSHIP_TYPE.AFFAIR) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "Affair");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
             log.AddToFillers(rel1 as Character, rel1.relatableName, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(rel2 as Character, rel2.relatableName, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddLogToDatabase();
@@ -268,7 +268,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         actor.relationshipContainer.AdjustOpinion(actor, target, opinionText, -10);
         target.relationshipContainer.AdjustOpinion(target, actor, opinionText, -10);
         
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade", null, LOG_TAG.Social);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToDatabase();

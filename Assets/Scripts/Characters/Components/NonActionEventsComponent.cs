@@ -297,7 +297,7 @@ public class NonActionEventsComponent : CharacterComponent {
         }
 
         GameDate dueDate = GameManager.Instance.Today();
-        overrideLog = new Log(dueDate, "Interrupt", "Chat", result);
+        overrideLog = new Log(dueDate, "Interrupt", "Chat", result, providedTags: LOG_TAG.Social);
         overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         overrideLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -346,10 +346,10 @@ public class NonActionEventsComponent : CharacterComponent {
 
         Log log;
         if (reason != string.Empty) {
-            log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason");
+            log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up_reason", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {
-            log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up");
+            log = new Log(GameManager.Instance.Today(), "Interrupt", "Break Up", "break_up", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
         }
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -381,7 +381,7 @@ public class NonActionEventsComponent : CharacterComponent {
         if (!disguisedActor.IsHostileWith(disguisedTarget)) {
             string result = TriggerFlirtCharacter(target);
             GameDate dueDate = GameManager.Instance.Today();
-            overrideLog = new Log(dueDate, "Interrupt", "Flirt", result);
+            overrideLog = new Log(dueDate, "Interrupt", "Flirt", result, providedTags: LOG_TAG.Social);
             overrideLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

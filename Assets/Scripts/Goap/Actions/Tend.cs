@@ -4,7 +4,9 @@
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         shouldAddLogs = false;
+        logTags = new[] {LOG_TAG.Work};
     }
+    
     
     #region Overrides
     public override void Perform(ActualGoapNode goapNode) {

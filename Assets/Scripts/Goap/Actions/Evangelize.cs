@@ -11,6 +11,7 @@ public class Evangelize : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Player, LOG_TAG.Crimes};
     }
     
     #region Overrides
@@ -142,12 +143,12 @@ public class Evangelize : GoapAction {
                  targetCharacter.relationshipContainer.HasRelationshipWith(goapNode.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || 
                  targetCharacter.relationshipContainer.HasOpinionLabelWithCharacter(goapNode.actor, RelationshipManager.Close_Friend)) &&
                 !targetCharacter.relationshipContainer.IsEnemiesWith(goapNode.actor)) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 goapNode.OverrideDescriptionLog(log);
             } else if (CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode) > CRIME_SEVERITY.Infraction) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 goapNode.OverrideDescriptionLog(log);

@@ -14,9 +14,10 @@ public struct Log {
     public readonly string actionID;
     public readonly bool hasValue;
     public string allInvolvedObjectIDs;
+    public string rawText; //text without rich text tags
     [SerializeField] private bool hasBeenFinalized;
     [SerializeField] private string _logText;
-
+    
     #region getters
     public string logText {
         get {
@@ -36,14 +37,15 @@ public struct Log {
         this.key = key;
         gameDate = date;
         _logText = LocalizationManager.Instance.GetLocalizedValue(category, file, key);
+        rawText = string.Empty;
         actionID = node?.persistentID ?? string.Empty;
         fillers = new List<LogFillerStruct>();
-        tags = providedTags != null ? new List<LOG_TAG>(providedTags) : new List<LOG_TAG>();
+        tags = providedTags != null && providedTags.Length > 0 ? new List<LOG_TAG>(providedTags) : new List<LOG_TAG>() { LOG_TAG.Misc }; //always default log to misc if no tags were provided, this is to prevent logs from having no tags
         hasValue = true;
         hasBeenFinalized = false;
         allInvolvedObjectIDs = string.Empty;
     }
-    public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects) {
+    public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText) {
         persistentID = id;
         this.category = category;
         this.file = key;
@@ -52,10 +54,11 @@ public struct Log {
         _logText = logText;
         actionID = string.Empty;
         fillers = null;
-        tags = null;
+        tags = providedTags != null && providedTags.Count > 0 ? new List<LOG_TAG>(providedTags) : new List<LOG_TAG>() { LOG_TAG.Misc }; //always default log to misc if no tags were provided, this is to prevent logs from having no tags
         hasValue = true;
         hasBeenFinalized = true;
         allInvolvedObjectIDs = involvedObjects;
+        this.rawText = rawText;
     }
 
     #region Fillers
@@ -137,6 +140,7 @@ public struct Log {
     #region Text
     public void FinalizeText() {
         _logText = UtilityScripts.Utilities.LogReplacer(_logText, fillers);
+        rawText = UtilityScripts.Utilities.RemoveRichText(_logText);
         hasBeenFinalized = true;
     }
     #endregion
@@ -151,6 +155,13 @@ public struct Log {
     public void AddTag(LOG_TAG tag) {
         if (!tags.Contains(tag)) {
             tags.Add(tag);    
+        }
+    }
+    public void AddTag(LOG_TAG[] tags) {
+        if (tags != null) {
+            for (int i = 0; i < tags.Length; i++) {
+                AddTag(tags[i]);
+            }    
         }
     }
     #endregion

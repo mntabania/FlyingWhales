@@ -14,6 +14,7 @@ public class RestrainCharacter : GoapAction {
         //    RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL };
         isNotificationAnIntel = true;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
+        logTags = new[] {LOG_TAG.Work, LOG_TAG.Crimes, LOG_TAG.Combat};
     }
 
     #region Overrides

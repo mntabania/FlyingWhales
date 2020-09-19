@@ -10,6 +10,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -41,7 +42,7 @@ namespace Interrupts {
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log log = default;
             if (actor.homeStructure != null) {
-                log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
+                log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure", null, logTags);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, actor.homeStructure.name, LOG_IDENTIFIER.STRING_1);    
             } else if (actor.HasTerritory()) {

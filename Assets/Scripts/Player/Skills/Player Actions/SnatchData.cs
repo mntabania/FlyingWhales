@@ -54,7 +54,7 @@ public class SnatchData : PlayerAction {
             }
             if (choices.Count > 0) {
                 availableSkeleton.jobComponent.CreateSnatchJob(targetCharacter, CollectionUtilities.GetRandomElement(choices), structure);
-                Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", "Snatch", "instructed");
+                Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", "Snatch", "instructed", null, LOG_TAG.Player);
                 log.AddToFillers(availableSkeleton, availableSkeleton.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(structure, structure.nameplateName, LOG_IDENTIFIER.LANDMARK_1);

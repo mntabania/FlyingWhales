@@ -39,7 +39,7 @@ namespace Traits {
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
                 if (gainedFromDoing == null) {
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", null, LOG_TAG.Misc);
                     log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToDatabase();
@@ -53,7 +53,7 @@ namespace Traits {
                 }
                 character.needsComponent.AdjustDoNotGetTired(-1);
                 character.RemoveTraitNeededToBeRemoved(this);
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait");
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Misc);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();

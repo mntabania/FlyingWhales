@@ -10,6 +10,7 @@ public class BoobyTrap : GoapAction {
         actionIconString = GoapActionStateDB.Anger_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
+        logTags = new[] {LOG_TAG.Crimes};
     }
 
     #region Overrides

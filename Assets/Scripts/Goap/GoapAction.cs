@@ -31,6 +31,7 @@ public class GoapAction {
     public bool canBePerformedEvenIfPathImpossible { get; protected set; } //can this action still be advertised even if there is no path towards the target
     protected TIME_IN_WORDS[] validTimeOfDays;
     public POINT_OF_INTEREST_TYPE[] advertisedBy { get; protected set; } //list of poi types that can advertise this action
+    public LOG_TAG[] logTags { get; protected set; }
 
     #region getters
     public string name => goapName;
@@ -316,11 +317,11 @@ public class GoapAction {
     public void LogActionInvalid(GoapActionInvalidity goapActionInvalidity, ActualGoapNode node) {
         string invalidKey = goapActionInvalidity.stateName.ToLower() + "_description";
         if (goapActionInvalidity.stateName != "Target Missing" && LocalizationManager.Instance.HasLocalizedValue("GoapAction", name, invalidKey)) {
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", name, invalidKey);
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", name, invalidKey, providedTags: LOG_TAG.Misc);
             AddFillersToLog(ref log, node);
             log.AddLogToDatabase();
         } else {
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid", providedTags: LOG_TAG.Misc);
             log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);

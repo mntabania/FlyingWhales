@@ -13,6 +13,7 @@ public interface IReactable {
     Log informationLog { get; }
     bool isStealth { get; }
     List<Character> awareCharacters { get; }
+    LOG_TAG[] logTags { get; }
     string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionToTarget(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);
     string ReactionOfTarget(Character actor, IPointOfInterest target, REACTION_STATUS status);
@@ -32,6 +33,7 @@ public interface IRumorable {
     Log informationLog { get; }
     bool isStealth { get; }
     List<Character> awareCharacters { get; }
+    LOG_TAG[] logTags { get; }
     void SetAsRumor(Rumor rumor);
     void AddAwareCharacter(Character character);
     string ReactionToActor(Character actor, IPointOfInterest target, Character witness, REACTION_STATUS status);

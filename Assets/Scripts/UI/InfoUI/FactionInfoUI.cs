@@ -41,12 +41,9 @@ public class FactionInfoUI : InfoUIBase {
     [Header("Relationships")]
     [SerializeField] private RectTransform relationshipsParent;
     [SerializeField] private GameObject relationshipPrefab;
-    
-    [Space(10)] [Header("Logs")]
-    [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private ScrollRect historyScrollView;
-    [SerializeField] private UIHoverPosition logHoverPosition;
-    private List<LogHistoryItem> logHistoryItems;
+
+    [Space(10)] [Header("Logs")] 
+    [SerializeField] private LogsWindow logsWindow;
     
     internal Faction currentlyShowingFaction => _data as Faction;
     private Faction activeFaction { get; set; }
@@ -67,7 +64,7 @@ public class FactionInfoUI : InfoUIBase {
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
-        logHistoryItems = new List<LogHistoryItem>();
+        logsWindow.Initialize();
     }
     public override void OpenMenu() {
         Faction previousArea = activeFaction;
@@ -81,6 +78,7 @@ public class FactionInfoUI : InfoUIBase {
         UpdateAllCharacters();
         UpdateOwnedLocations();
         UpdateAllRelationships();
+        logsWindow.SetObjectPersistentID(activeFaction.persistentID);
         UpdateAllHistoryInfo();
         ResetScrollPositions();
     }
@@ -267,7 +265,7 @@ public class FactionInfoUI : InfoUIBase {
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
         locationsScrollView.verticalNormalizedPosition = 1;
-        historyScrollView.verticalNormalizedPosition = 1;
+        logsWindow.ResetScrollPosition();
     }
     private void OnInspectAll() {
         if (isShowing && activeFaction != null) {
@@ -358,32 +356,8 @@ public class FactionInfoUI : InfoUIBase {
             UpdateAllHistoryInfo();
         }
     }
-    private LogHistoryItem CreateNewLogHistoryItem() {
-        GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-        newLogItem.transform.localScale = Vector3.one;
-        newLogItem.SetActive(true);
-        LogHistoryItem logHistoryItem = newLogItem.GetComponent<LogHistoryItem>();
-        logHistoryItems.Add(logHistoryItem);
-        return logHistoryItem;
-    }
     public void UpdateAllHistoryInfo() {
-        List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsMentioning(activeFaction.persistentID);
-        int historyCount = logs.Count;
-        int historyLastIndex = historyCount - 1;
-        int missingItems = historyCount - logHistoryItems.Count;
-        for (int i = 0; i < missingItems; i++) {
-            CreateNewLogHistoryItem();
-        }
-        for (int i = 0; i < logHistoryItems.Count; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            if(i < historyCount) {
-                Log currLog = logs[historyLastIndex - i];
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
+        logsWindow.UpdateAllHistoryInfo();
     }
     #endregion   
 }

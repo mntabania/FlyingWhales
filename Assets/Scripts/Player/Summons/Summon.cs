@@ -171,7 +171,7 @@ public class Summon : Character {
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log localDeathLog;
             if (!_deathLog.hasValue) {
-                localDeathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
+                localDeathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
                 localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

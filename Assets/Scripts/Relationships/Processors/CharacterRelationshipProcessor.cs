@@ -64,7 +64,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         if (!GameManager.Instance.gameHasStarted /*|| character1.isSwitchingAlterEgo*/) {
             return; //do not log initial relationships or when switching alter egos
         }
-        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", key);
+        Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", key, null, LOG_TAG.Life_Changes);
         log.AddToFillers(character1, character1.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(character2, character2.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToDatabase();

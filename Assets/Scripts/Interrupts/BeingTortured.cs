@@ -18,6 +18,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Injured_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -31,16 +32,16 @@ namespace Interrupts {
             //If not, add a dfferent log
             //https://trello.com/c/8sAgvnbE/2210-torture-argumentexception
             if (string.IsNullOrEmpty(randomNegativeTrait) || string.IsNullOrEmpty(randomNegativeStatus)) {
-                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "cannot_torture");
+                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "cannot_torture", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
                 log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
             } else {
                 List<string> tortureTexts =
                 LocalizationManager.Instance.GetKeysLike("Interrupt", "Being Tortured", "torture");
                 string chosenTortureKey = CollectionUtilities.GetRandomElement(tortureTexts);
-                Log randomTorture = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey);
+                Log randomTorture = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", chosenTortureKey, null, LOG_TAG.Life_Changes, LOG_TAG.Player);
                 randomTorture.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text");
+                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Tortured", "full_text", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
                 log.AddToFillers(null, randomTorture.unReplacedText, LOG_IDENTIFIER.APPEND);
                 log.AddToFillers(randomTorture.fillers);
                 log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);

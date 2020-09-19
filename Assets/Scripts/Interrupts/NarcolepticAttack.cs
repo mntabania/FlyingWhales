@@ -10,6 +10,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sleep_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Needs};
         }
 
         #region Overrides

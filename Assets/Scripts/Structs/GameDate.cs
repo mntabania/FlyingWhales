@@ -252,6 +252,9 @@ public struct GameDate {
         }
         return $"Day {ConvertToContinuousDays()} {GameManager.ConvertTickToTime(this.tick)}";
     }
+    public string ConvertToTime() {
+        return $"{GameManager.ConvertTickToTime(tick)}";
+    }
 
     //public override bool Equals(object obj) {
     //    //if (obj is GameDate) {

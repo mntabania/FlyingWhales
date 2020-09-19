@@ -33,7 +33,7 @@ public class HeartOfTheWind : Artifact {
     public override void OnInspect(Character inspector) {
         base.OnInspect(inspector);
         SpawnTornado();
-        Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Berserk Orb", "inspect");
+        Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Berserk Orb", "inspect", providedTags: LOG_TAG.Life_Changes);
         log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToDatabase();

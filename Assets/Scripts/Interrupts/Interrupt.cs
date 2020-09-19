@@ -16,6 +16,7 @@ namespace Interrupts {
         public bool isIntel { get; protected set; }
         public bool shouldAddLogs { get; protected set; } //Does this interrupt add logs to the involved characters
         public bool shouldShowNotif { get; protected set; }
+        public LOG_TAG[] logTags { get; protected set; }
 
         protected Interrupt(INTERRUPT type) {
             this.type = type;
@@ -35,7 +36,7 @@ namespace Interrupts {
         public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
+                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
                 effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 return effectLog;
@@ -44,7 +45,7 @@ namespace Interrupts {
         }
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, key)) {
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, key);
+                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, key, null, logTags);
                 effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 return effectLog;
@@ -82,6 +83,7 @@ namespace Interrupts {
         public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Interrupt;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Interrupt;
         public System.Type serializedData => typeof(SaveDataInterruptHolder);
+        public LOG_TAG[] logTags => interrupt.logTags;
         #endregion
 
         public InterruptHolder() {

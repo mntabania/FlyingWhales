@@ -10,16 +10,17 @@ public class LogHistoryItem : LogItem {
 
     [SerializeField] private TextMeshProUGUI logLbl;
     [SerializeField] private TextMeshProUGUI dateLbl;
-    [SerializeField] private Image logBG;
     [SerializeField] private EnvelopContentUnityUI envelopContent;
     [SerializeField] private EventLabel eventLabel;
+    [SerializeField] private LogsTagButton logsTagButton;
     private UIHoverPosition _hoverPosition;
     
     public void SetLog(in Log log) {
         name = log.persistentID;
-        dateLbl.text = log.gameDate.ConvertToContinuousDaysWithTime();
+        dateLbl.text = log.gameDate.ConvertToTime();
         logLbl.text = log.logText;
         // log.fillers.Count > 0 ? UtilityScripts.Utilities.LogReplacer(log) : LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+        logsTagButton.SetTags(log.tags);
         eventLabel.SetOnClickAction(OnClickObjectInLog);
         EnvelopContentExecute();
     }
@@ -48,6 +49,9 @@ public class LogHistoryItem : LogItem {
     }
     public void OnHoverOutLog() {
         UIManager.Instance.HideCharacterNameplateTooltip();
+    }
+    public void ManualReset() {
+        logsTagButton.Reset();
     }
     
 

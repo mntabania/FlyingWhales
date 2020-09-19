@@ -14,6 +14,7 @@ public class BuildCampfire : GoapAction {
         actionIconString = GoapActionStateDB.Build_Icon;
         showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides

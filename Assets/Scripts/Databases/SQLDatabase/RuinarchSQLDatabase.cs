@@ -13,7 +13,9 @@ namespace Databases.SQLDatabase {
         private SQLiteConnection dbConnection;
 
         private const int Log_Row_Limit = 2000;
-        private const string Bare_Bones_Log_Fields = "persistentID, date_tick, date_day, date_month, date_year, logText, category, key, file, involvedObjects";
+        private string BareBonesLogFields = "persistentID, date_tick, date_day, date_month, date_year, logText, category, key, file, involvedObjects, rawText";
+
+        private LOG_TAG[] allLogTags;
         
         #region Clean Up
         ~RuinarchSQLDatabase() {
@@ -42,6 +44,12 @@ namespace Databases.SQLDatabase {
             //This will either create or get the current gameDB database located at the Temp folder
             //so it is essential that if game came from save data, that it's relevant data be placed inside the Temp folder.
             OpenConnection();
+
+            allLogTags = CollectionUtilities.GetEnumValues<LOG_TAG>();
+            for (int i = 0; i < allLogTags.Length; i++) {
+                LOG_TAG logTag = allLogTags[i];
+                BareBonesLogFields = $"{BareBonesLogFields}, {logTag.ToString()}";
+            }
             
             //create logs table
             SQLiteCommand command = dbConnection.CreateCommand();
@@ -55,6 +63,7 @@ namespace Databases.SQLDatabase {
                                 $"'date_month' INTEGER NOT NULL, " +
                                 $"'date_year' INTEGER NOT NULL, " +
                                 $"'logText' STRING NOT NULL, " +
+                                $"'rawText' STRING NOT NULL COLLATE NOCASE, " +
                                 $"'actionID' STRING, " +
                                 $"'involvedObjects' STRING, " +
                                 $"'isIntel' BOOLEAN DEFAULT false, ";
@@ -81,8 +90,8 @@ namespace Databases.SQLDatabase {
 
         #region Connection
         public void CloseConnection() {
-            dbConnection.Close();
-            dbConnection.Dispose();
+            dbConnection?.Close();
+            dbConnection?.Dispose();
             dbConnection = null;
         }
         public void OpenConnection() {
@@ -103,7 +112,8 @@ namespace Databases.SQLDatabase {
             //Need to replace single quotes in log message to two single quotes to prevent SQL command errors
             //Reference: https://stackoverflow.com/questions/603572/escape-single-quote-character-for-use-in-an-sqlite-query
             string replacedLog = log.logText.Replace("'", "''");
-            string insertStr = "INSERT OR REPLACE INTO 'Logs'('persistentID', 'category', 'file', 'key', 'date_tick', 'date_day', 'date_month', 'date_year', 'logText', 'actionID', 'involvedObjects'";
+            string replacedRawText = log.rawText.Replace("'", "''");
+            string insertStr = "INSERT OR REPLACE INTO 'Logs'('persistentID', 'category', 'file', 'key', 'date_tick', 'date_day', 'date_month', 'date_year', 'logText', 'rawText', 'actionID', 'involvedObjects'";
             if (log.fillers.Count > 0) {
                 for (int i = 0; i < log.fillers.Count; i++) {
                     LogFillerStruct filler = log.fillers[i];
@@ -122,7 +132,7 @@ namespace Databases.SQLDatabase {
                 insertStr = $"{insertStr})"; //closing parenthesis if no tags were provided
             }
             
-            string valuesStr = $"VALUES ('{log.persistentID}', '{log.category}', '{log.file}', '{log.key}', '{log.gameDate.tick.ToString()}', '{log.gameDate.day.ToString()}', '{log.gameDate.month.ToString()}', '{log.gameDate.year.ToString()}', '{replacedLog}', '{log.actionID}', '{log.allInvolvedObjectIDs}'";
+            string valuesStr = $"VALUES ('{log.persistentID}', '{log.category}', '{log.file}', '{log.key}', '{log.gameDate.tick.ToString()}', '{log.gameDate.day.ToString()}', '{log.gameDate.month.ToString()}', '{log.gameDate.year.ToString()}', '{replacedLog}', '{replacedRawText}', '{log.actionID}', '{log.allInvolvedObjectIDs}'";
             if (log.fillers.Count > 0) {
                 for (int i = 0; i < log.fillers.Count; i++) {
                     LogFillerStruct filler = log.fillers[i];
@@ -175,7 +185,7 @@ namespace Databases.SQLDatabase {
         public List<Log> GetLogsMentioning(string persistentID) {
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
-            command.CommandText = $"SELECT {Bare_Bones_Log_Fields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%' ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
+            command.CommandText = $"SELECT {BareBonesLogFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%' ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
             IDataReader dataReader = command.ExecuteReader();
             List<Log> logs = new List<Log>();
             while (dataReader.Read()) {
@@ -185,10 +195,49 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
             return logs;
         }
+        public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags) {
+            SQLiteCommand command = dbConnection.CreateCommand();
+            command.CommandType = CommandType.Text;
+            if (tags.Count == 0) {
+                //if no tags were passed then return an empty list, since all logs should have tags
+                //so removing all tags should remove all logs
+                return null;
+            }
+            
+            string commandStr = $"SELECT {BareBonesLogFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%'";
+            //append string search condition
+            if (!string.IsNullOrEmpty(textLike)) {
+                commandStr = $"{commandStr} AND rawText LIKE '%{textLike}%'";
+            }
+            //append tags condition.
+            if (tags.Count > 0) {
+                commandStr = $"{commandStr} AND (";
+                for (int i = 0; i < tags.Count; i++) {
+                    LOG_TAG tag = tags[i];
+                    commandStr = $"{commandStr} {tag.ToString()} = '1'";
+                    if (i + 1 < tags.Count) {
+                        commandStr = $"{commandStr} OR";
+                    }else if (i + 1 == tags.Count) {
+                        commandStr = $"{commandStr})";
+                    }
+                }
+            }
+            commandStr = $"{commandStr} ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
+            Debug.Log($"Trying to get logs that match criteria, full query command is {commandStr}");
+            command.CommandText = commandStr;
+            IDataReader dataReader = command.ExecuteReader();
+            List<Log> logs = new List<Log>();
+            while (dataReader.Read()) {
+                Log log = ConvertToBareBonesLog(dataReader);
+                logs.Add(log);
+            }
+            dataReader.Close();
+            return logs;    
+        }
         public Log GetLogWithPersistentID(string persistentID) {
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
-            command.CommandText = $"SELECT {Bare_Bones_Log_Fields} FROM Logs WHERE persistentID = '{persistentID}'";
+            command.CommandText = $"SELECT {BareBonesLogFields} FROM Logs WHERE persistentID = '{persistentID}'";
             IDataReader dataReader = command.ExecuteReader();
             while (dataReader.Read()) {
                 return ConvertToBareBonesLog(dataReader);
@@ -224,7 +273,20 @@ namespace Databases.SQLDatabase {
             string key = dataReader.GetString(7);
             string file = dataReader.GetString(8);
             string involvedObjects = dataReader.GetString(9);
-            return new Log(id, new GameDate(month, day, year, tick), logText, category, key, file, involvedObjects);
+            string rawText = dataReader.GetString(10);
+            
+            int startingTagIndex = 11;
+            List<LOG_TAG> logTags = new List<LOG_TAG>();
+            LOG_TAG[] allLogTagTypes = CollectionUtilities.GetEnumValues<LOG_TAG>();
+            for (int i = 0; i < allLogTagTypes.Length; i++) {
+                LOG_TAG currentType = allLogTagTypes[i];
+                bool isTagOn = dataReader.GetBoolean(startingTagIndex);
+                if (isTagOn) {
+                    logTags.Add(currentType);
+                }
+                startingTagIndex++;
+            }
+            return new Log(id, new GameDate(month, day, year, tick), logText, category, key, file, involvedObjects, logTags, rawText);
         }
         private void DeleteOldestLog() {
             SQLiteCommand command = dbConnection.CreateCommand();

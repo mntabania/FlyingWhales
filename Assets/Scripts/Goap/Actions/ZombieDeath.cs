@@ -12,6 +12,7 @@ public class ZombieDeath : GoapAction {
         actionIconString = GoapActionStateDB.Injured_Icon;
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides

@@ -13,6 +13,7 @@ public class DouseFire : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
         shouldAddLogs = false;
         showNotification = false;
+        logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides

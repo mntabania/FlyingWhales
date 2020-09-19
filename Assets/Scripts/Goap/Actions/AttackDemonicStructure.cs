@@ -13,6 +13,7 @@ public class AttackDemonicStructure : GoapAction {
         doesNotStopTargetCharacter = true;
 		advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
 		racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.ANGEL, RACE.GHOST };
+		logTags = new[] {LOG_TAG.Combat};
 	}
 
 	#region Overrides

@@ -188,7 +188,7 @@ public enum LOG_IDENTIFIER{
     ITEM_1,
     ITEM_2,
     ITEM_3,
-    COMBAT,
+    COMBAT_FILLER,
     //PARTY_NAME,
     OTHER,
     STRING_1,
@@ -1026,7 +1026,7 @@ public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
 }
 public enum LOG_TAG {
-    Life_Changes, Social, Needs, Work, Combat_Tag, Crimes, Witnessed, Informed, Party, Misc, Assumption
+    Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel
 }
 
 

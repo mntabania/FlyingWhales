@@ -18,7 +18,7 @@ public class LycanthropyData : SpellData {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //targetPOI.traitContainer.AddTrait(targetPOI, "Lycanthrope");
         LycanthropeData lycanthropeData = new LycanthropeData(targetPOI as Character);
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Lycanthrope", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();

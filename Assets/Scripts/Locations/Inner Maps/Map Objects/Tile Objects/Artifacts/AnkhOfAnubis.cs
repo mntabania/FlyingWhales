@@ -56,7 +56,7 @@ public class AnkhOfAnubis : Artifact {
                 vengefulGhost.SetName(characterThatDied.name);
                 CharacterManager.Instance.PlaceSummon(vengefulGhost, gridTileLocation); //characterThatDied.gridTileLocation
 
-                Log log = new Log(GameManager.Instance.Today(), "Artifact", "Ankh Of Anubis", "spawn_vengeful_ghost");
+                Log log = new Log(GameManager.Instance.Today(), "Artifact", "Ankh Of Anubis", "spawn_vengeful_ghost", providedTags: LOG_TAG.Life_Changes);
                 log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, characterThatDied.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();

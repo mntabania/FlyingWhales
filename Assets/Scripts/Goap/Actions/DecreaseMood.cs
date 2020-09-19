@@ -8,6 +8,7 @@ public class DecreaseMood : GoapAction {
         actionIconString = GoapActionStateDB.Magic_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON, RACE.LESSER_DEMON, RACE.GHOST };
+        logTags = new[] {LOG_TAG.Player, LOG_TAG.Life_Changes};
     }
     
     #region Overrides
@@ -41,7 +42,7 @@ public class DecreaseMood : GoapAction {
     private void DecreaseEffect(ITraitable traitable, Character actor) {
         if (traitable is Character targetCharacter && actor.IsHostileWith(targetCharacter)) {
             targetCharacter.traitContainer.AddTrait(traitable, "Dolorous", actor);  
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Decrease Mood", "effect");
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Decrease Mood", "effect", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddLogToDatabase();

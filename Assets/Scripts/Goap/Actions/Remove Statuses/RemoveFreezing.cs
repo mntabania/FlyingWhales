@@ -12,6 +12,7 @@ public class RemoveFreezing : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides

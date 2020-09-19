@@ -10,6 +10,7 @@ namespace Interrupts {
             duration = 3;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Injured_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides

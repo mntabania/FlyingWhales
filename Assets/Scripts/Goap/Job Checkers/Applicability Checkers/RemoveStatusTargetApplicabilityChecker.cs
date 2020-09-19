@@ -5,8 +5,11 @@ namespace Goap.Job_Checkers {
         public override bool IsJobStillApplicable(JobQueueItem job) {
             GoapPlanJob goapPlanJob = job as GoapPlanJob;
             Assert.IsNotNull(goapPlanJob);
-            Character target = goapPlanJob.targetPOI as Character;
-            Assert.IsNotNull(target);
+            IPointOfInterest target = goapPlanJob.targetPOI;
+            if (target == null) {
+                return false;
+            }
+            
             string traitName = goapPlanJob.goal.conditionKey;
             
             if (target.gridTileLocation == null || target.isDead) {

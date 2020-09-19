@@ -176,7 +176,7 @@ public class PsychopathUI : PopupMenuBase {
     public void OnClickConfirm() {
         Psychopath psychopathTrait = TraitManager.Instance.CreateNewInstancedTraitClass<Psychopath>("Psychopath");
         character.traitContainer.AddTrait(character, psychopathTrait);
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Life_Changes);
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
         log.AddLogToDatabase();

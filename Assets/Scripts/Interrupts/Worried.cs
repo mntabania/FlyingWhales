@@ -12,6 +12,7 @@ namespace Interrupts {
             //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;
             //isIntel = true;
+            logTags = new[] {LOG_TAG.Misc};
         }
 
         #region Overrides

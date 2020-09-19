@@ -10,13 +10,14 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sick_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Misc};
         }
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             interruptHolder.actor.SetPOIState(POI_STATE.INACTIVE);
-            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
+            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(interruptHolder.target, interruptHolder.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_1);

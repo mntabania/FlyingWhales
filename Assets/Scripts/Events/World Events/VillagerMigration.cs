@@ -39,7 +39,7 @@ namespace Events.World_Events {
                             newCharacter.jobComponent.PlanReturnHomeUrgent();
                             Messenger.Broadcast(Signals.NEW_VILLAGER_ARRIVED, newCharacter);
                             
-                            Log log = new Log(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager");
+                            Log log = new Log(GameManager.Instance.Today(), "WorldEvents", "VillagerMigration", "new_villager", providedTags: LOG_TAG.Life_Changes);
                             log.AddToFillers(newCharacter, newCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(newCharacter.homeRegion, newCharacter.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                             log.AddLogToDatabase();

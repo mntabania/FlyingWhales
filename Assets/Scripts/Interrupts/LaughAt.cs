@@ -9,6 +9,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Mock_Icon;
+            logTags = new[] {LOG_TAG.Social, LOG_TAG.Misc};
         }
 
         #region Overrides

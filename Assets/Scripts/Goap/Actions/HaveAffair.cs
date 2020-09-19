@@ -13,6 +13,7 @@ public class HaveAffair : GoapAction {
         showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
+        logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Social};
     }
 
     #region Overrides

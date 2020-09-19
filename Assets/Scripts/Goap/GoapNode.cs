@@ -65,6 +65,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
     //Crime
     public CRIME_TYPE crimeType { get; private set; }
+    public LOG_TAG[] logTags => GetLogTags().ToArray();
 
     #region getters
     public GoapActionState currentState {
@@ -794,7 +795,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private void CreateThoughtBubbleLog() {
         if(!thoughtBubbleLog.hasValue) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble")) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this, LOG_TAG.Misc);
                 // thoughtBubbleLog.SetLogType(LOG_TYPE.Action);
                 action.AddFillersToLog(ref log, this);
                 thoughtBubbleLog = log;
@@ -802,7 +803,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         if (!thoughtBubbleMovingLog.hasValue) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble_m")) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this, LOG_TAG.Misc);
                 // log.SetLogType(LOG_TYPE.Action);
                 action.AddFillersToLog(ref log, this);
                 thoughtBubbleMovingLog = log;
@@ -822,6 +823,16 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     public string StringText() {
         return $"{action.goapName} with actor => {actor.name}, and target => {poiTarget.name}";
+    }
+    private List<LOG_TAG> GetLogTags() {
+        List<LOG_TAG> tags = new List<LOG_TAG>(action.logTags);
+        if (crimeType != CRIME_TYPE.None) {
+            tags.Add(LOG_TAG.Crimes);
+        }
+        if (action.isNotificationAnIntel) {
+            tags.Add(LOG_TAG.Intel);
+        }
+        return tags;
     }
     #endregion
 

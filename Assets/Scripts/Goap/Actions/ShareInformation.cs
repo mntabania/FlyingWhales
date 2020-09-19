@@ -15,6 +15,7 @@ public class ShareInformation : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         doesNotStopTargetCharacter = true;
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Informed, LOG_TAG.Social};
     }
 
     #region Overrides
@@ -253,7 +254,7 @@ public class ShareInformation : GoapAction {
                     recipient.jobComponent.CreateConfirmRumorJob(actor, shareActionItself);
                 }
             }
-            Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result);
+            Log believeLog = new Log(GameManager.Instance.Today(), "GoapAction", name, result, providedTags: LOG_TAG.Informed);
             believeLog.AddToFillers(sharer, sharer.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             believeLog.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             believeLog.AddToFillers(null, reactable.classificationName.ToLower(), LOG_IDENTIFIER.STRING_1);

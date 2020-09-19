@@ -84,6 +84,8 @@ public class PlayerSkillTreeNodeItemDictionary : SerializableDictionary<SPELL_TY
 public class PlayerSkillDataDictionary : SerializableDictionary<SPELL_TYPE, PlayerSkillData> { }
 [System.Serializable]
 public class PlayerArchetypeLoadoutDictionary : SerializableDictionary<PLAYER_ARCHETYPE, PlayerSkillLoadout> { }
+[System.Serializable]
+public class LogTagSpriteDictionary : SerializableDictionary<LOG_TAG, Sprite> { }
 //List storage
 [System.Serializable]
 public class LandmarkSpriteListStorage : SerializableDictionary.Storage<List<LandmarkStructureSprite>> { }

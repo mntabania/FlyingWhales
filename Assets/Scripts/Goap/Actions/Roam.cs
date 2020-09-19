@@ -16,6 +16,7 @@ public class Roam : GoapAction {
 		//	RACE.ENT, RACE.REVENANT
   //      };
 		shouldAddLogs = false;
+		logTags = new[] {LOG_TAG.Misc};
 	}
 
 	#region Overrides

@@ -214,7 +214,7 @@ public class InterruptComponent : CharacterComponent {
     }
     private void CreateThoughtBubbleLog(Interrupt interrupt) {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble");
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble", providedTags: interrupt.logTags);
             thoughtBubbleLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(currentInterrupt.target, currentInterrupt.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             interrupt.AddAdditionalFillersToThoughtLog(thoughtBubbleLog, owner);

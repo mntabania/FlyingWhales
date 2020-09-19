@@ -208,6 +208,27 @@ namespace UtilityScripts {
         #endregion
 
         #region New Logs
+        public static string RemoveRichText(string text) {
+            StringBuilder sb = new StringBuilder(text.Length);
+            bool tag = false;
+            for (int index = 0; index < text.Length; index++) {
+                char c = text[index];
+                if (tag) {
+                    if (c == '>') {
+                        tag = false;
+                    }
+                }
+                else {
+                    if (c == '<') {
+                        tag = true;
+                    }
+                    else {
+                        sb.Append(c);
+                    }
+                }
+            }
+            return sb.ToString();
+        }
         public static string LogReplacer(string unReplacedLog, List<LogFillerStruct> fillers) {
             if (string.IsNullOrEmpty(unReplacedLog)) {
                 return string.Empty;
@@ -238,7 +259,7 @@ namespace UtilityScripts {
             }
             return newText;
         }
-         private static string CustomStringReplacer(string wordToBeReplaced, List<LogFillerStruct> fillers) {
+        private static string CustomStringReplacer(string wordToBeReplaced, List<LogFillerStruct> fillers) {
             string wordToReplace = string.Empty;
             string strLogIdentifier = wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2);
             LOG_IDENTIFIER identifier = logIdentifiers[strLogIdentifier];
@@ -298,8 +319,7 @@ namespace UtilityScripts {
                 }
             }
             return wordToReplace;
-
-        }
+         }
         private static string CustomPronounReplacer(string wordToBeReplaced, List<LogFillerStruct> fillers) {
             LOG_IDENTIFIER identifier = logIdentifiers[wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2)];
             string identifierAsString = identifier.ToString();
@@ -623,7 +643,7 @@ namespace UtilityScripts {
             {"107", LOG_IDENTIFIER.ITEM_1},
             {"108", LOG_IDENTIFIER.ITEM_2},
             {"109", LOG_IDENTIFIER.ITEM_3},
-            {"110", LOG_IDENTIFIER.COMBAT},
+            {"110", LOG_IDENTIFIER.COMBAT_FILLER},
             {"111", LOG_IDENTIFIER.STRING_1},
             {"112", LOG_IDENTIFIER.STRING_2},
             {"113", LOG_IDENTIFIER.MINION_1},
@@ -688,7 +708,7 @@ namespace UtilityScripts {
             {LOG_IDENTIFIER.ITEM_1, "107"},
             {LOG_IDENTIFIER.ITEM_2, "108"},
             {LOG_IDENTIFIER.ITEM_3, "109"},
-            {LOG_IDENTIFIER.COMBAT, "110"},
+            {LOG_IDENTIFIER.COMBAT_FILLER, "110"},
             {LOG_IDENTIFIER.STRING_1, "111"},
             {LOG_IDENTIFIER.STRING_2, "112"},
             {LOG_IDENTIFIER.MINION_1, "113"},
@@ -732,7 +752,7 @@ namespace UtilityScripts {
                         case LOG_IDENTIFIER.LANDMARK_3:
                         case LOG_IDENTIFIER.PARTY_3:
                         case LOG_IDENTIFIER.TASK:
-                        case LOG_IDENTIFIER.COMBAT:
+                        case LOG_IDENTIFIER.COMBAT_FILLER:
                             key += "@";
                             break;
                         default:

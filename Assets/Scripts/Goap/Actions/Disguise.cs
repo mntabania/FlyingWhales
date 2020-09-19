@@ -16,6 +16,7 @@ public class Disguise : GoapAction {
             RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON
         };
         doesNotStopTargetCharacter = true;
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides

@@ -16,6 +16,7 @@ public class Play : GoapAction {
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, };
+        logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides

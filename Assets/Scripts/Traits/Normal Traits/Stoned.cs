@@ -40,7 +40,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if(addedTo is Character character && character.marker) {
                 character.marker.PauseAnimation();
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "effect");
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "effect", null, LOG_TAG.Misc);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
                 _stonedGO = GameManager.Instance.CreateParticleEffectAt(character, PARTICLE_EFFECT.Stoned);

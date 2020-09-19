@@ -31,12 +31,8 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI houseLbl;
     [SerializeField] private EventLabel houseEventLbl;
 
-    [Space(10)] [Header("Logs")]
-    [SerializeField] private GameObject logParentGO;
-    [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private ScrollRect historyScrollView;
-    [SerializeField] private UIHoverPosition logHoverPosition;
-    private List<LogHistoryItem> logHistoryItems;
+    [Space(10)] [Header("Logs")] 
+    [SerializeField] private LogsWindow _logsWindow;
 
     [Space(10)] [Header("Stats")]
     [SerializeField] private TextMeshProUGUI hpLbl;
@@ -141,8 +137,8 @@ public class CharacterInfoUI : InfoUIBase {
         hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
         hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
         hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
-        
-        logHistoryItems = new List<LogHistoryItem>();
+
+        _logsWindow.Initialize();
 
         afflictions = new List<SpellData>();
         triggerFlawPool = new List<string>();
@@ -184,6 +180,7 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateTraits();
         UpdateRelationships();
         UpdateInventoryInfo();
+        _logsWindow.SetObjectPersistentID(_activeCharacter.persistentID);
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();
@@ -226,7 +223,7 @@ public class CharacterInfoUI : InfoUIBase {
     //     }
     // }
     private void ResetAllScrollPositions() {
-        historyScrollView.verticalNormalizedPosition = 1;
+        _logsWindow.ResetScrollPosition();
     }
     public void UpdateCharacterInfo() {
         if (_activeCharacter == null) {
@@ -411,44 +408,13 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion
 
     #region History
-    private LogHistoryItem CreateNewLogHistoryItem() {
-        GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-        newLogItem.transform.localScale = Vector3.one;
-        newLogItem.SetActive(true);
-        LogHistoryItem logHistoryItem = newLogItem.GetComponent<LogHistoryItem>();
-        logHistoryItems.Add(logHistoryItem);
-        return logHistoryItem;
-    }
     private void UpdateHistory(Log log) {
         if (isShowing && log.IsInvolved(_activeCharacter)) {
             UpdateAllHistoryInfo();
         }
     }
     public void UpdateAllHistoryInfo() {
-        List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsMentioning(_activeCharacter.persistentID);
-        int historyCount = logs.Count;
-        int historyLastIndex = historyCount - 1;
-        int missingItems = historyCount - logHistoryItems.Count;
-        for (int i = 0; i < missingItems; i++) {
-            CreateNewLogHistoryItem();
-        }
-        for (int i = 0; i < logHistoryItems.Count; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            if(i < historyCount) {
-                Log currLog = logs[historyLastIndex - i];
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-                currItem.SetHoverPosition(logHoverPosition);
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-    }
-    private void ClearHistory() {
-        for (int i = 0; i < logHistoryItems.Count; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            currItem.gameObject.SetActive(false);
-        }
+        _logsWindow.UpdateAllHistoryInfo();
     }
     #endregion   
 

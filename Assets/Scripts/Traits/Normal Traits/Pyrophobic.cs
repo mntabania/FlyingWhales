@@ -105,7 +105,7 @@ namespace Traits {
             }
             owner.logComponent.PrintLogIfActive(debugLog);
             
-            Log log = new Log(GameManager.Instance.Today(), "Trait", "Pyrophobic", "on_see_first");
+            Log log = new Log(GameManager.Instance.Today(), "Trait", "Pyrophobic", "on_see_first", null, LOG_TAG.Misc);
             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase();
         }

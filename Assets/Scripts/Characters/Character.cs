@@ -653,7 +653,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "spawn_revenant");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "spawn_revenant", null, LOG_TAG.Life_Changes);
         log.AddToFillers(revenant, revenant.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToDatabase();
@@ -786,7 +786,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_hero");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_hero", providedTags: LOG_TAG.Life_Changes);
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToDatabase();
             traitContainer.AddTrait(this, "Blessed");
@@ -4475,7 +4475,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             shouldLogReason = false;
         }
         if (shouldLogReason) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason", providedTags: LOG_TAG.Misc);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
@@ -5645,7 +5645,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             logComponent.PrintLogIfActive($"{name} died of {cause}");
             Log localDeathLog;
             if (!_deathLog.hasValue) {
-                localDeathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
+                localDeathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
                 localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

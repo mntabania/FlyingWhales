@@ -4,6 +4,7 @@
         actionIconString = GoapActionStateDB.Eat_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.WOLF };
+        logTags = new[] {LOG_TAG.Needs};
     }
     
     #region Overrides
