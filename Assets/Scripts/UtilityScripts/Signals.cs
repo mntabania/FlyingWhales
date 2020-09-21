@@ -198,6 +198,10 @@ public static class Signals {
     /// Parameters Character 
     /// </summary>
     public static string CHARACTER_MARKER_DESTROYED = "OnCharacterMarkerDestroyed";
+    /// <summary>
+    /// Parameters Character 
+    /// </summary>
+    public static string CHARACTER_MARKER_EXPIRED = "OnCharacterMarkerExpired";
     #endregion
 
     #region UI
@@ -210,13 +214,13 @@ public static class Signals {
     public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification";
     public static string LOG_ADDED = "OnLogAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     /// <summary>
-    /// Parameters (Faction)
+    /// Parameters (Log)
     /// </summary>
-    public static string FACTION_LOG_ADDED = "OnFactionLogAdded";
+    public static string LOG_IN_DATABASE_UPDATED = "OnLogInDatabaseUpdated";
     /// <summary>
-    /// Parameters Log, IPointOfInterest
+    /// Parameters Log
     /// </summary>
-    public static string LOG_REMOVED = "OnLogRemoved";
+    public static string LOG_REMOVED_FROM_DATABASE = "OnLogRemovedFromDatabase";
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)
     public static string PAUSED_BY_PLAYER = "OnPausedByPlayer";
     public static string PROGRESSION_SPEED_CHANGED = "OnProgressionSpeedChanged"; //Parameters (PROGRESSION_SPEED progressionSpeed)
@@ -482,10 +486,6 @@ public static class Signals {
     /// </summary>
     public static string CHAOS_ORB_EXPIRED = "OnChaosOrbExpired";
     public static string CHARGES_ADJUSTED = "OnChargesAdjusted";
-    /// <summary>
-    /// Parameters: Log log
-    /// </summary>
-    public static string UPDATE_ALL_NOTIFICATION_LOGS = "UpdateAllNotificationLogs";
     public static string CHECK_IF_PLAYER_WINS = "CheckIfPlayerWins";
     #endregion
 

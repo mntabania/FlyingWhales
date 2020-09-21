@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Logs;
 using UnityEngine;
 
 public class AgoraphobiaData : SpellData {
@@ -15,10 +16,10 @@ public class AgoraphobiaData : SpellData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         targetPOI.traitContainer.AddTrait(targetPOI, "Agoraphobic");
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Agoraphobic", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }

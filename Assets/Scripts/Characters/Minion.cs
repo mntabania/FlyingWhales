@@ -48,8 +48,7 @@ public class Minion {
             SubscribeListeners();
         }
     }
-    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, 
-        Log _deathLog = null, LogFiller[] deathLogFillers = null) {
+    public void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null) {
         if (!character.isDead) {
             Region deathLocation = character.currentRegion;
             LocationStructure deathStructure = character.currentStructure;
@@ -125,9 +124,9 @@ public class Minion {
             // StopInvasionProtocol(PlayerManager.Instance.player.currentNpcSettlementBeingInvaded);
 
             Log deathLog;
-            if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
-                deathLog.AddToFillers(this, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (!_deathLog.hasValue) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
+                deathLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 }
@@ -137,7 +136,7 @@ public class Minion {
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                character.logComponent.AddHistory(deathLog);
+                deathLog.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(character, deathLog);
             } else {
                 deathLog = _deathLog;

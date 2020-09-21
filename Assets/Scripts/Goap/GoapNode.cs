@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
@@ -64,9 +65,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
     //Crime
     public CRIME_TYPE crimeType { get; private set; }
+    public LOG_TAG[] logTags => GetLogTags().ToArray();
 
     #region getters
-    //TODO: Refactor these getters after all errors are resolved.
     public GoapActionState currentState {
         get {
             if (!action.states.ContainsKey(currentStateName)) {
@@ -148,7 +149,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //Move To Do Action
         actor.marker.pathfindingAI.ResetEndReachedDistance();
         SetTargetToGoTo();
-        CreateThoughtBubbleLog(targetStructure);
+        CreateThoughtBubbleLog();
         CheckAndMoveToDoAction(job);
     }
     private void SetTargetToGoTo() {
@@ -569,11 +570,11 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
         if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false) {
             //trigger vigilant, only if character is NOT resting or unconscious
-            descriptionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this);
-            descriptionLog.SetLogType(LOG_TYPE.Action);
-            action.AddFillersToLog(descriptionLog, this);
-            descriptionLog.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
-
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Misc);
+            // descriptionLog.SetLogType(LOG_TYPE.Action);
+            action.AddFillersToLog(ref log, this);
+            log.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
+            descriptionLog = log;
             actor.marker.UpdateAnimation();
 
             //When a character is vigilant and an action has started performing do not let it perform the action even if the action has duration
@@ -640,7 +641,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     private void EndEffectNormal(bool shouldDoAfterEffect) {
         if (shouldDoAfterEffect) {
-            if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+            if (descriptionLog.hasValue && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+                descriptionLog.AddLogToDatabase();
                 //Only show notif if an action can be stored as an intel to reduce notifications and info overload to the player
                 if (action.isNotificationAnIntel) {
                     bool cannotBeStoredAsIntel = !actor.isNormalCharacter && (!(poiTarget is Character) || !(poiTarget as Character).isNormalCharacter);
@@ -652,7 +654,6 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(descriptionLog);
                 }
-                descriptionLog.AddLogToInvolvedObjects();
             }
         }
         GoapActionState currentState = action.states[currentStateName];
@@ -698,8 +699,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         //}
     }
     private void EndEffectVigilant() {
-        if (descriptionLog != null && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
-            descriptionLog.AddLogToInvolvedObjects();
+        if (descriptionLog.hasValue && action.shouldAddLogs && CharacterManager.Instance.CanAddCharacterLogOrShowNotif(action.goapType)) { //only add logs if both the parent action and this state should add logs
+            descriptionLog.AddLogToDatabase();
             if(actor.currentRegion != null) {
                 PlayerManager.Instance.player.ShowNotificationFrom(actor.currentRegion, descriptionLog);
             }
@@ -789,23 +790,25 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
     #region Log
     private void CreateDescriptionLog(GoapActionState actionState) {
-        if (descriptionLog == null) {
-            descriptionLog = actionState.CreateDescriptionLog(actor, poiTarget, this);
+        if (!descriptionLog.hasValue) {
+            descriptionLog = actionState.CreateDescriptionLog(this);
         }
     }
-    private void CreateThoughtBubbleLog(LocationStructure targetStructure) {
-        if(thoughtBubbleLog == null) {
+    private void CreateThoughtBubbleLog() {
+        if(!thoughtBubbleLog.hasValue) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble")) {
-                thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this);
-                thoughtBubbleLog.SetLogType(LOG_TYPE.Action);
-                action.AddFillersToLog(thoughtBubbleLog, this);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this, LOG_TAG.Misc);
+                // thoughtBubbleLog.SetLogType(LOG_TYPE.Action);
+                action.AddFillersToLog(ref log, this);
+                thoughtBubbleLog = log;
             }
         }
-        if (thoughtBubbleMovingLog == null) {
+        if (!thoughtBubbleMovingLog.hasValue) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble_m")) {
-                thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this);
-                thoughtBubbleMovingLog.SetLogType(LOG_TYPE.Action);
-                action.AddFillersToLog(thoughtBubbleMovingLog, this);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this, LOG_TAG.Misc);
+                // log.SetLogType(LOG_TYPE.Action);
+                action.AddFillersToLog(ref log, this);
+                thoughtBubbleMovingLog = log;
             }
         }
     }
@@ -816,40 +819,22 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             return thoughtBubbleLog;
         }
         return descriptionLog;
-        //if (onlyShowNotifOfDescriptionLog && currentState != null) {
-        //    return this.currentState.descriptionLog;
-        //}
-        //if (actor.currentParty.icon.isTravelling) {
-        //    if (currentState != null) {
-        //        //character is travelling but there is already a current state
-        //        //Note: this will only happen is action has whileMovingState
-        //        //Examples are: Imprison Character and Abduct Character actions
-        //        return currentState.descriptionLog;
-        //    }
-        //    //character is travelling
-        //    return thoughtBubbleMovingLog;
-        //} else {
-        //    //character is not travelling
-        //    if (this.isDone) {
-        //        //action is already done
-        //        return this.currentState.descriptionLog;
-        //    } else {
-        //        //action is not yet done
-        //        if (currentState == null) {
-        //            //if the actions' current state is null, Use moving log
-        //            return thoughtBubbleMovingLog;
-        //        } else {
-        //            //if the actions current state has a duration
-        //            return thoughtBubbleLog;
-        //        }
-        //    }
-        //}
     }
     public void OverrideDescriptionLog(Log log) {
         descriptionLog = log;
     }
     public string StringText() {
         return $"{action.goapName} with actor => {actor.name}, and target => {poiTarget.name}";
+    }
+    private List<LOG_TAG> GetLogTags() {
+        List<LOG_TAG> tags = new List<LOG_TAG>(action.logTags);
+        if (crimeType != CRIME_TYPE.None) {
+            tags.Add(LOG_TAG.Crimes);
+        }
+        if (action.isNotificationAnIntel) {
+            tags.Add(LOG_TAG.Intel);
+        }
+        return tags;
     }
     #endregion
 
@@ -986,14 +971,23 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (!string.IsNullOrEmpty(data.disguisedTarget)) {
             disguisedTarget = CharacterManager.Instance.GetCharacterByPersistentID(data.disguisedTarget);
         }
-        if (!string.IsNullOrEmpty(data.thoughtBubbleLog)) {
-            thoughtBubbleLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleLog);
+        // if (!string.IsNullOrEmpty(data.thoughtBubbleLog)) {
+        //     thoughtBubbleLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleLog);
+        // }
+        // if (!string.IsNullOrEmpty(data.thoughtBubbleMovingLog)) {
+        //     thoughtBubbleMovingLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleMovingLog);
+        // }
+        // if (!string.IsNullOrEmpty(data.descriptionLog)) {
+        //     descriptionLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.descriptionLog);
+        // }
+        if (data.thoughtBubbleLog.hasValue) {
+            thoughtBubbleLog = data.thoughtBubbleLog;
         }
-        if (!string.IsNullOrEmpty(data.thoughtBubbleMovingLog)) {
-            thoughtBubbleMovingLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.thoughtBubbleMovingLog);
+        if (data.thoughtBubbleMovingLog.hasValue) {
+            thoughtBubbleMovingLog = data.thoughtBubbleMovingLog;
         }
-        if (!string.IsNullOrEmpty(data.descriptionLog)) {
-            descriptionLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.descriptionLog);
+        if (data.descriptionLog.hasValue) {
+            descriptionLog = data.descriptionLog;
         }
         if (!string.IsNullOrEmpty(data.targetStructure)) {
             targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(data.targetStructure);
@@ -1049,9 +1043,9 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
 
     public INTERACTION_TYPE action;
     public ACTION_STATUS actionStatus;
-    public string thoughtBubbleLog;
-    public string thoughtBubbleMovingLog;
-    public string descriptionLog;
+    public Log thoughtBubbleLog;
+    public Log thoughtBubbleMovingLog;
+    public Log descriptionLog;
     public string targetStructure;
     public string targetTile;
     public string targetPOIToGoTo;
@@ -1101,17 +1095,26 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
             disguisedTarget = data.disguisedTarget.persistentID;
         }
 
-        if (data.thoughtBubbleLog != null) {
-            thoughtBubbleLog = data.thoughtBubbleLog.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.thoughtBubbleLog);
+        // if (data.thoughtBubbleLog != null) {
+        //     thoughtBubbleLog = data.thoughtBubbleLog.persistentID;
+        //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.thoughtBubbleLog);
+        // }
+        // if (data.thoughtBubbleMovingLog != null) {
+        //     thoughtBubbleMovingLog = data.thoughtBubbleMovingLog.persistentID;
+        //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.thoughtBubbleMovingLog);
+        // }
+        // if (data.descriptionLog != null) {
+        //     descriptionLog = data.descriptionLog.persistentID;
+        //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.descriptionLog);
+        // }
+        if (data.thoughtBubbleLog.hasValue) {
+            thoughtBubbleLog = data.thoughtBubbleLog;
         }
-        if (data.thoughtBubbleMovingLog != null) {
-            thoughtBubbleMovingLog = data.thoughtBubbleMovingLog.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.thoughtBubbleMovingLog);
+        if (data.thoughtBubbleMovingLog.hasValue) {
+            thoughtBubbleMovingLog = data.thoughtBubbleMovingLog;
         }
-        if (data.descriptionLog != null) {
-            descriptionLog = data.descriptionLog.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.descriptionLog);
+        if (data.descriptionLog.hasValue) {
+            descriptionLog = data.descriptionLog;
         }
         if (data.targetStructure != null) {
             targetStructure = data.targetStructure.persistentID;

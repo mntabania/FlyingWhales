@@ -99,13 +99,13 @@ public class FactionIdeologyComponent {
         relationshipToPlayerFaction.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
         owner.factionType.AddIdeology(demonWorship);
 
-        Log changeIdeologyLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change");
+        Log changeIdeologyLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", providedTags: LOG_TAG.Life_Changes);
         changeIdeologyLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
-        changeIdeologyLog.AddLogToInvolvedObjects();
+        changeIdeologyLog.AddLogToDatabase();
 
-        Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
+        Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change", providedTags: LOG_TAG.Life_Changes);
         changeRelationsLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
-        changeRelationsLog.AddLogToInvolvedObjects();
+        changeRelationsLog.AddLogToDatabase();
         
         Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, owner);
     }

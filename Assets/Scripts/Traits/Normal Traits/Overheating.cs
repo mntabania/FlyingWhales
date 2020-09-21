@@ -142,9 +142,9 @@ namespace Traits {
 
                     string result = weights.PickRandomElementGivenWeights();
                     if(result == "unconscious") {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "overheat_unconscious");
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "overheat_unconscious", null, LOG_TAG.Misc);
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddLogToInvolvedObjects();
+                        log.AddLogToDatabase();
 
                         character.traitContainer.AddTrait(character, "Unconscious");
                         return true;

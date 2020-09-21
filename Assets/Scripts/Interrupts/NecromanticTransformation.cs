@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -8,6 +9,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Player, LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -21,12 +23,12 @@ namespace Interrupts {
                 if (actor.traitContainer.HasTrait("Evil")) {
                     adjective = "evil";
                 }
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
+                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
                 effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 effectLog.AddToFillers(null, adjective, LOG_IDENTIFIER.STRING_1);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         #endregion
     }

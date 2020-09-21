@@ -66,14 +66,14 @@ public class Excalibur : TileObject {
         if (lockedState == Locked_State.Locked) {
             if (inspector.traitContainer.HasTrait("Blessed") && 
                 inspector.traitContainer.HasTrait("Evil", "Treacherous") == false) {
-                Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_success");
+                Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_success", providedTags: LOG_TAG.Life_Changes);
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
                 UnlockSword(inspector);
             } else {
-                Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_fail");
+                Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Excalibur", "on_inspect_fail", providedTags: LOG_TAG.Misc);
                 log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
             }
         }
     }

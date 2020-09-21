@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -9,6 +10,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Social};
         }
 
         #region Overrides
@@ -24,7 +26,7 @@ namespace Interrupts {
                 } else {
                     targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, chosenEnemyOrRival, "Base", 15);
                 }
-                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey);
+                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 overrideEffectLog.AddToFillers(chosenEnemyOrRival, chosenEnemyOrRival.name, LOG_IDENTIFIER.CHARACTER_3);

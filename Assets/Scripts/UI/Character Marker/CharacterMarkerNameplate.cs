@@ -238,7 +238,7 @@ public class CharacterMarkerNameplate : PooledObject {
         thoughtLbl.text = string.Empty;
     }
     private void UpdateThoughtText() {
-        string thoughts = _parentMarker.character.visuals.GetThoughtBubble(out var log);
+        string thoughts = _parentMarker.character.visuals.GetThoughtBubble();
         if (thoughtLbl.text.Equals(thoughts) == false) {
             //thoughts changed
             thoughtLbl.text = thoughts;

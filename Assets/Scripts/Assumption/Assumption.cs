@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 public class Assumption : IReactable {
@@ -19,6 +20,7 @@ public class Assumption : IReactable {
     public Log informationLog => assumedAction.informationLog;
     public bool isStealth => assumedAction.isStealth;
     public List<Character> awareCharacters => assumedAction.awareCharacters;
+    public LOG_TAG[] logTags => assumedAction.logTags;
     #endregion
 
     public Assumption(Character characterThatCreated, Character targetCharacter) {

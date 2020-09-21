@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -8,6 +9,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -15,7 +17,7 @@ namespace Interrupts {
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Faction prevFaction = interruptHolder.actor.faction;
             if (interruptHolder.actor.ChangeFactionTo(FactionManager.Instance.vagrantFaction)) {
-                overrideEffectLog  = new Log(GameManager.Instance.Today(), "Interrupt", "Leave Faction", interruptHolder.identifier);
+                overrideEffectLog  = new Log(GameManager.Instance.Today(), "Interrupt", "Leave Faction", interruptHolder.identifier, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(prevFaction, prevFaction.name, LOG_IDENTIFIER.FACTION_1);
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

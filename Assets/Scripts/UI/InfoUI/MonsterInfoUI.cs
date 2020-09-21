@@ -20,13 +20,8 @@ public class MonsterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private LogItem plansLblLogItem;
 
-    [Space(10)]
-    [Header("Logs")]
-    [SerializeField] private GameObject logParentGO;
-    [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private ScrollRect historyScrollView;
-    [SerializeField] private UIHoverPosition logHoverPosition;
-    private LogHistoryItem[] logHistoryItems;
+    [Space(10)] [Header("Logs")] 
+    [SerializeField] private LogsWindow logsWindow;
 
     [Space(10)]
     [Header("Stats")]
@@ -55,7 +50,8 @@ public class MonsterInfoUI : InfoUIBase {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<IPointOfInterest>(Signals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
+        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.CHARACTER_TRAIT_STACKED, UpdateTraitsFromSignal);
@@ -66,7 +62,7 @@ public class MonsterInfoUI : InfoUIBase {
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
         
-        InitializeLogsMenu();
+        logsWindow.Initialize();
         ConstructCombatModes();
     }
 
@@ -104,7 +100,8 @@ public class MonsterInfoUI : InfoUIBase {
         UpdateMonsterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
-        UpdateHistory(_activeMonster);
+        logsWindow.OnParentMenuOpened(activeMonster.persistentID);
+        UpdateAllHistoryInfo();
         ResetAllScrollPositions();
     }
     protected override void OnExecutePlayerAction(PlayerAction action) {
@@ -131,21 +128,8 @@ public class MonsterInfoUI : InfoUIBase {
     #endregion
 
     #region Utilities
-    private void InitializeLogsMenu() {
-        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
-        //populate history logs table
-        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-            newLogItem.transform.localScale = Vector3.one;
-            newLogItem.SetActive(true);
-        }
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            logHistoryItems[i].gameObject.SetActive(false);
-        }
-    }
     private void ResetAllScrollPositions() {
-        historyScrollView.verticalNormalizedPosition = 1;
+        logsWindow.ResetScrollPosition();
     }
     public void UpdateMonsterInfo() {
         if (_activeMonster == null) {
@@ -164,10 +148,10 @@ public class MonsterInfoUI : InfoUIBase {
         UpdateThoughtBubble();
     }
     public void UpdateThoughtBubble() {
-        plansLbl.text = activeMonster.visuals.GetThoughtBubble(out var log);
-        if (log != null) {
-            plansLblLogItem.SetLog(log);
-        }
+        plansLbl.text = activeMonster.visuals.GetThoughtBubble();
+        // if (log != null) {
+        //     plansLblLogItem.SetLog(log);
+        // }
     }
     #endregion
 
@@ -301,31 +285,13 @@ public class MonsterInfoUI : InfoUIBase {
     #endregion
 
     #region History
-    private void UpdateHistory(IPointOfInterest poi) {
-        if (isShowing && poi == _activeMonster) {
+    private void UpdateHistory(Log log) {
+        if (isShowing && log.IsInvolved(activeMonster)) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
-        int historyCount = _activeMonster.logComponent.history.Count;
-        int historyLastIndex = historyCount - 1;
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            if(i < historyCount) {
-                Log currLog = _activeMonster.logComponent.history[historyLastIndex - i];
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-                currItem.SetHoverPosition(logHoverPosition);
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-    }
-    private void ClearHistory() {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            currItem.gameObject.SetActive(false);
-        }
+        logsWindow.UpdateAllHistoryInfo();
     }
     #endregion   
 

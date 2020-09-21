@@ -17,6 +17,7 @@ public class KnockoutCharacter : GoapAction {
             RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL, 
             RACE.TROLL };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Combat};
     }
 
     #region Overrides

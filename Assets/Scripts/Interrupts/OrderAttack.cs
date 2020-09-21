@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class OrderAttack : Interrupt {
         public OrderAttack() : base(INTERRUPT.Order_Attack) {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Hostile_Icon;
+            logTags = new[] {LOG_TAG.Combat, LOG_TAG.Work};
         }
 
         #region Overrides
@@ -25,12 +26,12 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
+                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
                 effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 effectLog.AddToFillers(actor.necromancerTrait.attackVillageTarget, actor.necromancerTrait.attackVillageTarget.name, LOG_IDENTIFIER.LANDMARK_1);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         #endregion
     }

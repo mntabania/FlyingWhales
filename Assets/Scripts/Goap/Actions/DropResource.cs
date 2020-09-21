@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -9,6 +10,7 @@ public class DropResource : GoapAction {
         actionIconString = GoapActionStateDB.Haul_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
@@ -47,8 +49,8 @@ public class DropResource : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         ResourcePile pile = node.actor.carryComponent.carriedPOI as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }

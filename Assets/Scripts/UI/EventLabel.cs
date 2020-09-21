@@ -9,7 +9,6 @@ using UnityEngine.Events;
 
 public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler{
 
-    [SerializeField] private LogItem logItem;
 	[SerializeField] private TextMeshProUGUI text;
     [SerializeField] private bool allowClickAction = true;
     [SerializeField] private EventLabelHoverAction hoverAction;
@@ -27,6 +26,9 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 
     protected Dictionary<string, object> objectDictionary;
 
+    //cached this so as not to create a new array everytime this is hovered/clicked. This is used for splitting words in linkText
+    private static char[] linkTextSeparators = new[] {'|'}; 
+    
     private void Awake() {
         objectDictionary = new Dictionary<string, object>();
         if (text == null) {
@@ -66,36 +68,58 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         if (linkIndex != -1) {
             TMP_LinkInfo linkInfo = text.textInfo.linkInfo[linkIndex];
             object obj = null;
-            if (logItem == null) {
-                string linkText = linkInfo.GetLinkID();
-                if (!int.TryParse(linkText, out var idToUse)) {
-                    if (linkText.Contains("_") && linkText.Length > 1) {
-                        string id = linkText.Substring(0, linkText.IndexOf('_'));
-                        idToUse = int.Parse(id);
+            string linkText = linkInfo.GetLinkID();
+            //check first if linkText is just a number, if it is then assume that the object is an integer.
+            if (int.TryParse(linkText, out var integer)) {
+                obj = linkText;
+            } else {
+                //linkText is NOT an integer, check if it follows the logFiller format (Type_persistentID)
+                if (linkText.Contains("|")) {
+                    string[] words = linkText.Split(linkTextSeparators);
+                    if (words.Length == 2) {
+                        System.Type type = System.Type.GetType(words[0]);
+                        string persistentID = words[1];
+                        if (type != null && !string.IsNullOrEmpty(persistentID)) {
+                            //linkText follows required format for logFiller, info can be used to determine object.
+                            obj = DatabaseManager.Instance.GetObjectFromDatabase(type, persistentID);
+                        }
                     }
+                } else { 
+                    //link text does not follow log filler format, just assign the given text
+                    obj = linkText;
                 }
-                if (linkText.Contains("_faction")) {
-                    Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
-                    obj = faction;
-                } else if (linkText.Contains("_character")) {
-                    Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
-                    obj = character;
-                } else if (linkText.Contains("_hextile")) {
-                    HexTile tile = GridMap.Instance.normalHexTiles[idToUse];
-                    obj = tile;
-                }
-                else {
-                    obj = linkInfo.GetLinkID();
-                }
-            } else if (logItem.log != null) {
-                string linkText = linkInfo.GetLinkID();
-                if (!int.TryParse(linkText, out var idToUse)) {
-                    string id = linkText.Substring(0, linkText.IndexOf('_'));
-                    idToUse = int.Parse(id);
-                }
-                LogFiller lf = logItem.log.fillers[idToUse];
-                obj = lf.obj;
             }
+            
+            // if (logItem == null) {
+            //     string linkText = linkInfo.GetLinkID();
+            //     if (!int.TryParse(linkText, out var idToUse)) {
+            //         if (linkText.Contains("_") && linkText.Length > 1) {
+            //             string id = linkText.Substring(0, linkText.IndexOf('_'));
+            //             idToUse = int.Parse(id);
+            //         }
+            //     }
+            //     if (linkText.Contains("_faction")) {
+            //         Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
+            //         obj = faction;
+            //     } else if (linkText.Contains("_character")) {
+            //         Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
+            //         obj = character;
+            //     } else if (linkText.Contains("_hextile")) {
+            //         HexTile tile = GridMap.Instance.normalHexTiles[idToUse];
+            //         obj = tile;
+            //     }
+            //     else {
+            //         obj = linkInfo.GetLinkID();
+            //     }
+            // } else if (logItem.log != null) {
+            //     string linkText = linkInfo.GetLinkID();
+            //     if (!int.TryParse(linkText, out var idToUse)) {
+            //         string id = linkText.Substring(0, linkText.IndexOf('_'));
+            //         idToUse = int.Parse(id);
+            //     }
+            //     LogFiller lf = logItem.log.fillers[idToUse];
+            //     obj = lf.obj;
+            // }
             if (onClickAction != null) {
                 if (obj != null) {
                     onClickAction.Invoke(obj);
@@ -151,40 +175,60 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 
             string linkText = linkInfo.GetLinkID();
             object obj = null;
-            if (log == null) {
-                int idToUse;
-                if (!int.TryParse(linkText, out idToUse)) {
-                    if (linkText.Contains("_") && linkText.Length > 1) {
-                        string id = linkText.Substring(0, linkText.IndexOf('_'));
-                        idToUse = int.Parse(id);
-                    }
-                }
-                if (objectDictionary.ContainsKey(linkText)) {
-                    obj = objectDictionary[linkText];
-                } else {
-                    if (linkText.Contains("_faction")) {
-                        obj = FactionManager.Instance.GetFactionBasedOnID(idToUse);
-                    } else if (linkText.Contains("_character")) {
-                        obj = CharacterManager.Instance.GetCharacterByID(idToUse);
-                    } else if (linkText.Contains("_hextile")) {
-                        obj = GridMap.Instance.normalHexTiles[idToUse];
-                    } else {
-                        obj = linkText;
-                    }
-                    objectDictionary.Add(linkText, obj);
-                }
+            //check first if linkText is just a number, if it is then assume that the object is an integer.
+            if (int.TryParse(linkText, out var integer)) {
+                obj = linkText;
             } else {
-                if (!int.TryParse(linkText, out var idToUse)) {
-                    string id = linkText.Substring(0, linkText.IndexOf('_'));
-                    idToUse = int.Parse(id);
-                }
-                if (objectDictionary.ContainsKey(linkText)) {
-                    obj = objectDictionary[linkText];
+                //linkText is NOT an integer, check if it follows the logFiller format (Type_persistentID)
+                if (linkText.Contains("|")) {
+                    string[] words = linkText.Split(linkTextSeparators);
+                    if (words.Length == 2) {
+                        System.Type type = System.Type.GetType(words[0]);
+                        string persistentID = words[1];
+                        if (type != null && !string.IsNullOrEmpty(persistentID)) {
+                            //linkText follows required format for logFiller, info can be used to determine object.
+                            obj = DatabaseManager.Instance.GetObjectFromDatabase(type, persistentID);
+                        }
+                    }
                 } else {
-                    obj = log.fillers[idToUse].obj;
-                    objectDictionary.Add(linkText, obj);
+                    //link text does not follow log filler format, just assign the given text
+                    obj = linkText;
                 }
             }
+            // if (log == null) {
+            //     int idToUse;
+            //     if (!int.TryParse(linkText, out idToUse)) {
+            //         if (linkText.Contains("_") && linkText.Length > 1) {
+            //             string id = linkText.Substring(0, linkText.IndexOf('_'));
+            //             idToUse = int.Parse(id);
+            //         }
+            //     }
+            //     if (objectDictionary.ContainsKey(linkText)) {
+            //         obj = objectDictionary[linkText];
+            //     } else {
+            //         if (linkText.Contains("_faction")) {
+            //             obj = FactionManager.Instance.GetFactionBasedOnID(idToUse);
+            //         } else if (linkText.Contains("_character")) {
+            //             obj = CharacterManager.Instance.GetCharacterByID(idToUse);
+            //         } else if (linkText.Contains("_hextile")) {
+            //             obj = GridMap.Instance.normalHexTiles[idToUse];
+            //         } else {
+            //             obj = linkText;
+            //         }
+            //         objectDictionary.Add(linkText, obj);
+            //     }
+            // } else {
+            //     if (!int.TryParse(linkText, out var idToUse)) {
+            //         string id = linkText.Substring(0, linkText.IndexOf('_'));
+            //         idToUse = int.Parse(id);
+            //     }
+            //     if (objectDictionary.ContainsKey(linkText)) {
+            //         obj = objectDictionary[linkText];
+            //     } else {
+            //         obj = log.fillers[idToUse].obj;
+            //         objectDictionary.Add(linkText, obj);
+            //     }
+            // }
             if (obj != null) {
                 if (ShouldBeHighlighted(obj)) {
                     if (lastHoveredLinkIndex != linkIndex) {

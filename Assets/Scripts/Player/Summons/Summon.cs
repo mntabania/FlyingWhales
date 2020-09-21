@@ -50,10 +50,10 @@ public class Summon : Character {
         needsComponent.SetFullnessForcedTick(0);
         needsComponent.SetTirednessForcedTick(0);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Default_Monster_Behaviour);
-        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their npcSettlement is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
     }
     public override void OnActionPerformed(ActualGoapNode node) { } //overridden OnActionStateSet so that summons cannot witness other events.
-    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
+    public override void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null,
+        Interrupt interrupt = null) {
         if (!_isDead) {
             Region deathLocation = currentRegion;
             LocationStructure deathStructure = currentStructure;
@@ -169,27 +169,28 @@ public class Summon : Character {
             jobQueue.CancelAllJobs();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log deathLog;
-            if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
-                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            Log localDeathLog;
+            if (!_deathLog.hasValue) {
+                localDeathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", null, LOG_TAG.Life_Changes);
+                localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
-                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 }
                 if (deathLogFillers != null) {
                     for (int i = 0; i < deathLogFillers.Length; i++) {
-                        deathLog.AddToFillers(deathLogFillers[i]);
+                        localDeathLog.AddToFillers(deathLogFillers[i]);
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                logComponent.AddHistory(deathLog);
+                // logComponent.AddHistory(deathLog);
+                localDeathLog.AddLogToDatabase();
                 if (showNotificationOnDeath) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);    
+                    PlayerManager.Instance.player.ShowNotificationFrom(this, localDeathLog);    
                 }
             } else {
-                deathLog = _deathLog;
+                localDeathLog = _deathLog;
             }
-            SetDeathLog(deathLog);
+            SetDeathLog(localDeathLog);
             AfterDeath(deathTile);
         }
     }

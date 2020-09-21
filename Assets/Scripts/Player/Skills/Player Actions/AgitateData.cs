@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
+using Logs;
 
 public class AgitateData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.AGITATE;
@@ -22,9 +23,9 @@ public class AgitateData : PlayerAction {
                 targetCharacter.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
                 targetCharacter.behaviourComponent.SetIsAgitated(true);
 
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "agitated");
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LOG_TAG.Player, LOG_TAG.Combat);
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             } else {
                 targetCharacter.movementComponent.SetEnableDigging(false);

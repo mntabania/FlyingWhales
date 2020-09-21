@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class RecallAttack : Interrupt {
         public RecallAttack() : base(INTERRUPT.Recall_Attack) {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Magic_Icon;
+            logTags = new[] {LOG_TAG.Combat, LOG_TAG.Work};
         }
 
         #region Overrides

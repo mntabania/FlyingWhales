@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Crime_System;
-
+using Logs;
 namespace Interrupts {
     public class TransformToWolf : Interrupt {
         public TransformToWolf() : base(INTERRUPT.Transform_To_Wolf) {
@@ -12,6 +12,7 @@ namespace Interrupts {
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Player};
         }
 
         #region Overrides

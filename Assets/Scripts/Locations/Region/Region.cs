@@ -6,13 +6,14 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Region_Features;
 using Locations.Settlements;
+using Logs;
 using PathFind;
 using SpriteGlow;
 using UnityEngine;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
-public class Region : ISavable {
+public class Region : ISavable, ILogFiller {
     public string persistentID { get; }
     public int id { get; }
     public string name { get; private set; }
@@ -86,15 +87,24 @@ public class Region : ISavable {
         for (int i = 0; i < saveDataRegion.residentIDs.Length; i++) {
             string residentID = saveDataRegion.residentIDs[i];
             Character resident = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(residentID);
-            residents.Add(resident);
-            summary = $"{summary}\n- {resident.name}";
+            if (resident != null) {
+                residents.Add(resident);
+                summary = $"{summary}\n- {resident.name}";    
+            } else {
+                Debug.LogWarning($"Trying to add resident at {name} with ID {residentID} but could not find character with that ID");
+            }
+            
         }
         summary = $"{summary}\nLoading characters at Location:";
         for (int i = 0; i < saveDataRegion.charactersAtLocationIDs.Length; i++) {
             string charactersAtLocationID = saveDataRegion.charactersAtLocationIDs[i];
             Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(charactersAtLocationID);
-            charactersAtLocation.Add(character);
-            summary = $"{summary}\n- {character.name}";
+            if (character != null) {
+                charactersAtLocation.Add(character);
+                summary = $"{summary}\n- {character.name}";    
+            } else {
+                Debug.LogWarning($"Trying to add character at location {name} with ID {charactersAtLocationID} but could not find character with that ID");
+            }
         }
         Debug.Log(summary);
     }
@@ -437,7 +447,6 @@ public class Region : ISavable {
         if (!IsFactionHere(faction) && faction.isMajorFaction) {
             factionsHere.Add(faction);
             //Once a faction is added and there is no ruling faction yet, automatically let the added faction own the region
-            //TODO:
             // if(owner == null) {
             //     LandmarkManager.Instance.OwnRegion(faction, this);
             // }
@@ -446,7 +455,6 @@ public class Region : ISavable {
     public void RemoveFactionHere(Faction faction) {
         if (factionsHere.Remove(faction)) {
             //If a faction is removed and it is the ruling faction, transfer ruling faction to the next faction on the list if there's any, if not make the region part of neutral faction
-            //TODO:
             // if(owner == faction) {
             //     LandmarkManager.Instance.UnownSettlement(this);
             //     if(factionsHere.Count > 0) {

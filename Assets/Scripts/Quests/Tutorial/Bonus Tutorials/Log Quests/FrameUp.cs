@@ -154,10 +154,10 @@ namespace Tutorial {
                 $"and has now assumed that it has been {UtilityScripts.Utilities.ColorizeAction("stolen")}!"
             );
         }
-        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
+        private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
             if (owner == _droppedObject.characterOwner && obj is Character clickedCharacter 
                 && clickedCharacter != _droppedObject.characterOwner
-                && log.key.Equals("assumed_event")) {
+                && log.Contains("assumed")) {
                 return true;
             }
             return false;

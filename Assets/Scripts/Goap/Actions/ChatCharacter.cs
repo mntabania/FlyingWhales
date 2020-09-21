@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
+[System.Obsolete("Use Chat Interrupt instead")]
 public class ChatCharacter : GoapAction {
 
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.INDIRECT; } }
@@ -18,6 +19,7 @@ public class ChatCharacter : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        logTags = new[] {LOG_TAG.Social};
     }
 
     #region Overrides
@@ -205,12 +207,12 @@ public class ChatCharacter : GoapAction {
     private void Argument(ActualGoapNode goapNode, Character targetCharacter) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         if (goapNode.actor.traitContainer.HasTrait("Angry")) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat", providedTags: LOG_TAG.Social);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             goapNode.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
         if (targetCharacter.traitContainer.HasTrait("Angry")) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat", providedTags: LOG_TAG.Social);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             targetCharacter.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
@@ -242,13 +244,13 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     private void CreateChatLog(ActualGoapNode goapNode, string logKey) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode);
-        if (goapNode != null) {
-            log.SetLogType(LOG_TYPE.Action);
-        }
+        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode, LOG_TAG.Social);
+        // if (goapNode != null) {
+        //     log.SetLogType(LOG_TYPE.Action);
+        // }
         log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        goapNode.OverrideDescriptionLog(log);
+        // goapNode.OverrideDescriptionLog(log);
     }
 
     //    #region Intel Reactions

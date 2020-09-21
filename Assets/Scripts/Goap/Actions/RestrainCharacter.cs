@@ -14,6 +14,7 @@ public class RestrainCharacter : GoapAction {
         //    RACE.CHICKEN, RACE.SHEEP, RACE.PIG, RACE.NYMPH, RACE.WISP, RACE.SLUDGE, RACE.GHOST, RACE.LESSER_DEMON, RACE.ANGEL };
         isNotificationAnIntel = true;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
+        logTags = new[] {LOG_TAG.Work, LOG_TAG.Crimes, LOG_TAG.Combat};
     }
 
     #region Overrides
@@ -25,7 +26,6 @@ public class RestrainCharacter : GoapAction {
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
-        //TODO: isForCriminal = parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.jobType == JOB_TYPE.RESTRAIN);
         SetState("Restrain Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {

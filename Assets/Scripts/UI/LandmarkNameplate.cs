@@ -19,7 +19,6 @@ public class LandmarkNameplate : PooledObject {
     }
 
     public void UpdateVisuals() {
-        //TODO: Make this better
         if (landmark.tileLocation.settlementOnTile != null) {
             if (landmark.tileLocation.settlementOnTile.tiles[0] == landmark.tileLocation) {
                 gameObject.SetActive(true);

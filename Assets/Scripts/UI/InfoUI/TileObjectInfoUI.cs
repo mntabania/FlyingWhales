@@ -34,19 +34,16 @@ public class TileObjectInfoUI : InfoUIBase {
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private GameObject charactersGO;
 
-    [Space(10)]
-    [Header("Logs")]
-    [SerializeField] private GameObject logParentGO;
-    [SerializeField] private GameObject logHistoryPrefab;
-    [SerializeField] private ScrollRect historyScrollView;
-    private LogHistoryItem[] logHistoryItems;
+    [Space(10)] [Header("Logs")] 
+    [SerializeField] private LogsWindow logsWindow;
 
     public TileObject activeTileObject { get; private set; }
 
     #region Overrides
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<IPointOfInterest>(Signals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
+        Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.ADD_TILE_OBJECT_USER, UpdateUsersFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.REMOVE_TILE_OBJECT_USER, UpdateUsersFromSignal);
         Messenger.AddListener<TileObject, Trait>(Signals.TILE_OBJECT_TRAIT_ADDED, UpdateTraitsFromSignal);
@@ -57,7 +54,7 @@ public class TileObjectInfoUI : InfoUIBase {
         ownerEventLbl.SetOnClickAction(OnClickOwner);
         carriedByEventLbl.SetOnClickAction(OnClickCarriedBy);
 
-        InitializeLogsMenu();
+        logsWindow.Initialize();
     }
     public override void CloseMenu() {
         base.CloseMenu();
@@ -101,6 +98,7 @@ public class TileObjectInfoUI : InfoUIBase {
         UpdateInfo();
         UpdateTraits();
         UpdateUsers();
+        logsWindow.OnParentMenuOpened(activeTileObject.persistentID);
         UpdateLogs();
     }
     #endregion
@@ -201,24 +199,13 @@ public class TileObjectInfoUI : InfoUIBase {
         }
     }
     public void UpdateLogs() {
-        int historyCount = activeTileObject.logComponent.history.Count;
-        int historyLastIndex = historyCount - 1;
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            if (i < historyCount) {
-                Log currLog = activeTileObject.logComponent.history[historyLastIndex - i];
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
+        logsWindow.UpdateAllHistoryInfo();
     }
     #endregion
 
     #region Listeners
-    private void UpdateLogsFromSignal(IPointOfInterest poi) {
-        if(isShowing && poi == activeTileObject) {
+    private void UpdateLogsFromSignal(Log log) {
+        if(isShowing && log.IsInvolved(activeTileObject)) {
             UpdateLogs();
         }
     }
@@ -263,31 +250,6 @@ public class TileObjectInfoUI : InfoUIBase {
     }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
-    }
-    #endregion
-
-    #region Logs
-    private void ClearLogs() {
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            currItem.gameObject.SetActive(false);
-        }
-    }
-    private void InitializeLogsMenu() {
-        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
-        //populate history logs table
-        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-            newLogItem.transform.localScale = Vector3.one;
-            newLogItem.SetActive(true);
-        }
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            logHistoryItems[i].gameObject.SetActive(false);
-        }
-    }
-    private void ResetAllScrollPositions() {
-        historyScrollView.verticalNormalizedPosition = 1;
     }
     #endregion
 }

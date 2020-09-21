@@ -224,6 +224,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         thisTransform.position = data.worldPos;
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
+        UpdateAnimation();
         region.AddPendingAwareness(character);
         if (data.hasExpiry) {
             ScheduleExpiry(data.markerExpiryDate);
@@ -842,7 +843,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private IEnumerator StartBlood() {
         bloodSplatterEffect.gameObject.SetActive(true);
-        yield return new WaitForSeconds(5f);
+        yield return GameUtilities.waitFor5Seconds;
         bloodSplatterEffect.Pause();
     }
     private void ResetBlood() {
@@ -1783,6 +1784,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (String.IsNullOrEmpty(_destroySchedule)) {
             _destroyDate = GameManager.Instance.Today();
             _destroyDate.AddDays(3);
+            // _destroyDate.AddTicks(3);
             Debug.Log($"{character.name}'s marker will expire at {_destroyDate.ConvertToContinuousDaysWithTime()}");
             _destroySchedule = SchedulingManager.Instance.AddEntry(_destroyDate, TryExpire, character);    
         }
@@ -1814,7 +1816,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     private void Expire() {
         Debug.Log($"{character.name}'s marker has expired.");
         character.ForceCancelAllJobsTargetingThisCharacter(false);
-        character?.DestroyMarker();
+        Messenger.Broadcast(Signals.CHARACTER_MARKER_EXPIRED, character);
+        character.DestroyMarker();
     }
     #endregion
 

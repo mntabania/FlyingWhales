@@ -2,6 +2,7 @@
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using Traits;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class Open  : GoapAction {
         advertisedBy = new[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         validTimeOfDays = new[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON };
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides
@@ -28,8 +30,8 @@ public class Open  : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         if (node.poiTarget is TreasureChest treasureChest && treasureChest.objectInside != null) {
             log.AddToFillers(treasureChest.objectInside, treasureChest.objectInside.name, LOG_IDENTIFIER.CHARACTER_3);
         }

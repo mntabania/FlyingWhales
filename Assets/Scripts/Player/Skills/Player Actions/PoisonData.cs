@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using Traits;
 using UnityEngine;
 
@@ -15,8 +16,9 @@ public class PoisonData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
-        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
+        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);
     }

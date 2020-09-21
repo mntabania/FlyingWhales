@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller {
         public string persistentID { get; }
         public int id { get; private set; }
         public string name { get; protected set; }

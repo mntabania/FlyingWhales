@@ -11,11 +11,12 @@ namespace Interrupts {
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Shock_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
         }
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            interruptHolder.actor.Death("Septic Shock", interrupt: this, _deathLog: interruptHolder.effectLog);
+            interruptHolder.actor.Death("Septic Shock", _deathLog: interruptHolder.effectLog, interrupt: this);
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,

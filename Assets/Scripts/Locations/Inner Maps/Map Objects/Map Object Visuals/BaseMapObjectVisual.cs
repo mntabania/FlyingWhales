@@ -7,6 +7,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UtilityScripts;
 
 /// <summary>
 /// Base class to be used for the visuals of any objects that are NPCSettlement Map Objects.
@@ -169,7 +170,6 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (visionTrigger) {
             visionTrigger.Reset();    
         }
-        
     }
     void OnEnable() {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -241,8 +241,8 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     }
     private IEnumerator QuickShowHPBarCoroutine(IPointOfInterest poi) {
         ShowHPBar(poi);
-        yield return new WaitForSeconds(2f);
-        if (!(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && (poi as Character).combatComponent.isInCombat)) {
+        yield return GameUtilities.waitFor2Seconds;
+        if (!(poi is Character character && character.combatComponent.isInCombat)) {
             HideHPBar();
         }
     }
@@ -266,9 +266,4 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         graphUpdateScene.Apply();
     }
     #endregion
-
-    private void OnDestroy() {
-        objectVisual = null;
-        hoverObject = null;
-    }
 }

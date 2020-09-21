@@ -9,6 +9,7 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Social};
         }
 
         #region Overrides

@@ -80,12 +80,12 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         factionType = new SaveDataFactionType();
         factionType.Save(data.factionType);
 
-        history = new List<string>();
-        for (int i = 0; i < data.history.Count; i++) {
-            Log log = data.history[i];
-            history.Add(log.persistentID);
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log);
-        }
+        // history = new List<string>();
+        // for (int i = 0; i < data.history.Count; i++) {
+        //     Log log = data.history[i];
+        //     history.Add(log.persistentID);
+        //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log);
+        // }
         newLeaderDesignationChance = data.newLeaderDesignationChance;
     }
 

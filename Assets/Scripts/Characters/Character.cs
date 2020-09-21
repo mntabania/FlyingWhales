@@ -13,6 +13,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Profiling;
 using UtilityScripts;
 using JetBrains.Annotations;
+using Logs;
 using Random = UnityEngine.Random;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
@@ -176,7 +177,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
-    public Transform worldObject => marker.transform;
+    public Transform worldObject {
+        get {
+            if (marker != null) {
+                return marker.transform;
+            }
+            return null;
+        }
+    }
 
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public RACE race => _raceSetting.race;
@@ -656,9 +664,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
 
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "spawn_revenant");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "spawn_revenant", null, LOG_TAG.Life_Changes);
         log.AddToFillers(revenant, revenant.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(homeSettlement, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(null, homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     #endregion
@@ -788,9 +797,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (_characterClass.className == "Hero") {
             //Reference: https://www.notion.so/ruinarch/Hero-9697369ffca6410296f852f295ee0090
             traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.FLAW);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_hero");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_hero", providedTags: LOG_TAG.Life_Changes);
             log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
             traitContainer.AddTrait(this, "Blessed");
         }
     }
@@ -1972,26 +1981,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion    
 
     #region History/Logs
-    //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
-    public void RegisterLog(string fileName, string key, object target = null, string targetName = "", ActualGoapNode node = null, bool onlyClickedCharacter = true) {
-        if (!GameManager.Instance.gameHasStarted) {
-            return;
-        }
-        if (key == "remove_trait" && isDead) {
-            return;
-        }
-        Log addLog = new Log(GameManager.Instance.Today(), "Character", fileName, key, node);
-        if(node != null) {
-            addLog.SetLogType(LOG_TYPE.Action);
-        }
-        addLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        if (targetName != "") {
-            addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
-        }
-        addLog.AddLogToInvolvedObjects();
-        // PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
-    }
-
     public virtual void OnActionPerformed(ActualGoapNode node) {
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
         if (isDead || !canWitness) {
@@ -2278,150 +2267,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    //    }
     //    //}
     //}
-    /// <summary>
-    /// This character watched an action happen.
-    /// </summary>
-    /// <param name="targetCharacter">The character that was performing the action.</param>
-    /// <param name="action">The action that was performed.</param>
-    /// <param name="state">The state the action was in when this character watched it.</param>
-    public void ThisCharacterWatchEvent(Character targetCharacter, GoapAction action, GoapActionState state) {
-        if (faction.isPlayerFaction) {
-            //Player characters cannot watch events
-            return;
-        }
-        if (action == null) {
-            if (targetCharacter != null && targetCharacter.combatComponent.isInCombat) {
-                CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
-                if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
-                    if (targetCombatState.currentClosestHostile is Character) {
-                        Character currentHostileOfTargetCharacter = targetCombatState.currentClosestHostile as Character;
-                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = relationshipContainer.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
-                        if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                            if (!targetCombatState.allCharactersThatDegradedRel.Contains(this)) {
-                                relationshipContainer.AdjustOpinion(this, targetCharacter, "Base", -10);
-                                targetCombatState.AddCharacterThatDegradedRel(this);
-                            }
-                        }
-                        if (targetCharacter.faction == faction) {
-                            if (currentHostileOfTargetCharacter.stateComponent.currentState != null
-                                && !currentHostileOfTargetCharacter.stateComponent.currentState.isDone
-                                && currentHostileOfTargetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                                CombatState combatStateOfCurrentHostileOfTargetCharacter = currentHostileOfTargetCharacter.stateComponent.currentState as CombatState;
-                                if (combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile != null
-                                    && combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile == this) {
-                                    //If character 1 is supposed to watch/join the combat of character 2 against character 3
-                                    //but character 3 is already in combat and his current target is already character 1
-                                    //then character 1 should not react
-                                    return;
-                                }
-                            }
-                            if (currentHostileOfTargetCharacter.faction == faction) {
-                                RELATIONSHIP_EFFECT relEffectTowardsTarget = relationshipContainer.GetRelationshipEffectWith(targetCharacter);
-
-                                if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                        CreateWatchEvent(null, targetCombatState, targetCharacter);
-                                    } else {
-                                        if (combatComponent.Fight(targetCombatState.currentClosestHostile, CombatManager.Join_Combat, isLethal: targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                            //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
-                                                //Do process combat behavior first for this character, if the current closest hostile
-                                                //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                                //Then that's only when we apply the join combat log and notif
-                                                //Because if not, it means that this character is already in combat with someone else, and thus
-                                                //should not product join combat log anymore
-                                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                                joinLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                                joinLog.AddToFillers(null, relationshipContainer.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
-                                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                                // PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                            //}
-                                            //combatComponent.ProcessCombatBehavior();
-                                        }
-                                    }
-                                } else {
-                                    if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                        //if (combatComponent.AddHostileInRange(targetCharacter, false, targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                        //    if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
-                                        //        //Do process combat behavior first for this character, if the current closest hostile
-                                        //        //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                        //        //Then that's only when we apply the join combat log and notif
-                                        //        //Because if not, it means that this character is already in combat with someone else, and thus
-                                        //        //should not product join combat log anymore
-                                        //        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                        //        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                        //        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        //        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
-                                        //        joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipName(currentHostileOfTargetCharacter), LOG_IDENTIFIER.STRING_1);
-                                        //        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        //        PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                        //    }
-                                        //    //combatComponent.ProcessCombatBehavior();
-                                        //}
-                                    } else {
-                                        CreateWatchEvent(null, targetCombatState, targetCharacter);
-                                    }
-                                }
-                            } else {
-                                //the target of the combat state is not part of this character's faction
-                                if (combatComponent.Fight(targetCombatState.currentClosestHostile, CombatManager.Join_Combat, isLethal: targetCharacter.combatComponent.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
-                                    //if (!combatComponent.avoidInRange.Contains(targetCharacter)) {
-                                        //of the combat state of this character is also the targetCombatState.currentClosestHostile
-                                        //Then that's only when we apply the join combat log and notif
-                                        //Because if not, it means that this character is already in combat with someone else, and thus
-                                        //should not product join combat log anymore
-                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
-                                        joinLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        // PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
-                                    //}
-                                    //combatComponent.ProcessCombatBehavior();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        //else if (!action.isDone) {
-        //    if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
-        //        MakeLove makeLove = action as MakeLove;
-        //        Character target = makeLove.targetCharacter;
-        //        if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
-        //            CreateWatchEvent(action, null, action.actor);
-        //        } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR)) {
-        //            CreateWatchEvent(action, null, target);
-        //        } else {
-        //            combatComponent.AddAvoidInRange(action.actor, false);
-        //            combatComponent.AddAvoidInRange(target);
-        //        }
-        //    } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait<Trait>("MusicHater") == null) {
-        //        int chance = UnityEngine.Random.Range(0, 100);
-        //        if (chance < 25) { //25
-        //            if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
-        //                CreateWatchEvent(action, null, action.actor);
-        //            }
-        //        }
-        //    } else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
-        //        int chance = UnityEngine.Random.Range(0, 100);
-        //        if (chance < 35) {
-        //            CreateWatchEvent(action, null, action.actor);
-        //        }
-        //    } else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
-        //        int chance = UnityEngine.Random.Range(0, 100);
-        //        if (chance < 35) {
-        //            CreateWatchEvent(action, null, action.actor);
-        //        }
-        //    } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) && state.name == "Transform Success") {
-        //        if (faction == action.actor.faction) {
-        //            CreateWatchEvent(action, null, action.actor);
-        //        }
-        //    }
-        //}
-    }
     //In watch event, it's either the character watch an action or combat state, it cannot be both. (NOTE: Since 9/2/2019 Enabled watching of other states other than Combat)
     public void CreateWatchEvent(ActualGoapNode actionToWatch, CharacterState stateToWatch, Character targetCharacter) {
         string summary = $"Creating watch event for {name} with target {targetCharacter.name}";
@@ -4647,7 +4492,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             shouldLogReason = false;
         }
         if (shouldLogReason) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason", providedTags: LOG_TAG.Misc);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
@@ -5621,7 +5466,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
         }
     }
-    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null, Interrupt interrupt = null) {
+    public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
@@ -5817,28 +5662,28 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.AddTrait(this, "Dead", responsibleCharacter, gainedFromDoing: deathFromAction);
 
             logComponent.PrintLogIfActive($"{name} died of {cause}");
-            Log deathLog;
-            if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
-                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            Log localDeathLog;
+            if (!_deathLog.hasValue) {
+                localDeathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
+                localDeathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
-                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    localDeathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 }
                 if (deathLogFillers != null) {
                     for (int i = 0; i < deathLogFillers.Length; i++) {
-                        deathLog.AddToFillers(deathLogFillers[i]);
+                        localDeathLog.AddToFillers(deathLogFillers[i]);
                     }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 //AddHistory(deathLog);
-                deathLog.AddLogToInvolvedObjects();
+                localDeathLog.AddLogToDatabase();
                 //specificLocation.AddHistory(deathLog);
-                PlayerManager.Instance.player?.ShowNotificationFrom(this, deathLog);
+                PlayerManager.Instance.player?.ShowNotificationFrom(this, localDeathLog);
             } else {
-                deathLog = _deathLog;
+                localDeathLog = _deathLog;
             }
-            SetDeathLog(deathLog);
-            deathStr = UtilityScripts.Utilities.LogReplacer(deathLog);
+            SetDeathLog(localDeathLog);
+            deathStr = localDeathLog.logText;
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
             //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
@@ -5900,8 +5745,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!string.IsNullOrEmpty(data.ruledSettlement)) {
             ruledSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ruledSettlement) as NPCSettlement;
         }
-        if (!string.IsNullOrEmpty(data.deathLog)) {
-            deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
+        if (data.deathLog.hasValue) {
+            deathLog = data.deathLog;
+            // deathLog = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.deathLog);
         }
         if (!string.IsNullOrEmpty(data.homeRegion)) {
             homeRegion = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(data.homeRegion);
@@ -5969,7 +5815,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moodComponent.LoadReferences(data.moodComponent);
         jobComponent.LoadReferences(data.jobComponent);
         reactionComponent.LoadReferences(data.reactionComponent);
-        logComponent.LoadReferences(data.logComponent);
+        // logComponent.LoadReferences(data.logComponent);
         combatComponent.LoadReferences(data.combatComponent);
         rumorComponent.LoadReferences(data.rumorComponent);
         assumptionComponent.LoadReferences(data.assumptionComponent);
@@ -6016,6 +5862,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void LoadCurrentlyDoingAction() {
         if (marker) {
             marker.UpdatePosition();
+            marker.UpdateAnimation();
         }
         if (currentActionNode != null) {
             if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {

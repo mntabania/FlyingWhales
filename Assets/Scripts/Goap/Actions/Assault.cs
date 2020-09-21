@@ -21,6 +21,7 @@ public class Assault : GoapAction {
         isNotificationAnIntel = true;
         doesNotStopTargetCharacter = true;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
+        logTags = new[] {LOG_TAG.Combat};
     }
 
     #region Overrides

@@ -1,6 +1,7 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -11,6 +12,7 @@ public class RaiseCorpse : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER, POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, RACE.DEMON };
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
+        logTags = new[] {LOG_TAG.Work, LOG_TAG.Life_Changes};
     }
 
     #region Overrides
@@ -32,8 +34,8 @@ public class RaiseCorpse : GoapAction {
         //raise corpse cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         IPointOfInterest targetPOI = node.poiTarget;
         Character target = null;
         if (targetPOI is Character) {

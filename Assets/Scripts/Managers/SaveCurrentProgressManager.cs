@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Tutorial;
+using UtilityScripts;
 using Debug = UnityEngine.Debug;
 
 public class SaveCurrentProgressManager : MonoBehaviour {
@@ -16,10 +18,6 @@ public class SaveCurrentProgressManager : MonoBehaviour {
 
     public bool isSaving { get; private set; }
     public string currentSaveDataPath { get; private set; }
-    
-    #region getters
-    public bool hasSavedDataCurrentProgress => currentSaveDataProgress != null;
-    #endregion
 
     #region Saving
     public void AddToSaveHub<T>(T data) where T : ISavable {
@@ -73,32 +71,47 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
 
         if (string.IsNullOrEmpty(fileName)) {
-            // fileName = savedCurrentProgressFileName;
+            //if no file name was provided
             string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
             fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.day.ToString()}_{GameManager.ConvertTickToTime(currentSaveDataProgress.tick, "-")}_{timeStampStr}";
         }
 
-        string path = $"{UtilityScripts.Utilities.gameSavePath}{fileName}.sav";
-        filePath = path;
+        //write to file
+        string savePath = $"{UtilityScripts.Utilities.tempZipPath}mainSave.sav";
+        filePath = savePath;
         var thread = new Thread(SaveCurrentDataToFile);
         thread.Start();
-
         while (thread.IsAlive) {
             yield return null;
         }
-        thread = null;
+        Debug.Log($"Saved new game at {savePath}");
         
-
-        Debug.Log($"Saved new game at {path}");
+        //Need to close connection to database so .db file can be zipped.
+        DatabaseManager.Instance.mainSQLDatabase.CloseConnection();
+        yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure database connection has been fully closed.
+        
+        File.Copy($"{UtilityScripts.Utilities.tempPath}gameDB.db", $"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
+        
+        //zip files
+        string zipPath = $"{UtilityScripts.Utilities.gameSavePath}/{fileName}.zip";
+        ZipFile.CreateFromDirectory(UtilityScripts.Utilities.tempZipPath, zipPath);
+        yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure zipping file has finished.
+        
+        //delete created save file in temp folder since its already been zipped.
+        File.Delete(savePath);
+        File.Delete($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
+        
         loadingWatch.Stop();
         Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
-        loadingWatch = null;
         yield return null;
         UIManager.Instance.optionsMenu.HideSaveLoading();
         isSaving = false;
         WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
         saveCallback?.Invoke();
+        
+        //Reopen db connection.
+        DatabaseManager.Instance.mainSQLDatabase.OpenConnection();
     }
     private string filePath;
     private void SaveCurrentDataToFile() {
@@ -111,12 +124,14 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         currentSaveDataPath = path;
     }
     public IEnumerator LoadSaveDataCurrentProgressBasedOnSetPath() {
-        var thread = new Thread(() => LoadDataFromPath(currentSaveDataPath));
+        //extract files from currentSaveDataPath zip to temp folder
+        ZipFile.ExtractToDirectory(currentSaveDataPath, UtilityScripts.Utilities.tempPath);
+        string savePath = $"{UtilityScripts.Utilities.tempPath}mainSave.sav";
+        var thread = new Thread(() => LoadDataFromPath(savePath));
         thread.Start();
         while (thread.IsAlive) {
             yield return null;
         }
-        thread = null;
     }
     private void LoadDataFromPath(string path) {
         currentSaveDataProgress = GetSaveFileData(path);
@@ -125,11 +140,11 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         return SaveGame.Load<SaveDataCurrentProgress>(path);
     }
     public bool HasAnySaveFiles() {
-        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        string[] saveFiles = Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.zip");
         return saveFiles.Length > 0;
     }
     public string GetLatestSaveFile() {
-        string[] saveFiles = System.IO.Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.sav");
+        string[] saveFiles = Directory.GetFiles(UtilityScripts.Utilities.gameSavePath, "*.zip");
         string latestFile = string.Empty;
         for (int i = 0; i < saveFiles.Length; i++) {
             string saveFile = saveFiles[i];
@@ -137,8 +152,8 @@ public class SaveCurrentProgressManager : MonoBehaviour {
                 latestFile = saveFile;
             } else {
                 //compare times
-                DateTime writeTimeOfCurrentSave = System.IO.File.GetLastWriteTime(saveFile);
-                DateTime writeTimeOfLatestSave = System.IO.File.GetLastWriteTime(latestFile);
+                DateTime writeTimeOfCurrentSave = File.GetLastWriteTime(saveFile);
+                DateTime writeTimeOfLatestSave = File.GetLastWriteTime(latestFile);
                 if (writeTimeOfCurrentSave > writeTimeOfLatestSave) {
                     latestFile = saveFile;
                 }

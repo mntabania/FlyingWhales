@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -12,6 +13,7 @@ public class DepositResourcePile : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
@@ -143,8 +145,8 @@ public class DepositResourcePile : GoapAction {
         //}
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
-        base.AddFillersToLog(log, goapNode);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
+        base.AddFillersToLog(ref log, goapNode);
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
     }

@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Logs;
 using UnityEngine;
 using Traits;
 
-public interface IPointOfInterest : ITraitable, ISelectable {
+public interface IPointOfInterest : ITraitable, ISelectable, ILogFiller {
     string persistentID { get; }
     OBJECT_TYPE objectType { get; }
     new string name { get; }

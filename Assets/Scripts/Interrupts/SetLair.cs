@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps.Location_Structures;
-
+using Logs;
 namespace Interrupts {
     public class SetLair : Interrupt {
         public SetLair() : base(INTERRUPT.Set_Lair) {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Misc};
         }
 
         #region Overrides

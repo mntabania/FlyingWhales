@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -14,6 +15,7 @@ public class RememberFallen : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Social};
     }
 
     #region Overrides
@@ -48,8 +50,8 @@ public class RememberFallen : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         LocationStructure targetStructure = node.targetStructure;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Traits;
 using Crime_System;
-
+using Logs;
 namespace Interrupts {
     public class RevertToNormal : Interrupt {
         public RevertToNormal() : base(INTERRUPT.Revert_To_Normal) {
@@ -12,6 +12,7 @@ namespace Interrupts {
             doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Crimes, LOG_TAG.Player};
         }
 
         #region Overrides

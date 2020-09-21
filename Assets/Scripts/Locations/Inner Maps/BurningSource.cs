@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Traits;
+using UnityEngine;
 using UtilityScripts;
 
 public class BurningSource {
@@ -30,6 +31,7 @@ public class BurningSource {
     }
     private void RemoveObjectOnFire(ITraitable traitable) {
         if (objectsOnFire.Remove(traitable)) {
+            Debug.Log($"Removed object on fire {traitable.name} from burning source {id.ToString()}");
             if (objectsOnFire.Count == 0) {
                 SetAsInactive();
             } else if (traitable is IPointOfInterest && _poisOnFireCount > 0){

@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Interrupts;
+using UtilityScripts;
 
 public class RumorComponent : CharacterComponent {
     private List<string> _rumorPool;
     private List<ActualGoapNode> _negativeInfoPool;
     private List<IPointOfInterest> _rumorTargetPool;
 
+    private const int Max_Negative_Info = 40;
+
+    #region getters
+    public List<ActualGoapNode> negativeInfoPool => _negativeInfoPool;
+    #endregion
+    
     public RumorComponent() {
         _rumorPool = new List<string>();
         _rumorTargetPool = new List<IPointOfInterest>();
@@ -21,21 +28,41 @@ public class RumorComponent : CharacterComponent {
 
     #region General
     public ActualGoapNode GetRandomKnownNegativeInfo(Character spreadTargetCharacter, Character negativeCharacter) {
-        _negativeInfoPool.Clear();
-        for (int i = 0; i < owner.logComponent.history.Count; i++) {
-            Log history = owner.logComponent.history[i];
-            if(history.logType == LOG_TYPE.Assumption || history.logType == LOG_TYPE.Witness || history.logType == LOG_TYPE.Informed) {
-                if(history.node != null && history.node.descriptionLog != null) {
-                    if(history.node.actor == negativeCharacter && history.node.poiTarget != spreadTargetCharacter && history.node.GetReactableEffect(owner) == REACTABLE_EFFECT.Negative) {
-                        _negativeInfoPool.Add(history.node);
-                    }
+        if (_negativeInfoPool.Count == 0) {
+            return null;
+        }
+        List<ActualGoapNode> filteredInfo = new List<ActualGoapNode>();
+        for (int i = 0; i < _negativeInfoPool.Count; i++) {
+            ActualGoapNode node = _negativeInfoPool[i];
+            if(node.descriptionLog.hasValue) {
+                if(node.actor == negativeCharacter && node.poiTarget != spreadTargetCharacter) {
+                    filteredInfo.Add(node);
                 }
             }
         }
-        if(_negativeInfoPool.Count > 0) {
-            return _negativeInfoPool[UnityEngine.Random.Range(0, _negativeInfoPool.Count)];
+        if(filteredInfo.Count > 0) {
+            return CollectionUtilities.GetRandomElement(filteredInfo);
         }
+        //_negativeInfoPool.Clear();
+        // for (int i = 0; i < owner.logComponent.history.Count; i++) {
+        //     Log history = owner.logComponent.history[i];
+        //     if(history.logType == LOG_TYPE.Assumption || history.logType == LOG_TYPE.Witness || history.logType == LOG_TYPE.Informed) {
+        //         if(history.node != null && history.node.descriptionLog != null) {
+        //             if(history.node.actor == negativeCharacter && history.node.poiTarget != spreadTargetCharacter && history.node.GetReactableEffect(owner) == REACTABLE_EFFECT.Negative) {
+        //                 _negativeInfoPool.Add(history.node);
+        //             }
+        //         }
+        //     }
+        // }
         return null;
+    }
+    public void AddAssumedWitnessedOrInformedNegativeInfo(ActualGoapNode node) {
+        if (!_negativeInfoPool.Contains(node)) {
+            _negativeInfoPool.Add(node);
+            if (_negativeInfoPool.Count > Max_Negative_Info) {
+                _negativeInfoPool.RemoveAt(0);
+            }
+        }
     }
     public Rumor GenerateNewRandomRumor(Character spreadTargetCharacter, Character rumoredCharacter) {
         _rumorPool.Clear();
@@ -43,7 +70,7 @@ public class RumorComponent : CharacterComponent {
         string chosenRumor = string.Empty;
         IPointOfInterest chosenTargetOfRumoredCharacter = null;
         while (_rumorPool.Count > 0 && chosenTargetOfRumoredCharacter == null) {
-            string potentialRumor = _rumorPool[UnityEngine.Random.Range(0, _rumorPool.Count)];
+            string potentialRumor = _rumorPool[Random.Range(0, _rumorPool.Count)];
             IPointOfInterest targetOfRumoredCharacter = GetTargetOfRumorCharacter(spreadTargetCharacter, rumoredCharacter, potentialRumor);
             if(targetOfRumoredCharacter != null) {
                 chosenRumor = potentialRumor;
@@ -67,7 +94,7 @@ public class RumorComponent : CharacterComponent {
                 }
             }
             if(_rumorTargetPool.Count > 0) {
-                return _rumorTargetPool[UnityEngine.Random.Range(0, _rumorTargetPool.Count)];
+                return _rumorTargetPool[Random.Range(0, _rumorTargetPool.Count)];
             }
         } else if (identifier == CharacterManager.Steal) {
             for (int i = 0; i < owner.relationshipContainer.charactersWithOpinion.Count; i++) {
@@ -78,8 +105,8 @@ public class RumorComponent : CharacterComponent {
                     }
                 }
                 if (_rumorTargetPool.Count > 0) {
-                    Character chosenCharacter = _rumorTargetPool[UnityEngine.Random.Range(0, _rumorTargetPool.Count)] as Character;
-                    return chosenCharacter.ownedItems[UnityEngine.Random.Range(0, chosenCharacter.ownedItems.Count)];
+                    Character chosenCharacter = _rumorTargetPool[Random.Range(0, _rumorTargetPool.Count)] as Character;
+                    return chosenCharacter.ownedItems[Random.Range(0, chosenCharacter.ownedItems.Count)];
                 }
             }
         } else if (identifier == CharacterManager.Poison_Food) {
@@ -96,7 +123,7 @@ public class RumorComponent : CharacterComponent {
                     }
                 }
                 if (_rumorTargetPool.Count > 0) {
-                    return _rumorTargetPool[UnityEngine.Random.Range(0, _rumorTargetPool.Count)];
+                    return _rumorTargetPool[Random.Range(0, _rumorTargetPool.Count)];
                 }
             }
         } else if (identifier == CharacterManager.Place_Trap) {
@@ -113,7 +140,7 @@ public class RumorComponent : CharacterComponent {
                     }
                 }
                 if (_rumorTargetPool.Count > 0) {
-                    return _rumorTargetPool[UnityEngine.Random.Range(0, _rumorTargetPool.Count)];
+                    return _rumorTargetPool[Random.Range(0, _rumorTargetPool.Count)];
                 }
             }
         } else if (identifier == CharacterManager.Drink_Blood) {
@@ -124,7 +151,7 @@ public class RumorComponent : CharacterComponent {
                 }
             }
             if (_rumorTargetPool.Count > 0) {
-                return _rumorTargetPool[UnityEngine.Random.Range(0, _rumorTargetPool.Count)];
+                return _rumorTargetPool[Random.Range(0, _rumorTargetPool.Count)];
             }
         } else if (identifier == CharacterManager.Flirt) {
             for (int i = 0; i < owner.relationshipContainer.charactersWithOpinion.Count; i++) {
@@ -136,7 +163,7 @@ public class RumorComponent : CharacterComponent {
                 }
             }
             if (_rumorTargetPool.Count > 0) {
-                return _rumorTargetPool[UnityEngine.Random.Range(0, _rumorTargetPool.Count)];
+                return _rumorTargetPool[Random.Range(0, _rumorTargetPool.Count)];
             }
         } else if (identifier == CharacterManager.Transform_To_Wolf) {
             return rumoredCharacter;
@@ -148,7 +175,7 @@ public class RumorComponent : CharacterComponent {
         int charactersWithOpinionCount = owner.relationshipContainer.charactersWithOpinion.Count;
         if(charactersWithOpinionCount > 2) {
             while (chosenCharacter == null) {
-                Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[UnityEngine.Random.Range(0, owner.relationshipContainer.charactersWithOpinion.Count)];
+                Character potentialCharacter = owner.relationshipContainer.charactersWithOpinion[Random.Range(0, owner.relationshipContainer.charactersWithOpinion.Count)];
                 if (potentialCharacter != rumoredCharacter) {
                     chosenCharacter = potentialCharacter;
                 }
@@ -173,7 +200,7 @@ public class RumorComponent : CharacterComponent {
         IRumorable rumorable = null;
         if (identifier == CharacterManager.Flirt || identifier == CharacterManager.Transform_To_Wolf) {
             Interrupt interrupt = null;
-            Log effectLog = null;
+            Log effectLog = default;
             if (identifier == CharacterManager.Flirt) {
                 interrupt = InteractionManager.Instance.GetInterruptData(INTERRUPT.Flirt);
                 effectLog = interrupt.CreateEffectLog(rumoredCharacter, targetOfRumoredCharacter, "flirted_back");
@@ -213,7 +240,11 @@ public class RumorComponent : CharacterComponent {
 
     #region Loading
     public void LoadReferences(SaveDataRumorComponent data) {
-        //Currently N/A
+        for (int i = 0; i < data.negativeInfoIDs.Count; i++) {
+            string id = data.negativeInfoIDs[i];
+            ActualGoapNode node = DatabaseManager.Instance.actionDatabase.GetActionByPersistentID(id);
+            _negativeInfoPool.Add(node);
+        }
     }
     #endregion
 }
@@ -221,9 +252,16 @@ public class RumorComponent : CharacterComponent {
 [System.Serializable]
 public class SaveDataRumorComponent : SaveData<RumorComponent> {
 
+    public List<string> negativeInfoIDs;
+    
     #region Overrides
     public override void Save(RumorComponent data) {
-
+        negativeInfoIDs = new List<string>();
+        for (int i = 0; i < data.negativeInfoPool.Count; i++) {
+            ActualGoapNode node = data.negativeInfoPool[i];
+            negativeInfoIDs.Add(node.persistentID);
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(node);
+        }
     }
 
     public override RumorComponent Load() {

@@ -424,7 +424,7 @@ public class CombatState : CharacterState {
         isAttacking = state;
         if (isAttacking) {
             actionIconString = GoapActionStateDB.Hostile_Icon;
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble");
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", "Combat State", "thought_bubble", providedTags: LOG_TAG.Combat);
             thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         } else {
             actionIconString = GoapActionStateDB.Flee_Icon;
@@ -600,7 +600,7 @@ public class CombatState : CharacterState {
             Messenger.Broadcast(Signals.START_FLEE, stateComponent.owner);
 
             string avoidReason = GetAvoidReason(objToAvoid);
-            Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
+            Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee", providedTags: LOG_TAG.Combat);
             fleeLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             fleeLog.AddToFillers(objToAvoid, objToAvoid is GenericTileObject ? "something" : objToAvoid.name,
                 LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -669,15 +669,15 @@ public class CombatState : CharacterState {
     }
     private void CreateNewCombatTargetLog() {
         CombatData combatData = stateComponent.owner.combatComponent.GetCombatData(currentClosestHostile);
-        Log log = null;
+        Log log;
         string key = stateComponent.owner.combatComponent.GetCombatLogKeyReason(currentClosestHostile);
         if (key != string.Empty && LocalizationManager.Instance.HasLocalizedValue("Character", "Combat", key)) {
-            log = new Log(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target_with_reason");
+            log = new Log(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target_with_reason", providedTags: LOG_TAG.Combat);
             string reason = LocalizationManager.Instance.GetLocalizedValue("Character", "Combat", key);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_1);
         } else {
             //use default log instead, because no text for combat reason was provided. This is to prevent text with %125%.
-            log = new Log(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target");
+            log = new Log(GameManager.Instance.Today(), "Character", "Combat", "new_combat_target", providedTags: LOG_TAG.Combat);
         }
         log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);

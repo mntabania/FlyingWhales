@@ -69,7 +69,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     //References
     public string grave;
     public string ruledSettlement;
-    public string deathLog;
+    public Log deathLog;
     public string homeRegion;
     public string homeSettlement;
     public string homeStructure;
@@ -226,9 +226,9 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         if (data.ruledSettlement != null) {
             ruledSettlement = data.ruledSettlement.persistentID;
         }
-        if (data.deathLog != null) {
-            deathLog = data.deathLog.persistentID;
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
+        if (data.deathLog.hasValue) {
+            deathLog = data.deathLog;
+            // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.deathLog);
         }
         if (data.homeRegion != null) {
             homeRegion = data.homeRegion.persistentID;

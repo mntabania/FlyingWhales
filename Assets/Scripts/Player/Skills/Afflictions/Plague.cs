@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Logs;
 using UnityEngine;
 
 public class PlagueData : SpellData {
@@ -14,10 +15,10 @@ public class PlagueData : SpellData {
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted", null, LOG_TAG.Player, LOG_TAG.Life_Changes);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Plagued", LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         if (targetPOI is Character) {
             (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);

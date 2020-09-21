@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Logs;
 using Traits;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -10,6 +11,7 @@ public class Evangelize : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Player, LOG_TAG.Crimes};
     }
     
     #region Overrides
@@ -141,12 +143,12 @@ public class Evangelize : GoapAction {
                  targetCharacter.relationshipContainer.HasRelationshipWith(goapNode.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER) || 
                  targetCharacter.relationshipContainer.HasOpinionLabelWithCharacter(goapNode.actor, RelationshipManager.Close_Friend)) &&
                 !targetCharacter.relationshipContainer.IsEnemiesWith(goapNode.actor)) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "nothing_happens", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 goapNode.OverrideDescriptionLog(log);
             } else if (CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode) > CRIME_SEVERITY.Infraction) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode);
+                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 goapNode.OverrideDescriptionLog(log);
@@ -156,9 +158,10 @@ public class Evangelize : GoapAction {
     public void AfterEvangelizeSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         Assert.IsNotNull(targetCharacter, $"Target of Evangelize is not a character! Actor: {goapNode.actor.name}. Target: {goapNode.poiTarget?.name ?? "Null"}");
-        if (goapNode.descriptionLog.key == "evangelize success_description") {
+        //TODO: Use something else rather than the description log of the action, because this can easily be forgotten in case the log of this action changes.
+        if (goapNode.descriptionLog.logText.Contains("effective")) {
             targetCharacter.traitContainer.AddTrait(targetCharacter, "Cultist");
-        } else if (goapNode.descriptionLog.key == "crime") {
+        } else if (goapNode.descriptionLog.logText.Contains("accused")) {
             // CrimeManager.Instance.MakeCharacterACriminal(CRIME_TYPE.Demon_Worship, 
             //     CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode), 
             //     goapNode, targetCharacter, goapNode.actor, targetCharacter, targetCharacter.faction, REACTION_STATUS.WITNESSED, goapNode.actor.traitContainer.GetNormalTrait<Criminal>("Criminal"));

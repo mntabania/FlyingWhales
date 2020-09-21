@@ -172,7 +172,7 @@ public class CharacterState {
     protected virtual void OnJobSet() { }
     protected virtual void CreateThoughtBubbleLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble");
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Misc);
             thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetPOI != null) {
                 thoughtBubbleLog.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -273,7 +273,7 @@ public class CharacterState {
     /// </summary>
     private void CreateStartStateLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "start")) {
-            Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "start");
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "start", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Misc);
             log.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             if (targetPOI != null) {
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
@@ -281,14 +281,14 @@ public class CharacterState {
             //if(targetNpcSettlement != null) {
             //    log.AddToFillers(targetNpcSettlement, targetNpcSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
             //}
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
 
             // PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
         }
     }
     private void CreateTravellingThoughtBubbleLog(NPCSettlement targetLocation) {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", stateName, "thought_bubble_m")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m");
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", stateName, "thought_bubble_m", providedTags: characterState == CHARACTER_STATE.COMBAT ? LOG_TAG.Combat : LOG_TAG.Misc);
             thoughtBubbleLog.AddToFillers(stateComponent.owner, stateComponent.owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }

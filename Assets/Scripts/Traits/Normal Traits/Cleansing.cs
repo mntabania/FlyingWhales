@@ -38,9 +38,9 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 _owner = null;
-                Log endLog = new Log(GameManager.Instance.Today(), "Behaviour", "CleanseTileBehaviour", "end");
+                Log endLog = new Log(GameManager.Instance.Today(), "Behaviour", "CleanseTileBehaviour", "end", null, LOG_TAG.Work);
                 endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                endLog.AddLogToInvolvedObjects();    
+                endLog.AddLogToDatabase();    
                 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(CleanseTileBehaviour));
                 character.behaviourComponent.SetCleansingTilesForSettlement(null);

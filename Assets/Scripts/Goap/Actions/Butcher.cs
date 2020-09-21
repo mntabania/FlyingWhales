@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -13,6 +14,7 @@ public class Butcher : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.KOBOLD, RACE.TROLL };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Work, LOG_TAG.Needs};
     }
 
     #region Overrides
@@ -182,8 +184,8 @@ public class Butcher : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         if(node.poiTarget is Tombstone) {
             poiTarget = (node.poiTarget as Tombstone).character;

@@ -17,6 +17,7 @@ public class ResolveCombat : GoapAction {
         //    RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON, RACE.REVENANT
         //};
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
+        logTags = new[] {LOG_TAG.Combat};
     }
 
     #region Overrides

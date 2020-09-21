@@ -6,10 +6,11 @@ using Factions.Faction_Types;
 using Locations.Settlements;
 using Traits;
 using Inner_Maps.Location_Structures;
+using Logs;
 using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
-public class Faction : IJobOwner, ISavable {
+public class Faction : IJobOwner, ISavable, ILogFiller {
     
     public const int MAX_HISTORY_LOGS = 60;
 
@@ -28,7 +29,7 @@ public class Faction : IJobOwner, ISavable {
     public Dictionary<Faction, FactionRelationship> relationships { get; }
     public FactionType factionType { get; }
     public bool isActive { get; private set; }
-    public List<Log> history { get; }
+    // public List<Log> history { get; }
     public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
@@ -76,7 +77,7 @@ public class Faction : IJobOwner, ISavable {
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
-        history = new List<Log>();
+        // history = new List<Log>();
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
@@ -105,7 +106,7 @@ public class Faction : IJobOwner, ISavable {
         relationships = new Dictionary<Faction, FactionRelationship>();
         ownedSettlements = new List<BaseSettlement>();
         bannedCharacters = new List<Character>();
-        history = new List<Log>();
+        // history = new List<Log>();
         availableJobs = new List<JobQueueItem>();
         newLeaderDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
@@ -669,17 +670,17 @@ public class Faction : IJobOwner, ISavable {
     }
     #endregion
     
-    #region Logs
-    public void AddHistory(Log log) {
-        if (!history.Contains(log)) {
-            history.Add(log);
-            if (history.Count > MAX_HISTORY_LOGS) {
-                history.RemoveAt(0);
-            }
-            Messenger.Broadcast(Signals.FACTION_LOG_ADDED, this);
-        }
-    }
-    #endregion
+    // #region Logs
+    // public void AddHistory(Log log) {
+    //     if (!history.Contains(log)) {
+    //         history.Add(log);
+    //         if (history.Count > MAX_HISTORY_LOGS) {
+    //             history.RemoveAt(0);
+    //         }
+    //         Messenger.Broadcast(Signals.FACTION_LOG_ADDED, this);
+    //     }
+    // }
+    // #endregion
     
     #region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
@@ -950,12 +951,12 @@ public class Faction : IJobOwner, ISavable {
                     debugLog += $"\nChance for war met, setting {name} and {targetFaction.name} as Hostile.";
                     if (SetRelationshipFor(targetFaction, FACTION_RELATIONSHIP_STATUS.Hostile)) {
                         debugLog += $"\nSuccessfully set {name} and {targetFaction.name} as Hostile.";
-                        Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war");
+                        Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                         log.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
                         log.AddToFillers(crime.descriptionLog.fillers);
-                        log.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(crime.descriptionLog), LOG_IDENTIFIER.APPEND);
-                        log.AddLogToInvolvedObjects();    
+                        log.AddToFillers(null, crime.descriptionLog.unReplacedText, LOG_IDENTIFIER.APPEND);
+                        log.AddLogToDatabase();    
                         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                     } else {
                         debugLog += $"\nCould not set {name} and {targetFaction.name} as Hostile.";
@@ -1041,10 +1042,10 @@ public class Faction : IJobOwner, ISavable {
             // faction2.AddNewRelationship(this, rel);
         }
 
-        for (int i = 0; i < data.history.Count; i++) {
-            Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.history[i]);
-            history.Add(log);
-        }
+        // for (int i = 0; i < data.history.Count; i++) {
+        //     Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(data.history[i]);
+        //     history.Add(log);
+        // }
 
         for (int i = 0; i < data.ownedSettlementIDs.Count; i++) {
             BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ownedSettlementIDs[i]);

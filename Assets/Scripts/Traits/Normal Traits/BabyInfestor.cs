@@ -31,9 +31,9 @@ namespace Traits {
                     adult.InitialCharacterPlacement(summon.gridTileLocation);
                     adult.ClearTerritory();
                     
-                    Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider");
+                    Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
                     growUpLog.AddToFillers(adult, adult.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    growUpLog.AddLogToInvolvedObjects();
+                    growUpLog.AddLogToDatabase();
                     
                     for (int i = 0; i < summon.territories.Count; i++) {
                         adult.AddTerritory(summon.territories[i]);

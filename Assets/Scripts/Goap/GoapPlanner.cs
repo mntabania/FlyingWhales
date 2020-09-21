@@ -161,7 +161,7 @@ public class GoapPlanner {
                     //Note: Added checking for target POI because there are times that a job has no target POI (defaults to target actor when planning)
                     bool logCancelJobNoPlan = !(jobType == JOB_TYPE.DOUSE_FIRE && goapThread.job.targetPOI.gridTileLocation == null);
                     if (logCancelJobNoPlan && !CharacterManager.Instance.lessenCharacterLogs) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan", providedTags: LOG_TAG.Misc);
                         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
                         owner.logComponent.RegisterLog(log);

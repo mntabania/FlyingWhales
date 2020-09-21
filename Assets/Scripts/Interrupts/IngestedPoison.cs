@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -11,6 +12,7 @@ namespace Interrupts {
 			isSimulateneous = true;
 			interruptIconString = GoapActionStateDB.Sick_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -27,7 +29,7 @@ namespace Interrupts {
 						}
 					}
 					
-					overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick");
+					overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick", null, logTags);
 					overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 					//log.AddLogToInvolvedObjects();
 				}

@@ -68,9 +68,9 @@ public class SaveDataFactionIdeology : SaveData<FactionIdeology> {
     public override FactionIdeology Load() {
         FactionIdeology newIdeology = FactionManager.Instance.CreateIdeology<FactionIdeology>(ideologyType);
         if(newIdeology is Exclusive exclusive) {
-            if(exclusive.category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
+            if(category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
                 exclusive.SetRequirement(raceRequirement);
-            } else if (exclusive.category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
+            } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
                 exclusive.SetRequirement(genderRequirement);
             }
         }

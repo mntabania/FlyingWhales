@@ -16,6 +16,7 @@ public class Cook : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides

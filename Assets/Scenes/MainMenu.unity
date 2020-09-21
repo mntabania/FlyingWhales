@@ -24465,7 +24465,7 @@ MonoBehaviour:
   saveCurrentProgressManager: {fileID: 1380393232}
   alwaysResetSpecialPopupsOnStartup: 0
   alwaysResetBonusTutorialsOnStartup: 0
-  _unlockAllWorlds: 1
+  _unlockAllWorlds: 0
 --- !u!4 &1625756931
 Transform:
   m_ObjectHideFlags: 0

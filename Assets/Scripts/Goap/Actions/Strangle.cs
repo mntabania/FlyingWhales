@@ -13,6 +13,7 @@ public class Strangle : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT, };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Override

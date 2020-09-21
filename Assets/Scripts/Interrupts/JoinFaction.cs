@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -8,6 +9,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -16,7 +18,7 @@ namespace Interrupts {
             if(interruptHolder.target is Character targetCharacter) {
                 Faction factionToJoinTo = targetCharacter.faction;
                 if (interruptHolder.actor.ChangeFactionTo(factionToJoinTo)) {
-                    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", interruptHolder.identifier);
+                    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Join Faction", interruptHolder.identifier, null, logTags);
                     overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     overrideEffectLog.AddToFillers(factionToJoinTo, factionToJoinTo.name, LOG_IDENTIFIER.FACTION_1);
                     //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

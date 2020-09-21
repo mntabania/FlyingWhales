@@ -15,13 +15,9 @@ public class IntelNotificationItem : PlayerNotificationItem {
     [SerializeField] private GameObject convertTooltip;
     [SerializeField] private GameObject effectPrefab;
 
-    public void Initialize(IIntel intel, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
+    public void Initialize(IIntel intel, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         this.intel = intel;
-        base.Initialize(intel.log, hasExpiry, onDestroyAction);
-    }
-    public void Initialize(IIntel intel, Log log, int tick, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
-        this.intel = intel;
-        base.Initialize(log, tick, hasExpiry, onDestroyAction);
+        base.Initialize(intel.log, onDestroyAction);
     }
     public void GetIntel() {
         Vector3 pos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(getIntelBtn.transform.position);
@@ -49,6 +45,10 @@ public class IntelNotificationItem : PlayerNotificationItem {
         PlayerUI.Instance.DoIntelTabPunchEffect();
         ObjectPoolManager.Instance.DestroyObject(effectGO);
         PlayerManager.Instance.player.AddIntel(intel);
+    }
+    public override void DeleteOldestNotification() {
+        intel.OnIntelRemoved(); //cleanup intel
+        base.DeleteOldestNotification();
     }
     public override void Reset() {
         base.Reset();

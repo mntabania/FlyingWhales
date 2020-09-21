@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -11,13 +12,14 @@ namespace Interrupts {
             //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;
             //isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Needs};
         }
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, interruptHolder.actor.marker.transform.position, 2, interruptHolder.actor.currentRegion.innerMap);
-            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "cry");
+            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "cry", null, logTags);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_1);
             return true;

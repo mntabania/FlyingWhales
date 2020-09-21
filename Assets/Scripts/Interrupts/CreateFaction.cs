@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using UtilityScripts;
 namespace Interrupts {
@@ -8,6 +9,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides
@@ -82,7 +84,7 @@ namespace Interrupts {
                 }
             }
             
-            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
+            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction", null, LOG_TAG.Life_Changes);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             overrideEffectLog.AddToFillers(interruptHolder.actor.currentRegion, interruptHolder.actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);

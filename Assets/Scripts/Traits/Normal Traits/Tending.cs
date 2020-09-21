@@ -38,9 +38,9 @@
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 if (_hasTendedAtLeastOnce) {
-                    Log endLog = new Log(GameManager.Instance.Today(), "Behaviour", "TendFarmBehaviour", "end");
+                    Log endLog = new Log(GameManager.Instance.Today(), "Behaviour", "TendFarmBehaviour", "end", null, LOG_TAG.Work);
                     endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    endLog.AddLogToInvolvedObjects();    
+                    endLog.AddLogToDatabase();    
                 }
 
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(TendFarmBehaviour));

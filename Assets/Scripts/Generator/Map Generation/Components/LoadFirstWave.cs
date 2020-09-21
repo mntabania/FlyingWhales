@@ -29,7 +29,7 @@ public class LoadFirstWave : MapGenerationComponent {
 
         yield return MapGenerator.Instance.StartCoroutine(LoadActions(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadInterrupts(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadLogs(saveData));
+        // yield return MapGenerator.Instance.StartCoroutine(LoadLogs(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadParties(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadPartyQuests(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadCrimes(saveData));
@@ -54,11 +54,11 @@ public class LoadFirstWave : MapGenerationComponent {
         saveData.LoadTileObjects();
         yield return null;
     }
-    private IEnumerator LoadLogs(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Logs...");
-        saveData.LoadLogs();
-        yield return null;
-    }
+    // private IEnumerator LoadLogs(SaveDataCurrentProgress saveData) {
+    //     LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Logs...");
+    //     saveData.LoadLogs();
+    //     yield return null;
+    // }
 
     private IEnumerator LoadActions(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Actions...");

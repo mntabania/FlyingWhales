@@ -91,7 +91,7 @@ namespace Traits {
                     CheckTargetVictimIfStillAvailable();
                     if (targetVictim == null) {
                         SetTargetVictim(potentialVictim);
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim", null, LOG_TAG.Crimes);
                         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
@@ -124,7 +124,7 @@ namespace Traits {
                     Character chosenVictim = victims[UnityEngine.Random.Range(0, victims.Count)]; 
                     SetTargetVictim(chosenVictim);
 
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim", null, LOG_TAG.Crimes);
                     log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
@@ -147,10 +147,10 @@ namespace Traits {
 
         public void SetVictimRequirements(SerialVictim serialVictim) {
             victim1Requirement = serialVictim;
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer", null, LOG_TAG.Crimes);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
         public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
@@ -350,7 +350,7 @@ namespace Traits {
         }
 
         public void PsychopathSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "psychopath_saw_no_assist");
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "psychopath_saw_no_assist", null, LOG_TAG.Crimes);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);

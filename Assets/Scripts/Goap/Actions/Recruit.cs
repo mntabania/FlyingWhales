@@ -14,6 +14,7 @@ public class Recruit : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         //isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides

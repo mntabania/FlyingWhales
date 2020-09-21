@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 public class Rumor : IReactable {
@@ -22,6 +23,7 @@ public class Rumor : IReactable {
     public Log informationLog => rumorable.informationLog;
     public bool isStealth => rumorable.isStealth;
     public List<Character> awareCharacters => rumorable.awareCharacters;
+    public LOG_TAG[] logTags => rumorable.logTags;
     #endregion
 
     public Rumor(Character characterThatCreated, Character targetCharacter) {

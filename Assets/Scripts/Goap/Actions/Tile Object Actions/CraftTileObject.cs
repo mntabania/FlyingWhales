@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -11,6 +12,7 @@ public class CraftTileObject : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.EARLY_NIGHT };
         canBeAdvertisedEvenIfTargetIsUnavailable = true;
+        logTags = new[] {LOG_TAG.Work};
     }
 
     #region Overrides
@@ -49,8 +51,8 @@ public class CraftTileObject : GoapAction {
         //craft cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         TileObject obj = node.poiTarget as TileObject;
         log.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
@@ -104,8 +106,10 @@ public class CraftTileObject : GoapAction {
         obj.SetMapObjectState(MAP_OBJECT_STATE.BUILDING);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
-        goapNode.thoughtBubbleLog?.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
-        goapNode.thoughtBubbleLog?.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+        if (goapNode.thoughtBubbleLog.hasValue) {
+            goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.GetArticleForWord(obj.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
+            goapNode.thoughtBubbleLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
+        }
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         TileObject tileObj = goapNode.poiTarget as TileObject;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
+[System.Obsolete("This is no longer advertised by anything.")]
 public class Accident : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
@@ -11,6 +12,7 @@ public class Accident : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        logTags = new[] {LOG_TAG.Life_Changes};
     }
 
     #region Overrides
@@ -41,7 +43,7 @@ public class Accident : GoapAction {
     #region State Effects
     public void PreAccidentSuccess(ActualGoapNode goapNode) {
         GoapAction actionToDo = goapNode.otherData[0].obj as GoapAction;
-        goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
+        // goapNode.descriptionLog.AddToFillers(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     public void AfterAccidentSuccess(ActualGoapNode goapNode) {
         goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Injured", gainedFromDoing: goapNode);

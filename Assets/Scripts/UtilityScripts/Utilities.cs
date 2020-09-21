@@ -10,6 +10,7 @@ using EZObjectPools;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Logs;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
@@ -36,6 +37,8 @@ namespace UtilityScripts {
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
+        public static string tempPath => $"{gameSavePath}/Temp/";
+        public static string tempZipPath => $"{gameSavePath}/Temp/Temp/";
 
         private static readonly Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
             { "man", "men" },
@@ -205,22 +208,33 @@ namespace UtilityScripts {
         }
         #endregion
 
-        #region Log Utilities
-        public static string LogReplacer(Log log, bool ignoreLogText = false) {
-            if (log == null) {
+        #region New Logs
+        public static string RemoveRichText(string text) {
+            StringBuilder sb = new StringBuilder(text.Length);
+            bool tag = false;
+            for (int index = 0; index < text.Length; index++) {
+                char c = text[index];
+                if (tag) {
+                    if (c == '>') {
+                        tag = false;
+                    }
+                }
+                else {
+                    if (c == '<') {
+                        tag = true;
+                    }
+                    else {
+                        sb.Append(c);
+                    }
+                }
+            }
+            return sb.ToString();
+        }
+        public static string LogReplacer(string unReplacedLog, List<LogFillerStruct> fillers) {
+            if (string.IsNullOrEmpty(unReplacedLog)) {
                 return string.Empty;
             }
-            if(log.logText != string.Empty && ignoreLogText == false) {
-                return log.logText;
-            }
-            string newText;
-            if (string.IsNullOrEmpty(log.message)) {
-                newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
-            } else {
-                newText = log.message;
-            }
-        
-            //bool hasPeriod = newText.EndsWith(".");
+            string newText = unReplacedLog;
 
             if (!string.IsNullOrEmpty(newText)) {
                 string[] words = SplitAndKeepDelimiters(newText, ' ', '.', ',', '\'', '!', '"', ':');
@@ -228,9 +242,9 @@ namespace UtilityScripts {
                     var replacedWord = string.Empty;
                     string word = words[i];
                     if (word.StartsWith("%") && (word.EndsWith("%") || word.EndsWith("@"))) { //OBJECT
-                        replacedWord = CustomStringReplacer(word, log.fillers);
+                        replacedWord = CustomStringReplacer(word, fillers);
                     } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
-                        replacedWord = CustomPronounReplacer(word, log.fillers);
+                        replacedWord = CustomPronounReplacer(word, fillers);
                     } else if (IsWordAVerb(word)) {
                         replacedWord = ColorizeActionInLog(word);
                     }
@@ -244,9 +258,165 @@ namespace UtilityScripts {
                 }
                 newText = newText.Trim(' ');
             }
-            log.SetLogText(newText);
             return newText;
         }
+        private static string CustomStringReplacer(string wordToBeReplaced, List<LogFillerStruct> fillers) {
+            string wordToReplace = string.Empty;
+            string strLogIdentifier = wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2);
+            LOG_IDENTIFIER identifier = logIdentifiers[strLogIdentifier];
+            if (identifier == LOG_IDENTIFIER.CHARACTER_LIST_1 || identifier == LOG_IDENTIFIER.CHARACTER_LIST_2) {
+                int listCount = 0;
+                for (int i = 0; i < fillers.Count; i++) {
+                    LogFillerStruct logFiller = fillers[i];
+                    if (logFiller.identifier == identifier) {
+                        if (wordToReplace != string.Empty) {
+                            wordToReplace = $"{wordToReplace}, ";
+                        }
+                        object obj = logFiller.GetObjectForFiller();
+                        if(obj != null) {
+                            if (obj is Character character) {
+                                wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>")}";
+                            } else {
+                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>")}";    
+                            }
+                        } else {
+                            wordToReplace = $"{wordToReplace}{ColorizeName($"<b>{logFiller.value}</b>")}";
+                        }
+                        listCount++;
+                    }
+                }
+                if(listCount > 1) {
+                    //Add 'and' after last comma
+                    int commaLastIndex = wordToReplace.LastIndexOf(',');
+                    wordToReplace = wordToReplace.Insert(commaLastIndex + 1, " and");
+                }
+            } else if (identifier == LOG_IDENTIFIER.APPEND) {
+                for (int i = 0; i < fillers.Count; i++) {
+                    LogFillerStruct logFiller = fillers[i];
+                    if (logFiller.identifier == identifier) {
+                        wordToReplace = StringReplacer(logFiller.value, fillers);
+                        break;
+                    }
+                }
+            } else {
+                for (int i = 0; i < fillers.Count; i++) {
+                    LogFillerStruct logFiller = fillers[i];
+                    if (logFiller.identifier == identifier) {
+                        object obj = logFiller.GetObjectForFiller();
+                        if (obj != null) {
+                            wordToReplace = $"<b><link={logFiller.GetLinkText()}>{logFiller.value}</link></b>";
+                            if (obj is Character || obj is TileObject || obj is Faction) {
+                                wordToReplace = ColorizeName(wordToReplace);
+                            }
+                            if (obj is Character character) {
+                                wordToReplace = $"{character.visuals.GetCharacterStringIcon()}{wordToReplace}";
+                            }
+                        } else {
+                            wordToReplace = $"<b>{logFiller.value}</b>";
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+            return wordToReplace;
+         }
+        private static string CustomPronounReplacer(string wordToBeReplaced, List<LogFillerStruct> fillers) {
+            LOG_IDENTIFIER identifier = logIdentifiers[wordToBeReplaced.Substring(1, wordToBeReplaced.Length - 2)];
+            string identifierAsString = identifier.ToString();
+            string wordToReplace = string.Empty;
+            char lastCharacter = identifierAsString.Last(); 
+            
+            LOG_IDENTIFIER logIdentifier = LOG_IDENTIFIER.NONE;
+            string logIdentifierAsString = identifierAsString.Substring(0, identifierAsString.Length - 10);
+            if (System.Enum.TryParse(logIdentifierAsString, out logIdentifier)) {
+                string pronouns = GetPronoun(lastCharacter, wordToBeReplaced.Last());
+                for (int i = 0; i < fillers.Count; i++) {
+                    if (fillers[i].identifier == logIdentifier) {
+                        wordToReplace = PronounReplacer(pronouns, fillers[i].GetObjectForFiller());
+                        break;
+                    }
+                } 
+            }
+            if(wordToReplace != string.Empty) { 
+                return wordToReplace;
+            } 
+            return wordToBeReplaced;
+        }
+        public static string StringReplacer(string text, List<LogFillerStruct> fillers) {
+            if (string.IsNullOrEmpty(text)) {
+                return string.Empty;
+            }
+            string newText = text;
+
+            if (!string.IsNullOrEmpty(newText)) {
+                string[] words = SplitAndKeepDelimiters(newText, delimiters);
+                for (int i = 0; i < words.Length; i++) {
+                    var replacedWord = string.Empty;
+                    string word = words[i];
+                    if (word.StartsWith("%") && (word.EndsWith("%") || word.EndsWith("@"))) { //OBJECT
+                        replacedWord = CustomStringReplacer(word, fillers);
+                    } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
+                        replacedWord = CustomPronounReplacer(word, fillers);
+                    } else if (IsWordAVerb(word)) {
+                        replacedWord = ColorizeActionInLog(word);
+                    }
+                    if (!string.IsNullOrEmpty(replacedWord)) {
+                        words[i] = replacedWord;
+                    }
+                }
+                newText = string.Empty;
+                for (int i = 0; i < words.Length; i++) {
+                    newText = $"{newText}{words[i]}";
+                }
+                newText = newText.Trim(' ');
+            }
+            return newText;
+        }
+        #endregion
+        
+        #region Log Utilities
+        // public static string LogReplacer(Log log, bool ignoreLogText = false) {
+        //     if (!log.hasValue) {
+        //         return string.Empty;
+        //     }
+        //     if(log.logText != string.Empty && ignoreLogText == false) {
+        //         return log.logText;
+        //     }
+        //     string newText;
+        //     if (string.IsNullOrEmpty(log.message)) {
+        //         newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+        //     } else {
+        //         newText = log.message;
+        //     }
+        //
+        //     //bool hasPeriod = newText.EndsWith(".");
+        //
+        //     if (!string.IsNullOrEmpty(newText)) {
+        //         string[] words = SplitAndKeepDelimiters(newText, ' ', '.', ',', '\'', '!', '"', ':');
+        //         for (int i = 0; i < words.Length; i++) {
+        //             var replacedWord = string.Empty;
+        //             string word = words[i];
+        //             if (word.StartsWith("%") && (word.EndsWith("%") || word.EndsWith("@"))) { //OBJECT
+        //                 replacedWord = CustomStringReplacer(word, log.fillers);
+        //             } else if (word.StartsWith("%") && (word.EndsWith("a") || word.EndsWith("b"))) { //PRONOUN
+        //                 replacedWord = CustomPronounReplacer(word, log.fillers);
+        //             } else if (IsWordAVerb(word)) {
+        //                 replacedWord = ColorizeActionInLog(word);
+        //             }
+        //             if (!string.IsNullOrEmpty(replacedWord)) {
+        //                 words[i] = replacedWord;
+        //             }
+        //         }
+        //         newText = string.Empty;
+        //         for (int i = 0; i < words.Length; i++) {
+        //             newText = $"{newText}{words[i]}";
+        //         }
+        //         newText = newText.Trim(' ');
+        //     }
+        //     log.SetLogText(newText);
+        //     return newText;
+        // }
         private static bool IsWordAVerb(string word) {
             if (InteractionManager.Instance.ignoredActionNames.Contains(word)) {
                 return false;
@@ -292,13 +462,13 @@ namespace UtilityScripts {
             }
             return newText;
         }
-        public static string LogDontReplace(Log log) {
-            if (log == null) {
-                return string.Empty;
-            }
-            string newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
-            return newText;
-        }
+        // public static string LogDontReplace(Log log) {
+        //     if (log == null) {
+        //         return string.Empty;
+        //     }
+        //     string newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+        //     return newText;
+        // }
         public static string LogDontReplace(string category, string file, string key) {
             return LocalizationManager.Instance.GetLocalizedValue(category, file, key);
         }
@@ -338,9 +508,9 @@ namespace UtilityScripts {
                         }
                         if(logFiller.obj != null) {
                             if (logFiller.obj is Character character) {
-                                wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";
+                                wordToReplace = $"{wordToReplace}{character.visuals.GetCharacterStringIcon()}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>")}";
                             } else {
-                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link=\"{i}\">{logFiller.value}</link></b>")}";    
+                                wordToReplace = $"{wordToReplace}{ColorizeName($"<b><link={i}>{logFiller.value}</link></b>")}";    
                             }
                         } else {
                             wordToReplace = $"{wordToReplace}{ColorizeName($"<b>{logFiller.value}</b>")}";
@@ -366,7 +536,7 @@ namespace UtilityScripts {
                     LogFiller logFiller = objectLog[i];
                     if (logFiller.identifier == identifier) {
                         if (logFiller.obj != null) {
-                            wordToReplace = $"<b><link=\"{i}\">{logFiller.value}</link></b>";
+                            wordToReplace = $"<b><link={i}>{logFiller.value}</link></b>";
                             if (logFiller.obj is Character || logFiller.obj is TileObject || logFiller.obj is Faction) {
                                 wordToReplace = ColorizeName(wordToReplace);
                             }
@@ -474,7 +644,7 @@ namespace UtilityScripts {
             {"107", LOG_IDENTIFIER.ITEM_1},
             {"108", LOG_IDENTIFIER.ITEM_2},
             {"109", LOG_IDENTIFIER.ITEM_3},
-            {"110", LOG_IDENTIFIER.COMBAT},
+            {"110", LOG_IDENTIFIER.COMBAT_FILLER},
             {"111", LOG_IDENTIFIER.STRING_1},
             {"112", LOG_IDENTIFIER.STRING_2},
             {"113", LOG_IDENTIFIER.MINION_1},
@@ -539,7 +709,7 @@ namespace UtilityScripts {
             {LOG_IDENTIFIER.ITEM_1, "107"},
             {LOG_IDENTIFIER.ITEM_2, "108"},
             {LOG_IDENTIFIER.ITEM_3, "109"},
-            {LOG_IDENTIFIER.COMBAT, "110"},
+            {LOG_IDENTIFIER.COMBAT_FILLER, "110"},
             {LOG_IDENTIFIER.STRING_1, "111"},
             {LOG_IDENTIFIER.STRING_2, "112"},
             {LOG_IDENTIFIER.MINION_1, "113"},
@@ -583,7 +753,7 @@ namespace UtilityScripts {
                         case LOG_IDENTIFIER.LANDMARK_3:
                         case LOG_IDENTIFIER.PARTY_3:
                         case LOG_IDENTIFIER.TASK:
-                        case LOG_IDENTIFIER.COMBAT:
+                        case LOG_IDENTIFIER.COMBAT_FILLER:
                             key += "@";
                             break;
                         default:

@@ -42,7 +42,7 @@ public class SaveDataCurrentProgress {
     private void ConstructObjectHub() {
         objectHub = new Dictionary<OBJECT_TYPE, BaseSaveDataHub>() {
             { OBJECT_TYPE.Faction, new SaveDataFactionHub() },
-            { OBJECT_TYPE.Log, new SaveDataLogHub() },
+            // { OBJECT_TYPE.Log, new SaveDataLogHub() },
             { OBJECT_TYPE.Tile_Object, new SaveDataTileObjectHub() },
             { OBJECT_TYPE.Action, new SaveDataActionHub() },
             { OBJECT_TYPE.Interrupt, new SaveDataInterruptHub() },
@@ -267,17 +267,17 @@ public class SaveDataCurrentProgress {
             }
         }
     }
-    public void LoadLogs() {
-        if (objectHub.ContainsKey(OBJECT_TYPE.Log)) {
-            if (objectHub[OBJECT_TYPE.Log] is SaveDataLogHub hub) {
-                Dictionary<string, SaveDataLog> saved = hub.hub;
-                foreach (SaveDataLog data in saved.Values) {
-                    Log log = data.Load();
-                    DatabaseManager.Instance.logDatabase.AddLog(log);
-                }
-            }
-        }
-    }
+    // public void LoadLogs() {
+    //     if (objectHub.ContainsKey(OBJECT_TYPE.Log)) {
+    //         if (objectHub[OBJECT_TYPE.Log] is SaveDataLogHub hub) {
+    //             Dictionary<string, SaveDataLog> saved = hub.hub;
+    //             foreach (SaveDataLog data in saved.Values) {
+    //                 Log log = data.Load();
+    //                 DatabaseManager.Instance.logDatabase.AddLog(log);
+    //             }
+    //         }
+    //     }
+    // }
     public void LoadParties() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Party)) {
             if (objectHub[OBJECT_TYPE.Party] is SaveDataPartyHub hub) {
@@ -374,12 +374,12 @@ public class SaveDataCurrentProgress {
             item.Value.LoadReferences(saveData);
         }
     }
-    public void LoadLogReferences() {
-        foreach (KeyValuePair<string, Log> item in DatabaseManager.Instance.logDatabase.allLogs) {
-            SaveDataLog saveData = GetFromSaveHub<SaveDataLog>(OBJECT_TYPE.Log, item.Key);
-            item.Value.LoadReferences(saveData);
-        }
-    }
+    // public void LoadLogReferences() {
+    //     foreach (KeyValuePair<string, Log> item in DatabaseManager.Instance.logDatabase.allLogs) {
+    //         SaveDataLog saveData = GetFromSaveHub<SaveDataLog>(OBJECT_TYPE.Log, item.Key);
+    //         item.Value.LoadReferences(saveData);
+    //     }
+    // }
     public void LoadPartyReferences() {
         foreach (KeyValuePair<string, Party> item in DatabaseManager.Instance.partyDatabase.allParties) {
             SaveDataParty saveData = GetFromSaveHub<SaveDataParty>(OBJECT_TYPE.Party, item.Key);
@@ -451,12 +451,13 @@ public class SaveDataNotification {
     public SaveDataInterruptIntel interruptIntel;
 
     public void Save(PlayerNotificationItem notif) {
-        logID = notif.shownLog.persistentID;
-        tickShown = notif.tickShown;
-        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog);
-        if (notif.shownLog.node != null) {
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog.node);
-        }
+        logID = notif.logPersistentID;
+        // logID = notif.shownLog.persistentID;
+        // tickShown = notif.tickShown;
+        // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog);
+        // if (notif.shownLog.node != null) {
+        //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(notif.shownLog.node);
+        // }
 
         if(notif is IntelNotificationItem intelNotif) {
             isIntel = true;
@@ -473,7 +474,7 @@ public class SaveDataNotification {
     }
 
     public void Load() {
-        Log log = DatabaseManager.Instance.logDatabase.GetLogByPersistentID(logID);
+        Log log = DatabaseManager.Instance.mainSQLDatabase.GetLogWithPersistentID(logID);
         if (isIntel) {
             IIntel intel = null;
             if (isActionIntel) {

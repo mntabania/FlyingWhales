@@ -47,7 +47,7 @@ namespace Traits {
                     if (roll < chance) {
                         if (!targetCharacter.traitContainer.HasTrait("Unconscious")) {
                             if (characterThatWillDoJob.combatComponent.Fight(targetCharacter, CombatManager.Drunk, isLethal: false)) {
-                                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
+                                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault", null, LOG_TAG.Combat);
                                 log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                 characterThatWillDoJob.logComponent.RegisterLog(log, onlyClickedCharacter: false);

@@ -92,7 +92,7 @@ namespace Traits {
         /// <summary>
         /// Only used for characters, since traits aren't removed when a character dies.
         /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
-        /// <see cref="Character.Death(string,ActualGoapNode,Character,Log,LogFiller[],Interrupt)"/>
+        /// <see cref="Character.Death"/>
         /// </summary>
         /// <param name="character">The character that died.</param>
         /// <returns>If this trait was removed or not.</returns>
@@ -176,9 +176,10 @@ namespace Traits {
         #region Utilities
         public string GetTriggerFlawEffectDescription(Character character, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, key);
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, key, null, LOG_TAG.Player);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                return UtilityScripts.Utilities.LogReplacer(log);
+                log.FinalizeText();
+                return log.logText;
             }
             return string.Empty;
         }
@@ -218,7 +219,6 @@ namespace Traits {
                 if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
                     currentJob.CancelJob(shouldDoAfterEffect: false);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob);
-                    //TODO: characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
                     return true;
                 }
             }

@@ -10,6 +10,7 @@ namespace Interrupts {
             duration = 6;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides

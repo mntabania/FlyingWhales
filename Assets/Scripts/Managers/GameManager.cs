@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour {
             UIManager.Instance.ToggleConsole();
 #endif
         } else if (keyCode == KeyCode.Space) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
                 } else {
@@ -76,15 +76,15 @@ public class GameManager : MonoBehaviour {
                 }
             }
         } else if (keyCode == KeyCode.Alpha1) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
                 UIManager.Instance.SetProgressionSpeed1X();
             }
         } else if (keyCode == KeyCode.Alpha2) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
                 UIManager.Instance.SetProgressionSpeed2X();
             }
         } else if (keyCode == KeyCode.Alpha3) {
-            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable() && !InputManager.Instance.HasSelectedUIObject()) {
                 UIManager.Instance.SetProgressionSpeed4X();
             }
         }

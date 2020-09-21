@@ -4,6 +4,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
+using Logs;
 using UtilityScripts;
 
 public class ReportCorruptedStructure : GoapAction {
@@ -13,6 +14,7 @@ public class ReportCorruptedStructure : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.UPON_STRUCTURE_ARRIVAL;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
+        logTags = new[] {LOG_TAG.Player};
     }
 
     #region Override
@@ -36,8 +38,8 @@ public class ReportCorruptedStructure : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return null;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         LocationStructure structureToReport = node.otherData[0].obj as LocationStructure;
         log.AddToFillers(structureToReport, structureToReport.GetNameRelativeTo(node.actor), LOG_IDENTIFIER.LANDMARK_2);
     }

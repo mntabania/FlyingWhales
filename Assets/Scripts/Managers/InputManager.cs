@@ -214,6 +214,7 @@ namespace Ruinarch {
                     //Do not allow hotkeys while saving
                     return;
                 }
+                if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Tab);
             }
         }
@@ -222,6 +223,7 @@ namespace Ruinarch {
                 //Do not allow hotkeys while saving
                 return;
             }
+            if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
             Messenger.Broadcast(Signals.HOTKEY_CLICK, buttonToActivate);
         }
         #endregion
@@ -364,6 +366,9 @@ namespace Ruinarch {
         }
         public bool ShouldBeHighlighted(RuinarchToggle button) {
             return buttonsToHighlight.Contains(button.name);
+        }
+        public bool HasSelectedUIObject() {
+            return EventSystem.current.currentSelectedGameObject != null;
         }
         #endregion
 

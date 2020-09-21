@@ -14,6 +14,7 @@ public class BuildTrollCauldron : GoapAction {
         actionIconString = GoapActionStateDB.Build_Icon;
         showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides
@@ -52,7 +53,7 @@ public class BuildTrollCauldron : GoapAction {
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         TrollCauldron cauldron = InnerMapManager.Instance.CreateNewTileObject<TrollCauldron>(TILE_OBJECT_TYPE.TROLL_CAULDRON);
         goapNode.actor.gridTileLocation.structure.AddPOI(cauldron, goapNode.actor.gridTileLocation);
-        cauldron.logComponent.AddHistory(goapNode.descriptionLog);
+        // cauldron.logComponent.AddHistory(goapNode.descriptionLog);
     }
     #endregion
 }

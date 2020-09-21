@@ -8,6 +8,7 @@ public class Disable : GoapAction {
         actionIconString = GoapActionStateDB.Magic_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.DEMON, RACE.LESSER_DEMON };
+        logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
     }
     
     #region Overrides
@@ -45,10 +46,10 @@ public class Disable : GoapAction {
     private void DisableEffect(ITraitable traitable, Character actor) {
         if (traitable is Character targetCharacter && actor.IsHostileWith(targetCharacter)) {
             targetCharacter.traitContainer.AddTrait(traitable, "Ensnared", actor);  
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Disable", "effect");
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Disable", "effect", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
         }
     }
     #endregion

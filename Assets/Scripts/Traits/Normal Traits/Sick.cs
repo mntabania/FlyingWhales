@@ -39,26 +39,24 @@ namespace Traits {
                 owner.movementComponent.AdjustSpeedModifier(-0.10f);
                 owner.AddTraitNeededToBeRemoved(this);
 
-                if (gainedFromDoing == null) {
-                    owner.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
-                } else {
-                    if (gainedFromDoing.goapType == INTERACTION_TYPE.EAT) {
-                        Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
-                        if (gainedFromDoing != null) {
-                            addLog.SetLogType(LOG_TYPE.Action);
-                        }
-                        addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    } else {
-                        owner.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
-                    }
+                if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.EAT) {
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Misc);
+                    // if (gainedFromDoing != null) {
+                    //     addLog.SetLogType(LOG_TYPE.Action);
+                    // }
+                    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddLogToDatabase();
                 }
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             owner.movementComponent.AdjustSpeedModifier(0.10f);
             owner.RemoveTraitNeededToBeRemoved(this);
-            owner.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Misc);
+            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddLogToDatabase();
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
         public override bool PerTickOwnerMovement() {

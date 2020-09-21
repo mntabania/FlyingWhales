@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -10,6 +11,7 @@ public class RevertToNormalForm : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.WOLF };
+        logTags = new[] {LOG_TAG.Crimes, LOG_TAG.Life_Changes};
     }
 
     #region Overrides
@@ -20,8 +22,8 @@ public class RevertToNormalForm : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         return 5;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         Character actor = node.actor;
         //AlterEgoData ogData = actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
         //log.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
@@ -34,7 +36,6 @@ public class RevertToNormalForm : GoapAction {
         //AlterEgoData ogData = goapNode.actor.GetAlterEgoData(CharacterManager.Original_Alter_Ego);
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         //goapNode.descriptionLog.AddToFillers(null, Utilities.GetNormalizedSingularRace(ogData.race), LOG_IDENTIFIER.STRING_1);
-        //TODO: currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess(ActualGoapNode goapNode) {
         //Lycanthrope lycanthropy = goapNode.actor.traitContainer.GetNormalTrait<Trait>("Lycanthrope") as Lycanthrope;

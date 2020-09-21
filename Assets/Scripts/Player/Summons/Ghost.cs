@@ -80,10 +80,10 @@ public class Ghost : Summon {
                 if (choices.Count > 0) {
                     Character chosenCharacter = CollectionUtilities.GetRandomElement(choices);
                     chosenCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Feared, this);
-                    Log log = new Log(GameManager.Instance.Today(), "Summon", "Ghost", "feared");
+                    Log log = new Log(GameManager.Instance.Today(), "Summon", "Ghost", "feared", null, LOG_TAG.Combat);
                     log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddLogToInvolvedObjects();
+                    log.AddLogToDatabase();
                 }
             }
         }

@@ -27,6 +27,8 @@ public class StartupManager : MonoBehaviour {
             LevelLoaderManager.Instance.UpdateLoadingBar(0.4f, 8f);
             yield return StartCoroutine(SaveManager.Instance.saveCurrentProgressManager.LoadSaveDataCurrentProgressBasedOnSetPath());
             yield return StartCoroutine(mapGenerator.InitializeSavedWorld(SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress));
+            //clear out save file in temp folder
+            SaveManager.Instance.DeleteSaveFilesInTempDirectory();
         } else {
             LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
             if (WorldSettings.Instance.worldSettingsData.IsScenarioMap()) {
@@ -53,7 +55,7 @@ public class StartupManager : MonoBehaviour {
                     default:
                         throw new Exception($"There is no scenario map data for {WorldSettings.Instance.worldSettingsData.worldType.ToString()}");
                 }
-
+                
                 if (scenarioMapData != null && !WorldConfigManager.Instance.useRandomGenerationForScenarioMaps) {
                     yield return StartCoroutine(mapGenerator.InitializeScenarioWorld(scenarioMapData));    
                 } else {

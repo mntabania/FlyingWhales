@@ -44,9 +44,6 @@ namespace Traits {
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
             // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
             //trait.RemoveExpiryTicket(traitable);
-            //TODO: if (triggerOnRemove) {
-            //    trait.OnRemoveTrait(this, removedBy);
-            //}
             traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);

@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using Interrupts;
+using Logs;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader, IObjectManipulator {
@@ -369,6 +370,7 @@ public class Player : ILeader, IObjectManipulator {
     private void RemoveIntel(IIntel intel) {
         if (allIntel.Remove(intel)) {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
+            intel.OnIntelRemoved();
         }
     }
     public void LoadIntels(SaveDataPlayer data) {
@@ -442,30 +444,22 @@ public class Player : ILeader, IObjectManipulator {
         return location.canShowNotifications;
     }
     private bool ShouldShowNotificationFrom(Character character) {
-        // if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
-        //     if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
-        //         return true;
-        //     }
-        // } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
-        //     return true;
-        // }
-        // return false;
         return character.currentRegion != null && ShouldShowNotificationFrom(character.currentRegion);
     }
-    private bool ShouldShowNotificationFrom(Character character, Log log) {
+    private bool ShouldShowNotificationFrom(Character character, in Log log) {
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray())
-                || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Region).Select(x => x.obj as Region).ToArray());
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+                || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
     }
-    private bool ShouldShowNotificationFrom(Region location, Log log) {
+    private bool ShouldShowNotificationFrom(Region location, in Log log) {
         if (ShouldShowNotificationFrom(location)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray())
-                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Region).Select(x => x.obj as Region).ToArray());
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Character).Select(x => x.GetObjectForFiller() as Character).ToArray())
+                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.GetObjectForFiller() is Region).Select(x => x.GetObjectForFiller() as Region).ToArray());
         }
     }
     private bool ShouldShowNotificationFrom(Character[] characters) {
@@ -484,7 +478,7 @@ public class Player : ILeader, IObjectManipulator {
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Character[] characters, Log log) {
+    private bool ShouldShowNotificationFrom(Character[] characters, in Log log) {
         for (int i = 0; i < characters.Length; i++) {
             if (ShouldShowNotificationFrom(characters[i], log)) {
                 return true;
@@ -519,12 +513,8 @@ public class Player : ILeader, IObjectManipulator {
             ShowNotification(log);
         }
     }
-    public void ShowNotificationFrom(Log log, Character character, bool onlyClickedCharacter) {
-        if (ShouldShowNotificationFrom(character)) {
-            ShowNotification(log);
-        }
-    }
     public void ShowNotificationFromPlayer(Log log) {
+        DatabaseManager.Instance.mainSQLDatabase.InsertLog(log);
         ShowNotification(log);
     }
     
@@ -533,53 +523,6 @@ public class Player : ILeader, IObjectManipulator {
     }
     private void ShowNotification(IIntel intel) {
         Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, intel);
-    }
-    #endregion
-
-    #region Tile Corruption
-    //public void InvadeATile() {
-    //    //currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
-    //    //if(currentCorruptionDuration == 0) {
-    //    //    Debug.LogError("Cannot corrupt a tile with 0 corruption duration");
-    //    //} else {
-    //    //    GameManager.Instance.SetOnlyTickDays(true);
-    //    //    currentTileBeingCorrupted.StartCorruptionAnimation();
-    //    //    currentCorruptionTick = 0;
-    //    //    Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
-    //    //    UIManager.Instance.Unpause();
-    //    //    isTileCurrentlyBeingCorrupted = true;
-    //    //}
-    //    currentTileBeingCorrupted.region.InvadeActions();
-    //    //TODO:
-    //    // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
-    //    //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
-    //}
-    //private void CorruptTilePerTick() {
-    //    currentCorruptionTick ++;
-    //    if(currentCorruptionTick >= currentCorruptionDuration) {
-    //        TileIsCorrupted();
-    //    }
-    //}
-    //private void TileIsCorrupted() {
-    //    isTileCurrentlyBeingCorrupted = false;
-    //    Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
-    //    UIManager.Instance.Pause();
-    //    //TODO:
-    //    // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
-    //    //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
-    //}
-    #endregion
-
-    #region Settlement Corruption
-    private NPCSettlement AreaIsCorrupted() {
-        //TODO:
-        // isTileCurrentlyBeingCorrupted = false;
-        // GameManager.Instance.SetPausedState(true);
-        // NPCSettlement corruptedSettlement = currentTileBeingCorrupted.settlementOfTile;
-        // LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
-        // //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
-        // return corruptedSettlement;
-        return null;
     }
     #endregion
 

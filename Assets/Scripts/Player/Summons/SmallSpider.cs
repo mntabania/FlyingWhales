@@ -101,9 +101,9 @@ public class SmallSpider : Summon {
             }
         }
         
-        Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider");
+        Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
         growUpLog.AddToFillers(summon, summon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        growUpLog.AddLogToInvolvedObjects();
+        growUpLog.AddLogToDatabase();
         
         CharacterManager.Instance.PlaceSummon(summon, tile);
         if (UIManager.Instance.characterInfoUI.isShowing && 

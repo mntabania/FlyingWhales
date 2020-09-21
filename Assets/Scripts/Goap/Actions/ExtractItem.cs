@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Logs;
 
 public class ExtractItem : GoapAction {
 
@@ -9,6 +10,7 @@ public class ExtractItem : GoapAction {
         actionIconString = GoapActionStateDB.Work_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides
@@ -38,8 +40,8 @@ public class ExtractItem : GoapAction {
         base.Perform(goapNode);
         SetState("Extract Success", goapNode);
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         TileObject obj = node.poiTarget as TileObject;
         IPointOfInterest target = node.poiTarget;
         string text = string.Empty;
@@ -93,8 +95,12 @@ public class ExtractItem : GoapAction {
         string article = UtilityScripts.Utilities.GetArticleForWord(text);
         text = article + " " + text;
         goapNode.descriptionLog.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
-        goapNode.thoughtBubbleLog?.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
-        goapNode.thoughtBubbleMovingLog?.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
+        if (goapNode.thoughtBubbleLog.hasValue) {
+            goapNode.thoughtBubbleLog.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);    
+        }
+        if (goapNode.thoughtBubbleMovingLog.hasValue) {
+            goapNode.thoughtBubbleMovingLog.AddToFillers(null, text, LOG_IDENTIFIER.STRING_1);
+        }
     }
     public void AfterExtractSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;

@@ -10,6 +10,7 @@ public class StudyMonster : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.DEMON };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Work};
     }
 
     #region Override

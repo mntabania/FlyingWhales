@@ -16,6 +16,7 @@ public class PlayGuitar : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
@@ -134,7 +135,6 @@ public class PlayGuitar : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(1);
         goapNode.actor.jobComponent.IncreaseNumOfTimesActionDone(this);
         goapNode.poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        //TODO: currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess(ActualGoapNode goapNode) {
         goapNode.actor.needsComponent.AdjustHappiness(6f);

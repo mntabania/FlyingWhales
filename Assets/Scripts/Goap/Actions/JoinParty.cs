@@ -1,6 +1,7 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -16,6 +17,7 @@ public class JoinGathering : GoapAction {
             RACE.GHOST, RACE.NYMPH, RACE.SLIME, RACE.SLUDGE, RACE.CHICKEN, RACE.ELEMENTAL, RACE.ABOMINATION, RACE.ANGEL, RACE.DEMON
         };
         doesNotStopTargetCharacter = true;
+        logTags = new[] {LOG_TAG.Party};
     }
 
     #region Overrides
@@ -28,8 +30,8 @@ public class JoinGathering : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget is Character partyLeader) {
             log.AddToFillers(null, partyLeader.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1); //partyLeader.partyComponent.currentParty

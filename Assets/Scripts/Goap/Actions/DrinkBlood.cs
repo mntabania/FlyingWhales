@@ -14,6 +14,7 @@ public class DrinkBlood : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Crimes, LOG_TAG.Needs};
     }
 
     #region Overrides
@@ -233,13 +234,13 @@ public class DrinkBlood : GoapAction {
         } else {
             Vampiric vampiric = TraitManager.Instance.CreateNewInstancedTraitClass<Vampiric>("Vampiric");
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, vampiric, goapNode.actor);
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode);
-            if(goapNode != null) {
-                log.SetLogType(LOG_TYPE.Action);
-            }
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
+            // if(goapNode != null) {
+            //     log.SetLogType(LOG_TYPE.Action);
+            // }
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToInvolvedObjects();
+            log.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFrom(goapNode.actor, log);
         }
 

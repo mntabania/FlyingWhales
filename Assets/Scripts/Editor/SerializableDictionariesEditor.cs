@@ -77,6 +77,8 @@ public class PlayerSkillTreeNodeItemDictionaryPropertyDrawer : SerializableDicti
 public class PlayerSkillDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(PlayerArchetypeLoadoutDictionary))]
 public class PlayerArchetypeLoadoutDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(LogTagSpriteDictionary))]
+public class LogTagSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
 public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }

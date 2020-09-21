@@ -10,11 +10,12 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Sick_Icon;
             isIntel = true;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Player};
         }
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            interruptHolder.actor.Death("Zombie Virus", interrupt: this, _deathLog: interruptHolder.effectLog);
+            interruptHolder.actor.Death("Zombie Virus", _deathLog: interruptHolder.effectLog, interrupt: this);
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,

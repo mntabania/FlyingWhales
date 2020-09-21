@@ -188,7 +188,7 @@ public enum LOG_IDENTIFIER{
     ITEM_1,
     ITEM_2,
     ITEM_3,
-    COMBAT,
+    COMBAT_FILLER,
     //PARTY_NAME,
     OTHER,
     STRING_1,
@@ -1027,11 +1027,11 @@ public enum OBJECT_TYPE {
     Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
     Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21, Party_Quest = 22, Gathering = 23,
 }
-
 public enum PASSIVE_SKILL {
-    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb,
-    Auto_Absorb_Chaos_Orb,
-    Passive_Mana_Regen
+    Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
+}
+public enum LOG_TAG {
+    Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
 

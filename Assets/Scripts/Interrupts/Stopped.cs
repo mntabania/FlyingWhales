@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -10,6 +11,7 @@ namespace Interrupts {
             //doesDropCurrentJob = true;
             interruptIconString = GoapActionStateDB.No_Icon;
             isSimulateneous = true;
+            logTags = new[] {LOG_TAG.Misc};
         }
 
         #region Overrides
@@ -25,7 +27,7 @@ namespace Interrupts {
             targetCharacter.currentJob?.CancelJob(false);
             targetCharacter.currentJob?.StopJobNotDrop();
             if(interruptHolder.actor != targetCharacter && node != null) {
-                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action");
+                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action", null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 overrideEffectLog.AddToFillers(null, node.action.name, LOG_IDENTIFIER.STRING_1);
@@ -34,7 +36,7 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (actor == target) {
-                return null; //do not create log if actor was stopped by itself.
+                return default; //do not create log if actor was stopped by itself.
             }
             return base.CreateEffectLog(actor, target);
         }

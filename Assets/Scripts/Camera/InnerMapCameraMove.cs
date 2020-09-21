@@ -105,6 +105,7 @@ public class InnerMapCameraMove : BaseCameraMove {
     private void Zooming() {
         if (isMovementDisabled) { return; }
         if (!allowZoom) { return; }
+        if (InputManager.Instance.HasSelectedUIObject()) { return; }
         if (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.X)) {
             float axis = -0.1f;
             if (Input.GetKeyDown(KeyCode.Z)) {

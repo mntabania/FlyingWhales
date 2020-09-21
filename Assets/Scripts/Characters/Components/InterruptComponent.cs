@@ -7,6 +7,7 @@ using Interrupts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Logs;
 using UnityEngine.Assertions;
 
 public class InterruptComponent : CharacterComponent {
@@ -112,7 +113,7 @@ public class InterruptComponent : CharacterComponent {
         }
     }
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
-        Log effectLog = null;
+        Log effectLog = new Log();
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} is null!");
         Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} is null!");
         INTERRUPT interruptType = interruptHolder.interrupt.type;
@@ -122,7 +123,7 @@ public class InterruptComponent : CharacterComponent {
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} became null after executing start effect of {interruptType.ToString()}!");
         Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} became null after executing start effect of {interruptType.ToString()}!");
         
-        if(effectLog == null) {
+        if(!effectLog.hasValue) {
             effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }
         interruptHolder.SetEffectLog(effectLog);
@@ -213,22 +214,23 @@ public class InterruptComponent : CharacterComponent {
     }
     private void CreateThoughtBubbleLog(Interrupt interrupt) {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble");
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble", providedTags: interrupt.logTags);
             thoughtBubbleLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(currentInterrupt.target, currentInterrupt.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             interrupt.AddAdditionalFillersToThoughtLog(thoughtBubbleLog, owner);
         }
     }
     private void AddEffectLog(InterruptHolder interruptHolder) {
-        if(interruptHolder.effectLog != null) {
+        if(interruptHolder.effectLog.hasValue) {
             if (interruptHolder.interrupt.shouldAddLogs) {
-                if (owner != interruptHolder.target) {
-                    interruptHolder.effectLog.AddLogToInvolvedObjects();
-                } else {
-                    owner.logComponent.AddHistory(interruptHolder.effectLog);
-                    interruptHolder.effectLog.AddLogToSpecificObjects(LOG_IDENTIFIER.FACTION_1,
-                        LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
-                }    
+                interruptHolder.effectLog.AddLogToDatabase();
+                // if (owner != interruptHolder.target) {
+                //     interruptHolder.effectLog.AddLogToInvolvedObjects();
+                // } else {
+                //     owner.logComponent.AddHistory(interruptHolder.effectLog);
+                //     interruptHolder.effectLog.AddLogToSpecificObjects(LOG_IDENTIFIER.FACTION_1,
+                //         LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
+                // }    
             }
             if (interruptHolder.interrupt.shouldShowNotif) {
                 if (interruptHolder.interrupt.type == INTERRUPT.Create_Party) {

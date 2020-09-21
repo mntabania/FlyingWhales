@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Inner_Maps.Location_Structures;
 using Locations.Tile_Features;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -15,6 +16,7 @@ public class TakeShelter : GoapAction {
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         doesNotStopTargetCharacter = true;
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides
@@ -27,8 +29,8 @@ public class TakeShelter : GoapAction {
         }
         return null;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         OtherData[] otherData = node.otherData;
         if (otherData != null && otherData.Length >= 1) {
             if (otherData[0].obj is LocationStructure) {

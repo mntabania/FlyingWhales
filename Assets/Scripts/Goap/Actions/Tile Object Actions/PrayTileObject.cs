@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -15,6 +16,7 @@ public class PrayTileObject : GoapAction {
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
+        logTags = new[] {LOG_TAG.Needs};
     }
 
     #region Overrides
@@ -26,8 +28,8 @@ public class PrayTileObject : GoapAction {
         //**Cost**: randomize between 15 - 55
         return UtilityScripts.Utilities.Rng.Next(15, 56);
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         IPointOfInterest poiTarget = node.poiTarget;
         TileObject obj = poiTarget as TileObject;
         log.AddToFillers(poiTarget, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);

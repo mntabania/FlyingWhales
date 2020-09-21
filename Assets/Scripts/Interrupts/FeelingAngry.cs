@@ -8,6 +8,7 @@ namespace Interrupts {
             duration = 3;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Anger_Icon;
+            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Combat};
         }
 
         //#region Overrides

@@ -14,6 +14,7 @@ public class Stumble : GoapAction {
         animationName = "Sleep Ground";
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides
@@ -37,9 +38,6 @@ public class Stumble : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreStumbleSuccess(ActualGoapNode goapNode) {
-        //TODO: currentState.SetIntelReaction(SuccessReactions);
-    }
     public void PerTickStumbleSuccess(ActualGoapNode goapNode) {
         int randomHpToLose = UnityEngine.Random.Range(1, 6);
         float percentMaxHPToLose = randomHpToLose / 100f;

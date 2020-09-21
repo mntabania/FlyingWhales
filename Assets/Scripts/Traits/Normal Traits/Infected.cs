@@ -199,10 +199,10 @@ namespace Traits {
         public void InfectTarget(Character target) {
             if (target.race == RACE.SKELETON) { return; } //Prevent skeletons from getting infected
             if (target.traitContainer.AddTrait(target, "Infected", out var infectedTrait, characterResponsible: owner)) {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddLogToInvolvedObjects();
+                log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(owner, log);
                 if (target.isDead && infectedTrait != null && infectedTrait is Infected infected) {
                     infected.SetHasAlreadyDied(true);

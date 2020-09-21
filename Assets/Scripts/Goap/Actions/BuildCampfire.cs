@@ -14,6 +14,7 @@ public class BuildCampfire : GoapAction {
         actionIconString = GoapActionStateDB.Build_Icon;
         showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
+        logTags = new[] {LOG_TAG.Misc};
     }
 
     #region Overrides
@@ -70,7 +71,8 @@ public class BuildCampfire : GoapAction {
         }
         Campfire campfire = InnerMapManager.Instance.CreateNewTileObject<Campfire>(TILE_OBJECT_TYPE.CAMPFIRE);
         goapNode.actor.gridTileLocation.structure.AddPOI(campfire, targetTile);
-        campfire.logComponent.AddHistory(goapNode.descriptionLog);
+        goapNode.descriptionLog.AddInvolvedObjectManual(campfire.persistentID);
+        // campfire.logComponent.AddHistory(goapNode.descriptionLog);
     }
     #endregion
 }

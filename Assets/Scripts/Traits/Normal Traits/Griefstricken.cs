@@ -39,11 +39,11 @@ namespace Traits {
                     if (!responsibleCharacter.isDead) {
                         description = "presumed death";
                     }
-                    Log log = new Log(GameManager.Instance.Today(), "Trait", name, "gain");
+                    Log log = new Log(GameManager.Instance.Today(), "Trait", name, "gain", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddToFillers(null, description, LOG_IDENTIFIER.STRING_1);
-                    log.AddLogToInvolvedObjects();
+                    log.AddLogToDatabase();
                 }
             }
             base.OnAddTrait(sourcePOI);

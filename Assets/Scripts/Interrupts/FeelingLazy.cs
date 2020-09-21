@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;
 using Traits;
 
@@ -9,6 +10,7 @@ namespace Interrupts {
             duration = 0;
             doesStopCurrentAction = true;
             interruptIconString = GoapActionStateDB.Flirt_Icon;
+            logTags = new[] {LOG_TAG.Misc, LOG_TAG.Needs};
         }
 
         #region Overrides

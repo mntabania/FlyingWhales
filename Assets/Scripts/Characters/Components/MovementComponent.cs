@@ -198,10 +198,10 @@ public class MovementComponent : CharacterComponent {
             owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
         }
 
-        Log leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
+        Log leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location", providedTags: LOG_TAG.Misc);
         leftLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         leftLog.AddToFillers(owner.currentRegion, owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        leftLog.AddLogToInvolvedObjects();
+        leftLog.AddLogToDatabase();
         owner.DisableMarker();
 
         owner.combatComponent.ClearHostilesInRange();
@@ -239,10 +239,10 @@ public class MovementComponent : CharacterComponent {
         if (owner.carryComponent.isCarryingAnyPOI) {
             owner.carryComponent.carriedPOI.SetPOIState(POI_STATE.ACTIVE);
         }
-        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location", providedTags: LOG_TAG.Misc);
         arriveLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER, false);
         arriveLog.AddToFillers(targetRegionToTravelInWorld, targetRegionToTravelInWorld.name, LOG_IDENTIFIER.LANDMARK_1);
-        arriveLog.AddLogToInvolvedObjects();
+        arriveLog.AddLogToDatabase();
 
         if (owner.isNormalCharacter) {
             PlayerManager.Instance.player.ShowNotificationFrom(targetRegionToTravelInWorld, arriveLog);

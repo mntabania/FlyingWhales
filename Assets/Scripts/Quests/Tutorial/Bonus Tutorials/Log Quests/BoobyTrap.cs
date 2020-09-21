@@ -39,11 +39,11 @@ namespace Tutorial {
         #region Activation
         public override void Activate() {
             base.Activate();
-            Messenger.AddListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
         }
         public override void Deactivate() {
             base.Deactivate();
-            Messenger.RemoveListener<Log, IPointOfInterest>(Signals.LOG_REMOVED, OnLogRemoved);
+            Messenger.RemoveListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemoved);
             Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         }
         #endregion
@@ -69,9 +69,8 @@ namespace Tutorial {
         #endregion
 
         #region Step Helpers
-        private bool IsClickedLogObjectValid(object obj, Log log, IPointOfInterest owner) {
-            if (owner == _targetAction.poiTarget && obj is Character && log.file.Equals("Booby Trap") 
-                && log.key.Equals("trap success_description")) {
+        private bool IsClickedLogObjectValid(object obj, string log, IPointOfInterest owner) {
+            if (owner == _targetAction.poiTarget && obj is Character && log.Contains("trapped")) {
                 return true;
             }
             return false;
@@ -103,8 +102,8 @@ namespace Tutorial {
         #endregion
 
         #region Failure
-        private void OnLogRemoved(Log log, IPointOfInterest poi) {
-            if (poi == _targetAction.poiTarget && log == _targetAction.descriptionLog) {
+        private void OnLogRemoved(Log log) {
+            if (log.persistentID == _targetAction.descriptionLog.persistentID) {
                 //consider this quest as failed if log associated with action was removed from the target object
                 TutorialManager.Instance.FailTutorialQuest(this);
             }

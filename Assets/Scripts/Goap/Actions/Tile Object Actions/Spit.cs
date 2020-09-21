@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Logs;
 using UnityEngine;  
 using Traits;
 
@@ -13,6 +14,7 @@ public class Spit : GoapAction {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING, TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         isNotificationAnIntel = true;
+        logTags = new[] {LOG_TAG.Social};
     }
 
     #region Overrides
@@ -67,8 +69,8 @@ public class Spit : GoapAction {
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Negative;
     }
-    public override void AddFillersToLog(Log log, ActualGoapNode node) {
-        base.AddFillersToLog(log, node);
+    public override void AddFillersToLog(ref Log log, ActualGoapNode node) {
+        base.AddFillersToLog(ref log, node);
         if(node.poiTarget is Tombstone tombstone) {
             log.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }

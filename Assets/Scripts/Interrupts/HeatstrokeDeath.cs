@@ -10,11 +10,12 @@ namespace Interrupts {
             duration = 4;
             doesStopCurrentAction = true;
             doesDropCurrentJob = true;
+            logTags = new[] {LOG_TAG.Life_Changes};
         }
 
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
-            interruptHolder.actor.Death("Heatstroke", interrupt: this, _deathLog: interruptHolder.effectLog);
+            interruptHolder.actor.Death("Heatstroke", _deathLog: interruptHolder.effectLog, interrupt: this);
             return true;
         }
         public override string ReactionToActor(Character actor, IPointOfInterest target,

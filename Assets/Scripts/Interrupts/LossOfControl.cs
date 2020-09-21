@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Locations.Tile_Features;
+using Logs;
 using UnityEngine;
 
 namespace Interrupts {
@@ -12,13 +13,14 @@ namespace Interrupts {
             doesStopCurrentAction = true;
             isSimulateneous = false;
             interruptIconString = GoapActionStateDB.Shock_Icon;
+            logTags = new[] {LOG_TAG.Needs, LOG_TAG.Life_Changes};
         }
 
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             //interruptHolder.actor.DecreaseCanMove();
-            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break");
+            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break", null, logTags);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(null, "Loss of Control", LOG_IDENTIFIER.STRING_1);
             interruptHolder.actor.logComponent.RegisterLog(overrideEffectLog, onlyClickedCharacter: false);
