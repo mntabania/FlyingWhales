@@ -69,6 +69,7 @@ public class SaveManager : MonoBehaviour {
     public void PrepareTempDirectory() {
         Directory.Delete(UtilityScripts.Utilities.tempPath, true);
         Directory.CreateDirectory(UtilityScripts.Utilities.tempPath);
+        Directory.CreateDirectory(UtilityScripts.Utilities.tempZipPath);
     }
     public void DeleteSaveFilesInTempDirectory() {
         string[] saveFiles = Directory.GetFiles(UtilityScripts.Utilities.tempPath, "*.sav");

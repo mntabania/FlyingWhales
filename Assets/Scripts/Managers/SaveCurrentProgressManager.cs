@@ -9,6 +9,7 @@ using System.Threading;
 using UnityEngine;
 using BayatGames.SaveGameFree;
 using Tutorial;
+using UtilityScripts;
 using Debug = UnityEngine.Debug;
 
 public class SaveCurrentProgressManager : MonoBehaviour {
@@ -76,7 +77,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         }
 
         //write to file
-        string savePath = $"{UtilityScripts.Utilities.tempPath}mainSave.sav";
+        string savePath = $"{UtilityScripts.Utilities.tempZipPath}mainSave.sav";
         filePath = savePath;
         var thread = new Thread(SaveCurrentDataToFile);
         thread.Start();
@@ -87,14 +88,18 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         
         //Need to close connection to database so .db file can be zipped.
         DatabaseManager.Instance.mainSQLDatabase.CloseConnection();
-        yield return new WaitForSeconds(0.5f);
+        yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure database connection has been fully closed.
+        
+        File.Copy($"{UtilityScripts.Utilities.tempPath}gameDB.db", $"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
         
         //zip files
         string zipPath = $"{UtilityScripts.Utilities.gameSavePath}/{fileName}.zip";
-        ZipFile.CreateFromDirectory(UtilityScripts.Utilities.tempPath, zipPath);
+        ZipFile.CreateFromDirectory(UtilityScripts.Utilities.tempZipPath, zipPath);
+        yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure zipping file has finished.
         
         //delete created save file in temp folder since its already been zipped.
         File.Delete(savePath);
+        File.Delete($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
         
         loadingWatch.Stop();
         Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");

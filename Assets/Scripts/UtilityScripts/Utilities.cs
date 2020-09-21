@@ -38,6 +38,7 @@ namespace UtilityScripts {
         public static string dataPath => $"{Application.streamingAssetsPath}/Data/";
         public static string gameSavePath => $"{Application.persistentDataPath}/Ruinarch Game Saves/";
         public static string tempPath => $"{gameSavePath}/Temp/";
+        public static string tempZipPath => $"{gameSavePath}/Temp/Temp/";
 
         private static readonly Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
             { "man", "men" },
