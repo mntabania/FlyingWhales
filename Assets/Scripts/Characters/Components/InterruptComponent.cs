@@ -233,11 +233,15 @@ public class InterruptComponent : CharacterComponent {
                 // }    
             }
             if (interruptHolder.interrupt.shouldShowNotif) {
-                if (interruptHolder.interrupt.isIntel) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interruptHolder) as IIntel);
-                    // PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+                if (interruptHolder.interrupt.type == INTERRUPT.Create_Party) {
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(interruptHolder.effectLog);
                 } else {
-                    PlayerManager.Instance.player.ShowNotificationFrom(owner, interruptHolder.effectLog);
+                    if (interruptHolder.interrupt.isIntel) {
+                        PlayerManager.Instance.player.ShowNotificationFrom(owner, InteractionManager.Instance.CreateNewIntel(interruptHolder) as IIntel);
+                        // PlayerManager.Instance.player.ShowNotification(InteractionManager.Instance.CreateNewIntel(interrupt, owner, target, _currentEffectLog) as IIntel);
+                    } else {
+                        PlayerManager.Instance.player.ShowNotificationFrom(owner, interruptHolder.effectLog);
+                    }
                 }
             }
         }

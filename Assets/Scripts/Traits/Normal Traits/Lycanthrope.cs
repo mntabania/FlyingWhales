@@ -192,8 +192,10 @@ namespace Traits {
                 form.marker.StopMovement();
             }
             if (form.trapStructure.IsTrapped()) {
-                form.trapStructure.SetStructureAndDuration(null, 0);
-                form.trapStructure.SetForcedStructure(null);
+                form.trapStructure.ResetAllTrapStructures();
+            }
+            if (form.trapStructure.IsTrappedInHex()) {
+                form.trapStructure.ResetAllTrapHexes();
             }
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, form as IPointOfInterest, "");
             if (form.carryComponent.isBeingCarriedBy != null) {
@@ -234,7 +236,7 @@ namespace Traits {
                 Messenger.RemoveListener(Signals.TICK_STARTED, form.OnTickStartedWhileSeized);
             }
             homeRegion.AddResident(form);
-            form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
+            form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region.coreTile.region);
             form.SubscribeToSignals();
             form.SetPOIState(POI_STATE.ACTIVE);
             if (!form.marker) {

@@ -60,24 +60,12 @@ public class Play : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             return actor == poiTarget;
         }
         return false;
     }
     #endregion
 }
-
-public class PlayData : GoapActionData {
-    public PlayData() : base(INTERACTION_TYPE.PLAY) {
-        racesThatCanDoAction = new RACE[] { RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        return actor == poiTarget;
-    }
-}
-

@@ -49,7 +49,7 @@ public class DouseFire : GoapAction {
         if (poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (actor.currentRegion != poiTarget.gridTileLocation.structure.location) {
+        if (actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
             return true;
         }
         

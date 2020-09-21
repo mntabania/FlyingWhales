@@ -161,13 +161,3 @@ public class FirstAidCharacter : GoapAction {
     //}
     //#endregion
 }
-
-public class FirstAidCharacterData : GoapActionData {
-    public FirstAidCharacterData() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
-        requirementAction = Requirement;
-    }
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.HasTrait("Injured", "Unconscious");
-    }
-}

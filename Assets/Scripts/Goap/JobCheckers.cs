@@ -88,10 +88,10 @@ public partial class InteractionManager {
     public bool CanCharacterTakeRepairStructureJob(Character character) {
         return true; //character.characterClass.CanDoJob(JOB_TYPE.REPAIR);
     }
-    public bool CanCharacterTakeJoinPartyJob(Character character, Character targetCharacter) {
-        Party partyToJoin = targetCharacter.partyComponent.currentParty;
-        return !character.partyComponent.hasParty && partyToJoin != null && !partyToJoin.isWaitTimeOver && !partyToJoin.isDisbanded && partyToJoin.IsAllowedToJoin(character);
-    }
+    //public bool CanCharacterTakeJoinPartyJob(Character character, Character targetCharacter) {
+    //    Party partyToJoin = targetCharacter.partyComponent.currentParty;
+    //    return !character.partyComponent.hasParty && partyToJoin != null && !partyToJoin.isWaitTimeOver && !partyToJoin.isDisbanded && partyToJoin.IsAllowedToJoin(character);
+    //}
     public bool CanCharacterTakeExterminateJob(Character character) {
         Party partyToJoin = character.partyComponent.currentParty;
         return !character.partyComponent.hasParty;

@@ -205,22 +205,3 @@ public class Steal : GoapAction {
     //}
     //#endregion
 }
-
-public class StealData : GoapActionData {
-    public StealData() : base(INTERACTION_TYPE.STEAL) {
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        if (poiTarget.gridTileLocation != null) {
-            //return true;
-            TileObject item = poiTarget as TileObject;
-            return item.characterOwner == null || !item.IsOwnedBy(actor);
-        }
-        return false;
-    }
-}

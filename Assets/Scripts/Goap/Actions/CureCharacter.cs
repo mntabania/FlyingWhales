@@ -163,13 +163,3 @@ public class CureCharacter : GoapAction {
     //}
     //#endregion
 }
-
-public class CureCharacterData : GoapActionData {
-    public CureCharacterData() : base(INTERACTION_TYPE.CURE_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
-        requirementAction = Requirement;
-    }
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.HasTrait("Poisoned", "Infected", "Plagued");
-    }
-}

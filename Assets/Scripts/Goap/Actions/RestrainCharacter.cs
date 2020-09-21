@@ -334,18 +334,3 @@ public class RestrainCharacter : GoapAction {
     //}
     //#endregion
 }
-
-public class RestrainCharacterData : GoapActionData {
-    public RestrainCharacterData() : base(INTERACTION_TYPE.RESTRAIN_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (actor != poiTarget) {
-            Character target = poiTarget as Character;
-            return !target.traitContainer.HasTrait("Restrained");
-        }
-        return false;
-    }
-}

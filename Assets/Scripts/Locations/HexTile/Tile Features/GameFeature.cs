@@ -102,7 +102,7 @@ namespace Locations.Tile_Features {
         }
 
         private void TryGeneratePerHour() {
-            if (Random.Range(0, 100) < 25) {
+            if (Random.Range(0, 100) < 10) {
                 SpawnNewAnimal();
             }
         }

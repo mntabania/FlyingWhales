@@ -107,9 +107,3 @@ public class TransformToWolfForm : GoapAction {
     //}
     //#endregion
 }
-
-public class TransformToWolfFormData : GoapActionData {
-    public TransformToWolfFormData() : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}

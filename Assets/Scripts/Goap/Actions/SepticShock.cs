@@ -43,9 +43,3 @@ public class SepticShock : GoapAction {
     }
     #endregion
 }
-
-public class SepticShockData : GoapActionData {
-    public SepticShockData() : base(INTERACTION_TYPE.SEPTIC_SHOCK) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}

@@ -176,15 +176,3 @@ public class RitualKilling : GoapAction {
     }
     #endregion
 }
-
-public class RitualKillingData : GoapActionData {
-    public RitualKillingData() : base(INTERACTION_TYPE.RITUAL_KILLING) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
-    }
-}
-

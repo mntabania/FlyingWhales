@@ -91,8 +91,8 @@ public class CombatState : CharacterState {
         stateComponent.owner.marker.ShowHPBar(stateComponent.owner);
         stateComponent.owner.marker.SetAnimationBool("InCombat", true);
         stateComponent.owner.marker.visionCollider.VoteToUnFilterVision();
-        if(stateComponent.owner.partyComponent.hasParty && stateComponent.owner.partyComponent.currentParty is SocialParty) {
-            stateComponent.owner.partyComponent.currentParty.RemoveMember(stateComponent.owner);
+        if(stateComponent.owner.gatheringComponent.hasGathering && stateComponent.owner.gatheringComponent.currentGathering is SocialGathering) {
+            stateComponent.owner.gatheringComponent.currentGathering.RemoveAttendee(stateComponent.owner);
         }
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
@@ -616,8 +616,11 @@ public class CombatState : CharacterState {
             avoidReason = combatData.avoidReason;
         }
         if(avoidReason == "critically low health") {
-            if(stateComponent.owner.partyComponent.hasParty && stateComponent.owner.partyComponent.currentParty.partyType == PARTY_TYPE.Raid) {
-                stateComponent.owner.partyComponent.currentParty.RemoveMember(stateComponent.owner);
+            if(stateComponent.owner.partyComponent.hasParty) {
+                Party party = stateComponent.owner.partyComponent.currentParty;
+                if(party.isActive && party.partyState == PARTY_STATE.Working && party.currentQuest.partyQuestType == PARTY_QUEST_TYPE.Raid) {
+                    stateComponent.owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(stateComponent.owner);
+                }
             }
         }
         return avoidReason;

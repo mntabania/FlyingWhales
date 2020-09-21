@@ -29,14 +29,3 @@ public class FeelingSpooked : GoapAction {
     }
     #endregion
 }
-
-public class FeelingSpookedData : GoapActionData {
-    public FeelingSpookedData() : base(INTERACTION_TYPE.FEELING_SPOOKED) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

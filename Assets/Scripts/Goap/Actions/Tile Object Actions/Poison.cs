@@ -538,29 +538,3 @@ public class Poison : GoapAction {
     //    }
     //}
 }
-
-public class PoisonTableData : GoapActionData {
-    public PoisonTableData() : base(INTERACTION_TYPE.POISON) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = poiTarget.gridTileLocation;
-        //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        if (knownLoc.structure.isDwelling) {
-            if (!knownLoc.structure.IsOccupied()) {
-                return false;
-            }
-            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
-            if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
-                return false; //to prevent poisoning a table that has been already poisoned by this character
-            }
-            return !knownLoc.structure.IsResident(actor);
-        }
-        return false;
-    }
-}

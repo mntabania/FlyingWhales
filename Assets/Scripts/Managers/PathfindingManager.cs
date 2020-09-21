@@ -58,7 +58,7 @@ public class PathfindingManager : BaseMonoBehaviour {
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
-        if(fromTile.structure.location == toTile.structure.location) {
+        if(fromTile.structure.region == toTile.structure.region) {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
                     AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
         } else {
@@ -75,7 +75,7 @@ public class PathfindingManager : BaseMonoBehaviour {
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile, NNConstraint constraint) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
-        if(fromTile.structure.location == toTile.structure.location) {
+        if(fromTile.structure.region == toTile.structure.region) {
             return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, constraint).node,
                 AstarPath.active.GetNearest(toTile.centeredWorldLocation, constraint).node);
         } else {

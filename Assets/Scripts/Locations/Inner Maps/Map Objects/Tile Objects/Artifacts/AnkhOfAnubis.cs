@@ -61,7 +61,7 @@ public class AnkhOfAnubis : Artifact {
                 log.AddToFillers(null, characterThatDied.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();
                 if(gridTileLocation != null) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation.structure.location, log);
+                    PlayerManager.Instance.player.ShowNotificationFrom(gridTileLocation.structure.region, log);
                 }
             }
         }

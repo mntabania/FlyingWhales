@@ -58,7 +58,7 @@ public class StructureInfoUI : InfoUIBase {
             structureObject = demonicStructure.structureObj.gameObject;
         }
         if(structureObject != null) {
-            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.location);
+            bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeStructure.region);
             InnerMapCameraMove.Instance.CenterCameraOn(structureObject, instantCenter);
         }
         base.OpenMenu();

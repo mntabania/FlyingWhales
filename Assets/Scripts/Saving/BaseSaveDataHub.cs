@@ -300,6 +300,41 @@ public class SaveDataPartyHub : BaseSaveDataHub {
     }
 }
 
+[System.Serializable]
+public class SaveDataPartyQuestHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataPartyQuest> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataPartyQuest> hub => _hub;
+    #endregion
+
+    public SaveDataPartyQuestHub() {
+        _hub = new Dictionary<string, SaveDataPartyQuest>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataPartyQuest save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataPartyQuest save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}
+
 public class SaveDataJobHub : BaseSaveDataHub {
     public Dictionary<string, SaveDataJobQueueItem> _hub;
 
@@ -392,6 +427,41 @@ public class SaveDataSettlementHub : BaseSaveDataHub {
     public override bool RemoveFromSave<T>(T data) {
         if (data is SaveDataBaseSettlement save) {
             return _hub.Remove(save._persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}
+
+[System.Serializable]
+public class SaveDataGatheringHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataGathering> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataGathering> hub => _hub;
+    #endregion
+
+    public SaveDataGatheringHub() {
+        _hub = new Dictionary<string, SaveDataGathering>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataGathering save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataGathering save) {
+            return _hub.Remove(save.persistentID);
         }
         return false;
     }

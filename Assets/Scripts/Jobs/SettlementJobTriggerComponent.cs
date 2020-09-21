@@ -382,10 +382,10 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			_owner.AddToAvailableJobs(job);
 		}
 	}
-	#endregion
+    #endregion
 
-	#region Judge Prisoner
-	private void TryCreateJudgePrisoner(Character target) {
+    #region Judge Prisoner
+    private void TryCreateJudgePrisoner(Character target) {
 		if (target.traitContainer.HasTrait("Restrained") && target.traitContainer.HasTrait("Criminal")
 		    && target.currentStructure.settlementLocation is NPCSettlement
 		    && target.currentStructure.settlementLocation == _owner
@@ -815,19 +815,19 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	#endregion
 
     #region Party
-    public bool TriggerExterminationJob(LocationStructure targetStructure) { //bool forceDoAction = false
-        if (!_owner.HasJob(JOB_TYPE.EXTERMINATE)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXTERMINATE, INTERACTION_TYPE.EXTERMINATE, null, _owner);
-            job.AddOtherData(INTERACTION_TYPE.EXTERMINATE, new object[] { targetStructure, _owner });
-            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Exterminate);
-            _owner.AddToAvailableJobs(job);
-            return true;
-        }
-        return false;
-    }
-    public void TriggerJoinPartyJob(Party party) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
-        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Party);
+    //public bool TriggerExterminationJob(LocationStructure targetStructure) { //bool forceDoAction = false
+    //    if (!_owner.HasJob(JOB_TYPE.EXTERMINATE)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.EXTERMINATE, INTERACTION_TYPE.EXTERMINATE, null, _owner);
+    //        job.AddOtherData(INTERACTION_TYPE.EXTERMINATE, new object[] { targetStructure, _owner });
+    //        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Exterminate);
+    //        _owner.AddToAvailableJobs(job);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    public void TriggerJoinGatheringJob(Gathering gathering) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_GATHERING, INTERACTION_TYPE.JOIN_GATHERING, gathering.host, _owner);
+        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Gathering);
         _owner.AddToAvailableJobs(job);
     }
     #endregion

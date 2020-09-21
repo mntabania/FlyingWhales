@@ -26,14 +26,3 @@ public class FeelingBrokenhearted : GoapAction {
     }
     #endregion
 }
-
-public class FeelingBrokenheartedData : GoapActionData {
-    public FeelingBrokenheartedData() : base(INTERACTION_TYPE.FEELING_BROKENHEARTED) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

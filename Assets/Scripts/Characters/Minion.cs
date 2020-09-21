@@ -79,6 +79,10 @@ public class Minion {
             if (carrier != null) {
                 carrier.UncarryPOI(character);
             }
+
+            if (character.partyComponent.hasParty) {
+                character.partyComponent.currentParty.RemoveMember(character);
+            }
             //character.ownParty.PartyDeath();
 
             //No longer remove from region list even if character died to prevent inconsistency in data because if a dead character is picked up and dropped, he will be added in the structure location list again but wont be in region list

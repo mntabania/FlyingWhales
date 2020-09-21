@@ -4,7 +4,7 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class MonsterInvadeParty : Party {
+public class MonsterInvadeGathering : Gathering {
 
     public LocationStructure targetStructure { get; private set; }
     public HexTile targetHex { get; private set; }
@@ -14,25 +14,23 @@ public class MonsterInvadeParty : Party {
     public bool isInvading { get; private set; }
 
     #region getters
-    public override IPartyTarget target => targetStructure;
-    public override System.Type serializedData => typeof(SaveDataMonsterInvadeParty);
+    public override IGatheringTarget target => targetStructure;
+    public override System.Type serializedData => typeof(SaveDataMonsterInvadeGathering);
     #endregion
 
-    public MonsterInvadeParty() : base(PARTY_TYPE.Monster_Invade) {
-        minimumPartySize = 3;
+    public MonsterInvadeGathering() : base(GATHERING_TYPE.Monster_Invade) {
+        minimumGatheringSize = 3;
         waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(MonsterInvadeBehaviour);
         jobQueueOwnerType = JOB_OWNER.FACTION;
     }
-    public MonsterInvadeParty(SaveDataParty data) : base(data) {
-        if (data is SaveDataMonsterInvadeParty subData) {
-            isInvading = subData.isInvading;
-        }
+    public MonsterInvadeGathering(SaveDataMonsterInvadeGathering data) : base(data) {
+        isInvading = data.isInvading;
     }
 
     #region Overrides
     public override bool IsAllowedToJoin(Character character) {
-        return character.race == leader.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && hexForJoining != null
+        return character.race == host.race && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && hexForJoining != null
             && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hexForJoining;
     }
     protected override void OnWaitTimeOver() {
@@ -47,17 +45,17 @@ public class MonsterInvadeParty : Party {
     //    base.OnRemoveMember(member);
     //    member.movementComponent.SetEnableDigging(false);
     //}
-    protected override void OnDisbandParty() {
-        base.OnDisbandParty();
+    protected override void OnDisbandGathering() {
+        base.OnDisbandGathering();
         if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ENTERED_HEXTILE)) {
             Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         }
     }
-    protected override void OnSetLeader() {
-        base.OnSetLeader();
-        if(leader != null) {
-            if (leader.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                hexForJoining = leader.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+    protected override void OnSetHost() {
+        base.OnSetHost();
+        if (host != null) {
+            if (host.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                hexForJoining = host.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
             }
         }
     }
@@ -65,7 +63,7 @@ public class MonsterInvadeParty : Party {
 
     #region General
     private void ProcessDisbandment() {
-        DisbandParty();
+        DisbandGathering();
     }
     public void SetTargetStructure(LocationStructure structure) {
         if (targetStructure != structure) {
@@ -79,13 +77,13 @@ public class MonsterInvadeParty : Party {
     }
     private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
         bool isInTargetLocation = false;
-        if(targetStructure != null) {
+        if (targetStructure != null) {
             isInTargetLocation = tile.settlementOnTile != null && targetStructure.settlementLocation == tile.settlementOnTile;
         } else if (targetHex != null) {
             isInTargetLocation = tile == targetHex;
         }
         if (isInTargetLocation) {
-            if (IsMember(character)) {
+            if (IsAttendee(character)) {
                 StartInvadeTimer();
             }
         }
@@ -110,9 +108,9 @@ public class MonsterInvadeParty : Party {
     #endregion
 
     #region Loading
-    public override void LoadReferences(SaveDataParty data) {
+    public override void LoadReferences(SaveDataGathering data) {
         base.LoadReferences(data);
-        if (data is SaveDataMonsterInvadeParty subData) {
+        if (data is SaveDataMonsterInvadeGathering subData) {
             if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
@@ -131,16 +129,16 @@ public class MonsterInvadeParty : Party {
 }
 
 [System.Serializable]
-public class SaveDataMonsterInvadeParty : SaveDataParty {
+public class SaveDataMonsterInvadeGathering : SaveDataGathering {
     public string targetStructure;
     public string targetHex;
     public string hexForJoining;
     public bool isInvading;
 
     #region Overrides
-    public override void Save(Party data) {
+    public override void Save(Gathering data) {
         base.Save(data);
-        if (data is MonsterInvadeParty subData) {
+        if (data is MonsterInvadeGathering subData) {
             isInvading = subData.isInvading;
 
             if (subData.targetStructure != null) {

@@ -65,17 +65,3 @@ public class Sit : GoapAction {
     }
     #endregion
 }
-
-public class SitData : GoapActionData {
-    public SitData() : base(INTERACTION_TYPE.SIT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
-            return poiTarget.IsAvailable();
-        }
-        return false;
-    }
-}

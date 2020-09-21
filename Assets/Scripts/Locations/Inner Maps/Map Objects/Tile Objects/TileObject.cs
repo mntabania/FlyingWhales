@@ -13,14 +13,14 @@ using Logs;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyTarget, ISavable {
+public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget, IPartyQuestTarget, IGatheringTarget, ISavable {
     public string persistentID { get; protected set; }
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
-    public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
+    public Region currentRegion => gridTileLocation.structure.region.coreTile.region;
     public LocationStructure structureLocation => gridTileLocation.structure;
     public bool isPreplaced { get; private set; }
     /// <summary>
@@ -339,6 +339,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if ((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
+            && actor.trapStructure.SatisfiesForcedHex(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)) {
             LocationGridTile tileLocation = gridTileLocation;
             if (isBeingCarriedBy != null) {

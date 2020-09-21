@@ -112,7 +112,9 @@ public class Nap : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
-
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             return poiTarget.IsAvailable() && CanSleepInBed(actor, poiTarget as TileObject) && poiTarget.gridTileLocation != null;
         }
         return false;
@@ -156,19 +158,5 @@ public class Nap : GoapAction {
 
     private bool CanSleepInBed(Character character, TileObject tileObject) {
         return (tileObject as Bed).CanSleepInBed(character);
-    }
-}
-
-public class NapData : GoapActionData {
-    public NapData() : base(INTERACTION_TYPE.NAP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
 }

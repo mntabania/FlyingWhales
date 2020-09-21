@@ -472,7 +472,7 @@ public enum INTERACTION_TYPE {
     DARK_RITUAL = 172,
     DRAW_MAGIC_CIRCLE = 173,
     CULTIST_TRANSFORM = 174,
-    JOIN_PARTY = 175,
+    JOIN_GATHERING = 175,
     EXPLORE = 176,
     EXTERMINATE = 177,
     RESCUE = 178,
@@ -552,7 +552,10 @@ public enum INTERRUPT {
     Heatstroke_Death,
     Seizure,
     Wary,
-    Panicking
+    Panicking,
+    Create_Party,
+    Join_Party,
+    Leave_Party,
 }
 
 public enum TRAIT_TYPE {
@@ -850,9 +853,9 @@ public enum JOB_TYPE { NONE, UNDERMINE, ENERGY_RECOVERY_URGENT, FULLNESS_RECOVER
         , DRY_TILES, CLEANSE_TILES, MONSTER_ABDUCT, REPORT_CORRUPTED_STRUCTURE, COUNTERATTACK, RECOVER_HP, POISON_FOOD
         , BRAWL, PLACE_TRAP, SPREAD_RUMOR, CONFIRM_RUMOR, OPEN_CHEST, TEND_FARM, VISIT_DIFFERENT_REGION, BERSERK_ATTACK, MINE, DIG_THROUGH, SPAWN_LAIR, ABSORB_LIFE, ABSORB_POWER
         , SPAWN_SKELETON, RAISE_CORPSE, HUNT_PREY, DROP_ITEM, BERSERK_STROLL, RETURN_HOME_URGENT, SABOTAGE_NEIGHBOUR, SHARE_NEGATIVE_INFO
-        , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_PARTY, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
+        , DECREASE_MOOD, DISABLE, MONSTER_EAT, ARSON, SEEK_SHELTER, DARK_RITUAL, CULTIST_TRANSFORM, CULTIST_POISON, CULTIST_BOOBY_TRAP, JOIN_GATHERING, EXPLORE, EXTERMINATE, RESCUE, RELEASE_CHARACTER, COUNTERATTACK_PARTY, MONSTER_BUTCHER
         , ROAM_AROUND_STRUCTURE, MONSTER_INVADE, PARTY_GO_TO, KIDNAP, RECRUIT, RAID, FLEE_CRIME, HOST_SOCIAL_PARTY, PARTYING, CRAFT_MISSING_FURNITURE, FULLNESS_RECOVERY_ON_SIGHT, HOARD, ZOMBIE_STROLL, WARM_UP, NO_PATH_IDLE, REPORT_CRIME
-        , EVANGELIZE, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY,
+        , EVANGELIZE, HUNT_HEIRLOOM, SNATCH, DROP_ITEM_PARTY, GO_TO_WAITING, PRODUCE_FOOD_FOR_CAMP, KIDNAP_RAID, STEAL_RAID, IDLE_CAMP,
 }
 
 public enum JOB_OWNER { CHARACTER, SETTLEMENT, FACTION, }
@@ -1013,14 +1016,16 @@ public enum REACTABLE_EFFECT { Neutral, Positive, Negative, }
 public enum STRUCTURE_TAG { Dangerous, Treasure, Monster_Spawner, Shelter, Physical_Power_Up, Magic_Power_Up, Counterattack, Resource }
 public enum LOG_TYPE { None, Action, Assumption, Witness, Informed }
 public enum AWARENESS_STATE { None, Available, Missing, Presumed_Dead }
-public enum PARTY_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Social, Heirloom_Hunt, }
+public enum PARTY_QUEST_TYPE { Exploration, Rescue, Extermination, Counterattack, Monster_Invade, Raid, Heirloom_Hunt, }
+public enum PARTY_STATE { None, Waiting, Moving, Resting, Working, }
+public enum GATHERING_TYPE { Social, Monster_Invade }
 public enum COMBAT_REACTION { None, Fight, Flight }
 public enum RUMOR_TYPE { Action, Interrupt }
 public enum ASSUMPTION_TYPE { Action, Interrupt }
 public enum CRIMABLE_TYPE { Action, Interrupt }
 public enum OBJECT_TYPE { 
     Character = 0, Summon = 1, Minion = 2, Faction = 3, Region = 4, Hextile = 5, Structure = 6, Settlement = 7, Gridtile = 8, Trait = 9, Job = 10, 
-    Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21
+    Action = 12, Interrupt = 13, Tile_Object = 14, Player = 15, Log = 16, Burning_Source = 17, Rumor = 18, Assumption = 19, Party = 20, Crime = 21, Party_Quest = 22, Gathering = 23,
 }
 public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
@@ -1028,6 +1033,7 @@ public enum PASSIVE_SKILL {
 public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel
 }
+public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
 
 
 #region Crime Subcategories
@@ -1532,6 +1538,7 @@ public static class Extensions {
                 priority = 820;
                 break;
             case JOB_TYPE.PRODUCE_FOOD:
+            case JOB_TYPE.PRODUCE_FOOD_FOR_CAMP:
             case JOB_TYPE.PRODUCE_METAL:
             case JOB_TYPE.PRODUCE_STONE:
             case JOB_TYPE.PRODUCE_WOOD:
@@ -1561,6 +1568,8 @@ public static class Extensions {
             //    priority = 550;
             //    break;
             case JOB_TYPE.KIDNAP:
+            case JOB_TYPE.KIDNAP_RAID:
+            case JOB_TYPE.STEAL_RAID:
                 priority = 530;
                 break;
             //case JOB_TYPE.MOVE_CHARACTER:
@@ -1583,7 +1592,9 @@ public static class Extensions {
                 priority = 495;
                 break;
             case JOB_TYPE.PARTY_GO_TO:
+            case JOB_TYPE.GO_TO_WAITING:
             case JOB_TYPE.PARTYING:
+            case JOB_TYPE.IDLE_CAMP:
                 priority = 490;
                 break;
             case JOB_TYPE.PATROL:
@@ -1591,7 +1602,7 @@ public static class Extensions {
             case JOB_TYPE.EXTERMINATE:
             case JOB_TYPE.COUNTERATTACK_PARTY:
             case JOB_TYPE.RESCUE:
-            case JOB_TYPE.JOIN_PARTY:
+            case JOB_TYPE.JOIN_GATHERING:
             case JOB_TYPE.RAID:
             case JOB_TYPE.HOST_SOCIAL_PARTY:
             case JOB_TYPE.HUNT_HEIRLOOM:
@@ -1782,6 +1793,7 @@ public static class Extensions {
             case JOB_TYPE.KIDNAP:
             case JOB_TYPE.MOVE_CHARACTER:
             case JOB_TYPE.RESTRAIN:
+            case JOB_TYPE.KIDNAP_RAID:
                 return false;
             default:
                 return true;

@@ -431,7 +431,7 @@ namespace UtilityScripts {
             }
             return false;
         }
-        private static char[] delimiters = new char[] {' ', '.', ',', '\'', '!', '"', ':'};
+        public static char[] delimiters = new char[] {' ', '.', ',', '\'', '!', '"', ':'};
         public static string StringReplacer(string text, List<LogFiller> fillers) {
             if (string.IsNullOrEmpty(text)) {
                 return string.Empty;

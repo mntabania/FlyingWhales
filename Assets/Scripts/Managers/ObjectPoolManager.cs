@@ -21,6 +21,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<TraitRemoveSchedule> traitRemoveSchedulePool { get; private set; }
     public List<CombatData> combatDataPool { get; private set; }
     public List<InterruptHolder> interruptPool { get; private set; }
+    public List<Party> partyPool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -49,6 +50,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructTraitRemoveSchedulePool();
         ConstructCombatDataPool();
         ConstructInterruptPool();
+        ConstructPartyPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -235,6 +237,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             return data;
         }
         return new InterruptHolder();
+    }
+    #endregion
+
+    #region Party
+    private void ConstructPartyPool() {
+        partyPool = new List<Party>();
+    }
+    public Party CreateNewParty() {
+        Party data = GetPartyFromPool();
+        return data;
+    }
+    public void ReturnPartyToPool(Party data) {
+        data.Reset();
+        partyPool.Add(data);
+    }
+    private Party GetPartyFromPool() {
+        if (partyPool.Count > 0) {
+            Party data = partyPool[0];
+            partyPool.RemoveAt(0);
+            return data;
+        }
+        return new Party();
     }
     #endregion
 

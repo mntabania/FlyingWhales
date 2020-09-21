@@ -38,10 +38,10 @@ public class HuntHeirloom : GoapAction {
 
     #region State Effects
     public void AfterHuntSuccess(ActualGoapNode goapNode) {
-        Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Heirloom_Hunt, goapNode.actor);
-        HeirloomHuntParty heirloomParty = party as HeirloomHuntParty;
-        heirloomParty.SetTargetHeirloom(goapNode.poiTarget as Heirloom);
-        heirloomParty.SetRegionToSearch(goapNode.otherData[0].obj as Region);
+        //Party party = CharacterManager.Instance.CreateNewParty(PARTY_QUEST_TYPE.Heirloom_Hunt, goapNode.actor);
+        //HeirloomHuntParty heirloomParty = party as HeirloomHuntParty;
+        //heirloomParty.SetTargetHeirloom(goapNode.poiTarget as Heirloom);
+        //heirloomParty.SetRegionToSearch(goapNode.otherData[0].obj as Region);
     }
     #endregion
 

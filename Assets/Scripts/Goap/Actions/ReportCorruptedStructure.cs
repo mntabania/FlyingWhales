@@ -91,18 +91,22 @@ public class ReportCorruptedStructure : GoapAction {
         }
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
 
-        if (character.faction != null && character.faction.isMajorNonPlayer) {
-            debugLog += "\n-CHOSEN FACTION: " + character.faction.name;
-            character.faction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
-        } else {
-            Faction chosenFaction = FactionManager.Instance.GetRandomMajorNonPlayerFaction();
-            if(chosenFaction != null) {
-                debugLog += "\n-CHOSEN FACTION: " + chosenFaction.name;
-                chosenFaction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
-            } else {
-                Debug.LogError("No faction for counterattack!");
-            }    
+        if(character.homeSettlement != null && !character.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Counterattack, targetDemonicStructure)) {
+            PartyManager.Instance.CreateCounterattackPartyQuest(character.homeSettlement, targetDemonicStructure);
         }
+
+        //if (character.faction != null && character.faction.isMajorNonPlayer) {
+        //    debugLog += "\n-CHOSEN FACTION: " + character.faction.name;
+        //    character.faction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
+        //} else {
+        //    Faction chosenFaction = FactionManager.Instance.GetRandomMajorNonPlayerFaction();
+        //    if(chosenFaction != null) {
+        //        debugLog += "\n-CHOSEN FACTION: " + chosenFaction.name;
+        //        chosenFaction.factionJobTriggerComponent.TriggerCounterattackPartyJob(targetDemonicStructure);
+        //    } else {
+        //        Debug.LogError("No faction for counterattack!");
+        //    }    
+        //}
         
         
         Debug.Log(debugLog);

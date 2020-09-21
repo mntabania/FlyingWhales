@@ -3,17 +3,18 @@ using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 
-public class SocialPartyBehaviour : CharacterBehaviourComponent {
-    public SocialPartyBehaviour() {
+public class SocialGatheringBehaviour : CharacterBehaviourComponent {
+    public SocialGatheringBehaviour() {
         priority = 450;
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
         bool hasJob = false;
         log += $"\n-Character is partying";
-        Party socialParty = character.partyComponent.currentParty;
-        if (!socialParty.isWaitTimeOver) {
-            if (character.currentStructure == socialParty.target) {
+        //Party socialParty = character.partyComponent.currentParty;
+        Gathering socialGathering = character.gatheringComponent.currentGathering;
+        if (!socialGathering.isWaitTimeOver) {
+            if (character.currentStructure == socialGathering.target) {
                 log += $"\n-Character is already in target structure, will do party jobs";
                 if(character.previousCurrentActionNode != null && character.previousCurrentActionNode.associatedJobType == JOB_TYPE.PARTY_GO_TO) {
                     hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
@@ -53,14 +54,14 @@ public class SocialPartyBehaviour : CharacterBehaviourComponent {
                 }
             } else {
                 log += $"\n-Character is not in target structure, go to it";
-                if (socialParty.target is LocationStructure targetStructure) {
+                if (socialGathering.target is LocationStructure targetStructure) {
                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
                     hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
                 }
             }
         }
         if (producedJob != null) {
-            producedJob.SetIsThisAPartyJob(true);
+            producedJob.SetIsThisAGatheringJob(true);
         }
         return hasJob;
     }

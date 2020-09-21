@@ -405,10 +405,19 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             }
         }
     }
-    public bool HasAMemberThatIsAPartyLeader(PARTY_TYPE partyType) {
-        for (int i = 0; i < characters.Count; i++) {
-            Character member = characters[i];
-            if (member.partyComponent.hasParty && member.partyComponent.currentParty.IsLeader(member) && member.partyComponent.currentParty.partyType == partyType) {
+    //public bool HasAMemberThatIsAPartyLeader(PARTY_QUEST_TYPE partyType) {
+    //    for (int i = 0; i < characters.Count; i++) {
+    //        Character member = characters[i];
+    //        if (member.partyComponent.hasParty && member.partyComponent.currentParty.IsLeader(member) && member.partyComponent.currentParty.partyType == partyType) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
+    public bool HasASettlementWithPartyQuest(PARTY_QUEST_TYPE questType) {
+        for (int i = 0; i < ownedSettlements.Count; i++) {
+            BaseSettlement settlement = ownedSettlements[i];
+            if (settlement.HasPartyQuest(questType)) {
                 return true;
             }
         }
@@ -847,37 +856,37 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     #endregion
 
-    #region Party
-    public bool HasActiveParty(params PARTY_TYPE[] party) {
-        for (int i = 0; i < characters.Count; i++) {
-            Character factionMember = characters[i];
-            if (factionMember.partyComponent.hasParty) {
-                for (int j = 0; j < party.Length; j++) {
-                    PARTY_TYPE partyType = party[j];
-                    if (factionMember.partyComponent.currentParty.partyType == partyType) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    public bool HasActivePartywithTarget(PARTY_TYPE partyType, IPartyTarget target) {
-        return GetActivePartywithTarget(partyType, target) != null;
-    }
-    public Party GetActivePartywithTarget(PARTY_TYPE partyType, IPartyTarget target) {
-        for (int i = 0; i < characters.Count; i++) {
-            Character factionMember = characters[i];
-            if (factionMember.partyComponent.hasParty) {
-                Party party = factionMember.partyComponent.currentParty;
-                if (party.partyType == partyType && party.target == target) {
-                    return party;
-                }
-            }
-        }
-        return null;
-    }
-    #endregion
+    //#region Party
+    //public bool HasActiveParty(params PARTY_QUEST_TYPE[] party) {
+    //    for (int i = 0; i < characters.Count; i++) {
+    //        Character factionMember = characters[i];
+    //        if (factionMember.partyComponent.hasParty) {
+    //            for (int j = 0; j < party.Length; j++) {
+    //                PARTY_QUEST_TYPE partyType = party[j];
+    //                if (factionMember.partyComponent.currentParty.partyType == partyType) {
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+    //public bool HasActivePartywithTarget(PARTY_QUEST_TYPE partyType, IPartyQuestTarget target) {
+    //    return GetActivePartywithTarget(partyType, target) != null;
+    //}
+    //public Party GetActivePartywithTarget(PARTY_QUEST_TYPE partyType, IPartyQuestTarget target) {
+    //    for (int i = 0; i < characters.Count; i++) {
+    //        Character factionMember = characters[i];
+    //        if (factionMember.partyComponent.hasParty) {
+    //            Party party = factionMember.partyComponent.currentParty;
+    //            if (party.partyType == partyType && party.target == target) {
+    //                return party;
+    //            }
+    //        }
+    //    }
+    //    return null;
+    //}
+    //#endregion
 
     #region War Declaration
     public void CheckForWar(Faction targetFaction, CRIME_SEVERITY crimeSeverity, Character crimeCommitter, Character crimeTarget, ActualGoapNode crime) {
@@ -988,8 +997,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     private void DoneHeirloomSearch() {
         if(factionHeirloom != null) {
             if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && factionHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && factionHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT && !HasActiveParty(PARTY_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
-                factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.location);
+                && factionHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT && !HasASettlementWithPartyQuest(PARTY_QUEST_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
+                factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.region);
             }
             HeirloomSearch();
         }

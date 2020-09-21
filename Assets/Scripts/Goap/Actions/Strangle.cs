@@ -7,7 +7,7 @@ using Traits;
 public class Strangle : GoapAction {
 
     public Strangle() : base(INTERACTION_TYPE.STRANGLE) {
-        actionIconString = GoapActionStateDB.Sleep_Icon;
+        actionIconString = GoapActionStateDB.Anger_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
@@ -137,15 +137,4 @@ public class Strangle : GoapAction {
 
     }
     #endregion
-}
-
-public class StrangleData : GoapActionData {
-    public StrangleData() : base(INTERACTION_TYPE.STRANGLE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
-    }
 }

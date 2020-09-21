@@ -41,14 +41,3 @@ public class GoTo : GoapAction {
     //}
     //#endregion
 }
-
-public class GoToData : GoapActionData {
-    public GoToData() : base(INTERACTION_TYPE.GO_TO) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget;
-    }
-}

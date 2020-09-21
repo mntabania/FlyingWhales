@@ -99,6 +99,9 @@ public class RememberFallen : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             if (poiTarget is Tombstone) {
                 Tombstone tombstone = poiTarget as Tombstone;
                 Character target = tombstone.character;
@@ -130,26 +133,4 @@ public class RememberFallen : GoapAction {
     //    goapNode.descriptionLog.AddToFillers(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     #endregion
-}
-
-public class RememberFallenData : GoapActionData {
-    public RememberFallenData() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        if (poiTarget is Tombstone) {
-            Tombstone tombstone = poiTarget as Tombstone;
-            Character target = tombstone.character;
-            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
-        }
-        return false;
-    }
 }

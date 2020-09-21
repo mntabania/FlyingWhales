@@ -209,7 +209,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
             summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
             if (!owner.traitContainer.HasTrait("Burning")) {
-                PlanFullnessRecoveryActions(owner);
+                PlanFullnessRecoveryActions();
             } else {
                 summary += $"\n{owner.name} is poisoned or burning will not plan fullness recovery...";
             }
@@ -217,20 +217,45 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
             summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
             if (!owner.traitContainer.HasTrait("Burning", "Poisoned")) {
-                PlanTirednessRecoveryActions(owner);
+                PlanTirednessRecoveryActions();
             } else {
                 summary += $"\n{owner.name} is poisoned or burning will not plan tiredness recovery...";
             }
         }
         if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
             summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
-            PlanHappinessRecoveryActions(owner);
+            PlanHappinessRecoveryActions();
+        }
+        Debug.Log(summary);
+    }
+    public void CheckExtremeNeedsWhileInActiveParty(Interrupt interruptThatTriggered = null) {
+        if (HasNeeds() == false) { return; }
+        string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} will check his/her needs.";
+        if ((isStarving || isHungry) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
+            summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
+            if (!owner.traitContainer.HasTrait("Burning")) {
+                PlanFullnessRecoveryActionsWhileInActiveParty();
+            } else {
+                summary += $"\n{owner.name} is poisoned or burning will not plan fullness recovery...";
+            }
+        }
+        if ((isExhausted || isTired) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
+            summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
+            if (!owner.traitContainer.HasTrait("Burning", "Poisoned")) {
+                PlanTirednessRecoveryActionsWhileInActiveParty();
+            } else {
+                summary += $"\n{owner.name} is poisoned or burning will not plan tiredness recovery...";
+            }
+        }
+        if ((isSulking || isBored ) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
+            summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
+            PlanHappinessRecoveryWhileInActiveParty();
         }
         Debug.Log(summary);
     }
     private void CheckStarving() {
         if (isStarving) {
-            PlanFullnessRecoveryActions(owner);
+            PlanFullnessRecoveryActions();
         }
     }
 
@@ -472,17 +497,17 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetTired += amount;
         doNotGetTired = Math.Max(doNotGetTired, 0);
     }
-    public bool PlanTirednessRecoveryActions(Character character) {
-        if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+    public bool PlanTirednessRecoveryActions() {
+        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isExhausted) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem tirednessRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
+                JobQueueItem tirednessRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
                 if (tirednessRecoveryJob != null) {
                     //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
-                    JobQueueItem currJob = character.currentJob;
+                    JobQueueItem currJob = owner.currentJob;
                     if (currJob == tirednessRecoveryJob) {
                         return false;
                     } else {
@@ -490,24 +515,45 @@ public class CharacterNeedsComponent : CharacterComponent {
                     }
                 }
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
-                bool triggerSpooked = false;
-                Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
-                if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
+                PlanTirednessRecovery(jobType, false);
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool PlanTirednessRecoveryActionsWhileInActiveParty() {
+        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+            return false;
+        }
+        if (isExhausted) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+                //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
+                JobQueueItem tirednessRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
+                if (tirednessRecoveryJob != null) {
+                    //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
+                    JobQueueItem currJob = owner.currentJob;
+                    if (currJob == tirednessRecoveryJob) {
+                        return false;
+                    } else {
+                        tirednessRecoveryJob.CancelJob();
+                    }
                 }
-                if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                    //job.SetCancelOnFail(true);
-                    character.jobQueue.AddJobInQueue(job);
-                } else {
-                    spooked.TriggerFeelingSpooked();
-                }
+                JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
+                PlanTirednessRecoveryBase(jobType, false);
+                return true;
+            }
+        } else if (isTired) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL)) {
+                PlanTirednessRecoveryBase(JOB_TYPE.ENERGY_RECOVERY_NORMAL, false);
                 return true;
             }
         }
         return false;
     }
     public bool PlanExtremeTirednessRecoveryActionsForCannotPerform() {
+        if (owner.partyComponent.isActiveMember) {
+            return false;
+        }
         if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
             //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
             JobQueueItem tirednessRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
@@ -537,59 +583,67 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
         return false;
     }
-    public void PlanScheduledTirednessRecovery(Character character) {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && character.canPerform && doNotGetTired <= 0) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+    public void PlanScheduledTirednessRecovery() {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.Today().tick >= tirednessForcedTick && owner.canPerform && doNotGetTired <= 0) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
                     jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 }
-
-                bool triggerSpooked = false;
-                Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
-                if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
-                }
-                if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                    //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    //job.SetCancelOnFail(true);
-                    sleepScheduleJobID = job.persistentID;
-                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 /*|| stateComponent.stateToDo != null*/;
-                    character.jobQueue.AddJobInQueue(job); //, !willNotProcess
-                } else {
-                    spooked.TriggerFeelingSpooked();
-                }
+                PlanTirednessRecovery(jobType, true);
             }
             hasForcedTiredness = true;
             SetTirednessForcedTick();
         }
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && character.canPerform) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+        else if ((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && owner.canPerform) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_NORMAL;
                 if (isExhausted) {
                     jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 }
                 bool triggerSpooked = false;
-                Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
+                Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
                     //job.SetCancelOnFail(true);
                     sleepScheduleJobID = job.persistentID;
                     //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                    character.jobQueue.AddJobInQueue(job); //!willNotProcess
+                    owner.jobQueue.AddJobInQueue(job); //!willNotProcess
                 } else {
                     spooked.TriggerFeelingSpooked();
                 }
             }
             SetHasCancelledSleepSchedule(false);
         }
+    }
+    private GoapPlanJob PlanTirednessRecovery(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
+        if (owner.partyComponent.isActiveMember) {
+            return null;
+        }
+        return PlanTirednessRecoveryBase(jobType, shouldSetScheduleJobID);
+    }
+    private GoapPlanJob PlanTirednessRecoveryBase(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
+        bool triggerSpooked = false;
+        Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
+        if (spooked != null) {
+            triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
+        }
+        if (!triggerSpooked) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            owner.jobQueue.AddJobInQueue(job);
+            if (shouldSetScheduleJobID) {
+                sleepScheduleJobID = job.persistentID;
+            }
+        } else {
+            spooked.TriggerFeelingSpooked();
+        }
+        return null;
     }
     public void SetHasCancelledSleepSchedule(bool state) {
         hasCancelledSleepSchedule = state;
@@ -726,15 +780,24 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetBored += amount;
         doNotGetBored = Math.Max(doNotGetBored, 0);
     }
-    public bool PlanHappinessRecoveryActions(Character character) {
-        if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+    public bool PlanHappinessRecoveryActions() {
+        if (owner.partyComponent.isActiveMember) {
             return false;
         }
-        if (this.isBored || this.isSulking) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
+        return PlanHappinessRecoveryBase();
+    }
+    public bool PlanHappinessRecoveryWhileInActiveParty() {
+        return PlanHappinessRecoveryBase();
+    }
+    private bool PlanHappinessRecoveryBase() {
+        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+            return false;
+        }
+        if (isBored || isSulking) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
-                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick(character);
+                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick(owner);
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
                     value = 30;
                 } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
@@ -748,13 +811,13 @@ public class CharacterNeedsComponent : CharacterComponent {
                 }
                 if (chance < value || isSulking) {
                     bool triggerBrokenhearted = false;
-                    Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
+                    Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
                     if (heartbroken != null) {
-                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[heartbroken.name]);
+                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
                     }
                     if (!triggerBrokenhearted) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                        character.jobQueue.AddJobInQueue(job);
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
+                        owner.jobQueue.AddJobInQueue(job);
                     } else {
                         heartbroken.TriggerBrokenhearted();
                     }
@@ -946,49 +1009,30 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetHungry += amount;
         doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
-    public void PlanScheduledFullnessRecovery(Character character) {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.Today().tick >= fullnessForcedTick && character.canPerform && doNotGetHungry <= 0) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
+    public void PlanScheduledFullnessRecovery() {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.Today().tick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {
                     jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
                 }
-                bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
-                if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
-                }
-                if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-                    //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    //}
-                    //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                    //}
-                    //job.SetCancelOnFail(true);
-                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 /*|| stateComponent.stateToDo != null*/;
-                    character.jobQueue.AddJobInQueue(job); //, !willNotProcess
-                } else {
-                    griefstricken.TriggerGrieving();
-                }
+                PlanFullnessRecovery(jobType);
             }
             hasForcedFullness = true;
             SetFullnessForcedTick();
         }
     }
-    public bool PlanFullnessRecoveryActions(Character character) {
-        if (!character.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+    public bool PlanFullnessRecoveryActions() {
+        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
         if (this.isStarving) {
-            if (!character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
-                JobQueueItem hungerRecoveryJob = character.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                JobQueueItem hungerRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
                 if (hungerRecoveryJob != null) {
                     //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
-                    JobQueueItem currJob = character.currentJob;
+                    JobQueueItem currJob = owner.currentJob;
                     if (currJob == hungerRecoveryJob) {
                         return false;
                     } else {
@@ -996,97 +1040,74 @@ public class CharacterNeedsComponent : CharacterComponent {
                     }
                 }
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
-                bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
-                if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
-                }
-                if (!triggerGrieving) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-                    //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    //}
-                    //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                    //}
-                    //job.SetCancelOnFail(true);
-                    character.jobQueue.AddJobInQueue(job);
-                } else {
-                    griefstricken.TriggerGrieving();
-                }
+                PlanFullnessRecovery(jobType);
                 return true;
             }
         } 
-        //else if (this.isHungry) {
-        //    if (UnityEngine.Random.Range(0, 2) == 0 && character.traitContainer.GetNormalTrait<Trait>("Glutton") != null) {
-        //        if (!character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
-        //            JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-        //            bool triggerGrieving = false;
-        //            Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
-        //            if (griefstricken != null) {
-        //                triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
-        //            }
-        //            if (!triggerGrieving) {
-        //                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
-        //                //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-        //                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-        //                //}
-        //                //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-        //                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-        //                //}
-        //                //job.SetCancelOnFail(true);
-        //                character.jobQueue.AddJobInQueue(job);
-        //            } else {
-        //                griefstricken.TriggerGrieving();
-        //            }
-        //            return true;
-        //        }
-        //    }
-        //}
+        return false;
+    }
+    private bool PlanFullnessRecoveryActionsWhileInActiveParty() {
+        if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
+            return false;
+        }
+        if (isStarving) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+                //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
+                JobQueueItem hungerRecoveryJob = owner.jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                if (hungerRecoveryJob != null) {
+                    //Replace this with Hunger Recovery Starving only if the character is not doing the Hunger Recovery Job already
+                    JobQueueItem currJob = owner.currentJob;
+                    if (currJob == hungerRecoveryJob) {
+                        return false;
+                    } else {
+                        hungerRecoveryJob.CancelJob();
+                    }
+                }
+                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
+                PlanFullnessRecoveryBase(jobType);
+                return true;
+            }
+        } else if (isHungry) {
+            if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
+                PlanFullnessRecoveryBase(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                return true;
+            }
+        }
         return false;
     }
     public void PlanFullnessRecoveryNormal() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
-            bool triggerGrieving = false;
-            Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
-            if (griefstricken != null) {
-                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[griefstricken.name]);
-            }
-            if (!triggerGrieving) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-                //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                //}
-                //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                //}
-                //job.SetCancelOnFail(true);
-                owner.jobQueue.AddJobInQueue(job);
-            } else {
-                griefstricken.TriggerGrieving();
-            }
+            PlanFullnessRecovery(jobType);
         }
     }
     public void PlanFullnessRecoveryNormal(out JobQueueItem producedJob) {
         producedJob = null;
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
-            bool triggerGrieving = false;
-            Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
-            if (griefstricken != null) {
-                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[griefstricken.name]);
-            }
-            if (!triggerGrieving) {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-                producedJob = job;
-            } else {
-                griefstricken.TriggerGrieving();
-            }
+            producedJob = PlanFullnessRecovery(jobType);
         }
+    }
+    private GoapPlanJob PlanFullnessRecovery(JOB_TYPE jobType) {
+        if (owner.partyComponent.isActiveMember) {
+            return null;
+        }
+        return PlanFullnessRecoveryBase(jobType);
+    }
+    private GoapPlanJob PlanFullnessRecoveryBase(JOB_TYPE jobType) {
+        bool triggerGrieving = false;
+        Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+        if (griefstricken != null) {
+            triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[griefstricken.name]);
+        }
+        if (!triggerGrieving) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
+            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
+            return job;
+        } else {
+            griefstricken.TriggerGrieving();
+        }
+        return null;
     }
     #endregion
 
@@ -1317,9 +1338,9 @@ public class CharacterNeedsComponent : CharacterComponent {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{character.name} has finished job {job.ToString()}");
             //after doing an extreme needs type job, check again if the character needs to recover more of that need.
             if (job.jobType == JOB_TYPE.FULLNESS_RECOVERY_URGENT) {
-                PlanFullnessRecoveryActions(owner);
+                PlanFullnessRecoveryActions();
             } else if (job.jobType == JOB_TYPE.ENERGY_RECOVERY_URGENT) {
-                PlanTirednessRecoveryActions(owner);
+                PlanTirednessRecoveryActions();
             }
         }
     }

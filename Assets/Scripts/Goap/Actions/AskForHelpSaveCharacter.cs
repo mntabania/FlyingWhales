@@ -67,14 +67,3 @@ public class AskForHelpSaveCharacter : GoapAction {
    // }
    // #endregion
 }
-
-public class AskForHelpSaveCharacterData : GoapActionData {
-    public AskForHelpSaveCharacterData() : base(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget;
-    }
-}

@@ -51,14 +51,3 @@ public class Tantrum : GoapAction {
     }
     #endregion
 }
-
-public class TantrumData : GoapActionData {
-    public TantrumData() : base(INTERACTION_TYPE.TANTRUM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

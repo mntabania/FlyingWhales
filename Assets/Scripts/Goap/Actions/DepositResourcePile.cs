@@ -60,14 +60,20 @@ public class DepositResourcePile : GoapAction {
     }
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         OtherData[] otherData = node.otherData;
-        if (otherData != null && otherData.Length == 1 && otherData[0].obj is IPointOfInterest poiToBeDeposited) {
-            if(poiToBeDeposited.gridTileLocation != null) {
-                return poiToBeDeposited.gridTileLocation.structure;
-            } else {
-                //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
-                //return the main storage so that the main storage will become the target structure
-                return node.actor.homeSettlement.mainStorage;
+        if (otherData != null && otherData.Length == 1) {
+            if(otherData[0].obj is IPointOfInterest poiToBeDeposited) {
+                if (poiToBeDeposited.gridTileLocation != null) {
+                    return poiToBeDeposited.gridTileLocation.structure;
+                } else {
+                    //if the poi where the actor is supposed to deposit his carried pile has no grid tile location, this must mean that the pile is either destroyed or carried by another character
+                    //return the main storage so that the main storage will become the target structure
+                    return node.actor.homeSettlement.mainStorage;
+                }
+            } else if (otherData[0].obj is HexTile hex) {
+                LocationGridTile centerTile = hex.GetCenterLocationGridTile();
+                return centerTile.structure;
             }
+            return node.actor.homeSettlement.mainStorage;
         } else {
             return node.actor.homeSettlement.mainStorage;
         }
@@ -87,10 +93,19 @@ public class DepositResourcePile : GoapAction {
         return null;
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
-        //if the process goes through here, this must mean that the target poi where the actor is supposed to go has no grid tile location or is destroyed or is carried by another character
-        //so, just return a random unoccupied tile from the target structure
-        List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles.ToList();
-        return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+        OtherData[] otherData = goapNode.otherData;
+        if (otherData != null && otherData.Length == 1 && otherData[0].obj is HexTile hex) {
+            LocationGridTile tile = hex.GetRandomPassableTile();
+            if(tile == null) {
+                tile = hex.GetRandomTile();
+            }
+            return tile;
+        } else {
+            //if the process goes through here, this must mean that the target poi where the actor is supposed to go has no grid tile location or is destroyed or is carried by another character
+            //so, just return a random unoccupied tile from the target structure
+            List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles.ToList();
+            return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
+        }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -104,6 +119,14 @@ public class DepositResourcePile : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(poiTarget);
+    }
+    public override void OnMoveToDoAction(ActualGoapNode node) {
+        base.OnMoveToDoAction(node);
+        if (node.associatedJobType == JOB_TYPE.STEAL_RAID) {
+            if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
+                node.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(node.actor);
+            }
+        }
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;

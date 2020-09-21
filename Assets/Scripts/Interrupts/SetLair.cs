@@ -26,7 +26,7 @@ namespace Interrupts {
                 interruptHolder.actor.necromancerTrait.SetLairStructure(GetLairInAllRegions());
             }
             if(interruptHolder.actor.necromancerTrait.lairStructure != null) {
-                log += "\n-Lair is set: " + interruptHolder.actor.necromancerTrait.lairStructure.GetNameRelativeTo(interruptHolder.actor) + " in " + interruptHolder.actor.necromancerTrait.lairStructure.location.name;
+                log += "\n-Lair is set: " + interruptHolder.actor.necromancerTrait.lairStructure.GetNameRelativeTo(interruptHolder.actor) + " in " + interruptHolder.actor.necromancerTrait.lairStructure.region.name;
                 log += "\n-Migrating home to lair";
                 interruptHolder.actor.MigrateHomeStructureTo(interruptHolder.actor.necromancerTrait.lairStructure);
                 interruptHolder.actor.ClearTerritory();

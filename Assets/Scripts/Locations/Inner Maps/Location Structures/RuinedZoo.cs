@@ -31,7 +31,7 @@ namespace Inner_Maps.Location_Structures {
             for (int i = 0; i < rooms.Length; i++) {
                 StructureRoom structureRoom = rooms[i];
                 SUMMON_TYPE summonType = orderedMonsters[i];
-                Summon newSummon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementLocation, location, this);
+                Summon newSummon = CharacterManager.Instance.CreateNewSummon(summonType, FactionManager.Instance.neutralFaction, settlementLocation, region, this);
                 LocationGridTile targetTile = CollectionUtilities.GetRandomElement(structureRoom.tilesInRoom);
                 CharacterManager.Instance.PlaceSummon(newSummon, targetTile);
             }

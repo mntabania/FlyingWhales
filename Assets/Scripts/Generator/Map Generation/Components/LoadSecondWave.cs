@@ -53,8 +53,10 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadInterruptReferences(saveData));
         // yield return MapGenerator.Instance.StartCoroutine(LoadLogReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadPartyReferences(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadPartyQuestsReferences(saveData));
         yield return MapGenerator.Instance.StartCoroutine(LoadCrimeReferences(saveData));
-        
+        yield return MapGenerator.Instance.StartCoroutine(LoadGatheringReferences(saveData));
+
         //Load Second Wave Job data
         yield return MapGenerator.Instance.StartCoroutine(LoadJobsSecondWave(saveData));
 
@@ -277,15 +279,25 @@ public class LoadSecondWave : MapGenerationComponent {
         saveData.LoadPartyReferences();
         yield return null;
     }
+    private IEnumerator LoadPartyQuestsReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Party Quest Data...");
+        saveData.LoadPartyQuestReferences();
+        yield return null;
+    }
     private IEnumerator LoadCrimeReferences(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Crime Data...");
         saveData.LoadCrimeReferences();
         yield return null;
     }
+    private IEnumerator LoadGatheringReferences(SaveDataCurrentProgress saveData) {
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Gathering Data...");
+        saveData.LoadGatheringReferences();
+        yield return null;
+    }
     #endregion
 
     #region Settlements
-        private IEnumerator LoadSettlementOwners(SaveDataCurrentProgress saveData) {
+    private IEnumerator LoadSettlementOwners(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
@@ -326,6 +338,7 @@ public class LoadSecondWave : MapGenerationComponent {
                 npcSettlement.LoadJobs(saveDataNpcSettlement);
                 npcSettlement.LoadRuler(saveDataNpcSettlement.rulerID);
                 npcSettlement.LoadResidents(saveDataNpcSettlement);
+                npcSettlement.LoadPartiesAndQuests(saveDataNpcSettlement);
             }
             yield return null;
         }

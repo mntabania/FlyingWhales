@@ -177,7 +177,7 @@ namespace Interrupts {
                             string identifier = string.Empty;
                             LocationStructure chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
                             if(chosenHomeStructure != null && identifier == "unoccupied") {
-                                log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.location.name;
+                                log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                                 actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                 actor.logComponent.PrintLogIfActive(log);
                                 return;
@@ -185,14 +185,14 @@ namespace Interrupts {
 
                             log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friende";
                             if (chosenHomeStructure != null && identifier == "occupied") {
-                                log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.location.name;
+                                log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                                 actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                 actor.logComponent.PrintLogIfActive(log);
                                 return;
                             }
 
                             if (chosenHomeStructure != null && identifier == "habitable") {
-                                log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.location.name;
+                                log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                                 actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                                 actor.logComponent.PrintLogIfActive(log);
                                 return;
@@ -246,7 +246,7 @@ namespace Interrupts {
                     string identifier = string.Empty;
                     chosenHomeStructure = FindHabitableStructureOrUnoccupiedHouseInOneOfOwnedSettlementsProcessing(actor, ref identifier);
                     if (chosenHomeStructure != null && identifier == "unoccupied") {
-                        log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.location.name;
+                        log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         actor.logComponent.PrintLogIfActive(log);
                         return;
@@ -254,14 +254,14 @@ namespace Interrupts {
 
                     log += "\nFind a Habitable Special Structure or House that is still not at full capacity and is home of a non-enemy and non-rival relative or a non-relative but close friend";
                     if (chosenHomeStructure != null && identifier == "occupied") {
-                        log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.location.name;
+                        log += "\nFound dwelling: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         actor.logComponent.PrintLogIfActive(log);
                         return;
                     }
 
                     if (chosenHomeStructure != null && identifier == "habitable") {
-                        log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.location.name;
+                        log += "\nFound Habitable Structure: " + chosenHomeStructure.name + " in " + chosenHomeStructure.region.name;
                         actor.ClearTerritoryAndMigrateHomeStructureTo(chosenHomeStructure);
                         actor.logComponent.PrintLogIfActive(log);
                         return;

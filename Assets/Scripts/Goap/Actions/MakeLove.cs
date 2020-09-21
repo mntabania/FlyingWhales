@@ -345,6 +345,9 @@ public class MakeLove : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             Character target = poiTarget as Character;
             if (target == actor) {
                 return false;
@@ -678,38 +681,4 @@ public class MakeLove : GoapAction {
     //    return reactions;
     //}
     //#endregion
-}
-
-public class MakeLoveData : GoapActionData {
-    public MakeLoveData() : base(INTERACTION_TYPE.MAKE_LOVE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        Character target = poiTarget as Character;
-        if (target == actor) {
-            return false;
-        }
-        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-        //    return false;
-        //}
-        if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            return false;
-        }
-        if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
-            return false;
-        }
-        if (actor.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED).Count <= 0) {
-            return false;
-        }
-        if (!(actor is SeducerSummon)) { //ignore relationships if succubus
-            if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
-                return false; //only lovers and affairs can make love
-            }
-        }
-        return target.carryComponent.IsNotBeingCarried();
-    }
 }

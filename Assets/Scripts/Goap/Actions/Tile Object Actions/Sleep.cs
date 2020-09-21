@@ -32,7 +32,7 @@ public class Sleep : GoapAction {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
-            if (actor.partyComponent.currentParty == null) {
+            if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 cost = 2000;
                 costLog += $" +{cost}(Location of target is in avoid structure)";
@@ -157,6 +157,12 @@ public class Sleep : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
+            if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
+                return false;
+            }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             //if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
@@ -216,18 +222,4 @@ public class Sleep : GoapAction {
     // private bool CanSleepInBed(Character character, TileObject tileObject) {
     //     return (tileObject as Bed).CanSleepInBed(character);
     // }
-}
-
-public class SleepData : GoapActionData {
-    public SleepData() : base(INTERACTION_TYPE.SLEEP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
-    }
 }

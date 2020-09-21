@@ -9,46 +9,15 @@ public class RescueBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
+        bool hasJob = false;
         log += $"\n-Character is rescuing";
-        Party rescueParty = character.partyComponent.currentParty;
-        if (!rescueParty.isWaitTimeOver) {
-            log += $"\n-Party is waiting";
-            if (character.homeSettlement != null) {
-                log += $"\n-Character has home settlement";
-                if (character.homeSettlement.locationType == LOCATION_TYPE.DUNGEON) {
-                    log += $"\n-Character home settlement is a special structure";
-                    character.jobComponent.TriggerRoamAroundStructure(out producedJob);
-                } else {
-                    log += $"\n-Character home settlement is a village";
-                    LocationStructure targetStructure = null;
-                    if (character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
-                        targetStructure = character.currentStructure;
-                    } else {
-                        targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
-                    }
-                    if (targetStructure == null) {
-                        if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-                            targetStructure = character.currentStructure;
-                        } else {
-                            targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-                        }
-                    }
-
-                    if (targetStructure != null) {
-                        log += $"\n-Character will roam around " + targetStructure.name;
-                        LocationGridTile targetTile = null;
-                        if (character.currentStructure != targetStructure) {
-                            targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                        }
-                        character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
-                    }
-                }
-            }
-        } else {
-            log += $"\n-Party is not waiting";
-            if(character.currentStructure == rescueParty.target.currentStructure) {
-                Character memberInCombat = rescueParty.GetMemberInCombatExcept(character);
-                if (memberInCombat != null && memberInCombat.currentStructure == rescueParty.target.currentStructure) {
+        Party party = character.partyComponent.currentParty;
+        if (party.isActive && party.partyState == PARTY_STATE.Working) {
+            log += $"\n-Party is working";
+            if (party.targetDestination.IsAtTargetDestination(character)) {
+                log += $"\n-Character is at target destination, do work";
+                Character memberInCombat = party.GetMemberInCombatExcept(character);
+                if (memberInCombat != null && party.targetDestination.IsAtTargetDestination(memberInCombat)) {
                     log += $"\n-{memberInCombat.name} is in combat, will try to combat also";
                     bool hasFought = false;
                     CombatState combatState = memberInCombat.stateComponent.currentState as CombatState;
@@ -57,41 +26,105 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                         character.combatComponent.Fight(combatState.currentClosestHostile, combatData.reasonForCombat, combatData.connectedAction, combatData.isLethal);
                         hasFought = true;
                     }
-                    //else {
-                    //    if (memberInCombat.combatComponent.avoidInRange.Count > 0) {
-                    //        for (int i = 0; i < memberInCombat.combatComponent.avoidInRange.Count; i++) {
-                    //            if (memberInCombat.combatComponent.avoidInRange[i] is Character targetCharacter) {
-                    //                character.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
-                    //                hasFought = true;
-                    //            }
-                    //        }
-                    //    }
-                    //}
                     if (hasFought) {
                         producedJob = null;
                         return true;
                     }
                     log += $"\n-Roam around";
-                    RoamAroundStructureOrHex(character, rescueParty.target, out producedJob);
+                    hasJob = RoamAroundStructureOrHex (character, party.currentQuest.target, out producedJob);
                     //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     log += $"\n-Roam around";
                     //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
-                    RoamAroundStructureOrHex(character, rescueParty.target, out producedJob);
+                    hasJob = RoamAroundStructureOrHex(character, party.currentQuest.target, out producedJob);
                 }
-            } else {
-                log += $"\n-Character is not in target structure, go to it";
-                LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(rescueParty.target.currentStructure.passableTiles);
-                character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
             }
+            //else {
+            //    LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+            //    hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+            //}
         }
+        //if (!party.isWaitTimeOver) {
+        //    log += $"\n-Party is waiting";
+        //    if (character.homeSettlement != null) {
+        //        log += $"\n-Character has home settlement";
+        //        if (character.homeSettlement.locationType == LOCATION_TYPE.DUNGEON) {
+        //            log += $"\n-Character home settlement is a special structure";
+        //            character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+        //        } else {
+        //            log += $"\n-Character home settlement is a village";
+        //            LocationStructure targetStructure = null;
+        //            if (character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+        //                targetStructure = character.currentStructure;
+        //            } else {
+        //                targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.TAVERN);
+        //            }
+        //            if (targetStructure == null) {
+        //                if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+        //                    targetStructure = character.currentStructure;
+        //                } else {
+        //                    targetStructure = character.homeSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+        //                }
+        //            }
+
+        //            if (targetStructure != null) {
+        //                log += $"\n-Character will roam around " + targetStructure.name;
+        //                LocationGridTile targetTile = null;
+        //                if (character.currentStructure != targetStructure) {
+        //                    targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+        //                }
+        //                character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
+        //            }
+        //        }
+        //    }
+        //} else {
+        //    log += $"\n-Party is not waiting";
+        //    if(character.currentStructure == party.target.currentStructure) {
+        //        Character memberInCombat = party.GetMemberInCombatExcept(character);
+        //        if (memberInCombat != null && memberInCombat.currentStructure == party.target.currentStructure) {
+        //            log += $"\n-{memberInCombat.name} is in combat, will try to combat also";
+        //            bool hasFought = false;
+        //            CombatState combatState = memberInCombat.stateComponent.currentState as CombatState;
+        //            if (combatState.currentClosestHostile != null) {
+        //                CombatData combatData = memberInCombat.combatComponent.GetCombatData(combatState.currentClosestHostile);
+        //                character.combatComponent.Fight(combatState.currentClosestHostile, combatData.reasonForCombat, combatData.connectedAction, combatData.isLethal);
+        //                hasFought = true;
+        //            }
+        //            //else {
+        //            //    if (memberInCombat.combatComponent.avoidInRange.Count > 0) {
+        //            //        for (int i = 0; i < memberInCombat.combatComponent.avoidInRange.Count; i++) {
+        //            //            if (memberInCombat.combatComponent.avoidInRange[i] is Character targetCharacter) {
+        //            //                character.combatComponent.Fight(targetCharacter, CombatManager.Hostility);
+        //            //                hasFought = true;
+        //            //            }
+        //            //        }
+        //            //    }
+        //            //}
+        //            if (hasFought) {
+        //                producedJob = null;
+        //                return true;
+        //            }
+        //            log += $"\n-Roam around";
+        //            RoamAroundStructureOrHex(character, party.target, out producedJob);
+        //            //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+        //        } else {
+        //            log += $"\n-Roam around";
+        //            //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+        //            RoamAroundStructureOrHex(character, party.target, out producedJob);
+        //        }
+        //    } else {
+        //        log += $"\n-Character is not in target structure, go to it";
+        //        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(party.target.currentStructure.passableTiles);
+        //        character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
+        //    }
+        //}
         if (producedJob != null) {
             producedJob.SetIsThisAPartyJob(true);
         }
-        return true;
+        return hasJob;
     }
 
-    private bool RoamAroundStructureOrHex(Character actor, IPartyTarget target, out JobQueueItem producedJob) {
+    private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
         if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
             if(target is Character targetCharacter && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;

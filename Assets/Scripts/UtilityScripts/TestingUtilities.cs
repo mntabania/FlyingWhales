@@ -34,7 +34,17 @@ namespace UtilityScripts {
                 } else {
                     summary += "\nNone";
                 }
-                if(npcSettlement.owner != null) {
+                summary += $"\n{npcSettlement.name} Party Quests:";
+                if (npcSettlement.availablePartyQuests.Count > 0) {
+                    for (int j = 0; j < npcSettlement.availablePartyQuests.Count; j++) {
+                        PartyQuest quest = npcSettlement.availablePartyQuests[j];
+                        summary += $"\n<b>{quest.partyQuestType.ToString()}</b>";
+                        summary += $"(Assigned Party: {quest.assignedParty?.partyName})";
+                    }
+                } else {
+                    summary += "\nNone";
+                }
+                if (npcSettlement.owner != null) {
                     summary += $"\n-----------------------------";
                     summary += $"\n{npcSettlement.owner.name} Faction Job Queue:";
                     if (npcSettlement.owner.availableJobs.Count > 0) {

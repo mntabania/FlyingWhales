@@ -113,6 +113,9 @@ public class Sing : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.Normal);
         }
         return false;
@@ -145,15 +148,4 @@ public class Sing : GoapAction {
     //    return reactions;
     //}
     //#endregion
-}
-
-public class SingData : GoapActionData {
-    public SingData() : base(INTERACTION_TYPE.SING) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.Normal);
-    }
 }

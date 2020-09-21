@@ -363,7 +363,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         if(homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
+            homeStructure.region.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, null, false);
             homeLocation.region.AddCharacterToLocation(newCharacter);
@@ -387,7 +387,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
+            homeStructure.region.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             if(homeLocation is NPCSettlement homeNPCSettlement) {
@@ -418,7 +418,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
+            homeStructure.region.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             //homeLocation.region.AddResident(newCharacter);
@@ -452,7 +452,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
+            homeStructure.region.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             //homeLocation.region.AddResident(newCharacter);
@@ -709,7 +709,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
+            homeStructure.region.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             homeLocation.region.AddCharacterToLocation(newCharacter);
@@ -738,7 +738,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         if (homeStructure != null) {
             newCharacter.MigrateHomeStructureTo(homeStructure, false, true);
-            homeStructure.location.AddCharacterToLocation(newCharacter);
+            homeStructure.region.AddCharacterToLocation(newCharacter);
         } else if (homeLocation != null) {
             newCharacter.MigrateHomeTo(homeLocation, null, false, true);
             if (homeLocation is NPCSettlement homeNPCSettlement) {
@@ -801,7 +801,7 @@ public class CharacterManager : BaseMonoBehaviour {
         if (isCentered) {
             InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
-        if (character.currentRegion != tile.structure.location) {
+        if (character.currentRegion != tile.structure.region) {
             character.currentRegion?.RemoveCharacterFromLocation(character);
         }
         if (!character.marker) {
@@ -1327,27 +1327,6 @@ public class CharacterManager : BaseMonoBehaviour {
     }
     #endregion
 
-    #region Party
-    private Party CreateNewParty(PARTY_TYPE partyType) {
-        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(partyType.ToString())}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided party type was invalid! {typeName}")) as Party ?? throw new Exception($"provided type not a party! {typeName}");
-    }
-    public Party CreateNewParty(PARTY_TYPE partyType, Character leader) {
-        Party newParty = CreateNewParty(partyType);
-        newParty.SetLeader(leader);
-        return newParty;
-    }
-    private SaveDataParty CreateNewParty(Party party) {
-        SaveDataParty saveParty = Activator.CreateInstance(party.serializedData) as SaveDataParty;
-        saveParty.Save(party);
-        return saveParty;
-    }
-    public Party CreateNewParty(SaveDataParty savedParty) {
-        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(savedParty.partyName)}Party, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-        return Activator.CreateInstance(Type.GetType(typeName), savedParty) as Party;
-    }
-    #endregion
-
     #region Minions
     public Minion CreateNewMinion(Character character, bool initialize = true, bool keepData = false) {
         Minion minion = new Minion(character, keepData);
@@ -1375,6 +1354,27 @@ public class CharacterManager : BaseMonoBehaviour {
     protected override void OnDestroy() {
         base.OnDestroy();
         Instance = null;
+    }
+    #endregion
+
+    #region Gathering
+    private Gathering CreateNewGathering(GATHERING_TYPE type) {
+        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(type.ToString())}Gathering, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided gathering type was invalid! {typeName}")) as Gathering ?? throw new Exception($"provided type not a gathering! {typeName}");
+    }
+    private SaveDataGathering CreateNewSaveDataGathering(Gathering gathering) {
+        SaveDataGathering data = Activator.CreateInstance(gathering.serializedData) as SaveDataGathering;
+        data.Save(gathering);
+        return data;
+    }
+    public Gathering CreateNewGathering(SaveDataGathering data) {
+        var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.gatheringType.ToString())}Gathering, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        return Activator.CreateInstance(Type.GetType(typeName), data) as Gathering;
+    }
+    public Gathering CreateNewGathering(GATHERING_TYPE type, Character host) {
+        Gathering newGathering = CreateNewGathering(type);
+        newGathering.SetHost(host);
+        return newGathering;
     }
     #endregion
 

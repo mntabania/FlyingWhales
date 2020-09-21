@@ -98,19 +98,3 @@ public class AskToStopJob : GoapAction {
    // }
    // #endregion
 }
-
-public class AskToStopJobData : GoapActionData {
-    public AskToStopJobData() : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool targetDoesNotConsiderActorEnemy = true;
-        if (poiTarget is Character) {
-            Character targetCharacter = poiTarget as Character;
-            targetDoesNotConsiderActorEnemy = !targetCharacter.relationshipContainer.IsEnemiesWith(actor);
-        }
-        return actor != poiTarget && targetDoesNotConsiderActorEnemy;
-    }
-}

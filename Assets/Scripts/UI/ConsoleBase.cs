@@ -89,7 +89,7 @@ public class ConsoleBase : InfoUIBase {
             {"/cancel_job", CancelJob },
             {"/save_scenario", SaveScenarioMap },
             {"/save_manual", SaveManual },
-            {"/find", FindTileObject },
+            {"/set_party_state", SwitchPartyState },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1384,6 +1384,22 @@ public class ConsoleBase : InfoUIBase {
                     UIManager.Instance.ShowTileObjectInfo(tileObj);
                 }
             }
+        }
+    }
+    private void SwitchPartyState(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SwitchPartyState");
+            return;
+        }
+        string nameParameterString = parameters[0];
+        string stateParameterString = parameters[1];
+        Party party = DatabaseManager.Instance.partyDatabase.GetPartyByName(nameParameterString);
+        PARTY_STATE partyState;
+        if (System.Enum.TryParse(stateParameterString, out partyState) == false) {
+            AddErrorMessage($"There is no poi of type {stateParameterString}");
+        } else {
+            party.SetPartyState(partyState);
         }
     }
     #endregion

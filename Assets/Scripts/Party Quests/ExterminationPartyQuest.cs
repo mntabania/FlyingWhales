@@ -5,56 +5,57 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 
-public class ExterminationParty : Party {
+public class ExterminationPartyQuest : PartyQuest {
 
     public LocationStructure targetStructure { get; private set; }
-    public HexTile waitingArea { get; private set; }
+    //public HexTile waitingArea { get; private set; }
     public bool isExterminating { get; private set; }
     public NPCSettlement originSettlement { get; private set; }
 
     #region getters
-    public override IPartyTarget target => targetStructure;
-    public override HexTile waitingHexArea => waitingArea;
-    public override System.Type serializedData => typeof(SaveDataExterminationParty);
+    public override IPartyQuestTarget target => targetStructure;
+    //public override HexTile waitingHexArea => waitingArea;
+    public override System.Type serializedData => typeof(SaveDataExterminationPartyQuest);
     #endregion
 
-    public ExterminationParty() : base(PARTY_TYPE.Extermination) {
+    public ExterminationPartyQuest() : base(PARTY_QUEST_TYPE.Extermination) {
         minimumPartySize = 4;
-        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
+        //waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(ExterminateBehaviour);
-        jobQueueOwnerType = JOB_OWNER.FACTION;
+        //jobQueueOwnerType = JOB_OWNER.FACTION;
     }
-    public ExterminationParty(SaveDataParty data) : base(data) {
-        if (data is SaveDataExterminationParty subData) {
-            isExterminating = subData.isExterminating;
-        }
+    public ExterminationPartyQuest(SaveDataExterminationPartyQuest data) : base(data) {
+        isExterminating = data.isExterminating;
     }
 
     #region Overrides
-    public override bool IsAllowedToJoin(Character character) {
-        return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
-    }
-    protected override void OnWaitTimeOver() {
+    //public override bool IsAllowedToJoin(Character character) {
+    //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
+    //}
+    public override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
         StartExterminationTimer();
     }
-    protected override void OnAddMember(Character member) {
-        base.OnAddMember(member);
-        member.movementComponent.SetEnableDigging(true);
-        member.traitContainer.AddTrait(member, "Travelling");
+    public override IPartyTargetDestination GetTargetDestination() {
+        return targetStructure;
     }
-    protected override void OnRemoveMember(Character member) {
-        base.OnRemoveMember(member);
-        member.movementComponent.SetEnableDigging(false);
-        member.traitContainer.RemoveTrait(member, "Travelling");
-    }
-    protected override void OnRemoveMemberOnDisband(Character member) {
-        base.OnRemoveMemberOnDisband(member);
-        member.movementComponent.SetEnableDigging(false);
-        member.traitContainer.RemoveTrait(member, "Travelling");
-    }
-    protected override void OnDisbandParty() {
-        base.OnDisbandParty();
+    //protected override void OnAddMember(Character member) {
+    //    base.OnAddMember(member);
+    //    member.movementComponent.SetEnableDigging(true);
+    //    member.traitContainer.AddTrait(member, "Travelling");
+    //}
+    //protected override void OnRemoveMember(Character member) {
+    //    base.OnRemoveMember(member);
+    //    member.movementComponent.SetEnableDigging(false);
+    //    member.traitContainer.RemoveTrait(member, "Travelling");
+    //}
+    //protected override void OnRemoveMemberOnDisband(Character member) {
+    //    base.OnRemoveMemberOnDisband(member);
+    //    member.movementComponent.SetEnableDigging(false);
+    //    member.traitContainer.RemoveTrait(member, "Travelling");
+    //}
+    protected override void OnEndQuest() {
+        base.OnEndQuest();
         if (originSettlement.exterminateTargetStructure == targetStructure) {
             originSettlement.SetExterminateTarget(null);
         }
@@ -63,8 +64,8 @@ public class ExterminationParty : Party {
 
     #region General
     private void ProcessExterminationOrDisbandment() {
-        if (!HasAliveResidentInsideSettlementThatIsHostileWith(leader, targetStructure.settlementLocation)) {
-            DisbandParty();
+        if (!HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner, targetStructure.settlementLocation)) {
+            assignedParty.GoBackHomeAndEndQuest();
         } else {
             StartExterminationTimer();
         }
@@ -72,26 +73,25 @@ public class ExterminationParty : Party {
     public void SetTargetStructure(LocationStructure structure) {
         if (targetStructure != structure) {
             targetStructure = structure;
-            if (targetStructure != null) {
-                SetWaitingArea();
-            }
+            //if (targetStructure != null) {
+            //    SetWaitingArea();
+            //}
         }
     }
     public void SetOriginSettlement(NPCSettlement settlement) {
         originSettlement = settlement;
     }
-    private void SetWaitingArea() {
-        waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
-    }
-    private bool HasAliveResidentInsideSettlementThatIsHostileWith(Character character, BaseSettlement settlement) {
+    //private void SetWaitingArea() {
+    //    waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
+    //}
+    private bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction, BaseSettlement settlement) {
         for (int i = 0; i < settlement.residents.Count; i++) {
             Character resident = settlement.residents[i];
-            if (character != resident
-                && !resident.isDead
+            if (!resident.isDead
                 && resident.gridTileLocation != null
                 && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                 && resident.gridTileLocation.IsPartOfSettlement(settlement)
-                && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
+                && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
                 return true;
             }
         }
@@ -117,15 +117,15 @@ public class ExterminationParty : Party {
     #endregion
 
     #region Loading
-    public override void LoadReferences(SaveDataParty data) {
+    public override void LoadReferences(SaveDataPartyQuest data) {
         base.LoadReferences(data);
-        if (data is SaveDataExterminationParty subData) {
+        if (data is SaveDataExterminationPartyQuest subData) {
             if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
-            if (!string.IsNullOrEmpty(subData.waitingArea)) {
-                waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
-            }
+            //if (!string.IsNullOrEmpty(subData.waitingArea)) {
+            //    waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
+            //}
             if (!string.IsNullOrEmpty(subData.originSettlement)) {
                 originSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.originSettlement) as NPCSettlement;
             }
@@ -135,24 +135,24 @@ public class ExterminationParty : Party {
 }
 
 [System.Serializable]
-public class SaveDataExterminationParty : SaveDataParty {
+public class SaveDataExterminationPartyQuest : SaveDataPartyQuest {
     public string targetStructure;
-    public string waitingArea;
+    //public string waitingArea;
     public bool isExterminating;
     public string originSettlement;
 
     #region Overrides
-    public override void Save(Party data) {
+    public override void Save(PartyQuest data) {
         base.Save(data);
-        if (data is ExterminationParty subData) {
+        if (data is ExterminationPartyQuest subData) {
             isExterminating = subData.isExterminating;
 
             if (subData.targetStructure != null) {
                 targetStructure = subData.targetStructure.persistentID;
             }
-            if (subData.waitingArea != null) {
-                waitingArea = subData.waitingArea.persistentID;
-            }
+            //if (subData.waitingArea != null) {
+            //    waitingArea = subData.waitingArea.persistentID;
+            //}
             if (subData.originSettlement != null) {
                 originSettlement = subData.originSettlement.persistentID;
             }

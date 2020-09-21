@@ -14,56 +14,18 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
         producedJob = null;
         log += $"\n-{character.name} will attack demonic structure";
         if (character.partyComponent.hasParty) {
-            Party counterattackParty = character.partyComponent.currentParty;
-            if (!counterattackParty.isWaitTimeOver) {
-                log += $"\n-Party is waiting";
-                if (character.homeSettlement != null) {
-                    log += $"\n-Character has home settlement";
-                    if (character.homeSettlement.locationType == LOCATION_TYPE.DUNGEON) {
-                        log += $"\n-Character home settlement is a special structure";
-                        bool hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
-                        if(producedJob != null) {
-                            producedJob.SetIsThisAPartyJob(true);
-                        }
-                        return hasJob;
-                    } else {
-                        log += $"\n-Character home settlement is a village";
-                        LocationStructure targetStructure = null;
-                        if (character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
-                            targetStructure = character.currentStructure;
-                        } else {
-                            targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
-                        }
-                        if (targetStructure == null) {
-                            if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-                                targetStructure = character.currentStructure;
-                            } else {
-                                targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
-                            }
-                        }
-
-                        if (targetStructure != null) {
-                            log += $"\n-Character will roam around " + targetStructure.name;
-                            LocationGridTile targetTile = null;
-                            if (character.currentStructure != targetStructure) {
-                                targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                            }
-                            bool hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
-                            if (producedJob != null) {
-                                producedJob.SetIsThisAPartyJob(true);
-                            }
-                            return hasJob;
-                        }
-                    }
-                }
-            } else {
-                if (counterattackParty.target is LocationStructure targetStructure) {
+            Party party = character.partyComponent.currentParty;
+            if (party.isActive && party.partyState == PARTY_STATE.Working) {
+                log += $"\n-Party is working";
+                if (party.targetDestination.IsAtTargetDestination(character)) {
+                    log += $"\n-Character is at target region, do work";
                     //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
                     //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
-                    if(targetStructure.location == character.currentRegion) {
-                        //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
-
-                        //LocationStructure targetStructure = character.currentStructure;
+                    
+                    //NOTE: Removed checking for current region because of the new party system in which the Working state must be when party is at target destination
+                    //if (party.targetDestination.region == character.currentRegion) {
+                    //    //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
+                        LocationStructure targetStructure = party.currentQuest.target as LocationStructure;
                         if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
                             log += "\n-Has tile object that contribute damage";
                             log += "\n-Adding tile object as hostile";
@@ -77,41 +39,118 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                                 return true;
                             } else {
                                 log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
-                                counterattackParty.DisbandParty();
+                                party.GoBackHomeAndEndQuest();
                                 return true;
                             }
                         } else {
                             log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
-                            counterattackParty.DisbandParty();
+                            party.GoBackHomeAndEndQuest();
                             return true;
                         }
-                    } else {
-                        LocationGridTile targetTile = targetStructure.occupiedHexTile.hexTileOwner.GetRandomTileThatMeetCriteria(x => character.movementComponent.HasPathToEvenIfDiffRegion(x));
-                        if(targetTile != null) {
-                            bool hasJob = character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
-                            if (producedJob != null) {
-                                producedJob.SetIsThisAPartyJob(true);
-                            }
-                            return hasJob;
-                        }
-                    }
+                    //}
                 }
-
-                //log += $"\n-Party is not waiting";
-                //if (character.currentStructure == counterattackParty.target) {
-                //    log += $"\n-Character is already in target structure";
-                    
-                //} else {
-                //    log += $"\n-Character is not in target structure, go to it";
-                //    if (counterattackParty.target is LocationStructure targetStructure) {
-                //        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
-                //        character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
-                //    }
-                //    //List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)).ToList();
-                //    //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
-                //    //character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+                //else {
+                //    LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+                //    return character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
                 //}
             }
+            //if (!party.isWaitTimeOver) {
+            //    log += $"\n-Party is waiting";
+            //    if (character.homeSettlement != null) {
+            //        log += $"\n-Character has home settlement";
+            //        if (character.homeSettlement.locationType == LOCATION_TYPE.DUNGEON) {
+            //            log += $"\n-Character home settlement is a special structure";
+            //            bool hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+            //            if(producedJob != null) {
+            //                producedJob.SetIsThisAPartyJob(true);
+            //            }
+            //            return hasJob;
+            //        } else {
+            //            log += $"\n-Character home settlement is a village";
+            //            LocationStructure targetStructure = null;
+            //            if (character.currentStructure.structureType == STRUCTURE_TYPE.TAVERN) {
+            //                targetStructure = character.currentStructure;
+            //            } else {
+            //                targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.TAVERN);
+            //            }
+            //            if (targetStructure == null) {
+            //                if (character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) {
+            //                    targetStructure = character.currentStructure;
+            //                } else {
+            //                    targetStructure = character.homeSettlement.GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+            //                }
+            //            }
+
+            //            if (targetStructure != null) {
+            //                log += $"\n-Character will roam around " + targetStructure.name;
+            //                LocationGridTile targetTile = null;
+            //                if (character.currentStructure != targetStructure) {
+            //                    targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+            //                }
+            //                bool hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob, targetTile);
+            //                if (producedJob != null) {
+            //                    producedJob.SetIsThisAPartyJob(true);
+            //                }
+            //                return hasJob;
+            //            }
+            //        }
+            //    }
+            //} else {
+            //    if (party.target is LocationStructure targetStructure) {
+            //        //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
+            //        //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
+            //        if(targetStructure.location == character.currentRegion) {
+            //            //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
+
+            //            //LocationStructure targetStructure = character.currentStructure;
+            //            if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
+            //                log += "\n-Has tile object that contribute damage";
+            //                log += "\n-Adding tile object as hostile";
+            //                TileObject chosenTileObject = null;
+            //                IDamageable nearestDamageableObject = targetStructure.GetNearestDamageableThatContributeToHP(character.gridTileLocation);
+            //                if (nearestDamageableObject != null && nearestDamageableObject is TileObject tileObject) {
+            //                    chosenTileObject = tileObject;
+            //                }
+            //                if (chosenTileObject != null) {
+            //                    character.combatComponent.Fight(chosenTileObject, CombatManager.Hostility);
+            //                    return true;
+            //                } else {
+            //                    log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+            //                    party.DisbandParty();
+            //                    return true;
+            //                }
+            //            } else {
+            //                log += "\n-No tile object that contribute damage/target structure is destroyed, disband party";
+            //                party.DisbandParty();
+            //                return true;
+            //            }
+            //        } else {
+            //            LocationGridTile targetTile = targetStructure.occupiedHexTile.hexTileOwner.GetRandomTileThatMeetCriteria(x => character.movementComponent.HasPathToEvenIfDiffRegion(x));
+            //            if(targetTile != null) {
+            //                bool hasJob = character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+            //                if (producedJob != null) {
+            //                    producedJob.SetIsThisAPartyJob(true);
+            //                }
+            //                return hasJob;
+            //            }
+            //        }
+            //    }
+
+            //    //log += $"\n-Party is not waiting";
+            //    //if (character.currentStructure == counterattackParty.target) {
+            //    //    log += $"\n-Character is already in target structure";
+
+            //    //} else {
+            //    //    log += $"\n-Character is not in target structure, go to it";
+            //    //    if (counterattackParty.target is LocationStructure targetStructure) {
+            //    //        LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(targetStructure.passableTiles);
+            //    //        character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+            //    //    }
+            //    //    //List<LocationGridTile> tileChoices = character.behaviourComponent.attackDemonicStructureTarget.tiles.Where(x => character.movementComponent.HasPathToEvenIfDiffRegion(x)).ToList();
+            //    //    //LocationGridTile targetTile = CollectionUtilities.GetRandomElement(tileChoices);
+            //    //    //character.jobComponent.TriggerAttackDemonicStructure(out producedJob, targetTile);
+            //    //}
+            //}
         } else {
             if (character.behaviourComponent.attackDemonicStructureTarget.hasBeenDestroyed || character.behaviourComponent.attackDemonicStructureTarget == null) {
                 log += $"\n-Demonic structure target is already destroyed";
@@ -141,7 +180,7 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
 
                 LocationStructure targetStructure = character.behaviourComponent.attackDemonicStructureTarget;
-                if (targetStructure.location == character.currentRegion) {
+                if (targetStructure.region == character.currentRegion) {
                     //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
                     if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
                         log += "\n-Has tile object that contribute damage";

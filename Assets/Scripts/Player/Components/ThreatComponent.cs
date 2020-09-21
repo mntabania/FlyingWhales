@@ -142,8 +142,8 @@ public class ThreatComponent {
         }
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
         CharacterManager.Instance.SetCurrentDemonicStructureTargetOfAngels(targetDemonicStructure as DemonicStructure);
-        Region region = targetDemonicStructure.location;
-        HexTile spawnHex = targetDemonicStructure.location.GetRandomUncorruptedPlainHex();
+        Region region = targetDemonicStructure.region;
+        HexTile spawnHex = targetDemonicStructure.region.GetRandomUncorruptedPlainHex();
         List<Character> characters = new List<Character>();
         int angelCount = 4; //UnityEngine.Random.Range(3, 6);
         for (int i = 0; i < angelCount; i++) {

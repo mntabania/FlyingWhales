@@ -333,14 +333,3 @@ public class KnockoutCharacter : GoapAction {
     //}
     //#endregion
 }
-
-public class KnockoutCharacterData : GoapActionData {
-    public KnockoutCharacterData() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
-    }
-}

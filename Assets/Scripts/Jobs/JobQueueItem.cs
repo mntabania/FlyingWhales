@@ -24,6 +24,7 @@ public abstract class JobQueueItem : ISavable {
     public bool doNotRecalculate { get; protected set; }
     public int invalidCounter { get; protected set; }
     public bool isThisAPartyJob { get; protected set; }
+    public bool isThisAGatheringJob { get; protected set; }
     public bool cannotBePushedBack { get; protected set; }
     public bool shouldBeRemovedFromSettlementWhenUnassigned { get; protected set; }
     //object pool
@@ -64,6 +65,7 @@ public abstract class JobQueueItem : ISavable {
         SetDoNotRecalculate(data.doNotRecalculate);
         invalidCounter = data.invalidCounter;
         SetIsThisAPartyJob(data.isThisAPartyJob);
+        SetIsThisAGatheringJob(data.isThisAGatheringJob);
         SetCannotBePushedBack(data.cannotBePushedBack);
         SetShouldBeRemovedFromSettlementWhenUnassigned(data.shouldBeRemovedFromSettlementWhenUnassigned);
         if (!string.IsNullOrEmpty(data.canTakeJobKey)) {
@@ -310,6 +312,9 @@ public abstract class JobQueueItem : ISavable {
     public void SetIsThisAPartyJob(bool state) {
         isThisAPartyJob = state;
     }
+    public void SetIsThisAGatheringJob(bool state) {
+        isThisAGatheringJob = state;
+    }
     #endregion
 
     #region Job Object Pool
@@ -333,6 +338,7 @@ public abstract class JobQueueItem : ISavable {
         SetFinishedSuccessfully(false);
         SetDoNotRecalculate(false);
         SetIsThisAPartyJob(false);
+        SetIsThisAGatheringJob(false);
         ResetInvalidCounter();
         Messenger.RemoveListener<JOB_TYPE, IPointOfInterest>(Signals.CHECK_JOB_APPLICABILITY, CheckJobApplicability);
         Messenger.RemoveListener<IPointOfInterest>(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, CheckJobApplicability);

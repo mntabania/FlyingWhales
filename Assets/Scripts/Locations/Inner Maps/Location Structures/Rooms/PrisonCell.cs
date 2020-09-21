@@ -109,7 +109,7 @@ namespace Inner_Maps.Location_Structures {
                 
                 int modifiedX = tortureChamber.entrance.localPlace.x - 2;
                 modifiedX = Mathf.Max(modifiedX, 0);
-                LocationGridTile outsideTile = tortureChamber.location.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
+                LocationGridTile outsideTile = tortureChamber.region.innerMap.map[modifiedX, tortureChamber.entrance.localPlace.y];
 
                 List<LocationGridTile> dropChoices = outsideTile
                     .GetTilesInRadius(7, includeCenterTile: true, includeTilesInDifferentStructure: false).Where(t =>

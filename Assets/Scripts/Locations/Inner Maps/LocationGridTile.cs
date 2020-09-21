@@ -598,10 +598,10 @@ namespace Inner_Maps {
                     if (!character.behaviourComponent.isAttackingDemonicStructure 
                         && character.homeSettlement != null && character.necromancerTrait == null && (character.race == RACE.HUMANS || character.race == RACE.ELVES)
                         && character.marker != null && character.carryComponent.IsNotBeingCarried() && character.isAlliedWithPlayer == false
-                        && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue)) 
+                        && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue)) 
                         //&& !InnerMapManager.Instance.HasWorldKnownDemonicStructure(mostImportantStructureOnTile)
                         && (Tutorial.TutorialManager.Instance.hasCompletedImportantTutorials || WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial)) {
-                        if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.HasActiveParty(PARTY_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
+                        if (character.faction != null && character.faction.isMajorNonPlayer && !character.faction.HasASettlementWithPartyQuest(PARTY_QUEST_TYPE.Counterattack) && !character.faction.HasActiveReportDemonicStructureJob(mostImportantStructureOnTile)) {
                             character.jobComponent.CreateReportDemonicStructure(mostImportantStructureOnTile);
                             return;
                         }
@@ -609,7 +609,7 @@ namespace Inner_Maps {
                     //If cannot report flee instead
                     //do not make characters that are allied with the player or attacking a demonic structure flee from corruption.
                     if (!character.behaviourComponent.isAttackingDemonicStructure 
-                        && (!character.partyComponent.hasParty || (character.partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack && character.partyComponent.currentParty.partyType != PARTY_TYPE.Rescue && character.partyComponent.currentParty.partyType != PARTY_TYPE.Heirloom_Hunt)) 
+                        && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
                         && character.isAlliedWithPlayer == false 
                         && character.necromancerTrait == null) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
@@ -918,10 +918,10 @@ namespace Inner_Maps {
         public LocationStructure GetNearestInteriorStructureFromThis() {
             LocationStructure nearestStructure = null;
             if (structure != null) {
-                if (structure.location.allStructures.Count > 0) {
+                if (structure.region.allStructures.Count > 0) {
                     float nearestDist = 99999f;
-                    for (int i = 0; i < structure.location.allStructures.Count; i++) {
-                        LocationStructure currStructure = structure.location.allStructures[i];
+                    for (int i = 0; i < structure.region.allStructures.Count; i++) {
+                        LocationStructure currStructure = structure.region.allStructures[i];
                         if (currStructure != structure && currStructure.isInterior) {
                             LocationGridTile randomPassableTile = currStructure.GetRandomPassableTile();
                             if (randomPassableTile != null && PathfindingManager.Instance.HasPath(this, randomPassableTile)) {
@@ -940,10 +940,10 @@ namespace Inner_Maps {
         public LocationStructure GetNearestInteriorStructureFromThisExcept(List<LocationStructure> exclusions) {
             LocationStructure nearestStructure = null;
             if (structure != null) {
-                if (structure.location.allStructures.Count > 0) {
+                if (structure.region.allStructures.Count > 0) {
                     float nearestDist = 99999f;
-                    for (int i = 0; i < structure.location.allStructures.Count; i++) {
-                        LocationStructure currStructure = structure.location.allStructures[i];
+                    for (int i = 0; i < structure.region.allStructures.Count; i++) {
+                        LocationStructure currStructure = structure.region.allStructures[i];
                         if (currStructure != structure && currStructure.isInterior) {
                             if (exclusions != null && exclusions.Contains(currStructure)) {
                                 continue;
@@ -965,10 +965,10 @@ namespace Inner_Maps {
         public LocationStructure GetNearestVillageStructureFromThisWithResidents(Character relativeTo = null) {
             LocationStructure nearestStructure = null;
             if (structure != null) {
-                if (structure.location.allStructures.Count > 0) {
+                if (structure.region.allStructures.Count > 0) {
                     float nearestDist = 99999f;
-                    for (int i = 0; i < structure.location.allStructures.Count; i++) {
-                        LocationStructure currStructure = structure.location.allStructures[i];
+                    for (int i = 0; i < structure.region.allStructures.Count; i++) {
+                        LocationStructure currStructure = structure.region.allStructures[i];
                         if (currStructure != structure && currStructure.settlementLocation != null && !(currStructure.settlementLocation is PlayerSettlement)
                             && currStructure.settlementLocation.owner != null && currStructure.settlementLocation.residents.Count > 0) {
                             if (currStructure.settlementLocation.owner.isMajorNonPlayer) {
@@ -1086,7 +1086,7 @@ namespace Inner_Maps {
             } else if (localPlace.y == 0) {
                 return DIRECTION.DOWN;
             }
-            throw new Exception("Cannot get the direction of " + ToString() + " in " + structure.location + " because this is not an edge tile");
+            throw new Exception("Cannot get the direction of " + ToString() + " in " + structure.region + " because this is not an edge tile");
         }
         public LocationGridTile GetRandomUnoccupiedNeighbor() {
             List<LocationGridTile> unoccupiedNeighbours = UnoccupiedNeighbours;

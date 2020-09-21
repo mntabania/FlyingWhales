@@ -53,7 +53,7 @@ namespace Locations.Settlements {
             List<LocationStructure> structuresInRegion = null;
             for (int i = 0; i < allStructures.Count; i++) {
                 LocationStructure structure = allStructures[i];
-                if(structure.location == region) {
+                if(structure.region == region) {
                     if(structuresInRegion == null) { structuresInRegion = new List<LocationStructure>(); }
                     structuresInRegion.Add(structure);
                 }

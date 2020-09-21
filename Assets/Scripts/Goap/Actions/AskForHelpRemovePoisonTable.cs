@@ -118,14 +118,3 @@ public class AskForHelpRemovePoisonTable : GoapAction {
    // }
    // #endregion
 }
-
-public class AskForHelpRemovePoisonTableData : GoapActionData {
-    public AskForHelpRemovePoisonTableData() : base(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget;
-    }
-}

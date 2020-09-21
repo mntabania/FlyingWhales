@@ -37,14 +37,3 @@ public class ScreamForHelp : GoapAction {
     }
     #endregion
 }
-
-public class ScreamForHelpData : GoapActionData {
-    public ScreamForHelpData() : base(INTERACTION_TYPE.SCREAM_FOR_HELP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

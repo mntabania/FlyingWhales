@@ -14,7 +14,7 @@ public class JobManager : BaseMonoBehaviour {
     private Dictionary<string, JobApplicabilityChecker> _applicabilityCheckers;
     
     public const string Can_Take_Bury_Job = "CanTakeBury";
-    public const string Can_Take_Join_Party = "CanTakeJoinParty";
+    public const string Can_Take_Join_Gathering = "CanTakeJoinGathering";
     public const string Can_Take_Remove_Status = "CanTakeRemoveStatus";
     public static string Can_Take_Counterattack = "CanTakeCounterattack";
     public static string Can_Take_Raid = "CanTakeRaid";
@@ -59,7 +59,7 @@ public class JobManager : BaseMonoBehaviour {
     public void Initialize() {
         ConstructInitialJobPool();
         _canTakeJobCheckers = new Dictionary<string, CanTakeJobChecker>() {
-            {Can_Take_Join_Party, new CanTakeJoinPartyJob()},
+            {Can_Take_Join_Gathering, new CanTakeJoinGathering()},
             {Can_Take_Remove_Status, new CanTakeRemoveStatus()},
             {Can_Take_Bury_Job, new CanTakeBuryJob()},
             {Can_Take_Counterattack, new CanTakeCounterattackJob()},

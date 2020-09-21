@@ -49,6 +49,9 @@ public class SleepOutside : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             return actor == poiTarget;
         }
         return false;
@@ -75,18 +78,4 @@ public class SleepOutside : GoapAction {
         goapNode.actor.traitContainer.RemoveTrait(goapNode.actor, "Resting");
     }
     #endregion
-}
-
-public class SleepOutsideData : GoapActionData {
-    public SleepOutsideData() : base(INTERACTION_TYPE.SLEEP_OUTSIDE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        return actor == poiTarget;
-    }
 }

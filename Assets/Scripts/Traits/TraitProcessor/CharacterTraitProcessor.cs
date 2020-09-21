@@ -19,11 +19,11 @@ namespace Traits {
 
             if (GameManager.Instance.gameHasStarted) {
                 if (trait.name == "Starving") {
-                    character.needsComponent.PlanFullnessRecoveryActions(character);
+                    character.needsComponent.PlanFullnessRecoveryActions();
                 } else if (trait.name == "Sulking" || trait.name == "Lonely") {
-                    character.needsComponent.PlanHappinessRecoveryActions(character);
+                    character.needsComponent.PlanHappinessRecoveryActions();
                 } else if (trait.name == "Exhausted") {
-                    character.needsComponent.PlanTirednessRecoveryActions(character);
+                    character.needsComponent.PlanTirednessRecoveryActions();
                 }
             }
             DefaultProcessOnAddTrait(traitable, trait, characterResponsible, gainedFromDoing, overrideDuration);
