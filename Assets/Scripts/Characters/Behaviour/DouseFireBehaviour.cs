@@ -44,7 +44,7 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
         for (int i = 0; i < character.behaviourComponent.dousingFireForSettlement.firesInSettlement.Count; i++) {
             IPointOfInterest currFire = character.behaviourComponent.dousingFireForSettlement.firesInSettlement[i];
             Burning burning = currFire.traitContainer.GetNormalTrait<Burning>("Burning");
-            if (burning != null && burning.douser == null) {
+            if (burning != null && burning.douser == null && currFire.worldObject != null) {
                 //only consider dousing fire that is not yet assigned
                 float dist = Vector2.Distance(character.worldObject.transform.position, currFire.worldObject.transform.position);
                 if (dist < nearest) {

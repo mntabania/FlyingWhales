@@ -4,16 +4,6 @@ namespace UtilityScripts {
         
         public static void ShowLocationInfo(Region region) {
             string summary = $"{region.name} Info:";
-            summary += $"\nActive burning sources {region.innerMap.activeBurningSources.Count.ToString()}";
-
-            // for (int i = 0; i < region.innerMap.activeBurningSources.Count; i++) {
-            //     BurningSource source = region.innerMap.activeBurningSources[i];
-            //     summary += $"\n{source}: ";
-            //     for (int j = 0; j < source.objectsOnFire.Count; j++) {
-            //         summary += $"\n\t{source.objectsOnFire[j]}";    
-            //     }
-            // }
-            
             List<NPCSettlement> settlements = GetSettlementsInRegion(region);
             summary += $"\n-----------------------------";
             summary += "\nLocations Info:";

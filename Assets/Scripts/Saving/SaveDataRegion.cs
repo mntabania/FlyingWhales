@@ -17,7 +17,7 @@ public class SaveDataRegion : SaveData<Region> {
     public string[] charactersAtLocationIDs;
     public SaveDataInnerMap innerMapSave;
 
-    public void Save(Region region) {
+    public override void Save(Region region) {
         persistentID = region.persistentID;
         id = region.id;
         name = region.name;

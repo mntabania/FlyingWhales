@@ -198,6 +198,10 @@ public static class Signals {
     /// Parameters Character 
     /// </summary>
     public static string CHARACTER_MARKER_DESTROYED = "OnCharacterMarkerDestroyed";
+    /// <summary>
+    /// Parameters Character 
+    /// </summary>
+    public static string CHARACTER_MARKER_EXPIRED = "OnCharacterMarkerExpired";
     #endregion
 
     #region UI

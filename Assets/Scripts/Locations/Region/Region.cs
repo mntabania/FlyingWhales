@@ -87,15 +87,24 @@ public class Region : ISavable, ILogFiller {
         for (int i = 0; i < saveDataRegion.residentIDs.Length; i++) {
             string residentID = saveDataRegion.residentIDs[i];
             Character resident = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(residentID);
-            residents.Add(resident);
-            summary = $"{summary}\n- {resident.name}";
+            if (resident != null) {
+                residents.Add(resident);
+                summary = $"{summary}\n- {resident.name}";    
+            } else {
+                Debug.LogWarning($"Trying to add resident at {name} with ID {residentID} but could not find character with that ID");
+            }
+            
         }
         summary = $"{summary}\nLoading characters at Location:";
         for (int i = 0; i < saveDataRegion.charactersAtLocationIDs.Length; i++) {
             string charactersAtLocationID = saveDataRegion.charactersAtLocationIDs[i];
             Character character = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(charactersAtLocationID);
-            charactersAtLocation.Add(character);
-            summary = $"{summary}\n- {character.name}";
+            if (character != null) {
+                charactersAtLocation.Add(character);
+                summary = $"{summary}\n- {character.name}";    
+            } else {
+                Debug.LogWarning($"Trying to add character at location {name} with ID {charactersAtLocationID} but could not find character with that ID");
+            }
         }
         Debug.Log(summary);
     }

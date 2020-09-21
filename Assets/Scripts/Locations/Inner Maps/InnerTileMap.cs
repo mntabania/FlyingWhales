@@ -71,7 +71,6 @@ namespace Inner_Maps {
         public GridGraph pathfindingGraph { get; set; }
         public Vector3 worldPos { get; private set; }
         public GameObject centerGo { get; private set; }
-        public List<BurningSource> activeBurningSources { get; private set; }
         public LocationGridTileCollection[,] locationGridTileCollections { get; protected set; }
         
         #region getters
@@ -85,7 +84,6 @@ namespace Inner_Maps {
             region = location;
             _xSeed = xSeed;
             _ySeed = ySeed;
-            activeBurningSources = new List<BurningSource>();
             
             //set tile map sorting orders
             groundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder;
@@ -698,8 +696,6 @@ namespace Inner_Maps {
             pathfindingGraph = null;
             Destroy(centerGo);
             centerGo = null;
-            activeBurningSources.Clear();
-            activeBurningSources = null;
             if (locationGridTileCollections != null) {
                 for (int i = 0; i < locationGridTileCollections.GetUpperBound(0); i++) {
                     for (int j = 0; j < locationGridTileCollections.GetUpperBound(1); j++) {

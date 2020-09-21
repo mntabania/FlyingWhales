@@ -54,7 +54,11 @@ namespace Traits {
             } else if (addTo is StructureWallObject structureWallObject) {
                 burningEffect = GameManager.Instance.CreateParticleEffectAt(structureWallObject, PARTICLE_EFFECT.Burning);
             }
+            sourceOfBurning?.AddObjectOnFire(owner);
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
+            if (addTo is Character) {
+                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+            }
         }
         #endregion
         
@@ -87,6 +91,9 @@ namespace Traits {
                 SetSourceOfBurning(sourceOfBurning, owner);
             }
             Messenger.AddListener(Signals.TICK_ENDED, PerTickEnded);
+            if (addedTo is Character) {
+                Messenger.AddListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+            }
             
             base.OnAddTrait(addedTo);
         }
@@ -96,6 +103,9 @@ namespace Traits {
             SetDouser(null); //reset douser so that any signals related to that will be removed.
             SetSourceOfBurning(null, removedFrom);
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
+            if (removedFrom is Character) {
+                Messenger.RemoveListener<Character>(Signals.CHARACTER_MARKER_EXPIRED, OnCharacterMarkerExpired);
+            }
             if (burningEffect) {
                 ObjectPoolManager.Instance.DestroyObject(burningEffect);
                 burningEffect = null;
@@ -183,6 +193,14 @@ namespace Traits {
                 source.AddObjectOnFire(obj);
             }
         }
+
+        #region Listeners
+        private void OnCharacterMarkerExpired(Character character) {
+            if (owner == character) {
+                //This is so that if the character that has this trait expires, he/she will lose this trait and be removed from the burning source's objects on fire. 
+                character.traitContainer.RemoveTrait(character, this);
+            }
+        }
         private void PerTickEnded() {
             if (_hasBeenRemoved) {
                 //if in case that this trait has been removed on the same tick that this runs, do not allow spreading.
@@ -212,7 +230,7 @@ namespace Traits {
                 }
             }
 
-            if (UnityEngine.Random.Range(0, 100) >= 4) {
+            if (Random.Range(0, 100) >= 4) {
                 return;
             }
             _burningSpreadChoices.Clear();
@@ -230,16 +248,7 @@ namespace Traits {
             }
 
         }
-        public void CharacterBurningProcess(Character character) {
-            if (character.traitContainer.HasTrait("Pyrophobic")) {
-                character.traitContainer.AddTrait(character, "Traumatized");
-                character.traitContainer.AddTrait(character, "Unconscious");
-
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn", null, LOG_TAG.Life_Changes);
-                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
-            }
-        }
+        #endregion
 
         #region Douser
         public void SetDouser(Character character) {
@@ -257,9 +266,21 @@ namespace Traits {
         }
         #endregion
 
+        #region Utilities
+        public void CharacterBurningProcess(Character character) {
+            if (character.traitContainer.HasTrait("Pyrophobic")) {
+                character.traitContainer.AddTrait(character, "Traumatized");
+                character.traitContainer.AddTrait(character, "Unconscious");
+
+                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn", null, LOG_TAG.Life_Changes);
+                log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddLogToDatabase();
+            }
+        }
         private bool ShouldSpreadFire() {
             return owner is IPointOfInterest && owner.gridTileLocation != null; //only spread fire of this is owned by a POI
         }
+        #endregion
 
     }
 }

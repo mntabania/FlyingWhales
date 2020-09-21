@@ -23,6 +23,9 @@ namespace UtilityScripts {
         public static string Unfiltered_Vision_Layer = "Non Filtered Vision";
         public static int Line_Of_Sight_Layer_Mask = LayerMask.GetMask("Unpassable", Filtered_Object_Layer, Unfiltered_Object_Layer);
         public static int Unpassable_Layer_Mask = LayerMask.GetMask("Unpassable");
+
+        public static WaitForSeconds waitFor2Seconds = new WaitForSeconds(2f);
+        public static WaitForSeconds waitFor5Seconds = new WaitForSeconds(5f);
         
         public static string GetNormalizedSingularRace(RACE race) {
             switch (race) {

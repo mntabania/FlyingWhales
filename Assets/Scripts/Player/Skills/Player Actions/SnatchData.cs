@@ -61,6 +61,7 @@ public class SnatchData : PlayerAction {
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 Messenger.Broadcast(Signals.FORCE_RELOAD_PLAYER_ACTIONS);
+                base.ActivateAbility(targetCharacter); //this is so that mana/charges/cooldown can be activated after picking structure to bring to
             }
         }
     }

@@ -175,7 +175,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int maxHP => combatComponent.maxHP;
     public Vector3 worldPosition => marker.transform.position;
     public Vector2 selectableSize => visuals.selectableSize;
-    public Transform worldObject => marker.transform;
+    public Transform worldObject {
+        get {
+            if (marker != null) {
+                return marker.transform;
+            }
+            return null;
+        }
+    }
 
     public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.CHARACTER;
     public RACE race => _raceSetting.race;
