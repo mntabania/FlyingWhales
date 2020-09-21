@@ -224,6 +224,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         thisTransform.position = data.worldPos;
         visualsParent.transform.localRotation = data.rotation;
         UpdateActionIcon();
+        UpdateAnimation();
         region.AddPendingAwareness(character);
         if (data.hasExpiry) {
             ScheduleExpiry(data.markerExpiryDate);

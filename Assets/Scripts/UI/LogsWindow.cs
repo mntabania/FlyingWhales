@@ -14,6 +14,7 @@ public class LogsWindow : MonoBehaviour {
     [SerializeField] private UIHoverPosition logHoverPosition;
     [SerializeField] private GameObject daySeparatorPrefab;
     [SerializeField] private TMP_InputField searchField;
+    [SerializeField] private Button clearBtn;
     private List<LogHistoryItem> logHistoryItems;
     private List<DaySeparator> daySeparators;
 
@@ -23,21 +24,36 @@ public class LogsWindow : MonoBehaviour {
     [SerializeField] private Toggle showAllToggle;
 
     private string _objPersistentID;
-    private List<LOG_TAG> enabledFilters;
+
+    private static string SharedSearch;
+    private static List<LOG_TAG> SharedEnabledFilters;
+    
     private void OnDisable() {
         filterGO.gameObject.SetActive(false);
+    }
+    private void OnEnable() {
+        //update text visual
+        searchField.text = SharedSearch;
+        //update filter visuals
+        for (int i = 0; i < allFilters.Length; i++) {
+            LogFilterItem filterItem = allFilters[i];
+            filterItem.SetIsOnWithoutNotify(SharedEnabledFilters.Contains(filterItem.filterType));
+        }
+        showAllToggle.SetIsOnWithoutNotify(AreAllFiltersOn());
     }
     public void Initialize() {
         logHistoryItems = new List<LogHistoryItem>();
         daySeparators = new List<DaySeparator>();
         searchField.onValueChanged.AddListener(OnEndSearchEdit);
-        
+        clearBtn.onClick.AddListener(OnClickClearSearch);
         //default logs filters to all be on.
-        enabledFilters = UtilityScripts.CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
+        if (SharedEnabledFilters == null) {
+            SharedEnabledFilters = UtilityScripts.CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
+        }
         showAllToggle.SetIsOnWithoutNotify(true);
         for (int i = 0; i < allFilters.Length; i++) {
             allFilters[i].SetIsOnWithoutNotify(true);
-        }
+        }    
     }
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Return) && EventSystem.current.currentSelectedGameObject == searchField.gameObject) {
@@ -56,7 +72,7 @@ public class LogsWindow : MonoBehaviour {
         logHistoryItems.Add(logHistoryItem);
     }
     public void UpdateAllHistoryInfo() {
-        List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, searchField.text, enabledFilters);
+        List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, SharedSearch, SharedEnabledFilters);
         int historyCount = logs?.Count ?? 0;
         int historyLastIndex = historyCount - 1;
         int missingItems = historyCount - logHistoryItems.Count;
@@ -111,7 +127,13 @@ public class LogsWindow : MonoBehaviour {
         //     //only update automatically if text changed to empty
         //     UpdateAllHistoryInfo();
         // }
+        SharedSearch = text;
+        clearBtn.gameObject.SetActive(!string.IsNullOrEmpty(SharedSearch)); //show clear button if there is a given text
         UpdateAllHistoryInfo();
+    }
+    private void OnClickClearSearch() {
+        searchField.SetTextWithoutNotify(string.Empty);
+        OnEndSearchEdit(string.Empty);
     }
     #endregion
 
@@ -121,9 +143,9 @@ public class LogsWindow : MonoBehaviour {
     }
     public void OnToggleFilter(bool isOn, LOG_TAG tag) {
         if (isOn) {
-            enabledFilters.Add(tag);
+            SharedEnabledFilters.Add(tag);
         } else {
-            enabledFilters.Remove(tag);
+            SharedEnabledFilters.Remove(tag);
         }
         showAllToggle.SetIsOnWithoutNotify(AreAllFiltersOn());
         UpdateAllHistoryInfo();
@@ -138,13 +160,13 @@ public class LogsWindow : MonoBehaviour {
         return true;
     }
     public void OnToggleAllFilters(bool state) {
-        enabledFilters.Clear();
+        SharedEnabledFilters.Clear();
         for (int i = 0; i < allFilters.Length; i++) {
             LogFilterItem filterItem = allFilters[i];
             filterItem.SetIsOnWithoutNotify(state);
             if (state) {
                 //if search all is enabled then add filter. If it is not do not do anything to the list since list was cleared beforehand.
-                enabledFilters.Add(filterItem.filterType);    
+                SharedEnabledFilters.Add(filterItem.filterType);    
             }
         }
         UpdateAllHistoryInfo();

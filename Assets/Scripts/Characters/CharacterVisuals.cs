@@ -48,6 +48,7 @@ public class CharacterVisuals {
    
     public CharacterVisuals(Character character, SaveDataCharacter data) {
         _owner = character;
+        _hasBlood = true;
         portraitSettings = data.portraitSettings;
         CreateHairMaterial();
         markerAnimations = new Dictionary<string, Sprite>();

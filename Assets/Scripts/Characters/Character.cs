@@ -5848,6 +5848,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void LoadCurrentlyDoingAction() {
         if (marker) {
             marker.UpdatePosition();
+            marker.UpdateAnimation();
         }
         if (currentActionNode != null) {
             if (currentActionNode.actionStatus == ACTION_STATUS.STARTED) {

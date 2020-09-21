@@ -196,6 +196,10 @@ namespace Databases.SQLDatabase {
             return logs;
         }
         public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags) {
+#if UNITY_EDITOR
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+#endif
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
             if (tags.Count == 0) {
@@ -207,6 +211,7 @@ namespace Databases.SQLDatabase {
             string commandStr = $"SELECT {BareBonesLogFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%'";
             //append string search condition
             if (!string.IsNullOrEmpty(textLike)) {
+                textLike = textLike.Replace("'", "''");
                 commandStr = $"{commandStr} AND rawText LIKE '%{textLike}%'";
             }
             //append tags condition.
@@ -232,6 +237,10 @@ namespace Databases.SQLDatabase {
                 logs.Add(log);
             }
             dataReader.Close();
+#if UNITY_EDITOR
+            timer.Stop();
+            Debug.Log($"Total log query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+#endif
             return logs;    
         }
         public Log GetLogWithPersistentID(string persistentID) {
