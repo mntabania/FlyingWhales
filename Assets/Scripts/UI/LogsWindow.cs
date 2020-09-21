@@ -126,7 +126,7 @@ public class LogsWindow : MonoBehaviour {
         for (int i = 0; i < missingItems; i++) {
             CreateNewLogHistoryItem();
             batches++;
-            if (batches > 50) {
+            if (batches > 200) {
                 batches = 0;
                 yield return null;
             }
@@ -158,7 +158,7 @@ public class LogsWindow : MonoBehaviour {
                 currItem.gameObject.SetActive(false);
             }
             batches++;
-            if (batches > 50) {
+            if (batches > 200) {
                 batches = 0;
                 yield return null;
             }

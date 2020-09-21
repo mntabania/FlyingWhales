@@ -195,7 +195,7 @@ namespace Databases.SQLDatabase {
             dataReader.Close();
             return logs;
         }
-        public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags) {
+        public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags, int limit = -1) {
 #if UNITY_EDITOR
             Stopwatch timer = new Stopwatch();
             timer.Start();
@@ -228,6 +228,9 @@ namespace Databases.SQLDatabase {
                 }
             }
             commandStr = $"{commandStr} ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
+            if (limit != -1) {
+                commandStr = $"{commandStr} LIMIT {limit.ToString()}";
+            }
             Debug.Log($"Trying to get logs that match criteria, full query command is {commandStr}");
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
