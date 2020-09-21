@@ -100,7 +100,7 @@ public class MonsterInfoUI : InfoUIBase {
         UpdateMonsterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
-        logsWindow.SetObjectPersistentID(activeMonster.persistentID);
+        logsWindow.OnParentMenuOpened(activeMonster.persistentID);
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
     }

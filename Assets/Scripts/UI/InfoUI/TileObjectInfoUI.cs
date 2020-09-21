@@ -98,7 +98,7 @@ public class TileObjectInfoUI : InfoUIBase {
         UpdateInfo();
         UpdateTraits();
         UpdateUsers();
-        logsWindow.SetObjectPersistentID(activeTileObject.persistentID);
+        logsWindow.OnParentMenuOpened(activeTileObject.persistentID);
         UpdateLogs();
     }
     #endregion

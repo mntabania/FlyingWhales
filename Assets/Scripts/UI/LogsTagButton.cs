@@ -59,6 +59,9 @@ public class LogsTagButton : PooledObject {
     public override void Reset() {
         hasPopulatedTagsGO = false;
         localTags.Clear();
-        UtilityScripts.Utilities.DestroyChildren(additionalTagsRect);
+        if (hasAdditionalTags) {
+            UtilityScripts.Utilities.DestroyChildren(additionalTagsRect);    
+        }
+        hasAdditionalTags = false;
     }
 }

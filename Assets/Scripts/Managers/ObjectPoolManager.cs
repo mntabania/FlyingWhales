@@ -29,7 +29,11 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //100
+            int size = 0;
+            if (currPrefab.name == "LogHistoryItem") {
+                size = 2000; //automatically create 200 log history items for performance in game
+            }
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, size, true, true, false); //100
             newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
         }
 
@@ -38,6 +42,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
             CreateNewPool(currPrefab, currPrefab.name, 0, true, true, false); //50    
         }
 
+        
+        
         ConstructGoapNodes();
         ConstructOpinionDataPool();
         ConstructTraitRemoveSchedulePool();

@@ -180,7 +180,7 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateTraits();
         UpdateRelationships();
         UpdateInventoryInfo();
-        _logsWindow.SetObjectPersistentID(_activeCharacter.persistentID);
+        _logsWindow.OnParentMenuOpened(_activeCharacter.persistentID);
         UpdateAllHistoryInfo();
         ResetAllScrollPositions();
         UpdateMoodSummary();

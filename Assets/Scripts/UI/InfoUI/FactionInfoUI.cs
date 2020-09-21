@@ -78,7 +78,7 @@ public class FactionInfoUI : InfoUIBase {
         UpdateAllCharacters();
         UpdateOwnedLocations();
         UpdateAllRelationships();
-        logsWindow.SetObjectPersistentID(activeFaction.persistentID);
+        logsWindow.OnParentMenuOpened(activeFaction.persistentID);
         UpdateAllHistoryInfo();
         ResetScrollPositions();
     }

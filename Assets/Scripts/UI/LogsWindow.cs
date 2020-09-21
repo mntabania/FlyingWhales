@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -31,16 +34,6 @@ public class LogsWindow : MonoBehaviour {
     private void OnDisable() {
         filterGO.gameObject.SetActive(false);
     }
-    private void OnEnable() {
-        //update text visual
-        searchField.text = SharedSearch;
-        //update filter visuals
-        for (int i = 0; i < allFilters.Length; i++) {
-            LogFilterItem filterItem = allFilters[i];
-            filterItem.SetIsOnWithoutNotify(SharedEnabledFilters.Contains(filterItem.filterType));
-        }
-        showAllToggle.SetIsOnWithoutNotify(AreAllFiltersOn());
-    }
     public void Initialize() {
         logHistoryItems = new List<LogHistoryItem>();
         daySeparators = new List<DaySeparator>();
@@ -60,8 +53,16 @@ public class LogsWindow : MonoBehaviour {
             DoSearch();
         }
     }
-    public void SetObjectPersistentID(string id) {
+    public void OnParentMenuOpened(string id) {
         _objPersistentID = id;
+        //update text visual
+        searchField.SetTextWithoutNotify(SharedSearch);
+        //update filter visuals
+        for (int i = 0; i < allFilters.Length; i++) {
+            LogFilterItem filterItem = allFilters[i];
+            filterItem.SetIsOnWithoutNotify(SharedEnabledFilters.Contains(filterItem.filterType));
+        }
+        showAllToggle.SetIsOnWithoutNotify(AreAllFiltersOn());
     }
     
     private void CreateNewLogHistoryItem() {
@@ -72,18 +73,70 @@ public class LogsWindow : MonoBehaviour {
         logHistoryItems.Add(logHistoryItem);
     }
     public void UpdateAllHistoryInfo() {
+        // Stopwatch timer = new Stopwatch();
+        // timer.Start();
+        // List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, SharedSearch, SharedEnabledFilters);
+        // int historyCount = logs?.Count ?? 0;
+        // int historyLastIndex = historyCount - 1;
+        // int missingItems = historyCount - logHistoryItems.Count;
+        // for (int i = 0; i < missingItems; i++) {
+        //     CreateNewLogHistoryItem();
+        // }
+        // for (int i = 0; i < daySeparators.Count; i++) {
+        //     ObjectPoolManager.Instance.DestroyObject(daySeparators[i]);
+        // }
+        // daySeparators.Clear();
+        //
+        // int currentDay = 0;
+        // for (int i = 0; i < logHistoryItems.Count; i++) {
+        //     LogHistoryItem currItem = logHistoryItems[i];
+        //     currItem.ManualReset();
+        //     if(logs != null && i < historyCount) {
+        //         Log currLog = logs[historyLastIndex - i];
+        //         currItem.gameObject.SetActive(true);
+        //         currItem.SetLog(currLog);
+        //         currItem.SetHoverPosition(logHoverPosition);
+        //         if (currLog.gameDate.day != currentDay) {
+        //             int siblingIndex = currItem.transform.GetSiblingIndex();
+        //             if (siblingIndex < 0) {
+        //                 siblingIndex = 0;
+        //             }
+        //             CreateDaySeparator(currLog.gameDate.day, siblingIndex);
+        //             currentDay = currLog.gameDate.day;
+        //         }
+        //     } else {
+        //         currItem.gameObject.SetActive(false);
+        //     }
+        // }
+        // timer.Stop();
+        // UnityEngine.Debug.Log($"Log items creation time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+        UIManager.Instance.StartCoroutine(UpdateAllHistoryInfoCoroutine());
+    }
+
+    private IEnumerator UpdateAllHistoryInfoCoroutine() {
+#if UNITY_EDITOR
+        Stopwatch timer = new Stopwatch();
+        timer.Start();
+#endif
         List<Log> logs = DatabaseManager.Instance.mainSQLDatabase.GetLogsThatMatchCriteria(_objPersistentID, SharedSearch, SharedEnabledFilters);
         int historyCount = logs?.Count ?? 0;
         int historyLastIndex = historyCount - 1;
         int missingItems = historyCount - logHistoryItems.Count;
+        int batches = 0;
         for (int i = 0; i < missingItems; i++) {
             CreateNewLogHistoryItem();
+            batches++;
+            if (batches > 50) {
+                batches = 0;
+                yield return null;
+            }
         }
         for (int i = 0; i < daySeparators.Count; i++) {
             ObjectPoolManager.Instance.DestroyObject(daySeparators[i]);
         }
         daySeparators.Clear();
-        
+
+        batches = 0;
         int currentDay = 0;
         for (int i = 0; i < logHistoryItems.Count; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
@@ -104,8 +157,18 @@ public class LogsWindow : MonoBehaviour {
             } else {
                 currItem.gameObject.SetActive(false);
             }
+            batches++;
+            if (batches > 50) {
+                batches = 0;
+                yield return null;
+            }
         }
+#if UNITY_EDITOR
+        timer.Stop();
+        UnityEngine.Debug.Log($"Log items creation time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+#endif
     }
+    
     private void CreateDaySeparator(int day, int indexInHierarchy) {
         //create day separator prefab
         GameObject dayGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(daySeparatorPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
