@@ -421,7 +421,7 @@ public class BehaviourComponent : CharacterComponent {
                 //if job allows digging do not check pathfinding, always allow it.
                 //TODO: Add some way to unify this checking instead of using JOB_TYPEs
                 return true;
-            } else if (goapPlanJob.jobType == JOB_TYPE.PRODUCE_FOOD) {
+            } else if (goapPlanJob.jobType == JOB_TYPE.PRODUCE_FOOD || goapPlanJob.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
                 //Do not check path towards produce food target, since target isn't really used for the job,
                 //and can produce problems if that object has been destroyed.
                 return true;

@@ -100,6 +100,9 @@ public class Invite : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             Character target = poiTarget as Character;
             if (target == actor) {
                 return false;
@@ -124,31 +127,4 @@ public class Invite : GoapAction {
         return false;
     }
     #endregion
-}
-
-public class InviteData : GoapActionData {
-    public InviteData() : base(INTERACTION_TYPE.INVITE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        Character target = poiTarget as Character;
-        if (target == actor) {
-            return false;
-        }
-        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-        //    return false;
-        //}
-        if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            return false;
-        }
-        if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
-            return false;
-        }
-        return target.carryComponent.IsNotBeingCarried();
-    }
 }

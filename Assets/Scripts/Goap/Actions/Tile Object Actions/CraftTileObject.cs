@@ -167,14 +167,3 @@ public class CraftTileObject : GoapAction {
     #endregion
 
 }
-
-public class CraftTileObjectData : GoapActionData {
-    public CraftTileObjectData() : base(INTERACTION_TYPE.CRAFT_TILE_OBJECT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.state == POI_STATE.INACTIVE;
-    }
-}

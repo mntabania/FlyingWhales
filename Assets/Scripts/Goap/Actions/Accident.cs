@@ -58,14 +58,3 @@ public class Accident : GoapAction {
     }
     #endregion
 }
-
-public class AccidentData : GoapActionData {
-    public AccidentData() : base(INTERACTION_TYPE.ACCIDENT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

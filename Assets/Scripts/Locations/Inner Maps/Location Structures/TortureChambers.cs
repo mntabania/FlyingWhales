@@ -53,10 +53,10 @@ namespace Inner_Maps.Location_Structures {
             _tortureChamberStructureObject = structureObj as TortureChamberStructureObject;
         }
         public override void OnBuiltNewStructure() {
-            _tortureChamberStructureObject.SetEntrance(location.innerMap);
+            _tortureChamberStructureObject.SetEntrance(region.innerMap);
         }
         public override void OnDoneLoadStructure() {
-            _tortureChamberStructureObject.SetEntrance(location.innerMap);
+            _tortureChamberStructureObject.SetEntrance(region.innerMap);
         }
         #endregion
 

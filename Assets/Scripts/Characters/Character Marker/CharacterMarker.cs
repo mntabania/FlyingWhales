@@ -236,7 +236,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         gameObject.transform.SetParent(tile.parentMap.objectsParent);
         //Always add to region characters now because in UpdatePosition, the character will be added to the structure characters at location list
         //It will be inconsistent if the character is added to that list but will not be added to the region's characters at location list
-        tile.structure.location.AddCharacterToLocation(character);
+        tile.structure.region.AddCharacterToLocation(character);
 
         //if (addToLocation) {
         //    tile.structure.location.AddCharacterToLocation(character);
@@ -260,7 +260,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //}
         UpdateActionIcon();
         SetCollidersState(true);
-        tile.structure.location.AddPendingAwareness(character);
+        tile.structure.region.AddPendingAwareness(character);
         character.reactionComponent.UpdateHiddenState();
     }
     #endregion
@@ -509,7 +509,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         //If any time a character goes to a structure outside the trap structure, the trap structure data will be cleared out
         if (character.trapStructure.IsTrappedAndTrapStructureIsNot(destinationTile.structure)) {
-            character.trapStructure.SetStructureAndDuration(null, 0);
+            character.trapStructure.ResetAllTrapStructures();
+        }
+        if (destinationTile.collectionOwner.isPartOfParentRegionMap && character.trapStructure.IsTrappedAndTrapHexIsNot(destinationTile.collectionOwner.partOfHextile.hexTileOwner)) {
+            character.trapStructure.ResetAllTrapHexes();
         }
         pathfindingAI.ClearAllCurrentPathData();
         //pathfindingAI.SetNotAllowedStructures(notAllowedStructures);
@@ -1599,8 +1602,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             chosenTile = character.GetRandomLocationGridTileWithPath();
         }
         if (chosenTile != null) {
-            if (character.currentRegion != chosenTile.structure.location) {
-                if (character.movementComponent.MoveToAnotherRegion(chosenTile.structure.location, () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
+            if (character.currentRegion != chosenTile.structure.region) {
+                if (character.movementComponent.MoveToAnotherRegion(chosenTile.structure.region, () => GoTo(chosenTile, OnFinishedTraversingFleePath)) == false) {
                     OnStartFlee();
                 }
             } else {

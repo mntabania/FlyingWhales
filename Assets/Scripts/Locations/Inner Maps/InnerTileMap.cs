@@ -581,24 +581,50 @@ namespace Inner_Maps {
                 
                 //trees and shrubs
                 if (currTile.objHere == null && currTile.HasNeighbouringWalledStructure() == false) {
-                    if (sampleDetail < 0.5f) {
-                        if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
-                            if (Random.Range(0, 100) < 50) {
-                                //shrubs
-                                if (region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA) {
-                                    TileBase tileBase = null;
-                                    //plant or herb plant
-                                    tileBase = Random.Range(0, 2) == 0 ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
-                                    detailsTilemap.SetTile(currTile.localPlace, tileBase);
-                                    Assert.IsNotNull(currTile.structure);
-                                    //place tile object
-                                    ConvertDetailToTileObject(currTile);
-                                    continue; //skip next processing, since detail was already placed.
+                    //if (sampleDetail < 0.5f) {
+                    //    if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
+                    //        if (Random.Range(0, 100) < 50) {
+                    //            //shrubs
+                    //            if (region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA) {
+                    //                TileBase tileBase = null;
+                    //                //plant or herb plant
+                    //                tileBase = Random.Range(0, 2) == 0 ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                    //                detailsTilemap.SetTile(currTile.localPlace, tileBase);
+                    //                Assert.IsNotNull(currTile.structure);
+                    //                //place tile object
+                    //                ConvertDetailToTileObject(currTile);
+                    //                continue; //skip next processing, since detail was already placed.
+                    //            }
+                    //        }
+                    //    }
+                    //} 
+
+                    if (sampleDetail < 0.55f) {
+                        if (Random.Range(0, 100) < 50) {
+                            //shrubs
+                            if (currTile.groundType == LocationGridTile.Ground_Type.Grass && region.coreTile.biomeType != BIOMES.SNOW && region.coreTile.biomeType != BIOMES.TUNDRA && region.coreTile.biomeType != BIOMES.DESERT) {
+                                Assert.IsNotNull(currTile.structure);
+                                TileBase tileBase = null;
+                                //plant or herb plant
+                                
+                                tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
+                                if (region.coreTile.biomeType == BIOMES.FOREST || region.coreTile.biomeType == BIOMES.GRASSLAND) {
+                                    if(tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
+                                        if (UtilityScripts.GameUtilities.RollChance(30)) {
+                                            TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
+                                            currTile.structure.AddPOI(obj, currTile);
+                                        } else {
+                                            detailsTilemap.SetTile(currTile.localPlace, tileBase);
+                                            //place tile object
+                                            ConvertDetailToTileObject(currTile);
+                                        }
+                                    }
                                 }
+                                continue; //skip next processing, since detail was already placed.
                             }
                         }
-                    } 
-                    
+                    }
+
                     if (Random.Range(0, 100) < 3) {
                         detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(region));
                         Assert.IsNotNull(currTile.structure);

@@ -14,14 +14,14 @@ namespace Inner_Maps.Location_Structures {
         #region Initialization
         public override void Initialize() {
             base.Initialize();
-            location.AllowNotifications();
+            region.AllowNotifications();
         }
         #endregion
 
         #region Overrides
         protected override void DestroyStructure() {
             base.DestroyStructure();
-            location.BlockNotifications();
+            region.BlockNotifications();
         }
         #endregion
     }

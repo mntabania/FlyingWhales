@@ -50,6 +50,9 @@ public class Dance : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             return actor == poiTarget && (actor.moodComponent.moodState == MOOD_STATE.Normal);
         }
         return false;
@@ -68,15 +71,4 @@ public class Dance : GoapAction {
         goapNode.actor.needsComponent.AdjustDoNotGetBored(-1);
     }
     #endregion
-}
-
-public class DanceData : GoapActionData {
-    public DanceData() : base(INTERACTION_TYPE.DANCE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
 }

@@ -44,7 +44,10 @@ namespace Interrupts {
             if(actor != target && witness != target && target is Character targetCharacter) {
                 if(actor.relationshipContainer.GetAwarenessState(targetCharacter) == AWARENESS_STATE.Missing) {
                     if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        witness.jobComponent.TriggerRescueJob(targetCharacter);
+                        if(witness.homeSettlement != null && !witness.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
+                            PartyManager.Instance.CreateRescuePartyQuest(witness.homeSettlement, targetCharacter);
+                        }
+                        //witness.jobComponent.TriggerRescueJob(targetCharacter);
                     }
                 }
             }

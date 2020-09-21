@@ -121,7 +121,10 @@ namespace Traits {
         public virtual string TriggerFlaw(Character character) {
             if (character.trapStructure.IsTrapped()) {
                 //clear all trap structures when triggering flaw
-                character.trapStructure.SetStructureAndDuration(null, 0);
+                character.trapStructure.ResetAllTrapStructures();
+            }
+            if (character.trapStructure.IsTrappedInHex()) {
+                character.trapStructure.ResetAllTrapHexes();
             }
             return "flaw_effect";
         }

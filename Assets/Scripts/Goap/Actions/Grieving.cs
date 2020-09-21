@@ -24,14 +24,3 @@ public class Grieving : GoapAction {
     }
     #endregion
 }
-
-public class GrievingData : GoapActionData {
-    public GrievingData() : base(INTERACTION_TYPE.GRIEVING) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

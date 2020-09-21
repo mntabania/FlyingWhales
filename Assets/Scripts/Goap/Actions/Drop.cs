@@ -68,6 +68,14 @@ public class Drop : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(targetCharacter);
     }
+    public override void OnMoveToDoAction(ActualGoapNode node) {
+        base.OnMoveToDoAction(node);
+        if(node.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
+           if(node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
+                node.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(node.actor);
+            }
+        }
+    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
@@ -187,15 +195,4 @@ public class Drop : GoapAction {
         }
     }
     #endregion
-}
-
-public class DropData : GoapActionData {
-    public DropData() : base(INTERACTION_TYPE.DROP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget;
-    }
 }

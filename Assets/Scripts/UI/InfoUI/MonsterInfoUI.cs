@@ -375,7 +375,7 @@ public class MonsterInfoUI : InfoUIBase {
         summary = $"{summary}{("\nPriority Jobs: " + activeMonster.jobComponent.GetPriorityJobs())}";
         summary = $"{summary}{("\nSecondary Jobs: " + activeMonster.jobComponent.GetSecondaryJobs())}";
         summary = $"{summary}{("\nAble Jobs: " + activeMonster.jobComponent.GetAbleJobs())}";
-        summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName + ": " + (activeMonster.partyComponent.currentParty.IsLeader(activeMonster) ? "Leader" : "Member (Leader: " + activeMonster.partyComponent.currentParty.leader.name + ")") : "None"))}";
+        summary = $"{summary}{("\nParty: " + (activeMonster.partyComponent.hasParty ? activeMonster.partyComponent.currentParty.partyName : "None") + ", State: " + activeMonster.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeMonster.partyComponent.currentParty?.members.Count)}";
         summary = $"{summary}{("\nPrimary Bed: " + (activeMonster.tileObjectComponent.primaryBed != null ? activeMonster.tileObjectComponent.primaryBed.name : "None"))}";
         summary = $"{summary}{("\nEnable Digging: " + (activeMonster.movementComponent.enableDigging))}";
         summary = $"{summary}{("\nAvoid Settlements: " + (activeMonster.movementComponent.avoidSettlements))}";

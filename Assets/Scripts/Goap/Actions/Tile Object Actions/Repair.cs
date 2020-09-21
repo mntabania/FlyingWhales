@@ -144,14 +144,3 @@ public class Repair : GoapAction {
     #endregion
 
 }
-
-public class RepairData : GoapActionData {
-    public RepairData() : base(INTERACTION_TYPE.REPAIR) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        //requirementAction = Requirement;
-    }
-
-    //private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-    //    return actor == poiTarget;
-    //}
-}

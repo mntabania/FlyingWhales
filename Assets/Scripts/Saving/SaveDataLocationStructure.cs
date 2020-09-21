@@ -30,7 +30,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         name = structure.name;
         nameWithoutID = structure.nameWithoutID;
         structureType = structure.structureType;
-        regionLocationID = structure.location.persistentID;
+        regionLocationID = structure.region.persistentID;
         settlementLocationID = structure.settlementLocation?.persistentID ?? string.Empty;
         
         //structure tags

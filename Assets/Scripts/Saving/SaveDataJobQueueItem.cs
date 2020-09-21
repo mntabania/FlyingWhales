@@ -21,6 +21,7 @@ public abstract class SaveDataJobQueueItem : SaveData<JobQueueItem>, ISavableCou
     public bool doNotRecalculate;
     public int invalidCounter;
     public bool isThisAPartyJob;
+    public bool isThisAGatheringJob;
     public bool cannotBePushedBack;
     public bool shouldBeRemovedFromSettlementWhenUnassigned;
 
@@ -61,6 +62,7 @@ public abstract class SaveDataJobQueueItem : SaveData<JobQueueItem>, ISavableCou
         doNotRecalculate = job.doNotRecalculate;
         invalidCounter = job.invalidCounter;
         isThisAPartyJob = job.isThisAPartyJob;
+        isThisAGatheringJob = job.isThisAGatheringJob;
         cannotBePushedBack = job.cannotBePushedBack;
         shouldBeRemovedFromSettlementWhenUnassigned = job.shouldBeRemovedFromSettlementWhenUnassigned;
 

@@ -41,14 +41,3 @@ public class ReturnHomeLocation : GoapAction {
     #endregion
 
 }
-
-public class ReturnHomeLocationData : GoapActionData {
-    public ReturnHomeLocationData() : base(INTERACTION_TYPE.RETURN_HOME_LOCATION) {
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

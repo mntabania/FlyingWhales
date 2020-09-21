@@ -49,9 +49,3 @@ public class ReturnHome : GoapAction {
     //}
     #endregion
 }
-
-public class ReturnHomeData : GoapActionData {
-    public ReturnHomeData() : base(INTERACTION_TYPE.RETURN_HOME) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-    }
-}

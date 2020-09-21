@@ -27,11 +27,35 @@ public class Butcher : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = "";
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
-            if (actor.partyComponent.currentParty == null) {
+            if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 costLog += $" +2000(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
                 return 2000;
+            }
+        }
+        if (job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+            if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
+                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
+                int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+
+                if (distance > distanceToCheck) {
+                    //target is at structure that character is avoiding
+                    costLog += $" +2000(Location of target too far from actor)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
+            }
+            if (target is Character characterTarget) {
+               if(actor.partyComponent.hasParty && actor.partyComponent.currentParty.IsMember(characterTarget)) {
+                    //Should not butcher party members when party is camping
+                    costLog += $" +2000(Cannot butcher party member when camping)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
             }
         }
         costLog = $"\n{name} {target.nameWithID}:";
@@ -321,9 +345,15 @@ public class Butcher : GoapAction {
         }
 
         FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation);
-        if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
-            goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
-            goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+        if (goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
+                goapNode.actor.jobComponent.TryCreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
+            }
+        } else {
+            if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter && !(foodPile is HumanMeat) && !(foodPile is ElfMeat)) {
+                goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+            }
         }
         
         //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
@@ -333,34 +363,4 @@ public class Butcher : GoapAction {
         }
     }
     #endregion
-}
-
-public class ButcherData : GoapActionData {
-    public ButcherData() : base(INTERACTION_TYPE.BUTCHER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        Character targetCharacter = null;
-        if (poiTarget is Character) {
-            targetCharacter = poiTarget as Character;
-        } else if (poiTarget is Tombstone) {
-            targetCharacter = (poiTarget as Tombstone).character;
-        }
-        if (targetCharacter != null) {
-            if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
-                //return true;
-                if (actor.traitContainer.HasTrait("Cannibal")) {
-                    return true;
-                }
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
 }

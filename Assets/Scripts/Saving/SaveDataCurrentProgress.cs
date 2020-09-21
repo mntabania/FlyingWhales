@@ -47,10 +47,12 @@ public class SaveDataCurrentProgress {
             { OBJECT_TYPE.Action, new SaveDataActionHub() },
             { OBJECT_TYPE.Interrupt, new SaveDataInterruptHub() },
             { OBJECT_TYPE.Party, new SaveDataPartyHub() },
+            { OBJECT_TYPE.Party_Quest, new SaveDataPartyQuestHub() },
             { OBJECT_TYPE.Crime, new SaveDataCrimeHub() },
             { OBJECT_TYPE.Character, new SaveDataCharacterHub() },
             { OBJECT_TYPE.Trait, new SaveDataTraitHub() },
             { OBJECT_TYPE.Job, new SaveDataJobHub() },
+            { OBJECT_TYPE.Gathering, new SaveDataGatheringHub() },
         };
     }
     #endregion
@@ -287,6 +289,17 @@ public class SaveDataCurrentProgress {
             }
         }
     }
+    public void LoadPartyQuests() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Party_Quest)) {
+            if (objectHub[OBJECT_TYPE.Party_Quest] is SaveDataPartyQuestHub hub) {
+                Dictionary<string, SaveDataPartyQuest> saved = hub.hub;
+                foreach (SaveDataPartyQuest data in saved.Values) {
+                    PartyQuest quest = data.Load();
+                    DatabaseManager.Instance.partyQuestDatabase.AddPartyQuest(quest);
+                }
+            }
+        }
+    }
     public void LoadCrimes() {
         if (objectHub.ContainsKey(OBJECT_TYPE.Crime)) {
             if (objectHub[OBJECT_TYPE.Crime] is SaveDataCrimeHub hub) {
@@ -304,6 +317,17 @@ public class SaveDataCurrentProgress {
                 Dictionary<string, SaveDataCharacter> saved = hub.hub;
                 foreach (SaveDataCharacter data in saved.Values) {
                     Character character = data.Load();
+                }
+            }
+        }
+    }
+    public void LoadGatherings() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Gathering)) {
+            if (objectHub[OBJECT_TYPE.Gathering] is SaveDataGatheringHub hub) {
+                Dictionary<string, SaveDataGathering> saved = hub.hub;
+                foreach (SaveDataGathering data in saved.Values) {
+                    Gathering gathering = data.Load();
+                    DatabaseManager.Instance.gatheringDatabase.AddGathering(gathering);
                 }
             }
         }
@@ -362,9 +386,21 @@ public class SaveDataCurrentProgress {
             item.Value.LoadReferences(saveData);
         }
     }
+    public void LoadPartyQuestReferences() {
+        foreach (KeyValuePair<string, PartyQuest> item in DatabaseManager.Instance.partyQuestDatabase.allPartyQuests) {
+            SaveDataPartyQuest saveData = GetFromSaveHub<SaveDataPartyQuest>(OBJECT_TYPE.Party_Quest, item.Key);
+            item.Value.LoadReferences(saveData);
+        }
+    }
     public void LoadCrimeReferences() {
         foreach (KeyValuePair<string, CrimeData> item in DatabaseManager.Instance.crimeDatabase.allCrimes) {
             SaveDataCrimeData saveData = GetFromSaveHub<SaveDataCrimeData>(OBJECT_TYPE.Crime, item.Key);
+            item.Value.LoadReferences(saveData);
+        }
+    }
+    public void LoadGatheringReferences() {
+        foreach (KeyValuePair<string, Gathering> item in DatabaseManager.Instance.gatheringDatabase.allGatherings) {
+            SaveDataGathering saveData = GetFromSaveHub<SaveDataGathering>(OBJECT_TYPE.Gathering, item.Key);
             item.Value.LoadReferences(saveData);
         }
     }

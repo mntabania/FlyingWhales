@@ -109,14 +109,3 @@ public class Carry : GoapAction {
                     || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !poiTarget.mapObjectVisual;
     }
 }
-
-public class CarryData : GoapActionData {
-    public CarryData() : base(INTERACTION_TYPE.CARRY) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && poiTarget is Character && !(poiTarget as Character).canPerform; //(poiTarget as Character).traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-    }
-}

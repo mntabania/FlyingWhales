@@ -413,20 +413,3 @@ public class DrinkBlood : GoapAction {
     //}
     //#endregion
 }
-
-public class DrinkBloodData : GoapActionData {
-    public DrinkBloodData() : base(INTERACTION_TYPE.DRINK_BLOOD) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation == null || actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        if (actor != poiTarget) {
-            return true;
-        }
-        return false;
-    }
-}

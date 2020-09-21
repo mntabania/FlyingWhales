@@ -23,7 +23,7 @@ public class Scrap : GoapAction {
     }
 
     
-#region Overrides
+    #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.PRODUCE_STONE, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
     }
@@ -41,8 +41,9 @@ public class Scrap : GoapAction {
         return UtilityScripts.Utilities.Rng.Next(15, 31);
     }
     #endregion
+
     #region Requirements
-   protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if (poiTarget is TileObject) {
@@ -57,7 +58,7 @@ public class Scrap : GoapAction {
                 if (item.gridTileLocation == null) {
                     return false;
                 }
-                if (item.gridTileLocation.structure.location.IsRequiredByLocation(item)) {
+                if (item.gridTileLocation.structure.region.IsRequiredByLocation(item)) {
                     return false;
                 }
                 return true;
@@ -97,30 +98,4 @@ public class Scrap : GoapAction {
         // stonePile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.STONE_PILE);
     }
     #endregion
-}
-
-public class ScrapData : GoapActionData {
-    public ScrapData() : base(INTERACTION_TYPE.SCRAP) {
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget is TileObject) {
-            TileObject item = poiTarget as TileObject;
-            if (item.gridTileLocation != null && item.gridTileLocation.structure.location.IsRequiredByLocation(item)) {
-                return false;
-            }
-        }
-        if (poiTarget.gridTileLocation != null) {
-            if (poiTarget.factionOwner != null) {
-                if (actor.faction == poiTarget.factionOwner) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
 }

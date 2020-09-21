@@ -7,6 +7,7 @@ public class PartyComponent : CharacterComponent {
 
     #region getters
     public bool hasParty => currentParty != null;
+    public bool isActiveMember => IsPartyActiveAndOwnerActivePartOfQuest();
     #endregion
 
     public PartyComponent() {
@@ -15,9 +16,20 @@ public class PartyComponent : CharacterComponent {
     public PartyComponent(SaveDataPartyComponent data) {
     }
 
+    #region General
     public void SetCurrentParty(Party party) {
         currentParty = party;
     }
+    private bool IsPartyActiveAndOwnerActivePartOfQuest() {
+        if (hasParty) {
+            return currentParty.isActive && currentParty.DidMemberJoinQuest(owner) && currentParty.IsMemberActive(owner);
+        }
+        return false;
+    }
+    public bool IsAMemberOfParty(Party party) {
+        return currentParty == party;
+    }
+    #endregion
 
     #region Loading
     public void LoadReferences(SaveDataPartyComponent data) {
@@ -34,7 +46,7 @@ public class SaveDataPartyComponent : SaveData<PartyComponent> {
 
     #region Overrides
     public override void Save(PartyComponent data) {
-        if (data.currentParty != null) {
+        if (data.hasParty) {
             currentParty = data.currentParty.persistentID;
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.currentParty);
         }

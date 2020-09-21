@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
-public class JoinParty : GoapAction {
+public class JoinGathering : GoapAction {
 
-    public JoinParty() : base(INTERACTION_TYPE.JOIN_PARTY) {
+    public JoinGathering() : base(INTERACTION_TYPE.JOIN_GATHERING) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

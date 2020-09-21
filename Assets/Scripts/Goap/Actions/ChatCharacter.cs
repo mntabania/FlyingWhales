@@ -525,9 +525,3 @@ public class ChatCharacter : GoapAction {
     //    }
     //    #endregion
 }
-
-public class ChatCharacterData : GoapActionData {
-    public ChatCharacterData() : base(INTERACTION_TYPE.CHAT_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}

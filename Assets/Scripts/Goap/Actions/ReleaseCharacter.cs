@@ -66,26 +66,11 @@ public class ReleaseCharacter : GoapAction {
         target.traitContainer.RemoveStatusAndStacks(target, "Frozen");
         target.traitContainer.RemoveStatusAndStacks(target, "Ensnared");
 
-        if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty is RescueParty rescueParty) {
-            if(rescueParty.targetCharacter == goapNode.poiTarget) {
-                rescueParty.DisbandParty();
+        if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RescuePartyQuest quest) {
+            if(quest.targetCharacter == goapNode.poiTarget) {
+                goapNode.actor.partyComponent.currentParty.GoBackHomeAndEndQuest();
             }
         }
     }
     #endregion
-}
-
-public class ReleaseCharacterData : GoapActionData {
-    public ReleaseCharacterData() : base(INTERACTION_TYPE.RELEASE_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget is Character) {
-            Character target = poiTarget as Character;
-            return target.traitContainer.HasTrait("Restrained");
-        }
-        return false;
-    }
 }

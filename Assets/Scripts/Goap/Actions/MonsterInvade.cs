@@ -44,12 +44,12 @@ public class MonsterInvade : GoapAction {
     public void AfterInvadeSuccess(ActualGoapNode goapNode) {
         OtherData[] otherData = goapNode.otherData;
         if (otherData != null && otherData.Length == 1) {
-            Party party = CharacterManager.Instance.CreateNewParty(PARTY_TYPE.Monster_Invade, goapNode.actor);
-            MonsterInvadeParty monsterInvadeParty = party as MonsterInvadeParty;
+            Gathering gathering = CharacterManager.Instance.CreateNewGathering(GATHERING_TYPE.Monster_Invade, goapNode.actor);
+            MonsterInvadeGathering monsterInvadeGathering = gathering as MonsterInvadeGathering;
             if(otherData[0].obj is LocationStructure targetStructure) {
-                monsterInvadeParty.SetTargetStructure(targetStructure);
+                monsterInvadeGathering.SetTargetStructure(targetStructure);
             } else if (otherData[0].obj is HexTile hex) {
-                monsterInvadeParty.SetTargetHex(hex);
+                monsterInvadeGathering.SetTargetHex(hex);
             }
         }
     }

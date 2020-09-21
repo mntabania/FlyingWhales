@@ -144,15 +144,3 @@ public class Watch : GoapAction {
     }
     #endregion
 }
-
-public class WatchData : GoapActionData {
-    public WatchData() : base(INTERACTION_TYPE.WATCH) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        Character target = poiTarget as Character;
-        return actor != target && !UtilityScripts.GameUtilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
-    }
-}

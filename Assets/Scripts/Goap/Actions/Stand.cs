@@ -46,14 +46,3 @@ public class Stand : GoapAction {
     }
     #endregion
 }
-
-public class StandData : GoapActionData {
-    public StandData() : base(INTERACTION_TYPE.STAND) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

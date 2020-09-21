@@ -25,7 +25,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
         if (tileObject.gridTileLocation != null) {
             isCorrupted = tileObject.gridTileLocation.isCorrupted;
         }
-        HexTile hex = tileObject.structureLocation.location.coreTile;
+        HexTile hex = tileObject.structureLocation.region.coreTile;
         if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }
@@ -71,7 +71,7 @@ public class SpiritGameObject : MapObjectVisual<TileObject> {
     
     
     public override void UpdateTileObjectVisual(TileObject tileObject) {
-        HexTile hex = tileObject.structureLocation.location.coreTile;
+        HexTile hex = tileObject.structureLocation.region.coreTile;
         if (tileObject.gridTileLocation.collectionOwner != null && tileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
             hex = tileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         }

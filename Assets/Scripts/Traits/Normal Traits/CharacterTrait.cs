@@ -134,10 +134,19 @@ namespace Traits {
                         }
                     }
                 } else if (characterThatWillDoJob.partyComponent.hasParty) {
-                    if(characterThatWillDoJob.partyComponent.currentParty is HeirloomHuntParty heirloomParty) {
-                        if(heirloomParty.targetHeirloom == item) {
-                            heirloomParty.SetFoundHeirloom(true);
-                            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, heirloomParty.targetHeirloom, heirloomParty.targetHeirloom.structureSpot, true);
+                    if(characterThatWillDoJob.partyComponent.currentParty.isActive && characterThatWillDoJob.partyComponent.currentParty.currentQuest is HeirloomHuntPartyQuest quest) {
+                        if(quest.targetHeirloom == item) {
+                            quest.SetFoundHeirloom(true);
+                            characterThatWillDoJob.jobComponent.CreateDropItemJob(JOB_TYPE.DROP_ITEM_PARTY, quest.targetHeirloom, quest.targetHeirloom.structureSpot, true);
+                        }
+                    }
+                }
+                if (characterThatWillDoJob.partyComponent.hasParty && characterThatWillDoJob.partyComponent.currentParty.isActive && item is ResourcePile resourcePile) {
+                    if (characterThatWillDoJob.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty) {
+                        if (UnityEngine.Random.Range(0, 100) < 35) {
+                            if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP_RAID)) {
+                                owner.jobComponent.TriggerStealRaidJob(resourcePile);
+                            }
                         }
                     }
                 }
@@ -159,36 +168,38 @@ namespace Traits {
                         }
                     } else {
                         if(targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
-                            if(owner.partyComponent.hasParty) {
-                                if(owner.partyComponent.currentParty is RescueParty rescueParty) {
+                            if(owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                                if(owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                     if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
                                         if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
                                             rescueParty.SetIsReleasing(true);
                                         }
                                     }
-                                } else if (owner.faction != null && owner.faction != targetCharacter.faction) {
-                                    if (owner.partyComponent.currentParty is ExplorationParty exploreParty) {
-                                        if (exploreParty.isWaitTimeOver) {
-                                            if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)){
-                                                if(UnityEngine.Random.Range(0, 100) < 15) {
-                                                    owner.jobComponent.TriggerKidnapJob(targetCharacter);
-                                                }
-                                            } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
-                                                owner.jobComponent.TriggerReleaseJob(targetCharacter);
-                                            }
-
-                                        }
-                                    } else if (owner.partyComponent.currentParty is RaidParty raidParty) {
-                                        if (raidParty.isWaitTimeOver) {
+                                } else if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                    if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest exploreParty) {
+                                        if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
                                             if (UnityEngine.Random.Range(0, 100) < 15) {
-                                                owner.jobComponent.TriggerKidnapJob(targetCharacter);
+                                                if (owner.jobComponent.TriggerKidnapJob(targetCharacter)) {
+                                                    owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
+                                                }
                                             }
+                                        } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+                                            owner.jobComponent.TriggerReleaseJob(targetCharacter);
                                         }
                                     }
                                 }
                             }
                         }
-                        if(owner.isNormalCharacter && targetCharacter.isNormalCharacter && owner.faction != targetCharacter.faction) {
+                        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                            if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty) {
+                                if (UnityEngine.Random.Range(0, 100) < 15) {
+                                    if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
+                                        owner.jobComponent.TriggerKidnapRaidJob(targetCharacter);
+                                    }
+                                }
+                            }
+                        }
+                        if (owner.isNormalCharacter && targetCharacter.isNormalCharacter && owner.faction != targetCharacter.faction) {
                             if(owner.faction != null && targetCharacter.currentStructure != null && targetCharacter.currentStructure.isInterior && targetCharacter.currentStructure.settlementLocation != null
                                 && targetCharacter.currentStructure.settlementLocation.owner == owner.faction) {
                                 bool willReact = true;

@@ -37,7 +37,7 @@ public class Eat : GoapAction {
         string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
-            if (actor.partyComponent.currentParty == null) {
+            if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 cost = 2000;
                 costLog += $" +{cost}(Location of target is in avoid structure)";
@@ -46,7 +46,8 @@ public class Eat : GoapAction {
             }
         }
         if (target is Table table) {
-            bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure);
+            bool isTrapped = actor.trapStructure.IsTrapStructure(table.gridTileLocation.structure)
+                || (table.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrapHex(table.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner));
             if (isTrapped) {
                 cost = UtilityScripts.Utilities.Rng.Next(50, 71);
                 costLog += $" +{cost}(Actor is currently visiting)";
@@ -211,6 +212,9 @@ public class Eat : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             if (actor.traitContainer.HasTrait("Vampiric")) {
                 return false;
             }
@@ -244,24 +248,4 @@ public class Eat : GoapAction {
         return poiTarget.HasResourceAmount(RESOURCE.FOOD, 12);
     }
     #endregion
-}
-
-public class EatData : GoapActionData {
-    public EatData() : base(INTERACTION_TYPE.EAT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable()) {
-            return false;
-        }
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        if (poiTarget.gridTileLocation != null) {
-            return true;
-        }
-        return false;
-    }
 }

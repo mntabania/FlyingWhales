@@ -31,6 +31,22 @@ public class HarvestPlant : GoapAction {
             actor.logComponent.AppendCostLog(costLog);
             return 2000;
         }
+        if(job.jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+            if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
+                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+                LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
+                float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
+                int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
+
+                if(distance > distanceToCheck) {
+                    //target is at structure that character is avoiding
+                    costLog += $" +2000(Location of target too far from actor)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
+            }
+        }
         int cost = UtilityScripts.Utilities.Rng.Next(40, 51);
         costLog += $" +{cost.ToString()}(Random Cost Between 40-50)";
         actor.logComponent.AppendCostLog(costLog);
@@ -68,9 +84,15 @@ public class HarvestPlant : GoapAction {
             List<LocationGridTile> choices = poiTarget.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true, includeImpassable: false);
             if (choices.Count > 0) {
                 FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, CollectionUtilities.GetRandomElement(choices));
-                if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter) {
-                    goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
-                    goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+                if(goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+                    if(goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
+                        goapNode.actor.jobComponent.TryCreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
+                    }
+                } else {
+                    if (foodPile != null && goapNode.actor.homeSettlement != null && goapNode.actor.isNormalCharacter) {
+                        goapNode.actor.homeSettlement.settlementJobTriggerComponent.TryCreateHaulJob(foodPile);
+                        goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
+                    }
                 }
             }
         }else {

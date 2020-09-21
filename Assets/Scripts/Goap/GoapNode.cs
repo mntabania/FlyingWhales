@@ -286,6 +286,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                 job.CancelJob(false);
                 actor.NoPathToDoJobOrAction(job, this);
             }
+        } else {
+            action.OnMoveToDoAction(this);
         }
     }
     //We only pass the job because we need to cancel it if the target tile is null
@@ -298,8 +300,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
-        if (actor.currentRegion != targetTile.structure.location) { //different core locations
-            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.location, () => CheckAndMoveToDoAction(job)) == false) {
+        if (actor.currentRegion != targetTile.structure.region) { //different core locations
+            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false) {
                 //character cannot exit region.
                 return false;
             }
@@ -371,8 +373,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         actor.marker.UpdateAnimation();
 
         if (associatedJobType == JOB_TYPE.ENERGY_RECOVERY_NORMAL || associatedJobType == JOB_TYPE.ENERGY_RECOVERY_URGENT){
-            if (actor.partyComponent.hasParty && actor.partyComponent.currentParty is SocialParty) {
-                actor.partyComponent.currentParty.RemoveMember(actor);
+            if (actor.gatheringComponent.hasGathering && actor.gatheringComponent.currentGathering is SocialGathering) {
+                actor.gatheringComponent.currentGathering.RemoveAttendee(actor);
             }
         }
 

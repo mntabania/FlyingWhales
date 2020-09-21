@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
-    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyTarget, ISavable {
+    public abstract class LocationStructure : IPlayerActionTarget, ISelectable, IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable {
         public string persistentID { get; }
         public int id { get; private set; }
         public string name { get; protected set; }
@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
         public STRUCTURE_TYPE structureType { get; private set; }
         public List<STRUCTURE_TAG> structureTags { get; protected set; }
         public List<Character> charactersHere { get; private set; }
-        public Region location { get; private set; }
+        public Region region { get; private set; }
         public BaseSettlement settlementLocation { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
@@ -34,7 +34,7 @@ namespace Inner_Maps.Location_Structures {
         public HashSet<IDamageable> objectsThatContributeToDamage { get; private set; }
         public List<Character> residents { get; protected set; }
         public StructureRoom[] rooms { get; protected set; }
-        public bool hasActiveSocialParty { get; protected set; }
+        public bool hasActiveSocialGathering { get; protected set; }
 
         //protected Faction _owner;
 
@@ -48,6 +48,7 @@ namespace Inner_Maps.Location_Structures {
         //public Faction owner => settlementLocation != null ? settlementLocation.owner : _owner;
         public OBJECT_TYPE objectType => OBJECT_TYPE.Structure;
         public Type serializedData => typeof(SaveDataLocationStructure);
+        public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Structure;
         #endregion
 
         protected LocationStructure(STRUCTURE_TYPE structureType, Region location) {
@@ -56,7 +57,7 @@ namespace Inner_Maps.Location_Structures {
             this.structureType = structureType;
             nameWithoutID = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
             name = $"{nameWithoutID} {id.ToString()}";
-            this.location = location;
+            this.region = location;
             charactersHere = new List<Character>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
@@ -73,7 +74,7 @@ namespace Inner_Maps.Location_Structures {
         }
         protected LocationStructure(Region location, SaveDataLocationStructure data) {
             persistentID = data.persistentID;
-            this.location = location;
+            this.region = location;
             id = UtilityScripts.Utilities.SetID(this, data.id);
             structureType = data.structureType;
             name = data.name;
@@ -160,17 +161,17 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.TAVERN:
                     return "the tavern";
                 case STRUCTURE_TYPE.WAREHOUSE:
-                    return $"the {location.name} warehouse";
+                    return $"the {region.name} warehouse";
                 case STRUCTURE_TYPE.PRISON:
-                    return $"the {location.name} prison";
+                    return $"the {region.name} prison";
                 case STRUCTURE_TYPE.WILDERNESS:
-                    return $"the outskirts of {location.name}";
+                    return $"the outskirts of {region.name}";
                 case STRUCTURE_TYPE.CEMETERY:
-                    return $"the cemetery of {location.name}";
+                    return $"the cemetery of {region.name}";
                 case STRUCTURE_TYPE.POND:
-                    return location.name;
+                    return region.name;
                 case STRUCTURE_TYPE.CITY_CENTER:
-                    return $"the {location.name} city center";
+                    return $"the {region.name} city center";
                 default:
                     // string normalizedStructure =
                     //     UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
@@ -234,10 +235,10 @@ namespace Inner_Maps.Location_Structures {
             return structureTags.Count > 0;
         }
         public override string ToString() {
-            return $"{structureType.ToString()} {id.ToString()} at {location.name}";
+            return $"{structureType.ToString()} {id.ToString()} at {region.name}";
         }
-        public void SetHasActiveSocialParty(bool state) {
-            hasActiveSocialParty = state;
+        public void SetHasActiveSocialGathering(bool state) {
+            hasActiveSocialGathering = state;
         }
         #endregion
 
@@ -337,7 +338,7 @@ namespace Inner_Maps.Location_Structures {
                     if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                     } else {
-                        location.innerMap.RemoveObject(poi.gridTileLocation, removedBy);
+                        region.innerMap.RemoveObject(poi.gridTileLocation, removedBy);
                     }
                     //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
                 }
@@ -353,7 +354,7 @@ namespace Inner_Maps.Location_Structures {
                 }
                 if (poi.gridTileLocation != null) {
                     if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        location.innerMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
+                        region.innerMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
                     }
                 }
                 return true;
@@ -372,7 +373,7 @@ namespace Inner_Maps.Location_Structures {
                 }
                 if (poi.gridTileLocation != null) {
                     if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
-                        location.innerMap.RemoveObjectDestroyVisualOnly(poi.gridTileLocation, remover);
+                        region.innerMap.RemoveObjectDestroyVisualOnly(poi.gridTileLocation, remover);
                     }
                 }
                 return true;
@@ -595,13 +596,13 @@ namespace Inner_Maps.Location_Structures {
         }
         private bool PlaceAreaObjectAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile) {
             if (tile != null) {
-                location.innerMap.PlaceObject(poi, tile);
+                region.innerMap.PlaceObject(poi, tile);
                 return true;
             } else {
                 List<LocationGridTile> tilesToUse = GetValidTilesToPlace(poi);
                 if (tilesToUse.Count > 0) {
                     LocationGridTile chosenTile = tilesToUse[UnityEngine.Random.Range(0, tilesToUse.Count)];
-                    location.innerMap.PlaceObject(poi, chosenTile);
+                    region.innerMap.PlaceObject(poi, chosenTile);
                     return true;
                 } 
                 // else {
@@ -798,7 +799,7 @@ namespace Inner_Maps.Location_Structures {
 
             //transfer tiles to either the wilderness or work npcSettlement
             List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
-            LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationStructure wilderness = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i < tilesInStructure.Count; i++) {
                 LocationGridTile tile = tilesInStructure[i];
                 LocationStructure transferTo = wilderness;
@@ -820,7 +821,7 @@ namespace Inner_Maps.Location_Structures {
         }
         protected virtual void AfterStructureDestruction() {
             //disable game object. Destruction of structure game object is handled by it's parent structure template.
-            location.RemoveStructure(this);
+            region.RemoveStructure(this);
             settlementLocation.RemoveStructure(this);
             Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedHexTile);
             SetOccupiedHexTile(null);
@@ -1012,7 +1013,7 @@ namespace Inner_Maps.Location_Structures {
             rooms = new StructureRoom[structureObject.roomTemplates.Length];
             for (int i = 0; i < rooms.Length; i++) {
                 RoomTemplate roomTemplate = structureObject.roomTemplates[i];
-                StructureRoom newRoom = CreteNewRoomForStructure(structureObject.GetTilesOccupiedByRoom(location.innerMap, roomTemplate));
+                StructureRoom newRoom = CreteNewRoomForStructure(structureObject.GetTilesOccupiedByRoom(region.innerMap, roomTemplate));
                 rooms[i] = newRoom;
             }
         }
@@ -1031,6 +1032,12 @@ namespace Inner_Maps.Location_Structures {
             }
             room = null;
             return false;
+        }
+        #endregion
+
+        #region IPartyTargetDestination
+        public bool IsAtTargetDestination(Character character) {
+            return character.currentStructure == this;
         }
         #endregion
 

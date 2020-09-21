@@ -48,14 +48,3 @@ public class WellJump : GoapAction {
     }
     #endregion
 }
-
-public class WellJumpData : GoapActionData {
-    public WellJumpData() : base(INTERACTION_TYPE.WELL_JUMP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
-    }
-}

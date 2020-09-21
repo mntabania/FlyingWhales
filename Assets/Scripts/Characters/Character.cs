@@ -15,7 +15,7 @@ using UtilityScripts;
 using JetBrains.Annotations;
 using Random = UnityEngine.Random;
 
-public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyTarget, ISavable {
+public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget, IObjectManipulator, IPartyQuestTarget, IGatheringTarget, ISavable {
     private int _id;
     private string _name;
     private string _firstName;
@@ -43,10 +43,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int attackPowerPercentMod { get; protected set; }
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
+    public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
+    public string deathStr { get; private set; }
+    public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public Region homeRegion { get; protected set; }
     public NPCSettlement homeSettlement { get; protected set; }
     public LocationStructure homeStructure { get; protected set; }
-    public List<INTERACTION_TYPE> advertisedActions { get; private set; }
     //public int supply { get; set; }
     //public int food { get; set; }
     public CharacterMarker marker { get; private set; }
@@ -54,19 +56,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public GoapPlan currentPlan { get; private set; }
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
-    //public Character lastAssaultedCharacter { get; private set; }
-    public List<TileObject> items { get; private set; }
-    public List<TileObject> ownedItems { get; private set; }
     public JobQueue jobQueue { get; private set; }
-    public List<JobQueueItem> allJobsTargetingThis { get; private set; }
-    public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
-    public List<Trait> traitsNeededToBeRemoved { get; private set; }
-    public TrapStructure trapStructure { get; private set; }
-    public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public CharacterTrait defaultCharacterTrait { get; private set; }
-    public int numOfActionsBeingPerformedOnThis { get; private set; } //this is increased, when the action of another character stops this characters movement
     public Faction prevFaction { get; private set; }
+    //public Character lastAssaultedCharacter { get; private set; }
+    public List<INTERACTION_TYPE> advertisedActions { get; private set; }
+    public List<TileObject> items { get; private set; }
+    public List<TileObject> ownedItems { get; private set; }
+    public List<JobQueueItem> allJobsTargetingThis { get; private set; }
+    public List<Trait> traitsNeededToBeRemoved { get; private set; }
+
     //public Party ownParty { get; protected set; }
     //public Party currentParty { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
@@ -113,6 +113,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<string> actionHistory { get; }
 
     //Components / Managers
+    public TrapStructure trapStructure { get; private set; }
     public GoapPlanner planner { get; private set; }
     public CharacterNeedsComponent needsComponent { get; private set; }
     public BuildStructureComponent buildStructureComponent { get; private set; }
@@ -131,6 +132,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public StateAwarenessComponent stateAwarenessComponent { get; private set; }
     public CarryComponent carryComponent { get; private set; }
     public PartyComponent partyComponent { get; private set; }
+    public GatheringComponent gatheringComponent { get; private set; }
     public TileObjectComponent tileObjectComponent { get; private set; }
     public CrimeComponent crimeComponent { get; private set; }
 
@@ -334,6 +336,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         stateAwarenessComponent = new StateAwarenessComponent(); stateAwarenessComponent.SetOwner(this);
         carryComponent = new CarryComponent(); carryComponent.SetOwner(this);
         partyComponent = new PartyComponent(); partyComponent.SetOwner(this);
+        gatheringComponent = new GatheringComponent(); gatheringComponent.SetOwner(this);
         tileObjectComponent = new TileObjectComponent(); tileObjectComponent.SetOwner(this);
         crimeComponent = new CrimeComponent(); crimeComponent.SetOwner(this);
 
@@ -354,7 +357,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         actionHistory = new List<string>();
 
         jobQueue = new JobQueue(this);
-        trapStructure = new TrapStructure();
         planner = new GoapPlanner(this);
         visuals = new CharacterVisuals(this, data);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -401,6 +403,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
+        trapStructure = data.trapStructure.Load();
         needsComponent = data.needsComponent.Load(); needsComponent.SetOwner(this);
         buildStructureComponent = data.buildStructureComponent.Load(); buildStructureComponent.SetOwner(this);
         stateComponent = data.stateComponent.Load(); stateComponent.SetOwner(this);
@@ -418,6 +421,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         stateAwarenessComponent = data.stateAwarenessComponent.Load(); stateAwarenessComponent.SetOwner(this);
         carryComponent = data.carryComponent.Load(); carryComponent.SetOwner(this);
         partyComponent = data.partyComponent.Load(); partyComponent.SetOwner(this);
+        gatheringComponent = data.gatheringComponent.Load(); gatheringComponent.SetOwner(this);
         tileObjectComponent = data.tileObjectComponent.Load(); tileObjectComponent.SetOwner(this);
         crimeComponent = data.crimeComponent.Load(); crimeComponent.SetOwner(this);
 
@@ -623,7 +627,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void SpawnRevenant(Character responsibleCharacter, LocationGridTile deathTile) {
         BaseSettlement homeSettlement = deathTile.structure.settlementLocation;
-        Region homeRegion = deathTile.structure.location;
+        Region homeRegion = deathTile.structure.region;
 
         if(homeSettlement == null) {
             //Will not spawn revenant if death tile has no settlement
@@ -1272,10 +1276,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    jobQueue.AddJobInQueue(job);
     //}
     public void NoPathToDoJobOrAction(JobQueueItem job, ActualGoapNode action) {
-        if (partyComponent.hasParty && job.isThisAPartyJob) {
-            //If a party has no path to do action and the job that has no path is a party job, leave party
-            partyComponent.currentParty.RemoveMember(this);
-        }
+        //if (partyComponent.hasParty && job.isThisAPartyJob) {
+        //    //If a party has no path to do action and the job that has no path is a party job, leave party
+        //    partyComponent.currentParty.RemoveMember(this);
+        //}
         if(gridTileLocation != null) {
             //If this character cannot do job or action because he has no path but the reason why he has no path is beacuse he has no grid location, do not trigger fall back jobs
             if (job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
@@ -1714,7 +1718,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (marker.gameObject.activeInHierarchy) {
                         bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(currentRegion);
                         if (instantCenter) {
-                            InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.location, false);
+                            InnerMapManager.Instance.ShowInnerMap(carryComponent.masterCharacter.gridTileLocation.structure.region, false);
                         }
                         InnerMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                     }
@@ -2721,15 +2725,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             } else {
                 bool sameLocationAlready = false;
-                if (homeStructure != null && homeStructure.location != null) {
-                    if (homeStructure.location == dwelling.location) {
+                if (homeStructure != null && homeStructure.region != null) {
+                    if (homeStructure.region == dwelling.region) {
                         sameLocationAlready = true;
                     } else {
-                        homeStructure.location.RemoveResident(this);
+                        homeStructure.region.RemoveResident(this);
                     }
                 }
                 if (!sameLocationAlready) {
-                    dwelling.location.AddResident(this);
+                    dwelling.region.AddResident(this);
                 }
                 ChangeHomeStructure(dwelling);
             }
@@ -2754,6 +2758,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetHomeSettlement(NPCSettlement settlement) {
         if(homeSettlement != settlement) {
+            if(settlement == null) {
+                if (partyComponent.hasParty) {
+                    interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, this, "Left home settlement");
+                }
+            }
             homeSettlement = settlement;
             if (isNormalCharacter) {
                 behaviourComponent.UpdateDefaultBehaviourSet();
@@ -2985,7 +2994,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected virtual void OnHourStarted() {
         ProcessTraitsOnHourStarted();
         if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledTirednessRecovery(this);
+            needsComponent.PlanScheduledTirednessRecovery();
         }
     }
     protected void StartTickGoapPlanGeneration() {
@@ -2994,7 +3003,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //so start doing actions again
         //SetHasAlreadyAskedForPlan(false);
         if (needsComponent.HasNeeds()) {
-            needsComponent.PlanScheduledFullnessRecovery(this);
+            needsComponent.PlanScheduledFullnessRecovery();
             //needsComponent.PlanScheduledTirednessRecovery(this);
         }
         if (isNormalCharacter) {
@@ -3889,6 +3898,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if((IsAvailable() || action.canBeAdvertisedEvenIfTargetIsUnavailable) 
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
+            && actor.trapStructure.SatisfiesForcedHex(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
             && (action.canBePerformedEvenIfPathImpossible || actor.movementComponent.HasPathToEvenIfDiffRegion(gridTileLocation))) {
             OtherData[] data = null;
@@ -4008,9 +4018,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.OPEN);
             AddAdvertisedAction(INTERACTION_TYPE.CREATE_CULTIST_KIT);
             AddAdvertisedAction(INTERACTION_TYPE.REMOVE_BUFF);
-            AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
-            AddAdvertisedAction(INTERACTION_TYPE.RAID);
-            AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
+            //AddAdvertisedAction(INTERACTION_TYPE.EXTERMINATE);
+            //AddAdvertisedAction(INTERACTION_TYPE.RAID);
+            //AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
             AddAdvertisedAction(INTERACTION_TYPE.EVANGELIZE);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
@@ -4847,13 +4857,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.StopMovement();
 
         if (trapStructure.IsTrapped()) {
-            trapStructure.SetStructureAndDuration(null, 0);
-            trapStructure.SetForcedStructure(null);
+            trapStructure.ResetAllTrapStructures();
         }
-        if(partyComponent.hasParty && partyComponent.currentParty.partyType != PARTY_TYPE.Counterattack) {
-            //Once a character is seized, leave party also - except counter attack
-            partyComponent.currentParty.RemoveMember(this);
+        if (trapStructure.IsTrappedInHex()) {
+            trapStructure.ResetAllTrapHexes();
         }
+        //if(partyComponent.hasParty && partyComponent.currentParty.partyType != PARTY_QUEST_TYPE.Counterattack) {
+        //    //Once a character is seized, leave party also - except counter attack
+        //    partyComponent.currentParty.RemoveMember(this);
+        //}
         minion?.OnSeize();
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //ForceCancelAllJobsTargettingThisCharacter();
@@ -4884,7 +4896,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public virtual void OnUnseizePOI(LocationGridTile tileLocation) {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
-        needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
+        needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.region.coreTile.region);
         if (minion == null) {
             if (!isDead) {
                 SubscribeToSignals();
@@ -4900,7 +4912,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         EnableMarker();
         marker.OnUnseize();
         minion?.OnUnseize();
-        if(tileLocation.structure.location.coreTile.region != currentRegion) {
+        if(tileLocation.structure.region.coreTile.region != currentRegion) {
             currentRegion.RemoveCharacterFromLocation(this);
         }
         marker.InitialPlaceMarkerAt(tileLocation);
@@ -5947,6 +5959,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
 
+        trapStructure.LoadReferences(data.trapStructure);
         needsComponent.LoadReferences(data.needsComponent);
         buildStructureComponent.LoadReferences(data.buildStructureComponent);
         stateComponent.LoadReferences(data.stateComponent);
@@ -5964,6 +5977,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         stateAwarenessComponent.LoadReferences(data.stateAwarenessComponent);
         carryComponent.LoadReferences(data.carryComponent);
         partyComponent.LoadReferences(data.partyComponent);
+        gatheringComponent.LoadReferences(data.gatheringComponent);
         tileObjectComponent.LoadReferences(data.tileObjectComponent);
         crimeComponent.LoadReferences(data.crimeComponent);
 

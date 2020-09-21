@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UtilityScripts;
 
-public class ExplorationParty : Party {
+public class ExplorationPartyQuest : PartyQuest {
 
     public LocationStructure targetStructure { get; private set; }
 
@@ -14,78 +15,89 @@ public class ExplorationParty : Party {
     public Region regionRefForGettingNewStructure { get; private set; }
 
     #region getters
-    public override IPartyTarget target => targetStructure;
-    public override System.Type serializedData => typeof(SaveDataExplorationParty);
+    public override IPartyQuestTarget target => targetStructure;
+    public override System.Type serializedData => typeof(SaveDataExplorationPartyQuest);
     #endregion
 
-    public ExplorationParty() : base(PARTY_TYPE.Exploration) {
+    public ExplorationPartyQuest() : base(PARTY_QUEST_TYPE.Exploration) {
         minimumPartySize = 3;
-        waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
+        //waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(ExploreBehaviour);
-        jobQueueOwnerType = JOB_OWNER.SETTLEMENT;
+        //jobQueueOwnerType = JOB_OWNER.SETTLEMENT;
         alreadyExplored = new List<LocationStructure>();
     }
-    public ExplorationParty(SaveDataParty data) : base(data) {
+    public ExplorationPartyQuest(SaveDataExplorationPartyQuest data) : base(data) {
         alreadyExplored = new List<LocationStructure>();
-        if (data is SaveDataExplorationParty subData) {
-            isExploring = subData.isExploring;
-            currentChance = subData.currentChance;
-        }
+        isExploring = data.isExploring;
+        currentChance = data.currentChance;
     }
 
     #region Overrides
-    public override bool IsAllowedToJoin(Character character) {
-        return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
-    }
-    protected override void OnWaitTimeOver() {
+    //public override bool IsAllowedToJoin(Character character) {
+    //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
+    //}
+    public override void OnWaitTimeOver() {
         base.OnWaitTimeOver();
         currentChance = 100;
-        Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         ProcessExplorationOrDisbandment();
-        for (int i = 0; i < members.Count; i++) {
-            Character member = members[i];
-            member.traitContainer.AddTrait(member, "Travelling");
-        }
     }
-    protected override void OnAddMember(Character member) {
-        base.OnAddMember(member);
-        member.movementComponent.SetEnableDigging(true);
+    public override IPartyTargetDestination GetTargetDestination() {
+        return targetStructure;
     }
-    protected override void OnRemoveMember(Character member) {
-        base.OnRemoveMember(member);
-        member.movementComponent.SetEnableDigging(false);
-        member.traitContainer.RemoveTrait(member, "Travelling");
-    }
-    protected override void OnRemoveMemberOnDisband(Character member) {
-        base.OnRemoveMemberOnDisband(member);
-        member.movementComponent.SetEnableDigging(false);
-        member.traitContainer.RemoveTrait(member, "Travelling");
-    }
-    protected override void OnDisbandParty() {
-        base.OnDisbandParty();
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {
-            Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
-        }
+    //protected override void OnAddMember(Character member) {
+    //    base.OnAddMember(member);
+    //    member.movementComponent.SetEnableDigging(true);
+    //}
+    //protected override void OnRemoveMember(Character member) {
+    //    base.OnRemoveMember(member);
+    //    member.movementComponent.SetEnableDigging(false);
+    //    member.traitContainer.RemoveTrait(member, "Travelling");
+    //}
+    //protected override void OnRemoveMemberOnDisband(Character member) {
+    //    base.OnRemoveMemberOnDisband(member);
+    //    member.movementComponent.SetEnableDigging(false);
+    //    member.traitContainer.RemoveTrait(member, "Travelling");
+    //}
+    protected override void OnEndQuest() {
+        base.OnEndQuest();
+        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_ARRIVED_AT_STRUCTURE)) {
+        //    Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+        //}
         if (Messenger.eventTable.ContainsKey(Signals.STRUCTURE_DESTROYED)) {
             Messenger.RemoveListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         }
     }
-    protected override void OnSetLeader() {
-        base.OnSetLeader();
-        if (leader != null) {
-            regionRefForGettingNewStructure = leader.currentRegion;
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if(toState == PARTY_STATE.Working) {
+            StartExplorationTimer();
         }
     }
+    //protected override void OnSetLeader() {
+    //    base.OnSetLeader();
+    //    if (leader != null) {
+    //        regionRefForGettingNewStructure = leader.currentRegion;
+    //    }
+    //}
     #endregion
 
     #region General
     private void ProcessExplorationOrDisbandment() {
-        if(UnityEngine.Random.Range(0, 100) < currentChance) {
+        if (GameUtilities.RollChance(currentChance)) {
             ProcessSettingTargetStructure();
+            if(targetStructure == null) {
+                assignedParty.GoBackHomeAndEndQuest();
+            } else {
+                assignedParty.SetPartyState(PARTY_STATE.Moving);
+            }
         } else {
-            DisbandParty();
+            assignedParty.GoBackHomeAndEndQuest();
         }
+    }
+    public void SetRegionRefForGettingNewStructure(Region region) {
+        regionRefForGettingNewStructure = region;
     }
     public void ProcessSettingTargetStructure() {
         List<Region> adjacentRegions = regionRefForGettingNewStructure.AdjacentRegions();
@@ -94,30 +106,24 @@ public class ExplorationParty : Party {
             adjacentRegions.Add(regionRefForGettingNewStructure);
             while (target == null && adjacentRegions.Count > 0) {
                 Region chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
+                //target = chosenRegion.GetRandomSpecialStructure();
                 target = chosenRegion.GetRandomSpecialStructureExcept(alreadyExplored);
                 if (target == null) {
                     adjacentRegions.Remove(chosenRegion);
                 }
             }
-            if (target != null) {
-                SetTargetStructure(target);
-            }
         } else {
+            //target = regionRefForGettingNewStructure.GetRandomSpecialStructure();
             target = regionRefForGettingNewStructure.GetRandomSpecialStructureExcept(alreadyExplored);
-            if (target != null) {
-                SetTargetStructure(target);
-            }
         }
-        if (target == null) {
-            DisbandParty();
-        }
+        SetTargetStructure(target);
     }
     private void SetTargetStructure(LocationStructure structure) {
         if(targetStructure != structure) {
             targetStructure = structure;
             if (targetStructure != null) {
                 alreadyExplored.Add(targetStructure);
-                regionRefForGettingNewStructure = targetStructure.location;
+                regionRefForGettingNewStructure = targetStructure.region;
             }
         }
     }
@@ -134,21 +140,21 @@ public class ExplorationParty : Party {
     }
     private void DoneExplorationTimer() {
         if (isExploring) {
+            isExploring = false;
             currentChance -= 35;
             ProcessExplorationOrDisbandment();
-            isExploring = false;
         }
     }
     #endregion
 
     #region Listeners
-    private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
-        if (targetStructure == structure) {
-            if (IsMember(character)) {
-                StartExplorationTimer();
-            }
-        }
-    }
+    //private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
+    //    if (targetStructure == structure) {
+    //        if (character.partyComponent.IsAMemberOfParty(assignedParty)) {
+    //            StartExplorationTimer();
+    //        }
+    //    }
+    //}
     private void OnStructureDestroyed(LocationStructure structure) {
         if (targetStructure == structure) {
             ProcessSettingTargetStructure();
@@ -158,9 +164,9 @@ public class ExplorationParty : Party {
     #endregion
 
     #region Loading
-    public override void LoadReferences(SaveDataParty data) {
+    public override void LoadReferences(SaveDataPartyQuest data) {
         base.LoadReferences(data);
-        if (data is SaveDataExplorationParty subData) {
+        if (data is SaveDataExplorationPartyQuest subData) {
             if (!string.IsNullOrEmpty(subData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(subData.targetStructure);
             }
@@ -171,8 +177,8 @@ public class ExplorationParty : Party {
             if (!string.IsNullOrEmpty(subData.regionRefForGettingNewStructure)) {
                 regionRefForGettingNewStructure = DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(subData.regionRefForGettingNewStructure);
             }
-            if(isWaitTimeOver && !isDisbanded) {
-                Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
+            if (isWaitTimeOver && assignedParty != null) {
+                //Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
                 Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             }
         }
@@ -181,7 +187,7 @@ public class ExplorationParty : Party {
 }
 
 [System.Serializable]
-public class SaveDataExplorationParty : SaveDataParty {
+public class SaveDataExplorationPartyQuest : SaveDataPartyQuest {
     public string targetStructure;
     public List<string> alreadyExplored;
     public bool isExploring;
@@ -189,9 +195,9 @@ public class SaveDataExplorationParty : SaveDataParty {
     public string regionRefForGettingNewStructure;
 
     #region Overrides
-    public override void Save(Party data) {
+    public override void Save(PartyQuest data) {
         base.Save(data);
-        if (data is ExplorationParty subData) {
+        if (data is ExplorationPartyQuest subData) {
             if (subData.targetStructure != null) {
                 targetStructure = subData.targetStructure.persistentID;
             }

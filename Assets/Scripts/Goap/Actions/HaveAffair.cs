@@ -318,24 +318,3 @@ public class HaveAffair : GoapAction {
     //}
     //#endregion
 }
-
-public class HaveAffairData : GoapActionData {
-    public HaveAffairData() : base(INTERACTION_TYPE.HAVE_AFFAIR) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable()) {
-            return false;
-        }
-        if (actor == poiTarget) {
-            return false;
-        }
-        // Character targetCharacter = poiTarget as Character;
-        // if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter, TODO, TODO) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
-        //     return true;
-        // }
-        return false;
-    }
-}

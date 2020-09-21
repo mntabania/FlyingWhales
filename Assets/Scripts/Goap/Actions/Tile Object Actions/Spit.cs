@@ -85,6 +85,9 @@ public class Spit : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             if (poiTarget is Tombstone tombstone) {
                 Character target = tombstone.character;
                 return actor.relationshipContainer.IsEnemiesWith(target);
@@ -157,26 +160,4 @@ public class Spit : GoapAction {
     //    return reactions;
     //}
     //#endregion
-}
-
-public class SpitData : GoapActionData {
-    public SpitData() : base(INTERACTION_TYPE.SPIT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        if (poiTarget is Tombstone) {
-            Tombstone tombstone = poiTarget as Tombstone;
-            Character target = tombstone.character;
-            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
-        }
-        return false;
-    }
 }

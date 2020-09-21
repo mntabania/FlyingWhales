@@ -18,6 +18,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private TextMeshProUGUI partyLbl;
     [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private GameObject leaderIcon;
 
@@ -237,6 +238,7 @@ public class CharacterInfoUI : InfoUIBase {
         UpdateLocationInfo();
         UpdateMoodMeter();
         UpdateNeedMeters();
+        UpdatePartyInfo();
     }
     private void UpdatePortrait() {
         characterPortrait.GeneratePortrait(_activeCharacter);
@@ -515,7 +517,7 @@ public class CharacterInfoUI : InfoUIBase {
         summary = $"{summary}{"\nPriority Jobs: " + activeCharacter.jobComponent.GetPriorityJobs()}";
         summary = $"{summary}{"\nSecondary Jobs: " + activeCharacter.jobComponent.GetSecondaryJobs()}";
         summary = $"{summary}{"\nAble Jobs: " + activeCharacter.jobComponent.GetAbleJobs()}";
-        summary = $"{summary}{"\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName + ": " + (activeCharacter.partyComponent.currentParty.IsLeader(activeCharacter) ? "Leader" : "Member (Leader: " + activeCharacter.partyComponent.currentParty.leader.name + ")") : "None")}";
+        summary = $"{summary}{("\nParty: " + (activeCharacter.partyComponent.hasParty ? activeCharacter.partyComponent.currentParty.partyName : "None") + ", State: " + activeCharacter.partyComponent.currentParty?.partyState.ToString() + ", Members: " + activeCharacter.partyComponent.currentParty?.members.Count)}";
         summary = $"{summary}{"\nPrimary Bed: " + (activeCharacter.tileObjectComponent.primaryBed != null ? activeCharacter.tileObjectComponent.primaryBed.name : "None")}";
         summary = $"{summary}{"\nEnable Digging: " + activeCharacter.movementComponent.enableDigging.ToString()}";
         summary = $"{summary}{"\nAvoid Settlements: " + activeCharacter.movementComponent.avoidSettlements.ToString()}";
@@ -1001,6 +1003,12 @@ public class CharacterInfoUI : InfoUIBase {
         // if (isOn) {
         //     Messenger.Broadcast(Signals.TOGGLE_TURNED_ON, "CharacterInfo_Logs");    
         // }
+    }
+    #endregion
+
+    #region Party
+    public void UpdatePartyInfo() {
+        partyLbl.text = (_activeCharacter.partyComponent.currentParty != null ? _activeCharacter.partyComponent.currentParty.partyName : "None");
     }
     #endregion
 }

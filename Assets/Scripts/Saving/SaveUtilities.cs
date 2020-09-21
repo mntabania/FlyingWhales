@@ -31,8 +31,10 @@ public static class SaveUtilities {
 
     public static List<string> ConvertSavableListToIDs<T>(List<T> savables) where T : ISavable{
         List<string> ids = new List<string>();
-        for (int i = 0; i < savables.Count; i++) {
-            ids.Add(savables[i].persistentID);
+        if(savables != null && savables.Count > 0) {
+            for (int i = 0; i < savables.Count; i++) {
+                ids.Add(savables[i].persistentID);
+            }
         }
         return ids;
     } 

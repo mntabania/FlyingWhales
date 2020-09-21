@@ -37,7 +37,7 @@ public class PickUp : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = "";
         if (target.gridTileLocation != null && actor.movementComponent.structuresToAvoid.Contains(target.gridTileLocation.structure)) {
-            if (actor.partyComponent.currentParty == null) {
+            if (!actor.partyComponent.hasParty) {
                 //target is at structure that character is avoiding
                 costLog += $" +2000(Location of target is in avoid structure)";
                 actor.logComponent.AppendCostLog(costLog);
@@ -187,16 +187,4 @@ public class PickUp : GoapAction {
         goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject, setOwnership: setOwnership);
     }
     #endregion
-}
-
-public class PickItemData : GoapActionData {
-    public PickItemData() : base(INTERACTION_TYPE.PICK_UP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        TileObject item = poiTarget as TileObject;
-        return poiTarget.gridTileLocation != null && !actor.HasItem(item);
-    }
 }

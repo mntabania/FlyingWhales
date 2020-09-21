@@ -8,7 +8,7 @@ using Traits;
 using UnityEngine;
 using UtilityScripts;
 namespace Locations.Settlements {
-    public abstract class BaseSettlement : IPartyTarget, ISavable {
+    public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable {
         public string persistentID { get; private set; }
         public int id { get; }
         public LOCATION_TYPE locationType { get; private set; }
@@ -19,12 +19,17 @@ namespace Locations.Settlements {
         public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; protected set; }
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
+        public List<Party> parties { get; protected set; }
+        public List<PartyQuest> availablePartyQuests { get; protected set; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
         public virtual Type serializedData => typeof(SaveDataBaseSettlement);
+        public virtual Region region => null;
         public LocationStructure currentStructure => null;
         public BaseSettlement currentSettlement => this;
+        public bool hasBeenDestroyed => false;
+        public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Settlement;
         #endregion
 
         protected BaseSettlement(LOCATION_TYPE locationType) {
@@ -36,6 +41,8 @@ namespace Locations.Settlements {
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
+            parties = new List<Party>();
+            availablePartyQuests = new List<PartyQuest>();
             SetLocationType(locationType);
             StartListeningForFires();
         }
@@ -48,6 +55,8 @@ namespace Locations.Settlements {
             structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
+            parties = new List<Party>();
+            availablePartyQuests = new List<PartyQuest>();
             SetLocationType(saveDataBaseSettlement.locationType);
             StartListeningForFires();
         }
@@ -123,7 +132,7 @@ namespace Locations.Settlements {
                 if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover) && lover.homeStructure.tiles.Count > 0) { //check if the character has a lover that lives in the npcSettlement
                     chosenDwelling = lover.homeStructure;
                 }
-                if (chosenDwelling == null && structures.ContainsKey(STRUCTURE_TYPE.DWELLING) && (character.homeStructure == null || character.homeStructure.location.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
+                if (chosenDwelling == null && structures.ContainsKey(STRUCTURE_TYPE.DWELLING) && (character.homeStructure == null || character.homeStructure.region.id != id)) { //else, find an unoccupied dwelling (also check if the character doesn't already live in this npcSettlement)
                     List<LocationStructure> structureList = structures[STRUCTURE_TYPE.DWELLING];
                     for (int i = 0; i < structureList.Count; i++) {
                         LocationStructure currDwelling = structureList[i];
@@ -330,7 +339,7 @@ namespace Locations.Settlements {
             if (HasStructure(type)) {
                 List<LocationStructure> structuresOfType = structures[type];
                 for (int i = 0; i < structuresOfType.Count; i++) {
-                    if (!structuresOfType[i].hasActiveSocialParty) {
+                    if (!structuresOfType[i].hasActiveSocialGathering) {
                         return structuresOfType[i];
                     }
                 }
@@ -635,6 +644,78 @@ namespace Locations.Settlements {
                 }
             }
             return objs;
+        }
+        #endregion
+
+        #region Party
+        public PartyQuest GetFirstUnassignedPartyQuest() {
+            for (int i = 0; i < availablePartyQuests.Count; i++) {
+                PartyQuest quest = availablePartyQuests[i];
+                if(!quest.isAssigned) {
+                    return quest;
+                }
+            }
+            return null;
+        }
+        public bool HasPartyQuest(PARTY_QUEST_TYPE questType) {
+            return GetPartyQuest(questType) != null;
+        }
+        public bool HasPartyQuestWithTarget(PARTY_QUEST_TYPE questType, IPartyQuestTarget target) {
+            return GetPartyQuestWithTarget(questType, target) != null;
+        }
+        public PartyQuest GetPartyQuestWithTarget(PARTY_QUEST_TYPE questType, IPartyQuestTarget target) {
+            for (int i = 0; i < availablePartyQuests.Count; i++) {
+                PartyQuest quest = availablePartyQuests[i];
+                if (quest.partyQuestType == questType && quest.target == target) {
+                    return quest;
+                }
+            }
+            return null;
+        }
+        public PartyQuest GetPartyQuest(PARTY_QUEST_TYPE questType) {
+            for (int i = 0; i < availablePartyQuests.Count; i++) {
+                PartyQuest quest = availablePartyQuests[i];
+                if (quest.partyQuestType == questType) {
+                    return quest;
+                }
+            }
+            return null;
+        }
+        public void AddPartyQuest(PartyQuest quest) {
+            availablePartyQuests.Add(quest);
+        }
+        public bool RemovePartyQuest(PartyQuest quest) {
+            return availablePartyQuests.Remove(quest);
+        }
+        public void AddParty(Party party) {
+            if (!parties.Contains(party)) {
+                parties.Add(party);
+            }
+        }
+        public bool RemoveParty(Party party) {
+            return parties.Remove(party);
+        }
+        public Party GetFirstUnfullParty() {
+            for (int i = 0; i < parties.Count; i++) {
+                Party party = parties[i];
+                if (party.members.Count < PartyManager.MAX_MEMBER_CAPACITY && party.members.Count > 0) {
+                    return party;
+                }
+            }
+            return null;
+        }
+        #endregion
+
+        #region IPartyTargetDestination
+        public LocationGridTile GetRandomPassableTile() {
+            LocationStructure structure = GetFirstStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+            if(structure == null) {
+                structure = GetRandomStructure();
+            }
+            return structure.GetRandomPassableTile();
+        }
+        public bool IsAtTargetDestination(Character character) {
+            return character.currentSettlement == this;
         }
         #endregion
     }

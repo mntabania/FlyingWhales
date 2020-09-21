@@ -222,7 +222,7 @@ public class TakeResource : GoapAction {
             newPile.SetGridTileLocation(pile.gridTileLocation);
             newPile.InitializeMapObject(newPile);
             newPile.SetPOIState(POI_STATE.ACTIVE);
-            newPile.gridTileLocation.structure.location.AddPendingAwareness(newPile);
+            newPile.gridTileLocation.structure.region.AddPendingAwareness(newPile);
             newPile.SetGridTileLocation(null);
 
             // carrier.ownParty.AddPOI(newPile);

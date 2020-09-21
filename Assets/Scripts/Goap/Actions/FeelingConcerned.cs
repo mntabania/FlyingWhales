@@ -33,10 +33,3 @@ public class FeelingConcerned : GoapAction {
     }
     #endregion   
 }
-
-public class FeelingConcernedData : GoapActionData {
-    public FeelingConcernedData() : base(INTERACTION_TYPE.FEELING_CONCERNED) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}
-

@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour {
 
     #region getters/setters
     public bool gameHasStarted => _gameHasStarted;
+    public int currentTick => today.tick;
     #endregion
 
     #region Monobehaviours

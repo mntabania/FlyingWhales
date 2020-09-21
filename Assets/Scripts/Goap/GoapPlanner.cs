@@ -144,7 +144,15 @@ public class GoapPlanner {
             if (jobType.IsNeedsTypeJob()) {
                 //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
                 if (owner.trapStructure.IsTrapped()) {
-                    owner.trapStructure.SetStructureAndDuration(null, 0);
+                    owner.trapStructure.ResetAllTrapStructures();
+                }
+                if (owner.trapStructure.IsTrappedInHex()) {
+                    owner.trapStructure.ResetAllTrapHexes();
+                }
+            }
+            if(jobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
+                if (owner.partyComponent.hasParty) {
+                    owner.partyComponent.currentParty.SetCannotProduceFoodThisRestPeriod(true);
                 }
             }
             if (goapThread.recalculationPlan == null) {

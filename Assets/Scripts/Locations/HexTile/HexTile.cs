@@ -15,8 +15,9 @@ using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 
-public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable, ISavable {
+public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable, IPartyTargetDestination, ISavable {
 
     public HexTileData data;
     private NPCSettlement _npcSettlementOfTile;
@@ -113,6 +114,8 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
     public bool isCorrupted => _isCorrupted;
     public bool isBeingDefended => _isBeingDefendedCount > 0;
+    public bool hasBeenDestroyed => false;
+    public PARTY_TARGET_DESTINATION_TYPE partyTargetDestinationType => PARTY_TARGET_DESTINATION_TYPE.Hextile;
     public Vector3 worldPosition {
         get {
             Vector2 pos = innerMapHexTile.gridTileCollections[0].locationGridTileCollectionItem.transform.position;
@@ -257,41 +260,42 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     #endregion
 
     #region Tile Utilities
-    public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter) {
-        List<HexTile> tilesInRange = new List<HexTile>();
-        List<HexTile> checkedTiles = new List<HexTile>();
-        List<HexTile> tilesToAdd = new List<HexTile>();
+    //NOTE: Commented this because no one is using this during this time
+    //public List<HexTile> GetTilesInRange(int range, bool isOnlyOuter) {
+    //    List<HexTile> tilesInRange = new List<HexTile>();
+    //    List<HexTile> checkedTiles = new List<HexTile>();
+    //    List<HexTile> tilesToAdd = new List<HexTile>();
 
-        for (int i = 0; i < range; i++) {
-            if (tilesInRange.Count <= 0) {
-                //tilesInRange = this.AllNeighbours;
-                for (int j = 0; j < AllNeighbours.Count; j++) {
-                    tilesInRange.Add(AllNeighbours[j]);
-                }
-                checkedTiles.Add(this);
-            } else {
-                tilesToAdd.Clear();
-                int tilesInRangeCount = tilesInRange.Count;
-                for (int j = 0; j < tilesInRangeCount; j++) {
-                    if (!checkedTiles.Contains(tilesInRange[j])) {
-                        checkedTiles.Add(tilesInRange[j]);
-                        List<HexTile> neighbors = tilesInRange[j].AllNeighbours;
-                        for (int k = 0; k < neighbors.Count; k++) {
-                            if (!tilesInRange.Contains(neighbors[k])) {
-                                tilesToAdd.Add(neighbors[k]);
-                            }
-                        }
-                        tilesInRange.AddRange(tilesToAdd);
-                    }
-                }
-                if (i == range - 1 && isOnlyOuter) {
-                    return tilesToAdd;
-                }
-            }
-        }
-        return tilesInRange;
-    }
-    public List<HexTile> GetTilesInRange(int range) {
+    //    for (int i = 0; i < range; i++) {
+    //        if (tilesInRange.Count <= 0) {
+    //            //tilesInRange = this.AllNeighbours;
+    //            for (int j = 0; j < AllNeighbours.Count; j++) {
+    //                tilesInRange.Add(AllNeighbours[j]);
+    //            }
+    //            checkedTiles.Add(this);
+    //        } else {
+    //            tilesToAdd.Clear();
+    //            int tilesInRangeCount = tilesInRange.Count;
+    //            for (int j = 0; j < tilesInRangeCount; j++) {
+    //                if (!checkedTiles.Contains(tilesInRange[j])) {
+    //                    checkedTiles.Add(tilesInRange[j]);
+    //                    List<HexTile> neighbors = tilesInRange[j].AllNeighbours;
+    //                    for (int k = 0; k < neighbors.Count; k++) {
+    //                        if (!tilesInRange.Contains(neighbors[k])) {
+    //                            tilesToAdd.Add(neighbors[k]);
+    //                        }
+    //                    }
+    //                    tilesInRange.AddRange(tilesToAdd);
+    //                }
+    //            }
+    //            if (i == range - 1 && isOnlyOuter) {
+    //                return tilesToAdd;
+    //            }
+    //        }
+    //    }
+    //    return tilesInRange;
+    //}
+    public List<HexTile> GetTilesInRange(int range, bool sameRegionOnly = true) {
         List<HexTile> tilesInRange = new List<HexTile>();
         CubeCoordinate cube = GridMap.Instance.OddRToCube(new HexCoordinate(xCoordinate, yCoordinate));
         //Debug.Log("Center in cube coordinates: " + cube.x.ToString() + "," + cube.y.ToString() + "," + cube.z.ToString());
@@ -303,7 +307,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                 if (hex.col >= 0 && hex.row >= 0
                     && hex.col < GridMap.Instance.width && hex.row < GridMap.Instance.height
                     && !(hex.col == xCoordinate && hex.row == yCoordinate)) {
-                    tilesInRange.Add(GridMap.Instance.map[hex.col, hex.row]);
+                    HexTile hextile = GridMap.Instance.map[hex.col, hex.row];
+                    if(!sameRegionOnly || hextile.region == region) {
+                        tilesInRange.Add(hextile);
+                    }
                 }
             }
         }
@@ -448,6 +455,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return IsPartOfVillage() || IsNextToVillage();
     }
     public bool IsPartOfVillage() {
+        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
+    }
+    public bool IsPartOfVillage(out BaseSettlement settlement) {
+        settlement = settlementOnTile;
         return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
     }
     public bool IsNextToVillage() {
@@ -1795,6 +1806,31 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public void RemoveFreezingTrapInHexTile() {
         freezingTraps--;
+    }
+    #endregion
+
+    #region IPartyTargetDestination
+    public LocationGridTile GetRandomPassableTile() {
+        LocationGridTile centerTile = GetCenterLocationGridTile();
+        if (centerTile.IsPassable()) {
+            return centerTile;
+        } else {
+            List<LocationGridTile> passableTiles = null;
+            for (int i = 0; i < locationGridTiles.Count; i++) {
+                LocationGridTile tile = locationGridTiles[i];
+                if (tile.IsPassable()) {
+                    if(passableTiles == null) { passableTiles = new List<LocationGridTile>(); }
+                    passableTiles.Add(tile);
+                }
+            }
+            if(passableTiles != null && passableTiles.Count > 0) {
+                return CollectionUtilities.GetRandomElement(passableTiles);
+            }
+        }
+        return null;
+    }
+    public bool IsAtTargetDestination(Character character) {
+        return character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == this;
     }
     #endregion
 }

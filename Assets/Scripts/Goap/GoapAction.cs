@@ -202,6 +202,7 @@ public class GoapAction {
     public virtual REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         return REACTABLE_EFFECT.Neutral;
     }
+    public virtual void OnMoveToDoAction(ActualGoapNode node) { }
     #endregion
 
     #region Utilities
@@ -224,7 +225,7 @@ public class GoapAction {
         if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
             return true;
         }
-        if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.location) {
+        if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
             return true;
         }
 
@@ -295,7 +296,7 @@ public class GoapAction {
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(actor.gridTileLocation.GetDistanceTo(tile));
             distance = (int) (distance * 2f);
-            if (actor.currentRegion != tile.structure.location) {
+            if (actor.currentRegion != tile.structure.region) {
                 return distance + 100;
             }
             return distance;
@@ -624,47 +625,5 @@ public class SaveDataGoapEffect {
         //    effect = tempEffect;
         //}
         return effect;
-    }
-}
-
-public class GoapActionData {
-    public INTERACTION_TYPE goapType { get; protected set; }
-    public RACE[] racesThatCanDoAction { get; protected set; }
-    public Func<Character, IPointOfInterest, object[], bool> requirementAction { get; protected set; }
-    public Func<Character, IPointOfInterest, object[], bool> requirementOnBuildGoapTreeAction { get; protected set; }
-
-    public GoapActionData(INTERACTION_TYPE goapType) {
-        this.goapType = goapType;
-    }
-
-    #region Virtuals
-    public bool CanSatisfyTimeOfDays() {
-        return true;
-    }
-    #endregion
-
-    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool requirementActionSatisfied = true;
-        if (requirementAction != null) {
-            requirementActionSatisfied = requirementAction.Invoke(actor, poiTarget, otherData);
-        }
-        //if (requirementActionSatisfied) {
-        //    if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-        //        requirementActionSatisfied = actor.IsCombatReady();
-        //    }
-        //}
-        return requirementActionSatisfied;
-    }
-    public bool CanSatisfyRequirementOnBuildGoapTree(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool requirementActionSatisfied = true;
-        if (requirementOnBuildGoapTreeAction != null) {
-            requirementActionSatisfied = requirementOnBuildGoapTreeAction.Invoke(actor, poiTarget, otherData);
-        }
-        //if (requirementActionSatisfied) {
-        //    if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-        //        requirementActionSatisfied = actor.IsCombatReady();
-        //    }
-        //}
-        return requirementActionSatisfied;
     }
 }

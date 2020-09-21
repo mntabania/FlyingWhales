@@ -579,6 +579,10 @@ public class CrimeData : ISavable {
         if (!factionsThatConsidersWanted.Contains(faction)) {
             factionsThatConsidersWanted.Add(faction);
 
+            if(criminal.homeSettlement != null && criminal.partyComponent.hasParty && criminal.homeSettlement.owner == faction) {
+                criminal.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, criminal, "Wanted criminal");
+            }
+
             if (criminal.isSettlementRuler) {
                 if(criminal.ruledSettlement.owner == faction) {
                     criminal.ruledSettlement.SetRuler(null);

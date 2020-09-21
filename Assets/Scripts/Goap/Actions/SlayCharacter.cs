@@ -253,14 +253,3 @@ public class SlayCharacter : GoapAction {
     //}
     #endregion
 }
-
-public class SlayCharacterData : GoapActionData {
-    public SlayCharacterData() : base(INTERACTION_TYPE.SLAY_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && !(poiTarget as Character).canPerform;
-    }
-}

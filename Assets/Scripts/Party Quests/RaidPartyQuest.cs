@@ -1,0 +1,160 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Locations.Settlements;
+
+public class RaidPartyQuest : PartyQuest {
+
+    public BaseSettlement targetSettlement { get; private set; }
+    //public HexTile waitingArea { get; private set; }
+    public bool isRaiding { get; private set; }
+
+    #region getters
+    public override IPartyQuestTarget target => targetSettlement;
+    //public override HexTile waitingHexArea => waitingArea;
+    public override System.Type serializedData => typeof(SaveDataRaidPartyQuest);
+    #endregion
+
+    public RaidPartyQuest() : base(PARTY_QUEST_TYPE.Raid) {
+        minimumPartySize = 4;
+        //waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
+        relatedBehaviour = typeof(RaidBehaviour);
+        //jobQueueOwnerType = JOB_OWNER.FACTION;
+    }
+    public RaidPartyQuest(SaveDataRaidPartyQuest data) : base(data) {
+        isRaiding = data.isRaiding;
+    }
+
+    #region Overrides
+    public override IPartyTargetDestination GetTargetDestination() {
+        return targetSettlement;
+    }
+    public override void OnAssignedPartySwitchedState(PARTY_STATE fromState, PARTY_STATE toState) {
+        base.OnAssignedPartySwitchedState(fromState, toState);
+        if(toState == PARTY_STATE.Working) {
+            StartRaidTimer();
+        }
+    }
+    //public override bool IsAllowedToJoin(Character character) {
+    //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
+    //}
+    //protected override void OnWaitTimeOver() {
+    //    base.OnWaitTimeOver();
+    //    for (int i = 0; i < members.Count; i++) {
+    //        members[i].traitContainer.AddTrait(members[i], "Travelling");
+    //    }
+    //    StartRaidTimer();
+    //}
+    //protected override void OnAddMember(Character member) {
+    //    base.OnAddMember(member);
+    //    member.movementComponent.SetEnableDigging(true);
+    //}
+    //protected override void OnRemoveMember(Character member) {
+    //    base.OnRemoveMember(member);
+    //    member.movementComponent.SetEnableDigging(false);
+    //    member.traitContainer.RemoveTrait(member, "Travelling");
+    //}
+    //protected override void OnRemoveMemberOnDisband(Character member) {
+    //    base.OnRemoveMemberOnDisband(member);
+    //    member.movementComponent.SetEnableDigging(false);
+    //    member.traitContainer.RemoveTrait(member, "Travelling");
+    //}
+    //protected override void OnDisbandParty() {
+    //    base.OnDisbandParty();
+    //    //TODO: notif reason why raid party disbanded
+    //}
+    #endregion
+
+    #region General
+    private void ProcessRaidOrDisbandment() {
+        assignedParty.GoBackHomeAndEndQuest();
+
+        //if (!HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner, targetSettlement)) {
+        //    assignedParty.GoBackHomeAndEndQuest();
+        //} else {
+        //    StartRaidTimer();
+        //}
+    }
+    public void SetTargetSettlement(BaseSettlement settlement) {
+        if(targetSettlement != settlement) {
+            targetSettlement = settlement;
+            //if (targetSettlement != null) {
+            //    SetWaitingArea();
+            //}
+        }
+    }
+    //private void SetWaitingArea() {
+    //    waitingArea = targetSettlement.GetAPlainAdjacentHextile();
+    //}
+    private bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction, BaseSettlement settlement) {
+        for (int i = 0; i < settlement.residents.Count; i++) {
+            Character resident = settlement.residents[i];
+            if (!resident.isDead
+                && resident.gridTileLocation != null
+                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                && resident.gridTileLocation.IsPartOfSettlement(settlement)
+                && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region Raid Timer
+    private void StartRaidTimer() {
+        if (!isRaiding) {
+            isRaiding = true;
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
+            //dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30));
+            SchedulingManager.Instance.AddEntry(dueDate, DoneRaidTimer, this);
+        }
+    }
+    private void DoneRaidTimer() {
+        if (isRaiding) {
+            isRaiding = false;
+            ProcessRaidOrDisbandment();
+        }
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadReferences(SaveDataPartyQuest data) {
+        base.LoadReferences(data);
+        if (data is SaveDataRaidPartyQuest subData) {
+            if (!string.IsNullOrEmpty(subData.targetSettlement)) {
+                targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.targetSettlement);
+            }
+            //if (!string.IsNullOrEmpty(subData.waitingArea)) {
+            //    waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);
+            //}
+        }
+    }
+    #endregion
+}
+
+[System.Serializable]
+public class SaveDataRaidPartyQuest : SaveDataPartyQuest {
+    public string targetSettlement;
+    //public string waitingArea;
+    public bool isRaiding;
+
+    #region Overrides
+    public override void Save(PartyQuest data) {
+        base.Save(data);
+        if (data is RaidPartyQuest subData) {
+            isRaiding = subData.isRaiding;
+
+            if (subData.targetSettlement != null) {
+                targetSettlement = subData.targetSettlement.persistentID;
+            }
+            //if (subData.waitingArea != null) {
+            //    waitingArea = subData.waitingArea.persistentID;
+            //}
+        }
+    }
+    #endregion
+}

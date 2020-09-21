@@ -9,7 +9,7 @@ public class DefaultOtherStructure : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         if (character.currentStructure.isInterior && character.currentStructure != character.homeStructure
-             && character.trapStructure.IsTrapped() == false) {
+             && character.trapStructure.IsTrapped() == false && character.trapStructure.IsTrappedInHex() == false) {
             log += $"\n-{character.name} is in Interior Structure that is not his/her and he/she is not trapped there";
             log += "\n-If character has a Home Structure or Territory, Return Home";
             if ((character.homeStructure != null && !character.homeStructure.hasBeenDestroyed) || character.HasTerritory()) {

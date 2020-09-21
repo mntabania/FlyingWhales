@@ -61,14 +61,3 @@ public class MineMetal : GoapAction {
     }
     #endregion
 }
-
-public class MineMetalData : GoapActionData {
-    public MineMetalData() : base(INTERACTION_TYPE.MINE_METAL) {
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
-    }
-}

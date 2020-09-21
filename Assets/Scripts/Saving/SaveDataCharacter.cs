@@ -91,6 +91,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataTraitContainer saveDataTraitContainer;
     public SaveDataBaseRelationshipContainer saveDataBaseRelationshipContainer;
 
+    public SaveDataTrapStructure trapStructure;
     public SaveDataCharacterNeedsComponent needsComponent;
     public SaveDataBuildStructureComponent buildStructureComponent;
     public SaveDataCharacterStateComponent stateComponent;
@@ -108,6 +109,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
     public SaveDataStateAwarenessComponent stateAwarenessComponent;
     public SaveDataCarryComponent carryComponent;
     public SaveDataPartyComponent partyComponent;
+    public SaveDataGatheringComponent gatheringComponent;
     public SaveDataTileObjectComponent tileObjectComponent;
     public SaveDataCrimeComponent crimeComponent;
 
@@ -168,6 +170,8 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
                 markerExpiryDate = data.marker.destroyDate;
             }
         }
+
+        trapStructure = new SaveDataTrapStructure(); trapStructure.Save(data.trapStructure);
         needsComponent = new SaveDataCharacterNeedsComponent(); needsComponent.Save(data.needsComponent);
         buildStructureComponent = new SaveDataBuildStructureComponent(); buildStructureComponent.Save(data.buildStructureComponent);
         stateComponent = new SaveDataCharacterStateComponent(); stateComponent.Save(data.stateComponent);
@@ -185,6 +189,7 @@ public class SaveDataCharacter : SaveData<Character>, ISavableCounterpart {
         stateAwarenessComponent = new SaveDataStateAwarenessComponent(); stateAwarenessComponent.Save(data.stateAwarenessComponent);
         carryComponent = new SaveDataCarryComponent(); carryComponent.Save(data.carryComponent);
         partyComponent = new SaveDataPartyComponent(); partyComponent.Save(data.partyComponent);
+        gatheringComponent = new SaveDataGatheringComponent(); gatheringComponent.Save(data.gatheringComponent);
         tileObjectComponent = new SaveDataTileObjectComponent(); tileObjectComponent.Save(data.tileObjectComponent);
         crimeComponent = new SaveDataCrimeComponent(); crimeComponent.Save(data.crimeComponent);
 

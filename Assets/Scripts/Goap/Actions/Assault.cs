@@ -270,20 +270,3 @@ public class Assault : GoapAction {
     }
     #endregion
 }
-
-public class AssaultData : GoapActionData {
-    public AssaultData() : base(INTERACTION_TYPE.ASSAULT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget is Character && actor != poiTarget) {
-            Character target = poiTarget as Character;
-            if (target.canPerform) { //!target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-                return true;
-            }
-        }
-        return false;
-    }
-}

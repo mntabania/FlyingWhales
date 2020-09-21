@@ -46,9 +46,3 @@ public class Puke : GoapAction {
     #endregion
 
 }
-
-public class PukeData : GoapActionData {
-    public PukeData() : base(INTERACTION_TYPE.PUKE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}

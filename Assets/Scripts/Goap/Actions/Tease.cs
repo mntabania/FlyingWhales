@@ -37,10 +37,3 @@ public class Tease : GoapAction {
     }
     #endregion   
 }
-
-public class TeaseData : GoapActionData {
-    public TeaseData() : base(INTERACTION_TYPE.TEASE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}
-

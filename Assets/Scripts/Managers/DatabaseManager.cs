@@ -20,13 +20,14 @@ public class DatabaseManager : MonoBehaviour {
     public BurningSourceDatabase burningSourceDatabase { get; private set; }
     public JobDatabase jobDatabase { get; private set; }
     public FamilyTreeDatabase familyTreeDatabase { get; private set; }
-    
+    public PartyDatabase partyDatabase { get; private set; }
 
     //These databases are only used when loading from a saved game, and therefore must be cleared out when loading is complete to save memory
     public ActionDatabase actionDatabase { get; private set; }
+    public PartyQuestDatabase partyQuestDatabase { get; private set; }
+    public GatheringDatabase gatheringDatabase { get; private set; }
     public InterruptDatabase interruptDatabase { get; private set; }
     public LogDatabase logDatabase { get; private set; }
-    public PartyDatabase partyDatabase { get; private set; }
     public CrimeDatabase crimeDatabase { get; private set; }
 
     void Awake() {
@@ -58,17 +59,21 @@ public class DatabaseManager : MonoBehaviour {
         interruptDatabase = new InterruptDatabase();
         logDatabase = new LogDatabase();
         partyDatabase = new PartyDatabase();
+        partyQuestDatabase = new PartyQuestDatabase();
         crimeDatabase = new CrimeDatabase();
+        gatheringDatabase = new GatheringDatabase();
     }
 
     public void ClearVolatileDatabases() {
         actionDatabase.allActions.Clear();
         interruptDatabase.allInterrupts.Clear();
         logDatabase.allLogs.Clear();
-        partyDatabase.allParties.Clear();
+        //partyDatabase.allParties.Clear();
+        partyQuestDatabase.allPartyQuests.Clear();
         crimeDatabase.allCrimes.Clear();
         locationGridTileDatabase.tileByGUID.Clear();
         locationGridTileDatabase.LocationGridTiles.Clear();
+        gatheringDatabase.allGatherings.Clear();
         System.GC.Collect();
     }
 }

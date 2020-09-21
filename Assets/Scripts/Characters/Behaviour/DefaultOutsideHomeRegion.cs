@@ -123,7 +123,7 @@ public class DefaultOutsideHomeRegion : CharacterBehaviourComponent {
                                 }
                             } else {
                                 log += $"\n  -No available campfire within hex, create one";
-                                return character.jobComponent.TriggerBuildCampfireJob(out producedJob);
+                                return character.jobComponent.TriggerBuildCampfireJob(JOB_TYPE.IDLE, out producedJob);
                             }
                         }
                     }

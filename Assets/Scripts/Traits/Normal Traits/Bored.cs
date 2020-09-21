@@ -23,8 +23,10 @@ namespace Traits {
             if(traitable is Character character) {
                 if (!character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
                     if (UnityEngine.Random.Range(0, 100) < 15) {
-                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
-                        character.jobQueue.AddJobInQueue(job);
+                        if (!character.partyComponent.isActiveMember) {
+                            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect(GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
+                            character.jobQueue.AddJobInQueue(job);
+                        }
                     }
                 }
             }

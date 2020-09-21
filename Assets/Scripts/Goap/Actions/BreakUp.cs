@@ -62,6 +62,9 @@ public class BreakUp : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             Character target = poiTarget as Character;
             if (target == actor) {
                 return false;
@@ -156,31 +159,4 @@ public class BreakUp : GoapAction {
     //    return reactions;
     //}
     //#endregion
-}
-
-public class BreakUpData : GoapActionData {
-    public BreakUpData() : base(INTERACTION_TYPE.BREAK_UP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        Character target = poiTarget as Character;
-        if (target == actor) {
-            return false;
-        }
-        //if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
-        //    return false;
-        //}
-        if (!target.canPerform) { //target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)
-            return false;
-        }
-        if (!actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.LOVER) && !actor.relationshipContainer.HasRelationshipWith(target, RELATIONSHIP_TYPE.AFFAIR)) {
-            return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
-        }
-        return target.carryComponent.IsNotBeingCarried();
-    }
 }

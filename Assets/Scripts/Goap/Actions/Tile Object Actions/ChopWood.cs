@@ -68,14 +68,3 @@ public class ChopWood : GoapAction {
     }
     #endregion
 }
-
-public class ChopWoodData : GoapActionData {
-    public ChopWoodData() : base(INTERACTION_TYPE.CHOP_WOOD) {
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
-    }
-}

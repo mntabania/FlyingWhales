@@ -85,14 +85,3 @@ public class Cry : GoapAction {
     }
     #endregion
 }
-
-public class CryData : GoapActionData {
-    public CryData() : base(INTERACTION_TYPE.CRY) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget;
-    }
-}

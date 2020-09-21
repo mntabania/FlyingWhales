@@ -1,16 +1,16 @@
 ﻿using UnityEngine.Assertions;
 namespace Goap.Job_Checkers {
-    public class CanTakeJoinPartyJob : CanTakeJobChecker {
+    public class CanTakeJoinGathering : CanTakeJobChecker {
         
-        public override string key => JobManager.Can_Take_Join_Party;
+        public override string key => JobManager.Can_Take_Join_Gathering;
         
         public override bool CanTakeJob(Character character, JobQueueItem jobQueueItem) {
             GoapPlanJob goapPlanJob = jobQueueItem as GoapPlanJob;
             Assert.IsNotNull(goapPlanJob);
             Character targetCharacter = goapPlanJob.targetPOI as Character;
             Assert.IsNotNull(targetCharacter);
-            Party partyToJoin = targetCharacter.partyComponent.currentParty;
-            return !character.partyComponent.hasParty && partyToJoin != null && !partyToJoin.isWaitTimeOver && !partyToJoin.isDisbanded && partyToJoin.IsAllowedToJoin(character);
+            Gathering gatheringToJoin = targetCharacter.gatheringComponent.currentGathering;
+            return !character.gatheringComponent.hasGathering && gatheringToJoin != null && !gatheringToJoin.isWaitTimeOver && !gatheringToJoin.isDisbanded && gatheringToJoin.IsAllowedToJoin(character);
         }
     }
 }

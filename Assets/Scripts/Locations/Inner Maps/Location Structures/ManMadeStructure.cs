@@ -109,11 +109,11 @@ namespace Inner_Maps.Location_Structures {
             SetInteriorState(intactWalls > neededWallsToBeConsideredExterior);
         }
         public override void CenterOnStructure() {
-            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != location.innerMap) {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != region.innerMap) {
                 InnerMapManager.Instance.HideAreaMap();
             }
-            if (location.innerMap.isShowing == false) {
-                InnerMapManager.Instance.ShowInnerMap(location);
+            if (region.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(region);
             }
             if (structureObj != null) {
                 InnerMapCameraMove.Instance.CenterCameraOn(structureObj.gameObject);

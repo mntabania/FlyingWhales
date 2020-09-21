@@ -158,6 +158,9 @@ public class PlayGuitar : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
                 return false;
             }
+            if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
+                return false;
+            }
             if (actor.traitContainer.HasTrait("Music Hater")) {
                 return false; //music haters will never play guitar
             }
@@ -222,50 +225,4 @@ public class PlayGuitar : GoapAction {
     //    return reactions;
     //}
     //#endregion
-}
-
-public class PlayGuitarData : GoapActionData {
-    public PlayGuitarData() : base(INTERACTION_TYPE.PLAY_GUITAR) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-        requirementAction = Requirement;
-    }
-
-    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        if (poiTarget.gridTileLocation != null && actor.trapStructure.IsTrappedAndTrapStructureIsNot(poiTarget.gridTileLocation.structure)) {
-            return false;
-        }
-        if (actor.traitContainer.HasTrait("MusicHater")) {
-            return false; //music haters will never play guitar
-        }
-        if (poiTarget.gridTileLocation == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = poiTarget.gridTileLocation;
-        //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
-        if (knownLoc.structure.isDwelling) {
-            if (actor.homeStructure == knownLoc.structure) {
-                return true;
-            } else {
-                if (knownLoc.structure.IsOccupied()) {
-                    for (int i = 0; i < knownLoc.structure.residents.Count; i++) {
-                        Character currResident = knownLoc.structure.residents[i];
-                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
-                            return true;
-                        }
-                    }
-                    //the actor does NOT have any positive relations with any resident
-                    return false;
-                } else {
-                    //in cases that the guitar is at a dwelling with no residents, always allow.
-                    return true;
-                }
-            }
-        } else {
-            //in cases that the guitar is not inside a dwelling, always allow.
-            return true;
-        }
-    }
 }

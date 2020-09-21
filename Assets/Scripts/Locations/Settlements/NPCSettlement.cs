@@ -16,7 +16,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationStructure prison { get; private set; }
     public LocationStructure mainStorage { get; private set; }
     public CityCenter cityCenter { get; private set; }
-    public Region region { get; }
 
     //Data that are only referenced from this npcSettlement's region
     //These are only getter data, meaning it cannot be stored
@@ -33,6 +32,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationEventManager eventManager { get; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
 
+    private Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
     private int newRulerDesignationChance;
     private int _isBeingHarassedCount;
@@ -41,6 +41,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     #region getters
     public override Type serializedData => typeof(SaveDataNPCSettlement);
+    public override Region region => _region;
     public JobTriggerComponent jobTriggerComponent => settlementJobTriggerComponent;
     public SettlementJobTriggerComponent settlementJobTriggerComponent { get; }
     public bool isBeingHarassed => _isBeingHarassedCount > 0;
@@ -48,7 +49,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     public NPCSettlement(Region region, LOCATION_TYPE locationType) : base(locationType) {
-        this.region = region;
+        _region = region;
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
@@ -61,7 +62,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     public NPCSettlement(SaveDataBaseSettlement saveDataBaseSettlement) : base (saveDataBaseSettlement) {
         //NOTE: This assumes that all tiles in this settlement is part of the same region.
-        region = GameUtilities.GetHexTilesGivenCoordinates(saveDataBaseSettlement.tileCoordinates, GridMap.Instance.map)[0].region;
+        _region = GameUtilities.GetHexTilesGivenCoordinates(saveDataBaseSettlement.tileCoordinates, GridMap.Instance.map)[0].region;
         newRulerDesignationWeights = new WeightedDictionary<Character>();
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ResetNewRulerDesignationChance();
@@ -107,6 +108,20 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             for (int i = 0; i < data.residents.Count; i++) {
                 Character resident = CharacterManager.Instance.GetCharacterByPersistentID(data.residents[i]);
                 residents.Add(resident);
+            }
+        }
+    }
+    public void LoadPartiesAndQuests(SaveDataBaseSettlement data) {
+        if (data.parties != null) {
+            for (int i = 0; i < data.parties.Count; i++) {
+                Party party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.parties[i]);
+                parties.Add(party);
+            }
+        }
+        if (data.availablePartyQuests != null) {
+            for (int i = 0; i < data.availablePartyQuests.Count; i++) {
+                PartyQuest quest = DatabaseManager.Instance.partyQuestDatabase.GetPartyQuestByPersistentID(data.availablePartyQuests[i]);
+                availablePartyQuests.Add(quest);
             }
         }
     }
@@ -163,12 +178,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             } else {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
                 if(exterminateTargetStructure != null) {
-                    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
-                    //if (UnityEngine.Random.Range(0, 100) < 20) {
-                    //    settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
-                    //} else {
-                    //    SetExterminateTarget(null);
-                    //}
+                    if(!HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
+                        PartyManager.Instance.CreateExterminatePartyQuest(this, exterminateTargetStructure, this);
+                    }
+                    //settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
                 }
             }
         }
@@ -499,15 +512,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
         return true;
     }
-    public bool HasAResidentThatIsAPartyLeader(PARTY_TYPE partyType) {
-        for (int i = 0; i < residents.Count; i++) {
-            Character resident = residents[i];
-            if(resident.partyComponent.hasParty && resident.partyComponent.currentParty.IsLeader(resident) && resident.partyComponent.currentParty.partyType == partyType) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool HasAResidentThatIsAPartyLeader(PARTY_QUEST_TYPE partyType) {
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character resident = residents[i];
+    //        if(resident.partyComponent.hasParty && resident.partyComponent.currentParty.IsLeader(resident) && resident.partyComponent.currentParty.partyType == partyType) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Tile Objects
@@ -1120,15 +1133,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             availableJobs[i].ClearBlacklist();
         }
     }
-    public bool HasActiveParty(PARTY_TYPE partyType) {
-        for (int i = 0; i < residents.Count; i++) {
-            Character character = residents[i];
-            if (character.partyComponent.currentParty != null && character.partyComponent.currentParty.partyType == partyType) {
-                return true;
-            }
-        }
-        return false;
-    }
+    //public bool HasActiveParty(PARTY_QUEST_TYPE partyType) {
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character character = residents[i];
+    //        if (character.partyComponent.hasParty && character.partyComponent.currentParty.partyType == partyType) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region IJobOwner

@@ -37,10 +37,3 @@ public class LaughAt : GoapAction {
     }
     #endregion   
 }
-
-public class LaughAtData : GoapActionData {
-    public LaughAtData() : base(INTERACTION_TYPE.LAUGH_AT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
-    }
-}
-

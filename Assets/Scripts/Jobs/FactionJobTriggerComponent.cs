@@ -9,29 +9,29 @@ public class FactionJobTriggerComponent : JobTriggerComponent {
     }
 
     #region Party
-    public bool TriggerCounterattackPartyJob(LocationStructure targetStructure) { //bool forceDoAction = false
-        // if (!_owner.HasJob(JOB_TYPE.COUNTERATTACK_PARTY)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK_PARTY, INTERACTION_TYPE.COUNTERATTACK_ACTION, null, _owner);
-            job.AddOtherData(INTERACTION_TYPE.COUNTERATTACK_ACTION, new object[] { targetStructure });
-            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Counterattack);
-            _owner.AddToAvailableJobs(job);
-            return true;
-        // }
-        // return false;
-    }
-    public bool TriggerRaidJob(BaseSettlement targetSettlement) { //bool forceDoAction = false
-        if (!_owner.HasJob(JOB_TYPE.RAID)) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAID, INTERACTION_TYPE.RAID, null, _owner);
-            job.AddOtherData(INTERACTION_TYPE.RAID, new object[] { targetSettlement, _owner });
-            job.SetCanTakeThisJobChecker(JobManager.Can_Take_Raid);
-            _owner.AddToAvailableJobs(job);
-            return true;
-        }
-        return false;
-    }
-    public void TriggerJoinPartyJob(Party party) {
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_PARTY, INTERACTION_TYPE.JOIN_PARTY, party.leader, _owner);
-        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Party);
+    //public bool TriggerCounterattackPartyJob(LocationStructure targetStructure) { //bool forceDoAction = false
+    //    // if (!_owner.HasJob(JOB_TYPE.COUNTERATTACK_PARTY)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COUNTERATTACK_PARTY, INTERACTION_TYPE.COUNTERATTACK_ACTION, null, _owner);
+    //        job.AddOtherData(INTERACTION_TYPE.COUNTERATTACK_ACTION, new object[] { targetStructure });
+    //        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Counterattack);
+    //        _owner.AddToAvailableJobs(job);
+    //        return true;
+    //    // }
+    //    // return false;
+    //}
+    //public bool TriggerRaidJob(BaseSettlement targetSettlement) { //bool forceDoAction = false
+    //    if (!_owner.HasJob(JOB_TYPE.RAID)) {
+    //        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RAID, INTERACTION_TYPE.RAID, null, _owner);
+    //        job.AddOtherData(INTERACTION_TYPE.RAID, new object[] { targetSettlement, _owner });
+    //        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Raid);
+    //        _owner.AddToAvailableJobs(job);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    public void TriggerJoinGatheringJob(Gathering gathering) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_GATHERING, INTERACTION_TYPE.JOIN_GATHERING, gathering.host, _owner);
+        job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Gathering);
         _owner.AddToAvailableJobs(job);
     }
     public bool TriggerHeirloomHuntJob(Region regionToSearch) { //bool forceDoAction = false
