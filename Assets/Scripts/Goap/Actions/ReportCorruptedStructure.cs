@@ -73,16 +73,16 @@ public class ReportCorruptedStructure : GoapAction {
             // PlayerUI.Instance.ShowGeneralConfirmation("Demonic Structure Reported", "Your demonic structure " + structureToReport.name + " has been reported! They can now attack this structure!");
         }
         PlayerManager.Instance.player.threatComponent.AdjustThreat(20); //15
-        TriggerCounterattack(goapNode.actor);
+        TriggerCounterattack(goapNode.actor, structureToReport);
     }
     #endregion
     
-     private void TriggerCounterattack(Character character) {
+     private void TriggerCounterattack(Character character, LocationStructure targetDemonicStructure) {
         string debugLog = GameManager.Instance.TodayLogString() + "Counterattack!";
 
-        LocationStructure targetDemonicStructure = InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure() ? 
-            CollectionUtilities.GetRandomElement(InnerMapManager.Instance.worldKnownDemonicStructures): 
-            PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
+        //LocationStructure targetDemonicStructure = InnerMapManager.Instance.HasExistingWorldKnownDemonicStructure() ? 
+        //    CollectionUtilities.GetRandomElement(InnerMapManager.Instance.worldKnownDemonicStructures): 
+        //    PlayerManager.Instance.player.playerSettlement.GetRandomStructure();
         
         if (targetDemonicStructure == null) {
             //it is assumed that this only happens if the player casts a spell that is seen by another character,

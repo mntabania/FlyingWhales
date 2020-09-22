@@ -611,7 +611,8 @@ namespace Inner_Maps {
                     if (!character.behaviourComponent.isAttackingDemonicStructure 
                         && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
                         && character.isAlliedWithPlayer == false 
-                        && character.necromancerTrait == null) {
+                        && character.necromancerTrait == null
+                        && !    character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
                             if (character.isNormalCharacter) {

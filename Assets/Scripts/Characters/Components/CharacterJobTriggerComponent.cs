@@ -2768,10 +2768,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     #region Haul
     public void TryCreateHaulForCampJob(ResourcePile target, HexTile hex) {
         if (owner.jobQueue.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == owner.currentRegion) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL,
-                new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
-            job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { hex });
-            owner.jobQueue.AddJobInQueue(job);
+            if(target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex) {
+                //Only create haul job for camp if resource pile is not in camp
+            } else {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
+                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { hex });
+                owner.jobQueue.AddJobInQueue(job);
+            }
         }
     }
     #endregion
