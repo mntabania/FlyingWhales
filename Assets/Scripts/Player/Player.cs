@@ -514,7 +514,7 @@ public class Player : ILeader, IObjectManipulator {
         }
     }
     public void ShowNotificationFromPlayer(Log log) {
-        DatabaseManager.Instance.mainSQLDatabase.InsertLog(log);
+        log.AddLogToDatabase();
         ShowNotification(log);
     }
     

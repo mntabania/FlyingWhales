@@ -222,16 +222,18 @@ public class InterruptComponent : CharacterComponent {
     }
     private void AddEffectLog(InterruptHolder interruptHolder) {
         if(interruptHolder.effectLog.hasValue) {
-            if (interruptHolder.interrupt.shouldAddLogs) {
+            if (interruptHolder.interrupt.shouldAddLogs || interruptHolder.interrupt.shouldShowNotif) {
                 interruptHolder.effectLog.AddLogToDatabase();
-                // if (owner != interruptHolder.target) {
-                //     interruptHolder.effectLog.AddLogToInvolvedObjects();
-                // } else {
-                //     owner.logComponent.AddHistory(interruptHolder.effectLog);
-                //     interruptHolder.effectLog.AddLogToSpecificObjects(LOG_IDENTIFIER.FACTION_1,
-                //         LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
-                // }    
             }
+            // if (interruptHolder.interrupt.shouldAddLogs) {
+            //     // if (owner != interruptHolder.target) {
+            //     //     interruptHolder.effectLog.AddLogToInvolvedObjects();
+            //     // } else {
+            //     //     owner.logComponent.AddHistory(interruptHolder.effectLog);
+            //     //     interruptHolder.effectLog.AddLogToSpecificObjects(LOG_IDENTIFIER.FACTION_1,
+            //     //         LOG_IDENTIFIER.FACTION_2, LOG_IDENTIFIER.FACTION_3);
+            //     // }    
+            // }
             if (interruptHolder.interrupt.shouldShowNotif) {
                 if (interruptHolder.interrupt.type == INTERRUPT.Create_Party) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(interruptHolder.effectLog);
