@@ -57,6 +57,7 @@ public class LogsWindow : MonoBehaviour {
         _objPersistentID = id;
         //update text visual
         searchField.SetTextWithoutNotify(SharedSearch);
+        clearBtn.gameObject.SetActive(!string.IsNullOrEmpty(SharedSearch));
         //update filter visuals
         for (int i = 0; i < allFilters.Length; i++) {
             LogFilterItem filterItem = allFilters[i];
