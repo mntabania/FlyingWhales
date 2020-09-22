@@ -142,4 +142,8 @@ public class SaveDataTrapStructure : SaveData<TrapStructure> {
             forcedHex = data.forcedHex.persistentID;
         }
     }
+    public override TrapStructure Load() {
+        TrapStructure component = new TrapStructure(this);
+        return component;
+    }
 }

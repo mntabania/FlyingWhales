@@ -597,9 +597,9 @@ public class Party : ISavable {
         OnDisbandParty();
     }
     private void OnDisbandParty() {
-        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband");
+        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
         log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
+        log.AddLogToDatabase();
 
         isDisbanded = true;
         DestroyParty();
@@ -641,7 +641,10 @@ public class Party : ISavable {
         if (data.membersThatJoinedQuest != null) {
             membersThatJoinedQuest = SaveUtilities.ConvertIDListToCharacters(data.membersThatJoinedQuest);
         }
-
+        if (!string.IsNullOrEmpty(data.partySettlement)) {
+            partySettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.partySettlement);
+        }
+        
         if ((targetRestingTavern != null || targetCamp != null) && partyState == PARTY_STATE.Resting) {
             Messenger.AddListener(Signals.HOUR_STARTED, RestingPerHour);
         } else if (partyState == PARTY_STATE.Waiting) {

@@ -9239,7 +9239,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 195919683}
   allowClickAction: 1
   hoverAction:
@@ -12903,7 +12902,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 262844871}
   allowClickAction: 1
   hoverAction:
@@ -14502,7 +14500,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -21666,7 +21663,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 438714915}
   allowClickAction: 1
   hoverAction:
@@ -21752,7 +21748,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 439343313}
   allowClickAction: 1
   hoverAction:
@@ -28484,7 +28479,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 464695947}
   allowClickAction: 1
   hoverAction:
@@ -32810,7 +32804,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -39837,7 +39830,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -57518,7 +57510,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883206538}
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -78109,7 +78101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1334812013}
   allowClickAction: 1
   hoverAction:
@@ -82342,7 +82333,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1403969436}
   allowClickAction: 1
   hoverAction:
@@ -84765,7 +84755,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1443323026}
   allowClickAction: 1
   hoverAction:
@@ -87476,7 +87465,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1478251721}
   allowClickAction: 1
   hoverAction:
@@ -93842,6 +93830,21 @@ MonoBehaviour:
   psychopathUI: {fileID: 2009634779}
   customDropdownList: {fileID: 1361932167}
   questUI: {fileID: 509764151}
+  logTagSpriteDictionary:
+    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b000000
+    m_values:
+    - {fileID: 21300000, guid: 68052aebd08ec7545bf281dc7a4a8078, type: 3}
+    - {fileID: 21300000, guid: 6da4931288c87ee439f3d3382f24c078, type: 3}
+    - {fileID: 21300000, guid: 0fddf22645329ee4f8d3ba928593b56a, type: 3}
+    - {fileID: 21300000, guid: dab4c18375ee22f418b1ffdd102d973a, type: 3}
+    - {fileID: 21300000, guid: 8c3b9fe0286ff244d911afc079a4f232, type: 3}
+    - {fileID: 21300000, guid: 62572a4ab34e7934799f8663b9d27fcc, type: 3}
+    - {fileID: 21300000, guid: 1f9183ef5eee83c44bfcc98f7274c048, type: 3}
+    - {fileID: 21300000, guid: 3145af3f181558e47b5e936e34f9fc18, type: 3}
+    - {fileID: 21300000, guid: 0485ac1d8c6fa3f45a9c6e5912d51cba, type: 3}
+    - {fileID: 21300000, guid: d9a7d8c892a22b94c91ae6fc45a4e4b4, type: 3}
+    - {fileID: 21300000, guid: b9f5f2ede50974a49ac1e41cfa208d94, type: 3}
+    - {fileID: 21300000, guid: fb10f4935a328d1419578994df66cbc5, type: 3}
   _optionsMenu: {fileID: 1720977191}
   factionInfoUI: {fileID: 1485930123}
   characterInfoUI: {fileID: 572338040}
@@ -96713,7 +96716,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1603081964}
   allowClickAction: 1
   hoverAction:
@@ -97108,7 +97110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1608515032}
   allowClickAction: 1
   hoverAction:
@@ -103557,7 +103558,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1699059518}
   allowClickAction: 1
   hoverAction:
@@ -104495,7 +104495,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 0}
   allowClickAction: 1
   hoverAction:
@@ -107728,7 +107727,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1739531751}
   allowClickAction: 1
   hoverAction:
@@ -109628,7 +109626,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1768371835}
   allowClickAction: 1
   hoverAction:
@@ -121235,7 +121232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 1979070286}
   allowClickAction: 1
   hoverAction:
@@ -133263,7 +133259,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f737e5ae56a617244ad293beb715783c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logItem: {fileID: 0}
   text: {fileID: 2144444159}
   allowClickAction: 1
   hoverAction:

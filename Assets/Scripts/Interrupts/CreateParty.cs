@@ -8,6 +8,7 @@ namespace Interrupts {
             duration = 0;
             isSimulateneous = true;
             interruptIconString = GoapActionStateDB.No_Icon;
+            logTags = new LOG_TAG[] { LOG_TAG.Party };
         }
 
         #region Overrides
@@ -18,11 +19,11 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log effectLog = base.CreateEffectLog(actor, target);
-            if (effectLog != null) {
+            if (effectLog.hasValue) {
                 effectLog.AddToFillers(null, actor.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1);
                 return effectLog;
             }
-            return null;
+            return default;
         }
         #endregion
     }

@@ -24465,7 +24465,7 @@ MonoBehaviour:
   saveCurrentProgressManager: {fileID: 1380393232}
   alwaysResetSpecialPopupsOnStartup: 0
   alwaysResetBonusTutorialsOnStartup: 0
-  _unlockAllWorlds: 0
+  _unlockAllWorlds: 1
 --- !u!4 &1625756931
 Transform:
   m_ObjectHideFlags: 0
@@ -24531,7 +24531,7 @@ MonoBehaviour:
     type: 2}
   initialArtifactChoices: 010000000200000003000000
   _isDemoBuild: 0
-  _disableLogs: 0
+  _disableLogs: 1
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1665094242
 GameObject:
@@ -29319,7 +29319,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1940818010}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -33739,12 +33739,12 @@ PrefabInstance:
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlockAllSkills
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6186091219942898611, guid: 39888b675721e8e488059363d0de61d1,
         type: 3}
       propertyPath: _unlimitedCast
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39888b675721e8e488059363d0de61d1, type: 3}

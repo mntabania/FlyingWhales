@@ -7,6 +7,8 @@ using JetBrains.Annotations;
 using Traits;
 using UnityEngine;
 using UtilityScripts;
+using Logs;
+
 namespace Locations.Settlements {
     public abstract class BaseSettlement : IPartyQuestTarget, IPartyTargetDestination, IGatheringTarget, ISavable, ILogFiller {
         public string persistentID { get; private set; }

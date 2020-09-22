@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using Locations.Settlements;
 using UnityEngine.Assertions;
+using Logs;
 
 namespace Inner_Maps.Location_Structures {
     [System.Serializable]
