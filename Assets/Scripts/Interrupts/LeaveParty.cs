@@ -17,7 +17,7 @@ namespace Interrupts {
             if (party != null) {
                 party.RemoveMember(interruptHolder.actor);
 
-                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
+                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", providedTags: LOG_TAG.Party);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(null, party.partyName, LOG_IDENTIFIER.STRING_1);
                 overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_2);

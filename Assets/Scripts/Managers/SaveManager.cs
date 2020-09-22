@@ -67,7 +67,9 @@ public class SaveManager : MonoBehaviour {
 
     #region Initialization
     public void PrepareTempDirectory() {
-        Directory.Delete(UtilityScripts.Utilities.tempPath, true);
+        if (Directory.Exists(UtilityScripts.Utilities.tempPath)) {
+            Directory.Delete(UtilityScripts.Utilities.tempPath, true);    
+        }
         Directory.CreateDirectory(UtilityScripts.Utilities.tempPath);
         Directory.CreateDirectory(UtilityScripts.Utilities.tempZipPath);
     }
