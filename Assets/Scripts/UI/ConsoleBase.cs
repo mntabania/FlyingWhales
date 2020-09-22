@@ -12,6 +12,7 @@ using Inner_Maps.Location_Structures;
 using Tutorial;
 using UnityEngine.Events;
 using UtilityScripts;
+using Locations.Settlements;
 
 public class ConsoleBase : InfoUIBase {
 
@@ -90,6 +91,7 @@ public class ConsoleBase : InfoUIBase {
             {"/save_scenario", SaveScenarioMap },
             {"/save_manual", SaveManual },
             {"/set_party_state", SwitchPartyState },
+            {"/raid", StartRaid },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1400,6 +1402,21 @@ public class ConsoleBase : InfoUIBase {
             AddErrorMessage($"There is no poi of type {stateParameterString}");
         } else {
             party.SetPartyState(partyState);
+        }
+    }
+    private void StartRaid(string[] parameters) {
+        if (parameters.Length != 2) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of StartRaid");
+            return;
+        }
+        string targetParameterString = parameters[0];
+        string characterNameParameterString = parameters[1];
+        Character character = CharacterManager.Instance.GetCharacterByName(characterNameParameterString);
+        if(character != null) {
+            BaseSettlement targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByName(targetParameterString);
+            character.interruptComponent.SetRaidTargetSettlement(targetSettlement);
+            character.interruptComponent.TriggerInterrupt(INTERRUPT.Declare_Raid, character);
         }
     }
     #endregion

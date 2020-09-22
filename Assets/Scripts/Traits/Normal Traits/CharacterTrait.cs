@@ -141,8 +141,10 @@ namespace Traits {
                         }
                     }
                 }
-                if (characterThatWillDoJob.partyComponent.hasParty && characterThatWillDoJob.partyComponent.currentParty.isActive && item is ResourcePile resourcePile) {
-                    if (characterThatWillDoJob.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty) {
+                if (characterThatWillDoJob.partyComponent.hasParty && characterThatWillDoJob.partyComponent.currentParty.isActive
+                    && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                    if (characterThatWillDoJob.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty && item is ResourcePile resourcePile 
+                        && resourcePile.gridTileLocation != null && resourcePile.gridTileLocation.IsPartOfSettlement(raidParty.targetSettlement)) {
                         if (UnityEngine.Random.Range(0, 100) < 35) {
                             if (!owner.jobQueue.HasJob(JOB_TYPE.KIDNAP_RAID)) {
                                 owner.jobComponent.TriggerStealRaidJob(resourcePile);
@@ -190,8 +192,10 @@ namespace Traits {
                                 }
                             }
                         }
-                        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                            if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty) {
+                        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                            if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty 
+                                && targetCharacter.homeSettlement == raidParty.targetSettlement 
+                                /*&& (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter))*/) {
                                 if (UnityEngine.Random.Range(0, 100) < 15) {
                                     if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
                                         owner.jobComponent.TriggerKidnapRaidJob(targetCharacter);
