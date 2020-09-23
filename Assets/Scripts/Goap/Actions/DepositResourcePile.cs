@@ -120,14 +120,6 @@ public class DepositResourcePile : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.UncarryPOI(poiTarget);
     }
-    public override void OnMoveToDoAction(ActualGoapNode node) {
-        base.OnMoveToDoAction(node);
-        if (node.associatedJobType == JOB_TYPE.STEAL_RAID) {
-            if (node.actor.partyComponent.hasParty && node.actor.partyComponent.currentParty.isActive && node.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
-                node.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(node.actor);
-            }
-        }
-    }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
@@ -246,6 +238,12 @@ public class DepositResourcePile : GoapAction {
             
         } else {
             actor.UncarryPOI(poiTarget);
+        }
+
+        if (goapNode.associatedJobType == JOB_TYPE.STEAL_RAID) {
+            if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.isActive && goapNode.actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
+                goapNode.actor.partyComponent.currentParty.RemoveMemberThatJoinedQuest(goapNode.actor);
+            }
         }
     }
     #endregion

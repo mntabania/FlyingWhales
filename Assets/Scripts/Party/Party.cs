@@ -16,6 +16,7 @@ public class Party : ISavable {
     public bool hasRested { get; private set; }
     public bool isDisbanded { get; private set; }
     public bool hasChangedTargetDestination { get; private set; }
+    public int perHourElapsedInWaiting { get; private set; }
     public BaseSettlement partySettlement { get; private set; }
     public LocationStructure meetingPlace { get; private set; }
     public LocationStructure targetRestingTavern { get; private set; }
@@ -55,6 +56,7 @@ public class Party : ISavable {
         partySettlement = partyCreator.homeSettlement;
         isDisbanded = false;
         hasRested = true;
+        perHourElapsedInWaiting = 0;
 
         SetPartyState(PARTY_STATE.None);
         SetTakeQuestSchedule();
@@ -79,6 +81,7 @@ public class Party : ISavable {
         isDisbanded = data.isDisbanded;
         cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
+        perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         waitingEndDate = data.waitingEndDate;
 
         if (partyName != string.Empty) {
@@ -114,7 +117,7 @@ public class Party : ISavable {
         }
     }
     //private void SetEndRestSchedule() {
-    //    endRestSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.MORNING);
+    //    endRestSchedule = GameManager.GetRandomTicokFromTimeInWords(TIME_IN_WORDS.MORNING);
     //}
     private void SetMeetingPlace() {
         if (partySettlement != null) {
@@ -211,13 +214,17 @@ public class Party : ISavable {
         StartWaitTimer();
     }
     private void StartWaitTimer() {
+        perHourElapsedInWaiting = 0;
         Messenger.AddListener(Signals.HOUR_STARTED, WaitingPerHour);
         waitingEndDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(5));
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
     }
     private void WaitingPerHour() {
-        if (members.Count > 0 && members.Count == GetNumberOfMembersThatJoinedInMeetingPlace()) {
-            WaitingEndedDecisionMaking();
+        perHourElapsedInWaiting++;
+        if(perHourElapsedInWaiting > 2) {
+            if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+                WaitingEndedDecisionMaking();
+            }
         }
     }
     private void WaitingEndedDecisionMaking() {
@@ -674,6 +681,7 @@ public class Party : ISavable {
         foodProducer = null;
         cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
+        perHourElapsedInWaiting = 0;
         members.Clear();
         ClearMembersThatJoinedQuest();
         _activeMembers.Clear();
@@ -703,6 +711,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public bool isDisbanded;
     public bool cannotProduceFoodThisRestPeriod;
     public bool hasChangedTargetDestination;
+    public int perHourElapsedInWaiting;
     public string partySettlement;
     public string meetingPlace;
     public string targetRestingTavern;
@@ -734,6 +743,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         isDisbanded = data.isDisbanded;
         cannotProduceFoodThisRestPeriod = data.cannotProduceFoodThisRestPeriod;
         hasChangedTargetDestination = data.hasChangedTargetDestination;
+        perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         partySettlement = data.partySettlement.persistentID;
 
         waitingEndDate = data.waitingEndDate;

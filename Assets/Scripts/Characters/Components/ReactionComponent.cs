@@ -625,6 +625,16 @@ public class ReactionComponent : CharacterComponent {
                     //     ((disguisedActor.race == RACE.DEMON && disguisedTarget.race == RACE.ANGEL) || (disguisedActor.race == RACE.ANGEL && disguisedTarget.race == RACE.DEMON));
                     bool isLethal = true;
                     bool isTopPrioJobLethal = actor.jobQueue.jobsInQueue.Count <= 0 || actor.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
+                    if(actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive && actor.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                        //If actor is in a raid party quest, all hostile attacks should be non lethal
+                        //This is because of the changes in raid
+                        //Now, the raid is for stealing or kidnapping only, that is why all hostile attacks should be non lethal
+                        if(actor.partyComponent.currentParty.currentQuest is RaidPartyQuest) {
+                            if (actor.partyComponent.isActiveMember) {
+                                isLethal = false;
+                            }
+                        }
+                    }
                     if (actor.jobQueue.jobsInQueue.Count > 0) {
                         debugLog = $"{debugLog}\n-{actor.jobQueue.jobsInQueue[0].jobType}";
                     }

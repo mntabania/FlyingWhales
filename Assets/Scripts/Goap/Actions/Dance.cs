@@ -25,6 +25,7 @@ public class Dance : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
         string costLog = $"\n{name} {target.nameWithID}:";
+
         int cost = UtilityScripts.Utilities.Rng.Next(90, 131);
         costLog += $" +{cost}(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);

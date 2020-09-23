@@ -1299,6 +1299,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     public void CreateEatJob(IPointOfInterest target) {
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
+            if (owner.partyComponent.isActiveMember) {
+                return;
+            }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT, INTERACTION_TYPE.EAT, target, owner);
             if (owner.jobQueue.AddJobInQueue(job)) {
                 owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);

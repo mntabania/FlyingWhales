@@ -22,24 +22,24 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                     party.GoBackHomeAndEndQuest();
                     return true;
                 } else {
-                    if (quest.target is BaseSettlement targetSettlement) {
-                        if (targetSettlement.owner == null || character.faction == null || !character.faction.IsHostileWith(targetSettlement.owner)) {
-                            party.GoBackHomeAndEndQuest();
-                            log += $"\n-No settlement/character faction or factions are no longer hostile, leave party";
-                            return true;
-                        }
-                    }
+                    //if (quest.target is BaseSettlement targetSettlement) {
+                    //    if (targetSettlement.owner == null || character.faction == null || !character.faction.IsHostileWith(targetSettlement.owner)) {
+                    //        party.GoBackHomeAndEndQuest();
+                    //        log += $"\n-No settlement/character faction or factions are no longer hostile, leave party";
+                    //        return true;
+                    //    }
+                    //}
                 }
 
-                Character target = GetRandomAliveResidentInsideSettlementThatIsHostileWith(character, quest.targetSettlement);
-                if (target != null) {
-                    log += $"\n-Chosen target is {target.name}";
-                    character.combatComponent.Fight(target, CombatManager.Hostility, isLethal: false);
-                    return true;
-                } else {
+                //Character target = GetRandomAliveResidentInsideSettlementThatIsHostileWith(character, quest.targetSettlement);
+                //if (target != null) {
+                //    log += $"\n-Chosen target is {target.name}";
+                //    character.combatComponent.Fight(target, CombatManager.Hostility, isLethal: false);
+                //    return true;
+                //} else {
                     log += $"\n-Roam around";
                     hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
-                }
+                //}
             } 
             //else {
             //    LocationGridTile tile = party.targetDestination.GetRandomPassableTile();

@@ -192,7 +192,7 @@ namespace Traits {
                                 }
                             }
                         }
-                        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                        if (!targetCharacter.canMove && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                             if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty 
                                 && targetCharacter.homeSettlement == raidParty.targetSettlement 
                                 /*&& (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter))*/) {
