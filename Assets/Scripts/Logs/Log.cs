@@ -76,6 +76,13 @@ public struct Log {
         fillers.Add (new LogFillerStruct(obj, value, identifier));
     }
     internal void AddToFillers(LogFillerStruct filler) {
+        ILogFiller obj = filler.GetObjectForFiller() as ILogFiller;
+        if(obj != null) {
+            AddInvolvedObject(obj.persistentID);
+            if (obj is TileObject tileObject) {
+                tileObject.OnReferencedInALog();
+            }
+        }
         fillers.Add (filler);
     }
     internal void AddToFillers(List<LogFillerStruct> fillers) {

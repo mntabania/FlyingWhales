@@ -46,6 +46,7 @@ namespace Interrupts {
                 log.AddToFillers(randomTorture.fillers);
                 log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
                 log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);
+
                 interruptHolder.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
 
                 interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, randomNegativeStatus);
