@@ -26,7 +26,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
             //    character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character, out producedJob);
             //}
             return true;
-        } else if (character.currentStructure == character.homeStructure || character.IsInTerritory()) {
+        } else if (character.isAtHomeStructure || character.IsInTerritory()) {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 log += $"\n-{character.name} is in home structure and just returned home";
 
@@ -317,7 +317,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
                 log += "\n-Otherwise, if character has at least one item in his inventory, 15% chance (multiplied by number of items in inventory, but cap at 4) to add a Drop Item job";
-                if (character.HasItem()) {
+                if (character.HasItem() && character.homeStructure != null) {
                     log += $"\n  -Has " + character.items.Count + " items in inventory";
                     int multiplier = character.items.Count > 4 ? 4 : character.items.Count;
                     int chance = multiplier * 15;

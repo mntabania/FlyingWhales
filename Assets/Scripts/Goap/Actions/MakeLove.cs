@@ -33,20 +33,9 @@ public class MakeLove : GoapAction {
         string costLog = $"\n{name} {target.nameWithID}:";
         if (actor.partyComponent.hasParty && actor.partyComponent.currentParty.isActive) {
             if (actor.partyComponent.isActiveMember) {
-                if (target.gridTileLocation != null && target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.gridTileLocation != null
-                && actor.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
-                    LocationGridTile centerGridTileOfTarget = target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    LocationGridTile centerGridTileOfActor = actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetCenterLocationGridTile();
-                    float distance = centerGridTileOfActor.GetDistanceTo(centerGridTileOfTarget);
-                    int distanceToCheck = (InnerMapManager.BuildingSpotSize.x * 2) * 3;
-
-                    if (distance > distanceToCheck) {
-                        //target is at structure that character is avoiding
-                        costLog += $" +2000(Active Party, Location of target too far from actor)";
-                        actor.logComponent.AppendCostLog(costLog);
-                        return 2000;
-                    }
-                }
+                costLog += $" +2000(Active Party, Cannot make love)";
+                actor.logComponent.AppendCostLog(costLog);
+                return 2000;
             }
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);

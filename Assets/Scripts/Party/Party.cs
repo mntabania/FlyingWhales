@@ -283,6 +283,7 @@ public class Party : ISavable {
     }
     private void RestingPerHour() {
         if (!HasActiveMemberThatMustDoNeedsRecovery()) {
+            Messenger.RemoveListener(Signals.HOUR_STARTED, RestingPerHour);
             SetPartyState(PARTY_STATE.Moving);
         }
     }
@@ -299,13 +300,17 @@ public class Party : ISavable {
         }
         if (firstActiveMember != null) {
             HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+            if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT) {
+                //Hex tile within a village cannot be a camp
+                activeMemberCurrentHex = null;
+            }
             List<HexTile> nearbyHexes = activeMemberCurrentHex.GetTilesInRange(3);
             if (nearbyHexes != null && nearbyHexes.Count > 0) {
                 for (int i = 0; i < nearbyHexes.Count; i++) {
                     HexTile hex = nearbyHexes[i];
                     BaseSettlement settlement;
                     if (hex.IsPartOfVillage(out settlement)) {
-                        if(settlement == partySettlement && targetDestination == partySettlement) {
+                        if (settlement == partySettlement && targetDestination == partySettlement) {
                             //If the nearby tavern is in the home settlement of the party and the home settlement is the target destination (meaning the quest is done and the party is going home), return immeditately
                             //This would mean the no resting tavern or camp will be set
                             //If this happens, it means that their home is nearby and will go home instead of setting up a camp
@@ -317,6 +322,10 @@ public class Party : ISavable {
                                 targetRestingTavern = tavern;
                                 break;
                             }
+                        }
+                    } else {
+                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER) {
+                            activeMemberCurrentHex = hex;
                         }
                     }
                 }
@@ -347,6 +356,8 @@ public class Party : ISavable {
             currentQuest = quest;
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
+
+
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {

@@ -588,7 +588,7 @@ namespace Inner_Maps {
             if (hasSnareTrap) {
                 TriggerSnareTrap(character);
             }
-            if (isCorrupted && !character.isDead) {
+            if (isCorrupted && !character.isDead && character.canMove) {
                 //Reporting does not trigger until Tutorial is over
                 //https://trello.com/c/OmmyR6go/1239-reporting-does-not-trigger-until-tutorial-is-over
 

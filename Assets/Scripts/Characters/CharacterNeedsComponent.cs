@@ -1050,6 +1050,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
+        if (owner.traitContainer.HasTrait("Vampiric")) {
+            return false;
+        }
         if (isStarving) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
                 //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already

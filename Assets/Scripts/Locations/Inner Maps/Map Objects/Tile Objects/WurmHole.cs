@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
+using UnityEngine.Assertions;
 
 public class WurmHole : TileObject{
     public WurmHole wurmHoleConnection { get; private set; }
+
+    #region getters
+    public override System.Type serializedData => typeof(SaveDataWurmHole);
+    #endregion
 
     public WurmHole() {
         Initialize(TILE_OBJECT_TYPE.WURM_HOLE);
         traitContainer.AddTrait(this, "Indestructible");
         traitContainer.AddTrait(this, "Fireproof");
     }
-    public WurmHole(SaveDataTileObject data) { }
+    public WurmHole(SaveDataWurmHole data) { }
 
     public void SetWurmHoleConnection(WurmHole wurmHole) {
         wurmHoleConnection = wurmHole;
@@ -28,4 +33,30 @@ public class WurmHole : TileObject{
         character.combatComponent.ClearHostilesInRange();
         character.combatComponent.ClearAvoidInRange();
     }
+
+    #region Loading
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
+        if(data is SaveDataWurmHole subData) {
+            if (!string.IsNullOrEmpty(subData.wurmHoleConnection)) {
+                wurmHoleConnection = DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(subData.wurmHoleConnection) as WurmHole;
+            }
+        }
+    }
+    #endregion
 }
+
+#region Save Data
+[System.Serializable]
+public class SaveDataWurmHole : SaveDataTileObject {
+    public string wurmHoleConnection;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        WurmHole wurmHole = tileObject as WurmHole;
+        Assert.IsNotNull(wurmHole);
+        wurmHoleConnection = wurmHole.wurmHoleConnection.persistentID;
+        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(wurmHole.wurmHoleConnection);
+    }
+}
+#endregion
