@@ -1016,7 +1016,10 @@ public class CharacterNeedsComponent : CharacterComponent {
                 if (isStarving) {
                     jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
                 }
-                PlanFullnessRecovery(jobType);
+                GoapPlanJob job = PlanFullnessRecovery(jobType);
+                if(job != null) {
+                    owner.jobQueue.AddJobInQueue(job);
+                }
             }
             hasForcedFullness = true;
             SetFullnessForcedTick();
@@ -1040,7 +1043,10 @@ public class CharacterNeedsComponent : CharacterComponent {
                     }
                 }
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
-                PlanFullnessRecovery(jobType);
+                GoapPlanJob job = PlanFullnessRecovery(jobType);
+                if (job != null) {
+                    owner.jobQueue.AddJobInQueue(job);
+                }
                 return true;
             }
         } 
@@ -1067,12 +1073,18 @@ public class CharacterNeedsComponent : CharacterComponent {
                     }
                 }
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
-                PlanFullnessRecoveryBase(jobType);
+                GoapPlanJob job = PlanFullnessRecoveryBase(jobType);
+                if (job != null) {
+                    owner.jobQueue.AddJobInQueue(job);
+                }
                 return true;
             }
         } else if (isHungry) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
-                PlanFullnessRecoveryBase(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                GoapPlanJob job = PlanFullnessRecoveryBase(JOB_TYPE.FULLNESS_RECOVERY_NORMAL);
+                if (job != null) {
+                    owner.jobQueue.AddJobInQueue(job);
+                }
                 return true;
             }
         }
@@ -1081,7 +1093,10 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void PlanFullnessRecoveryNormal() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
-            PlanFullnessRecovery(jobType);
+            GoapPlanJob job = PlanFullnessRecovery(jobType);
+            if (job != null) {
+                owner.jobQueue.AddJobInQueue(job);
+            }
         }
     }
     public void PlanFullnessRecoveryNormal(out JobQueueItem producedJob) {
