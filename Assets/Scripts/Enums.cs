@@ -1034,6 +1034,7 @@ public enum LOG_TAG {
     Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
+public enum SETTLEMENT_TYPE { Default_Human, Default_Elf }
 
 
 #region Crime Subcategories

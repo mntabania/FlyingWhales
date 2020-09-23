@@ -11,14 +11,13 @@ namespace UtilityScripts {
                 NPCSettlement npcSettlement = settlements[i];
                 summary += $"\n<b>{npcSettlement.name}</b>";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
+                if (npcSettlement.settlementType != null) {
+                    summary += $"\n<b>Facility Weights and Caps:</b>";
+                    foreach (var kvp in npcSettlement.settlementType.facilityWeights.dictionary) {
+                        summary += $"\n\t{kvp.Key.ToString()} - {kvp.Value.ToString()} - {npcSettlement.settlementType.facilityCaps[kvp.Key].ToString()}";
+                    }
+                }
                 if (npcSettlement.owner == null) { continue; }
-                // summary += $"\nDryers: {npcSettlement.settlementJobTriggerComponent.tileDryers.Count.ToString()}";
-                // summary += $"\nCleansers: {npcSettlement.settlementJobTriggerComponent.poisonCleansers.Count.ToString()}";
-                // summary += $"\nDousers: {npcSettlement.settlementJobTriggerComponent.dousers.Count.ToString()}";
-                // for (int j = 0; j < npcSettlement.settlementJobTriggerComponent.dousers.Count; j++) {
-                //     Character douser = npcSettlement.settlementJobTriggerComponent.dousers[j];
-                //     summary += $"\n\t-{douser.name}";    
-                // }
                 summary += $"\n{npcSettlement.name} Location Job Queue:";
                 if (npcSettlement.availableJobs.Count > 0) {
                     for (int j = 0; j < npcSettlement.availableJobs.Count; j++) {

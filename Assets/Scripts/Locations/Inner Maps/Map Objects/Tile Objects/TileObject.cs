@@ -1039,7 +1039,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         SubscribeListeners();
     }
-    protected void CheckUnbuiltObjectValidity() {
+    private void CheckUnbuiltObjectValidity() {
         if (allExistingJobsTargetingThis.Count <= 0) {
             //unbuilt object is no longer valid, remove it
             Messenger.RemoveListener(Signals.CHECK_UNBUILT_OBJECT_VALIDITY, CheckUnbuiltObjectValidity);

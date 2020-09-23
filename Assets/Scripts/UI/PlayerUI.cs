@@ -361,7 +361,7 @@ public class PlayerUI : BaseMonoBehaviour {
             Assert.IsNotNull(location, $"Trying to update region name UI in top menu, but no region is specified.");
             regionNameTopMenuText.text = location.name;
             regionNameTopMenuGO.SetActive(true);
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             regionNameHoverHandler.SetOnHoverAction(() => TestingUtilities.ShowLocationInfo(location.coreTile.region));
             regionNameHoverHandler.SetOnHoverOutAction(TestingUtilities.HideLocationInfo);
 #endif

@@ -454,7 +454,7 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = $"Home structure: {activeCharacter.homeStructure?.ToString() ?? "None"}" ?? "None";
         summary = $"{summary} {$"Territories: {activeCharacter.territories?.Count.ToString() ?? "None"}"}";
         summary = $"{summary} {$"Current structure: {activeCharacter.currentStructure}" ?? "None"}";
@@ -530,7 +530,9 @@ public class CharacterInfoUI : InfoUIBase {
 #endif
     }
     public void HideCharacterTestingInfo() {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         UIManager.Instance.HideSmallInfo();
+#endif
     }
     #endregion
 

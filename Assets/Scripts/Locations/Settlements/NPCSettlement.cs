@@ -6,6 +6,7 @@ using Databases;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Locations.Settlements.Settlement_Types;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -31,6 +32,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public LocationClassManager classManager { get; }
     public LocationEventManager eventManager { get; }
     public SettlementJobPriorityComponent jobPriorityComponent { get; }
+    public SettlementType settlementType { get; private set; }
 
     private Region _region;
     private readonly WeightedDictionary<Character> newRulerDesignationWeights;
@@ -75,7 +77,28 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
 
     #region Loading
-    public void LoadJobs(SaveDataNPCSettlement data) {
+    public override void LoadReferences(SaveDataBaseSettlement data) {
+        base.LoadReferences(data);
+        if (data is SaveDataNPCSettlement saveDataNpcSettlement) {
+            if (!string.IsNullOrEmpty(saveDataNpcSettlement.prisonID)) {
+                LocationStructure p = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.prisonID);
+                LoadPrison(p);
+            }
+            if (!string.IsNullOrEmpty(saveDataNpcSettlement.mainStorageID)) {
+                LocationStructure storage = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.mainStorageID);
+                LoadMainStorage(storage);
+            }
+            LoadJobs(saveDataNpcSettlement);
+            LoadRuler(saveDataNpcSettlement.rulerID);
+            LoadResidents(saveDataNpcSettlement);
+            LoadPartiesAndQuests(saveDataNpcSettlement);
+            if (saveDataNpcSettlement.settlementType != null) {
+                settlementType = saveDataNpcSettlement.settlementType.Load();    
+            }
+            SubscribeToSignals();
+        }
+    }
+    private void LoadJobs(SaveDataNPCSettlement data) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             job.ForceCancelJob(false);
@@ -92,7 +115,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             forcedCancelJobsOnTickEnded.Add(jobQueueItem);
         }
     }
-    public void LoadRuler(string rulerID) {
+    private void LoadRuler(string rulerID) {
         if (locationType == LOCATION_TYPE.SETTLEMENT) {
             //only load rulers if location type is settlement
             if (!string.IsNullOrEmpty(rulerID)) {
@@ -103,7 +126,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }    
         }
     }
-    public void LoadResidents(SaveDataBaseSettlement data) {
+    private void LoadResidents(SaveDataBaseSettlement data) {
         if(data.residents != null) {
             for (int i = 0; i < data.residents.Count; i++) {
                 Character resident = CharacterManager.Instance.GetCharacterByPersistentID(data.residents[i]);
@@ -111,7 +134,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-    public void LoadPartiesAndQuests(SaveDataBaseSettlement data) {
+    private void LoadPartiesAndQuests(SaveDataBaseSettlement data) {
         if (data.parties != null) {
             for (int i = 0; i < data.parties.Count; i++) {
                 Party party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.parties[i]);
@@ -200,18 +223,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         isPlagued = state;
         Debug.Log($"{GameManager.Instance.TodayLogString()}{name} Plagued state changed to {isPlagued.ToString()}");
         
-    }
-    public void IncreaseIsBeingHarassedCount() {
-        _isBeingHarassedCount++;
-    }
-    public void DecreaseIsBeingHarassedCount() {
-        _isBeingHarassedCount--;
-    }
-    public void IncreaseIsBeingInvadedCount() {
-        _isBeingInvadedCount++;
-    }
-    public void DecreaseIsBeingInvadedCount() {
-        _isBeingInvadedCount--;
     }
     private void OnTickEnded() {
         ProcessForcedCancelJobsOnTickEnded();
@@ -524,52 +535,13 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #endregion
 
     #region Tile Objects
-    //public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
-    //    if (!itemsInArea.Contains(token)) {
-    //        itemsInArea.Add(token);
-    //        token.SetOwner(this.owner);
-    //        if (areaMap != null) { //if the npcSettlement map of this npcSettlement has already been created.
-    //            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
-    //            if (structure != null) {
-    //                structure.AddItem(token, gridLocation);
-    //            } else {
-    //                //get structure for token
-    //                LocationStructure chosen = InnerMapManager.Instance.GetRandomStructureToPlaceItem(this, token);
-    //                chosen.AddItem(token);
-    //            }
-    //            OnItemAddedToLocation(token, token.structureLocation);
-    //        }
-    //        Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    //public void RemoveSpecialTokenFromLocation(SpecialToken token) {
-    //    if (itemsInArea.Remove(token)) {
-    //        LocationStructure takenFrom = token.structureLocation;
-    //        if (takenFrom != null) {
-    //            takenFrom.RemoveItem(token);
-    //            OnItemRemovedFromLocation(token, takenFrom);
-    //        }
-    //        //Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
-    //        Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
-    //    }
-    //}
-    //public bool IsItemInventoryFull() {
-    //    return itemsInArea.Count >= MAX_ITEM_CAPACITY;
-    //}
-    //private int GetItemsInAreaCount(SPECIAL_TOKEN itemType) {
-    //    int count = 0;
-    //    for (int i = 0; i < itemsInArea.Count; i++) {
-    //        SpecialToken currItem = itemsInArea[i];
-    //        if (currItem.specialTokenType == itemType) {
-    //            count++;
-    //        }
-    //    }
-    //    return count;
-    //}
     public void OnItemAddedToLocation(TileObject item, LocationStructure structure) {
         CheckIfInventoryJobsAreStillValid(item, structure);
+        settlementJobTriggerComponent.OnItemAddedToStructure(item, structure);
+    }
+    public void OnItemRemovedFromLocation(TileObject item, LocationStructure structure, LocationGridTile tile) {
+        CheckAreaInventoryJobs(structure, item);
+        settlementJobTriggerComponent.OnItemRemovedFromStructure(item, structure, tile);
     }
     private void CheckIfInventoryJobsAreStillValid(TileObject item, LocationStructure structure) {
         if (structure == mainStorage && (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION || item.tileObjectType == TILE_OBJECT_TYPE.TOOL)) {
@@ -595,20 +567,6 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
-    }
-    public void OnItemRemovedFromLocation(TileObject item, LocationStructure structure) {
-        CheckAreaInventoryJobs(structure, item);
-    }
-    public bool IsRequiredByLocation(TileObject item) {
-        if (item.gridTileLocation != null && item.gridTileLocation.structure == mainStorage) {
-            if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
-                return mainStorage.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) <= 2; //item is required by warehouse.
-            }
-            if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
-                return mainStorage.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) <= 2; //item is required by warehouse.
-            }
-        }
-        return false;
     }
     #endregion
 
@@ -1040,10 +998,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return null;
     }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
-        if (affectedStructure == mainStorage && (objectThatTriggeredChange == null 
-             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION 
-             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL
-             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.ANTIDOTE)) {
+        if (affectedStructure == mainStorage && 
+            (objectThatTriggeredChange == null || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION 
+                                               || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL
+                                               || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.ANTIDOTE)) {
             //brew potion
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
                 //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
@@ -1178,6 +1136,24 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (owner == null) {
             //if owner of settlement becomes null, then set the settlement as no longer under siege
             SetIsUnderSiege(false);
+        } else {
+            //whenever a new owner is set, then redetermine settlement type
+            if (owner.race == RACE.HUMANS) {
+                SetSettlementType(SETTLEMENT_TYPE.Default_Human);
+            } else if (owner.race == RACE.ELVES) {
+                SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
+            }
+        }
+    }
+    #endregion
+
+    #region Settlement Type
+    private void SetSettlementType(SETTLEMENT_TYPE settlementType) {
+        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+            //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
+            this.settlementType = LandmarkManager.Instance.CreateSettlementType(settlementType);
+            //NOTE: For now always apply default settings. This will change in the future.
+            this.settlementType.ApplyDefaultSettings();    
         }
     }
     #endregion

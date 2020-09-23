@@ -114,8 +114,7 @@ namespace Locations.Settlements {
         }
         public virtual void AssignCharacterToDwellingInArea(Character character, LocationStructure dwellingOverride = null) {
             if (structures == null) {
-                Debug.LogWarning(
-                    $"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
+                Debug.LogWarning($"{name} doesn't have any dwellings for {character.name} because structures have not been generated yet");
                 return;
             }
             //Note: Removed this because, even if there are no dwellings left, home structure should be set to city center
@@ -718,6 +717,14 @@ namespace Locations.Settlements {
         }
         public bool IsAtTargetDestination(Character character) {
             return character.currentSettlement == this;
+        }
+        #endregion
+
+        #region Loading
+        public virtual void LoadReferences(SaveDataBaseSettlement data) {
+            if (!string.IsNullOrEmpty(data.factionOwnerID)) {
+                owner =  DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(data.factionOwnerID);    
+            }
         }
         #endregion
     }
