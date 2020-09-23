@@ -178,6 +178,10 @@ public static class TileObjectDB {
         } },
         { TILE_OBJECT_TYPE.WATER_WELL, new TileObjectData() {
             maxHP = 1000,
+            constructionCost = 30,
+            constructionTime = 12,
+            neededCharacterClass = new string[] { "Craftsman" },
+            itemRequirementsForCreation = new[] { "Stone Pile" },
         } },
         { TILE_OBJECT_TYPE.TOMBSTONE, new TileObjectData() {
             maxHP = 400,

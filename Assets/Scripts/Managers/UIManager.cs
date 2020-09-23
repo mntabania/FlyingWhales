@@ -1121,17 +1121,17 @@ public class UIManager : BaseMonoBehaviour {
 
     #region Intel Notification
     [Header("Intel Notification")]
-    [SerializeField] private RectTransform playerNotificationParent;
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
-    [SerializeField] private Button notifExpandButton;
     [SerializeField] private UIHoverPosition notificationHoverPos;
+    [SerializeField] private GameObject searchFieldsParent;
     public GameObject playerNotifGO;
     public RectTransform playerNotificationScrollRectTransform;
     public ScrollRect playerNotifScrollRect;
     public Image[] playerNotifTransparentImages;
     public int maxPlayerNotif;
     public List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
+    private List<string> activeNotificationIDs = new List<string>();
     private void ShowPlayerNotification(IIntel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
@@ -1182,6 +1182,7 @@ public class UIManager : BaseMonoBehaviour {
             itemToReplace.DeleteNotification();
         }
         activeNotifications.Add(newNotif);
+        activeNotificationIDs.Add(shownLog.persistentID);
         if (activeNotifications.Count > maxPlayerNotif) {
             activeNotifications[0].DeleteOldestNotification();
         }
@@ -1189,6 +1190,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
+        activeNotificationIDs.Remove(item.logPersistentID);
         if(activeNotifications.Count <= 0) {
             
         }
@@ -1211,12 +1213,8 @@ public class UIManager : BaseMonoBehaviour {
             playerNotifTransparentImages[i].color = new Color(playerNotifTransparentImages[i].color.r, playerNotifTransparentImages[i].color.g, playerNotifTransparentImages[i].color.b, 25f/255f);
         }
     }
-    public void ShowPlayerNotificationArea() {
-        UtilityScripts.Utilities.DestroyChildren(playerNotifScrollRect.content);
-        playerNotifGO.SetActive(true);
-    }
-    public void HidePlayerNotificationArea() {
-        playerNotifGO.SetActive(false);
+    private void UpdateSearchFieldsState() {
+        searchFieldsParent.gameObject.SetActive(activeNotificationIDs.Count > 0);
     }
     #endregion
 

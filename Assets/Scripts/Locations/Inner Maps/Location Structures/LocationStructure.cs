@@ -325,15 +325,10 @@ namespace Inner_Maps.Location_Structures {
         }
         public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
             if (pointsOfInterest.Remove(poi)) {
-                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    TileObject tileObject = poi as TileObject;
-                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
-                    
-                    if (poi.gridTileLocation.collectionOwner.isPartOfParentRegionMap 
-                        && poi.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
-                        npcSettlement.OnItemRemovedFromLocation(tileObject, this);    
-                    }
+                if (poi is TileObject obj) {
+                    groupedTileObjects[obj.tileObjectType].RemoveTileObject(obj);
                 }
+                LocationGridTile tileLocation = poi.gridTileLocation;
                 if (poi.gridTileLocation != null) {
                     // Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                     if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -342,6 +337,12 @@ namespace Inner_Maps.Location_Structures {
                         region.innerMap.RemoveObject(poi.gridTileLocation, removedBy);
                     }
                     //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
+                }
+                if (poi is TileObject tileObject) {
+                    if (tileLocation.collectionOwner.isPartOfParentRegionMap 
+                        && tileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
+                        npcSettlement.OnItemRemovedFromLocation(tileObject, this, tileLocation);    
+                    }
                 }
                 return true;
             }
@@ -369,7 +370,7 @@ namespace Inner_Maps.Location_Structures {
                     groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
                     if (poi.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                     && poi.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile is NPCSettlement npcSettlement) {
-                        npcSettlement.OnItemRemovedFromLocation(tileObject, this);    
+                        npcSettlement.OnItemRemovedFromLocation(tileObject, this, poi.gridTileLocation);    
                     }
                 }
                 if (poi.gridTileLocation != null) {

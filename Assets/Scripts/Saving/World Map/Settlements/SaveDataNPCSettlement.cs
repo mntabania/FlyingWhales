@@ -8,6 +8,7 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
     public string prisonID;
     public string mainStorageID;
     public string rulerID;
+    public SaveDataSettlementType settlementType;
     
     public override void Save(BaseSettlement baseSettlement) {
         base.Save(baseSettlement);
@@ -31,6 +32,11 @@ public class SaveDataNPCSettlement : SaveDataBaseSettlement {
         rulerID = npcSettlement.ruler?.persistentID ?? string.Empty;
         prisonID = npcSettlement.prison != null ? npcSettlement.prison.persistentID : string.Empty;
         mainStorageID = npcSettlement.mainStorage != null ? npcSettlement.mainStorage.persistentID : string.Empty;
+        
+        if (npcSettlement.settlementType != null) {
+            settlementType = new SaveDataSettlementType();
+            settlementType.Save(npcSettlement.settlementType);
+        }
     }
     public override BaseSettlement Load() {
         return LandmarkManager.Instance.LoadNPCSettlement(this);

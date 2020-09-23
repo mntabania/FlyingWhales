@@ -57,7 +57,7 @@ public class WeightedDictionary<T> {
         AddElements(otherDictionary._dictionary);
     }
 
-	internal void ChangeElementWeight(T element, int newWeight){
+	internal void SetElementWeight(T element, int newWeight){
 		if (_dictionary.ContainsKey(element)) {
 			_dictionary[element] = newWeight;
 		}else{

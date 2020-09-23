@@ -207,6 +207,22 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			CheckDouseFireJobsValidity();
 		// }
 	}
+	public void OnItemRemovedFromStructure(TileObject item, LocationStructure structure, LocationGridTile removedFrom) {
+		if (structure is CityCenter && item is WaterWell) {
+			//immediately create a new unbuilt water well at tile to reserve it.
+			TileObject waterWell = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+			waterWell.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+			structure.AddPOI(waterWell, removedFrom);
+			
+			//create craft water well job any time water well is destroyed.
+			StartCraftWaterWellCheck();
+		}
+	}
+	public void OnItemAddedToStructure(TileObject item, LocationStructure structure) {
+		if (structure is CityCenter && item is WaterWell) {
+			CheckIfShouldStopWaterWellCheck();
+		}
+	}
 	#endregion
 
 	#region Resources
@@ -829,6 +845,42 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JOIN_GATHERING, INTERACTION_TYPE.JOIN_GATHERING, gathering.host, _owner);
         job.SetCanTakeThisJobChecker(JobManager.Can_Take_Join_Gathering);
         _owner.AddToAvailableJobs(job);
+    }
+    #endregion
+
+    #region Craft Water Well
+    private void StartCraftWaterWellCheck() {
+	    CheckIfShouldCraftWaterWell();
+	    //check every hour if water well should be crafted
+	    Messenger.AddListener(Signals.HOUR_STARTED, CheckIfShouldCraftWaterWell);
+    }
+    private void CheckIfShouldStopWaterWellCheck() {
+	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+	    TileObject waterWell = cityCenter.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+	    if (waterWell != null && waterWell.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+		    //already has a built water well at city center, stop hourly check
+		    StopCraftWaterWellCheck();
+	    }
+    }
+    private void StopCraftWaterWellCheck() {
+	    Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfShouldCraftWaterWell);
+    }
+    
+    public void CheckIfShouldCraftWaterWell() {
+	    LocationStructure cityCenter = _owner.GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER);
+	    TileObject waterWell = cityCenter.GetTileObjectOfType<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+	    Assert.IsNotNull(waterWell);
+	    //there is water well present, check if water well is unbuilt
+	    if (waterWell.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+		    return; //already has built water well! Do not create craft object job.
+	    }
+	    
+	    if (!_owner.HasJob(JOB_TYPE.CRAFT_OBJECT, waterWell)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, waterWell, _owner);
+		    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.WATER_WELL).constructionCost });
+		    job.SetCanTakeThisJobChecker(JobManager.Can_Craft_Well);
+		    _owner.AddToAvailableJobs(job); 
+	    }
     }
     #endregion
 }

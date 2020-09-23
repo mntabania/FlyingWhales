@@ -33,9 +33,9 @@ public class LoadSecondWave : MapGenerationComponent {
         yield return MapGenerator.Instance.StartCoroutine(LoadLocationGridTileSecondWave(saveData));
         
         //Load Settlement data
-        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementOwners(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
-        yield return MapGenerator.Instance.StartCoroutine(LoadOtherSettlementData(saveData));
+        yield return MapGenerator.Instance.StartCoroutine(LoadSettlementReferences(saveData));
+        // yield return MapGenerator.Instance.StartCoroutine(LoadSettlementMainStorageAndPrison(saveData));
+        // yield return MapGenerator.Instance.StartCoroutine(LoadOtherSettlementData(saveData));
         
         //Load Characters
 
@@ -297,52 +297,55 @@ public class LoadSecondWave : MapGenerationComponent {
     #endregion
 
     #region Settlements
-    private IEnumerator LoadSettlementOwners(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
-        for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
-            SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
-            if (!string.IsNullOrEmpty(saveDataBaseSettlement.factionOwnerID)) {
-                BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement._persistentID);
-                Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(saveDataBaseSettlement.factionOwnerID);
-                LandmarkManager.Instance.OwnSettlement(faction, baseSettlement);    
-            }
-        }
-        yield return null;
-    }
-    private IEnumerator LoadSettlementMainStorageAndPrison(SaveDataCurrentProgress saveData) {
+    private IEnumerator LoadSettlementReferences(SaveDataCurrentProgress saveData) {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
         for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
             SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
             BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement._persistentID);
-            if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement && baseSettlement is NPCSettlement npcSettlement) {
-                if (!string.IsNullOrEmpty(saveDataNpcSettlement.prisonID)) {
-                    LocationStructure prison = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.prisonID);
-                    npcSettlement.LoadPrison(prison);
-                }
-                if (!string.IsNullOrEmpty(saveDataNpcSettlement.mainStorageID)) {
-                    LocationStructure mainStorage = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.mainStorageID);
-                    npcSettlement.LoadMainStorage(mainStorage);
-                }    
-            }
+            baseSettlement.LoadReferences(saveDataBaseSettlement);
+            
+            // if (!string.IsNullOrEmpty(saveDataBaseSettlement.factionOwnerID)) {
+            //     BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement._persistentID);
+            //     // LandmarkManager.Instance.OwnSettlement(faction, baseSettlement);
+            //     baseSettlement.LoadReferences(saveDataBaseSettlement);
+            // }
         }
         yield return null;
     }
-    private IEnumerator LoadOtherSettlementData(SaveDataCurrentProgress saveData) {
-        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Settlement Jobs...");
-        for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
-            SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
-            if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement) {
-                NPCSettlement npcSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataNpcSettlement.persistentID) as NPCSettlement;
-                Assert.IsNotNull(npcSettlement);
-                npcSettlement.Initialize();
-                npcSettlement.LoadJobs(saveDataNpcSettlement);
-                npcSettlement.LoadRuler(saveDataNpcSettlement.rulerID);
-                npcSettlement.LoadResidents(saveDataNpcSettlement);
-                npcSettlement.LoadPartiesAndQuests(saveDataNpcSettlement);
-            }
-            yield return null;
-        }
-    }
+    // private IEnumerator LoadSettlementMainStorageAndPrison(SaveDataCurrentProgress saveData) {
+    //     LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Additional Settlement Data...");
+    //     for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
+    //         SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
+    //         BaseSettlement baseSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataBaseSettlement._persistentID);
+    //         if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement && baseSettlement is NPCSettlement npcSettlement) {
+    //             if (!string.IsNullOrEmpty(saveDataNpcSettlement.prisonID)) {
+    //                 LocationStructure prison = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.prisonID);
+    //                 npcSettlement.LoadPrison(prison);
+    //             }
+    //             if (!string.IsNullOrEmpty(saveDataNpcSettlement.mainStorageID)) {
+    //                 LocationStructure mainStorage = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(saveDataNpcSettlement.mainStorageID);
+    //                 npcSettlement.LoadMainStorage(mainStorage);
+    //             }    
+    //         }
+    //     }
+    //     yield return null;
+    // }
+    // private IEnumerator LoadOtherSettlementData(SaveDataCurrentProgress saveData) {
+    //     LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Settlement Jobs...");
+    //     for (int i = 0; i < saveData.worldMapSave.settlementSaves.Count; i++) {
+    //         SaveDataBaseSettlement saveDataBaseSettlement = saveData.worldMapSave.settlementSaves[i];
+    //         if (saveDataBaseSettlement is SaveDataNPCSettlement saveDataNpcSettlement) {
+    //             NPCSettlement npcSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(saveDataNpcSettlement.persistentID) as NPCSettlement;
+    //             Assert.IsNotNull(npcSettlement);
+    //             npcSettlement.Initialize();
+    //             npcSettlement.LoadJobs(saveDataNpcSettlement);
+    //             npcSettlement.LoadRuler(saveDataNpcSettlement.rulerID);
+    //             npcSettlement.LoadResidents(saveDataNpcSettlement);
+    //             npcSettlement.LoadPartiesAndQuests(saveDataNpcSettlement);
+    //         }
+    //         yield return null;
+    //     }
+    // }
     #endregion
 
     #region Structure Walls

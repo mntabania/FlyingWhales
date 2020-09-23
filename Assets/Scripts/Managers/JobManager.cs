@@ -30,6 +30,7 @@ public class JobManager : BaseMonoBehaviour {
     public static string Can_Brew_Potion = "CanBrewPotion";
     public static string Can_Craft_Tool = "CanCraftTool";
     public static string Can_Brew_Antidote = "CanBrewAntidote";
+    public static string Can_Craft_Well = "CanCraftWell";
     
     //applicability
     public static string Destroy_Applicability = "IsDestroyApplicable";
@@ -76,6 +77,7 @@ public class JobManager : BaseMonoBehaviour {
             {Can_Brew_Potion, new CanBrewPotion()},
             {Can_Craft_Tool, new CanCraftTool()},
             {Can_Brew_Antidote, new CanBrewAntidote()},
+            {Can_Craft_Well, new CanCraftWell()},
         };
         _applicabilityCheckers = new Dictionary<string, JobApplicabilityChecker>() {
             {Destroy_Applicability, new DestroyJobApplicabilityChecker()},

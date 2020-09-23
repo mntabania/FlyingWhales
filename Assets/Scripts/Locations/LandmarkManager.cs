@@ -8,6 +8,7 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Locations.Region_Features;
 using Locations.Settlements;
+using Locations.Settlements.Settlement_Types;
 using Locations.Tile_Features;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -338,20 +339,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         }
         return null;
     }
-    public NPCSettlement GetRandomVillageSettlementInRegion(Region region) {
-        List<NPCSettlement> villages = null;
-        for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
-            NPCSettlement settlement = allNonPlayerSettlements[i];
-            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.SETTLEMENT)) {
-                if (villages == null) { villages = new List<NPCSettlement>(); }
-                villages.Add(settlement);
-            }
-        }
-        if (villages != null && villages.Count > 0) {
-            return villages[UnityEngine.Random.Range(0, villages.Count)];
-        }
-        return null;
-    }
     public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region, Faction faction) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
@@ -363,9 +350,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             }
         }
         return null;
-    }
-    public BaseSettlement GetSettlementByID(int id) {
-        return DatabaseManager.Instance.settlementDatabase.GetSettlementByID(id);
     }
     public BaseSettlement GetSettlementByPersistentID(string id) {
         return DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(id);
@@ -532,6 +516,31 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         System.Type type = System.Type.GetType(typeName);
         Assert.IsNotNull(type, $"type for {featureName} is null!");
         return System.Activator.CreateInstance(type) as T;
+    }
+    #endregion
+
+    #region Settlement Type
+    public SettlementType CreateSettlementType(SETTLEMENT_TYPE settlementType) {
+        string enumStr = settlementType.ToString();
+        var typeName = $"Locations.Settlements.Settlement_Types.{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(enumStr)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            SettlementType data = Activator.CreateInstance(type) as SettlementType;
+            return data;
+        } else {
+            throw new Exception($"{typeName} has no data!");
+        }
+    }
+    public SettlementType CreateSettlementType(SaveDataSettlementType saveData) {
+        string enumStr = saveData.settlementType.ToString();
+        var typeName = $"Locations.Settlements.Settlement_Types.{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(enumStr)}, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+        Type type = Type.GetType(typeName);
+        if (type != null) {
+            SettlementType data = Activator.CreateInstance(type, saveData) as SettlementType;
+            return data;
+        } else {
+            throw new Exception($"{typeName} has no data!");
+        }
     }
     #endregion
 }

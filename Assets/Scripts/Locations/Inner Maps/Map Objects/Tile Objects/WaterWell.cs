@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 
@@ -56,6 +57,21 @@ public class WaterWell : TileObject {
             traitContainer.AddTrait(this, "Wet", overrideDuration: 0);    
         }
         
+    }
+    #endregion
+
+    #region Map Object State
+    protected override void OnSetObjectAsUnbuilt() {
+        if (structureLocation is CityCenter) {
+            mapVisual.SetVisualAlpha(0f / 255f);
+            SetSlotAlpha(0f / 255f);
+            SetPOIState(POI_STATE.INACTIVE);
+            AddAdvertisedAction(INTERACTION_TYPE.CRAFT_TILE_OBJECT);
+            UnsubscribeListeners();
+            //only difference with base is that this doesn't listen to check if it is no longer valid. Since we want water wells in the city center to be permanent.
+        } else {
+            base.OnSetObjectAsUnbuilt();
+        }
     }
     #endregion
 }

@@ -11,5 +11,19 @@
         public override string ToString() {
             return $"{resource.ToString()} {structureType.ToString()}";
         }
+
+        #region Equality Members
+        public bool Equals(StructureSetting other) {
+            return resource == other.resource && structureType == other.structureType;
+        }
+        public override bool Equals(object obj) {
+            return obj is StructureSetting other && Equals(other);
+        }
+        public override int GetHashCode() {
+            unchecked {
+                return ((int) resource * 397) ^ (int) structureType;
+            }
+        }
+        #endregion
     }
 }
