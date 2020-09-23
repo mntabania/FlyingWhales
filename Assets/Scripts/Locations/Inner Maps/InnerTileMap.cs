@@ -181,7 +181,8 @@ namespace Inner_Maps {
                     tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.TryGetTileAsset(saveDataLocationGridTile.groundTileMapAssetName, tileAssetDB));    
                 }
                 if (!string.IsNullOrEmpty(saveDataLocationGridTile.wallTileMapAssetName)) {
-                    tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.TryGetTileAsset(saveDataLocationGridTile.wallTileMapAssetName, tileAssetDB));    
+                    tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.TryGetTileAsset(saveDataLocationGridTile.wallTileMapAssetName, tileAssetDB));
+                    tile.UpdateGroundTypeBasedOnAsset();    
                 }    
                 batchCount++;
                 if (batchCount == MapGenerationData.InnerMapTileGenerationBatches) {
