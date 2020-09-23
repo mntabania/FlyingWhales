@@ -455,12 +455,12 @@ public class RegionInfoUI : InfoUIBase {
 
     #region For Testing
     public void ShowLocationInfo() {
-#if UNITY_EDITOR
-        UtilityScripts.TestingUtilities.ShowLocationInfo(activeRegion);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        TestingUtilities.ShowLocationInfo(activeRegion);
 #endif
     }
     public void HideLocationInfo() {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         TestingUtilities.HideLocationInfo();
 #endif
     }
