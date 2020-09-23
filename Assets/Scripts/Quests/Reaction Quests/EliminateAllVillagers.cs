@@ -6,24 +6,24 @@ namespace Quests {
     public class EliminateAllVillagers : ReactionQuest {
 
 
-        private EliminateCharacterStep _eliminateCharacterStep;
+        private EliminateVillagerStep _eliminateVillagerStep;
         
         public EliminateAllVillagers() : base($"Eliminate All Villagers") { }
         protected override void ConstructSteps() {
             List<Character> villagers = CharacterManager.Instance.GetAllNormalCharacters();
-            _eliminateCharacterStep = new EliminateCharacterStep(GetEliminateAllVillagersDescription, villagers);
-            _eliminateCharacterStep.SetObjectsToCenter(villagers.Where(x => x.isDead == false).Select(x => x as ISelectable).ToList());
+            _eliminateVillagerStep = new EliminateVillagerStep(GetEliminateAllVillagersDescription, villagers);
+            _eliminateVillagerStep.SetObjectsToCenter(villagers.Where(x => x.isDead == false).Select(x => x as ISelectable).ToList());
             
             steps = new List<QuestStepCollection>() {
-                new QuestStepCollection(_eliminateCharacterStep),
+                new QuestStepCollection(_eliminateVillagerStep),
             };
             
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
         }
         private void OnKeyPressed(KeyCode keyCode) {
             if (keyCode == KeyCode.Tab) {
-                if (!_eliminateCharacterStep.isCompleted) {
-                    _eliminateCharacterStep.CenterCycle();    
+                if (!_eliminateVillagerStep.isCompleted) {
+                    _eliminateVillagerStep.CenterCycle();    
                 }
             }
         }

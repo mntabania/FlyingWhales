@@ -19,7 +19,7 @@ namespace Quests {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new EliminateCharacterStep(GetStopCharactersDescription, angels)
+                    new EliminateAngelStep(GetStopCharactersDescription, angels)
                         .SetHoverOverAction(OnHoverEliminateItem)
                         .SetHoverOutAction(() => UIManager.Instance.HideSmallInfo())
                         .SetObjectsToCenter(angels.Select(x => x as ISelectable).ToArray())    
