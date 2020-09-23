@@ -5505,6 +5505,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 CharacterManager.Instance.RemoveLimboCharacter(this);
                 return;
             }
+            //Remove disguise first before processing death
+            reactionComponent.SetDisguisedCharacter(null);
+
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
             ProcessBeforeDeath(cause, responsibleCharacter);

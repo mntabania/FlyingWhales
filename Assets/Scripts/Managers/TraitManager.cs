@@ -91,7 +91,11 @@ public class TraitManager : BaseMonoBehaviour {
             if (trait.type == TRAIT_TYPE.STATUS) {
                 trait = JsonUtility.FromJson<Status>(System.IO.File.ReadAllText(files[i]));
             }
-            _allTraits.Add(trait.name, trait);
+
+            //Should not add trait if the trait is from a json file and it already exists in the dictionary
+            if (!_allTraits.ContainsKey(trait.name)) {
+                _allTraits.Add(trait.name, trait);
+            }
         }
         
         AddInstancedTraits(); //Traits with their own classes
@@ -134,7 +138,14 @@ public class TraitManager : BaseMonoBehaviour {
             Assert.IsNotNull(type, $"No instanced trait with type, {typeName}");
             Trait trait = System.Activator.CreateInstance(type) as Trait;
             Assert.IsNotNull(trait);
-            _allTraits.Add(traitName, trait);
+
+            //When the trait already exists in the dictionary, replace it with the instanced trait
+            //We should always prioritize the instanced traits
+            if (_allTraits.ContainsKey(traitName)) {
+                _allTraits[traitName] = trait;
+            } else {
+                _allTraits.Add(traitName, trait);
+            }
         }
     }
     public Sprite GetTraitPortrait(string traitName) {

@@ -15,17 +15,25 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
         log += $"\n-{character.name} will attack demonic structure";
         if (character.partyComponent.hasParty) {
             Party party = character.partyComponent.currentParty;
-            if (party.isActive && party.partyState == PARTY_STATE.Working) {
-                log += $"\n-Party is working";
-                if (party.targetDestination.IsAtTargetDestination(character)) {
-                    log += $"\n-Character is at target region, do work";
-                    //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
-                    //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
-                    
-                    //NOTE: Removed checking for current region because of the new party system in which the Working state must be when party is at target destination
-                    //if (party.targetDestination.region == character.currentRegion) {
-                    //    //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
-                        LocationStructure targetStructure = party.currentQuest.target as LocationStructure;
+            if (party.isActive) {
+                LocationStructure targetStructure = null;
+                if(party.currentQuest.target != null) {
+                    targetStructure = party.currentQuest.target as LocationStructure;
+                }
+                if(targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.objectsThatContributeToDamage.Count <= 0) {
+                    party.GoBackHomeAndEndQuest();
+                    return true;
+                }
+                if (party.partyState == PARTY_STATE.Working) {
+                    log += $"\n-Party is working";
+                    if (party.targetDestination.IsAtTargetDestination(character)) {
+                        log += $"\n-Character is at target region, do work";
+                        //The checking that the character must be on the target structure first before attacking is removed because sometimes the structure is in a closed space, and if the character cannot dig, he can't attack forever because he cannot go to the structure first
+                        //That is why we bypassed the checking, we immediately added the structure objects to the hostile list
+
+                        //NOTE: Removed checking for current region because of the new party system in which the Working state must be when party is at target destination
+                        //if (party.targetDestination.region == character.currentRegion) {
+                        //    //Checking for region is added since if the target structure is in the diff inner map, there will be no path to go there
                         if (targetStructure.objectsThatContributeToDamage.Count > 0 && !targetStructure.hasBeenDestroyed) {
                             log += "\n-Has tile object that contribute damage";
                             log += "\n-Adding tile object as hostile";
@@ -47,12 +55,13 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                             party.GoBackHomeAndEndQuest();
                             return true;
                         }
+                        //}
+                    }
+                    //else {
+                    //    LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
+                    //    return character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
                     //}
                 }
-                //else {
-                //    LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
-                //    return character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-                //}
             }
             //if (!party.isWaitTimeOver) {
             //    log += $"\n-Party is waiting";

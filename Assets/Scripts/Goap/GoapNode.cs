@@ -543,6 +543,13 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         return false;
     }
+
+    //Right now this is only used on rumors, since rumors are just illusion action (meaning, the actor did not really do it), the target structure for rumors are always null
+    //So if we need the target structure in the logs, no target structure will be filled.
+    //That is why we must call this on the rumors that needs a target structure like Poison action
+    public void SetTargetStructure(LocationStructure structure) {
+        targetStructure = structure;
+    }
     #endregion
 
     #region Action State

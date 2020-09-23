@@ -69,6 +69,9 @@ public class Summon : Character {
                 CharacterManager.Instance.RemoveLimboCharacter(this);
                 return;
             }
+            //Remove disguise first before processing death
+            reactionComponent.SetDisguisedCharacter(null);
+
             UnsubscribeSignals();
             //behaviourComponent.SetIsHarassing(false, null);
             //behaviourComponent.SetIsInvading(false, null);

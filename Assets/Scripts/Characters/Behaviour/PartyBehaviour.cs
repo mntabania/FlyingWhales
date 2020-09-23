@@ -47,8 +47,10 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     //hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                                 } else {
                                     LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
-                                    hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-                                    hasJob = true;
+                                    if(tile != null) {
+                                        hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                        hasJob = true;
+                                    }
                                 }
                             }
                         } else if (party.partyState == PARTY_STATE.Resting) {
@@ -61,9 +63,11 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     hasJob = TavernBehaviour(character, party, out producedJob);
                                     hasJob = true;
                                 } else {
-                                    LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(party.targetRestingTavern.passableTiles);
-                                    hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
-                                    hasJob = true;
+                                    LocationGridTile tile = UtilityScripts.CollectionUtilities.GetRandomElement(party.targetRestingTavern.passableTiles);
+                                    if (tile != null) {
+                                        hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                                        hasJob = true;
+                                    }
                                 }
                             } else if (party.targetCamp != null) {
                                 if (character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap

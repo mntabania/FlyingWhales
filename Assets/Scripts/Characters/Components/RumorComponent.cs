@@ -227,7 +227,13 @@ public class RumorComponent : CharacterComponent {
             } else if (identifier == CharacterManager.Drink_Blood) {
                 actionType = INTERACTION_TYPE.DRINK_BLOOD;
             }
-            rumorable = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            ActualGoapNode action = new ActualGoapNode(InteractionManager.Instance.goapActionData[actionType], rumoredCharacter, targetOfRumoredCharacter, null, 0);
+            if (identifier == CharacterManager.Poison_Food) {
+                if(targetOfRumoredCharacter.gridTileLocation != null) {
+                    action.SetTargetStructure(targetOfRumoredCharacter.gridTileLocation.structure);
+                }
+            }
+            rumorable = action;
         }
         if(rumorable != null) {
             Rumor rumor = new Rumor(owner, rumoredCharacter);

@@ -53,6 +53,10 @@ public class SaveManager : MonoBehaviour {
 #if UNITY_EDITOR
             EditorApplication.quitting += OnEditorQuit;
 #endif
+            //Should create folder of save path if no folder exists
+            if (!Directory.Exists(UtilityScripts.Utilities.gameSavePath)) {
+                Directory.CreateDirectory(UtilityScripts.Utilities.gameSavePath);
+            }
         } else {
             Destroy(this.gameObject);
         }
