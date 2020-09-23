@@ -216,6 +216,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual bool OccupiesTile() { return true;}
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         OnRemoveTileObject(null, previousTile);
         DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
