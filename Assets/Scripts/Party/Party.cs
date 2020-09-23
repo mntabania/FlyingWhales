@@ -304,7 +304,7 @@ public class Party : ISavable {
                 //Hex tile within a village cannot be a camp
                 activeMemberCurrentHex = null;
             }
-            List<HexTile> nearbyHexes = activeMemberCurrentHex.GetTilesInRange(3);
+            List<HexTile> nearbyHexes = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.GetTilesInRange(3);
             if (nearbyHexes != null && nearbyHexes.Count > 0) {
                 for (int i = 0; i < nearbyHexes.Count; i++) {
                     HexTile hex = nearbyHexes[i];
