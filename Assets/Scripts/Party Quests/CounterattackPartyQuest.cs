@@ -43,6 +43,9 @@ public class CounterattackPartyQuest : PartyQuest {
     public override IPartyTargetDestination GetTargetDestination() {
         return targetStructure;
     }
+    public override string GetPartyQuestTextInLog() {
+        return "Attack Quest targeting " + targetStructure.name;
+    }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);
     //    member.movementComponent.SetEnableDigging(true);

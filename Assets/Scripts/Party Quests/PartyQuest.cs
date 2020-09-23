@@ -44,6 +44,7 @@ public class PartyQuest : ISavable {
     }
     public virtual IPartyTargetDestination GetTargetDestination() { return null; }
     public virtual void OnRemoveMemberThatJoinedQuest(Character character) { }
+    public virtual string GetPartyQuestTextInLog() { return string.Empty; }
     #endregion
 
     #region General

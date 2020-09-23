@@ -35,6 +35,9 @@ public class HeirloomHuntPartyQuest : PartyQuest {
     public override IPartyTargetDestination GetTargetDestination() {
         return targetHex;
     }
+    public override string GetPartyQuestTextInLog() {
+        return "Heirloom Hunting Quest";
+    }
     //public override bool IsAllowedToJoin(Character character) {
     //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";
     //}

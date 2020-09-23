@@ -46,6 +46,9 @@ public class ExplorationPartyQuest : PartyQuest {
     public override IPartyTargetDestination GetTargetDestination() {
         return targetStructure;
     }
+    public override string GetPartyQuestTextInLog() {
+        return "Exploration Quest";
+    }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);
     //    member.movementComponent.SetEnableDigging(true);

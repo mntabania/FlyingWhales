@@ -39,6 +39,9 @@ public class ExterminationPartyQuest : PartyQuest {
     public override IPartyTargetDestination GetTargetDestination() {
         return targetStructure;
     }
+    public override string GetPartyQuestTextInLog() {
+        return "Extermination Quest in " + targetStructure.name;
+    }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);
     //    member.movementComponent.SetEnableDigging(true);

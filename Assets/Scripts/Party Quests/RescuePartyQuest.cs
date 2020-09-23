@@ -35,6 +35,10 @@ public class RescuePartyQuest : PartyQuest {
         }
         return base.GetTargetDestination();
     }
+    public override string GetPartyQuestTextInLog() {
+        return "Rescue Quest of " + targetCharacter.name;
+    }
+
     //public override bool IsAllowedToJoin(Character character) {
     //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble"
     //        || (character.isNormalCharacter && character.relationshipContainer.GetOpinionLabel(targetCharacter) == RelationshipManager.Close_Friend);

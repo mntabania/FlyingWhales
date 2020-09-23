@@ -357,7 +357,13 @@ public class Party : ISavable {
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
-
+            Log log = new Log(GameManager.Instance.Today(), "Party", "General", "accept_quest", providedTags: LOG_TAG.Party);
+            log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
+            for (int i = 0; i < members.Count; i++) {
+                log.AddInvolvedObjectManual(members[i].persistentID);
+            }
+            log.AddLogToDatabase();
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -370,6 +376,14 @@ public class Party : ISavable {
     //}
     public void DropQuest() {
         if (isActive) {
+            Log log = new Log(GameManager.Instance.Today(), "Party", "General", "drop_quest", providedTags: LOG_TAG.Party);
+            log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
+            for (int i = 0; i < members.Count; i++) {
+                log.AddInvolvedObjectManual(members[i].persistentID);
+            }
+            log.AddLogToDatabase();
+
             ClearMembersThatJoinedQuest();
             partySettlement.RemovePartyQuest(currentQuest);
             SetPartyState(PARTY_STATE.None);
@@ -608,17 +622,19 @@ public class Party : ISavable {
     #region Disbandment
     public void DisbandParty() {
         if (isDisbanded) { return; }
-        for (int i = 0; i < members.Count; i++) {
-            OnRemoveMemberOnDisband(members[i]);
+        if(members.Count > 0) {
+            Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
+            log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+            for (int i = 0; i < members.Count; i++) {
+                log.AddInvolvedObjectManual(members[i].persistentID);
+                OnRemoveMemberOnDisband(members[i]);
+            }
+            log.AddLogToDatabase();
         }
         members.Clear();
         OnDisbandParty();
     }
     private void OnDisbandParty() {
-        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
-        log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
-        log.AddLogToDatabase();
-
         isDisbanded = true;
         DestroyParty();
     }
