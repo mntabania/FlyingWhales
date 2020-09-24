@@ -302,7 +302,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         Assert.IsNotNull(actor.currentRegion, $"Current region of {actor.name} is null when trying to perform {action.name} with job {job.jobType.ToString()}");
         //Only create thought bubble log when characters starts the action/moves to do the action so we can pass the target structure
         if (actor.currentRegion != targetTile.structure.region) { //different core locations
-            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false) {
+            if (actor.movementComponent.MoveToAnotherRegion(targetTile.structure.region, () => CheckAndMoveToDoAction(job)) == false || !actor.canMove) {
                 //character cannot exit region.
                 return false;
             }
@@ -312,8 +312,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
                 } else {
-                    if (action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetTile)) {
+                    if ((action.canBePerformedEvenIfPathImpossible == false && 
+                        !actor.movementComponent.HasPathTo(targetTile)) || !actor.canMove) {
                         return false;
                     }
                     actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
@@ -323,8 +323,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     actor.marker.StopMovement();
                     actor.PerformGoapAction();
                 } else {
-                    if (action.canBePerformedEvenIfPathImpossible == false && 
-                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) {
+                    if ((action.canBePerformedEvenIfPathImpossible == false && 
+                        !actor.movementComponent.HasPathTo(targetPOIToGoTo.gridTileLocation)) || !actor.canMove) {
                         return false;
                     }
                     actor.marker.GoToPOI(targetPOIToGoTo, OnArriveAtTargetLocation);

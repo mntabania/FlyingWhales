@@ -1289,7 +1289,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    //If a party has no path to do action and the job that has no path is a party job, leave party
         //    partyComponent.currentParty.RemoveMember(this);
         //}
-        if(gridTileLocation != null) {
+        if(gridTileLocation != null && canMove) {
             //If this character cannot do job or action because he has no path but the reason why he has no path is beacuse he has no grid location, do not trigger fall back jobs
             if (job.jobType == JOB_TYPE.RETURN_PORTAL || job.jobType == JOB_TYPE.RETURN_TERRITORY) {
                 //interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, null);

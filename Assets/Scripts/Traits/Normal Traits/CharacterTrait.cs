@@ -94,7 +94,7 @@ namespace Traits {
         
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is TileObject item) {
+            if (targetPOI is TileObject item && characterThatWillDoJob.canMove) {
                 //if(item is Heirloom) {
                 //    Debug.Log("sdfsdf");
                 //}
@@ -119,7 +119,7 @@ namespace Traits {
                 } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && !characterThatWillDoJob.traitContainer.HasTrait("Vampiric") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
                     characterThatWillDoJob.jobComponent.CreateEatJob(item);
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))) {
-                    if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false && characterThatWillDoJob.canMove) {
+                    if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
                         //NOTE: Added checker if character can move, so that Paralyzed characters will not try to pick up items
                         if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                             && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.TAKE_ITEM)) {
@@ -154,89 +154,91 @@ namespace Traits {
                 }
             }
             if(targetPOI is Character targetCharacter) {
-                if (!targetCharacter.isDead) {
-                    if (!targetCharacter.isNormalCharacter) {
-                        string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
-                        if (opinionLabel == RelationshipManager.Friend) {
-                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                                charactersAlreadySawForHope.Add(targetCharacter);
-                                characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+                if (characterThatWillDoJob.canMove) {
+                    if (!targetCharacter.isDead) {
+                        if (!targetCharacter.isNormalCharacter) {
+                            string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
+                            if (opinionLabel == RelationshipManager.Friend) {
+                                if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                    charactersAlreadySawForHope.Add(targetCharacter);
+                                    characterThatWillDoJob.needsComponent.AdjustHope(-5f);
+                                }
+                            } else if (opinionLabel == RelationshipManager.Close_Friend) {
+                                if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
+                                    charactersAlreadySawForHope.Add(targetCharacter);
+                                    characterThatWillDoJob.needsComponent.AdjustHope(-10f);
+                                }
                             }
-                        } else if (opinionLabel == RelationshipManager.Close_Friend) {
-                            if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
-                                charactersAlreadySawForHope.Add(targetCharacter);
-                                characterThatWillDoJob.needsComponent.AdjustHope(-10f);
+                        } else {
+                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
+                                if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
+                                    if (owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                        if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
+                                            if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
+                                                rescueParty.SetIsReleasing(true);
+                                            }
+                                        }
+                                    } else if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                        if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest exploreParty) {
+                                            if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
+                                                if (UnityEngine.Random.Range(0, 100) < 15) {
+                                                    if (owner.jobComponent.TriggerKidnapJob(targetCharacter)) {
+                                                        owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
+                                                    }
+                                                }
+                                            } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
+                                                owner.jobComponent.TriggerReleaseJob(targetCharacter);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (!targetCharacter.canMove && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                                if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
+                                    && targetCharacter.homeSettlement == raidParty.targetSettlement
+                                    /*&& (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter))*/) {
+                                    if (UnityEngine.Random.Range(0, 100) < 15) {
+                                        if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
+                                            owner.jobComponent.TriggerKidnapRaidJob(targetCharacter);
+                                        }
+                                    }
+                                }
                             }
                         }
                     } else {
-                        if(targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious", "Frozen", "Ensnared")) {
-                            if(owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive) {
-                                if(owner.partyComponent.currentParty.currentQuest is RescuePartyQuest rescueParty && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                                    if (rescueParty.isWaitTimeOver && rescueParty.targetCharacter == targetCharacter) {
-                                        if (owner.jobComponent.TriggerReleaseJob(targetCharacter)) {
-                                            rescueParty.SetIsReleasing(true);
-                                        }
-                                    }
-                                } else if (owner.faction != null && owner.faction != targetCharacter.faction && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                                    if (owner.partyComponent.currentParty.currentQuest is ExplorationPartyQuest exploreParty) {
-                                        if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Warmonger)) {
-                                            if (UnityEngine.Random.Range(0, 100) < 15) {
-                                                if (owner.jobComponent.TriggerKidnapJob(targetCharacter)) {
-                                                    owner.partyComponent.currentParty.RemoveMemberThatJoinedQuest(owner);
-                                                }
-                                            }
-                                        } else if (owner.faction.factionType.HasIdeology(FACTION_IDEOLOGY.Peaceful)) {
-                                            owner.jobComponent.TriggerReleaseJob(targetCharacter);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (!targetCharacter.canMove && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
-                            if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty 
-                                && targetCharacter.homeSettlement == raidParty.targetSettlement 
-                                /*&& (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter))*/) {
-                                if (UnityEngine.Random.Range(0, 100) < 15) {
-                                    if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
-                                        owner.jobComponent.TriggerKidnapRaidJob(targetCharacter);
-                                    }
-                                }
-                            }
-                        }
-                        if (owner.isNormalCharacter && targetCharacter.isNormalCharacter && owner.faction != targetCharacter.faction) {
-                            if(owner.faction != null && targetCharacter.currentStructure != null && targetCharacter.currentStructure.isInterior && targetCharacter.currentStructure.settlementLocation != null
-                                && targetCharacter.currentStructure.settlementLocation.owner == owner.faction) {
-                                bool willReact = true;
-                                switch (targetCharacter.currentStructure.structureType) {
-                                    case STRUCTURE_TYPE.TAVERN:
-                                    case STRUCTURE_TYPE.FARM:
-                                    case STRUCTURE_TYPE.APOTHECARY:
-                                    case STRUCTURE_TYPE.CEMETERY:
-                                    case STRUCTURE_TYPE.CITY_CENTER:
-                                        willReact = false;
-                                        break;
-                                }
-                                if (willReact) {
-                                    if (owner.marker) {
-                                        if (!targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
-                                            owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
-                                        }
-                                    }
-                                }
-                            }
+                        //if (owner.needsComponent.isStarving) {
+                        //    owner.jobComponent.CreateButcherJob(targetCharacter);
+                        //} else 
+                        if (owner.isNormalCharacter
+                            && targetCharacter.isNormalCharacter
+                            && targetCharacter.gridTileLocation != null
+                            && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
+                            && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
+                            //If a villager is dead and is seen outside the village, bury it
+                            owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
                         }
                     }
-                } else {
-                    //if (owner.needsComponent.isStarving) {
-                    //    owner.jobComponent.CreateButcherJob(targetCharacter);
-                    //} else 
-                    if(owner.isNormalCharacter 
-                        && targetCharacter.isNormalCharacter 
-                        && targetCharacter.gridTileLocation != null 
-                        && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
-                        && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
-                        //If a villager is dead and is seen outside the village, bury it
-                        owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                }
+                if (!targetCharacter.isDead && owner.isNormalCharacter && targetCharacter.isNormalCharacter && owner.faction != targetCharacter.faction) {
+                    if (owner.faction != null && targetCharacter.currentStructure != null && targetCharacter.currentStructure.isInterior && targetCharacter.currentStructure.settlementLocation != null
+                        && targetCharacter.currentStructure.settlementLocation.owner == owner.faction) {
+                        bool willReact = true;
+                        switch (targetCharacter.currentStructure.structureType) {
+                            case STRUCTURE_TYPE.TAVERN:
+                            case STRUCTURE_TYPE.FARM:
+                            case STRUCTURE_TYPE.APOTHECARY:
+                            case STRUCTURE_TYPE.CEMETERY:
+                            case STRUCTURE_TYPE.CITY_CENTER:
+                                willReact = false;
+                                break;
+                        }
+                        if (willReact) {
+                            if (owner.marker) {
+                                if (!targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
+                                    owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                }
+                            }
+                        }
                     }
                 }
             }
