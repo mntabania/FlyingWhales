@@ -919,7 +919,7 @@
       ],
       "minimumVillagerCount": 0,
       "factionRace": "HUMANS",
-      "settlementType": "Default_Human"
+      "settlementType": "Capital"
     }
   ]
 }
