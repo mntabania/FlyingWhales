@@ -57,7 +57,7 @@ public class PlaceBlueprint : GoapAction {
             } else {
                 Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Place Blueprint", "fail", goapNode, LOG_TAG.Work);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
                 goapNode.OverrideDescriptionLog(log);
             }
         }
