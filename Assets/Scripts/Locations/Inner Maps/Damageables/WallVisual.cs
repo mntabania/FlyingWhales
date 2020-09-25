@@ -8,6 +8,7 @@ using UnityEngine.Experimental.Rendering.Universal;
 public class WallVisual : MapObjectVisual<StructureWallObject> {
 
     private SpriteRenderer[] _spriteRenderers;
+    private BoxCollider2D _unpassableCollider;
 
     public SpriteRenderer[] spriteRenderers {
         get {
@@ -21,6 +22,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
     private void Awake() {
         _spriteRenderers = transform.GetComponentsInChildren<SpriteRenderer>();
         visionTrigger = transform.GetComponentInChildren<WallObjectVisionTrigger>();
+        _unpassableCollider = objectVisual.transform.GetComponentInChildren<BoxCollider2D>();
         visionTrigger.gameObject.SetActive(false);
     }
 
@@ -94,9 +96,13 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
             spriteRenderer.color = color;
         }
     }
-
+    public void SetUnpassableColliderState(bool state) {
+        _unpassableCollider.enabled = state;
+    }
+    
     public override void Reset() {
         base.Reset();
+        _unpassableCollider.enabled = true;
         visionTrigger.gameObject.SetActive(false);
     }
 

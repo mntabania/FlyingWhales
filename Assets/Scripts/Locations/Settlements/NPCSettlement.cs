@@ -704,6 +704,20 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public void SetExterminateTarget(LocationStructure target) {
         exterminateTargetStructure = target;
     }
+    public StructureSetting GetMissingFacilityToBuildBasedOnWeights() {
+        WeightedDictionary<StructureSetting> facilityWeights = new WeightedDictionary<StructureSetting>(settlementType.facilityWeights.dictionary);
+        foreach (var kvp in settlementType.facilityWeights.dictionary) {
+            int cap = settlementType.GetFacilityCap(kvp.Key);
+            int currentAmount = GetStructureCount(kvp.Key.structureType);
+            if (currentAmount >= cap) {
+                facilityWeights.SetElementWeight(kvp.Key, 0); //remove weight of object since it is already at max.
+            }
+        }
+        if (facilityWeights.GetTotalOfWeights() > 0) {
+            return facilityWeights.PickRandomElementGivenWeights();
+        }
+        return default;
+    }
     #endregion
 
     #region Inner Map
@@ -1136,19 +1150,12 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (owner == null) {
             //if owner of settlement becomes null, then set the settlement as no longer under siege
             SetIsUnderSiege(false);
-        } else {
-            //whenever a new owner is set, then redetermine settlement type
-            if (owner.race == RACE.HUMANS) {
-                SetSettlementType(SETTLEMENT_TYPE.Default_Human);
-            } else if (owner.race == RACE.ELVES) {
-                SetSettlementType(SETTLEMENT_TYPE.Default_Elf);
-            }
         }
     }
     #endregion
 
     #region Settlement Type
-    private void SetSettlementType(SETTLEMENT_TYPE settlementType) {
+    public void SetSettlementType(SETTLEMENT_TYPE settlementType) {
         if (locationType == LOCATION_TYPE.SETTLEMENT) {
             //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
             this.settlementType = LandmarkManager.Instance.CreateSettlementType(settlementType);

@@ -2797,6 +2797,23 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Place Blueprint
+    public bool TriggerPlaceBlueprint(string structurePrefabName, int connectorIndex, StructureSetting structureSetting, LocationGridTile centerTile, out JobQueueItem producedJob) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.PLACE_BLUEPRINT)) {
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PLACE_BLUEPRINT], owner, centerTile.genericTileObject, 
+			    new OtherData[]{ new StringOtherData(structurePrefabName), new IntOtherData(connectorIndex), new StructureSettingOtherData(structureSetting), }, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, centerTile.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PLACE_BLUEPRINT, INTERACTION_TYPE.PLACE_BLUEPRINT, centerTile.genericTileObject, owner);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetAssignedPlan(goapPlan);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

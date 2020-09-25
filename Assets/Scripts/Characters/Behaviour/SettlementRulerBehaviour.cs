@@ -25,6 +25,27 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                     return character.jobComponent.TriggerRecruitJob(targetCharacter, out producedJob);
                 }
             }
+            if (character.homeSettlement.settlementType != null) {
+                log += $"\n-10% chance to build dwelling if not yet at max. Else 10% chance to build a missing facility.";
+                if (GameUtilities.RollChance(10, ref log) && character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING) < character.homeSettlement.settlementType.maxDwellings) {
+                    log += $"\n-Chance met and dwellings not yet at maximum.";
+                    //place dwelling blueprint
+                    StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
+                    if (CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                        return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
+                    }
+                } else if (GameUtilities.RollChance(10, ref log) && character.homeSettlement.GetFacilityCount() < character.homeSettlement.settlementType.maxFacilities) {
+                    log += $"\n-Chance to build facility met.";
+                    //place random facility based on weights
+                    StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
+                    if (targetFacility.hasValue && CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
+                        return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
+                    }
+
+                }
+            }
         }
         producedJob = null;
         return false;
@@ -61,13 +82,25 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
         //return false;
     }
 
-    private bool HasCharacterWithPlaceBlueprintJobInSettlement(NPCSettlement npcSettlement) {
-        for (int i = 0; i < npcSettlement.residents.Count; i++) {
-            Character resident = npcSettlement.residents[i];
-            if (resident.jobQueue.HasJob(JOB_TYPE.PLACE_BLUEPRINT)) {
+    private bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
+        List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
+        availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
+        List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
+        prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+        for (int j = 0; j < prefabChoices.Count; j++) {
+            GameObject prefabGO = prefabChoices[j];
+            LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
+            if (validConnector != null) {
+                targetTile = tileToPlaceStructure;
+                structurePrefabName = prefabGO.name;
+                connectorToUse = connectorIndex;
                 return true;
             }
         }
+        targetTile = null;
+        structurePrefabName = string.Empty;
+        connectorToUse = -1;
         return false;
     }
 }

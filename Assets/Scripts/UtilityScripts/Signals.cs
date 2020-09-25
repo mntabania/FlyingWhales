@@ -563,9 +563,16 @@ public static class Signals {
     /// </summary>
     public static string STRUCTURE_OBJECT_PLACED = "OnStructureObjectPlaced";
     public static string STRUCTURE_OBJECT_REMOVED = "OnStructureObjectRemoved";
-
     public static string ADDED_STRUCTURE_RESIDENT = "OnAddedStructureResident";
     public static string REMOVED_STRUCTURE_RESIDENT = "OnRemoveStructureResident";
+    /// <summary>
+    /// Parameters (LocationGridTile)
+    /// </summary>
+    public static string STRUCTURE_CONNECTOR_PLACED = "OnStructureConnectorPlaced";
+    /// <summary>
+    /// Parameters (LocationGridTile)
+    /// </summary>
+    public static string STRUCTURE_CONNECTOR_REMOVED = "OnStructureConnectorRemoved";
     #endregion
 
     #region POI

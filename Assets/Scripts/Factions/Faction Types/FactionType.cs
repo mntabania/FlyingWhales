@@ -8,6 +8,10 @@ namespace Factions.Faction_Types {
         public readonly List<FactionIdeology> ideologies;
         public readonly List<StructureSetting> neededStructures;
         public readonly List<string> combatantClasses;
+
+        #region getters
+        public abstract RESOURCE mainResource { get; }
+        #endregion
         
         protected FactionType(FACTION_TYPE type) {
             this.type = type;

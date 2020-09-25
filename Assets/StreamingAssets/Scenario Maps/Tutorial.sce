@@ -28,7 +28,23 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "FARM"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -36,9 +52,18 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "TAVERN"
-        }
-      ]
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+      ],
+      "settlementType": "Default_Human"
     }
   ],
   "worldMapSave": {

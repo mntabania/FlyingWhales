@@ -1339,7 +1339,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (newFaction != null && newFaction == FactionManager.Instance.undeadFaction) {
             behaviourComponent.AddBehaviourComponent(typeof(UndeadBehaviour));
         }
-        Debug.Log($"{name} changed faction from {prevFaction?.name ?? "Null"} to {newFaction?.name ?? "Null"}");
+        // Debug.Log($"{name} changed faction from {prevFaction?.name ?? "Null"} to {newFaction?.name ?? "Null"}");
         // if (PlayerManager.Instance.player != null && this.faction == PlayerManager.Instance.player.playerFaction) {
         //     ClearPlayerActions();
         // }
@@ -1610,7 +1610,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetRegionLocation(Region region) {
         _currentRegion = region;
-        Debug.Log($"Set region location of {name} to {_currentRegion?.name ?? "Null"}");
+        // Debug.Log($"Set region location of {name} to {_currentRegion?.name ?? "Null"}");
     }
     public bool IsInHomeSettlement() {
         if (isAtHomeRegion) {

@@ -1102,6 +1102,23 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsFacilityStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.TAVERN:
+            case STRUCTURE_TYPE.CITY_CENTER:
+            case STRUCTURE_TYPE.WAREHOUSE:
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.CEMETERY:
+            case STRUCTURE_TYPE.BARRACKS:
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
+                return true;
+            default:
+                return false;
+        }
+    }
     public static int StructurePriority(this STRUCTURE_TYPE sub) {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:

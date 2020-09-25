@@ -3,10 +3,12 @@
     public struct StructureSetting {
         public RESOURCE resource;
         public STRUCTURE_TYPE structureType;
-
+        public bool hasValue;
+        
         public StructureSetting(STRUCTURE_TYPE structureType, RESOURCE resource) {
             this.structureType = structureType;
             this.resource = resource;
+            hasValue = true;
         }
         public override string ToString() {
             return $"{resource.ToString()} {structureType.ToString()}";

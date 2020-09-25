@@ -14,7 +14,6 @@ namespace Inner_Maps.Location_Structures {
         }
         public ThePortal(Region location, SaveDataLocationStructure data) : base(location, data) {
             selectableSize = new Vector2(10f, 10f);
-            SetMaxHP(5000);
         }
         //public override void ConstructDefaultActions() {
         //    base.ConstructDefaultActions();

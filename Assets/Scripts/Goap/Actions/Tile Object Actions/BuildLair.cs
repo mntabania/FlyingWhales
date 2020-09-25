@@ -47,6 +47,18 @@ public class BuildLair : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         return null;
     }
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, OtherData[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, target, otherData);
+        if (satisfied) {
+            if (otherData != null) {
+                if (otherData.Length == 1 && otherData[0].obj is LocationGridTile targetTile) {
+                    return !targetTile.hasBlueprint;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Effects

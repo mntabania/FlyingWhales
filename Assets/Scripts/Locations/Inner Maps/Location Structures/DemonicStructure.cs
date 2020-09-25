@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-
+using Debug = System.Diagnostics.Debug;
 namespace Inner_Maps.Location_Structures {
     public class DemonicStructure : LocationStructure {
         
@@ -18,7 +18,6 @@ namespace Inner_Maps.Location_Structures {
             currentAttackers = new HashSet<Character>();
         }
         public DemonicStructure(Region location, SaveDataLocationStructure data) : base(location, data) {
-            SetMaxHPAndReset(3000);
             currentAttackers = new HashSet<Character>();
         }
 
@@ -105,6 +104,20 @@ namespace Inner_Maps.Location_Structures {
         }
         private void OnCharacterEndedState(Character character, CharacterState characterState) {
             RemoveAttacker(character);
+        }
+        #endregion
+
+        #region Loading
+        public override void LoadReferences(SaveDataLocationStructure saveDataLocationStructure) {
+            base.LoadReferences(saveDataLocationStructure);
+            SaveDataDemonicStructure saveDataDemonicStructure = saveDataLocationStructure as SaveDataDemonicStructure;
+            Debug.Assert(saveDataDemonicStructure != null, nameof(saveDataDemonicStructure) + " != null");
+            if (saveDataDemonicStructure.damageContributors != null) {
+                for (int i = 0; i < saveDataDemonicStructure.damageContributors.Count; i++) {
+                    string damageContributorID = saveDataDemonicStructure.damageContributors[i];
+                    AddObjectAsDamageContributor(DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(damageContributorID));
+                }
+            }
         }
         #endregion
     }

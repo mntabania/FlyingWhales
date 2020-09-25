@@ -487,18 +487,29 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
     /// <param name="tileLocation">The hextile to place the structure object at</param>
     /// <param name="structureSetting">The settings that the structure should use.</param>
-    public void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
+    private void PlaceBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
         List<GameObject> choices = InnerMapManager.Instance.GetStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
-    //public void OwnStructure(Faction newOwner, LocationStructure structure) {
-    //    UnownStructure(structure);
-    //    newOwner.OwnStructure(structure);
-    //}
-    //public bool UnownStructure(LocationStructure structure) {
-    //    return structure.owner != null && structure.owner.UnownStructure(structure);
-    //}
+    
+    
+    
+    
+    public IEnumerator PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
+        HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
+        Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
+        PlaceIndividualBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
+        yield return null;
+    }
+    private void PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
+        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+        innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
+    }
+    public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, GameObject chosenPrefab, LocationGridTile centerTile) {
+        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenPrefab, centerTile, settlement);
+    }
     #endregion
 
     #region Tile Features

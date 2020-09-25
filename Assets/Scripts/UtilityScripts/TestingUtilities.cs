@@ -11,12 +11,13 @@ namespace UtilityScripts {
                 NPCSettlement npcSettlement = settlements[i];
                 summary += $"\n<b>{npcSettlement.name}</b>";
                 summary += $"\nStorage: {npcSettlement.mainStorage?.name ?? "None"}. Prison: {npcSettlement.prison?.name ?? "None"}";
-                // if (npcSettlement.settlementType != null) {
-                //     summary += $"\n<b>Facility Weights and Caps:</b>";
-                //     foreach (var kvp in npcSettlement.settlementType.facilityWeights.dictionary) {
-                //         summary += $"\n\t{kvp.Key.ToString()} - {kvp.Value.ToString()} - {npcSettlement.settlementType.facilityCaps[kvp.Key].ToString()}";
-                //     }
-                // }
+                if (npcSettlement.settlementType != null) {
+                    summary += $"\n<b>Max Dwellings: {npcSettlement.settlementType.maxDwellings.ToString()}</b>, <b>Max Facilities: {npcSettlement.settlementType.maxFacilities.ToString()}</b>";
+                    summary += $"\n<b>Facility Weights and Caps:</b>";
+                    foreach (var kvp in npcSettlement.settlementType.facilityWeights.dictionary) {
+                        summary += $"\n\t{kvp.Key.ToString()} - {kvp.Value.ToString()} - {npcSettlement.settlementType.facilityCaps[kvp.Key].ToString()}";
+                    }
+                }
                 if (npcSettlement.owner == null) { continue; }
                 summary += $"\n{npcSettlement.name} Location Job Queue:";
                 if (npcSettlement.availableJobs.Count > 0) {

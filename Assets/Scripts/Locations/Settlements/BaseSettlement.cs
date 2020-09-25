@@ -372,6 +372,36 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public List<StructureConnector> GetAvailableStructureConnectors() {
+            List<StructureConnector> connectors = new List<StructureConnector>();
+            for (int i = 0; i < allStructures.Count; i++) {
+                LocationStructure structure = allStructures[i];
+                if (structure is ManMadeStructure manMadeStructure && manMadeStructure.structureObj != null) {
+                    for (int j = 0; j < manMadeStructure.structureObj.connectors.Length; j++) {
+                        StructureConnector connector = manMadeStructure.structureObj.connectors[j];
+                        if (connector.isOpen) {
+                            connectors.Add(connector);    
+                        }
+                    }
+                }
+            }
+            return connectors;
+        }
+        public int GetStructureCount(STRUCTURE_TYPE structureType) {
+            if (HasStructure(structureType)) {
+                return structures[structureType].Count;
+            }
+            return 0;
+        }
+        public int GetFacilityCount() {
+            int count = 0;
+            foreach (var kvp in structures) {
+                if (kvp.Key.IsFacilityStructure()) {
+                    count += kvp.Value.Count;
+                }
+            }
+            return count;
+        }
         #endregion
 
         #region Tiles

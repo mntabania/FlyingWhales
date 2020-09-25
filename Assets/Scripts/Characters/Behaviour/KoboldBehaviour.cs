@@ -106,7 +106,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
     private List<HexTile> GetValidHexTilesNextToHome(Character character) {
         if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.occupiedHexTiles).hexTileOwner;
+                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles).hexTileOwner;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
             } else {
                 HexTile homeTile = character.homeStructure.occupiedHexTile.hexTileOwner;
@@ -168,7 +168,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
     private List<HexTile> GetAreasSurroundingHome(Character character) {
         if (character.homeStructure != null) {
             if (character.homeStructure is Cave cave) {
-                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.occupiedHexTiles).hexTileOwner;
+                HexTile homeTile = CollectionUtilities.GetRandomElement(cave.caveHexTiles).hexTileOwner;
                 return homeTile.AllNeighbours.Where(x => x.region == homeTile.region && x.freezingTraps < 4).ToList();
             } else {
                 HexTile homeTile = character.homeStructure.occupiedHexTile.hexTileOwner;

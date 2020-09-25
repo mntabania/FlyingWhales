@@ -1,8 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
+using Pathfinding.Util;
 using UnityEngine;
 using Traits;
+using UnityEngine.Assertions;
+using Debug = System.Diagnostics.Debug;
 
 public class GenericTileObject : TileObject {
     private bool hasBeenInitialized { get; set; }
@@ -159,6 +163,8 @@ public class GenericTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.PLACE_FREEZING_TRAP);
         AddAdvertisedAction(INTERACTION_TYPE.GO_TO_TILE);
         AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
+        AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
     }
     public void ManualInitializeLoad(LocationGridTile tile, SaveDataTileObject saveDataTileObject) {
         if (hasBeenInitialized) {
@@ -168,10 +174,98 @@ public class GenericTileObject : TileObject {
         Initialize(saveDataTileObject);
         SetGridTileLocation(tile);
     }
+
+    #region Structure Blueprints
+    public LocationStructureObject blueprintOnTile { get; private set; }
+    public bool PlaceBlueprintOnTile(string prefabName) {
+        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
+        LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+        if (structureObject.HasEnoughSpaceIfPlacedOn(gridTileLocation)) {
+            structurePrefab.transform.position = gridTileLocation.centeredWorldLocation;
+        
+            structureObject.RefreshAllTilemaps();
+            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentMap);
+            for (int j = 0; j < occupiedTiles.Count; j++) {
+                LocationGridTile tile = occupiedTiles[j];
+                tile.SetHasBlueprint(true);
+            }
+            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
+            structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+            blueprintOnTile = structureObject;
+            gridTileLocation.SetIsDefault(false);
+            return true;
+        }
+        ObjectPoolManager.Instance.DestroyObject(structurePrefab); //destroy structure since it wasn't placed
+        return false;
+    }
+    public LocationStructure BuildBlueprint(NPCSettlement npcSettlement) {
+        HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
+        npcSettlement.AddTileToSettlement(hexTile);
+        
+        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built);
+        LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
+        blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
+    
+        for (int j = 0; j < blueprintOnTile.tiles.Length; j++) {
+            LocationGridTile tile = blueprintOnTile.tiles[j];
+            tile.SetStructure(structure);
+            tile.SetHasBlueprint(false);
+        }
+        Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+        if (structure is DemonicStructure demonicStructure) {
+            demonicStructure.SetStructureObject(blueprintOnTile);    
+        } else if (structure is ManMadeStructure manMadeStructure) {
+            manMadeStructure.SetStructureObject(blueprintOnTile);    
+        }
+        structure.SetOccupiedHexTile(hexTile.innerMapHexTile);
+        blueprintOnTile.OnBuiltStructureObjectPlaced(gridTileLocation.parentMap, structure);
+        structure.CreateRoomsBasedOnStructureObject(blueprintOnTile);
+        structure.OnBuiltNewStructure();
+        blueprintOnTile = null;
+        return structure;
+        
+    }
+    #endregion
+
+    #region Loading
+    public override void LoadSecondWave(SaveDataTileObject data) {
+        base.LoadSecondWave(data);
+        SaveDataGenericTileObject saveDataGenericTileObject = data as SaveDataGenericTileObject;
+        Debug.Assert(saveDataGenericTileObject != null, nameof(saveDataGenericTileObject) + " != null");
+        if (!string.IsNullOrEmpty(saveDataGenericTileObject.blueprintOnTileName)) {
+            LoadBlueprintOnTile(saveDataGenericTileObject.blueprintOnTileName);
+        }
+    }
+    private void LoadBlueprintOnTile(string prefabName) {
+        GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabName, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
+        LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
+        structurePrefab.transform.position = gridTileLocation.centeredWorldLocation;
+    
+        structureObject.RefreshAllTilemaps();
+        List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentMap);
+        for (int j = 0; j < occupiedTiles.Count; j++) {
+            LocationGridTile tile = occupiedTiles[j];
+            tile.SetHasBlueprint(true);
+        }
+        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
+        structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+        blueprintOnTile = structureObject;
+    }
+    #endregion
 }
 
 #region Save Data
 public class SaveDataGenericTileObject : SaveDataTileObject {
+
+    public string blueprintOnTileName;
+    public override void Save(TileObject data) {
+        base.Save(data);
+        GenericTileObject genericTileObject = data as GenericTileObject;
+        Debug.Assert(genericTileObject != null, nameof(genericTileObject) + " != null");
+        if (genericTileObject.blueprintOnTile != null) {
+            blueprintOnTileName = genericTileObject.blueprintOnTile.name.Replace("(Clone)", "");
+        }
+    }
     public override TileObject Load() {
         GenericTileObject genericTileObject = InnerMapManager.Instance.LoadTileObject<GenericTileObject>(this);
         return genericTileObject;

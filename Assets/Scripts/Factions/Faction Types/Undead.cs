@@ -1,5 +1,8 @@
 ﻿namespace Factions.Faction_Types {
     public class Undead : FactionType {
+        
+        public override RESOURCE mainResource => RESOURCE.WOOD;
+        
         public Undead() : base(FACTION_TYPE.Undead) { }
         
         public override void SetAsDefault() {

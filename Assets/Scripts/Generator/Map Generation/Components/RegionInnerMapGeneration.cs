@@ -124,7 +124,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
             }
             
-            structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure);
+            structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
             structure.CreateRoomsBasedOnStructureObject(structureObject);
             structure.OnDoneLoadStructure();
 
@@ -154,7 +154,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
                 structure.SetOccupiedHexTile(occupiedHexTile.innerMapHexTile);
             }
             
-            structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure);
+            structureObject.OnLoadStructureObjectPlaced(region.innerMap, structure, saveDataLocationStructure);
             structure.CreateRoomsBasedOnStructureObject(structureObject);
             structure.OnDoneLoadStructure();
 

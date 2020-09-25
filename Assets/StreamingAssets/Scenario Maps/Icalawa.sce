@@ -1338,7 +1338,19 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "APOTHECARY"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         },
         {
           "resource": "WOOD",
@@ -1346,11 +1358,28 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "FARM"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         }
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "ELVES"
+      "factionRace": "ELVES",
+      "settlementType": "Default_Elf"
     }
   ]
 }

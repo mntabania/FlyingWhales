@@ -1686,7 +1686,15 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "CEMETERY"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -1694,19 +1702,40 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "PRISON"
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "HUNTER_LODGE"
-        }
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
         {
           "resource": "STONE",
           "structureType": "BARRACKS"
         },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "HUMANS"
+      "factionRace": "HUMANS",
+      "settlementType": "Default_Human"
     }
   ]
 }

@@ -131,7 +131,7 @@ public struct Log {
     public bool IsInvolved(ILogFiller obj) {
         return allInvolvedObjectIDs.Contains(obj.persistentID);
     }
-    public void AddInvolvedObject(string persistentID) {
+    private void AddInvolvedObject(string persistentID) {
         allInvolvedObjectIDs = $"{allInvolvedObjectIDs}|{persistentID}|";
     }
     /// <summary>

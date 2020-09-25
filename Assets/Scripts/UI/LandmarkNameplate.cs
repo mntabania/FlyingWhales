@@ -26,6 +26,8 @@ public class LandmarkNameplate : PooledObject {
             else {
                 gameObject.SetActive(false);
             }
+        } else {
+            gameObject.SetActive(false);
         }
         nameLbl.text = landmark.tileLocation.GetDisplayName();
     }

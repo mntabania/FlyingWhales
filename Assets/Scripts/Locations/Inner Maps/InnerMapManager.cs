@@ -41,6 +41,7 @@ namespace Inner_Maps {
         
         [Header("Structures")]
         [SerializeField] private LocationStructurePrefabDictionary structurePrefabs;
+        [SerializeField] private LocationStructurePrefabDictionary individualStructurePrefabs;
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
@@ -354,7 +355,7 @@ namespace Inner_Maps {
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
-            summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode.Area.ToString()}";
+            summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
             summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
             summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
@@ -397,8 +398,8 @@ namespace Inner_Maps {
                 summary = poi.allJobsTargetingThis.Count > 0 ? poi.allJobsTargetingThis.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t}") : $"{summary}None";
             }
             if (tile.structure != null) {
-                summary =
-                    $"{summary}\nStructure: {tile.structure},Is Interior: {tile.structure.isInterior.ToString()}";
+                summary = $"{summary}\nStructure: {tile.structure},Is Interior: {tile.structure.isInterior.ToString()}";
+                summary = $"{summary}\nOccupied Hex Tiles: {tile.structure.occupiedHexTiles.Count.ToString()}";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
@@ -617,6 +618,9 @@ namespace Inner_Maps {
         }
         public List<GameObject> GetStructurePrefabsForStructure(StructureSetting structureSetting) {
             return structurePrefabs[structureSetting];
+        }
+        public List<GameObject> GetIndividualStructurePrefabsForStructure(StructureSetting structureSetting) {
+            return individualStructurePrefabs[structureSetting];
         }
         public void AddWorldKnownDemonicStructure(LocationStructure structure) {
             worldKnownDemonicStructures.Add(structure);

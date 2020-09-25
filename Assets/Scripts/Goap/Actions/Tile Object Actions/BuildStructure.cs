@@ -15,8 +15,31 @@ public class BuildStructure : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+    // protected override void ConstructBasePreconditionsAndEffects() {
+    //     AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasSupply);
+    // }
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, OtherData[] otherData) {
+        if(target is GenericTileObject genericTileObject) {
+            if (genericTileObject.blueprintOnTile != null) {
+                List<Precondition> p = new List<Precondition>();
+                switch (genericTileObject.blueprintOnTile.thinWallResource) {
+                    case RESOURCE.STONE:
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                        break;
+                    case RESOURCE.WOOD:
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                        break;
+                    case RESOURCE.METAL:
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                        break;
+                    default:
+                        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.ACTOR), HasResource));
+                        break;
+                }
+                return p;
+            }
+        }
+        return base.GetPreconditions(actor, target, otherData);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -29,8 +52,9 @@ public class BuildStructure : GoapAction {
     }
     public override void AddFillersToLog(ref Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(ref log, goapNode);
-        StructureTileObject target = goapNode.poiTarget as StructureTileObject;
-        // log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
+        if (goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
+            log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+        }
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -52,46 +76,49 @@ public class BuildStructure : GoapAction {
             if (poiTarget.gridTileLocation == null) {
                 return false;
             }
+            if (poiTarget is GenericTileObject genericTileObject) {
+                if (genericTileObject.blueprintOnTile == null) {
+                    return false;
+                }  
+            } else {
+                return false;
+            }
             //TODO:
             // StructureTileObject structure = poiTarget as StructureTileObject;
             // return structure.spot.hasBlueprint;
+            return actor.homeSettlement != null;
         }
         return false;
     }
     #endregion
 
     #region Preconditions
-    private bool HasSupply(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        if (poiTarget.HasResourceAmount(RESOURCE.WOOD, 50)) {
-            return true;
-        }
-        //return actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile;
-        if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is WoodPile) {
-            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            //return carriedPile.resourceInPile >= 50;
-            return true;
+    private bool HasResource(Character actor, IPointOfInterest poiTarget, OtherData[] otherData, JOB_TYPE jobType) {
+        if (poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
+            if (poiTarget.HasResourceAmount(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost)) {
+                return true;
+            }
+            //return actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile;
+            if (actor.carryComponent.isCarryingAnyPOI && actor.carryComponent.carriedPOI is ResourcePile resourcePile) {
+                return resourcePile.providedResource == genericTileObject.blueprintOnTile.thinWallResource && resourcePile.resourceInPile >= genericTileObject.blueprintOnTile.craftCost;
+            }    
         }
         return false;
-        //return actor.HasItem()
     }
     #endregion
 
     #region State Effects
     public void PreBuildSuccess(ActualGoapNode goapNode) {
-        StructureTileObject target = goapNode.poiTarget as StructureTileObject;
-        if (goapNode.actor.carryComponent.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
-            int cost = TileObjectDB.GetTileObjectData((goapNode.poiTarget as TileObject).tileObjectType).constructionCost;
-            carriedPile.AdjustResourceInPile(-50);
-            goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, 50);
+        if (goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile && goapNode.poiTarget is GenericTileObject genericTileObject && genericTileObject.blueprintOnTile != null) {
+            carriedPile.AdjustResourceInPile(-genericTileObject.blueprintOnTile.craftCost);
+            goapNode.poiTarget.AdjustResource(genericTileObject.blueprintOnTile.thinWallResource, genericTileObject.blueprintOnTile.craftCost);
+            goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(genericTileObject.blueprintOnTile.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
         }
-        // goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
-        StructureTileObject spot = goapNode.poiTarget as StructureTileObject;
-        // LocationStructure structure = spot.BuildBlueprint(goapNode.actor.homeSettlement);
-        // goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -50);
-
+        if (goapNode.poiTarget is GenericTileObject genericTileObject) {
+            genericTileObject.BuildBlueprint(goapNode.actor.homeSettlement);
+        }
         //PlayerUI.Instance.ShowGeneralConfirmation("New Structure", $"A new {structure.name} has been built at {spot.gridTileLocation.structure.location.name}");
     }
     #endregion

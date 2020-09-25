@@ -485,6 +485,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Combine Stockpile
 	private void TryCreateCombineStockpile(ResourcePile pile) {
+		if (pile.mapObjectState != MAP_OBJECT_STATE.BUILT) {
+			return;
+		}
 		if (pile.IsAtMaxResource(pile.providedResource)) {
 			return; //if given pile is at maximum capacity, then do not create combine job for it
 		}
@@ -498,7 +501,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		ResourcePile targetPile = null;
 		for (int i = 0; i < resourcePiles.Count; i++) {
 			ResourcePile currPile = resourcePiles[i];
-			if (currPile != pile && currPile.IsAtMaxResource(pile.providedResource) == false
+			if (currPile != pile && currPile.mapObjectState == MAP_OBJECT_STATE.BUILT && currPile.IsAtMaxResource(pile.providedResource) == false
 			    && currPile.HasEnoughSpaceFor(pile.providedResource, pile.resourceInPile)) {
 				targetPile = currPile;
 				break;
