@@ -532,6 +532,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     //    }
     //    return false;
     //}
+    public bool HasHomelessResident() {
+        for (int i = 0; i < residents.Count; i++) {
+            Character resident = residents[i];
+            if (resident.homeStructure == null) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Tile Objects

@@ -56,24 +56,42 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                 }    
             }
             if (character.homeSettlement.settlementType != null) {
-                log += $"\n-10% chance to build dwelling if not yet at max. Else 10% chance to build a missing facility.";
-                if (GameUtilities.RollChance(10, ref log) && character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING) < character.homeSettlement.settlementType.maxDwellings) {
-                    log += $"\n-Chance met and dwellings not yet at maximum.";
-                    //place dwelling blueprint
-                    StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
-                    if (CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
-                        log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                        return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
+                log += $"\n-Check chance to build dwelling if not yet at max.";
+                int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
+                if (dwellingCount < character.homeSettlement.settlementType.maxDwellings) {
+                    int chance = 4;
+                    if (dwellingCount < (character.homeSettlement.settlementType.maxDwellings/2)) {
+                        chance = 8;
                     }
-                } else if (GameUtilities.RollChance(10, ref log) && character.homeSettlement.GetFacilityCount() < character.homeSettlement.settlementType.maxFacilities) {
-                    log += $"\n-Chance to build facility met.";
-                    //place random facility based on weights
-                    StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
-                    if (targetFacility.hasValue && CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
-                        log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
-                        return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
+                    if (character.homeSettlement.HasHomelessResident()) {
+                        chance = 12;
                     }
-
+                    if (GameUtilities.RollChance(chance, ref log)) {
+                        log += $"\n-Chance met and dwellings not yet at maximum.";
+                        //place dwelling blueprint
+                        StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
+                        if (CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                            log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
+                        }    
+                    }
+                }
+                log += $"\n-Check chance to build a missing facility.";
+                int facilityCount = character.homeSettlement.GetFacilityCount();
+                if (facilityCount < character.homeSettlement.settlementType.maxFacilities) {
+                    int chance = 4;
+                    if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
+                        chance = 6;
+                    }
+                    if (GameUtilities.RollChance(chance, ref log)) {
+                        log += $"\n-Chance to build facility met.";
+                        //place random facility based on weights
+                        StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
+                        if (targetFacility.hasValue && CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                            log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
+                            return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
+                        }
+                    }
                 }
             }
         }
