@@ -126,6 +126,9 @@ public class InterruptComponent : CharacterComponent {
         if(!effectLog.hasValue) {
             effectLog = interruptHolder.interrupt.CreateEffectLog(owner, interruptHolder.target);
         }
+        if (effectLog.hasValue && interruptHolder.interrupt.isIntel) {
+            effectLog.AddTag(LOG_TAG.Intel);
+        }
         interruptHolder.SetEffectLog(effectLog);
         if (owner.marker) {
             owner.marker.UpdateActionIcon();

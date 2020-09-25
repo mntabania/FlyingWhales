@@ -15,7 +15,7 @@ namespace Databases.SQLDatabase {
         private const int Log_Row_Limit = 2000;
         private string BareBonesLogFields = "persistentID, date_tick, date_day, date_month, date_year, logText, category, key, file, involvedObjects, rawText";
 
-        private LOG_TAG[] allLogTags;
+        public LOG_TAG[] allLogTags { get; private set; }
         
         #region Clean Up
         ~RuinarchSQLDatabase() {
@@ -243,6 +243,64 @@ namespace Databases.SQLDatabase {
 #if UNITY_EDITOR
             timer.Stop();
             Debug.Log($"Total log query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+#endif
+            return logs;    
+        }
+        public List<string> GetLogIDsThatMatchCriteria(List<string> pool, string textLike, List<LOG_TAG> tags) {
+#if UNITY_EDITOR
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+#endif
+            SQLiteCommand command = dbConnection.CreateCommand();
+            command.CommandType = CommandType.Text;
+            if (tags.Count == 0) {
+                //if no tags were passed then return an empty list, since all logs should have tags
+                //so removing all tags should remove all logs
+                return null;
+            }
+            
+            string commandStr = $"SELECT persistentID FROM Logs WHERE(";
+            for (int i = 0; i < pool.Count; i++) {
+                string idFromPool = pool[i];
+                commandStr = $"{commandStr}persistentID = '{idFromPool}'";
+                if (i + 1 < pool.Count) {
+                    commandStr = $"{commandStr} OR ";    
+                }
+            }
+            commandStr = $"{commandStr})";
+            
+            //append string search condition
+            if (!string.IsNullOrEmpty(textLike)) {
+                textLike = textLike.Replace("'", "''");
+                commandStr = $"{commandStr} AND rawText LIKE '%{textLike}%'";
+            }
+            
+            //append tags condition.
+            if (tags.Count > 0) {
+                commandStr = $"{commandStr} AND (";
+                for (int i = 0; i < tags.Count; i++) {
+                    LOG_TAG tag = tags[i];
+                    commandStr = $"{commandStr} {tag.ToString()} = '1'";
+                    if (i + 1 < tags.Count) {
+                        commandStr = $"{commandStr} OR";
+                    }else if (i + 1 == tags.Count) {
+                        commandStr = $"{commandStr})";
+                    }
+                }
+            }
+            commandStr = $"{commandStr} ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
+            Debug.Log($"Trying to get notifications that match criteria, full query command is {commandStr}");
+            command.CommandText = commandStr;
+            IDataReader dataReader = command.ExecuteReader();
+            List<string> logs = new List<string>();
+            while (dataReader.Read()) {
+                string id = dataReader.GetString(0);
+                logs.Add(id);
+            }
+            dataReader.Close();
+#if UNITY_EDITOR
+            timer.Stop();
+            Debug.Log($"Total notification query time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 #endif
             return logs;    
         }

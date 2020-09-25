@@ -22,15 +22,19 @@ public class PlayerNotificationItem : PooledObject {
     private UIHoverPosition _hoverPosition;
 
     private Action<PlayerNotificationItem> onDestroyAction;
-
+    private bool _adjustHeightOnEnable;
+    private void OnEnable() {
+        if (_adjustHeightOnEnable) {
+            StartCoroutine(InstantHeight());
+            _adjustHeightOnEnable = false;
+        }
+    }
     public void Initialize(in Log log, Action<PlayerNotificationItem> onDestroyAction = null) {
         logPersistentID = log.persistentID;
         tickShown = GameManager.Instance.Today().tick;
         logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {log.logText}";
         fromActionID = log.actionID;
         this.onDestroyAction = onDestroyAction;
-        StartCoroutine(TweenHeight());
-        
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
     }
     public void Initialize(in Log log, int tick, Action<PlayerNotificationItem> onDestroyAction = null) {
@@ -39,16 +43,33 @@ public class PlayerNotificationItem : PooledObject {
         logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {log.logText}";
         fromActionID = log.actionID;
         this.onDestroyAction = onDestroyAction;
-        StartCoroutine(TweenHeight());
         
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
     }
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
         _hoverPosition = hoverPosition;
     }
-    IEnumerator TweenHeight() {
+    public void DoTweenHeight() {
+        StartCoroutine(TweenHeight());
+    }
+    public void QueueAdjustHeightOnEnable() {
+        _adjustHeightOnEnable = true;
+       
+        
+        // RectTransform thisRect = transform as RectTransform;
+        // thisRect.sizeDelta = new Vector2(thisRect.sizeDelta.x, sizeDelta.y);
+    }
+    private IEnumerator TweenHeight() {
         yield return null;
         _layoutElement.DOPreferredSize(new Vector2(0f, (logLbl.transform as RectTransform).sizeDelta.y), 0.5f);
+        //_layoutElement.preferredHeight = (logLbl.transform as RectTransform).sizeDelta.y;
+    }
+    private IEnumerator InstantHeight() {
+        yield return null;
+        RectTransform logRect = logLbl.transform as RectTransform;
+        var sizeDelta = logRect.sizeDelta;
+        _layoutElement.preferredHeight = sizeDelta.y;
+        // _layoutElement.DOPreferredSize(new Vector2(0f, (logLbl.transform as RectTransform).sizeDelta.y), 0.5f);
         //_layoutElement.preferredHeight = (logLbl.transform as RectTransform).sizeDelta.y;
     }
     public void DeleteNotification() {
@@ -62,7 +83,7 @@ public class PlayerNotificationItem : PooledObject {
         _container.anchoredPosition = new Vector2(450f, 0f);
         _container.DOAnchorPosX(0f, 0.5f);
     }
-    
+
     public void OnHoverOverLog(object obj) {
         if (obj is Character character && _hoverPosition != null) {
             UIManager.Instance.ShowCharacterNameplateTooltip(character, _hoverPosition);
@@ -85,6 +106,7 @@ public class PlayerNotificationItem : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        _adjustHeightOnEnable = false;
         _container.anchoredPosition = Vector2.zero;
         transform.localScale = Vector3.one;
         fromActionID = string.Empty;

@@ -10,7 +10,6 @@ public class SleepOutside : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
-        showNotification = false;
         
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         racesThatCanDoAction = new RACE[] {

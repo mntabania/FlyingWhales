@@ -191,6 +191,18 @@ public class UIManager : BaseMonoBehaviour {
         Messenger.AddListener<IPointOfInterest>(Signals.UPDATE_POI_LOGS_UI, TryUpdatePOILog);
         Messenger.AddListener<Faction>(Signals.UPDATE_FACTION_LOGS_UI, TryUpdateFactionLog);
 
+        //notification area
+        notificationSearchField.onValueChanged.AddListener(OnEndNotificationSearchEdit);
+        notificationFilters = CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
+        showAllToggle.SetIsOnWithoutNotify(true);
+        for (int i = 0; i < allFilters.Length; i++) {
+            LogFilterItem logFilterItem = allFilters[i];
+            logFilterItem.SetOnToggleAction(OnToggleFilter);
+            logFilterItem.SetIsOnWithoutNotify(true);
+        }
+        showAllToggle.onValueChanged.AddListener(OnToggleAllFilters);
+        UpdateSearchFieldsState();
+        
         UpdateUI();
         // && WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Oona
     }
@@ -1125,13 +1137,17 @@ public class UIManager : BaseMonoBehaviour {
     [SerializeField] private GameObject defaultNotificationPrefab;
     [SerializeField] private UIHoverPosition notificationHoverPos;
     [SerializeField] private GameObject searchFieldsParent;
-    public GameObject playerNotifGO;
-    public RectTransform playerNotificationScrollRectTransform;
+    [SerializeField] private TMP_InputField notificationSearchField;
+    [SerializeField] private GameObject searchFieldClearBtn;
+    [SerializeField] private GameObject filtersGO;
+    [SerializeField] private LogFilterItem[] allFilters;
+    [SerializeField] private Toggle showAllToggle;
+    [SerializeField] private int maxPlayerNotif;
+    private List<LOG_TAG> notificationFilters;
     public ScrollRect playerNotifScrollRect;
-    public Image[] playerNotifTransparentImages;
-    public int maxPlayerNotif;
     public List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private List<string> activeNotificationIDs = new List<string>();
+    
     private void ShowPlayerNotification(IIntel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
@@ -1186,35 +1202,82 @@ public class UIManager : BaseMonoBehaviour {
         if (activeNotifications.Count > maxPlayerNotif) {
             activeNotifications[0].DeleteOldestNotification();
         }
-        newNotif.TweenIn();
+        UpdateSearchFieldsState();
+        if (HasSearchCriteria()) {
+            List<string> filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters);
+            if (filteredLogIDs.Contains(newNotif.logPersistentID)) {
+                newNotif.DoTweenHeight();
+                newNotif.TweenIn();    
+            } else {
+                newNotif.QueueAdjustHeightOnEnable();
+            }
+            FilterNotifications(filteredLogIDs);
+        } else {
+            newNotif.DoTweenHeight();
+            newNotif.TweenIn();    
+        }
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
         activeNotificationIDs.Remove(item.logPersistentID);
-        if(activeNotifications.Count <= 0) {
-            
+        UpdateSearchFieldsState();
+    }
+    private void FilterNotifications(List<string> filteredLogIDs = null) {
+        if (filteredLogIDs == null) {
+            filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters);
+        }
+        for (int i = 0; i < activeNotifications.Count; i++) {
+            PlayerNotificationItem item = activeNotifications[i];
+            if (filteredLogIDs != null && filteredLogIDs.Contains(item.logPersistentID)) {
+                item.gameObject.SetActive(true);
+                item.transform.SetSiblingIndex(i);
+            } else {
+                item.gameObject.SetActive(false);
+            }
         }
     }
-    public void OnClickExpand() {
-        if(playerNotificationScrollRectTransform.sizeDelta.y == 950f) {
-            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 194f);
-        }else if (playerNotificationScrollRectTransform.sizeDelta.y == 194f) {
-            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 950f);
-        }
-        //Canvas.ForceUpdateCanvases();
-    }
-    public void OnHoverNotificationArea() {
-        for (int i = 0; i < playerNotifTransparentImages.Length; i++) {
-            playerNotifTransparentImages[i].color = new Color(playerNotifTransparentImages[i].color.r, playerNotifTransparentImages[i].color.g, playerNotifTransparentImages[i].color.b, 120f/255f);
-        }
-    }
-    public void OnHoverExitNotificationArea() {
-        for (int i = 0; i < playerNotifTransparentImages.Length; i++) {
-            playerNotifTransparentImages[i].color = new Color(playerNotifTransparentImages[i].color.r, playerNotifTransparentImages[i].color.g, playerNotifTransparentImages[i].color.b, 25f/255f);
-        }
+    private bool HasSearchCriteria() {
+        return !string.IsNullOrEmpty(notificationSearchField.text) || (notificationFilters.Count > 0 && notificationFilters.Count < DatabaseManager.Instance.mainSQLDatabase.allLogTags.Length);
     }
     private void UpdateSearchFieldsState() {
         searchFieldsParent.gameObject.SetActive(activeNotificationIDs.Count > 0);
+    }
+    private void OnEndNotificationSearchEdit(string text) {
+        searchFieldClearBtn.gameObject.SetActive(!string.IsNullOrEmpty(text)); //show clear button if there is a given text
+        FilterNotifications();
+    }
+    public void ToggleFilters() {
+        filtersGO.gameObject.SetActive(!filtersGO.activeSelf);
+    }
+    private void OnToggleFilter(bool isOn, LOG_TAG tag) {
+        if (isOn) {
+            notificationFilters.Add(tag);
+        } else {
+            notificationFilters.Remove(tag);
+        }
+        showAllToggle.SetIsOnWithoutNotify(AreAllFiltersOn());
+        FilterNotifications();
+    }
+    private bool AreAllFiltersOn() {
+        for (int i = 0; i < allFilters.Length; i++) {
+            LogFilterItem filterItem = allFilters[i];
+            if (!filterItem.isOn) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public void OnToggleAllFilters(bool state) {
+        notificationFilters.Clear();
+        for (int i = 0; i < allFilters.Length; i++) {
+            LogFilterItem filterItem = allFilters[i];
+            filterItem.SetIsOnWithoutNotify(state);
+            if (state) {
+                //if search all is enabled then add filter. If it is not do not do anything to the list since list was cleared beforehand.
+                notificationFilters.Add(filterItem.filterType);    
+            }
+        }
+        FilterNotifications();
     }
     #endregion
 

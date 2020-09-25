@@ -10,7 +10,6 @@ public class StandStill : GoapAction {
     public StandStill() : base(INTERACTION_TYPE.STAND_STILL) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.No_Icon;
-        showNotification = false;
         
         shouldAddLogs = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };

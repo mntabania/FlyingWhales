@@ -18,7 +18,7 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
             log += $"\n-15% chance to recruit a restrained character from different faction";
             int roll = Random.Range(0, 100);
             log += $"\n-Roll: {roll}";
-            if (roll < 100) {
+            if (roll < 15) {
                 Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => x.traitContainer.HasTrait("Restrained") && x.faction != character.faction && !x.HasJobTargetingThis(JOB_TYPE.RECRUIT));
                 if(targetCharacter != null) {
                     log += $"\n-Chosen target: {targetCharacter.name}";

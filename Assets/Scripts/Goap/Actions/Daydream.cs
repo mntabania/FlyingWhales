@@ -9,7 +9,6 @@ public class Daydream : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
     public Daydream() : base(INTERACTION_TYPE.DAYDREAM) {
-        showNotification = false;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] { TIME_IN_WORDS.MORNING,  TIME_IN_WORDS.LUNCH_TIME, TIME_IN_WORDS.AFTERNOON, };
         actionIconString = GoapActionStateDB.Happy_Icon;

@@ -9,7 +9,6 @@ public class ReturnHome : GoapAction {
     public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
 
     public ReturnHome() : base(INTERACTION_TYPE.RETURN_HOME) {
-        showNotification = false;
         shouldAddLogs = false;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION;
         actionIconString = GoapActionStateDB.No_Icon;
