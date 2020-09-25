@@ -16,9 +16,13 @@ public class PlayerNotificationItem : PooledObject {
     public string logPersistentID { get; private set; }
     
     [SerializeField] private TextMeshProUGUI logLbl;
-    [SerializeField] private LogItem logItem;
+    [SerializeField] private TextMeshProUGUI dateLbl;
     [SerializeField] private RectTransform _container;
+    [SerializeField] private LogsTagButton _logsTagButton;
     [SerializeField] private LayoutElement _layoutElement;
+    [SerializeField] private Image _bg;
+    [SerializeField] private Sprite _normalSprite;
+    [SerializeField] private Sprite _importantSprite;
     private UIHoverPosition _hoverPosition;
 
     private Action<PlayerNotificationItem> onDestroyAction;
@@ -32,18 +36,23 @@ public class PlayerNotificationItem : PooledObject {
     public void Initialize(in Log log, Action<PlayerNotificationItem> onDestroyAction = null) {
         logPersistentID = log.persistentID;
         tickShown = GameManager.Instance.Today().tick;
-        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {log.logText}";
+        dateLbl.text = log.gameDate.ConvertToTime();    
+        logLbl.text = log.logText;
         fromActionID = log.actionID;
+        _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
+        _logsTagButton.SetTags(log.tags);
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
     }
     public void Initialize(in Log log, int tick, Action<PlayerNotificationItem> onDestroyAction = null) {
         logPersistentID = log.persistentID;
         tickShown = tick;
-        logLbl.text = $"[{GameManager.ConvertTickToTime(tickShown)}] {log.logText}";
+        dateLbl.text = log.gameDate.ConvertToTime();
+        logLbl.text = log.logText;
         fromActionID = log.actionID;
+        _bg.sprite = log.IsImportant() ? _importantSprite : _normalSprite;
         this.onDestroyAction = onDestroyAction;
-        
+        _logsTagButton.SetTags(log.tags);
         Messenger.AddListener<Log>(Signals.LOG_REMOVED_FROM_DATABASE, OnLogRemovedFromDatabase);
     }
     public void SetHoverPosition(UIHoverPosition hoverPosition) {
@@ -106,6 +115,7 @@ public class PlayerNotificationItem : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
+        _logsTagButton.Reset();
         _adjustHeightOnEnable = false;
         _container.anchoredPosition = Vector2.zero;
         transform.localScale = Vector3.one;

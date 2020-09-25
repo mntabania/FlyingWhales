@@ -172,4 +172,10 @@ public struct Log {
         }
     }
     #endregion
+
+    #region Utilities
+    public bool IsImportant() {
+        return tags.Contains(LOG_TAG.Crimes) || tags.Contains(LOG_TAG.Intel) || tags.Contains(LOG_TAG.Important);
+    }
+    #endregion
 }

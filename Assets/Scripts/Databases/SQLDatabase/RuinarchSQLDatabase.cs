@@ -85,6 +85,26 @@ namespace Databases.SQLDatabase {
             command.CommandType = CommandType.Text;
             command.CommandText = commandStr;
             command.ExecuteNonQuery();
+
+            List<string> existingColumns = new List<string>();
+            commandStr = "PRAGMA table_info (Logs)";
+            command.CommandText = commandStr;
+            IDataReader dataReader = command.ExecuteReader();
+            while (dataReader.Read()) {
+                string columnName = dataReader.GetString(1);
+                existingColumns.Add(columnName);
+            }
+            dataReader.Close();
+            
+            for (int i = 0; i < tags.Length; i++) {
+                LOG_TAG tag = tags[i];
+                if (!existingColumns.Contains(tag.ToString())) {
+                    //create missing column
+                    commandStr = $"ALTER TABLE Logs ADD COLUMN {tag.ToString()} BOOLEAN DEFAULT false";
+                    command.CommandText = commandStr;
+                    command.ExecuteNonQuery();    
+                }
+            }
         }
         #endregion
 
