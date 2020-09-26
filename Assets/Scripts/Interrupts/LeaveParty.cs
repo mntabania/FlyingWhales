@@ -19,7 +19,7 @@ namespace Interrupts {
 
                 overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", providedTags: LOG_TAG.Party);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                overrideEffectLog.AddToFillers(null, party.partyName, LOG_IDENTIFIER.STRING_1);
+                overrideEffectLog.AddToFillers(party, party.partyName, LOG_IDENTIFIER.PARTY_1);
                 overrideEffectLog.AddToFillers(null, interruptHolder.identifier, LOG_IDENTIFIER.STRING_2);
             }
             return true;

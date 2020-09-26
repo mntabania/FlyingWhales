@@ -582,7 +582,7 @@ namespace Traits {
                 //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             }
             if(comparer != string.Empty) {
-                if (victimDesc.ToLower() == comparer.ToLower()) {
+                if (victimDesc.Equals(comparer, StringComparison.CurrentCultureIgnoreCase)) {
                     return true;
                 }
             }

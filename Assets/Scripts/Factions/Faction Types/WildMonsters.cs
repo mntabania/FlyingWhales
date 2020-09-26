@@ -3,5 +3,7 @@
         public WildMonsters() : base(FACTION_TYPE.Wild_Monsters) { }
         
         public override void SetAsDefault() { }
+        public override void SetFromSaveData() { }
+
     }
 }

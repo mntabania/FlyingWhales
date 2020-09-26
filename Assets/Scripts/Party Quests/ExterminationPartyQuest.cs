@@ -40,7 +40,7 @@ public class ExterminationPartyQuest : PartyQuest {
         return targetStructure;
     }
     public override string GetPartyQuestTextInLog() {
-        return "Extermination Quest in " + targetStructure.name;
+        return "Exterminate " + targetStructure.name;
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);

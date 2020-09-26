@@ -27,6 +27,8 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
 
     public int newLeaderDesignationChance;
 
+    public SaveDataPartyQuestBoard partyQuestBoard;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     #endregion
@@ -79,6 +81,9 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
 
         factionType = new SaveDataFactionType();
         factionType.Save(data.factionType);
+
+        partyQuestBoard = new SaveDataPartyQuestBoard();
+        partyQuestBoard.Save(data.partyQuestBoard);
 
         // history = new List<string>();
         // for (int i = 0; i < data.history.Count; i++) {

@@ -2604,7 +2604,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void SetHomeSettlement(NPCSettlement settlement) {
         if(homeSettlement != settlement) {
             if(settlement == null) {
-                if (partyComponent.hasParty) {
+                if (partyComponent.hasParty && !isDead) {
                     interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Party, this, "Left home settlement");
                 }
             }

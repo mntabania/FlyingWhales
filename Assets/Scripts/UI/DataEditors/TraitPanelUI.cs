@@ -330,7 +330,7 @@ public class TraitPanelUI : MonoBehaviour {
     }
     private int GetOptionIndex(string identifier, Dropdown options) {
         for (int i = 0; i < options.options.Count; i++) {
-            if (options.options[i].text.ToLower() == identifier.ToLower()) {
+            if (options.options[i].text.Equals(identifier, StringComparison.CurrentCultureIgnoreCase)) {
                 return i;
             }
         }

@@ -10,6 +10,7 @@ public class PartyQuest : ISavable {
     public bool isWaitTimeOver { get; protected set; }
     public System.Type relatedBehaviour { get; protected set; }
     public Party assignedParty { get; protected set; }
+    public BaseSettlement madeInLocation { get; protected set; } //Where was this party quest created?
 
     #region getters
     public virtual IPartyQuestTarget target => null;
@@ -53,6 +54,9 @@ public class PartyQuest : ISavable {
             assignedParty = party;
         }
     }
+    public void SetMadeInLocation(BaseSettlement settlement) {
+        madeInLocation = settlement;
+    }
     public void EndQuest() {
         OnEndQuest();
         assignedParty.DropQuest();
@@ -63,6 +67,9 @@ public class PartyQuest : ISavable {
     public virtual void LoadReferences(SaveDataPartyQuest data) {
         if (!string.IsNullOrEmpty(data.assignedParty)) {
             assignedParty = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.assignedParty);
+        }
+        if (!string.IsNullOrEmpty(data.madeInLocation)) {
+            madeInLocation = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.madeInLocation);
         }
     }
     #endregion
@@ -75,6 +82,7 @@ public class SaveDataPartyQuest : SaveData<PartyQuest>, ISavableCounterpart {
     public bool isWaitTimeOver;
     public string relatedBehaviour;
     public string assignedParty;
+    public string madeInLocation;
 
     public OBJECT_TYPE objectType => OBJECT_TYPE.Party_Quest;
 
@@ -88,6 +96,9 @@ public class SaveDataPartyQuest : SaveData<PartyQuest>, ISavableCounterpart {
         relatedBehaviour = data.relatedBehaviour.ToString();
         if(data.assignedParty != null) {
             assignedParty = data.assignedParty.persistentID;
+        }
+        if(data.madeInLocation != null) {
+            madeInLocation = data.madeInLocation.persistentID;
         }
     }
     public override PartyQuest Load() {

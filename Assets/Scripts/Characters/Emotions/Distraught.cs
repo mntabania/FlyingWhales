@@ -13,8 +13,8 @@ public class Distraught : Emotion {
         ActualGoapNode goapNode = null) {
         if(target is Character targetCharacter) {
             if (targetCharacter.IsInDanger()) {
-                if (witness.homeSettlement != null && !witness.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
-                    PartyManager.Instance.CreateRescuePartyQuest(witness.homeSettlement, targetCharacter);
+                if (witness.faction != null && !witness.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {
+                    witness.faction.partyQuestBoard.CreateRescuePartyQuest(witness, witness.homeSettlement, targetCharacter);
                 }
                 //if (witness.characterClass.IsCombatant()) {
                 //    if (witness.homeSettlement != null && !witness.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, targetCharacter)) {

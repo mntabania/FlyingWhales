@@ -9,8 +9,8 @@ using BayatGames.SaveGameFree;
 public class SaveDataFactionType : SaveData<FactionType> {
     public FACTION_TYPE type;
     public List<SaveDataFactionIdeology> ideologies;
-    public List<StructureSetting> neededStructures;
-    public List<string> combatantClasses;
+    //public List<StructureSetting> neededStructures;
+    //public List<string> combatantClasses;
 
     #region Overrides
     public override void Save(FactionType data) {
@@ -26,17 +26,18 @@ public class SaveDataFactionType : SaveData<FactionType> {
             }
         }
 
-        neededStructures = data.neededStructures;
-        combatantClasses = data.combatantClasses;
+        //neededStructures = data.neededStructures;
+        //combatantClasses = data.combatantClasses;
     }
     public override FactionType Load() {
         FactionType newFactionType = FactionManager.Instance.CreateFactionType(type);
-        for (int i = 0; i < neededStructures.Count; i++) {
-            newFactionType.AddNeededStructure(neededStructures[i]);
-        }
-        for (int i = 0; i < combatantClasses.Count; i++) {
-            newFactionType.AddCombatantClass(combatantClasses[i]);
-        }
+        newFactionType.SetFromSaveData();
+        //for (int i = 0; i < neededStructures.Count; i++) {
+        //    newFactionType.AddNeededStructure(neededStructures[i]);
+        //}
+        //for (int i = 0; i < combatantClasses.Count; i++) {
+        //    newFactionType.AddCombatantClass(combatantClasses[i]);
+        //}
         for (int i = 0; i < ideologies.Count; i++) {
             SaveDataFactionIdeology saveIdeology = ideologies[i];
             newFactionType.AddIdeology(saveIdeology.Load());

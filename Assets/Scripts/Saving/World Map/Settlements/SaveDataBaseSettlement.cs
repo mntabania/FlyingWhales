@@ -16,7 +16,6 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
     public string factionOwnerID;
     public List<string> residents;
     public List<string> parties;
-    public List<string> availablePartyQuests;
 
     public string persistentID => _persistentID;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -42,13 +41,6 @@ public class SaveDataBaseSettlement : SaveData<BaseSettlement>, ISavableCounterp
             Party party = baseSettlement.parties[i];
             parties.Add(party.persistentID);
             SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(party);
-        }
-
-        availablePartyQuests = new List<string>();
-        for (int i = 0; i < baseSettlement.availablePartyQuests.Count; i++) {
-            PartyQuest quest = baseSettlement.availablePartyQuests[i];
-            availablePartyQuests.Add(quest.persistentID);
-            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(quest);
         }
     }
     

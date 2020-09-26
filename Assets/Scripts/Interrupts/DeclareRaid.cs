@@ -15,8 +15,9 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
             ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
-            if(interruptHolder.actor.homeSettlement != null && !interruptHolder.actor.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Raid, interruptHolder.actor.interruptComponent.raidTargetSettlement)) {
-                PartyManager.Instance.CreateRaidPartyQuest(interruptHolder.actor.homeSettlement, interruptHolder.actor.interruptComponent.raidTargetSettlement);
+            Character actor = interruptHolder.actor;
+            if (actor.faction != null && !actor.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Raid, actor.interruptComponent.raidTargetSettlement)) {
+                actor.faction.partyQuestBoard.CreateRaidPartyQuest(actor, actor.homeSettlement, actor.interruptComponent.raidTargetSettlement);
                 return true;
             }
             return false;

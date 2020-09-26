@@ -91,8 +91,8 @@ public class ReportCorruptedStructure : GoapAction {
         }
         debugLog += "\n-TARGET: " + targetDemonicStructure.name;
 
-        if(character.homeSettlement != null && !character.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Counterattack, targetDemonicStructure)) {
-            PartyManager.Instance.CreateCounterattackPartyQuest(character.homeSettlement, targetDemonicStructure);
+        if(character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Counterattack, targetDemonicStructure)) {
+            character.faction.partyQuestBoard.CreateCounterattackPartyQuest(character, character.homeSettlement, targetDemonicStructure);
         }
 
         //if (character.faction != null && character.faction.isMajorNonPlayer) {

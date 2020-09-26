@@ -33,7 +33,7 @@ public class PartyManager : MonoBehaviour {
         newParty.Initialize(data);
         return newParty;
     }
-    private PartyQuest CreateNewPartyQuest(PARTY_QUEST_TYPE type) {
+    public PartyQuest CreateNewPartyQuest(PARTY_QUEST_TYPE type) {
         var typeName = $"{UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(type.ToString())}PartyQuest, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         return Activator.CreateInstance(Type.GetType(typeName) ?? throw new Exception($"provided party quest type was invalid! {typeName}")) as PartyQuest ?? throw new Exception($"provided type not a party quest! {typeName}");
     }
@@ -107,47 +107,5 @@ public class PartyManager : MonoBehaviour {
         }
         return newWord;
     }
-    #endregion
-
-    #region Party Quests
-    public void CreateExplorationPartyQuest(BaseSettlement settlement, Region region) {
-        ExplorationPartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Exploration) as ExplorationPartyQuest;
-        quest.SetRegionRefForGettingNewStructure(region);
-        quest.ProcessSettingTargetStructure();
-        settlement.AddPartyQuest(quest);
-    }
-    public void CreateRescuePartyQuest(BaseSettlement settlement, Character targetCharacter) {
-        RescuePartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Rescue) as RescuePartyQuest;
-        quest.SetTargetCharacter(targetCharacter);
-        settlement.AddPartyQuest(quest);
-    }
-    public void CreateExterminatePartyQuest(BaseSettlement settlement, LocationStructure targetStructure, NPCSettlement originSettlement) {
-        ExterminationPartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Extermination) as ExterminationPartyQuest;
-        quest.SetOriginSettlement(originSettlement);
-        quest.SetTargetStructure(targetStructure);
-        settlement.AddPartyQuest(quest);
-    }
-    public void CreateCounterattackPartyQuest(BaseSettlement settlement, LocationStructure targetStructure) {
-        CounterattackPartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Counterattack) as CounterattackPartyQuest;
-        quest.SetTargetStructure(targetStructure);
-        settlement.AddPartyQuest(quest);
-    }
-    public void CreateRaidPartyQuest(BaseSettlement settlement, BaseSettlement targetSettlement) {
-        RaidPartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Raid) as RaidPartyQuest;
-        quest.SetTargetSettlement(targetSettlement);
-        settlement.AddPartyQuest(quest);
-    }
-    //public void CreateMonsterInvadePartyQuest(BaseSettlement settlement, HexTile hexForJoining, LocationStructure targetStructure) {
-    //    MonsterInvadePartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Monster_Invade) as MonsterInvadePartyQuest;
-    //    quest.SetHexForJoining(hexForJoining);
-    //    quest.SetTargetStructure(targetStructure);
-    //    settlement.AddPartyQuest(quest);
-    //}
-    //public void CreateMonsterInvadePartyQuest(BaseSettlement settlement, HexTile hexForJoining, HexTile targetHex) {
-    //    MonsterInvadePartyQuest quest = CreateNewPartyQuest(PARTY_QUEST_TYPE.Monster_Invade) as MonsterInvadePartyQuest;
-    //    quest.SetHexForJoining(hexForJoining);
-    //    quest.SetTargetHex(targetHex);
-    //    settlement.AddPartyQuest(quest);
-    //}
     #endregion
 }

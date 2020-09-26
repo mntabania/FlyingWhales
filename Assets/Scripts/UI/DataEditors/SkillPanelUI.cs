@@ -121,7 +121,7 @@ public class SkillPanelUI : MonoBehaviour {
     }
     private int GetOptionIndex(string name, Dropdown ddOptions) {
         for (int i = 0; i < ddOptions.options.Count; i++) {
-            if (ddOptions.options[i].text.ToLower() == name.ToLower()) {
+            if (ddOptions.options[i].text.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return i;
             }
         }

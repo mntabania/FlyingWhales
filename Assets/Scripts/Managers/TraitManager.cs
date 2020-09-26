@@ -31,7 +31,7 @@ public class TraitManager : BaseMonoBehaviour {
     public const string See_Poi_Trait = "See_Poi_Trait";
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
 
-    public static string[] instancedTraits = new string[] {
+    public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
         "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
@@ -46,6 +46,16 @@ public class TraitManager : BaseMonoBehaviour {
         "Abductor", "Arsonist", "Hibernating", "Baby Infestor", "Tower", "Mighty", "Stoned", "Transforming", "Subterranean", "Petrasol",
         "Snatcher", "Agitated", "Hunting", "Chained Electric",
     };
+
+    //public static string[] unhiddenInstancedTraits = new string[] {
+    //    "Kleptomaniac", "Lycanthrope", "Vampiric", "Cannibal", "Unfaithful", "Agoraphobic", "Music Lover", "Music Hater",
+    //    "Psychopath", "Vigilant", "Diplomatic", "Nocturnal", "Glutton",
+    //    "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Alcoholic", "Pessimist", "Lazy",
+    //    "Coward", "Chaste", "Lustful", "Edible", "Accident Prone",
+    //    "Fire Prone", "Electric", "Venomous", "Necromancer", "Cultist", "Stealthy", "Noxious Wanderer", "Infestor",
+    //    "Baby Infestor", "Tower", "Mighty", "Subterranean", "Petrasol",
+    //};
+
     [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
     public GameObject traitIconPrefab;
@@ -58,6 +68,7 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> buffTraitPool { get; private set; }
     public List<string> flawTraitPool { get; private set; }
     public List<string> neutralTraitPool { get; private set; }
+    public List<string> unhiddenTraitsNotStatuses { get; private set; }
 
     public List<string> removeStatusTraits = new List<string> {
         "Unconscious", "Injured", "Poisoned", "Plagued",
@@ -84,6 +95,8 @@ public class TraitManager : BaseMonoBehaviour {
     public void Initialize() {
         instancedSingletonTraits = new Dictionary<string, Trait>();
         _allTraits = new Dictionary<string, Trait>();
+        unhiddenTraitsNotStatuses = new List<string>();
+
         string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
@@ -95,6 +108,9 @@ public class TraitManager : BaseMonoBehaviour {
             //Should not add trait if the trait is from a json file and it already exists in the dictionary
             if (!_allTraits.ContainsKey(trait.name)) {
                 _allTraits.Add(trait.name, trait);
+                if(trait.type != TRAIT_TYPE.STATUS && !trait.isHidden) {
+                    unhiddenTraitsNotStatuses.Add(trait.name);
+                }
             }
         }
         
@@ -127,11 +143,11 @@ public class TraitManager : BaseMonoBehaviour {
     #region Utilities
     private void AddInstancedTraits() {
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
-        for (int i = 0; i < instancedTraits.Length; i++) {
+        for (int i = 0; i < instancedTraitsAndStatuses.Length; i++) {
             //Create new instances of instanced traits, but do not register them to the database.
             //This is because INSTANCED traits contained in the _allTraits list should only be used for inquiry
             //and should NEVER be used by any ITraitable
-            string traitName = instancedTraits[i];
+            string traitName = instancedTraitsAndStatuses[i];
             string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);
             string typeName = $"Traits.{ noSpacesTraitName }, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
             Type type = System.Type.GetType(typeName);
@@ -145,6 +161,9 @@ public class TraitManager : BaseMonoBehaviour {
                 _allTraits[traitName] = trait;
             } else {
                 _allTraits.Add(traitName, trait);
+                if (trait.type != TRAIT_TYPE.STATUS && !trait.isHidden) {
+                    unhiddenTraitsNotStatuses.Add(traitName);
+                }
             }
         }
     }
@@ -160,8 +179,8 @@ public class TraitManager : BaseMonoBehaviour {
         return traitPortraitDictionary.ContainsKey(traitName);
     }
     public bool IsInstancedTrait(string traitName) {
-        for (int i = 0; i < instancedTraits.Length; i++) {
-            if (string.Equals(instancedTraits[i], traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
+        for (int i = 0; i < instancedTraitsAndStatuses.Length; i++) {
+            if (string.Equals(instancedTraitsAndStatuses[i], traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
                 return true;
             }
         }

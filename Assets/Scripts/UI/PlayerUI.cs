@@ -585,10 +585,15 @@ public class PlayerUI : BaseMonoBehaviour {
     #region Villagers
     public void ToggleVillagersTab(bool isOn) {
         if (isOn) {
-            OpenVillagersList();
+            FactionInfoHubUI.Instance.Open();
+            //OpenVillagersList();
         } else {
-            CloseVillagersList();
+            FactionInfoHubUI.Instance.Close();
+            //CloseVillagersList();
         }
+    }
+    public void SetVillagerTabIsOn(bool state) {
+        villagerTab.isOn = state;
     }
     public void OpenVillagersList() {
         villagerGO.SetActive(true);

@@ -47,7 +47,7 @@ public class ExplorationPartyQuest : PartyQuest {
         return targetStructure;
     }
     public override string GetPartyQuestTextInLog() {
-        return "Exploration Quest";
+        return "Exploration";
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);

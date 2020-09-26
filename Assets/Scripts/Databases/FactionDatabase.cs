@@ -57,7 +57,7 @@ public class FactionDatabase {
     }
     public Faction GetFactionBasedOnName(string name) {
         for (int i = 0; i < allFactionsList.Count; i++) {
-            if (allFactionsList[i].name.ToLower() == name.ToLower()) {
+            if (allFactionsList[i].name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return allFactionsList[i];
             }
         }

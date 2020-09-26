@@ -38,7 +38,7 @@ public class RaidPartyQuest : PartyQuest {
         }
     }
     public override string GetPartyQuestTextInLog() {
-        return "Raid Quest at " + targetSettlement.name;
+        return "Raid " + targetSettlement.name;
     }
     //public override bool IsAllowedToJoin(Character character) {
     //    return (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") || character.characterClass.className == "Noble";

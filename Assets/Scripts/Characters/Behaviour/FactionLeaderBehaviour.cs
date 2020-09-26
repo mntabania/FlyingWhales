@@ -19,7 +19,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             log += $"\n-10% chance to declare raid";
             int roll = UnityEngine.Random.Range(0, 100);
             if(roll < 10) {
-                if (!faction.HasASettlementWithPartyQuest(PARTY_QUEST_TYPE.Raid)) {
+                if (!faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Raid)) {
                     log += $"\n-Character faction is warmonger and has no raid job and has no raid party yet";
                     Faction targetFaction = faction.GetRandomAtWarFaction();
                     if (targetFaction != null) {

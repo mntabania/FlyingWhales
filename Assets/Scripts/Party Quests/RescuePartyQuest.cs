@@ -36,7 +36,7 @@ public class RescuePartyQuest : PartyQuest {
         return base.GetTargetDestination();
     }
     public override string GetPartyQuestTextInLog() {
-        return "Rescue Quest of " + targetCharacter.name;
+        return "Rescue " + targetCharacter.name;
     }
 
     //public override bool IsAllowedToJoin(Character character) {

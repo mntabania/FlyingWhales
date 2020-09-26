@@ -8,6 +8,8 @@ namespace Factions.Faction_Types {
         public readonly List<FactionIdeology> ideologies;
         public readonly List<StructureSetting> neededStructures;
         public readonly List<string> combatantClasses;
+        public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes;
+        public bool hasCrimes { get; protected set; }
         
         protected FactionType(FACTION_TYPE type) {
             this.type = type;
@@ -15,10 +17,12 @@ namespace Factions.Faction_Types {
             ideologies = new List<FactionIdeology>();
             neededStructures = new List<StructureSetting>();
             combatantClasses = new List<string>();
+            crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
         }
 
         #region Initialization
         public abstract void SetAsDefault();
+        public abstract void SetFromSaveData();
         #endregion
 
         #region Ideologies
@@ -56,8 +60,24 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Crimes
-        public virtual CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+        public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+            if (hasCrimes) {
+                if (crimes.ContainsKey(crimeType)) {
+                    return crimes[crimeType];
+                }
+                return CRIME_SEVERITY.None;
+            }
             return CRIME_SEVERITY.Unapplicable;
+        }
+        public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
+            if (!crimes.ContainsKey(type)) {
+                crimes.Add(type, severity);
+            }
+        }
+        public void RemoveCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
+            if (crimes.ContainsKey(type)) {
+                crimes.Remove(type);
+            }
         }
         #endregion
 

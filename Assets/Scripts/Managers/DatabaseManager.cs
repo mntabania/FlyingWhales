@@ -85,6 +85,8 @@ public class DatabaseManager : MonoBehaviour {
             return settlementDatabase.GetSettlementByPersistentID(persistentID);
         } else if (type == typeof(Faction)) {
             return factionDatabase.GetFactionBasedOnPersistentID(persistentID);
+        } else if (type == typeof(Party)) {
+            return partyDatabase.GetPartyByPersistentID(persistentID);
         }
         return null;
     }

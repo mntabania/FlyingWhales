@@ -44,7 +44,7 @@ public class CounterattackPartyQuest : PartyQuest {
         return targetStructure;
     }
     public override string GetPartyQuestTextInLog() {
-        return "Attack Quest targeting " + targetStructure.name;
+        return "Attack " + targetStructure.name;
     }
     //protected override void OnAddMember(Character member) {
     //    base.OnAddMember(member);

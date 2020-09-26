@@ -39,6 +39,7 @@ public class Initializer : MonoBehaviour {
 
     public void InitializeDataAfterWorldCreation() {
         PlayerUI.Instance.InitializeAfterGameLoaded();
+        FactionInfoHubUI.Instance.InitializeAfterGameLoaded();
         LightingManager.Instance.Initialize();
         QuestManager.Instance.InitializeAfterGameLoaded();
         AudioManager.Instance.OnGameLoaded();

@@ -91,7 +91,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             LoadJobs(saveDataNpcSettlement);
             LoadRuler(saveDataNpcSettlement.rulerID);
             LoadResidents(saveDataNpcSettlement);
-            LoadPartiesAndQuests(saveDataNpcSettlement);
+            LoadParties(saveDataNpcSettlement);
             if (saveDataNpcSettlement.settlementType != null) {
                 settlementType = saveDataNpcSettlement.settlementType.Load();    
             }
@@ -134,17 +134,11 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
     }
-    private void LoadPartiesAndQuests(SaveDataBaseSettlement data) {
+    private void LoadParties(SaveDataBaseSettlement data) {
         if (data.parties != null) {
             for (int i = 0; i < data.parties.Count; i++) {
                 Party party = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.parties[i]);
                 parties.Add(party);
-            }
-        }
-        if (data.availablePartyQuests != null) {
-            for (int i = 0; i < data.availablePartyQuests.Count; i++) {
-                PartyQuest quest = DatabaseManager.Instance.partyQuestDatabase.GetPartyQuestByPersistentID(data.availablePartyQuests[i]);
-                availablePartyQuests.Add(quest);
             }
         }
     }
@@ -201,8 +195,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             } else {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
                 if(exterminateTargetStructure != null) {
-                    if(!HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        PartyManager.Instance.CreateExterminatePartyQuest(this, exterminateTargetStructure, this);
+                    if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
+                        owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
                     }
                     //settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
                 }

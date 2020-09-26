@@ -251,7 +251,7 @@ public class UIManager : BaseMonoBehaviour {
             $"Day {GameManager.Instance.continuousDays.ToString()}\n{GameManager.ConvertTickToTime(GameManager.Instance.Today().tick)}");
 
         UpdateInteractableInfoUI();
-        UpdateFactionInfo();
+        //UpdateFactionInfo();
         PlayerUI.Instance.UpdateUI();
     }
     private void UpdateInteractableInfoUI() {
@@ -791,7 +791,7 @@ public class UIManager : BaseMonoBehaviour {
     #region NPCSettlement Info
     public Sprite GetAreaCenterSprite(string name) {
         for (int i = 0; i < areaCenterSprites.Length; i++) {
-            if (areaCenterSprites[i].name.ToLower() == name.ToLower()) {
+            if (areaCenterSprites[i].name.Equals(name, StringComparison.CurrentCultureIgnoreCase)) {
                 return areaCenterSprites[i];
             }
         }
@@ -808,14 +808,15 @@ public class UIManager : BaseMonoBehaviour {
             SetTempDisableShowInfoUI(false);
             return;
         }
-        factionInfoUI.SetData(faction);
-        factionInfoUI.OpenMenu();
+        //factionInfoUI.SetData(faction);
+        //factionInfoUI.OpenMenu();
+        FactionInfoHubUI.Instance.ShowFaction(faction);
     }
-    public void UpdateFactionInfo() {
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.UpdateFactionInfo();
-        }
-    }
+    //public void UpdateFactionInfo() {
+    //    if (factionInfoUI.isShowing) {
+    //        factionInfoUI.UpdateFactionInfo();
+    //    }
+    //}
     #endregion
 
     #region Character Info

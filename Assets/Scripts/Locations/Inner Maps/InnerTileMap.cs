@@ -609,7 +609,7 @@ namespace Inner_Maps {
                                 tileBase = UtilityScripts.GameUtilities.RollChance(35) ? InnerMapManager.Instance.assetManager.shrubTile : InnerMapManager.Instance.assetManager.herbPlantTile;
                                 if (region.coreTile.biomeType == BIOMES.FOREST || region.coreTile.biomeType == BIOMES.GRASSLAND) {
                                     if(tileBase == InnerMapManager.Instance.assetManager.herbPlantTile) {
-                                        if (UtilityScripts.GameUtilities.RollChance(30)) {
+                                        if (UtilityScripts.GameUtilities.RollChance(10)) {
                                             TileObject obj = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BERRY_SHRUB);
                                             currTile.structure.AddPOI(obj, currTile);
                                         } else {

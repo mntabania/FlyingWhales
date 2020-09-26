@@ -22,7 +22,6 @@ namespace Locations.Settlements {
         public List<IPointOfInterest> firesInSettlement { get; }
         public List<LocationStructure> allStructures { get; protected set; }
         public List<Party> parties { get; protected set; }
-        public List<PartyQuest> availablePartyQuests { get; protected set; }
 
         #region getters
         public OBJECT_TYPE objectType => OBJECT_TYPE.Settlement;
@@ -44,7 +43,6 @@ namespace Locations.Settlements {
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
-            availablePartyQuests = new List<PartyQuest>();
             SetLocationType(locationType);
             StartListeningForFires();
         }
@@ -58,7 +56,6 @@ namespace Locations.Settlements {
             firesInSettlement = new List<IPointOfInterest>();
             allStructures = new List<LocationStructure>();
             parties = new List<Party>();
-            availablePartyQuests = new List<PartyQuest>();
             SetLocationType(saveDataBaseSettlement.locationType);
             StartListeningForFires();
         }
@@ -649,45 +646,6 @@ namespace Locations.Settlements {
         #endregion
 
         #region Party
-        public PartyQuest GetFirstUnassignedPartyQuest() {
-            for (int i = 0; i < availablePartyQuests.Count; i++) {
-                PartyQuest quest = availablePartyQuests[i];
-                if(!quest.isAssigned) {
-                    return quest;
-                }
-            }
-            return null;
-        }
-        public bool HasPartyQuest(PARTY_QUEST_TYPE questType) {
-            return GetPartyQuest(questType) != null;
-        }
-        public bool HasPartyQuestWithTarget(PARTY_QUEST_TYPE questType, IPartyQuestTarget target) {
-            return GetPartyQuestWithTarget(questType, target) != null;
-        }
-        public PartyQuest GetPartyQuestWithTarget(PARTY_QUEST_TYPE questType, IPartyQuestTarget target) {
-            for (int i = 0; i < availablePartyQuests.Count; i++) {
-                PartyQuest quest = availablePartyQuests[i];
-                if (quest.partyQuestType == questType && quest.target == target) {
-                    return quest;
-                }
-            }
-            return null;
-        }
-        public PartyQuest GetPartyQuest(PARTY_QUEST_TYPE questType) {
-            for (int i = 0; i < availablePartyQuests.Count; i++) {
-                PartyQuest quest = availablePartyQuests[i];
-                if (quest.partyQuestType == questType) {
-                    return quest;
-                }
-            }
-            return null;
-        }
-        public void AddPartyQuest(PartyQuest quest) {
-            availablePartyQuests.Add(quest);
-        }
-        public bool RemovePartyQuest(PartyQuest quest) {
-            return availablePartyQuests.Remove(quest);
-        }
         public void AddParty(Party party) {
             if (!parties.Contains(party)) {
                 parties.Add(party);

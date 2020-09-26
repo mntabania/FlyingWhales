@@ -33,6 +33,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public List<JobQueueItem> availableJobs { get; }
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
+    public PartyQuestBoard partyQuestBoard { get; private set; }
     
     public int newLeaderDesignationChance { get; private set; }
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
@@ -83,6 +84,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         forcedCancelJobsOnTickEnded = new List<JobQueueItem>();
         ideologyComponent = new FactionIdeologyComponent(this);
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
+        partyQuestBoard = new PartyQuestBoard(this);
         ResetNewLeaderDesignationChance();
         AddListeners();
     }
@@ -92,6 +94,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         ideologyComponent = new FactionIdeologyComponent(this);
         factionJobTriggerComponent = new FactionJobTriggerComponent(this);
         factionType = data.factionType.Load();
+        partyQuestBoard = data.partyQuestBoard.Load();
 
         name = data.name;
         description = data.description;
@@ -414,15 +417,6 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     //    }
     //    return false;
     //}
-    public bool HasASettlementWithPartyQuest(PARTY_QUEST_TYPE questType) {
-        for (int i = 0; i < ownedSettlements.Count; i++) {
-            BaseSettlement settlement = ownedSettlements[i];
-            if (settlement.HasPartyQuest(questType)) {
-                return true;
-            }
-        }
-        return false;
-    }
     #endregion
 
     #region Utilities
@@ -997,7 +991,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     private void DoneHeirloomSearch() {
         if(factionHeirloom != null) {
             if(factionHeirloom.gridTileLocation != null && !factionHeirloom.IsInStructureSpot() && factionHeirloom.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && factionHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT && !HasASettlementWithPartyQuest(PARTY_QUEST_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
+                && factionHeirloom.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.biomeType == BIOMES.DESERT && !partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Heirloom_Hunt) && !HasJob(JOB_TYPE.HUNT_HEIRLOOM)) {
                 factionJobTriggerComponent.TriggerHeirloomHuntJob(factionHeirloom.gridTileLocation.structure.region);
             }
             HeirloomSearch();
@@ -1051,6 +1045,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
             BaseSettlement settlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.ownedSettlementIDs[i]);
             ownedSettlements.Add(settlement);
         }
+
+        partyQuestBoard.LoadReferences(data.partyQuestBoard);
     }
     #endregion
 }

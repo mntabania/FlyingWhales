@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System;
 using Inner_Maps;
 using Traits;
 using UnityEngine;
@@ -1046,6 +1047,7 @@ public class SubcategoryOf : System.Attribute {
     public CRIME_SEVERITY Category { get; private set; }
 }
 #endregion
+
 public static class Extensions {
 
     #region Crimes
@@ -1996,6 +1998,12 @@ public static class Extensions {
             default:
                 return false;
         }
+    }
+    #endregion
+
+    #region Strings
+    public static bool CaseInsensitiveContains(this string text, string value, StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase) {
+        return text.IndexOf(value, stringComparison) >= 0;
     }
     #endregion
 }

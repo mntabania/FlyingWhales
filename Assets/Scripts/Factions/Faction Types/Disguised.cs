@@ -3,5 +3,6 @@
         public Disguised() : base(FACTION_TYPE.Disguised) { }
         
         public override void SetAsDefault() { }
+        public override void SetFromSaveData() { }
     }
 }

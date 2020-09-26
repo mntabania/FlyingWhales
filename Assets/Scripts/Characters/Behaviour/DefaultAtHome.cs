@@ -62,12 +62,12 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     log += "\n-If character is an Archer, Marauder, or Shaman";
                     if (character.characterClass.className == "Archer" || character.characterClass.className == "Marauder" || character.characterClass.className == "Shaman") {
                         log += "\n-15% chance to Create Exploration Party if there are no Exploration Party whose leader lives in the same settlement";
-                        if (!character.homeSettlement.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
+                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuest(PARTY_QUEST_TYPE.Exploration)) {
                             int chance = WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa ? 5 : 15;
                             int roll = Random.Range(0, 100);
                             log += $"\nRoll: {roll}";
                             if (roll < chance) {
-                                PartyManager.Instance.CreateExplorationPartyQuest(character.homeSettlement, character.currentRegion);
+                                character.faction.partyQuestBoard.CreateExplorationPartyQuest(character, character.homeSettlement, character.currentRegion);
                                 //character.jobComponent.TriggerExploreJob(out producedJob);
                                 return true;
                             }
@@ -80,22 +80,11 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     Character missingCharacter = character.relationshipContainer.GetMissingCharacterWithOpinion(RelationshipManager.Close_Friend);
                     if(missingCharacter != null) {
                         log += "\n-Missing close friend: " + missingCharacter;
-                        if (character.characterClass.IsCombatant() && character.characterClass.identifier == "Normal") {
-                            log += "\n-Character is combatant, 5% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
-                            if (!character.homeSettlement.HasPartyQuest(PARTY_QUEST_TYPE.Rescue)) {
-                                int chance = Random.Range(0, 100);
-                                log += $"\nRoll: {chance}";
-                                if (chance < 5) {
-                                    //character.jobComponent.TriggerRescueJob(missingCharacter, out producedJob);
-                                    return true;
-                                }
-                            }
-                        } else {
-                            log += "\n-Character is not combatant, 5% chance to Request Rescue";
+                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 5) {
-                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Cry_Request, missingCharacter, "Missing " + missingCharacter.name);
+                                character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
                                 return true;
                             }
                         }
@@ -107,11 +96,11 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     missingCharacter = character.relationshipContainer.GetMissingCharacterWithOpinion(RelationshipManager.Friend);
                     if (missingCharacter != null) {
                         log += "\n-Missing friend: " + missingCharacter;
-                        if (!character.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
+                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 5) {
-                                PartyManager.Instance.CreateRescuePartyQuest(character.homeSettlement, missingCharacter);
+                                character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
                                 return true;
                             }
                         }
@@ -144,11 +133,11 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     if (missingCharacter != null) {
                         log += "\n-Missing Lover/Affair/Relative: " + missingCharacter;
                         log += "\n-Character is combatant, 15% chance to Create Rescue Party if there are no Rescue Party whose leader lives in the same settlement";
-                        if (!character.homeSettlement.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
+                        if (character.faction != null && !character.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Rescue, missingCharacter)) {
                             int chance = Random.Range(0, 100);
                             log += $"\nRoll: {chance}";
                             if (chance < 15) {
-                                PartyManager.Instance.CreateRescuePartyQuest(character.homeSettlement, missingCharacter);
+                                character.faction.partyQuestBoard.CreateRescuePartyQuest(character, character.homeSettlement, missingCharacter);
                                 return true;
                             }
                         }

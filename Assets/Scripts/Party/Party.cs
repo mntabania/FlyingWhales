@@ -5,8 +5,9 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using UtilityScripts;
+using Logs;
 
-public class Party : ISavable {
+public class Party : ILogFiller, ISavable {
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
     public PARTY_STATE partyState { get; private set; }
@@ -18,6 +19,7 @@ public class Party : ISavable {
     public bool hasChangedTargetDestination { get; private set; }
     public int perHourElapsedInWaiting { get; private set; }
     public BaseSettlement partySettlement { get; private set; }
+    public Faction partyFaction { get; private set; }
     public LocationStructure meetingPlace { get; private set; }
     public LocationStructure targetRestingTavern { get; private set; }
     public HexTile targetCamp { get; private set; }
@@ -54,6 +56,7 @@ public class Party : ISavable {
         }
         partyName = PartyManager.Instance.GetNewPartyName(partyCreator);
         partySettlement = partyCreator.homeSettlement;
+        partyFaction = partyCreator.faction;
         isDisbanded = false;
         hasRested = true;
         perHourElapsedInWaiting = 0;
@@ -138,7 +141,7 @@ public class Party : ISavable {
     }
     private void PerTickEndedWhileInactive() {
         if (takeQuestSchedule == GameManager.Instance.currentTick) {
-            PartyQuest quest = partySettlement.GetFirstUnassignedPartyQuest();
+            PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
             if(quest != null) {
                 AcceptQuest(quest);
             }
@@ -357,12 +360,9 @@ public class Party : ISavable {
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
-            Log log = new Log(GameManager.Instance.Today(), "Party", "General", "accept_quest", providedTags: LOG_TAG.Party);
-            log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+            Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", providedTags: LOG_TAG.Party);
+            log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
-            for (int i = 0; i < members.Count; i++) {
-                log.AddInvolvedObjectManual(members[i].persistentID);
-            }
             log.AddLogToDatabase();
         }
     }
@@ -376,16 +376,13 @@ public class Party : ISavable {
     //}
     public void DropQuest() {
         if (isActive) {
-            Log log = new Log(GameManager.Instance.Today(), "Party", "General", "drop_quest", providedTags: LOG_TAG.Party);
-            log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+            Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
+            log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
-            for (int i = 0; i < members.Count; i++) {
-                log.AddInvolvedObjectManual(members[i].persistentID);
-            }
             log.AddLogToDatabase();
 
             ClearMembersThatJoinedQuest();
-            partySettlement.RemovePartyQuest(currentQuest);
+            partyFaction.partyQuestBoard.RemovePartyQuest(currentQuest);
             SetPartyState(PARTY_STATE.None);
             currentQuest.SetAssignedParty(null);
             currentQuest = null;
@@ -624,9 +621,8 @@ public class Party : ISavable {
         if (isDisbanded) { return; }
         if(members.Count > 0) {
             Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
-            log.AddToFillers(null, partyName, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             for (int i = 0; i < members.Count; i++) {
-                log.AddInvolvedObjectManual(members[i].persistentID);
                 OnRemoveMemberOnDisband(members[i]);
             }
             log.AddLogToDatabase();
@@ -678,7 +674,10 @@ public class Party : ISavable {
         if (!string.IsNullOrEmpty(data.partySettlement)) {
             partySettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.partySettlement);
         }
-        
+        if (!string.IsNullOrEmpty(data.partyFaction)) {
+            partyFaction = FactionManager.Instance.GetFactionByPersistentID(data.partyFaction);
+        }
+
         if ((targetRestingTavern != null || targetCamp != null) && partyState == PARTY_STATE.Resting) {
             Messenger.AddListener(Signals.HOUR_STARTED, RestingPerHour);
         } else if (partyState == PARTY_STATE.Waiting) {
@@ -699,6 +698,7 @@ public class Party : ISavable {
         restSchedule = -1;
         hasRested = false;
         partySettlement = null;
+        partyFaction = null;
         targetRestingTavern = null;
         targetCamp = null;
         targetDestination = null;
@@ -740,6 +740,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public bool hasChangedTargetDestination;
     public int perHourElapsedInWaiting;
     public string partySettlement;
+    public string partyFaction;
     public string meetingPlace;
     public string targetRestingTavern;
     public string targetCamp;
@@ -772,6 +773,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         hasChangedTargetDestination = data.hasChangedTargetDestination;
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         partySettlement = data.partySettlement.persistentID;
+        partyFaction = data.partyFaction.persistentID;
 
         waitingEndDate = data.waitingEndDate;
 
