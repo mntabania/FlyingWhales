@@ -149,9 +149,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         SubscribeListeners();
         EnableColliders();
-        if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
+        // if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
             CheckIfStructureVisualsAreStillValid();
-        }
+        // }
         _hexTileBiomeEffectTrigger.Initialize();
     }
 
@@ -957,6 +957,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             TileFeature feature = featureComponent.features[i];
             summary += $"{feature.name}, ";
         }
+        summary += $"\nSettlement on Tile: {settlementOnTile?.name}";
         UIManager.Instance.ShowSmallInfo(summary);
         
     }
@@ -1240,23 +1241,32 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         LocationStructure mostImportant = region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in region.structures) {
             for (int i = 0; i < pair.Value.Count; i++) {
+                if (pair.Key == STRUCTURE_TYPE.WILDERNESS) {
+                    continue;
+                }
                 LocationStructure structure = pair.Value[i];
-                if (structure is Cave cave) {
-                    if (cave.occupiedHexTile != null && cave.occupiedHexTiles.Contains(innerMapHexTile)) {
-                        int value = pair.Key.StructurePriority(); 
-                        if (value > mostImportant.structureType.StructurePriority()) {
-                            mostImportant = structure;
-                        }    
-                    }
-                } else {
-                    if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
-                        int value = pair.Key.StructurePriority(); 
-                        if (value > mostImportant.structureType.StructurePriority()) {
-                            mostImportant = structure;
-                        }    
+                if (structure.HasTileOnHexTile(this)) {
+                    int value = pair.Key.StructurePriority(); 
+                    if (value > mostImportant.structureType.StructurePriority()) {
+                        mostImportant = structure;
                     }
                 }
                 
+                // if (structure is Cave cave) {
+                //     if (cave.occupiedHexTile != null && cave.occupiedHexTiles.Contains(innerMapHexTile)) {
+                //         int value = pair.Key.StructurePriority(); 
+                //         if (value > mostImportant.structureType.StructurePriority()) {
+                //             mostImportant = structure;
+                //         }    
+                //     }
+                // } else {
+                //     if (structure.occupiedHexTile != null && structure.occupiedHexTile == innerMapHexTile) {
+                //         int value = pair.Key.StructurePriority(); 
+                //         if (value > mostImportant.structureType.StructurePriority()) {
+                //             mostImportant = structure;
+                //         }    
+                //     }
+                // }
             }
         }
         
@@ -1266,7 +1276,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         string log = $"Checking {ToString()} to check if landmark on it is still valid";
         STRUCTURE_TYPE mostImportantStructure = GetMostImportantStructureOnTile().structureType;
         log += $"\nMost important structure is {mostImportantStructure.ToString()}";
-        if (mostImportantStructure == STRUCTURE_TYPE.WILDERNESS) {
+        if (mostImportantStructure == STRUCTURE_TYPE.WILDERNESS || mostImportantStructure == STRUCTURE_TYPE.CAVE || mostImportantStructure == STRUCTURE_TYPE.OCEAN) {
             log += $"\nWill destroy existing landmark {landmarkOnTile?.ToString() ?? "Null"}";
             LandmarkManager.Instance.DestroyLandmarkOnTile(this);
         } else {

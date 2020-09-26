@@ -33,7 +33,7 @@ namespace Scenario_Maps {
                         structureSettings.Add(structureSetting);
                     }
                 }
-                villageSettlementTemplates[i] = new SettlementTemplate(tileCoordinates, structureSettings.ToArray(), 0, settlement.owner.race);
+                villageSettlementTemplates[i] = new SettlementTemplate(tileCoordinates, structureSettings.ToArray(), 0, settlement.owner.race, settlement.settlementType.settlementType);
             }
         }
         
@@ -45,12 +45,14 @@ namespace Scenario_Maps {
         public StructureSetting[] structureSettings;
         public int minimumVillagerCount;
         public RACE factionRace;
+        public SETTLEMENT_TYPE settlementType;
         
-        public SettlementTemplate(Point[] hexTiles, StructureSetting[] structureSettings, int minimumVillagerCount, RACE factionRace) {
+        public SettlementTemplate(Point[] hexTiles, StructureSetting[] structureSettings, int minimumVillagerCount, RACE factionRace, SETTLEMENT_TYPE settlementType) {
             this.hexTiles = hexTiles;
             this.structureSettings = structureSettings;
             this.minimumVillagerCount = minimumVillagerCount;
             this.factionRace = factionRace;
+            this.settlementType = settlementType;
         }
         
         public HexTile[] GetTilesInTemplate(HexTile[,] map) {

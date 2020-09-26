@@ -1,5 +1,8 @@
 ﻿namespace Factions.Faction_Types {
     public class HumanEmpire : FactionType {
+        
+        public override RESOURCE mainResource => RESOURCE.STONE;
+        
         public HumanEmpire() : base(FACTION_TYPE.Human_Empire) { }
         
         public override void SetAsDefault() {

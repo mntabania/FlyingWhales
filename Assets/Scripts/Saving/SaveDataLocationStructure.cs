@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -15,6 +16,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public string regionLocationID;
     public STRUCTURE_TAG[] structureTags;
     public Point[] tileCoordinates;
+    public int maxHP;
     public int currentHP;
     public List<string> residentIDs;
     public List<string> charactersHereIDs;
@@ -49,6 +51,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         }
 
         //hp
+        maxHP = structure.maxHP;
         currentHP = structure.currentHP;
         
         //residents
@@ -94,6 +97,7 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
     public SaveDataStructureWallObject[] structureWallObjects;
     public RESOURCE wallsMadeOf;
     public Vector3Save structureObjectWorldPosition;
+    public SaveDataStructureConnector[] structureConnectors;
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
@@ -108,8 +112,16 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
             templateName = templateName.Replace("(Clone)", "");
             structureTemplateName = templateName;
             structureObjectWorldPosition = manMadeStructure.structureObj.transform.position;    
+            structureConnectors = new SaveDataStructureConnector[manMadeStructure.structureObj.connectors.Length];
+            for (int i = 0; i < structureConnectors.Length; i++) {
+                StructureConnector connector = manMadeStructure.structureObj.connectors[i];
+                SaveDataStructureConnector savedConnector = new SaveDataStructureConnector();
+                savedConnector.Save(connector);
+                structureConnectors[i] = savedConnector;
+            }
         }
         
+        //NOTE: Did not save damage contributors of man made structure since they are always the thin walls, and not specific tile objects
         
         //walls
         if (manMadeStructure.structureWalls != null) {
@@ -129,6 +141,7 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
     
     public string structureTemplateName;
     public Vector3Save structureObjectWorldPosition;
+    public List<string> damageContributors;
     
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
@@ -144,6 +157,13 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
             templateName = templateName.Replace("(Clone)", "");
             structureTemplateName = templateName;
             structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
+            damageContributors = new List<string>();
+            for (int i = 0; i < demonicStructure.objectsThatContributeToDamage.Count; i++) {
+                IDamageable damageable = demonicStructure.objectsThatContributeToDamage.ElementAt(i);
+                if (damageable is TileObject tileObject) {
+                    damageContributors.Add(tileObject.persistentID);
+                }
+            }
         }
     }
 }

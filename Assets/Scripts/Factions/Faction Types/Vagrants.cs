@@ -1,5 +1,8 @@
 ﻿namespace Factions.Faction_Types {
     public class Vagrants : FactionType {
+        
+        public override RESOURCE mainResource => RESOURCE.WOOD;
+        
         public Vagrants() : base(FACTION_TYPE.Vagrants) { }
         
         public override void SetAsDefault() {

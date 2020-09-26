@@ -8,6 +8,7 @@ using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -26,8 +27,9 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] protected Tilemap _blockWallsTilemap;
 
     [Header("Template Data")]
-    [SerializeField] protected Vector2Int _size;
-    [SerializeField] protected Vector3Int _center;
+    [SerializeField] private Vector2Int _size;
+    [SerializeField] private Vector3Int _center;
+    [SerializeField] private int _craftCost = 50;
 
     [Header("Objects")]
     [FormerlySerializedAs("_objectsParent")] public Transform objectsParent;
@@ -39,26 +41,37 @@ public class LocationStructureObject : PooledObject {
     [FormerlySerializedAs("_wallResource")][SerializeField] private RESOURCE _thinWallResource;
     
     [Header("Helpers")]
-    [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
-    [SerializeField] private List<Vector3Int> predeterminedOccupiedCoordinates;
+    [FormerlySerializedAs("predeterminedOccupiedCoordinates")][SerializeField] private List<Vector3Int> _predeterminedOccupiedCoordinates;
 
+    [Header("Connectors")] 
+    [SerializeField] private StructureConnector[] _connectors; 
+    
     [FormerlySerializedAs("rooms")] [Header("Rooms")] 
     public RoomTemplate[] roomTemplates; //if this is null then it means that this structure object has no rooms.
 
     public bool wallsContributeToDamage = true;
-    
     private StructureTemplate _parentTemplate;
 
     #region Properties
     private Tilemap[] allTilemaps;
     private WallVisual[] wallVisuals;
     public LocationGridTile[] tiles { get; private set; }
-    // public StructureWallObject[] walls { get; private set; }
     #endregion
 
     #region Getters
     public Vector2Int size => _size;
     public Vector3Int center => _center;
+    public StructureConnector[] connectors => _connectors;
+    public List<Vector3Int> localOccupiedCoordinates {
+        get {
+            if (_predeterminedOccupiedCoordinates.Count == 0) {
+                DetermineOccupiedTileCoordinates();
+            }
+            return _predeterminedOccupiedCoordinates;
+        }
+    }
+    public RESOURCE thinWallResource => _thinWallResource;
+    public int craftCost => _craftCost;
     #endregion
 
     #region Monobehaviours
@@ -66,7 +79,7 @@ public class LocationStructureObject : PooledObject {
         allTilemaps = transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = transform.GetComponentsInChildren<WallVisual>();
         _parentTemplate = GetComponentInParent<StructureTemplate>();
-        // _groundTileMap.CompressBounds();
+        DetermineOccupiedTileCoordinates();
     }
     #endregion
 
@@ -98,6 +111,24 @@ public class LocationStructureObject : PooledObject {
     #region Tiles
     public void SetTilesInStructure(LocationGridTile[] tiles) {
         this.tiles = tiles;
+    }
+    /// <summary>
+    /// Determine the local points that this structure object occupies.
+    /// This is computed on startup. NOTE: If predeterminedOccupiedCoordinates has preset values, then this will have no effect.
+    /// </summary>
+    private void DetermineOccupiedTileCoordinates() {
+        if (_predeterminedOccupiedCoordinates.Count == 0) {
+            BoundsInt bounds = _groundTileMap.cellBounds;
+            for (int x = bounds.xMin; x < bounds.xMax; x++) {
+                for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                    Vector3Int pos = new Vector3Int(x, y, 0);
+                    TileBase tb = _groundTileMap.GetTile(pos);
+                    if (tb != null) {
+                        _predeterminedOccupiedCoordinates.Add(pos);
+                    }
+                }
+            }
+        }
     }
     #endregion
 
@@ -143,15 +174,15 @@ public class LocationStructureObject : PooledObject {
             StructureTemplateObjectData preplacedObj = preplacedObjs[i];
             Vector3Int tileCoords = areaMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
             LocationGridTile tile = areaMap.map[tileCoords.x, tileCoords.y];
-            // tile.SetReservedType(preplacedObj.tileObjectType);
 
             TileObject newTileObject = InnerMapManager.Instance.CreateNewTileObject<TileObject>(preplacedObj.tileObjectType);
             structure.AddPOI(newTileObject, tile);
             newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
+            newTileObject.SetIsPreplaced(true);
             
-            if (newTileObject.tileObjectType.IsPreBuilt() == false) { //non-prebuilt items should create a craft job targeting themselves
+            if (!newTileObject.tileObjectType.IsPreBuilt()) { //non-prebuilt items should create a craft job targeting themselves
                 newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, npcSettlement);
                 job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
@@ -237,7 +268,8 @@ public class LocationStructureObject : PooledObject {
     /// </summary>
     /// <param name="innerMap">The map where the structure was placed.</param>
     /// <param name="structure">The structure that was placed.</param>
-    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
+    /// <param name="buildAllTileObjects">Should all preplaced objects be built</param>
+    public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, bool buildAllTileObjects = true) {
         bool isDemonicStructure = structure is DemonicStructure;
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
@@ -252,20 +284,32 @@ public class LocationStructureObject : PooledObject {
             }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
+        ProcessConnectors(structure);
         RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
-        RegisterPreplacedObjects(structure, innerMap);
+        if (buildAllTileObjects) {
+            RegisterPreplacedObjects(structure, innerMap);    
+        } else {
+            if (structure.settlementLocation is NPCSettlement npcSettlement) {
+                PlacePreplacedObjectsAsBlueprints(structure, innerMap, npcSettlement);    
+            }
+        }
+        
         RescanPathfindingGridOfStructure();
         UpdateSortingOrders();
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
-    public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure) {
+    public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, SaveDataLocationStructure saveData) {
         if (!(structure is DemonicStructure)) { //if structure is demonic structure then do not Register walls, since Loaded tile objects will become its walls
             RegisterWalls(innerMap, structure);
         }
+        if (saveData is SaveDataManMadeStructure saveDataManMadeStructure && saveDataManMadeStructure.structureConnectors != null) {
+            LoadConnectors(saveDataManMadeStructure.structureConnectors, innerMap);    
+        }
         _groundTileMap.gameObject.SetActive(false);
-        // //Only load preplaced structure tile object
-        // RegisterPreplacedObjectsOfType(structure, innerMap, TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT);
+        if (_blockWallsTilemap != null) {
+            _blockWallsTilemap.gameObject.SetActive(false);    
+        }
         RescanPathfindingGridOfStructure();
         UpdateSortingOrders();
         SetPreplacedObjectsState(false);
@@ -281,27 +325,12 @@ public class LocationStructureObject : PooledObject {
     #region Inquiry
     public List<LocationGridTile> GetTilesOccupiedByStructure(InnerTileMap map) {
         List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
-        BoundsInt bounds = _groundTileMap.cellBounds;
-
-        List<Vector3Int> occupiedCoordinates = new List<Vector3Int>();
-        if (predeterminedOccupiedCoordinates != null && predeterminedOccupiedCoordinates.Count > 0) {
-            occupiedCoordinates = predeterminedOccupiedCoordinates;
-        } else {
-            for (int x = bounds.xMin; x < bounds.xMax; x++) {
-                for (int y = bounds.yMin; y < bounds.yMax; y++) {
-                    Vector3Int pos = new Vector3Int(x, y, 0);
-                    TileBase tb = _groundTileMap.GetTile(pos);
-                    if (tb != null) {
-                        occupiedCoordinates.Add(pos);
-                    }
-                }
-            }    
-        }
+        // BoundsInt bounds = _groundTileMap.cellBounds;
 
         var localPosition = map.transform.InverseTransformPoint(transform.position);
         Vector3Int actualLocation = new Vector3Int(Mathf.FloorToInt(localPosition.x), Mathf.FloorToInt(localPosition.y), 0);
-        for (int i = 0; i < occupiedCoordinates.Count; i++) {
-            Vector3Int currCoordinate = occupiedCoordinates[i];
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
 
             Vector3Int gridTileLocation = actualLocation;
 
@@ -371,10 +400,12 @@ public class LocationStructureObject : PooledObject {
                 color.a = 128f / 255f;
                 SetStructureColor(color);
                 SetPreplacedObjectsState(false);
+                SetWallCollidersState(false);
                 break;
             default:
                 color = Color.white;
                 SetStructureColor(color);
+                SetWallCollidersState(true);
                 RescanPathfindingGridOfStructure();
                 break;
         }
@@ -400,7 +431,11 @@ public class LocationStructureObject : PooledObject {
         if (_blockWallsTilemap != null) {
             _blockWallsTilemap.gameObject.SetActive(true);    
         }
+        SetWallCollidersState(true);
         tiles = null;
+        for (int i = 0; i < connectors.Length; i++) {
+            connectors[i].Reset();
+        }
     }
     #endregion
 
@@ -452,37 +487,12 @@ public class LocationStructureObject : PooledObject {
             manMadeStructure.SetWallObjects(wallObjects, _thinWallResource);
         }
     }
-    // internal void ChangeResourceMadeOf(RESOURCE resource) {
-    //     for (int i = 0; i < walls.Length; i++) {
-    //         StructureWallObject structureWallObject = walls[i];
-    //         structureWallObject.ChangeResourceMadeOf(resource);
-    //     }
-    //     for (int i = 0; i < tiles.Length; i++) {
-    //         LocationGridTile tile = tiles[i];
-    //         switch (resource) {
-    //             case RESOURCE.WOOD:
-    //                 tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.woodFloorTile);
-    //                 break;
-    //             case RESOURCE.STONE:
-    //                 tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
-    //                 break;
-    //             case RESOURCE.METAL:
-    //                 tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
-    //                 break;
-    //         }
-    //     }
-    // }
-    /// <summary>
-    /// Get what this structures walls are made of.
-    /// </summary>
-    /// <returns>A resource type. NOTE: this defaults to wood if no walls are present.</returns>
-    // public RESOURCE WallsMadeOf() {
-    //     if (walls.Length > 0) {
-    //         StructureWallObject structureWallObject = walls[0];
-    //         return structureWallObject.madeOf;
-    //     }
-    //     return RESOURCE.WOOD;
-    // }
+    private void SetWallCollidersState(bool state) {
+        for (int i = 0; i < wallVisuals.Length; i++) {
+            WallVisual wallVisual = wallVisuals[i];
+            wallVisual.SetUnpassableColliderState(state);
+        }
+    }
     #endregion
 
     #region Pathfinding
@@ -497,6 +507,167 @@ public class LocationStructureObject : PooledObject {
         Debug.Log($"Player clicked {name}");
     }
     #endregion
+
+    #region Connectors
+    /// <summary>
+    /// Get first valid connector given a list of choices.
+    /// NOTE: This assumes that all connectors owned by this is still open. In other words, this is used to initially place a structure object.
+    /// </summary>
+    /// <param name="connectionChoices">A list of all OPEN connector choices.</param>
+    /// <param name="innerTileMap">The inner map that this structure will be placed on.</param>
+    /// <param name="usedConnectorIndex">The index of the connector that was used by this structure object.</param>
+    /// <returns>The first valid connector from the list of choices.</returns>
+    public StructureConnector GetFirstValidConnector(List<StructureConnector> connectionChoices, InnerTileMap innerTileMap, out int usedConnectorIndex, out LocationGridTile tileToPlaceStructure) {
+        //loop through connection choices
+        for (int i = 0; i < connectionChoices.Count; i++) {
+            StructureConnector connectorA = connectionChoices[i];
+            LocationGridTile connectorATileLocation = connectorA.GetLocationGridTileGivenCurrentPosition(innerTileMap);
+            if (connectorATileLocation == null) {
+                continue;
+            }
+            //for each choice check each connector that I own, and check if that connector can connect to the other connector
+            for (int j = 0; j < connectors.Length; j++) {
+                //To check if connectorA and connectorB can connect, get the center tile that this object will occupy given the location of connectorA
+                //and from that, get the tiles, that this object will occupy if placed on the computed center tile.
+                //If it will occupy a tile that is NOT part of the Wilderness, then connectorA is invalid.
+                StructureConnector connectorB = connectors[j];
+                var connectorBLocalPos = connectorB.transform.localPosition;
+                Vector2Int connectorBLocalPosition = new Vector2Int(Mathf.FloorToInt(connectorBLocalPos.x), Mathf.FloorToInt(connectorBLocalPos.y));
+                Vector2Int distanceFromCenter = new Vector2Int(center.x - connectorBLocalPosition.x, center.y - connectorBLocalPosition.y);
+                Vector2Int computedCenterLocation = new Vector2Int(connectorATileLocation.localPlace.x + distanceFromCenter.x, connectorATileLocation.localPlace.y + distanceFromCenter.y);
+                
+                LocationGridTile centerTile = innerTileMap.GetTileFromMapCoordinates(computedCenterLocation.x, computedCenterLocation.y);
+                if (centerTile != null && HasEnoughSpaceIfPlacedOn(centerTile)) {
+                    tileToPlaceStructure = centerTile;
+                    usedConnectorIndex = j;
+                    return connectorA;
+                }
+            }
+        }
+        tileToPlaceStructure = null;
+        usedConnectorIndex = -1;
+        return null;
+    }
+    public bool HasEnoughSpaceIfPlacedOn(LocationGridTile centerTile) {
+        if (!CanPlaceStructureOnTile(centerTile)) {
+            return false;
+        }
+        InnerTileMap map = centerTile.parentMap;
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                if (!CanPlaceStructureOnTile(tile)) {
+                    return false;
+                }
+            } else {
+                return false; //returned coordinates are out of the map
+            }
+        }
+        return true;
+    }
+    private bool CanPlaceStructureOnTile(LocationGridTile tile) {
+        if (tile.structure.structureType != STRUCTURE_TYPE.WILDERNESS) {
+            return false; //if calculated tile that will be occupied, is not part of wilderness, then this structure object cannot be placed on given center.
+        }
+        if (tile.hasBlueprint) {
+            return false; //This is to prevent overlapping blueprints. If any tile that will be occupied by this has a blueprint, then do not allow
+        }
+        if (tile.IsAtEdgeOfMap()) {
+            return false;
+        }
+        if (tile.collectionOwner.isPartOfParentRegionMap) {
+            HexTile hexTileOwner = tile.collectionOwner.partOfHextile.hexTileOwner;
+            if (hexTileOwner.elevationType == ELEVATION.WATER || hexTileOwner.elevationType == ELEVATION.MOUNTAIN) {
+                return false;
+            }
+            if (hexTileOwner.landmarkOnTile != null && hexTileOwner.landmarkOnTile.specificLandmarkType.GetStructureType().IsSpecialStructure()) {
+                return false;
+            }
+        } else {
+            return false; //prevent structure placement on tiles that aren't linked to any hextile. This is to prevent errors when trying to check if a tile IsPartOfSettlement 
+        }
+        //limit so that structures will not be directly adjacent with each other
+        for (int j = 0; j < tile.neighbourList.Count; j++) {
+            LocationGridTile neighbour = tile.neighbourList[j];
+            if (neighbour.hasBlueprint) {
+                return false; //if bordering tile has a blueprint, then do not allow this structure to be placed. This is to prevent structures from being directly adjacent with each other, while they are still blueprints.
+            }
+            //only limit adjacency if adjacent tile is not wilderness and not city center (Allow adjacency with city center since it has no walls, and looks better when structures are close to it.)
+            if (neighbour.structure.structureType != STRUCTURE_TYPE.WILDERNESS && neighbour.structure.structureType != STRUCTURE_TYPE.CITY_CENTER) {
+                return false;
+            }
+        }
+        return true;
+    }
+    private List<LocationGridTile> GetTilesThatWillBeOccupiedGivenCenter(InnerTileMap map, LocationGridTile centerTile) {
+        List<LocationGridTile> occupiedTiles = new List<LocationGridTile>();
+        // BoundsInt bounds = _groundTileMap.cellBounds;
+
+        List<Vector3Int> localOccupiedCoordinates = this.localOccupiedCoordinates;
+        
+        // List<Vector3Int> localOccupiedCoordinates = new List<Vector3Int>();
+        // if (predeterminedOccupiedCoordinates != null && predeterminedOccupiedCoordinates.Count > 0) {
+        //     localOccupiedCoordinates = predeterminedOccupiedCoordinates;
+        // } else {
+        //     for (int x = bounds.xMin; x < bounds.xMax; x++) {
+        //         for (int y = bounds.yMin; y < bounds.yMax; y++) {
+        //             Vector3Int pos = new Vector3Int(x, y, 0);
+        //             TileBase tb = _groundTileMap.GetTile(pos);
+        //             if (tb != null) {
+        //                 localOccupiedCoordinates.Add(pos);
+        //             }
+        //         }
+        //     }    
+        // }
+        for (int i = 0; i < localOccupiedCoordinates.Count; i++) {
+            Vector3Int currCoordinate = localOccupiedCoordinates[i];
+
+            Vector3Int gridTileLocation = centerTile.localPlace;
+
+            //get difference from center
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
+            gridTileLocation.x += xDiffFromCenter;
+            gridTileLocation.y += yDiffFromCenter;
+
+            if (UtilityScripts.Utilities.IsInRange(gridTileLocation.x, 0, map.width) 
+                && UtilityScripts.Utilities.IsInRange(gridTileLocation.y, 0, map.height)) {
+                LocationGridTile tile = map.map[gridTileLocation.x, gridTileLocation.y];
+                occupiedTiles.Add(tile);
+            } else {
+                throw new Exception($"IndexOutOfRangeException when trying to place structure object {name} at {map.region.name}");
+            }
+        }
+        return occupiedTiles;
+    }
+    private void ProcessConnectors(LocationStructure structure) {
+        for (int i = 0; i < _connectors.Length; i++) {
+            StructureConnector connector = _connectors[i];
+            connector.SetOwner(structure);
+            connector.OnPlaceConnector(structure.region.innerMap);
+        }
+    }
+    private void LoadConnectors(SaveDataStructureConnector[] connectorSaves, InnerTileMap innerTileMap) {
+        Assert.IsTrue(connectorSaves.Length == _connectors.Length, $"Inconsistent connector save data on {name}");
+        for (int i = 0; i < _connectors.Length; i++) {
+            StructureConnector connector = _connectors[i];
+            SaveDataStructureConnector saveData = connectorSaves[i];
+            connector.LoadReferences(saveData, innerTileMap);
+        }
+    }
+    #endregion
+    
 
     #region Helpers
     [Header("Wall Converter")]
@@ -536,27 +707,29 @@ public class LocationStructureObject : PooledObject {
                         wallVisual = InstantiateWall(topWall, centeredPos, wallTileMap.transform, _thinWallResource != RESOURCE.WOOD);
                     }
 
-                    Vector3 cornerPos = centeredPos;
-                    if (tile.name.Contains("BotLeft")) {
-                        cornerPos.x -= 0.5f;
-                        cornerPos.y -= 0.5f;
-                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
-                    } else if (tile.name.Contains("BotRight")) {
-                        cornerPos.x += 0.5f;
-                        cornerPos.y -= 0.5f;
-                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
-                    } else if (tile.name.Contains("TopLeft")) {
-                        cornerPos.x -= 0.5f;
-                        cornerPos.y += 0.5f;
-                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
-                    } else if (tile.name.Contains("TopRight")) {
-                        cornerPos.x += 0.5f;
-                        cornerPos.y += 0.5f;
-                        Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
-                    }
-                    if (_thinWallResource != RESOURCE.WOOD) {
-                        //only update asset if wall resource is not wood.
-                        wallVisual.UpdateWallAssets(_thinWallResource);    
+                    if (wallVisual != null) {
+                        Vector3 cornerPos = centeredPos;
+                        if (tile.name.Contains("BotLeft")) {
+                            cornerPos.x -= 0.5f;
+                            cornerPos.y -= 0.5f;
+                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                        } else if (tile.name.Contains("BotRight")) {
+                            cornerPos.x += 0.5f;
+                            cornerPos.y -= 0.5f;
+                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                        } else if (tile.name.Contains("TopLeft")) {
+                            cornerPos.x -= 0.5f;
+                            cornerPos.y += 0.5f;
+                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                        } else if (tile.name.Contains("TopRight")) {
+                            cornerPos.x += 0.5f;
+                            cornerPos.y += 0.5f;
+                            Instantiate(cornerPrefab, cornerPos, Quaternion.identity, wallVisual.transform);
+                        }
+                        if (_thinWallResource != RESOURCE.WOOD) {
+                            //only update asset if wall resource is not wood.
+                            wallVisual.UpdateWallAssets(_thinWallResource);    
+                        }    
                     }
                 }
             }
@@ -624,13 +797,13 @@ public class LocationStructureObject : PooledObject {
     public void PredetermineOccupiedCoordinates() {
         BoundsInt bounds = _groundTileMap.cellBounds;
 
-        predeterminedOccupiedCoordinates = new List<Vector3Int>();
+        _predeterminedOccupiedCoordinates = new List<Vector3Int>();
         for (int x = bounds.xMin; x < bounds.xMax; x++) {
             for (int y = bounds.yMin; y < bounds.yMax; y++) {
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 TileBase tb = _groundTileMap.GetTile(pos);
                 if (tb != null && assetsToConsiderAsStructure.Contains(tb)) {
-                    predeterminedOccupiedCoordinates.Add(pos);
+                    _predeterminedOccupiedCoordinates.Add(pos);
                     // _groundTileMap.SetColor(pos, Color.red);
                 }
             }

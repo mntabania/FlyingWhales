@@ -38,7 +38,16 @@ namespace Inner_Maps.Location_Structures {
         public bool hasActiveSocialGathering { get; protected set; }
 
         //protected Faction _owner;
-
+        
+        /// <summary>
+        /// List of hex tiles that this structure has a tile on.
+        /// NOTE: This can have duplicates of the same HexTile, this is so that there is
+        /// no need to count the number of tiles that occupy a hextile, when trying to remove that hextile from the list
+        /// so it is safe to assume that number of tiles = length of this list.
+        /// NOTE: This is not filled out in wilderness structure! Because it is not needed.
+        /// </summary>
+        public List<HexTile> occupiedHexTiles { get; private set; }
+        
         #region getters
         public virtual string nameplateName => name;
         public virtual bool isDwelling => false;
@@ -68,6 +77,7 @@ namespace Inner_Maps.Location_Structures {
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             structureTags = new List<STRUCTURE_TAG>();
             residents = new List<Character>();
+            occupiedHexTiles = new List<HexTile>();
             SetMaxHPAndReset(3000);
             //outerTiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
@@ -89,7 +99,8 @@ namespace Inner_Maps.Location_Structures {
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             objectsThatContributeToDamage = new HashSet<IDamageable>();
             residents = new List<Character>();
-            SetMaxHP(3000);
+            occupiedHexTiles = new List<HexTile>();
+            maxHP = data.maxHP;
             currentHP = data.currentHP;
             SetInteriorState(data.isInterior);
             maxResidentCapacity = 5;
@@ -240,6 +251,9 @@ namespace Inner_Maps.Location_Structures {
         }
         public void SetHasActiveSocialGathering(bool state) {
             hasActiveSocialGathering = state;
+        }
+        public virtual bool HasTileOnHexTile(HexTile hexTile) {
+            return (occupiedHexTile != null && occupiedHexTile == hexTile.innerMapHexTile) || occupiedHexTiles.Contains(hexTile);
         }
         #endregion
 
@@ -673,12 +687,18 @@ namespace Inner_Maps.Location_Structures {
                 if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
                     SetSettlementLocation(settlement);
                 }
+                if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.collectionOwner.isPartOfParentRegionMap) {
+                    AddOccupiedHexTile(tile.collectionOwner.partOfHextile.hexTileOwner);
+                }
                 OnTileAddedToStructure(tile);
             }
         }
         public void RemoveTile(LocationGridTile tile) {
             if (tiles.Remove(tile)) {
                 OnTileRemovedFromStructure(tile);
+                if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.collectionOwner.isPartOfParentRegionMap) {
+                    RemoveOccupiedHexTile(tile.collectionOwner.partOfHextile.hexTileOwner);
+                }
             }
             RemovePassableTile(tile);
             RemoveUnoccupiedTile(tile);
@@ -717,6 +737,12 @@ namespace Inner_Maps.Location_Structures {
         }
         public virtual void OnTileDamaged(LocationGridTile tile, int amount) { }
         public virtual void OnTileRepaired(LocationGridTile tile, int amount) { }
+        private void AddOccupiedHexTile(HexTile hexTile) {
+            occupiedHexTiles.Add(hexTile);
+        }
+        private void RemoveOccupiedHexTile(HexTile hexTile) {
+            occupiedHexTiles.Remove(hexTile);
+        }
         #endregion
 
         #region Tile Objects

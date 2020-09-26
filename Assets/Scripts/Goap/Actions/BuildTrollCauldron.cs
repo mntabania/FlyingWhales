@@ -12,7 +12,6 @@ public class BuildTrollCauldron : GoapAction {
     public BuildTrollCauldron() : base(INTERACTION_TYPE.BUILD_TROLL_CAULDRON) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Build_Icon;
-        showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Misc};
     }

@@ -119,7 +119,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         if (InnerMapManager.Instance.currentlyHoveredPoi == poi) {
             InnerMapManager.Instance.SetCurrentlyHoveredPOI(null);
         }
-        UIManager.Instance.HideSmallInfo();
+        UIManager.Instance?.HideSmallInfo();
     }
     #endregion
 

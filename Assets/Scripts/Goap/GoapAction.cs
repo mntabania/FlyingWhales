@@ -40,7 +40,7 @@ public class GoapAction {
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
         this.goapType = goapType;
         this.goapName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
-        showNotification = true;
+        showNotification = false;
         shouldAddLogs = true;
         basePreconditions = new List<Precondition>();
         baseExpectedEffects = new List<GoapEffect>();

@@ -45,7 +45,9 @@ public class LogsWindow : MonoBehaviour {
         }
         showAllToggle.SetIsOnWithoutNotify(true);
         for (int i = 0; i < allFilters.Length; i++) {
-            allFilters[i].SetIsOnWithoutNotify(true);
+            LogFilterItem logFilterItem = allFilters[i];
+            logFilterItem.SetOnToggleAction(OnToggleFilter);
+            logFilterItem.SetIsOnWithoutNotify(true);
         }    
     }
     private void Update() {
@@ -205,7 +207,7 @@ public class LogsWindow : MonoBehaviour {
     public void ToggleFilters() {
         filterGO.gameObject.SetActive(!filterGO.activeInHierarchy);
     }
-    public void OnToggleFilter(bool isOn, LOG_TAG tag) {
+    private void OnToggleFilter(bool isOn, LOG_TAG tag) {
         if (isOn) {
             SharedEnabledFilters.Add(tag);
         } else {

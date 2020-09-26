@@ -47,6 +47,16 @@ namespace Inner_Maps {
         public bool hasFreezingTrap { get; private set; }
         public bool hasSnareTrap { get; private set; }
         /// <summary>
+        /// Does this tile have a blueprint on it.
+        /// NOTE: This is not saved since blueprint placement is handled by GenericTileObject loading
+        /// <see cref="GenericTileObject.LoadBlueprintOnTile"/>
+        /// </summary>
+        public bool hasBlueprint { get; private set; }
+        /// <summary>
+        /// Number of structure connectors on the tile.
+        /// </summary>
+        public int connectorsOnTile { get; private set; }
+        /// <summary>
         /// The generated perlin noise sample of this tile.
         /// </summary>
         public float floorSample { get; private set; }
@@ -105,6 +115,7 @@ namespace Inner_Maps {
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
             isDefault = true;
+            connectorsOnTile = 0;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
         public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, InnerTileMap parentMap) {
@@ -121,6 +132,7 @@ namespace Inner_Maps {
             charactersHere = new List<Character>();
             walls = new List<StructureWallObject>();
             isDefault = data.isDefault;
+            connectorsOnTile = data.connectorsCount;
             DatabaseManager.Instance.locationGridTileDatabase.RegisterTile(this);
         }
 
@@ -1517,6 +1529,21 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Blueprints
+        public void SetHasBlueprint(bool hasBlueprint) {
+            this.hasBlueprint = hasBlueprint;
+        }
+        #endregion
+
+        #region Connectors
+        public void AddConnector() {
+            connectorsOnTile++;
+        }
+        public void RemoveConnector() {
+            connectorsOnTile--;
+        }
+        #endregion
+        
         #region Meteor
         public int meteorCount { get; private set; }
         public void AddMeteor() {

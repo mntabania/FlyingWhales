@@ -17,17 +17,17 @@ namespace Inner_Maps.Location_Structures {
         /// Separate field for the occupied hex tiles of this cave.
         /// Since caves can occupy multiple hex tiles.
         /// </summary>
-        public List<InnerMapHexTile> occupiedHexTiles { get; }
-        public override InnerMapHexTile occupiedHexTile => occupiedHexTiles.Count > 0 ? occupiedHexTiles[0] : null;
+        public List<InnerMapHexTile> caveHexTiles { get; }
+        public override InnerMapHexTile occupiedHexTile => caveHexTiles.Count > 0 ? caveHexTiles[0] : null;
         
         public Cave(Region location) : base(STRUCTURE_TYPE.CAVE, location) {
             resourceYield = GetRandomResourceYield();
-            occupiedHexTiles = new List<InnerMapHexTile>();
+            caveHexTiles = new List<InnerMapHexTile>();
         }
 
         public Cave(Region location, SaveDataLocationStructure data) : base(location, data) {
             resourceYield = GetRandomResourceYield();
-            occupiedHexTiles = new List<InnerMapHexTile>();
+            caveHexTiles = new List<InnerMapHexTile>();
         }
 
         #region Loading
@@ -36,7 +36,7 @@ namespace Inner_Maps.Location_Structures {
                 string hexTileID = saveDataCave.occupiedHextiles[i];
                 if (!string.IsNullOrEmpty(hexTileID)) {
                     HexTile hexTile = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(hexTileID);
-                    occupiedHexTiles.Add(hexTile.innerMapHexTile);
+                    caveHexTiles.Add(hexTile.innerMapHexTile);
                 }
             }
         }
@@ -89,8 +89,8 @@ namespace Inner_Maps.Location_Structures {
             base.OnTileAddedToStructure(tile);
             tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.MINE);
             if (tile.collectionOwner.isPartOfParentRegionMap && 
-                occupiedHexTiles.Contains(tile.collectionOwner.partOfHextile) == false) {
-                occupiedHexTiles.Add(tile.collectionOwner.partOfHextile);
+                caveHexTiles.Contains(tile.collectionOwner.partOfHextile) == false) {
+                caveHexTiles.Add(tile.collectionOwner.partOfHextile);
             }
         }
         protected override void OnTileRemovedFromStructure(LocationGridTile tile) {
@@ -102,6 +102,9 @@ namespace Inner_Maps.Location_Structures {
                 occupiedHexTile.hexTileOwner.CenterCameraHere();
             }
         }
+        public override bool HasTileOnHexTile(HexTile hexTile) {
+            return occupiedHexTile != null && caveHexTiles.Contains(hexTile.innerMapHexTile);
+        }
     }
 }
 
@@ -112,8 +115,8 @@ public class SaveDataCave : SaveDataNaturalStructure {
         base.Save(structure);
         Cave cave = structure as Cave;
         occupiedHextiles = new List<string>();
-        for (int i = 0; i < cave.occupiedHexTiles.Count; i++) {
-            InnerMapHexTile innerMapHexTile = cave.occupiedHexTiles[i];
+        for (int i = 0; i < cave.caveHexTiles.Count; i++) {
+            InnerMapHexTile innerMapHexTile = cave.caveHexTiles[i];
             occupiedHextiles.Add(innerMapHexTile.hexTileOwner.persistentID);
         }
     }

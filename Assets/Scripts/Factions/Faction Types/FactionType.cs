@@ -10,6 +10,10 @@ namespace Factions.Faction_Types {
         public readonly List<string> combatantClasses;
         public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes;
         public bool hasCrimes { get; protected set; }
+
+        #region getters
+        public abstract RESOURCE mainResource { get; }
+        #endregion
         
         protected FactionType(FACTION_TYPE type) {
             this.type = type;

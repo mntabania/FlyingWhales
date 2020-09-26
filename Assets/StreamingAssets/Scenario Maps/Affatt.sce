@@ -1735,7 +1735,23 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "FARM"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         },
         {
           "resource": "WOOD",
@@ -1743,11 +1759,24 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "TAVERN"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         }
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "ELVES"
+      "factionRace": "ELVES",
+      "settlementType": "Default_Elf"
     },
     {
       "hexTiles": [
@@ -1779,7 +1808,19 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "FARM"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -1787,15 +1828,28 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "CEMETERY"
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "BARRACKS"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         }
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "HUMANS"
+      "factionRace": "HUMANS",
+      "settlementType": "Default_Human"
     },
     {
       "hexTiles": [
@@ -1827,7 +1881,19 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "APOTHECARY"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         },
         {
           "resource": "WOOD",
@@ -1835,15 +1901,36 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "CEMETERY"
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "BARRACKS"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         }
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "ELVES"
+      "factionRace": "ELVES",
+      "settlementType": "Default_Elf"
     }
   ]
 }

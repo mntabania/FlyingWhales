@@ -2826,7 +2826,23 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "LUMBERYARD"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         },
         {
           "resource": "WOOD",
@@ -2834,11 +2850,24 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "FARM"
-        }
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "ELVES"
+      "factionRace": "ELVES",
+      "settlementType": "Default_Elf"
     },
     {
       "hexTiles": [
@@ -2866,7 +2895,19 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "MINE_SHACK"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -2874,11 +2915,24 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "MINE_SHACK"
-        }
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "HUMANS"
+      "factionRace": "HUMANS",
+      "settlementType": "Default_Human"
     },
     {
       "hexTiles": [
@@ -2903,6 +2957,14 @@
         {
           "resource": "WOOD",
           "structureType": "CITY_CENTER"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
         },
         {
           "resource": "WOOD",
@@ -2910,15 +2972,36 @@
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "FARM"
         },
         {
           "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
           "structureType": "LUMBERYARD"
-        }
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "ELVES"
+      "factionRace": "ELVES",
+      "settlementType": "Default_Elf"
     },
     {
       "hexTiles": [
@@ -2946,7 +3029,23 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "FARM"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -2954,11 +3053,24 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "MAGE_QUARTERS"
-        }
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "HUMANS"
+      "factionRace": "HUMANS",
+      "settlementType": "Default_Human"
     }
   ]
 }

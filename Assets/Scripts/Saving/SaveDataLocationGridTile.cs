@@ -22,6 +22,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
     public bool hasFreezingTrap;
     public bool hasSnareTrap;
     public int meteorCount;
+    public int connectorsCount;
     public List<RACE> freezingTrapExclusions;
 
     //tilemap assets
@@ -44,6 +45,7 @@ public class SaveDataLocationGridTile : SaveData<LocationGridTile> {
         hasFreezingTrap = gridTile.hasFreezingTrap;
         hasSnareTrap = gridTile.hasSnareTrap;
         meteorCount = gridTile.meteorCount;
+        connectorsCount = gridTile.connectorsOnTile;
         freezingTrapExclusions = gridTile.freezingTrapExclusions;
         genericTileObjectID = gridTile.genericTileObject.persistentID;
 

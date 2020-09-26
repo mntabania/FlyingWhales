@@ -85,6 +85,11 @@ public class BuildWolfLair : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, OtherData[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
+            if (otherData != null) {
+                if (otherData.Length == 1 && otherData[0].obj is LocationGridTile targetTile && targetTile.hasBlueprint) {
+                    return false;
+                }
+            }
             return poiTarget == actor;
         }
         return false;

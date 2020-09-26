@@ -39,6 +39,12 @@ namespace Locations.Settlements.Settlement_Types {
             }
             facilityCaps[setting] = cap;
         }
+        public int GetFacilityCap(StructureSetting structureSetting) {
+            if (facilityCaps.ContainsKey(structureSetting)) {
+                return facilityCaps[structureSetting];
+            }
+            return 0;
+        }
         #endregion
     }
 }

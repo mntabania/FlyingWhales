@@ -12,7 +12,6 @@ public class BuildCampfire : GoapAction {
     public BuildCampfire() : base(INTERACTION_TYPE.BUILD_CAMPFIRE) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Build_Icon;
-        showNotification = false;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         logTags = new[] {LOG_TAG.Misc};
     }

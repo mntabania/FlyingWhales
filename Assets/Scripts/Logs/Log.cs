@@ -131,7 +131,7 @@ public struct Log {
     public bool IsInvolved(ILogFiller obj) {
         return allInvolvedObjectIDs.Contains(obj.persistentID);
     }
-    public void AddInvolvedObject(string persistentID) {
+    private void AddInvolvedObject(string persistentID) {
         allInvolvedObjectIDs = $"{allInvolvedObjectIDs}|{persistentID}|";
     }
     /// <summary>
@@ -170,6 +170,12 @@ public struct Log {
                 AddTag(tags[i]);
             }    
         }
+    }
+    #endregion
+
+    #region Utilities
+    public bool IsImportant() {
+        return tags.Contains(LOG_TAG.Crimes) || tags.Contains(LOG_TAG.Intel) || tags.Contains(LOG_TAG.Important);
     }
     #endregion
 }

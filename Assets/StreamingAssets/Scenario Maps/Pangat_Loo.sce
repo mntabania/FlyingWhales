@@ -842,11 +842,27 @@
         },
         {
           "resource": "STONE",
-          "structureType": "TAVERN"
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
           "structureType": "TAVERN"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "TAVERN"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -854,15 +870,31 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "CEMETERY"
         },
         {
           "resource": "STONE",
-          "structureType": "FARM"
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
           "structureType": "FARM"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "FARM"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
@@ -870,11 +902,24 @@
         },
         {
           "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
           "structureType": "BARRACKS"
-        }
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
       ],
       "minimumVillagerCount": 0,
-      "factionRace": "HUMANS"
+      "factionRace": "HUMANS",
+      "settlementType": "Capital"
     }
   ]
 }

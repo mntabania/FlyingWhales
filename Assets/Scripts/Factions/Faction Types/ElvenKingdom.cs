@@ -1,5 +1,8 @@
 ﻿namespace Factions.Faction_Types {
     public class ElvenKingdom : FactionType {
+        
+        public override RESOURCE mainResource => RESOURCE.WOOD;
+        
         public ElvenKingdom() : base(FACTION_TYPE.Elven_Kingdom) { }
         
         public override void SetAsDefault() {

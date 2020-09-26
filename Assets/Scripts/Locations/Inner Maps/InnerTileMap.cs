@@ -480,6 +480,50 @@ namespace Inner_Maps {
 
             hexTile.innerMapHexTile.Occupy();
         }
+        /// <summary>
+        /// Build a structure object at the given center tile.
+        /// NOTE: This will also create a LocationStructure instance for the new structure.
+        /// </summary>
+        /// <param name="structurePrefab">The structure prefab to use.</param>
+        /// <param name="centerTile">The center tile to place the prefab at.</param>
+        /// <param name="settlement">The settlement that owns the structure that will be placed</param>
+        /// <returns>The instance of the placed structure.</returns>
+        public LocationStructure PlaceBuiltStructureTemplateAt(GameObject structurePrefab, LocationGridTile centerTile, BaseSettlement settlement) {
+            GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, centerTile.centeredLocalLocation, Quaternion.identity, structureParent);
+        
+            LocationStructureObject structureObject = structureTemplateGO.GetComponent<LocationStructureObject>();
+            if (structureObject == null) {
+                throw new Exception($"No LocationStructureObject for {structurePrefab.name}");
+            }
+            Assert.IsTrue(centerTile.collectionOwner.isPartOfParentRegionMap, $"Structure Object {structurePrefab.name} for {settlement} is being placed on unlinked tile {centerTile}");
+            HexTile hexTile = centerTile.collectionOwner.partOfHextile.hexTileOwner;
+            settlement.AddTileToSettlement(hexTile);
+            structureObject.RefreshAllTilemaps();
+            List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(this);
+            structureObject.SetTilesInStructure(occupiedTiles.ToArray());
+            structureObject.ClearOutUnimportantObjectsBeforePlacement();
+            LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(centerTile.parentMap.region, structureObject.structureType, settlement);
+            for (int j = 0; j < occupiedTiles.Count; j++) {
+                LocationGridTile tile = occupiedTiles[j];
+                tile.SetStructure(structure);
+            }
+            
+            Assert.IsTrue(structure is DemonicStructure || structure is ManMadeStructure);
+            if (structure is DemonicStructure demonicStructure) {
+                demonicStructure.SetStructureObject(structureObject);    
+            } else if (structure is ManMadeStructure manMadeStructure) {
+                manMadeStructure.SetStructureObject(structureObject);    
+            }
+            
+            structure.SetOccupiedHexTile(centerTile.collectionOwner.partOfHextile);
+            structureObject.OnBuiltStructureObjectPlaced(this, structure);
+            structure.CreateRoomsBasedOnStructureObject(structureObject);
+            structure.OnBuiltNewStructure();
+
+            Debug.Log($"Placed {structure} at {centerTile}");
+            return structure;
+            // hexTile.innerMapHexTile.Occupy();
+        }
         #endregion
 
         #region Details

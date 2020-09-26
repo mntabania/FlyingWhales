@@ -660,6 +660,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
                     || action.goapType == INTERACTION_TYPE.EXTERMINATE || action.goapType == INTERACTION_TYPE.HUNT_HEIRLOOM || action.goapType == INTERACTION_TYPE.RAID
                     || action.goapType == INTERACTION_TYPE.RESCUE || action.goapType == INTERACTION_TYPE.HOST_SOCIAL_PARTY || action.goapType == INTERACTION_TYPE.JUDGE_CHARACTER) {
                     PlayerManager.Instance.player.ShowNotificationFromPlayer(descriptionLog);
+                } else if (action.showNotification) {
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, descriptionLog);
                 }
             }
         }

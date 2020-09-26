@@ -1032,10 +1032,10 @@ public enum PASSIVE_SKILL {
     Monster_Chaos_Orb, Undead_Chaos_Orb, Enemies_Chaos_Orb, Auto_Absorb_Chaos_Orb, Passive_Mana_Regen
 }
 public enum LOG_TAG {
-    Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel
+    Life_Changes, Social, Needs, Work, Combat, Crimes, Witnessed, Informed, Party, Misc, Player, Intel, Important
 }
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
-public enum SETTLEMENT_TYPE { Default_Human, Default_Elf }
+public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital }
 
 
 #region Crime Subcategories
@@ -1099,6 +1099,23 @@ public static class Extensions {
             case STRUCTURE_TYPE.LUMBERYARD:
             case STRUCTURE_TYPE.MINE_SHACK:
             case STRUCTURE_TYPE.TAVERN:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsFacilityStructure(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.TAVERN:
+            case STRUCTURE_TYPE.CITY_CENTER:
+            case STRUCTURE_TYPE.WAREHOUSE:
+            case STRUCTURE_TYPE.FARM:
+            case STRUCTURE_TYPE.MINE_SHACK:
+            case STRUCTURE_TYPE.LUMBERYARD:
+            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.CEMETERY:
+            case STRUCTURE_TYPE.BARRACKS:
+            case STRUCTURE_TYPE.MAGE_QUARTERS:
                 return true;
             default:
                 return false;

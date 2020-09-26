@@ -30,7 +30,7 @@ public class CharacterMarkerVisionCollider : BaseVisionCollider {
         isApplicationQuitting = true;
     }
     public void Initialize() {
-        Debug.Log($"Initialization of vision collider of {parentMarker.character?.name ?? parentMarker.name}");
+        // Debug.Log($"Initialization of vision collider of {parentMarker.character?.name ?? parentMarker.name}");
         VoteToFilterVision();
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }

@@ -25,6 +25,8 @@ public class SettlementJobPriorityComponent
             { JOB_TYPE.RESTRAIN, 0 },
             { JOB_TYPE.REMOVE_STATUS, 0 },
             { JOB_TYPE.TEND_FARM, 0 },
+            { JOB_TYPE.MINE, 0 },
+            { JOB_TYPE.BUILD_BLUEPRINT, 0 },
         };
     }
     public void OnAddResident(Character character) {

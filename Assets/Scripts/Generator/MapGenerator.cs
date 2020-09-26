@@ -32,6 +32,7 @@ public class MapGenerator : MonoBehaviour {
             new WorldMapLandmarkGeneration(), new FamilyTreeGeneration(), new RegionInnerMapGeneration(), 
             new SettlementGeneration(), new CharacterFinalization(), new LandmarkStructureGeneration(), new ElevationStructureGeneration(), 
             new RegionFeatureActivation(), new MonsterGeneration(), new MapGenerationFinalization(), 
+            
             //new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
@@ -88,18 +89,14 @@ public class MapGenerator : MonoBehaviour {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
                 region.UpdateAwareness();
-                for (int j = 0; j < region.tiles.Count; j++) {
-                    HexTile tile = region.tiles[j];
-                    if (!tile.isCorrupted
-                        && tile.landmarkOnTile != null
-                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
-                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-                        && tile.settlementOnTile is NPCSettlement npcSettlement) {
-                        if(npcSettlement.ruler == null) {
-                            npcSettlement.DesignateNewRuler(false);
-                        }
-                        npcSettlement.GenerateInitialOpinionBetweenResidents();
+            }
+            for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
+                NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
+                if (settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                    if(settlement.ruler == null) {
+                        settlement.DesignateNewRuler(false);
                     }
+                    settlement.GenerateInitialOpinionBetweenResidents();
                 }
             }
             
@@ -193,18 +190,14 @@ public class MapGenerator : MonoBehaviour {
             for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
                 Region region = GridMap.Instance.allRegions[i];
                 region.UpdateAwareness();
-                for (int j = 0; j < region.tiles.Count; j++) {
-                    HexTile tile = region.tiles[j];
-                    if (!tile.isCorrupted
-                        && tile.landmarkOnTile != null
-                        && (tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
-                            || tile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.HOUSES)
-                        && tile.settlementOnTile is NPCSettlement npcSettlement) {
-                        if(npcSettlement.ruler == null) {
-                            npcSettlement.DesignateNewRuler(false);
-                        }
-                        npcSettlement.GenerateInitialOpinionBetweenResidents();
+            }
+            for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
+                NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
+                if (settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                    if(settlement.ruler == null) {
+                        settlement.DesignateNewRuler(false);
                     }
+                    settlement.GenerateInitialOpinionBetweenResidents();
                 }
             }
             
