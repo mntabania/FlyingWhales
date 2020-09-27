@@ -273,6 +273,7 @@ public class UIManager : BaseMonoBehaviour {
         UpdateRegionInfo();
         UpdateHextileInfo();
         UpdateStructureInfo();
+        UpdatePartyInfo();
     }
 
     #region World Controls
@@ -647,11 +648,9 @@ public class UIManager : BaseMonoBehaviour {
             ShowFactionInfo(faction);
         } else if (obj is Minion minion) {
             ShowCharacterInfo(minion.character, true);
-        }
-        //else if (obj is Party party) {
-        //    ShowCharacterInfo(party.owner, true);
-        //} 
-        else if (obj is TileObject tileObject) {
+        } else if (obj is Party party) {
+            ShowPartyInfo(party);
+        } else if (obj is TileObject tileObject) {
             ShowTileObjectInfo(tileObject);
         } else if (obj is Region region) {
             ShowRegionInfo(region);
@@ -945,6 +944,25 @@ public class UIManager : BaseMonoBehaviour {
     public void UpdateTileObjectInfo() {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.UpdateTileObjectInfo();
+        }
+    }
+    #endregion
+
+    #region Party Info
+    [Space(10)]
+    [Header("Party Info")]
+    [SerializeField] internal PartyInfoUI partyInfoUI;
+    public void ShowPartyInfo(Party party) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        partyInfoUI.SetData(party);
+        partyInfoUI.OpenMenu();
+    }
+    public void UpdatePartyInfo() {
+        if (partyInfoUI.isShowing) {
+            partyInfoUI.UpdatePartyInfo();
         }
     }
     #endregion

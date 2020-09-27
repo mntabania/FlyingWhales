@@ -692,6 +692,7 @@ public class Party : ILogFiller, ISavable {
     }
     public void Reset() {
         partySettlement.RemoveParty(this);
+        DatabaseManager.Instance.partyDatabase.RemoveParty(this);
         partyName = string.Empty;
         partyState = PARTY_STATE.None;
         takeQuestSchedule = -1;

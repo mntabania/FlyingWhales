@@ -19,6 +19,7 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI lvlClassLbl;
     [SerializeField] private TextMeshProUGUI plansLbl;
     [SerializeField] private TextMeshProUGUI partyLbl;
+    [SerializeField] private EventLabel partyEventLbl;
     [SerializeField] private LogItem plansLblLogItem;
     [SerializeField] private GameObject leaderIcon;
 
@@ -109,6 +110,7 @@ public class CharacterInfoUI : InfoUIBase {
         currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
         homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
         houseEventLbl.SetOnClickAction(OnClickHomeStructure);
+        partyEventLbl.SetOnClickAction(OnClickParty);
 
         moodMeter.ResetMarks();
         moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
@@ -978,7 +980,16 @@ public class CharacterInfoUI : InfoUIBase {
 
     #region Party
     public void UpdatePartyInfo() {
-        partyLbl.text = (_activeCharacter.partyComponent.currentParty != null ? _activeCharacter.partyComponent.currentParty.partyName : "None");
+        string text = "None";
+        if (activeCharacter.partyComponent.hasParty) {
+            text = $"<link=\"party\">{UtilityScripts.Utilities.ColorizeAndBoldName(activeCharacter.partyComponent.currentParty.partyName)}</link>";
+        }
+        partyLbl.text = text;
+    }
+    private void OnClickParty(object obj) {
+        if (activeCharacter.partyComponent.hasParty) {
+            UIManager.Instance.ShowPartyInfo(activeCharacter.partyComponent.currentParty);
+        }
     }
     #endregion
 }

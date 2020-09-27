@@ -20,7 +20,7 @@ namespace Interrupts {
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log effectLog = base.CreateEffectLog(actor, target);
             if (effectLog.hasValue) {
-                effectLog.AddToFillers(null, actor.partyComponent.currentParty.partyName, LOG_IDENTIFIER.STRING_1);
+                effectLog.AddToFillers(actor.partyComponent.currentParty, actor.partyComponent.currentParty.partyName, LOG_IDENTIFIER.PARTY_1);
                 return effectLog;
             }
             return default;

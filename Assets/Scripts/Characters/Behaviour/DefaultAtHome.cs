@@ -33,7 +33,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 if((character.characterClass.IsCombatant() || character.characterClass.className == "Noble") && !character.partyComponent.hasParty && character.homeSettlement != null) {
                     Party unfullParty = character.homeSettlement.GetFirstUnfullParty();
                     if(unfullParty == null) {
-                        if (GameUtilities.RollChance(10)) { //10
+                        if (GameUtilities.RollChance(10) && character.faction != null) { //10
                             character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Party, character);
                         }
                     } else {
