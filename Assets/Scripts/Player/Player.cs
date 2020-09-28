@@ -276,6 +276,7 @@ public class Player : ILeader, IObjectManipulator {
                 Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Default);
                 previousActiveAction.UnhighlightAffectedTiles();
+                UIManager.Instance.HideSmallInfo(); //This is to hide the invalid messages.
                 Messenger.Broadcast(Signals.PLAYER_NO_ACTIVE_SPELL, previousActiveAction);
             } else {
             	InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);

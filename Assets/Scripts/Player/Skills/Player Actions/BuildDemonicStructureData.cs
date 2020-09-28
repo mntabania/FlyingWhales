@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Obsolete("This is no longer used because structures can now be cast independently.")]
 public class BuildDemonicStructureData : PlayerAction {
     public override SPELL_TYPE type => SPELL_TYPE.BUILD_DEMONIC_STRUCTURE;
     public override string name => "Build Structure";
@@ -15,7 +16,7 @@ public class BuildDemonicStructureData : PlayerAction {
     }
     public override bool IsValid(IPlayerActionTarget target) {
         if (target is HexTile targetHex) {
-            return targetHex.CanBuildDemonicStructure();
+            // return targetHex.CanBuildDemonicStructureHere();
         }
         return false;
     }

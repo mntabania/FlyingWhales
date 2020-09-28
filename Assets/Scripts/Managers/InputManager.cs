@@ -112,14 +112,12 @@ namespace Ruinarch {
                         if (canTarget) {
                             PlayerManager.Instance.player.currentActivePlayerSpell.HighlightAffectedTiles(hoveredTile);
                         } else {
-                            if (hoveredTile == null || PlayerManager.Instance.player.currentActivePlayerSpell.InvalidHighlight(hoveredTile) == false) {
+                            if (hoveredTile == null || PlayerManager.Instance.player.currentActivePlayerSpell.InvalidHighlight(hoveredTile, ref hoverText) == false) {
                                 PlayerManager.Instance.player.currentActivePlayerSpell.UnhighlightAffectedTiles();    
                             }
                         }
-                        if(hoveredPOI != null) { 
-                            if (hoverText != string.Empty) { 
-                                UIManager.Instance.ShowSmallInfo(hoverText); 
-                            } 
+                        if(!string.IsNullOrEmpty(hoverText)) {
+                            UIManager.Instance.ShowSmallInfo(hoverText);
                         } else { 
                             UIManager.Instance.HideSmallInfo(); 
                         } 

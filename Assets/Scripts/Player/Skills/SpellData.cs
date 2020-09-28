@@ -85,8 +85,9 @@ public class SpellData : IPlayerSkill {
     /// Show an invalid highlight.
     /// </summary>
     /// <param name="tile"></param>
+    /// <param name="invalidText"></param>
     /// <returns>True or false (Whether or not this spell showed an invalid highlight)</returns>
-    public virtual bool InvalidHighlight(LocationGridTile tile) { return false; }
+    public virtual bool InvalidHighlight(LocationGridTile tile, ref string invalidText) { return false; }
     #endregion
 
     #region General
@@ -109,7 +110,7 @@ public class SpellData : IPlayerSkill {
     /// <returns>true or false</returns>
     public bool CanTarget(IPointOfInterest poi, ref string hoverText) {
         if (poi.traitContainer.HasTrait("Blessed")) {
-            hoverText = "Blessed characters cannot be targetted.";
+            hoverText = "Blessed characters cannot be targeted.";
             return false;
         }
         //Quick fix only, remove this later
