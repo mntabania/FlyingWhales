@@ -149,9 +149,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         SubscribeListeners();
         EnableColliders();
-        // if (landmarkOnTile != null && landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE) {
+        if (settlementOnTile != null || HasSettlementNeighbour()) { //&& landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.VILLAGE
             CheckIfStructureVisualsAreStillValid();
-        // }
+        }
         _hexTileBiomeEffectTrigger.Initialize();
     }
 
@@ -201,6 +201,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         RACE race = RACE.NONE;
         if (settlementOnTile?.owner != null) {
             race = settlementOnTile.owner.race;
+        } else if (region.structures != null){
+            LocationStructure structure = GetMostImportantStructureOnTile();
+            if (structure.structureType != STRUCTURE_TYPE.WILDERNESS && structure.settlementLocation?.owner != null) {
+                race = structure.settlementLocation.owner.race;    
+            }
         }
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
         List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType, race);
@@ -209,8 +214,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             landmarkOnTile.landmarkVisual.SetIconState(true);
             landmarkOnTile.SetLandmarkPortrait(landmarkData.defaultLandmarkPortrait);
         } else {
-            LandmarkStructureSprite chosenAssets =
-                UtilityScripts.CollectionUtilities.GetRandomElement(landmarkTileSprites);
+            LandmarkStructureSprite chosenAssets = UtilityScripts.CollectionUtilities.GetRandomElement(landmarkTileSprites);
             SetLandmarkTileSprite(chosenAssets);
             landmarkOnTile.landmarkVisual.SetIconState(false);
             landmarkOnTile.SetLandmarkPortrait(chosenAssets.overrideLandmarkPortrait != null ? chosenAssets.overrideLandmarkPortrait : landmarkData.defaultLandmarkPortrait);
@@ -374,11 +378,10 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         }
         return false;
     }
-    public bool HasActiveSettlementNeighbour() {
+    private bool HasSettlementNeighbour() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile neighbour = AllNeighbours[i];
-            if (neighbour.settlementOnTile?.owner != null 
-                && (neighbour.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT)) {
+            if (neighbour.settlementOnTile != null && neighbour.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT) {
                 return true;
             }
         }
@@ -842,7 +845,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     private void MouseOver() {
         if (UIManager.Instance.initialWorldSetupMenu.isPickingPortal) {
-            if (CanBuildDemonicStructure()) {
+            if (CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL)) {
                 SetBordersState(true, true, Color.green);
             } else {
                 SetBordersState(true, true, Color.red);    
@@ -1328,17 +1331,38 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
 
     #region Demonic Structure Building
     private AutoDestroyParticle _buildParticles;
-    public bool CanBuildDemonicStructure() {
-        //Cannot build on settlements and hex tiles with blueprints right now
-        if(settlementOnTile == null && landmarkOnTile == null 
-               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN && _buildParticles == null) {
-            return true;
+    public bool CanBuildDemonicStructureHere(STRUCTURE_TYPE structureType) {
+        if (InnerMapManager.Instance.currentlyShowingLocation == null && structureType != STRUCTURE_TYPE.THE_PORTAL) {
+            //allow portal to be built while no inner map is shown, because portal is build on the overworld
+            return false;
         }
-        return false;
+        if (structureType == STRUCTURE_TYPE.EYE) {
+            return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE); //only 1 eye per region.
+        }
+        if (structureType == STRUCTURE_TYPE.MEDDLER) {
+            return CanBuildDemonicStructureHere() && InnerMapManager.Instance.currentlyShowingLocation != null && !InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.MEDDLER); //only 1 finger at a time.
+        }
+        return CanBuildDemonicStructureHere();
+    }
+    private bool CanBuildDemonicStructureHere() {
+        if (settlementOnTile != null || landmarkOnTile != null) {
+            return false;
+        }
+        if (_buildParticles != null) {
+            return false;
+        }
+        if(elevationType == ELEVATION.WATER || elevationType == ELEVATION.MOUNTAIN) {
+            return false;
+        }
+        return true;
+        // //Cannot build on settlements and hex tiles with blueprints right now
+        // if(settlementOnTile == null && landmarkOnTile == null && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN && _buildParticles == null) {
+        //     return true;
+        // }
+        // return false;
     }
     public void StartBuild(SPELL_TYPE structureType) {
-        _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(),
-            PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
+        _buildParticles = GameManager.Instance.CreateParticleEffectAt(GetCenterLocationGridTile(), PARTICLE_EFFECT.Build_Demonic_Structure).GetComponent<AutoDestroyParticle>();
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));

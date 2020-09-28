@@ -66,8 +66,7 @@ public class WorldMapLandmarkGeneration : MapGenerationComponent {
 						landmarkType = LANDMARK_TYPE.ANCIENT_GRAVEYARD;
 					}
 					LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenTile, landmarkType);
-					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON,
-						chosenTile);
+					LandmarkManager.Instance.CreateNewSettlement(chosenTile.region, LOCATION_TYPE.DUNGEON, chosenTile);
 					if (WorldConfigManager.Instance.isTutorialWorld) {
 						//make sure that chosen tiles for demo are flat and featureless  
 						chosenTile.featureComponent.RemoveAllFeatures(chosenTile);

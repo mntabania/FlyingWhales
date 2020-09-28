@@ -1125,7 +1125,6 @@ public static class Extensions {
         switch (sub) {
             case STRUCTURE_TYPE.WILDERNESS:
             case STRUCTURE_TYPE.POND:
-            case STRUCTURE_TYPE.CEMETERY:
                 return -1;
             case STRUCTURE_TYPE.DWELLING:
                 return 0;

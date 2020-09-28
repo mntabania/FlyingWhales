@@ -684,9 +684,9 @@ namespace Inner_Maps.Location_Structures {
                 } else {
                     RemovePassableTile(tile);
                 }
-                if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
-                    SetSettlementLocation(settlement);
-                }
+                // if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
+                //     SetSettlementLocation(settlement);
+                // }
                 if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.collectionOwner.isPartOfParentRegionMap) {
                     AddOccupiedHexTile(tile.collectionOwner.partOfHextile.hexTileOwner);
                 }

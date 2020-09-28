@@ -178,8 +178,7 @@ public class TileFeatureGeneration : MapGenerationComponent {
 				if (highestHabitabilityTile == null) {
 					continue;
 				}
-				List<HexTile> habitableNeighbours =
-					highestHabitabilityTile.AllNeighbours.Where(t => t.region == region && data.GetHabitabilityValue(t) > 0).ToList();
+				List<HexTile> habitableNeighbours = highestHabitabilityTile.AllNeighbours.Where(t => t.region == region && data.GetHabitabilityValue(t) > 0).ToList();
 				if (habitableNeighbours.Count >= 2) {
 					if (GameUtilities.RollChance(chanceToCreateSettlement)) {
 						List<HexTile> villageTiles = new List<HexTile>();
@@ -199,8 +198,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 							// LandmarkManager.Instance.CreateNewLandmarkOnTile(villageTile, LANDMARK_TYPE.VILLAGE);
 						}
 						createdSettlements++;
-						//when a settlement is built, reduce chance by 20% for the next loop
-						chanceToCreateSettlement -= 20;
+						//when a settlement is built, reduce chance by 10% for the next loop
+						chanceToCreateSettlement -= 15;
 					}
 				}	
 			}

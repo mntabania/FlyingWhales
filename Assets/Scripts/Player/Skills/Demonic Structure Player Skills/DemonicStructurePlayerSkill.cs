@@ -14,7 +14,6 @@ public class DemonicStructurePlayerSkill : SpellData {
     }
     
     public override void ActivateAbility(HexTile targetHex) {
-        string landmarkName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         string question;
         if (targetHex.IsNextToOrPartOfVillage()) {
             question = $"<color=\"red\">Warning: You are building too close to a village!</color>";
@@ -28,7 +27,7 @@ public class DemonicStructurePlayerSkill : SpellData {
     }
     public override bool CanPerformAbilityTowards(HexTile targetHex) {
         if (base.CanPerformAbilityTowards(targetHex)) {
-            return targetHex.CanBuildDemonicStructure();
+            return targetHex.CanBuildDemonicStructureHere(structureType);
         }
         return false;
     }
@@ -44,13 +43,15 @@ public class DemonicStructurePlayerSkill : SpellData {
         color.a = 0.3f;
         TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner, color);
     }
-    public override bool InvalidHighlight(LocationGridTile tile) {
+    public override bool InvalidHighlight(LocationGridTile tile, ref string invalidText) {
         if (tile.collectionOwner.isPartOfParentRegionMap) {
             Color color = Color.red;
             color.a = 0.3f;
             TileHighlighter.Instance.PositionHighlight(tile.collectionOwner.partOfHextile.hexTileOwner, color);
+            invalidText = InvalidMessage(tile);
             return true;    
         }
         return false;
     }
+    protected virtual string InvalidMessage(LocationGridTile tile) { return string.Empty; }
 }

@@ -35,7 +35,7 @@ public class InitialWorldSetupMenu : MonoBehaviour  {
         pickPortalMessage.DOAnchorPosY(110f, 0.5f).SetEase(Ease.OutBack);
     }
     private void OnTileLeftClicked(HexTile hexTile) {
-        if (hexTile.CanBuildDemonicStructure()) {
+        if (hexTile.CanBuildDemonicStructureHere(STRUCTURE_TYPE.THE_PORTAL)) {
             UIManager.Instance.ShowYesNoConfirmation("Build Portal", "Are you sure you want to build your portal here?", () => PlacePortal(hexTile), showCover: true, layer: 50);
         }
     }

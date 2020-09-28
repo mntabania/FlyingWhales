@@ -24,12 +24,31 @@ public class BuildListUI : PopupMenuBase {
     public override void Open() {
         base.Open();
         UpdateBuildList();
+        SubscribeListeners();
         buildToggle.SetIsOnWithoutNotify(true);
     }
     public override void Close() {
         buildToggle.SetIsOnWithoutNotify(false);
+        UnsubscribeListeners();
         base.Close();
     }
+
+    #region Listeners
+    private void SubscribeListeners() {
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.AddListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+    }
+    private void UnsubscribeListeners() {
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
+        Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
+    }
+    private void OnInnerMapOpened(Region region) {
+        UpdateBuildList();
+    }
+    private void OnInnerMapClosed(Region region) {
+        UpdateBuildList();
+    }
+    #endregion
 
     public void Initialize() {
         PopulateBuildingList();
@@ -62,73 +81,36 @@ public class BuildListUI : PopupMenuBase {
         for (int i = 0; i < buildItems.Length; i++) {
             SpellItem item = buildItems[i];
             item.SetInteractableState(CanChooseLandmark(item.spellData.type));
-            if (item.toggle.interactable) {
-                item.transform.SetAsFirstSibling();
-            } else {
-                item.transform.SetAsLastSibling();
-            }
+            // if (item.toggle.interactable) {
+            //     item.transform.SetAsFirstSibling();
+            // } else {
+            //     item.transform.SetAsLastSibling();
+            // }
         }
     }
     private bool CanChooseLandmark(SPELL_TYPE structureType) {
-        if (InnerMapManager.Instance.currentlyShowingLocation == null) {
-            return false;
-        }
+        // if (InnerMapManager.Instance.currentlyShowingLocation == null) {
+        //     return false;
+        // }
         bool canChooseLandmark = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
 
         if (canChooseLandmark) {
             if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Tutorial) {
                 if (structureType == SPELL_TYPE.EYE) {
-                    return
-                        TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
-                        TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
+                    return TutorialManager.Instance.HasTutorialBeenCompletedInCurrentPlaythrough(TutorialManager.Tutorial.Share_An_Intel) ||
+                           TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
                 } else if (structureType == SPELL_TYPE.KENNEL) {
-                    return
-                        TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
-                        TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
+                    return TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
+                           TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
                 }
             }
-            if (structureType == SPELL_TYPE.EYE && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
-                canChooseLandmark = false; //only 1 eye per region.
-            }
-            if (structureType == SPELL_TYPE.MEDDLER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
-                canChooseLandmark = false; //only 1 finger at a time.
-            }
-        }
-        
-        // if (WorldConfigManager.Instance.isTutorialWorld) {
-        //     canChooseLandmark = WorldConfigManager.Instance.availableSpellsInTutorial.Contains(structureType) 
-        //            && PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
-        // } else {
             // if (structureType == SPELL_TYPE.EYE && InnerMapManager.Instance.currentlyShowingLocation.HasStructure(STRUCTURE_TYPE.EYE)) {
             //     canChooseLandmark = false; //only 1 eye per region.
             // }
             // if (structureType == SPELL_TYPE.MEDDLER && PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.MEDDLER)) {
             //     canChooseLandmark = false; //only 1 finger at a time.
             // }
-            // if (canChooseLandmark) {
-            //     canChooseLandmark = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType).CanPerformAbility();
-            // }
-        // }
-
-        // if (canChooseLandmark && WorldConfigManager.Instance.isTutorialWorld) {
-        //     if (structureType == SPELL_TYPE.TORTURE_CHAMBERS) {
-        //         return
-        //             TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Prison) ||
-        //             TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Prison);
-        //     } else if (structureType == SPELL_TYPE.KENNEL) {
-        //         return
-        //             TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Build_A_Kennel) ||
-        //             TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Build_A_Kennel);
-        //     } else if (structureType == SPELL_TYPE.EYE) {
-        //         return
-        //             TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Share_An_Intel) ||
-        //             TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Share_An_Intel);
-        //     } else if (structureType == SPELL_TYPE.DEFILER) {
-        //         return
-        //             TutorialManager.Instance.HasTutorialBeenCompleted(TutorialManager.Tutorial.Create_A_Cultist) ||
-        //             TutorialManager.Instance.IsTutorialCurrentlyActive(TutorialManager.Tutorial.Create_A_Cultist);
-        //     }
-        // }
+        }
         return canChooseLandmark;
     }
 }
