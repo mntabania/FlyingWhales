@@ -200,6 +200,18 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void Butcher() {
+        if (poi is Tombstone tombstone) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.BUTCHER, tombstone.character, activeCharacter);
+            activeCharacter.jobQueue.AddJobInQueue(job);
+        } else if (poi is Character targetCharacter) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.PRODUCE_FOOD, INTERACTION_TYPE.BUTCHER, targetCharacter, activeCharacter);
+            activeCharacter.jobQueue.AddJobInQueue(job);
+        } else {
+            Debug.LogError($"{poi.name} is not a table or a character!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Grid Tile Testing

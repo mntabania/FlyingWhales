@@ -535,7 +535,7 @@ public class CharacterManager : BaseMonoBehaviour {
         }
         return 50;
     }
-    public FoodPile CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null) {
+    public FoodPile CreateFoodPileForPOI(IPointOfInterest poi, LocationGridTile tileOverride = null, bool createLog = true) {
         LocationGridTile targetTile = tileOverride;
         Character deadCharacter = null;
         //determine if target is a character
@@ -587,7 +587,7 @@ public class CharacterManager : BaseMonoBehaviour {
                     poi.traitContainer.RemoveStatusAndStacks(poi, "Abomination Germ");
                 }
 
-                if (deadCharacter != null) {
+                if (deadCharacter != null && createLog) {
                     //add log if food pile came from character
                     Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
                     log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
