@@ -10,6 +10,7 @@ using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using Logs;
 using Ruinarch;
+using Ruinarch.Custom_UI;
 using TMPro;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -122,6 +123,13 @@ public class UIManager : BaseMonoBehaviour {
     [Header("Logs")]
     public LogTagSpriteDictionary logTagSpriteDictionary;
 
+    [Header("Transition Region UI")]
+    public GameObject transitionRegionUIGO;
+    public RuinarchButton rightTransitionBtn;
+    public RuinarchButton leftTransitionBtn;
+    public RuinarchButton upTransitionBtn;
+    public RuinarchButton downTransitionBtn;
+
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for npcSettlement double clicks showing?
     public PopupMenuBase latestOpenedPopup { get; private set; }
     public InfoUIBase latestOpenedInfoUI { get; private set; }
@@ -146,6 +154,7 @@ public class UIManager : BaseMonoBehaviour {
         if (isHoveringTile) {
             currentTileHovered.region?.OnHoverOverAction();
         }
+        UpdateTransitionRegionUI();
     }
     #endregion
 
@@ -1559,6 +1568,76 @@ public class UIManager : BaseMonoBehaviour {
             return logTagSpriteDictionary[tag];
         }
         throw new System.Exception($"No Log tag sprite for tag {tag.ToString()}");
+    }
+    #endregion
+
+    #region Transition Region UI
+    private void UpdateTransitionRegionUI() {
+        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
+            transitionRegionUIGO.SetActive(true);
+            if (InnerMapCameraMove.Instance.HasReachedMinXBound()) {
+                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.West)) {
+                    leftTransitionBtn.gameObject.SetActive(true);
+                } else {
+                    leftTransitionBtn.gameObject.SetActive(false);
+                }
+            } else {
+                leftTransitionBtn.gameObject.SetActive(false);
+            }
+            if (InnerMapCameraMove.Instance.HasReachedMaxXBound()) {
+                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.East)) {
+                    rightTransitionBtn.gameObject.SetActive(true);
+                } else {
+                    rightTransitionBtn.gameObject.SetActive(false);
+                }
+            } else {
+                rightTransitionBtn.gameObject.SetActive(false);
+            }
+            if (InnerMapCameraMove.Instance.HasReachedMinYBound()) {
+                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.South)) {
+                    downTransitionBtn.gameObject.SetActive(true);
+                } else {
+                    downTransitionBtn.gameObject.SetActive(false);
+                }
+            } else {
+                downTransitionBtn.gameObject.SetActive(false);
+            }
+            if (InnerMapCameraMove.Instance.HasReachedMaxYBound()) {
+                if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.North)) {
+                    upTransitionBtn.gameObject.SetActive(true);
+                } else {
+                    upTransitionBtn.gameObject.SetActive(false);
+                }
+            } else {
+                upTransitionBtn.gameObject.SetActive(false);
+            }
+        } else {
+            transitionRegionUIGO.SetActive(false);
+        }
+    }
+    public void OnClickRegionTransition(string direction) {
+        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
+            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
+            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
+            if(region != null) {
+                InnerMapManager.Instance.TryShowLocationMap(region);
+                InnerMapCameraMove.Instance.CenterCameraOnTile(region.coreTile);
+            }
+        }
+    }
+    public void OnHoverRegionTransitionBtn(string direction) {
+        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
+            GridNeighbourDirection dir = (GridNeighbourDirection) System.Enum.Parse(typeof(GridNeighbourDirection), direction);
+            Region region = InnerMapManager.Instance.currentlyShowingLocation.GetNeighbourInDirection(dir);
+            if (region != null) {
+                ShowSmallInfo("Go To " + region.name);
+            }
+        }
+    }
+    public void OnHoverOutRegionTransitionBtn(string direction) {
+        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
+            HideSmallInfo();
+        }
     }
     #endregion
 }

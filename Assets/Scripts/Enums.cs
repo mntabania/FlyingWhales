@@ -829,7 +829,7 @@ public enum POI_STATE {
 }
 
 public enum TARGET_POI { ACTOR, TARGET, }
-public enum GridNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
+public enum GridNeighbourDirection { North, South, West, East, North_West, North_East, South_West, South_East }
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, MORNING, AFTERNOON, EARLY_NIGHT, LATE_NIGHT, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum Food { BERRY, MUSHROOM, RABBIT, RAT }

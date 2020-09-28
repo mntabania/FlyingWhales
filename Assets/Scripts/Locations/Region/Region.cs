@@ -18,6 +18,8 @@ public class Region : ISavable, ILogFiller {
     public int id { get; }
     public string name { get; private set; }
     public string description => GetDescription();
+    public Dictionary<GridNeighbourDirection, Region> neighboursWithDirection { get; private set; }
+    public List<Region> neighbours { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
     public HexTile coreTile { get; private set; }
@@ -56,6 +58,8 @@ public class Region : ISavable, ILogFiller {
         pendingRemoveAwareness = new List<IPointOfInterest>();
         regionFeatureComponent = new RegionFeatureComponent();
         settlementsInRegion = new List<BaseSettlement>();
+        neighbours = new List<Region>();
+        neighboursWithDirection = new Dictionary<GridNeighbourDirection, Region>();
     }
     public Region(HexTile coreTile, RegionTemplate regionTemplate) : this() {
         persistentID = System.Guid.NewGuid().ToString();
@@ -243,23 +247,23 @@ public class Region : ISavable, ILogFiller {
         }
         return borders;
     }
-    public List<Region> AdjacentRegions() {
-        List<Region> adjacent = null;
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            List<Region> regions;
-            if (currTile.TryGetDifferentRegionNeighbours(out regions)) {
-                for (int j = 0; j < regions.Count; j++) {
-                    Region currRegion = regions[j];
-                    if(adjacent == null) { adjacent = new List<Region>(); }
-                    if (!adjacent.Contains(currRegion)) {
-                        adjacent.Add(currRegion);
-                    }
-                }
-            }
-        }
-        return adjacent;
-    }
+    //public List<Region> AdjacentRegions() {
+    //    List<Region> adjacent = null;
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        HexTile currTile = tiles[i];
+    //        List<Region> regions;
+    //        if (currTile.TryGetDifferentRegionNeighbours(out regions)) {
+    //            for (int j = 0; j < regions.Count; j++) {
+    //                Region currRegion = regions[j];
+    //                if(adjacent == null) { adjacent = new List<Region>(); }
+    //                if (!adjacent.Contains(currRegion)) {
+    //                    adjacent.Add(currRegion);
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return adjacent;
+    //}
     public void OnHoverOverAction() { }
     public void OnHoverOutAction() { }
     public void ShowBorders(Color color, bool showGlow = false) {
@@ -322,6 +326,53 @@ public class Region : ISavable, ILogFiller {
             }
         }
         return areas;
+    }
+    public void PopulateNeighbours() {
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            List<Region> regions;
+            if (currTile.TryGetDifferentRegionNeighbours(out regions)) {
+                for (int j = 0; j < regions.Count; j++) {
+                    Region currRegion = regions[j];
+                    if(this != currRegion) {
+                        Vector3 direction = (currRegion.coreTile.transform.position - coreTile.transform.position).normalized;
+                        GridNeighbourDirection neighbourDir = GridNeighbourDirection.East;
+                        if(direction.x > 0 && direction.y > 0) {
+                            neighbourDir = GridNeighbourDirection.North_East;
+                        } else if (direction.x > 0 && direction.y < 0) {
+                            neighbourDir = GridNeighbourDirection.South_East;
+                        } else if (direction.x < 0 && direction.y > 0) {
+                            neighbourDir = GridNeighbourDirection.North_West;
+                        } else if (direction.x < 0 && direction.y < 0) {
+                            neighbourDir = GridNeighbourDirection.South_West;
+                        } else if (direction.x < 0) {
+                            neighbourDir = GridNeighbourDirection.West;
+                        } else if (direction.x > 0) {
+                            neighbourDir = GridNeighbourDirection.East;
+                        } else if (direction.y > 0) {
+                            neighbourDir = GridNeighbourDirection.North;
+                        } else if (direction.y < 0) {
+                            neighbourDir = GridNeighbourDirection.South;
+                        }
+                        if (!neighboursWithDirection.ContainsKey(neighbourDir)) {
+                            neighboursWithDirection.Add(neighbourDir, currRegion);
+                        }
+                        if (neighbours.Contains(currRegion)) {
+                            neighbours.Add(currRegion);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public bool HasNeighbourInDirection(GridNeighbourDirection direction) {
+        return GetNeighbourInDirection(direction) != null;
+    }
+    public Region GetNeighbourInDirection(GridNeighbourDirection direction) {
+        if (neighboursWithDirection.ContainsKey(direction)) {
+            return neighboursWithDirection[direction];
+        }
+        return null;
     }
     #endregion
 

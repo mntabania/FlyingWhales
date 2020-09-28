@@ -321,8 +321,10 @@ public static class Signals {
     #endregion
 
     #region Party
-    public static string CHARACTER_JOINED_PARTY = "OnCharacterJoinedParty"; //Parameters (ICharacter characterThatJoined, NewParty affectedParty)
-    public static string CHARACTER_LEFT_PARTY = "OnCharacterLeftParty"; //Parameters (ICharacter characterThatLeft, NewParty affectedParty)
+    public static string CHARACTER_JOINED_PARTY = "OnCharacterJoinedParty";
+    public static string CHARACTER_LEFT_PARTY = "OnCharacterLeftParty";
+    public static string CHARACTER_LEFT_PARTY_DISBAND = "OnCharacterLeftPartyDisband";
+    public static string DISBAND_PARTY = "OnDisbandParty";
     #endregion
 
     #region Factions

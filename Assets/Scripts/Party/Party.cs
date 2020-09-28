@@ -448,18 +448,21 @@ public class Party : ILogFiller, ISavable {
     private void OnAddMember(Character character) {
         character.partyComponent.SetCurrentParty(this);
         character.behaviourComponent.AddBehaviourComponent(typeof(PartyBehaviour));
+        Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, this, character);
     }
     private void OnRemoveMember(Character character) {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
         character.jobQueue.CancelAllPartyJobs();
         RemoveMemberThatJoinedQuest(character);
+        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, this, character);
     }
     private void OnRemoveMemberOnDisband(Character character) {
         character.partyComponent.SetCurrentParty(null);
         character.behaviourComponent.RemoveBehaviourComponent(typeof(PartyBehaviour));
         character.jobQueue.CancelAllPartyJobs();
         RemoveMemberThatJoinedQuest(character);
+        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY_DISBAND, this, character);
     }
     private List<Character> GetActiveMembers() {
         _activeMembers.Clear();
@@ -632,6 +635,7 @@ public class Party : ILogFiller, ISavable {
     }
     private void OnDisbandParty() {
         isDisbanded = true;
+        Messenger.Broadcast(Signals.DISBAND_PARTY, this);
         DestroyParty();
     }
     #endregion

@@ -103,7 +103,7 @@ public class ExplorationPartyQuest : PartyQuest {
         regionRefForGettingNewStructure = region;
     }
     public void ProcessSettingTargetStructure() {
-        List<Region> adjacentRegions = regionRefForGettingNewStructure.AdjacentRegions();
+        List<Region> adjacentRegions = new List<Region>(regionRefForGettingNewStructure.neighbours);
         LocationStructure target = null;
         if (adjacentRegions != null) {
             adjacentRegions.Add(regionRefForGettingNewStructure);

@@ -37,6 +37,9 @@ public class PartyInfoUI : InfoUIBase {
         base.Initialize();
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateLogsFromSignal);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
+        Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party>(Signals.DISBAND_PARTY, UpdateMembersFromSignal);
 
         homeSettlementNameplate.SetAsButton();
         homeSettlementNameplate.ClearAllOnClickActions();
@@ -123,6 +126,16 @@ public class PartyInfoUI : InfoUIBase {
     private void UpdateLogsFromSignal(Log log) {
         if(isShowing && log.IsInvolved(activeParty)) {
             UpdateLogs();
+        }
+    }
+    private void UpdateMembersFromSignal(Party party, Character member) {
+        if (isShowing && activeParty == party) {
+            UpdateMembers();
+        }
+    }
+    private void UpdateMembersFromSignal(Party party) {
+        if (isShowing && activeParty == party) {
+            UpdateMembers();
         }
     }
     #endregion

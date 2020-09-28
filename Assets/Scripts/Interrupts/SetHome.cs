@@ -348,7 +348,7 @@ namespace Interrupts {
             return null;
         }
         private HexTile GetTerritoryInAdjacentRegions(Region region) {
-            List<Region> adjacentRegions = region.AdjacentRegions();
+            List<Region> adjacentRegions = new List<Region>(region.neighbours);
             if(adjacentRegions != null) {
                 while (adjacentRegions.Count > 0) {
                     Region chosenAdjacentRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
