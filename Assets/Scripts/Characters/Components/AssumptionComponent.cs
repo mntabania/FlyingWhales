@@ -19,6 +19,10 @@ public class AssumptionComponent : CharacterComponent {
         if(HasAlreadyAssumedTo(assumedActionType, assumedCharacter, targetOfAssumedCharacter)) {
             return;
         }
+        if (!owner.canWitness) {
+            //Cannot assume cannot witness characters
+            return;
+        }
         assumptionData.Add(new AssumptionData(assumedActionType, assumedCharacter, targetOfAssumedCharacter));
         Assumption newAssumption = CreateNewAssumption(assumedCharacter, targetOfAssumedCharacter, assumedActionType);
         newAssumption.assumedAction.SetCrimeType();

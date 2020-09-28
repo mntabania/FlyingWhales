@@ -2152,6 +2152,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void ThisCharacterSawAction(ActualGoapNode action) {
+        if (!canWitness) {
+            return;
+        }
         reactionComponent.ReactTo(action, REACTION_STATUS.WITNESSED);
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
