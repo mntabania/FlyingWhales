@@ -480,7 +480,7 @@ public static class Signals {
     public static string FLAW_TRIGGERED_BY_PLAYER = "OnFlawTriggeredByPlayer";
     public static string CHAOS_ORB_SPAWNED = "OnChaosOrbSpawned";
     public static string CHAOS_ORB_DESPAWNED = "OnChaosOrbDespawned";
-    public static string CHAOS_ORB_CLICKED = "OnChaosOrbClicked";
+    public static string CHAOS_ORB_COLLECTED = "OnChaosOrbCollected";
     /// <summary>
     /// Parameters: Chaos Orb
     /// </summary>
