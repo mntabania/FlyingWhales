@@ -622,7 +622,7 @@ public class Party : ILogFiller, ISavable {
     #region Disbandment
     public void DisbandParty() {
         if (isDisbanded) { return; }
-        if(members.Count > 0) {
+        if(members.Count <= 0) {
             Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             for (int i = 0; i < members.Count; i++) {
@@ -635,6 +635,11 @@ public class Party : ILogFiller, ISavable {
     }
     private void OnDisbandParty() {
         isDisbanded = true;
+        if (currentQuest != null) {
+            //unassign party from quest when they disband, if any.
+            currentQuest.SetAssignedParty(null);
+            currentQuest = null;
+        }
         Messenger.Broadcast(Signals.DISBAND_PARTY, this);
         DestroyParty();
     }
