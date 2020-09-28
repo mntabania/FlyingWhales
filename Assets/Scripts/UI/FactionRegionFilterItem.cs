@@ -18,9 +18,9 @@ public class FactionRegionFilterItem : PooledObject {
     }
     public void OnToggle(bool state) {
         if (state) {
-            FactionInfoHubUI.Instance.UnFilterRegion(region);
-        } else {
             FactionInfoHubUI.Instance.FilterRegion(region);
+        } else {
+            FactionInfoHubUI.Instance.UnFilterRegion(region);
         }
     }
 

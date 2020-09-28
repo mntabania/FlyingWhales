@@ -2156,6 +2156,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void ThisCharacterSawAction(ActualGoapNode action) {
+        if (!canWitness) {
+            return;
+        }
         reactionComponent.ReactTo(action, REACTION_STATUS.WITNESSED);
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
@@ -3976,7 +3979,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     }
                 } else {
                     //If character is Troll and job is Move Character, do not perform if target is not in vision, or target is outside and it is not Night time
-                    if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.MOVE_CHARACTER) {
+                    if(this is Troll && currentTopPrioJob.jobType == JOB_TYPE.CAPTURE_CHARACTER) {
                         bool shouldCancelJob = false;
                         if(!marker || (!marker.inVisionCharacters.Contains(currentTopPrioJob.targetPOI as Character) && !carryComponent.IsPOICarried(currentTopPrioJob.targetPOI) && !isAtHomeStructure && !IsInHomeSettlement())) {
                             shouldCancelJob = true;

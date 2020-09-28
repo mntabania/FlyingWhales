@@ -51,7 +51,20 @@ public class Carry : GoapAction {
         return goapActionInvalidity;
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, OtherData[] otherData) {
-        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}:";
+        if (job.jobType == JOB_TYPE.MOVE_CHARACTER) {
+            //If the job is move character and the target can move again, should not, do move character anymore
+            //because when you try to carry a character that can move, it will knock it out first so that it cannot move, the character will end up attacking the other character which we do not want because we use this on paralyzed characters only
+            //We do not unnecessary fighting because it will lead to criminality which we do not intended to do in this case
+            if (target is Character targetCharacter) {
+                if (targetCharacter.canMove) {
+                    costLog += $" +2000(Move Character, target can move again)";
+                    actor.logComponent.AppendCostLog(costLog);
+                    return 2000;
+                }
+            }
+        }
+        costLog += $" +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }

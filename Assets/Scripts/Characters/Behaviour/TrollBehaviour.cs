@@ -33,7 +33,7 @@ public class TrollBehaviour : CharacterBehaviourComponent {
         }
 
         if(character.homeStructure != null) {
-            if (!character.isAtHomeStructure && !character.jobQueue.HasJob(JOB_TYPE.MOVE_CHARACTER)) {
+            if (!character.isAtHomeStructure && !character.jobQueue.HasJob(JOB_TYPE.CAPTURE_CHARACTER)) {
                 if (character.marker) {
                     Character chosenCharacter = null;
                     Character characterThatCanBeKidnapped = null;
@@ -58,7 +58,7 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                         chosenCharacter = characterThatCanBeKidnapped;
                     }
                     if (chosenCharacter != null) {
-                        if (character.jobComponent.TryTriggerMoveCharacter(chosenCharacter, character.homeStructure, out producedJob, true)){
+                        if (character.jobComponent.TryTriggerCaptureCharacter(chosenCharacter, character.homeStructure, out producedJob, true)){
                             return true;
                         }
                     }

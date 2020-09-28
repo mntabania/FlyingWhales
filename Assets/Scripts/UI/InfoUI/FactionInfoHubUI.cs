@@ -28,8 +28,10 @@ public class FactionInfoHubUI : MonoBehaviour {
     [Header("Faction Info UI V2")]
     [SerializeField] private FactionInfoUIV2 factionInfoUI;
 
-    private List<FactionItem> factionItems;
+    public List<FactionItem> factionItems;
     private List<GameObject> factionPaginationGOs;
+
+    //private int lastIndex = 0;
 
     #region getters
     public FactionItem currentSelectedFactionItem => factionItems[factionScrollSnap.CurrentPage];
@@ -57,11 +59,45 @@ public class FactionInfoHubUI : MonoBehaviour {
     private void PopulateInitialFactions() {
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
-            if(faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants) {
+            if(faction.isMajorNonPlayer) {
                 AddFactionItem(faction);
             }
         }
+        if (FactionManager.Instance.vagrantFaction != null) {
+            AddFactionItem(FactionManager.Instance.vagrantFaction);
+        }
+        if(FactionManager.Instance.undeadFaction != null) {
+            AddFactionItem(FactionManager.Instance.undeadFaction);
+        }
         InitialFactionItemStates();
+    }
+    private IEnumerator RepopulateFactions() {
+        //int currentPage = factionScrollSnap.CurrentPage;
+        UtilityScripts.Utilities.DestroyChildren(factionScrollSnapContent);
+        UtilityScripts.Utilities.DestroyChildren(factionScrollSnapPagination);
+        factionPaginationGOs.Clear();
+        factionItems.Clear();
+        factionScrollSnap.ChildObjects = null;
+        yield return null;
+        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+            Faction faction = FactionManager.Instance.allFactions[i];
+            if (faction.isMajorNonPlayer) {
+                FactionItem item = AddFactionItem(faction);
+                SetFactionSelection(item, false);
+            }
+        }
+        if (FactionManager.Instance.vagrantFaction != null) {
+            FactionItem item = AddFactionItem(FactionManager.Instance.vagrantFaction);
+            SetFactionSelection(item, false);
+        }
+        if (FactionManager.Instance.undeadFaction != null) {
+            FactionItem item = AddFactionItem(FactionManager.Instance.undeadFaction);
+            SetFactionSelection(item, false);
+        }
+        //if(currentPage >= factionItems.Count || currentPage < 0) {
+        //    currentPage = 0;
+        //}
+        factionScrollSnap.CurrentPage = 0;
     }
     private void InitializeUI() {
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
@@ -110,19 +146,36 @@ public class FactionInfoHubUI : MonoBehaviour {
 
     #region Listeners
     private void OnFactionCreated(Faction faction) {
-        if(faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants) {
-            AddFactionItem(faction);
+        if (GameManager.Instance.gameHasStarted) {
+            if (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead) {
+                //FactionItem item = AddFactionItem(faction);
+                //SetFactionSelection(item, false);
+
+                StartCoroutine(RepopulateFactions());
+            }
         }
     }
     #endregion
 
     #region Faction Item
-    private void AddFactionItem(Faction faction) {
+    private FactionItem AddFactionItem(Faction faction) {
         if (!HasFactionItem(faction)) {
+            //if(faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead) {
+            //    lastIndex++;
+            //}
             FactionItem factionItem = CreateFactionItem(faction);
             CreateFactionItemPagination();
             factionItems.Add(factionItem);
+
+            //if (faction.factionType.type != FACTION_TYPE.Vagrants && faction.factionType.type != FACTION_TYPE.Undead) {
+            //    int index = factionItems.Count - lastIndex;
+            //    factionItems.Insert(index, factionItem);
+            //} else {
+            //    factionItems.Add(factionItem);
+            //}
+            return factionItem;
         }
+        return null;
     }
     private void RemoveFactionItem(Faction faction) {
         int index = GetFactionItemIndex(faction);

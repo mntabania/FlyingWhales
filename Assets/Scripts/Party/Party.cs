@@ -622,15 +622,16 @@ public class Party : ILogFiller, ISavable {
     #region Disbandment
     public void DisbandParty() {
         if (isDisbanded) { return; }
-        if(members.Count <= 0) {
-            Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
-            log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
+        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
+        log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
+        log.AddLogToDatabase();
+
+        if (members.Count > 0) {
             for (int i = 0; i < members.Count; i++) {
                 OnRemoveMemberOnDisband(members[i]);
             }
-            log.AddLogToDatabase();
+            members.Clear();
         }
-        members.Clear();
         OnDisbandParty();
     }
     private void OnDisbandParty() {

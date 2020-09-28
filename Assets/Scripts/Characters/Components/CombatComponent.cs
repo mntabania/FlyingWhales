@@ -802,7 +802,7 @@ public class CombatComponent : CharacterComponent {
                             key = "Destroy_Suspicious";
                         }
                         break;
-                    case JOB_TYPE.MOVE_CHARACTER:
+                    case JOB_TYPE.CAPTURE_CHARACTER:
                         if (owner is Troll) {
                             key = "Abduct";
                         }
