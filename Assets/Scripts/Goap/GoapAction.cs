@@ -164,6 +164,9 @@ public class GoapAction {
         //}
         IPointOfInterest poiTarget = node.poiTarget;
         if (poiTarget.gridTileLocation == null) {
+            if (poiTarget is TileObject tileObject && tileObject.isBeingCarriedBy?.currentStructure != null) {
+                return tileObject.isBeingCarriedBy.currentStructure;
+            }
             return null;
         }
         return poiTarget.gridTileLocation.structure;

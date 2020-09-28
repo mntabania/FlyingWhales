@@ -36,6 +36,7 @@ public class SeizeComponent {
             poi.isBeingCarriedBy?.UncarryPOI();
             if (poi.gridTileLocation != null) {
                 Messenger.Broadcast(Signals.BEFORE_SEIZING_POI, poi);
+                seizedPOI = poi;
                 _seizedPOISprite = poi.mapObjectVisual.GetSeizeSprite(poi);
                 poi.mapObjectVisual.SetVisual(_seizedPOISprite);
                 if (poi is BaseMapObject baseMapObject) { baseMapObject.OnManipulatedBy(PlayerManager.Instance.player); }
@@ -55,7 +56,7 @@ public class SeizeComponent {
                 Debug.LogError($"Cannot seize. {poi.name} has no tile");
                 return;
             }
-            seizedPOI = poi;
+            
             PrepareToUnseize();
             // PlayerManager.Instance.player.AdjustMana(-manaCost);
             //PlayerUI.Instance.ShowSeizedObjectUI();

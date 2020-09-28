@@ -156,7 +156,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (targetStructure == null) {
             targetStructure = action.GetTargetStructure(this);
             if (targetStructure == null) { throw new System.Exception(
-                $"{actor.name} target structure of action {action.goapName} targeting {poiTarget} is null."); }
+                $"{actor.name} target structure of job {associatedJobType.ToString()} with action {action.goapName} targeting {poiTarget} is null."); }
         }
         if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
