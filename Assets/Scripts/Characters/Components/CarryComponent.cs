@@ -144,7 +144,7 @@ public class CarryComponent : CharacterComponent {
             if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOIDestroyVisualOnly(tileObject, owner);
             } else if (tileObject.mapVisual != null) {
-                tileObject.OnDiscardCarriedObject();
+                tileObject.DestroyMapVisualGameObject();
             }
         }
         if (tileObject.mapVisual != null) {

@@ -34,7 +34,10 @@ public class DestroyData : PlayerAction {
         base.ActivateAbility(targetPOI);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        if (tileObject.gridTileLocation == null && tileObject.isBeingCarriedBy == null) {
+        if (tileObject.gridTileLocation == null) {
+            return false;
+        }
+        if (tileObject.isBeingCarriedBy != null) {
             return false;
         }
         return base.CanPerformAbilityTowards(tileObject);
