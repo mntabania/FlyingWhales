@@ -184,7 +184,7 @@ public class CarryComponent : CharacterComponent {
         }
         character.marker.transform.eulerAngles = Vector3.zero;
         // character.marker.SetNameState(true);
-        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
+        // Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     public bool IsPOICarried(IPointOfInterest poi) {
         return carriedPOI != null && carriedPOI == poi;
