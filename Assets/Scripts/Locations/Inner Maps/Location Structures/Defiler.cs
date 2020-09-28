@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
                 DoorTileObject door = room.GetTileObjectInRoom<DoorTileObject>(); //close door in room
                 door?.Close();
                 if (character.partyComponent.hasParty) {
-                    character.partyComponent.currentParty.RemoveMember(character);
+                    character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(character);
                 }
             }
         }

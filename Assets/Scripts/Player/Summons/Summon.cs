@@ -143,6 +143,9 @@ public class Summon : Character {
             //    SetHome(home); //keep this data with character to prevent errors
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}
+            if (partyComponent.hasParty) {
+                partyComponent.currentParty.RemoveMember(this);
+            }
 
             traitContainer.RemoveAllTraitsAndStatusesByName(this, "Criminal"); //remove all criminal type traits
 

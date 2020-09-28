@@ -268,9 +268,33 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
             yCoord,
             zCoord);
     }
-    private bool HasReachedBounds() {
+    public bool HasReachedBounds() {
         if ((Mathf.Approximately(transform.position.x, MAX_X) || Mathf.Approximately(transform.position.x, MIN_X)) &&
                 (Mathf.Approximately(transform.position.y, MAX_Y) || Mathf.Approximately(transform.position.y, MIN_Y))) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMinXBound() {
+        if (Mathf.Approximately(transform.position.x, MIN_X)) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMaxXBound() {
+        if (Mathf.Approximately(transform.position.x, MAX_X)) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMinYBound() {
+        if (Mathf.Approximately(transform.position.y, MIN_Y)) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMaxYBound() {
+        if (Mathf.Approximately(transform.position.y, MAX_Y)) {
             return true;
         }
         return false;

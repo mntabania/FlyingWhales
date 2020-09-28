@@ -1790,7 +1790,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public bool TriggerVisitDifferentRegion() {
         if (!owner.jobQueue.HasJob(JOB_TYPE.VISIT_DIFFERENT_REGION)) {
             Region chosenRegion = null;
-            List<Region> adjacentRegions = owner.currentRegion.AdjacentRegions();
+            List<Region> adjacentRegions = owner.currentRegion.neighbours;
             if(adjacentRegions != null && adjacentRegions.Count > 0) {
                 chosenRegion = adjacentRegions[UnityEngine.Random.Range(0, adjacentRegions.Count)];
             }

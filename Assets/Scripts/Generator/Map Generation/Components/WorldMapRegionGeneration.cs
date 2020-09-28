@@ -37,6 +37,7 @@ public class WorldMapRegionGeneration : MapGenerationComponent {
 		string summary = "Region Generation Summary: ";
 		for (int i = 0; i < allRegions.Length; i++) {
 			Region region = allRegions[i];
+            region.PopulateNeighbours();
 			summary += $"\n{region.name} - {region.tiles.Count.ToString()}";
 		}
 		Debug.Log(summary);

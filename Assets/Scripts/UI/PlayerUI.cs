@@ -8,7 +8,6 @@ using System.Linq;
 using System;
 using DG.Tweening;
 using Inner_Maps;
-using Ruinarch;
 using Settings;
 using Traits;
 using Tutorial;
@@ -49,9 +48,6 @@ public class PlayerUI : BaseMonoBehaviour {
 
     [Header("Unleash Summon UI")]
     public UnleashSummonUI unleashSummonUI;
-
-    [Header("Skirmish UI")]
-    public GameObject skirmishConfirmationGO;
 
     [Header("Saving/Loading")]
     public Button saveGameButton;
@@ -414,7 +410,7 @@ public class PlayerUI : BaseMonoBehaviour {
         return false;
     }
     public bool IsMajorUIShowing() {
-        return _generalConfirmation.isShowing || newMinionUIGO.activeInHierarchy || 
+        return _generalConfirmation.isShowing /*|| newMinionUIGO.activeInHierarchy*/ || 
                UIManager.Instance.generalConfirmationWithVisual.isShowing || unleashSummonUI.isShowing || 
                UIManager.Instance.yesNoConfirmation.yesNoGO.activeInHierarchy;
     }
@@ -796,27 +792,27 @@ public class PlayerUI : BaseMonoBehaviour {
     }
     #endregion
 
-    #region New Minion
-    [Header("New Minion UI")]
-    [SerializeField] private GameObject newMinionUIGO;
-    [SerializeField] private MinionCard newMinionCard;
-    public void ShowNewMinionUI(Minion minion) {
-        if (IsMajorUIShowing()) {
-            AddPendingUI(() => ShowNewMinionUI(minion));
-            return;
-        }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
-        newMinionCard.SetMinion(minion);
-        newMinionUIGO.SetActive(true);
-    }
-    public void HideNewMinionUI() {
-        newMinionUIGO.SetActive(false);
-        if (!TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
-            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
-        }
-    }
-    #endregion
+    //#region New Minion
+    //[Header("New Minion UI")]
+    //[SerializeField] private GameObject newMinionUIGO;
+    //[SerializeField] private MinionCard newMinionCard;
+    //public void ShowNewMinionUI(Minion minion) {
+    //    if (IsMajorUIShowing()) {
+    //        AddPendingUI(() => ShowNewMinionUI(minion));
+    //        return;
+    //    }
+    //    UIManager.Instance.Pause();
+    //    UIManager.Instance.SetSpeedTogglesState(false);
+    //    newMinionCard.SetMinion(minion);
+    //    newMinionUIGO.SetActive(true);
+    //}
+    //public void HideNewMinionUI() {
+    //    newMinionUIGO.SetActive(false);
+    //    if (!TryShowPendingUI() && !UIManager.Instance.IsObjectPickerOpen()) {
+    //        UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown and object picker is not open, unpause game
+    //    }
+    //}
+    //#endregion
 
     #region Seize
     private void OnSeizePOI(IPointOfInterest poi) {

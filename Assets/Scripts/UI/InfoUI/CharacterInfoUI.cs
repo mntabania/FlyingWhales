@@ -755,7 +755,7 @@ public class CharacterInfoUI : InfoUIBase {
         //When flaw is triggered, leave from party
         if (result == "flaw_effect") {
             if (activeCharacter.partyComponent.hasParty) {
-                activeCharacter.partyComponent.currentParty.RemoveMember(activeCharacter);
+                activeCharacter.partyComponent.currentParty.RemoveMemberThatJoinedQuest(activeCharacter);
             }
             PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).OnExecuteSpellActionAffliction();
         } else {

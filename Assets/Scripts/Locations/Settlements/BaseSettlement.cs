@@ -315,7 +315,7 @@ namespace Locations.Settlements {
             return null;
         }
         public LocationStructure GetRandomStructure() {
-            return CollectionUtilities.GetRandomElement(allStructures);;
+            return CollectionUtilities.GetRandomElement(allStructures);
         }
         public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
             if (structures.ContainsKey(type)) {

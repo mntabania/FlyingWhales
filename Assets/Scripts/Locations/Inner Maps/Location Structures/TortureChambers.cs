@@ -21,7 +21,7 @@ namespace Inner_Maps.Location_Structures {
             if (character.isNormalCharacter) {
                 character.traitContainer.AddTrait(character, "Restrained");
                 if (character.partyComponent.hasParty) {
-                    character.partyComponent.currentParty.RemoveMember(character);
+                    character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(character);
                 }
                 if (character.gridTileLocation != null && !character.gridTileLocation.charactersHere.Contains(character)) {
                     character.gridTileLocation.AddCharacterHere(character);
