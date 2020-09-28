@@ -110,6 +110,15 @@ public class Region : ISavable, ILogFiller {
                 Debug.LogWarning($"Trying to add character at location {name} with ID {charactersAtLocationID} but could not find character with that ID");
             }
         }
+
+        foreach (KeyValuePair<GridNeighbourDirection, string> item in saveDataRegion.neighboursWithDirection) {
+            neighboursWithDirection.Add(item.Key, DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(item.Value));
+        }
+
+        for (int i = 0; i < saveDataRegion.neighbours.Count; i++) {
+            neighbours.Add(DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.neighbours[i]));
+        }
+
         Debug.Log(summary);
     }
     #endregion
