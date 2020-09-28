@@ -1265,7 +1265,7 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     private bool HasSearchCriteria() {
-        return !string.IsNullOrEmpty(notificationSearchField.text) || (notificationFilters.Count > 0 && notificationFilters.Count < DatabaseManager.Instance.mainSQLDatabase.allLogTags.Length);
+        return !string.IsNullOrEmpty(notificationSearchField.text) || (notificationFilters.Count > 0 && notificationFilters.Count < DatabaseManager.Instance.mainSQLDatabase.allLogTags.Count);
     }
     private void UpdateSearchFieldsState() {
         searchFieldsParent.gameObject.SetActive(activeNotificationIDs.Count > 0);
