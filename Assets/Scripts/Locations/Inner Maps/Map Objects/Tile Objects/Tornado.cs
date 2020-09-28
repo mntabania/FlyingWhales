@@ -39,7 +39,8 @@ public class Tornado : MovingTileObject {
     public void SetExpiryDate(GameDate expiry) {
         expiryDate = expiry;
     }
-    public void OnExpire() {
+    public override void Expire() {
+        base.Expire();
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
     }
     public override string ToString() {

@@ -343,10 +343,16 @@ public class Butcher : GoapAction {
 
         tileLocation.structure.RemoveCharacterAtLocation(poiTarget as Character);
         if (poiTarget is Character character) {
-            character.DestroyMarker();
+            if (character.grave != null && character.grave.gridTileLocation != null) {
+                //if character is at a tombstone, destroy tombstone and character marker.
+                character.grave.SetRespawnCorpseOnDestroy(false);
+                character.grave.gridTileLocation.structure.RemovePOI(character.grave);
+            } else {
+                character.DestroyMarker();    
+            }
         }
 
-        FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation);
+        FoodPile foodPile = CharacterManager.Instance.CreateFoodPileForPOI(poiTarget, tileLocation, false);
         if (goapNode.associatedJobType == JOB_TYPE.PRODUCE_FOOD_FOR_CAMP) {
             if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
                 goapNode.actor.jobComponent.TryCreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
@@ -357,11 +363,13 @@ public class Butcher : GoapAction {
                 goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
         }
-        
-        //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
-        if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) 
-           && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter) {
-            goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized");
+        if (foodPile != null) {
+            goapNode.descriptionLog.AddInvolvedObjectManual(foodPile.persistentID);    
+            //if produced human/elf meat and the actor is not a cannibal, make him/her traumatized
+            if((foodPile.tileObjectType == TILE_OBJECT_TYPE.HUMAN_MEAT || foodPile.tileObjectType == TILE_OBJECT_TYPE.ELF_MEAT) 
+               && !goapNode.actor.traitContainer.HasTrait("Cannibal") && goapNode.actor.isNormalCharacter) {
+                goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Traumatized");
+            }
         }
     }
     #endregion

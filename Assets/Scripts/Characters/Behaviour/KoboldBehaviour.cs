@@ -44,7 +44,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
                 //check if a character is frozen in any of the neighbouring areas,
                 //if there are, then create a job to carry then drop them at this character's home/territory
                 Character chosenCharacter = CollectionUtilities.GetRandomElement(frozenCharacters);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MOVE_CHARACTER, INTERACTION_TYPE.DROP,
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP,
                     chosenCharacter, character);
                 if (character.homeStructure != null) {
                     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] {character.homeStructure});    
@@ -125,7 +125,7 @@ public class KoboldBehaviour : CharacterBehaviourComponent {
             for (int i = 0; i < surroundingAreas.Count; i++) {
                 HexTile tile = surroundingAreas[i];
                 List<Character> charactersAtTile = tile.GetAllCharactersInsideHexThatMeetCriteria<Character>(c => c.traitContainer.HasTrait("Frozen") && c.race != RACE.KOBOLD &&
-                                                                                                                  c.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER) == false);
+                                                                                                                  c.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER) == false);
                 if (charactersAtTile != null) {
                     if (characters == null) {
                         characters = new List<Character>();

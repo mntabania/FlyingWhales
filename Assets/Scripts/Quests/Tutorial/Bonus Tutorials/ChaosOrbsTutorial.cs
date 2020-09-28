@@ -44,7 +44,7 @@ namespace Tutorial {
         protected override void ConstructSteps() {
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(
-                    new ClickOnChaosOrbStep()
+                    new CollectChaosOrbStep()
                         .SetObjectsToCenter(() => 
                             PlayerManager.Instance.availableChaosOrbs.Select(x => x.gameObject).ToList(), 
                             IsChaosOrbSelected, CenterChaosOrb

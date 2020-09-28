@@ -630,12 +630,17 @@ public class Party : ILogFiller, ISavable {
             for (int i = 0; i < members.Count; i++) {
                 OnRemoveMemberOnDisband(members[i]);
             }
+            members.Clear();
         }
-        members.Clear();
         OnDisbandParty();
     }
     private void OnDisbandParty() {
         isDisbanded = true;
+        if (currentQuest != null) {
+            //unassign party from quest when they disband, if any.
+            currentQuest.SetAssignedParty(null);
+            currentQuest = null;
+        }
         Messenger.Broadcast(Signals.DISBAND_PARTY, this);
         DestroyParty();
     }

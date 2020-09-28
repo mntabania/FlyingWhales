@@ -228,6 +228,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         UnsubscribeListeners();
     }
+    public void OnDiscardCarriedObject() {
+        //DisableGameObject();
+        Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
+        DestroyMapVisualGameObject();
+        SetPOIState(POI_STATE.INACTIVE);
+        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        UnsubscribeListeners();
+    }
     public virtual void OnPlacePOI() {
         SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
@@ -532,6 +540,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             }
             if (tile != null && tile.structure != null) {
                 tile.structure.RemovePOI(this, removed);    
+            } else if (isBeingCarriedBy != null) {
+                isBeingCarriedBy.UncarryPOI(this, addToLocation: false);
             }
         }
         if (amount < 0) {

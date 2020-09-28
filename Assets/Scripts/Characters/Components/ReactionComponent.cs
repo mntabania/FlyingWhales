@@ -567,8 +567,8 @@ public class ReactionComponent : CharacterComponent {
                         debugLog += "\n-Target cannot perform/move";
                         if (!actor.combatComponent.isInCombat) {
                             debugLog += "\n-Actor is not in combat, will try to bring target back to home";
-                            if (!actor.jobQueue.HasJob(JOB_TYPE.MOVE_CHARACTER)) {
-                                actor.jobComponent.TryTriggerMoveCharacter(targetCharacter, disguisedActor.homeStructure, true);
+                            if (!actor.jobQueue.HasJob(JOB_TYPE.CAPTURE_CHARACTER)) {
+                                actor.jobComponent.TryTriggerCaptureCharacter(targetCharacter, disguisedActor.homeStructure, true);
                             } else {
                                 debugLog += "\n-Actor already has a move character job, will ignore this target";
                             }

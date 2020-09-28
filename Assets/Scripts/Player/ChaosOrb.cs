@@ -89,7 +89,7 @@ public class ChaosOrb : PooledObject {
 		transform.DOPath(new[] {manaContainerPos, controlPointA, controlPointB}, 0.7f, PathType.CubicBezier)
 			.SetEase(Ease.InSine)
 			.OnComplete(GainMana);
-		Messenger.Broadcast(Signals.CHAOS_ORB_CLICKED);
+		Messenger.Broadcast(Signals.CHAOS_ORB_COLLECTED);
 	}
 	private void GainMana() {
 		int randomMana = Random.Range(5, 11);

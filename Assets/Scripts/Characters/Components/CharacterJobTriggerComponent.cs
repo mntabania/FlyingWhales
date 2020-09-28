@@ -648,40 +648,73 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return false;
 	}
-	// public bool TryTriggerMoveCharacterTirednessRecovery(Character target) {
-	// 	if (target.traitContainer.GetNormalTrait<Trait>("Tired", "Exhausted") != null) {
-	// 		bool isSameHome = target.homeNpcSettlement == _owner.homeNpcSettlement;
-	// 		bool isNotHostileFaction = target.faction == _owner.faction
-	// 			|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
-	// 			!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
-	// 		bool isNotEnemy =
-	// 			_owner.RelationshipManager.HasOpinionLabelWithCharacter(target, RelationshipManager.Enemy,
-	// 				RelationshipManager.Rival) == false;
-	// 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
-	// 			return TriggerMoveCharacterToBed(target);
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-	// public bool TryTriggerMoveCharacterHappinessRecovery(Character target) {
-	// 	if (target.traitContainer.GetNormalTrait<Trait>("Bored", "Sulking", "Forlorn", "Lonely") != null) {
-	// 		bool isSameHome = target.homeNpcSettlement == _owner.homeNpcSettlement;
-	// 		bool isNotHostileFaction = target.faction == _owner.faction
-	// 		                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
-	// 		                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;
-	// 		bool isNotEnemy =
-	// 			_owner.RelationshipManager.HasOpinionLabelWithCharacter(target, RelationshipManager.Enemy,
-	// 				RelationshipManager.Rival) == false;
-	// 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
-	// 			return TriggerMoveCharacterForHappinessRecovery(target);
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-	#endregion
+    // public bool TryTriggerMoveCharacterTirednessRecovery(Character target) {
+    // 	if (target.traitContainer.GetNormalTrait<Trait>("Tired", "Exhausted") != null) {
+    // 		bool isSameHome = target.homeNpcSettlement == _owner.homeNpcSettlement;
+    // 		bool isNotHostileFaction = target.faction == _owner.faction
+    // 			|| target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
+    // 			!= FACTION_RELATIONSHIP_STATUS.HOSTILE;
+    // 		bool isNotEnemy =
+    // 			_owner.RelationshipManager.HasOpinionLabelWithCharacter(target, RelationshipManager.Enemy,
+    // 				RelationshipManager.Rival) == false;
+    // 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
+    // 			return TriggerMoveCharacterToBed(target);
+    // 		}
+    // 	}
+    // 	return false;
+    // }
+    // public bool TryTriggerMoveCharacterHappinessRecovery(Character target) {
+    // 	if (target.traitContainer.GetNormalTrait<Trait>("Bored", "Sulking", "Forlorn", "Lonely") != null) {
+    // 		bool isSameHome = target.homeNpcSettlement == _owner.homeNpcSettlement;
+    // 		bool isNotHostileFaction = target.faction == _owner.faction
+    // 		                           || target.faction.GetRelationshipWith(_owner.faction).relationshipStatus
+    // 		                           != FACTION_RELATIONSHIP_STATUS.HOSTILE;
+    // 		bool isNotEnemy =
+    // 			_owner.RelationshipManager.HasOpinionLabelWithCharacter(target, RelationshipManager.Enemy,
+    // 				RelationshipManager.Rival) == false;
+    // 		if ((isSameHome || isNotHostileFaction) && isNotEnemy) {
+    // 			return TriggerMoveCharacterForHappinessRecovery(target);
+    // 		}
+    // 	}
+    // 	return false;
+    // }
+    #endregion
 
-	#region Suicide
-	public GoapPlanJob TriggerSuicideJob() {
+    #region Capture Character
+    public bool TryTriggerCaptureCharacter(Character targetCharacter, LocationStructure dropLocationStructure, bool doNotRecalculate = false) {
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP,
+                targetCharacter, owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
+            job.SetDoNotRecalculate(doNotRecalculate);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool TryTriggerCaptureCharacter(Character targetCharacter, LocationStructure dropLocationStructure, out JobQueueItem producedJob, bool doNotRecalculate = false) {
+        producedJob = null;
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP,
+                targetCharacter, owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure });
+            job.SetDoNotRecalculate(doNotRecalculate);
+            producedJob = job;
+            return true;
+        }
+        return false;
+    }
+    public bool TryTriggerCaptureCharacter(Character targetCharacter, LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
+        if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.CAPTURE_CHARACTER)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CAPTURE_CHARACTER, INTERACTION_TYPE.DROP, targetCharacter, owner);
+            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile });
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    #endregion
+
+    #region Suicide
+    public GoapPlanJob TriggerSuicideJob() {
 		if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, 
 				new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, 

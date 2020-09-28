@@ -26,6 +26,12 @@ public class PartyDatabase {
             throw new System.NullReferenceException("Trying to get a party from the database with id " + id + " but the party is not loaded");
         }
     }
+    public Party GetPartyByPersistentIDSafe(string id) {
+        if (allParties.ContainsKey(id)) {
+            return allParties[id];
+        }
+        return null;
+    }
     public Party GetPartyByName(string name) {
         foreach (Party party in allParties.Values) {
             if(party.partyName == name) {

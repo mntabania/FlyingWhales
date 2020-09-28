@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
 
 public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
@@ -80,6 +81,7 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
     private void GoToRandomTileInRadius() {
         List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
+        Assert.IsNotNull(chosen, $"Tornado at {gridTileLocation} cannot find a tile to go to!");
         GoTo(chosen);
     }
 
@@ -143,14 +145,8 @@ public sealed class TornadoMapObjectVisual : MovingMapObjectVisual<TileObject> {
         StopTornadoParticle();
         SchedulingManager.Instance.RemoveSpecificEntry(_expiryKey);
         _tornado.Expire();
-        GameManager.Instance.StartCoroutine(ExpireCoroutine());
-    }
-    private IEnumerator ExpireCoroutine() {
-        yield return new WaitForSeconds(1f);
         ObjectPoolManager.Instance.DestroyObject(this);
-        _tornado.OnExpire();
     }
-
     #region Object Pooling
     public override void Reset() {
         base.Reset();
