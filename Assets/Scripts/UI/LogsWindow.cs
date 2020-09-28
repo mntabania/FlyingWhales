@@ -34,6 +34,10 @@ public class LogsWindow : MonoBehaviour {
     private void OnDisable() {
         filterGO.gameObject.SetActive(false);
     }
+    private void OnDestroy() {
+        SharedSearch = string.Empty;
+        SharedEnabledFilters = null;
+    }
     public void Initialize() {
         logHistoryItems = new List<LogHistoryItem>();
         daySeparators = new List<DaySeparator>();

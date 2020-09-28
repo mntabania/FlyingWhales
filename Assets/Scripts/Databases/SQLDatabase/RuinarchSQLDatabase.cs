@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using Logs;
 using UtilityScripts;
 using Debug = UnityEngine.Debug;
@@ -15,7 +16,7 @@ namespace Databases.SQLDatabase {
         private const int Log_Row_Limit = 2000;
         private string BareBonesLogFields = "persistentID, date_tick, date_day, date_month, date_year, logText, category, key, file, involvedObjects, rawText";
 
-        public LOG_TAG[] allLogTags { get; private set; }
+        public List<LOG_TAG> allLogTags { get; private set; }
         
         #region Clean Up
         ~RuinarchSQLDatabase() {
@@ -45,8 +46,8 @@ namespace Databases.SQLDatabase {
             //so it is essential that if game came from save data, that it's relevant data be placed inside the Temp folder.
             OpenConnection();
 
-            allLogTags = CollectionUtilities.GetEnumValues<LOG_TAG>();
-            for (int i = 0; i < allLogTags.Length; i++) {
+            allLogTags = CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
+            for (int i = 0; i < allLogTags.Count; i++) {
                 LOG_TAG logTag = allLogTags[i];
                 BareBonesLogFields = $"{BareBonesLogFields}, {logTag.ToString()}";
             }
@@ -196,38 +197,17 @@ namespace Databases.SQLDatabase {
             timer.Stop();
             Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         }
-        /// <summary>
-        /// Get List of logs that mentions a specific ID.
-        /// NOTE: some data in the returned Log is not filled out. Like fillers, category, key, etc. because I assume that they are no longer needed.
-        /// </summary>
-        /// <param name="persistentID">The ID of object to query</param>
-        /// <returns>List of logs</returns>
-        public List<Log> GetLogsMentioning(string persistentID) {
-            SQLiteCommand command = dbConnection.CreateCommand();
-            command.CommandType = CommandType.Text;
-            command.CommandText = $"SELECT {BareBonesLogFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%' ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
-            IDataReader dataReader = command.ExecuteReader();
-            List<Log> logs = new List<Log>();
-            while (dataReader.Read()) {
-                Log log = ConvertToBareBonesLog(dataReader);
-                logs.Add(log);
-            }
-            dataReader.Close();
-            return logs;
-        }
         public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags, int limit = -1) {
 #if UNITY_EDITOR
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #endif
+            //if no tags were passed then default to use all tags instead. Since we found it weird that if not filters were checked it would result in no logs being shown.
+            var tagsToUse = tags.Count > 0 ? tags : allLogTags;
+            
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
-            if (tags.Count == 0) {
-                //if no tags were passed then return an empty list, since all logs should have tags
-                //so removing all tags should remove all logs
-                return null;
-            }
-            
+
             string commandStr = $"SELECT {BareBonesLogFields} FROM Logs WHERE involvedObjects LIKE '%{persistentID}%'";
             //append string search condition
             if (!string.IsNullOrEmpty(textLike)) {
@@ -235,14 +215,14 @@ namespace Databases.SQLDatabase {
                 commandStr = $"{commandStr} AND rawText LIKE '%{textLike}%'";
             }
             //append tags condition.
-            if (tags.Count > 0) {
+            if (tagsToUse.Count > 0) {
                 commandStr = $"{commandStr} AND (";
-                for (int i = 0; i < tags.Count; i++) {
-                    LOG_TAG tag = tags[i];
+                for (int i = 0; i < tagsToUse.Count; i++) {
+                    LOG_TAG tag = tagsToUse[i];
                     commandStr = $"{commandStr} {tag.ToString()} = '1'";
-                    if (i + 1 < tags.Count) {
+                    if (i + 1 < tagsToUse.Count) {
                         commandStr = $"{commandStr} OR";
-                    }else if (i + 1 == tags.Count) {
+                    }else if (i + 1 == tagsToUse.Count) {
                         commandStr = $"{commandStr})";
                     }
                 }
@@ -271,14 +251,12 @@ namespace Databases.SQLDatabase {
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #endif
+            //if no tags were passed then default to use all tags instead. Since we found it weird that if not filters were checked it would result in no logs being shown.
+            var tagsToUse = tags.Count > 0 ? tags : allLogTags;
+            
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
-            if (tags.Count == 0) {
-                //if no tags were passed then return an empty list, since all logs should have tags
-                //so removing all tags should remove all logs
-                return null;
-            }
-            
+
             string commandStr = $"SELECT persistentID FROM Logs WHERE(";
             for (int i = 0; i < pool.Count; i++) {
                 string idFromPool = pool[i];
@@ -296,14 +274,14 @@ namespace Databases.SQLDatabase {
             }
             
             //append tags condition.
-            if (tags.Count > 0) {
+            if (tagsToUse.Count > 0) {
                 commandStr = $"{commandStr} AND (";
-                for (int i = 0; i < tags.Count; i++) {
-                    LOG_TAG tag = tags[i];
+                for (int i = 0; i < tagsToUse.Count; i++) {
+                    LOG_TAG tag = tagsToUse[i];
                     commandStr = $"{commandStr} {tag.ToString()} = '1'";
-                    if (i + 1 < tags.Count) {
+                    if (i + 1 < tagsToUse.Count) {
                         commandStr = $"{commandStr} OR";
-                    }else if (i + 1 == tags.Count) {
+                    }else if (i + 1 == tagsToUse.Count) {
                         commandStr = $"{commandStr})";
                     }
                 }

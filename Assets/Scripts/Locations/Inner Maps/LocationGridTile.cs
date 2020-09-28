@@ -1532,6 +1532,13 @@ namespace Inner_Maps {
         #region Blueprints
         public void SetHasBlueprint(bool hasBlueprint) {
             this.hasBlueprint = hasBlueprint;
+            if (collectionOwner.isPartOfParentRegionMap) {
+                if (hasBlueprint) {
+                    collectionOwner.partOfHextile.hexTileOwner.AddBlueprint();
+                } else {
+                    collectionOwner.partOfHextile.hexTileOwner.RemoveBlueprint();
+                }
+            }
         }
         #endregion
 

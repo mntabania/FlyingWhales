@@ -90,6 +90,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
     private int _isBeingDefendedCount;
     private HexTileBiomeEffectTrigger _hexTileBiomeEffectTrigger;
+    /// <summary>
+    /// Number of blueprint LocationGridTiles on this.
+    /// NOTE: This is not saved because this is filled out by <see cref="LocationGridTile.SetHasBlueprint"/>
+    /// </summary>
+    private int _blueprintsOnTile;
 
     //Components
     public HexTileSpellsComponent spellsComponent { get; private set; }
@@ -1345,6 +1350,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return CanBuildDemonicStructureHere();
     }
     private bool CanBuildDemonicStructureHere() {
+        if (HasBlueprintOnTile()) {
+            return false;
+        }
         if (settlementOnTile != null || landmarkOnTile != null) {
             return false;
         }
@@ -1865,6 +1873,18 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     }
     public bool IsAtTargetDestination(Character character) {
         return character.gridTileLocation != null && character.gridTileLocation.collectionOwner.isPartOfParentRegionMap && character.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == this;
+    }
+    #endregion
+
+    #region Blueprints
+    public void AddBlueprint() {
+        _blueprintsOnTile++;
+    }
+    public void RemoveBlueprint() {
+        _blueprintsOnTile++;
+    }
+    public bool HasBlueprintOnTile() {
+        return _blueprintsOnTile > 0;
     }
     #endregion
 }
