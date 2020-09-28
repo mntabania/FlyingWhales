@@ -291,6 +291,7 @@ namespace Locations.Settlements {
             if (!structures[structure.structureType].Contains(structure)) {
                 structures[structure.structureType].Add(structure);
                 allStructures.Add(structure);
+                structure.SetSettlementLocation(this);
                 OnStructureAdded(structure);
             }
         }
@@ -403,6 +404,9 @@ namespace Locations.Settlements {
 
         #region Tiles
         public void AddTileToSettlement(HexTile tile) {
+            if (tile.settlementOnTile != null) {
+                return;
+            }
             if (tiles.Contains(tile) == false) {
                 tiles.Add(tile);
                 tile.SetSettlementOnTile(this);
