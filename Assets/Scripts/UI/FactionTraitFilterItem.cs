@@ -18,9 +18,9 @@ public class FactionTraitFilterItem : PooledObject {
     }
     public void OnToggle(bool state) {
         if (state) {
-            FactionInfoHubUI.Instance.UnFilterTrait(traitName);
-        } else {
             FactionInfoHubUI.Instance.FilterTrait(traitName);
+        } else {
+            FactionInfoHubUI.Instance.UnFilterTrait(traitName);
         }
     }
 

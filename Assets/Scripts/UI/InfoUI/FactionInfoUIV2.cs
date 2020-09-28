@@ -44,7 +44,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
     [SerializeField] private RuinarchToggle aliveToggle;
     [SerializeField] private GameObject traitFilterItemPrefab;
     [SerializeField] private GameObject regionFilterItemPrefab;
-    [SerializeField] private ScrollRect traitFilterScrollRect;
+    [SerializeField] private ScrollRect traitFilterColumn1ScrollRect;
+    [SerializeField] private ScrollRect traitFilterColumn2ScrollRect;
     [SerializeField] private ScrollRect regionFilterScrollRect;
     [SerializeField] private TMP_InputField searchTraitFilterField;
     [SerializeField] private TMP_InputField searchRegionFilterField;
@@ -55,6 +56,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     private List<string> filteredTraits; //Characters must NOT have the traits inside this list
     private List<Region> filteredRegions;
+    private int traitFilterHalfCount;
 
     public Faction activeFaction { get; private set; }
 
@@ -331,11 +333,14 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private bool ShouldCharacterNameplateBeShown(Character character) {
-        return !IsCharacterFilteredByTraits(character) && !IsCharacterFilteredByRegion(character) && !IsCharacterFilteredByDeath(character);
+        return IsCharacterFilteredByTraits(character) && IsCharacterFilteredByRegion(character) && !IsCharacterFilteredByDeath(character);
     }
     private bool IsCharacterFilteredByTraits(Character character) {
-        //If character has one of the filtered traits, it means that the nameplate item of the character must not show
-        //The list of the filtered traits contains the traits that the player does NOT want to show
+        //If character has one of the filtered traits, it means that the nameplate item of the character must show
+        //The list of the filtered traits contains the traits that the player does want to show
+        if(filteredTraits.Count <= 0) {
+            return true;
+        }
         for (int i = 0; i < filteredTraits.Count; i++) {
             if (character.traitContainer.HasTrait(filteredTraits[i])) {
                 return true;
@@ -344,8 +349,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
         return false;
     }
     private bool IsCharacterFilteredByRegion(Character character) {
-        //If character's home region is in one of the filtered regions, it means that the nameplate item of the character must not show
-        //The list of the filtered regions contains the traits that the player does NOT want to show
+        //If character's home region is in one of the filtered regions, it means that the nameplate item of the character must show
+        //The list of the filtered regions contains the traits that the player does want to show
+        if (filteredRegions.Count <= 0) {
+            return true;
+        }
         for (int i = 0; i < filteredRegions.Count; i++) {
             if (character.homeRegion == filteredRegions[i]) {
                 return true;
@@ -362,6 +370,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         return false;
     }
     private void PopulateFilterTraits() {
+        traitFilterHalfCount = Mathf.RoundToInt(TraitManager.Instance.unhiddenTraitsNotStatuses.Count * 0.5f);
         for (int i = 0; i < TraitManager.Instance.unhiddenTraitsNotStatuses.Count; i++) {
             string traitName = TraitManager.Instance.unhiddenTraitsNotStatuses[i];
             CreateFactionTraitFilterItem(traitName);
@@ -389,7 +398,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     }
     private void ResetFilterTraits() {
         for (int i = 0; i < _traitFilterItems.Count; i++) {
-            _traitFilterItems[i].toggle.isOn = true;
+            _traitFilterItems[i].toggle.isOn = false;
         }
     }
     public void AddFilteredRegion(Region region) {
@@ -408,7 +417,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     }
     private void ResetFilterRegions() {
         for (int i = 0; i < _regionFilterItems.Count; i++) {
-            _regionFilterItems[i].toggle.isOn = true;
+            _regionFilterItems[i].toggle.isOn = false;
         }
     }
     private void OnSearchTraitFilterValueChanged(string text) {
@@ -446,7 +455,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private FactionTraitFilterItem CreateFactionTraitFilterItem(string traitName) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(traitFilterItemPrefab.name, Vector3.zero, Quaternion.identity, traitFilterScrollRect.content);
+        Transform content = traitFilterColumn1ScrollRect.content;
+        if(_traitFilterItems.Count > traitFilterHalfCount) {
+            content = traitFilterColumn2ScrollRect.content;
+        }
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(traitFilterItemPrefab.name, Vector3.zero, Quaternion.identity, content);
         FactionTraitFilterItem item = go.GetComponent<FactionTraitFilterItem>();
         item.SetTraitName(traitName);
         _traitFilterItems.Add(item);
