@@ -73,9 +73,14 @@ public class TakeResource : GoapAction {
                 costLog += $" +{cost}(Obtain Personal Food, not Elf/Human Meat)";
             }
         } else {
-            // int currCost = UtilityScripts.Utilities.Rng.Next(400, 431);
-            cost = 400;
-            costLog += $" +{cost}(not Obtain Personal Food)";
+            if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && 
+                settlement.locationType == LOCATION_TYPE.SETTLEMENT && settlement != actor.homeSettlement) {
+                cost = 2000;
+                costLog += $" +{cost}(Resource pile is at another village)";
+            } else {
+                cost = 400;
+                costLog += $" +{cost}(not Obtain Personal Food)";    
+            }
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;
