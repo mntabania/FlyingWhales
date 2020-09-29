@@ -1000,6 +1000,7 @@ public class SaveDataCombatData : SaveData<CombatData> {
         isLethal = data.isLethal;
         if(data.connectedAction != null) {
             connectedAction = data.connectedAction.persistentID;
+            SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(data.connectedAction);
         }
     }
 

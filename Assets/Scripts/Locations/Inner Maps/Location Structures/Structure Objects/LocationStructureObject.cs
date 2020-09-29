@@ -300,7 +300,8 @@ public class LocationStructureObject : PooledObject {
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_PLACED, structure);
     }
     public void OnLoadStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, SaveDataLocationStructure saveData) {
-        if (!(structure is DemonicStructure)) { //if structure is demonic structure then do not Register walls, since Loaded tile objects will become its walls
+        if (structure is ManMadeStructure && structure.structureType != STRUCTURE_TYPE.RUINED_ZOO) {
+            //Only register walls if structure is a man made structure, this is because demonic structures and the ruined zoo uses the loaded block wall objects. 
             RegisterWalls(innerMap, structure);
         }
         if (saveData is SaveDataManMadeStructure saveDataManMadeStructure && saveDataManMadeStructure.structureConnectors != null) {

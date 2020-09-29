@@ -119,6 +119,12 @@ namespace Inner_Maps.Location_Structures {
                     structureRoom.LoadReferences(saveDataStructureRoom);
                 }    
             }
+            if (saveDataLocationStructure.tileObjectDamageContributors != null) {
+                for (int i = 0; i < saveDataLocationStructure.tileObjectDamageContributors.Count; i++) {
+                    string damageContributorID = saveDataLocationStructure.tileObjectDamageContributors[i];
+                    objectsThatContributeToDamage.Add(DatabaseManager.Instance.tileObjectDatabase.GetTileObjectByPersistentID(damageContributorID));
+                }
+            }
         }
         public virtual void LoadAdditionalReferences(SaveDataLocationStructure saveDataLocationStructure) {
             if (saveDataLocationStructure.structureRoomSaveData != null && rooms != null) {
