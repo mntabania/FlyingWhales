@@ -25,6 +25,8 @@ public class SaveDataPlayer {
     public LoadoutSaveData lichLoadoutSaveData;
     public LoadoutSaveData secondWorldSaveData;
 
+    public bool moreLoadoutOptions;
+
     public void InitializeInitialData() {
         gameVersion = Application.version;
         exp = 10000;
@@ -437,6 +439,9 @@ public class SaveDataPlayer {
             secondWorldSaveData.ClearExtraStructures();
             secondWorldSaveData.ClearExtraMiscs();
         }
+    }
+    public void SetMoreLoadoutOptions(bool state) {
+        moreLoadoutOptions = state;
     }
     #endregion
 

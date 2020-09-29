@@ -84,7 +84,7 @@ public class SkillSlotItem : MonoBehaviour {
     private void UpdateFixedIcon() {
         fixedIcon.gameObject.SetActive(isFixed);
     }
-    private void ClearData() {
+    public void ClearData() {
         SetSkillSlotItem(archetype, null, isFixed);
     }
     private void UpdateText() {
