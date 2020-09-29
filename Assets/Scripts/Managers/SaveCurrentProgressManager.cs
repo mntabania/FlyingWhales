@@ -73,7 +73,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         if (string.IsNullOrEmpty(fileName)) {
             //if no file name was provided
             string timeStampStr = $"{currentSaveDataProgress.timeStamp.ToString("yyyy-MM-dd_HHmm")}";
-            fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.day.ToString()}_{GameManager.ConvertTickToTime(currentSaveDataProgress.tick, "-")}_{timeStampStr}";
+            fileName = $"{worldMapSave.worldType.ToString()}_{currentSaveDataProgress.day.ToString()}_{GameManager.ConvertTickToTime(currentSaveDataProgress.tick, "-")}({timeStampStr})";
         }
 
         //write to file
