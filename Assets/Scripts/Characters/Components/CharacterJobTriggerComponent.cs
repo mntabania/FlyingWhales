@@ -1887,6 +1887,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
     }
+    public void TriggerPersonalBuryInActivePartyJob(Character targetCharacter) {
+        if (owner.gridTileLocation != null && !owner.jobQueue.HasJob(JOB_TYPE.BURY_IN_ACTIVE_PARTY, targetCharacter)) {
+            GoapPlanJob buryJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BURY_IN_ACTIVE_PARTY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter, owner);
+            buryJob.SetStillApplicableChecker(JobManager.Bury_Applicability);
+            owner.jobQueue.AddJobInQueue(buryJob);
+        }
+    }
     #endregion
 
     #region Go To

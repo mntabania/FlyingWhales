@@ -24,6 +24,9 @@ public class BuryCharacter : GoapAction {
     public override LocationStructure GetTargetStructure(ActualGoapNode node) {
         Character actor = node.actor;
         OtherData[] otherData = node.otherData;
+        if(node.associatedJobType == JOB_TYPE.BURY_IN_ACTIVE_PARTY) {
+            return actor.currentStructure;
+        }
         if (otherData != null && otherData.Length >= 1 && otherData[0].obj is LocationStructure) {
             return otherData[0].obj as LocationStructure;
         } else {
@@ -31,6 +34,19 @@ public class BuryCharacter : GoapAction {
         }
     }
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
+        if (goapNode.associatedJobType == JOB_TYPE.BURY_IN_ACTIVE_PARTY) {
+            Character actor = goapNode.actor;
+            if (actor.canMove && !actor.movementComponent.isStationary) {
+                List<LocationGridTile> choices = actor.gridTileLocation.GetTilesInRadius(3, includeImpassable: false);
+                if (choices != null && choices.Count > 0) {
+                    return choices[UtilityScripts.Utilities.Rng.Next(0, choices.Count)];
+                } else {
+                    return actor.gridTileLocation;
+                }
+            } else {
+                return actor.gridTileLocation;
+            }
+        }
         if (goapNode.otherData != null && goapNode.otherData.Length == 2 && goapNode.otherData[1].obj is LocationGridTile) {
             return goapNode.otherData[1].obj as LocationGridTile;
         } else {

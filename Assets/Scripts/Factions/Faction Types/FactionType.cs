@@ -73,6 +73,15 @@ namespace Factions.Faction_Types {
             }
             return CRIME_SEVERITY.Unapplicable;
         }
+        public CRIME_SEVERITY GetCrimeSeverity(CRIME_TYPE crimeType) {
+            if (hasCrimes) {
+                if (crimes.ContainsKey(crimeType)) {
+                    return crimes[crimeType];
+                }
+                return CRIME_SEVERITY.None;
+            }
+            return CRIME_SEVERITY.Unapplicable;
+        }
         public void AddCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
             if (!crimes.ContainsKey(type)) {
                 crimes.Add(type, severity);

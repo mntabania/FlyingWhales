@@ -10,7 +10,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
         producedJob = null;
-        bool hasJob = false;
+        bool hasJob = true;
         Party party = character.partyComponent.currentParty;
         if (party.isActive) {
             log += $"\n-Party is active, will try to do party behaviour";
@@ -23,12 +23,11 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                         character.needsComponent.CheckExtremeNeedsWhileInActiveParty();
 
                         hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
-                        hasJob = true;
                     } else {
                         LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(party.meetingPlace.passableTiles);
                         hasJob = character.jobComponent.CreateGoToWaitingJob(targetTile, out producedJob);
-                        hasJob = true;
                     }
+                    hasJob = true;
                 }
             } else {
                 if (party.membersThatJoinedQuest.Contains(character)) {
@@ -42,14 +41,12 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     } else {
                                         party.SetPartyState(PARTY_STATE.Working);
                                     }
-                                    hasJob = true;
                                     return hasJob;
                                     //hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                                 } else {
                                     LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
                                     if(tile != null) {
                                         hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-                                        hasJob = true;
                                     }
                                 }
                             }
@@ -61,12 +58,10 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     character.needsComponent.CheckExtremeNeedsWhileInActiveParty();
 
                                     hasJob = TavernBehaviour(character, party, out producedJob);
-                                    hasJob = true;
                                 } else {
                                     LocationGridTile tile = UtilityScripts.CollectionUtilities.GetRandomElement(party.targetRestingTavern.passableTiles);
                                     if (tile != null) {
                                         hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-                                        hasJob = true;
                                     }
                                 }
                             } else if (party.targetCamp != null) {
@@ -76,11 +71,9 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                     character.needsComponent.CheckExtremeNeedsWhileInActiveParty();
 
                                     hasJob = CampBehaviour(character, party, out producedJob);
-                                    hasJob = true;
                                 } else {
                                     LocationGridTile targetTile = UtilityScripts.CollectionUtilities.GetRandomElement(party.targetCamp.locationGridTiles);
                                     hasJob = character.jobComponent.CreatePartyGoToJob(targetTile, out producedJob);
-                                    hasJob = true;
                                 }
                             }
                         } else if (party.partyState == PARTY_STATE.Working) {
@@ -93,10 +86,10 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                                 } else {
                                     LocationGridTile tile = party.targetDestination.GetRandomPassableTile();
                                     hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
-                                    hasJob = true;
                                 }
                             }
                         }
+                        hasJob = true;
                     }
                 }
             }
@@ -104,7 +97,8 @@ public class PartyBehaviour : CharacterBehaviourComponent {
         if (producedJob != null) {
             producedJob.SetIsThisAPartyJob(true);
         }
-        return hasJob;
+        //return hasJob;
+        return true;
     }
 
     private bool CampBehaviour(Character character, Party party, out JobQueueItem producedJob) {
