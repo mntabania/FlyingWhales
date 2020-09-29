@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UnityEngine.Serialization;
+using UtilityScripts;
 
 public class CharacterInfoUI : InfoUIBase {
     
@@ -58,6 +59,9 @@ public class CharacterInfoUI : InfoUIBase {
     [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
     [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
     [SerializeField] private UIHoverPosition relationshipNameplateItemPosition;
+    [SerializeField] private RelationshipFilterItem[] relationFilterItems;
+    [SerializeField] private GameObject relationFiltersGO;
+    [SerializeField] private Toggle allRelationshipFiltersToggle;
     
     [Space(10)] [Header("Mood")] 
     [SerializeField] private MarkedMeter moodMeter;
@@ -79,6 +83,9 @@ public class CharacterInfoUI : InfoUIBase {
     private List<string> combatModes;
     private List<string> triggerFlawPool;
     private List<LogFiller> triggerFlawLogFillers;
+    private bool aliveRelationsOnly;
+    private List<RELATIONS_FILTER> filters;
+    private RELATIONS_FILTER[] allFilters;
 
     internal override void Initialize() {
         base.Initialize();
@@ -143,6 +150,8 @@ public class CharacterInfoUI : InfoUIBase {
 
         _logsWindow.Initialize();
 
+        InitializeRelationships();
+        
         afflictions = new List<SpellData>();
         triggerFlawPool = new List<string>();
         triggerFlawLogFillers = new List<LogFiller>();
@@ -448,8 +457,13 @@ public class CharacterInfoUI : InfoUIBase {
     //    }
     //}
     private void OnCharacterDied(Character character) {
-        if (this.isShowing && activeCharacter.id == character.id) {
-            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        if (isShowing) {
+            if (activeCharacter.id == character.id) {
+                InnerMapCameraMove.Instance.CenterCameraOn(null);    
+            }
+            if (activeCharacter.relationshipContainer.HasRelationshipWith(character)) {
+                UpdateRelationships();
+            }
         }
     }
     #endregion
@@ -539,53 +553,189 @@ public class CharacterInfoUI : InfoUIBase {
     #endregion
 
     #region Relationships
+    private void InitializeRelationships() {
+        for (int i = 0; i < relationFilterItems.Length; i++) {
+            RelationshipFilterItem item = relationFilterItems[i];
+            item.Initialize(OnToggleRelationshipFilter);
+            item.SetIsOnWithoutNotify(true);
+        }
+        allRelationshipFiltersToggle.SetIsOnWithoutNotify(true);
+        allFilters = CollectionUtilities.GetEnumValues<RELATIONS_FILTER>();
+        filters = new List<RELATIONS_FILTER>(allFilters);
+        aliveRelationsOnly = false;
+    }
+    public void OnToggleShowOnlyAliveRelations(bool isOn) {
+        aliveRelationsOnly = isOn;
+        UpdateRelationships();
+    }
+    public void OnToggleShowAll(bool isOn) {
+        filters.Clear();
+        if (isOn) {
+            filters.AddRange(allFilters);
+        }
+        for (int i = 0; i < relationFilterItems.Length; i++) {
+            RelationshipFilterItem item = relationFilterItems[i];
+            item.SetIsOnWithoutNotify(isOn);
+        }
+        UpdateRelationships();
+    }
+    private void OnToggleRelationshipFilter(bool isOn, RELATIONS_FILTER filter) {
+        if (isOn) {
+            filters.Add(filter);
+        } else {
+            filters.Remove(filter);
+        }
+        allRelationshipFiltersToggle.SetIsOnWithoutNotify(filters.Count == allFilters.Length);
+        UpdateRelationships();
+    }
+    public void ToggleRelationFilters() {
+        relationFiltersGO.SetActive(!relationFiltersGO.activeSelf);
+    }
     private void UpdateRelationships() {
         relationshipTypesLbl.text = string.Empty;
         relationshipNamesLbl.text = string.Empty;
         relationshipValuesLbl.text = string.Empty;
+        
+        HashSet<int> filteredKeys = new HashSet<int>();
+        foreach (var kvp in activeCharacter.relationshipContainer.relationships) {
+            if (DoesRelationshipMeetFilters(kvp.Key, kvp.Value)) {
+                filteredKeys.Add(kvp.Key);
+            }
+        }
+        
         Dictionary<int, IRelationshipData> orderedRels = _activeCharacter.relationshipContainer.relationships
             .OrderByDescending(k => k.Value.opinions.totalOpinion)
             .ToDictionary(k => k.Key, v => v.Value);
-
-        List<int> keys = _activeCharacter.relationshipContainer.relationships.Keys.ToList();
+        List<int> allKeys = _activeCharacter.relationshipContainer.relationships.Keys.ToList();
+        
         for (int i = 0; i < orderedRels.Keys.Count; i++) {
             int targetID = orderedRels.Keys.ElementAt(i);
-            int actualIndex = keys.IndexOf(targetID);
-            IRelationshipData relationshipData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
-            string relationshipName = _activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID);
-            Character target = CharacterManager.Instance.GetCharacterByID(targetID);
-
+            if (filteredKeys.Contains(targetID)) {
+                int actualIndex = allKeys.IndexOf(targetID);
+                IRelationshipData relationshipData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
+                string relationshipName = _activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID);
+                Character target = CharacterManager.Instance.GetCharacterByID(targetID);
+                
+                relationshipTypesLbl.text += $"{relationshipName}\n";
             
-            //Hide relationship in UI if both consider each other an Acquaintance and no other special relationships (relative, lover, etc)
-            //Reference: https://trello.com/c/7uR4Iwya/1874-hide-relationship-in-ui-if-both-consider-each-other-an-acquaintance-and-no-other-special-relationships-relative-lover-etc
-            bool shouldShowRelationship = relationshipName != RelationshipManager.Acquaintance;
-            if (!shouldShowRelationship) {
-                //if active character considers target an acquaintance, then check if target also considers active character as an Acquaintance  
-                if (target != null) {
-                    string targetRelationshipName = target.relationshipContainer.GetRelationshipNameWith(_activeCharacter.id);
-                    shouldShowRelationship = targetRelationshipName != RelationshipManager.Acquaintance;
-                }    
-            }
-
-            if (!shouldShowRelationship) {
-                continue; //skip
-            }
-
-            relationshipTypesLbl.text += $"{relationshipName}\n";
+                int opinionOfOther = 0;
+                string opinionText;
+                if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
+                    opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
+                    opinionText = GetOpinionText(opinionOfOther);
+                } else {
+                    opinionText = "???";
+                }
             
-            int opinionOfOther = 0;
-            string opinionText;
-            if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
-                opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
-                opinionText = GetOpinionText(opinionOfOther);
-            } else {
-                opinionText = "???";
+                relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(relationshipData.targetName)}</link>\n";
+                relationshipValuesLbl.text +=
+                    $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
             }
-            
-            relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(relationshipData.targetName)}</link>\n";
-            relationshipValuesLbl.text +=
-                $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
         }
+        
+        // for (int i = 0; i < orderedRels.Keys.Count; i++) {
+        //     int targetID = orderedRels.Keys.ElementAt(i);
+        //     int actualIndex = keys.IndexOf(targetID);
+        //     IRelationshipData relationshipData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
+        //     string relationshipName = _activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID);
+        //     Character target = CharacterManager.Instance.GetCharacterByID(targetID);
+        //
+        //     
+        //     //Hide relationship in UI if both consider each other an Acquaintance and no other special relationships (relative, lover, etc)
+        //     //Reference: https://trello.com/c/7uR4Iwya/1874-hide-relationship-in-ui-if-both-consider-each-other-an-acquaintance-and-no-other-special-relationships-relative-lover-etc
+        //     bool shouldShowRelationship = relationshipName != RelationshipManager.Acquaintance;
+        //     if (!shouldShowRelationship) {
+        //         //if active character considers target an acquaintance, then check if target also considers active character as an Acquaintance  
+        //         if (target != null) {
+        //             string targetRelationshipName = target.relationshipContainer.GetRelationshipNameWith(_activeCharacter.id);
+        //             shouldShowRelationship = targetRelationshipName != RelationshipManager.Acquaintance;
+        //         }    
+        //     }
+        //
+        //     if (!shouldShowRelationship) {
+        //         continue; //skip
+        //     }
+        //
+        //     relationshipTypesLbl.text += $"{relationshipName}\n";
+        //     
+        //     int opinionOfOther = 0;
+        //     string opinionText;
+        //     if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
+        //         opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
+        //         opinionText = GetOpinionText(opinionOfOther);
+        //     } else {
+        //         opinionText = "???";
+        //     }
+        //     
+        //     relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{UtilityScripts.Utilities.ColorizeAndBoldName(relationshipData.targetName)}</link>\n";
+        //     relationshipValuesLbl.text +=
+        //         $"<link=\"{actualIndex.ToString()}\"><color={BaseRelationshipContainer.OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color={BaseRelationshipContainer.OpinionColor(opinionOfOther)}>({opinionText})</color></link>\n";
+        // }
+    }
+    private bool DoesRelationshipMeetFilters(int id, IRelationshipData data) {
+        Character target = CharacterManager.Instance.GetCharacterByID(id);
+        if (target != null) {
+            if (aliveRelationsOnly && target.isDead) {
+                return false;
+            }
+            return DoesRelationshipMeetAnyFilter(data);
+        } else {
+            //did not check aliveRelationsOnly because unspawned characters will be shown regardless
+            return DoesRelationshipMeetAnyFilter(data);
+        }
+        return true;
+    }
+    private bool DoesRelationshipMeetAnyFilter(IRelationshipData data) {
+        if (filters.Count == 0) {
+            return true; //if no filters were provided, then show all relationships
+        }
+        //loop through enabled filters, if relationships meets any filter then return true.
+        bool hasMetAFilter = false;
+        string opinionLabel = data.opinions.GetOpinionLabel();
+        for (int i = 0; i < filters.Count; i++) {
+            RELATIONS_FILTER filter = filters[i];
+            switch (filter) {
+                case RELATIONS_FILTER.Enemies:
+                    if (opinionLabel == RelationshipManager.Enemy) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+                case RELATIONS_FILTER.Rivals:
+                    if (opinionLabel == RelationshipManager.Rival) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+                case RELATIONS_FILTER.Acquaintances:
+                    if (opinionLabel == RelationshipManager.Acquaintance) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+                case RELATIONS_FILTER.Friends:
+                    if (opinionLabel == RelationshipManager.Friend) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+                case RELATIONS_FILTER.Close_Friends:
+                    if (opinionLabel == RelationshipManager.Close_Friend) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+                case RELATIONS_FILTER.Relatives:
+                    if (data.IsFamilyMember()) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+                case RELATIONS_FILTER.Lovers:
+                    if (data.IsLover()) {
+                        hasMetAFilter = true;
+                    }
+                    break;
+            }
+            if (hasMetAFilter) {
+                return true;
+            }
+        }
+        return false; //no filters were met.
     }
     public void OnHoverRelationshipValue(object obj) {
         if (obj is string) {

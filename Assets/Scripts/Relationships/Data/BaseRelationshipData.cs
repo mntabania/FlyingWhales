@@ -56,6 +56,12 @@ public class BaseRelationshipData : IRelationshipData {
         //}
         return RELATIONSHIP_TYPE.NONE;
     }
+    public bool IsFamilyMember() {
+        return HasRelationship(RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.SIBLING);
+    }
+    public bool IsLover() {
+        return HasRelationship(RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+    }
     #endregion
 
 }

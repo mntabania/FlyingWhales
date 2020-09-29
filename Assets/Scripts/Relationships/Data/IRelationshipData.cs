@@ -20,4 +20,6 @@ public interface IRelationshipData {
     bool HasRelationship(params RELATIONSHIP_TYPE[] rels);
     void SetTargetName(string name);
     void SetTargetGender(GENDER gender);
+    bool IsFamilyMember();
+    bool IsLover();
 }

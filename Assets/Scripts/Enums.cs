@@ -1037,6 +1037,9 @@ public enum LOG_TAG {
 public enum PARTY_TARGET_DESTINATION_TYPE { Structure, Settlement, Hextile, }
 public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital }
 
+public enum RELATIONS_FILTER {
+    Enemies, Rivals, Acquaintances, Friends, Close_Friends, Relatives, Lovers,
+}
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
