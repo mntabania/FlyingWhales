@@ -266,8 +266,13 @@ public class FactionInfoUIV2 : MonoBehaviour {
         //https://trello.com/c/SGow0hA0/2234-angels-on-list
         for (int i = 0; i < activeFaction.characters.Count; i++) {
             Character currCharacter = activeFaction.characters[i];
+            if (currCharacter is Summon summon && summon.isVolatileMonster) {
+                //skip volatile monster
+                //this is a solution for https://trello.com/c/EbPTZFAv/2288-03314-skeleton-from-defiler-appears-on-vagrant-tab
+                continue;
+            }
             if(currCharacter.race != RACE.ANGEL) {
-                CharacterNameplateItem nameplate = CreateNewCharacterItem(currCharacter, false);
+                CreateNewCharacterItem(currCharacter, false);
             }
         }
         //OrderCharacterItems();

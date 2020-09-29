@@ -173,6 +173,7 @@ namespace Inner_Maps.Location_Structures {
 
                     //spawn skeleton to carry target
                     skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
+                    skeleton.SetIsVolatile(true);
                     skeleton.SetShowNotificationOnDeath(false);
                     skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                     skeleton.SetDestroyMarkerOnDeath(true);
