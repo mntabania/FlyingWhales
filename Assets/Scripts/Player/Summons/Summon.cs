@@ -11,6 +11,10 @@ public class Summon : Character {
 
 	public SUMMON_TYPE summonType { get; }
     private bool showNotificationOnDeath { get; set; }
+    /// <summary>
+    /// Is this monster unimportant? (i.e. skeleton carriers from Defiler/Prison)
+    /// </summary>
+    public bool isVolatileMonster { get; private set; }
 
     #region getters
     public virtual SUMMON_TYPE adultSummonType => SUMMON_TYPE.None;
@@ -23,10 +27,12 @@ public class Summon : Character {
     protected Summon(SUMMON_TYPE summonType, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         showNotificationOnDeath = true;
+        isVolatileMonster = false;
     }
     protected Summon(SaveDataSummon data) : base(data) {
         summonType = data.summonType;
         showNotificationOnDeath = true;
+        isVolatileMonster = data.isVolatileMonster;
     }
 
     #region Overrides
@@ -279,6 +285,9 @@ public class Summon : Character {
     public void SetShowNotificationOnDeath(bool showNotificationOnDeath) {
         this.showNotificationOnDeath = showNotificationOnDeath;
     }
+    public void SetIsVolatile(bool isVolatile) {
+        isVolatileMonster = isVolatile;
+    }
     #endregion
 }
 
@@ -322,11 +331,13 @@ public class SummonSlot {
 [System.Serializable]
 public class SaveDataSummon : SaveDataCharacter {
     public SUMMON_TYPE summonType;
+    public bool isVolatileMonster;
 
     public override void Save(Character data) {
         base.Save(data);
         if(data is Summon summon) {
             summonType = summon.summonType;
+            isVolatileMonster = summon.isVolatileMonster;
         }
     }
     public override Character Load() {

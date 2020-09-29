@@ -25,6 +25,7 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
     public bool isInterior;
     public SaveDataStructureRoom[] structureRoomSaveData;
     public bool hasBeenDestroyed;
+    public List<string> tileObjectDamageContributors;
 
     public override void Save(LocationStructure structure) {
         persistentID = structure.persistentID;
@@ -81,6 +82,15 @@ public class SaveDataLocationStructure : SaveData<LocationStructure> {
         }
 
         hasBeenDestroyed = structure.hasBeenDestroyed;
+        if (!structure.hasBeenDestroyed) {
+            tileObjectDamageContributors = new List<string>();
+            for (int i = 0; i < structure.objectsThatContributeToDamage.Count; i++) {
+                IDamageable damageable = structure.objectsThatContributeToDamage.ElementAt(i);
+                if (damageable is TileObject tileObject) {
+                    tileObjectDamageContributors.Add(tileObject.persistentID);
+                }
+            }
+        }
     }
     public LocationStructure InitialLoad(Region region) {
         return LandmarkManager.Instance.LoadNewStructureAt(region, structureType, this);
@@ -98,6 +108,7 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
     public RESOURCE wallsMadeOf;
     public Vector3Save structureObjectWorldPosition;
     public SaveDataStructureConnector[] structureConnectors;
+    
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         ManMadeStructure manMadeStructure = locationStructure as ManMadeStructure;
@@ -121,8 +132,6 @@ public class SaveDataManMadeStructure : SaveDataLocationStructure {
             }
         }
         
-        //NOTE: Did not save damage contributors of man made structure since they are always the thin walls, and not specific tile objects
-        
         //walls
         if (manMadeStructure.structureWalls != null) {
             structureWallObjects = new SaveDataStructureWallObject[manMadeStructure.structureWalls.Count];
@@ -141,8 +150,7 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
     
     public string structureTemplateName;
     public Vector3Save structureObjectWorldPosition;
-    public List<string> damageContributors;
-    
+
     public override void Save(LocationStructure locationStructure) {
         base.Save(locationStructure);
         DemonicStructure demonicStructure = locationStructure as DemonicStructure;
@@ -157,13 +165,6 @@ public class SaveDataDemonicStructure : SaveDataLocationStructure {
             templateName = templateName.Replace("(Clone)", "");
             structureTemplateName = templateName;
             structureObjectWorldPosition = demonicStructure.structureObj.transform.position;
-            damageContributors = new List<string>();
-            for (int i = 0; i < demonicStructure.objectsThatContributeToDamage.Count; i++) {
-                IDamageable damageable = demonicStructure.objectsThatContributeToDamage.ElementAt(i);
-                if (damageable is TileObject tileObject) {
-                    damageContributors.Add(tileObject.persistentID);
-                }
-            }
         }
     }
 }

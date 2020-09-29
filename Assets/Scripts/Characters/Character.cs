@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -723,6 +724,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetCharacterMarker(null);
         Debug.Log($"{name}'s marker has been destroyed!");
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        if (PlayerManager.Instance.player.seizeComponent.seizedPOI == this) {
+            throw new Exception($"{name} is seized by the player but its marker was destroyed! Refer to call stack to find out what destroyed it.");
+        }
     }
     public void DisableMarker() {
         if (marker.gameObject.activeSelf) {
@@ -5691,6 +5695,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetDeathLog(localDeathLog);
             deathStr = localDeathLog.logText;
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
             //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {

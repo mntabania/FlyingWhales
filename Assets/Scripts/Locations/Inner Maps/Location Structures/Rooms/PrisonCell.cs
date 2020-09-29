@@ -102,6 +102,7 @@ namespace Inner_Maps.Location_Structures {
                 door?.Open();
                 
                 skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, character.currentRegion, className: "Archer");
+                skeleton.SetIsVolatile(true);
                 skeleton.SetShowNotificationOnDeath(false);
                 skeleton.combatComponent.SetCombatMode(COMBAT_MODE.Passive);
                 skeleton.SetDestroyMarkerOnDeath(true);

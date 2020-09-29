@@ -39,11 +39,11 @@ public class CarryComponent : CharacterComponent {
         if (poi is Character) {
             return CarryCharacter(poi as Character, isOwner, isFromSave);
         } else if (poi is TileObject) {
-            return CarryTileObkect(poi as TileObject);
+            return CarryTileObject(poi as TileObject);
         }
         return false;
     }
-    private bool CarryTileObkect(TileObject tileObject) {
+    private bool CarryTileObject(TileObject tileObject) {
         if (carriedPOI == null) {
             carriedPOI = tileObject;
             // tileObject.SetIsBeingCarriedBy(owner);
@@ -60,6 +60,7 @@ public class CarryComponent : CharacterComponent {
             mapVisualTransform.localPosition = new Vector3(0f, 0.5f, 0f);
             mapVisualTransform.eulerAngles = Vector3.zero;
             tileObject.mapVisual.UpdateSortingOrders(tileObject);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, tileObject as IPlayerActionTarget);
             return true;
         }
         return false;
@@ -144,7 +145,7 @@ public class CarryComponent : CharacterComponent {
             if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOIDestroyVisualOnly(tileObject, owner);
             } else if (tileObject.mapVisual != null) {
-                tileObject.OnDiscardCarriedObject();
+                tileObject.DestroyMapVisualGameObject();
             }
         }
         if (tileObject.mapVisual != null) {
