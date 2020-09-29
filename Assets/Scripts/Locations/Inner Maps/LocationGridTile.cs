@@ -681,6 +681,7 @@ namespace Inner_Maps {
                 }
                 SetTileState(Tile_State.Empty);
                 Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI, removedObj);
+                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -696,6 +697,7 @@ namespace Inner_Maps {
                     tileObject.OnRemoveTileObject(null, gridTile, false, false);
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
+                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;
@@ -713,6 +715,7 @@ namespace Inner_Maps {
                 }
                 removedObj.SetPOIState(POI_STATE.INACTIVE);
                 Messenger.Broadcast(Signals.STOP_CURRENT_ACTION_TARGETING_POI_EXCEPT_ACTOR, removedObj, remover);
+                Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, removedObj as IPlayerActionTarget);
                 return removedObj;
             }
             return null;

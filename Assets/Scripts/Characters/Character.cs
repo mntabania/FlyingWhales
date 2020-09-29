@@ -5695,6 +5695,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetDeathLog(localDeathLog);
             deathStr = localDeathLog.logText;
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
+            Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, this as IPlayerActionTarget);
 
             //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             //    if (traitContainer.allTraits[i].OnAfterDeath(this, cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers)) {
