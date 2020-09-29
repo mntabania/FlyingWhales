@@ -2933,6 +2933,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             invalidReason = "Character is interrupted";
             return false;
         }
+        if (partyComponent.isActiveMember) {
+            invalidReason = "Character is in an active party";
+            return false;
+        }
         invalidReason = "No reason";
         return true;
     }

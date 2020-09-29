@@ -8,6 +8,11 @@ public class WaterWell : TileObject {
 
     public WaterWell() {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
+        traitContainer.RemoveTrait(this, "Flammable");
+        traitContainer.AddTrait(this, "Immovable");
+        for (int i = 0; i < 10; i++) {
+            traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
+        }
     }
     public WaterWell(SaveDataTileObject data) {
         
@@ -21,11 +26,7 @@ public class WaterWell : TileObject {
             AddAdvertisedAction(INTERACTION_TYPE.WELL_JUMP);
             AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         }
-        traitContainer.RemoveTrait(this, "Flammable");
-        traitContainer.AddTrait(this, "Immovable");
-        for (int i = 0; i < 10; i++) {
-            traitContainer.AddTrait(this, "Wet", overrideDuration: 0);    
-        }
+
         Messenger.AddListener(Signals.HOUR_STARTED, HourStarted);
     }
     public override void OnDestroyPOI() {

@@ -377,32 +377,39 @@ public class BaseRelationshipContainer : IRelationshipContainer {
                     }
                 }
                 if (UnityEngine.Random.Range(0, 100) < 25) {
-                    if (owner.jobComponent.CreatePoisonFoodJob(targetCharacter)) {
-                        return;
+                    if (!owner.partyComponent.isActiveMember) {
+                        if (owner.jobComponent.CreatePoisonFoodJob(targetCharacter)) {
+                            return;
+                        }
                     }
+
                 }
                 if (UnityEngine.Random.Range(0, 100) < 25) {
-                    if (owner.jobComponent.CreatePlaceTrapJob(targetCharacter)) {
-                        return;
+                    if (!owner.partyComponent.isActiveMember) {
+                        if (owner.jobComponent.CreatePlaceTrapJob(targetCharacter)) {
+                            return;
+                        }
                     }
                 }
                 //
 
                 //Spread Rumor
-                Character spreadRumorOrNegativeInfoTarget = owner.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(targetCharacter);
-                if (spreadRumorOrNegativeInfoTarget != null) {
-                    if(UnityEngine.Random.Range(0, 100) < 50) {
-                        ActualGoapNode negativeInfo = owner.rumorComponent.GetRandomKnownNegativeInfo(spreadRumorOrNegativeInfoTarget, targetCharacter);
-                        if(negativeInfo != null) {
-                            if(owner.jobComponent.CreateSpreadNegativeInfoJob(spreadRumorOrNegativeInfoTarget, negativeInfo)) {
-                                return;
+                if (!owner.partyComponent.isActiveMember) {
+                    Character spreadRumorOrNegativeInfoTarget = owner.rumorComponent.GetRandomSpreadRumorOrNegativeInfoTarget(targetCharacter);
+                    if (spreadRumorOrNegativeInfoTarget != null) {
+                        if (UnityEngine.Random.Range(0, 100) < 50) {
+                            ActualGoapNode negativeInfo = owner.rumorComponent.GetRandomKnownNegativeInfo(spreadRumorOrNegativeInfoTarget, targetCharacter);
+                            if (negativeInfo != null) {
+                                if (owner.jobComponent.CreateSpreadNegativeInfoJob(spreadRumorOrNegativeInfoTarget, negativeInfo)) {
+                                    return;
+                                }
                             }
                         }
-                    }
 
-                    Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorOrNegativeInfoTarget, targetCharacter);
-                    if(rumor != null) {
-                        owner.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor);
+                        Rumor rumor = owner.rumorComponent.GenerateNewRandomRumor(spreadRumorOrNegativeInfoTarget, targetCharacter);
+                        if (rumor != null) {
+                            owner.jobComponent.CreateSpreadRumorJob(spreadRumorOrNegativeInfoTarget, rumor);
+                        }
                     }
                 }
             }

@@ -108,8 +108,13 @@ namespace Traits {
                     //When a non-cultist sees a Cultist Kit, they will destroy it.
                     //Reference: https://www.notion.so/ruinarch/685c3fcca68545e285120e8778beed30?v=bc3ddbfa0b414ad881cc5e6d688bbe60&p=f4cd97ba9b53420fa6dedf0bf0650cb5
                     if (characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, item) == false) {
-                        //if character is non suspicious, create an open chest job.
-                        characterThatWillDoJob.jobComponent.TriggerDestroy(item);
+                        CRIME_SEVERITY severity = CRIME_SEVERITY.None;
+                        if (characterThatWillDoJob.faction != null) {
+                            severity = characterThatWillDoJob.faction.factionType.GetCrimeSeverity(CRIME_TYPE.Demon_Worship);
+                        }
+                        if(severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                            characterThatWillDoJob.jobComponent.TriggerDestroy(item);
+                        }
                     }
                 } else if (ShouldInspectItem(characterThatWillDoJob, item)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, item) && 
@@ -215,7 +220,11 @@ namespace Traits {
                             && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
                             && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
                             //If a villager is dead and is seen outside the village, bury it
-                            owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                            if (owner.partyComponent.isActiveMember) {
+                                owner.jobComponent.TriggerPersonalBuryInActivePartyJob(targetCharacter);
+                            } else {
+                                owner.jobComponent.TriggerPersonalBuryJob(targetCharacter);
+                            }
                         }
                     }
                 }
