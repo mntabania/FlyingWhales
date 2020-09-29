@@ -73,6 +73,20 @@ public class OpinionData {
         //              && compatibilityValue <= RelationshipManager.MaxCompatibility, 
         //    $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibilityValue.ToString()}");
     }
+    public string GetOpinionLabel() {
+        if (totalOpinion > 70) {
+            return RelationshipManager.Close_Friend;
+        } else if (totalOpinion > 20 && totalOpinion <= 70) {
+            return RelationshipManager.Friend;
+        } else if (totalOpinion > -21 && totalOpinion <= 20) {
+            return RelationshipManager.Acquaintance;
+        } else if (totalOpinion > -71 && totalOpinion <= -21) {
+            return RelationshipManager.Enemy;
+        } else if (totalOpinion <= -71) {
+            return RelationshipManager.Rival;
+        }
+        return string.Empty;
+    }
 
     #region Object Pool
     public void Initialize() { }

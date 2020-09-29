@@ -123,7 +123,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     public bool IsFamilyMember(Character target) {
         if (HasRelationshipWith(target)) {
             IRelationshipData data = GetRelationshipDataWith(target);
-            return data.HasRelationship(RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.SIBLING);
+            return data.IsFamilyMember();
         }
         return false;
     }
@@ -450,18 +450,19 @@ public class BaseRelationshipContainer : IRelationshipContainer {
     }
     public string GetOpinionLabel(int id) {
         if (HasRelationshipWith(id)) {
-            int totalOpinion = GetTotalOpinion(id);
-            if (totalOpinion > 70) {
-                return RelationshipManager.Close_Friend;
-            } else if (totalOpinion > 20 && totalOpinion <= 70) {
-                return RelationshipManager.Friend;
-            } else if (totalOpinion > -21 && totalOpinion <= 20) {
-                return RelationshipManager.Acquaintance;
-            } else if (totalOpinion > -71 && totalOpinion <= -21) {
-                return RelationshipManager.Enemy;
-            } else if (totalOpinion <= -71) {
-                return RelationshipManager.Rival;
-            }
+            return relationships[id].opinions.GetOpinionLabel();
+            // int totalOpinion = GetTotalOpinion(id);
+            // if (totalOpinion > 70) {
+            //     return RelationshipManager.Close_Friend;
+            // } else if (totalOpinion > 20 && totalOpinion <= 70) {
+            //     return RelationshipManager.Friend;
+            // } else if (totalOpinion > -21 && totalOpinion <= 20) {
+            //     return RelationshipManager.Acquaintance;
+            // } else if (totalOpinion > -71 && totalOpinion <= -21) {
+            //     return RelationshipManager.Enemy;
+            // } else if (totalOpinion <= -71) {
+            //     return RelationshipManager.Rival;
+            // }
         }
         return string.Empty;
     }

@@ -15,7 +15,9 @@ public class SaveItem : MonoBehaviour {
         this.path = path;
         DateTime lastWriteTime = File.GetLastWriteTime(path);
         timeStampLbl.text = lastWriteTime.ToString("yyyy-MM-dd HH:mm");
-        saveNameLbl.text = Path.GetFileNameWithoutExtension(path);
+        string fileName = Path.GetFileNameWithoutExtension(path);
+        string formattedFileName = fileName.Substring(0, fileName.IndexOf('(')).Replace(" ", "").Replace('_', ' ').Replace('-', ':');
+        saveNameLbl.text = formattedFileName.Replace(' ', '-');
     }
 
     public void OnClickItem() {
