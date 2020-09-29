@@ -287,6 +287,10 @@ public class CrimeManager : BaseMonoBehaviour {
         }
     }
     public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+        if (!actor.isNormalCharacter) {
+            //Non villagers should not be criminals that is why the severity is None
+            return CRIME_SEVERITY.None;
+        }
         CrimeType crimeTypeObj = GetCrimeType(crimeType);
         CRIME_SEVERITY factionCrimeSeverity = CRIME_SEVERITY.Unapplicable;
         if (witness.faction != null) {

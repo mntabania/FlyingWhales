@@ -327,32 +327,7 @@ namespace Traits {
         public bool RemoveTrait(ITraitable removeFrom, Trait trait, Character removedBy = null, bool bySchedule = false) {
             bool removedOrUnstacked = false;
             if(trait is Status status) {
-                if (!status.isStacking) {
-                    removedOrUnstacked = statuses.Remove(status);
-                    if (removedOrUnstacked) {
-                        allTraitsAndStatuses.Remove(status);
-                        removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
-                        RemoveScheduleTicket(status.name, bySchedule);
-                    }
-                } else {
-                    //status is stacking
-                    if (stacks.ContainsKey(status.name)) {
-                        if (stacks[status.name] > 1) {
-                            stacks[status.name]--;
-                            removeFrom.traitProcessor.OnStatusUnstack(removeFrom, status, removedBy);
-                            RemoveScheduleTicket(status.name, bySchedule);
-                            removedOrUnstacked = true;
-                        } else {
-                            removedOrUnstacked = statuses.Remove(status);
-                            if (removedOrUnstacked) {
-                                allTraitsAndStatuses.Remove(status);
-                                stacks.Remove(status.name);
-                                removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
-                                RemoveScheduleTicket(status.name, bySchedule);
-                            }
-                        }
-                    }
-                }
+                removedOrUnstacked = RemoveStatus(removeFrom, status, removedBy, bySchedule);
             } else {
                 removedOrUnstacked = traits.Remove(trait);
                 if (removedOrUnstacked) {
@@ -370,14 +345,18 @@ namespace Traits {
             }
             return false;
         }
-        private void RemoveStatusAndStacks(ITraitable removeFrom, Status status, Character removedBy = null, bool bySchedule = false) {
+        private bool RemoveStatusAndStacks(ITraitable removeFrom, Status status, Character removedBy = null, bool bySchedule = false) {
             int loopNum = 1;
             if (stacks.ContainsKey(status.name)) {
                 loopNum = stacks[status.name];
             }
+            int removedCount = 0;
             for (int i = 0; i < loopNum; i++) {
-                RemoveTrait(removeFrom, status, removedBy, bySchedule);
+                if(RemoveStatus(removeFrom, status, removedBy, bySchedule)) {
+                    removedCount++;
+                }
             }
+            return removedCount == loopNum;
         }
         public void RemoveStatusAndStacks(ITraitable removeFrom, string name, Character removedBy = null, bool bySchedule = false) {
             Status trait = GetNormalTrait<Status>(name);
@@ -385,29 +364,30 @@ namespace Traits {
                 RemoveStatusAndStacks(removeFrom, trait, removedBy, bySchedule);
             }
         }
-        public bool RemoveStatus(ITraitable removeFrom, int index, Character removedBy = null) {
+        public bool RemoveStatus(ITraitable removeFrom, Status status, Character removedBy = null, bool bySchedule = false) {
             bool removedOrUnstacked = true;
-            if (index < 0 || index >= statuses.Count) {
-                removedOrUnstacked = false;
-            } else {
-                Status status = statuses[index];
-                if (!status.isStacking) {
-                    statuses.RemoveAt(index);
+            if (!status.isStacking) {
+                removedOrUnstacked = statuses.Remove(status);
+                if (removedOrUnstacked) {
                     allTraitsAndStatuses.Remove(status);
                     removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
-                    RemoveScheduleTicket(status.name);
-                } else {
-                    if (stacks.ContainsKey(status.name)) {
-                        if (stacks[status.name] > 1) {
-                            stacks[status.name]--;
-                            removeFrom.traitProcessor.OnStatusUnstack(removeFrom, status, removedBy);
-                            RemoveScheduleTicket(status.name);
-                        } else {
-                            stacks.Remove(status.name);
-                            statuses.RemoveAt(index);
+                    RemoveScheduleTicket(status.name, bySchedule);
+                }
+            } else {
+                //status is stacking
+                if (stacks.ContainsKey(status.name)) {
+                    if (stacks[status.name] > 1) {
+                        stacks[status.name]--;
+                        removeFrom.traitProcessor.OnStatusUnstack(removeFrom, status, removedBy);
+                        RemoveScheduleTicket(status.name, bySchedule);
+                        removedOrUnstacked = true;
+                    } else {
+                        removedOrUnstacked = statuses.Remove(status);
+                        if (removedOrUnstacked) {
                             allTraitsAndStatuses.Remove(status);
+                            stacks.Remove(status.name);
                             removeFrom.traitProcessor.OnTraitRemoved(removeFrom, status, removedBy);
-                            RemoveScheduleTicket(status.name);
+                            RemoveScheduleTicket(status.name, bySchedule);
                         }
                     }
                 }
@@ -436,9 +416,9 @@ namespace Traits {
             List<Trait> removedTraits = new List<Trait>();
             //List<Trait> all = new List<Trait>(allTraits);
             for (int i = 0; i < statuses.Count; i++) {
-                Trait trait = statuses[i];
+                Status trait = statuses[i];
                 if (trait.type == traitType) {
-                    if (RemoveStatus(removeFrom, i)) {
+                    if (RemoveStatusAndStacks(removeFrom, trait)) {
                         removedTraits.Add(trait);
                         i--;
                     }
@@ -467,10 +447,10 @@ namespace Traits {
             //List<Trait> removedTraits = new List<Trait>();
             //List<Trait> all = new List<Trait>(allTraits);
             for (int i = 0; i < statuses.Count; i++) {
-                Trait trait = statuses[i];
+                Status trait = statuses[i];
                 if (trait.name == name) {
                     //removedTraits.Add(trait);
-                    if (RemoveStatus(removeFrom, i)) {
+                    if (RemoveStatusAndStacks(removeFrom, trait)) {
                         i--;
                     }
                 }
@@ -506,9 +486,9 @@ namespace Traits {
         public void RemoveAllNonPersistentTraitAndStatuses(ITraitable traitable) {
             //List<Trait> allTraits = new List<Trait>(this.allTraits);
             for (int i = 0; i < statuses.Count; i++) {
-                Trait currTrait = statuses[i];
+                Status currTrait = statuses[i];
                 if (!currTrait.isPersistent) {
-                    if (RemoveStatus(traitable, i)) {
+                    if (RemoveStatusAndStacks(traitable, currTrait)) {
                         i--;
                     }
                 }
@@ -525,7 +505,7 @@ namespace Traits {
         public void RemoveAllTraitsAndStatuses(ITraitable traitable) {
             //List<Trait> allTraits = new List<Trait>(this.allTraits);
             for (int i = 0; i < statuses.Count; i++) {
-                if (RemoveStatus(traitable, i)) { //remove all traits
+                if (RemoveStatusAndStacks(traitable, statuses[i])) { //remove all traits
                     i--;
                 }
             }
