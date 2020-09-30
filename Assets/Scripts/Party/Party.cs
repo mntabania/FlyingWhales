@@ -37,6 +37,9 @@ public class Party : ILogFiller, ISavable {
     public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
 
+    public bool canAcceptQuests { get; private set; }
+    public GameDate canAcceptQuestsAgainDate { get; private set; }
+
     private List<Character> _activeMembers;
 
     #region getters
@@ -61,6 +64,7 @@ public class Party : ILogFiller, ISavable {
         partyFaction = partyCreator.faction;
         isDisbanded = false;
         hasRested = true;
+        canAcceptQuests = true;
         perHourElapsedInWaiting = 0;
 
         SetPartyState(PARTY_STATE.None);
@@ -91,6 +95,9 @@ public class Party : ILogFiller, ISavable {
         hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
 
+        canAcceptQuests = data.canAcceptQuests;
+        canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
         if (partyName != string.Empty) {
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
@@ -98,6 +105,9 @@ public class Party : ILogFiller, ISavable {
         }
         if (hasStartedAcceptingQuests) {
             SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
+        }
+        if (!canAcceptQuests) {
+            SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
         }
     }
 
@@ -156,7 +166,7 @@ public class Party : ILogFiller, ISavable {
         }
     }
     private void PerTickEndedWhileInactive() {
-        if (takeQuestSchedule == GameManager.Instance.currentTick) {
+        if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
             TryAcceptQuest();
         }
     }
@@ -167,7 +177,7 @@ public class Party : ILogFiller, ISavable {
             AcceptQuest(quest);
         } else {
             TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-            if(currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+            if(canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
                 hasStartedAcceptingQuests = true;
                 nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
                 SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
@@ -445,6 +455,21 @@ public class Party : ILogFiller, ISavable {
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
         }
+
+        //Do not start the 12-hour cooldown if party is already disbanded
+        if (!isDisbanded) {
+            StartNoQuestCooldown();
+        }
+    }
+    private void StartNoQuestCooldown() {
+        if (canAcceptQuests) {
+            SetCanAcceptQuests(false);
+            canAcceptQuestsAgainDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+            SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
+        }
+    }
+    private void SetCanAcceptQuests(bool state) {
+        canAcceptQuests = state;
     }
     #endregion
 
@@ -802,6 +827,7 @@ public class Party : ILogFiller, ISavable {
         foodProducer = null;
         cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
+        canAcceptQuests = false;
         perHourElapsedInWaiting = 0;
         members.Clear();
         ClearMembersThatJoinedQuest();
@@ -843,6 +869,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public string currentQuest;
     public bool hasStartedAcceptingQuests;
     public GameDate nextQuestCheckDate;
+    public bool canAcceptQuests;
+    public GameDate canAcceptQuestsAgainDate;
+
 
     public string campSetter;
     public string foodProducer;
@@ -870,9 +899,13 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         partySettlement = data.partySettlement.persistentID;
         partyFaction = data.partyFaction.persistentID;
-        hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
 
+        hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
+
+        canAcceptQuests = data.canAcceptQuests;
+        canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
         waitingEndDate = data.waitingEndDate;
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
