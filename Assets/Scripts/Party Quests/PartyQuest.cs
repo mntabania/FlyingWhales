@@ -57,9 +57,9 @@ public class PartyQuest : ISavable {
     public void SetMadeInLocation(BaseSettlement settlement) {
         madeInLocation = settlement;
     }
-    public void EndQuest() {
+    public void EndQuest(string reason) {
         OnEndQuest();
-        assignedParty.DropQuest();
+        assignedParty.DropQuest(reason);
     }
     #endregion
 

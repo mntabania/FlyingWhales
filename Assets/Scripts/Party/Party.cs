@@ -37,6 +37,9 @@ public class Party : ILogFiller, ISavable {
     public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
 
+    public bool canAcceptQuests { get; private set; }
+    public GameDate canAcceptQuestsAgainDate { get; private set; }
+
     private List<Character> _activeMembers;
 
     #region getters
@@ -61,6 +64,7 @@ public class Party : ILogFiller, ISavable {
         partyFaction = partyCreator.faction;
         isDisbanded = false;
         hasRested = true;
+        canAcceptQuests = true;
         perHourElapsedInWaiting = 0;
 
         SetPartyState(PARTY_STATE.None);
@@ -91,6 +95,9 @@ public class Party : ILogFiller, ISavable {
         hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
 
+        canAcceptQuests = data.canAcceptQuests;
+        canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
         if (partyName != string.Empty) {
             Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
             Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
@@ -98,6 +105,9 @@ public class Party : ILogFiller, ISavable {
         }
         if (hasStartedAcceptingQuests) {
             SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
+        }
+        if (!canAcceptQuests) {
+            SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
         }
     }
 
@@ -112,6 +122,15 @@ public class Party : ILogFiller, ISavable {
         } else {
             PerTickEndedWhileInactive();
         }
+    }
+    private void OnCharacterDeath(Character character) {
+        CharacterDies(character);
+    }
+    private void OnCharacterNoLongerMove(Character character) {
+        CharacterNoLongerMove(character);
+    }
+    private void OnCharacterNoLongerPerform(Character character) {
+        CharacterNoLongerPerform(character);
     }
     #endregion
 
@@ -147,7 +166,7 @@ public class Party : ILogFiller, ISavable {
         }
     }
     private void PerTickEndedWhileInactive() {
-        if (takeQuestSchedule == GameManager.Instance.currentTick) {
+        if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
             TryAcceptQuest();
         }
     }
@@ -158,7 +177,7 @@ public class Party : ILogFiller, ISavable {
             AcceptQuest(quest);
         } else {
             TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-            if(currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+            if(canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
                 hasStartedAcceptingQuests = true;
                 nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
                 SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
@@ -258,7 +277,7 @@ public class Party : ILogFiller, ISavable {
                 SetPartyState(PARTY_STATE.Moving);
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
-                currentQuest.EndQuest();
+                currentQuest.EndQuest("Not enough members joined");
             }
         }
     }
@@ -384,6 +403,8 @@ public class Party : ILogFiller, ISavable {
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
+
+            OnAcceptQuest(quest);
         }
     }
     //private void DistributeQuestToMembersThatJoinedParty() {
@@ -394,13 +415,15 @@ public class Party : ILogFiller, ISavable {
     //        }
     //    }
     //}
-    public void DropQuest() {
+    public void DropQuest(string reason) {
         if (isActive) {
             Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
-            log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
+            log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
 
+            OnDropQuest(currentQuest);
             ClearMembersThatJoinedQuest();
             partyFaction.partyQuestBoard.RemovePartyQuest(currentQuest);
             SetPartyState(PARTY_STATE.None);
@@ -411,6 +434,42 @@ public class Party : ILogFiller, ISavable {
             targetCamp = null;
             targetDestination = null;
         }
+    }
+    private void OnAcceptQuest(PartyQuest quest) {
+        if(quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+        }
+    }
+    private void OnAcceptQuestFromSaveData(PartyQuest quest) {
+        if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+        }
+    }
+    private void OnDropQuest(PartyQuest quest) {
+        if (quest.partyQuestType == PARTY_QUEST_TYPE.Exploration || quest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDeath);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterNoLongerMove);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterNoLongerPerform);
+        }
+
+        //Do not start the 12-hour cooldown if party is already disbanded
+        if (!isDisbanded) {
+            StartNoQuestCooldown();
+        }
+    }
+    private void StartNoQuestCooldown() {
+        if (canAcceptQuests) {
+            SetCanAcceptQuests(false);
+            canAcceptQuestsAgainDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+            SchedulingManager.Instance.AddEntry(canAcceptQuestsAgainDate, () => SetCanAcceptQuests(true), null);
+        }
+    }
+    private void SetCanAcceptQuests(bool state) {
+        canAcceptQuests = state;
     }
     #endregion
 
@@ -637,6 +696,33 @@ public class Party : ILogFiller, ISavable {
     public bool IsMember(Character character) {
         return members.Contains(character);
     }
+    private void CharacterDies(Character character) {
+        if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+            if (GameUtilities.RollChance(25)) {
+                if (membersThatJoinedQuest.Contains(character)) {
+                    currentQuest.EndQuest(character.name + " died");
+                }
+            }
+        }
+    }
+    private void CharacterNoLongerPerform(Character character) {
+        if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+            if (GameUtilities.RollChance(15)) {
+                if (membersThatJoinedQuest.Contains(character)) {
+                    currentQuest.EndQuest(character.name + " is incapacitated");
+                }
+            }
+        }
+    }
+    private void CharacterNoLongerMove(Character character) {
+        if (currentQuest.partyQuestType == PARTY_QUEST_TYPE.Exploration || currentQuest.partyQuestType == PARTY_QUEST_TYPE.Rescue) {
+            if (GameUtilities.RollChance(15)) {
+                if (membersThatJoinedQuest.Contains(character)) {
+                    currentQuest.EndQuest(character.name + " is incapacitated");
+                }
+            }
+        }
+    }
     #endregion
 
     #region Disbandment
@@ -656,10 +742,9 @@ public class Party : ILogFiller, ISavable {
     }
     private void OnDisbandParty() {
         isDisbanded = true;
-        if (currentQuest != null) {
+        if (isActive) {
             //unassign party from quest when they disband, if any.
-            currentQuest.SetAssignedParty(null);
-            currentQuest = null;
+            currentQuest.EndQuest("Party disbanded");
         }
         Messenger.Broadcast(Signals.DISBAND_PARTY, this);
         DestroyParty();
@@ -688,6 +773,9 @@ public class Party : ILogFiller, ISavable {
         }
         if (!string.IsNullOrEmpty(data.currentQuest)) {
             currentQuest = DatabaseManager.Instance.partyQuestDatabase.GetPartyQuestByPersistentID(data.currentQuest);
+            if(currentQuest != null) {
+                OnAcceptQuestFromSaveData(currentQuest);
+            }
         }
         if (!string.IsNullOrEmpty(data.campSetter)) {
             campSetter = CharacterManager.Instance.GetCharacterByPersistentID(data.campSetter);
@@ -739,6 +827,7 @@ public class Party : ILogFiller, ISavable {
         foodProducer = null;
         cannotProduceFoodThisRestPeriod = false;
         hasChangedTargetDestination = false;
+        canAcceptQuests = false;
         perHourElapsedInWaiting = 0;
         members.Clear();
         ClearMembersThatJoinedQuest();
@@ -780,6 +869,9 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public string currentQuest;
     public bool hasStartedAcceptingQuests;
     public GameDate nextQuestCheckDate;
+    public bool canAcceptQuests;
+    public GameDate canAcceptQuestsAgainDate;
+
 
     public string campSetter;
     public string foodProducer;
@@ -807,9 +899,13 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         partySettlement = data.partySettlement.persistentID;
         partyFaction = data.partyFaction.persistentID;
-        hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
 
+        hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
+
+        canAcceptQuests = data.canAcceptQuests;
+        canAcceptQuestsAgainDate = data.canAcceptQuestsAgainDate;
+
         waitingEndDate = data.waitingEndDate;
 
         members = SaveUtilities.ConvertSavableListToIDs(data.members);
