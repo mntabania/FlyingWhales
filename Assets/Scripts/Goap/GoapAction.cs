@@ -35,6 +35,7 @@ public class GoapAction {
 
     #region getters
     public string name => goapName;
+    public virtual Type uniqueActionDataType => null; 
     #endregion
 
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget

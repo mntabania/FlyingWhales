@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Goap.Unique_Action_Data;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Logs;
@@ -65,8 +66,8 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
     //Crime
     public CRIME_TYPE crimeType { get; private set; }
-    public LOG_TAG[] logTags => GetLogTags().ToArray();
-
+    public UniqueActionData uniqueActionData { get; private set; }
+    
     #region getters
     public GoapActionState currentState {
         get {
@@ -90,6 +91,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     public CRIMABLE_TYPE crimableType => CRIMABLE_TYPE.Action;
     public OBJECT_TYPE objectType => OBJECT_TYPE.Action;
     public System.Type serializedData => typeof(SaveDataActualGoapNode);
+    public LOG_TAG[] logTags => GetLogTags().ToArray();
     #endregion
 
     public ActualGoapNode(GoapAction action, Character actor, IPointOfInterest poiTarget, OtherData[] otherData, int cost) {
@@ -102,7 +104,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         actionStatus = ACTION_STATUS.NONE;
         currentStateName = string.Empty;
         awareCharacters = new List<Character>();
-
+        uniqueActionData = CreateUniqueActionData(action);
         //Whenever a disguised character is being set as actor/target, assign disguised actor/target
         disguisedActor = actor.reactionComponent.disguisedCharacter;
         if(poiTarget is Character targetCharacter) {
@@ -950,6 +952,22 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     }
     #endregion
 
+    #region Unique Action Data
+    private UniqueActionData CreateUniqueActionData(GoapAction action) {
+        if (action.uniqueActionDataType != null) {
+            UniqueActionData data = System.Activator.CreateInstance(action.uniqueActionDataType) as UniqueActionData;
+            Assert.IsNotNull(data, $"{action.goapType.ToString()} has provided a unique action data type {action.uniqueActionDataType} but no class like that exists!");
+            return data;
+        }
+        return null;
+    }
+    public T GetConvertedUniqueActionData<T>() where T : UniqueActionData {
+        T converted = uniqueActionData as T;
+        Assert.IsNotNull(converted, $"Trying to get converted unique action data of {action.goapName} of actor {actor.name} but it could not be converted! Unique action data value is {uniqueActionData}");
+        return converted;
+    }
+    #endregion
+    
     #region Loading
     public void DoActionUponLoadingSavedGame() {
         if(actionStatus == ACTION_STATUS.STARTED) {
@@ -1034,6 +1052,9 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         if (!string.IsNullOrEmpty(data.associatedJobID)) {
             associatedJob = DatabaseManager.Instance.jobDatabase.GetJobWithPersistentID(data.associatedJobID);
         }
+        if (data.uniqueActionData != null) {
+            uniqueActionData = data.uniqueActionData.Load();
+        }
     }
     #endregion
 }
@@ -1074,6 +1095,8 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
 
     //Crime
     public CRIME_TYPE crimeType;
+
+    public SaveDataUniqueActionData uniqueActionData;
 
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Action;
@@ -1162,6 +1185,9 @@ public class SaveDataActualGoapNode : SaveData<ActualGoapNode>, ISavableCounterp
         }
         if (data.associatedJob != null && data.associatedJob.jobType != JOB_TYPE.NONE) {
             associatedJobID = data.associatedJob.persistentID;
+        }
+        if (data.uniqueActionData != null) {
+            uniqueActionData = data.uniqueActionData.Save();
         }
     }
 
