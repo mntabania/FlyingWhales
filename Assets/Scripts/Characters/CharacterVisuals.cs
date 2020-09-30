@@ -246,6 +246,11 @@ public class CharacterVisuals {
         }
         return UtilityScripts.Utilities.VillagerIcon();
     }
+    public string GetCharacterNameWithIconAndColor() {
+        string icon = GetCharacterStringIcon();
+        string characterName = UtilityScripts.Utilities.ColorizeName(_owner.name);
+        return $"{icon}{characterName}";
+    }
     #endregion
 
     public void CleanUp() {

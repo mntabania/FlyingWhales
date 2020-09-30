@@ -64,6 +64,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		LevelLoaderManager.Instance.UpdateLoadingInfo("Finalizing world...");
 		yield return MapGenerator.Instance.StartCoroutine(FinalizeInnerMaps());
 		yield return MapGenerator.Instance.StartCoroutine(ExecuteLoadedFeatureInitialActions());
+		yield return MapGenerator.Instance.StartCoroutine(LoadWorldEvents());
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i]; 
 			region.GenerateOuterBorders();

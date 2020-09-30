@@ -398,6 +398,8 @@ public class Player : ILeader, IObjectManipulator {
             intelItem?.SetClickedState(true);
             InputManager.Instance.SetCursorTo(InputManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnIntelCast);
+        } else {
+            Messenger.Broadcast(Signals.ACTIVE_INTEL_REMOVED);
         }
     }
     private void OnIntelCast(KeyCode keyCode) {

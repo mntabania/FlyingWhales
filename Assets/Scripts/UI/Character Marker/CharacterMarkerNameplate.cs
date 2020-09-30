@@ -20,6 +20,10 @@ public class CharacterMarkerNameplate : PooledObject {
     [SerializeField] private RectTransform thoughtsRectTransform;
     [SerializeField] private ContentSizeFitter contentSizeFitter;
     
+    [Header("Intel Helper")]
+    [SerializeField] private TextMeshProUGUI intelHelperLbl;
+    [SerializeField] private GameObject intelHelperGO;
+    [SerializeField] private GameObject highlightGO;
     private CharacterMarker _parentMarker;
 
     private const float DefaultSize = 80f;
@@ -94,6 +98,8 @@ public class CharacterMarkerNameplate : PooledObject {
     public override void Reset() {
         base.Reset();
         HideThoughtsAndNameplate();
+        HideIntelHelper();
+        SetHighlighterState(false);
         _parentMarker = null;
         Messenger.RemoveListener<Camera, float>(Signals.CAMERA_ZOOM_CHANGED, OnCameraZoomChanged);
         Messenger.RemoveListener<Region>(Signals.LOCATION_MAP_OPENED, OnLocationMapOpened);
@@ -247,6 +253,22 @@ public class CharacterMarkerNameplate : PooledObject {
             // contentSizeFitter.SetLayoutHorizontal();
         }
         
+    }
+    #endregion
+
+    #region Intel Helper
+    public void ShowIntelHelper(string text) {
+        intelHelperLbl.text = text;
+        intelHelperGO.SetActive(true);
+    }
+    public void HideIntelHelper() {
+        intelHelperGO.SetActive(false);
+    }
+    #endregion
+
+    #region Highlighter
+    public void SetHighlighterState(bool state) {
+        highlightGO.SetActive(state);
     }
     #endregion
 }
