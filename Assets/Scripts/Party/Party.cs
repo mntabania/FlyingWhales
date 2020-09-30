@@ -11,7 +11,7 @@ public class Party : ILogFiller, ISavable {
     public string persistentID { get; private set; }
     public string partyName { get; private set; }
     public PARTY_STATE partyState { get; private set; }
-    public int takeQuestSchedule { get; private set; }
+    //public int takeQuestSchedule { get; private set; }
     public int restSchedule { get; private set; }
     //public int endRestSchedule { get; private set; }
     public bool hasRested { get; private set; }
@@ -34,7 +34,7 @@ public class Party : ILogFiller, ISavable {
     public List<Character> membersThatJoinedQuest { get; private set; }
 
     public bool cannotProduceFoodThisRestPeriod { get; private set; }
-    public bool hasStartedAcceptingQuests { get; private set; }
+    //public bool hasStartedAcceptingQuests { get; private set; }
     public GameDate nextQuestCheckDate { get; private set; }
 
     public bool canAcceptQuests { get; private set; }
@@ -68,7 +68,7 @@ public class Party : ILogFiller, ISavable {
         perHourElapsedInWaiting = 0;
 
         SetPartyState(PARTY_STATE.None);
-        SetTakeQuestSchedule();
+        //SetTakeQuestSchedule();
         SetRestSchedule();
         //SetEndRestSchedule();
 
@@ -77,13 +77,15 @@ public class Party : ILogFiller, ISavable {
         Messenger.AddListener<LocationStructure>(Signals.STRUCTURE_DESTROYED, OnStructureDestroyed);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         DatabaseManager.Instance.partyDatabase.AddParty(this);
+
+        ScheduleNextDateToCheckQuest();
     }
 
     public void Initialize(SaveDataParty data) { //In order to create a party, there must always be a party creator
         persistentID = data.persistentID;
         partyName = data.partyName;
         partyState = data.partyState;
-        takeQuestSchedule = data.takeQuestSchedule;
+        //takeQuestSchedule = data.takeQuestSchedule;
         restSchedule = data.restSchedule;
         //endRestSchedule = data.endRestSchedule;
         hasRested = data.hasRested;
@@ -92,7 +94,7 @@ public class Party : ILogFiller, ISavable {
         hasChangedTargetDestination = data.hasChangedTargetDestination;
         perHourElapsedInWaiting = data.perHourElapsedInWaiting;
         waitingEndDate = data.waitingEndDate;
-        hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
+        //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
 
         canAcceptQuests = data.canAcceptQuests;
@@ -103,7 +105,7 @@ public class Party : ILogFiller, ISavable {
             Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
             DatabaseManager.Instance.partyDatabase.AddParty(this);
         }
-        if (hasStartedAcceptingQuests) {
+        if (!isDisbanded) {
             SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
         }
         if (!canAcceptQuests) {
@@ -135,9 +137,9 @@ public class Party : ILogFiller, ISavable {
     #endregion
 
     #region General
-    private void SetTakeQuestSchedule() {
-        takeQuestSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.MORNING);
-    }
+    //private void SetTakeQuestSchedule() {
+    //    takeQuestSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.MORNING);
+    //}
     private void SetRestSchedule() {
         if (GameUtilities.RollChance(50)) {
             restSchedule = GameManager.GetRandomTickFromTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
@@ -166,25 +168,29 @@ public class Party : ILogFiller, ISavable {
         }
     }
     private void PerTickEndedWhileInactive() {
-        if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
-            TryAcceptQuest();
-        }
+        //if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
+        //    TryAcceptQuest();
+        //}
     }
     private void TryAcceptQuest() {
-        PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
-        if (quest != null) {
-            hasStartedAcceptingQuests = false;
-            AcceptQuest(quest);
-        } else {
+        if (isDisbanded) {
+            return;
+        }
+        if (!isActive) {
             TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-            if(canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
-                hasStartedAcceptingQuests = true;
-                nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-                SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
-            } else {
-                hasStartedAcceptingQuests = false;
+            if (canAcceptQuests && (currentTimeInWords == TIME_IN_WORDS.MORNING || currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME || currentTimeInWords == TIME_IN_WORDS.AFTERNOON)) {
+                PartyQuest quest = partyFaction.partyQuestBoard.GetFirstUnassignedPartyQuestFor(this);
+                if (quest != null) {
+                    //hasStartedAcceptingQuests = false;
+                    AcceptQuest(quest);
+                }
             }
         }
+        ScheduleNextDateToCheckQuest();
+    }
+    private void ScheduleNextDateToCheckQuest() {
+        nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+        SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
     private void PerTickEndedWhileActive() {
         if (restSchedule == GameManager.Instance.currentTick && partyState != PARTY_STATE.Resting) {
@@ -815,7 +821,7 @@ public class Party : ILogFiller, ISavable {
         DatabaseManager.Instance.partyDatabase.RemoveParty(this);
         partyName = string.Empty;
         partyState = PARTY_STATE.None;
-        takeQuestSchedule = -1;
+        //takeQuestSchedule = -1;
         restSchedule = -1;
         hasRested = false;
         partySettlement = null;
@@ -853,7 +859,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public string persistentID { get; set; }
     public string partyName;
     public PARTY_STATE partyState;
-    public int takeQuestSchedule;
+    //public int takeQuestSchedule;
     public int restSchedule;
     //public int endRestSchedule;
     public bool hasRested;
@@ -869,7 +875,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
     public string targetDestination;
     public PARTY_TARGET_DESTINATION_TYPE targetDestinationType;
     public string currentQuest;
-    public bool hasStartedAcceptingQuests;
+    //public bool hasStartedAcceptingQuests;
     public GameDate nextQuestCheckDate;
     public bool canAcceptQuests;
     public GameDate canAcceptQuestsAgainDate;
@@ -891,7 +897,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         persistentID = data.persistentID;
         partyName = data.partyName;
         partyState = data.partyState;
-        takeQuestSchedule = data.takeQuestSchedule;
+        //takeQuestSchedule = data.takeQuestSchedule;
         restSchedule = data.restSchedule;
         //endRestSchedule = data.endRestSchedule;
         hasRested = data.hasRested;
@@ -902,7 +908,7 @@ public class SaveDataParty : SaveData<Party>, ISavableCounterpart {
         partySettlement = data.partySettlement.persistentID;
         partyFaction = data.partyFaction.persistentID;
 
-        hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
+        //hasStartedAcceptingQuests = data.hasStartedAcceptingQuests;
         nextQuestCheckDate = data.nextQuestCheckDate;
 
         canAcceptQuests = data.canAcceptQuests;
