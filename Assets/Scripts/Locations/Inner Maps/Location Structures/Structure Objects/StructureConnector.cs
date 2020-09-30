@@ -19,10 +19,12 @@ namespace Inner_Maps.Location_Structures {
         private void Awake() {
             _isOpen = true;
         }
+#if UNITY_EDITOR
         private void OnDrawGizmos() {
             Gizmos.color = isOpen ? Color.green : Color.red;
             Gizmos.DrawWireCube(transform.position, new Vector3(1, 1, 1));
         }
+#endif
         #endregion
 
         public void SetOwner([NotNull]LocationStructure owner) {
