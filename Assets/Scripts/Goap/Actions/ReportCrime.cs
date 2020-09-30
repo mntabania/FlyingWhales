@@ -72,8 +72,10 @@ public class ReportCrime : GoapAction {
                        witness.relationshipContainer.HasRelationshipWith(reactable.actor, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.LOVER)){
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);
             } else {
-                if (!witness.relationshipContainer.IsEnemiesWith(node.actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);    
+                if (witness.relationshipContainer.IsEnemiesWith(reactable.actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
+                } else {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status, node);
                 }
             }
             //SPECIAL CASE: After reacting to the Report Crime, witness should also react to the rumor itself

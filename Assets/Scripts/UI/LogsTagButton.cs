@@ -14,7 +14,6 @@ public class LogsTagButton : PooledObject {
     [SerializeField] private RectTransform additionalTagsRect;
     [SerializeField] private GameObject tagWithNamePrefab;
 
-    private bool hasAdditionalTags;
     private List<LOG_TAG> localTags;
     private bool hasPopulatedTagsGO;
     private void Awake() {
@@ -23,23 +22,15 @@ public class LogsTagButton : PooledObject {
     public void SetTags(List<LOG_TAG> tags) {
         LOG_TAG mainTag = tags[0];
         mainTagImage.sprite = UIManager.Instance.GetLogTagSprite(mainTag);
-        if (tags.Count > 1) {
-            hasAdditionalTags = true;
-            additionalTagsPlusObject.gameObject.SetActive(true);
-            localTags.AddRange(tags);
-        } else {
-            hasAdditionalTags = false;
-            additionalTagsPlusObject.gameObject.SetActive(false);
-        }
+        localTags.AddRange(tags);
+        additionalTagsPlusObject.gameObject.SetActive(tags.Count > 1);
     }
 
     public void ShowAllTags() {
-        if (hasAdditionalTags) {
-            if (!hasPopulatedTagsGO) {
-                CreateTagItems();
-            }
-            additionalTagsGO.gameObject.SetActive(true);    
+        if (!hasPopulatedTagsGO) {
+            CreateTagItems();
         }
+        additionalTagsGO.gameObject.SetActive(true);    
     }
     private void CreateTagItems() {
         //populate additional tags
@@ -51,17 +42,12 @@ public class LogsTagButton : PooledObject {
         hasPopulatedTagsGO = true;
     }
     public void HideAllTags() {
-        if (hasAdditionalTags) {
-            additionalTagsGO.gameObject.SetActive(false);    
-        }
+        additionalTagsGO.gameObject.SetActive(false);    
     }
     
     public override void Reset() {
         hasPopulatedTagsGO = false;
         localTags.Clear();
-        if (hasAdditionalTags) {
-            UtilityScripts.Utilities.DestroyChildren(additionalTagsRect);    
-        }
-        hasAdditionalTags = false;
+        UtilityScripts.Utilities.DestroyChildren(additionalTagsRect);    
     }
 }

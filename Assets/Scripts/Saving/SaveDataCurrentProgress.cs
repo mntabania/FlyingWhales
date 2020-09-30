@@ -177,6 +177,12 @@ public class SaveDataCurrentProgress {
             SaveDataTileObject saveDataTileObject = CreateNewSaveDataForTileObject(tileObject);
             saveDataTileObject.Save(tileObject);
             AddToSaveHub(saveDataTileObject, saveDataTileObject.objectType);
+            if (tileObject is WurmHole wurmHole) {
+                //special case for wurm hole because connected wurm hole cannot be saved inside other wurm hole because it will produce a stack overflow exception
+                SaveDataTileObject otherWurmHoleSaveData = CreateNewSaveDataForTileObject(wurmHole.wurmHoleConnection);
+                otherWurmHoleSaveData.Save(wurmHole.wurmHoleConnection);
+                SaveManager.Instance.saveCurrentProgressManager.currentSaveDataProgress.AddToSaveHub(otherWurmHoleSaveData, otherWurmHoleSaveData.objectType);
+            }
             batchCount++;
             if (batchCount >= SaveManager.TileObject_Save_Batches) {
                 batchCount = 0;
