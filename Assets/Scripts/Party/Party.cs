@@ -403,6 +403,7 @@ public class Party : ILogFiller, ISavable {
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             OnAcceptQuest(quest);
         }
@@ -422,6 +423,7 @@ public class Party : ILogFiller, ISavable {
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             OnDropQuest(currentQuest);
             ClearMembersThatJoinedQuest();

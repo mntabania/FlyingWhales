@@ -18,7 +18,7 @@ public class RaidPartyQuest : PartyQuest {
     #endregion
 
     public RaidPartyQuest() : base(PARTY_QUEST_TYPE.Raid) {
-        minimumPartySize = 4;
+        minimumPartySize = 3;
         //waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(RaidBehaviour);
         //jobQueueOwnerType = JOB_OWNER.FACTION;

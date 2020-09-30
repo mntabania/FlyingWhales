@@ -93,12 +93,14 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                     }
                 }
             }
+        } else {
+            hasJob = false;
         }
         if (producedJob != null) {
             producedJob.SetIsThisAPartyJob(true);
         }
-        //return hasJob;
-        return true;
+        return hasJob;
+        //return true;
     }
 
     private bool CampBehaviour(Character character, Party party, out JobQueueItem producedJob) {
