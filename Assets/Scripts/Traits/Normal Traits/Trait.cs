@@ -57,12 +57,29 @@ namespace Traits {
             }
         }
         #endregion
+
+        #region Mood Effects
+        public void ApplyMoodEffects(ITraitable addedTo, GameDate expiryDate) {
+            if(addedTo is Character character) {
+                if (moodEffect != 0) {
+                    character.moodComponent.AddMoodEffect(moodEffect, this, expiryDate);    
+                }
+            }
+        }
+        public void UnapplyMoodEffects(ITraitable removedFrom) {
+            if (removedFrom is Character character) {
+                if (moodEffect != 0) {
+                    character.moodComponent.RemoveMoodEffect(-moodEffect, this);
+                }
+            }
+        }
+        #endregion
         
         #region Virtuals
         public virtual void OnAddTrait(ITraitable addedTo) {
             if(addedTo is Character) {
                 Character character = addedTo as Character;
-                character.moodComponent.AddMoodEffect(moodEffect, this);
+                // character.moodComponent.AddMoodEffect(moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
                     character.combatComponent.SetElementalType(elementalType);
                 }
@@ -71,7 +88,7 @@ namespace Traits {
         public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                character.moodComponent.RemoveMoodEffect(-moodEffect, this);
+                // character.moodComponent.RemoveMoodEffect(-moodEffect, this);
                 if (elementalType != ELEMENTAL_TYPE.Normal) {
                     character.combatComponent.UpdateElementalType();
                 }

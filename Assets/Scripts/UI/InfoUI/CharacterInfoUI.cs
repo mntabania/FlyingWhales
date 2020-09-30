@@ -1015,6 +1015,7 @@ public class CharacterInfoUI : InfoUIBase {
     private void UpdateMoodSummary() {
         moodSummary.text = string.Empty;
         string summary = string.Empty;
+        int index = 0;
         foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
             string color = "green";
             string text = "+" + pair.Value;
@@ -1022,9 +1023,41 @@ public class CharacterInfoUI : InfoUIBase {
                 color = "red";
                 text = pair.Value.ToString();
             }
-            summary += $"<color={color}>{text}</color> {pair.Key}\n";
+            summary += $"<color={color}>{text}</color> <link=\"{index}\">{pair.Key}</link>\n";
+            index++;
         }
         moodSummary.text = summary;
+    }
+    public void OnHoverMoodEffect(object obj) {
+        if (obj is string text) {
+            int index = int.Parse(text);
+            if (index < _activeCharacter.moodComponent.allMoodModifications.Count) {
+                var kvp = _activeCharacter.moodComponent.allMoodModifications.ElementAt(index);
+                MoodModification modifications = kvp.Value;
+                string summary = string.Empty;
+                int dateIndex = modifications.expiryDates.Count - 1;
+                for (int i = 0; i < modifications.modifications.Count; i++) {
+                    int modificationValue = modifications.modifications[i];
+                    if (modificationValue != 0) { //do not show 0 values
+                        GameDate date = modifications.expiryDates[dateIndex];
+                        string modificationSign = string.Empty;
+                        if (modificationValue > 0) {
+                            modificationSign = "+";
+                        }
+                        string color = "green";
+                        if (modificationValue < 0) {
+                            color = "red";
+                        }
+                        summary = $"{summary} <color={color}>{modificationSign}{modificationValue.ToString()}</color> - {date.ConvertToContinuousDaysWithTime()}\n";
+                    }
+                    dateIndex--;
+                }
+                UIManager.Instance.ShowSmallInfo(summary, "Mood Modifications", false);    
+            }
+        }
+    }
+    public void OnHoverOutMoodEffect() {
+        UIManager.Instance.HideSmallInfo();
     }
     public void ShowMoodTooltip() {
         string summary = $"Represents the Villagers' overall state of mind. Lower a Villagers' Mood to make them less effective and more volatile.\n\n" +

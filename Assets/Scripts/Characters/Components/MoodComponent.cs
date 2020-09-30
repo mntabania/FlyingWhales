@@ -22,6 +22,7 @@ public class MoodComponent : CharacterComponent {
     public string mentalBreakName { get; private set; }
 
     public Dictionary<string, int> moodModificationsSummary { get; private set; }
+    public Dictionary<string, MoodModification> allMoodModifications { get; private set; }
 
     #region getters
     public MOOD_STATE moodState {
@@ -55,6 +56,7 @@ public class MoodComponent : CharacterComponent {
     public MoodComponent() {
 		EnableMoodEffects();
 		moodModificationsSummary = new Dictionary<string, int>();
+		allMoodModifications = new Dictionary<string, MoodModification>();
 		isInNormalMood = true; //set as initially in normal mood
 	}
     public MoodComponent(SaveDataMoodComponent data) {
@@ -76,6 +78,7 @@ public class MoodComponent : CharacterComponent {
         hasMoodChanged = data.hasMoodChanged;
         mentalBreakName = data.mentalBreakName;
         moodModificationsSummary = data.moodModificationsSummary;
+        allMoodModifications = data.allMoodModifications;
 
         if (!string.IsNullOrEmpty(mentalBreakName)) {
 	        if (mentalBreakName == "Loss of Control") {
@@ -112,25 +115,28 @@ public class MoodComponent : CharacterComponent {
         hasMoodChanged = true;
         //OnMoodChanged();
 	}
-	public void AddMoodEffect(int amount, IMoodModifier modifier) {
-		if (amount == 0) {
-			return; //ignore
-		}
+	public void AddMoodEffect(int amount, IMoodModifier modifier, GameDate expiryDate) {
+		// if (amount == 0) {
+		// 	return; //ignore
+		// }
+		//NOTE: Allowed addition of zero values because of the expiry dates.
+		//statuses, even if they have no mood effects, can extend the expiry of that status, and so the mood summary needs to be updated
+		//normal traits on the other hand usually don't have mood effects so moved checking of 0 values there.
 		moodValue += amount;
-		AddModificationToSummary(modifier.moodModificationDescription, amount);
+		AddModificationToSummary(modifier.moodModificationDescription, amount, expiryDate);
         hasMoodChanged = true;
         //OnMoodChanged();
 	}
 	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
-		if (amount == 0) {
-			return; //ignore
-		}
+		// if (amount == 0) {
+		// 	return; //ignore
+		// }
 		moodValue += amount;
 		RemoveModificationFromSummary(modifier.moodModificationDescription, amount);
         hasMoodChanged = true;
         //OnMoodChanged();
 	}
-    public void OnTickEnded() {
+	public void OnTickEnded() {
         if (hasMoodChanged) {
             hasMoodChanged = false;
             OnMoodChanged();
@@ -510,9 +516,14 @@ public class MoodComponent : CharacterComponent {
 	#endregion
 
 	#region Summary
-	private void AddModificationToSummary(string modificationKey, int modificationValue) {
-		if (moodModificationsSummary.ContainsKey(modificationKey) == false) {
+	private void AddModificationToSummary(string modificationKey, int modificationValue, GameDate expiryDate) {
+		if (!moodModificationsSummary.ContainsKey(modificationKey)) {
 			moodModificationsSummary.Add(modificationKey, 0);
+		}
+		if (!allMoodModifications.ContainsKey(modificationKey)) {
+			allMoodModifications.Add(modificationKey, new MoodModification(modificationValue, expiryDate));
+		} else {
+			allMoodModifications[modificationKey].AddModification(modificationValue, expiryDate);
 		}
 		Debug.Log($"<color=blue>{owner.name} Added mood modification {modificationKey} {modificationValue.ToString()}</color>");
 		moodModificationsSummary[modificationKey] += modificationValue;
@@ -525,6 +536,16 @@ public class MoodComponent : CharacterComponent {
 			if (moodModificationsSummary[modificationKey] == 0) {
 				moodModificationsSummary.Remove(modificationKey);
 			}
+			
+			if (allMoodModifications.ContainsKey(modificationKey)) {
+				MoodModification modification = allMoodModifications[modificationKey];
+				modification.expiryDates.RemoveAt(0); //remove oldest date.
+				modification.modifications.RemoveAt(modification.modifications.Count - 1); //remove latest modification. Because stacking statuses are first in last out.
+				if (allMoodModifications[modificationKey].IsEmpty()) {
+					allMoodModifications.Remove(modificationKey);	
+				}
+			}
+			
 			Messenger.Broadcast(Signals.MOOD_SUMMARY_MODIFIED, this);
 		}
 	}
@@ -547,6 +568,7 @@ public class SaveDataMoodComponent : SaveData<MoodComponent> {
     public string mentalBreakName;
 
     public Dictionary<string, int> moodModificationsSummary;
+    public Dictionary<string, MoodModification> allMoodModifications;
 
     #region Overrides
     public override void Save(MoodComponent data) {
@@ -562,6 +584,7 @@ public class SaveDataMoodComponent : SaveData<MoodComponent> {
         hasMoodChanged = data.hasMoodChanged;
         mentalBreakName = data.mentalBreakName;
         moodModificationsSummary = data.moodModificationsSummary;
+        allMoodModifications = data.allMoodModifications;
     }
 
     public override MoodComponent Load() {
@@ -569,4 +592,24 @@ public class SaveDataMoodComponent : SaveData<MoodComponent> {
         return component;
     }
     #endregion
+}
+
+[System.Serializable]
+public struct MoodModification {
+	public List<int> modifications;
+	public List<GameDate> expiryDates;
+	public MoodModification(int modification, GameDate expiryDate) {
+		modifications = new List<int>();
+		expiryDates = new List<GameDate>();
+		AddModification(modification, expiryDate);
+	}
+
+	public void AddModification(int modification, GameDate expiryDate) {
+		modifications.Add(modification);
+		expiryDates.Add(expiryDate);
+	}
+
+	public bool IsEmpty() {
+		return expiryDates.Count == 0 && modifications.Count == 0;
+	}
 }

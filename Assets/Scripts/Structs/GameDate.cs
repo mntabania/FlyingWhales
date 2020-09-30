@@ -9,12 +9,14 @@ public struct GameDate {
 	public int day;
 	public int year;
     public int tick;
-
+    public bool hasValue;
+    
     public GameDate(int month, int day, int year, int tick){
         this.month = month;
 		this.day = day;
 		this.year = year;
         this.tick = tick;
+        hasValue = true;
     }
 
     public GameDate AddTicks(int amount) {
@@ -247,6 +249,9 @@ public struct GameDate {
     }
     
     public string ConvertToContinuousDaysWithTime(bool nextLineTime = false) {
+        if (!hasValue) {
+            return "Indefinite";
+        }
         if (nextLineTime) {
             return $"Day {ConvertToContinuousDays()}\n{GameManager.ConvertTickToTime(this.tick)}";
         }

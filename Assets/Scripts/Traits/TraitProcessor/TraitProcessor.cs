@@ -19,14 +19,16 @@ namespace Traits {
 
             int duration = overrideDuration;
             if (duration == -1) { duration = trait.ticksDuration; } //if no override duration was given(-1), then use the default trait duration
+            GameDate removeDate = default;
             if (duration > 0) {
                 //traitable.traitContainer.currentDurations.Add(trait, 0);
-                GameDate removeDate = GameManager.Instance.Today();
+                removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(duration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, trait), this);
                 traitable.traitContainer.AddScheduleTicket(trait.name, ticket, removeDate);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
+            trait.ApplyMoodEffects(traitable, removeDate);
             if(trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
                 for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
                     string identifier = trait.traitOverrideFunctionIdentifiers[i];
@@ -47,7 +49,7 @@ namespace Traits {
             traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
-
+            trait.UnapplyMoodEffects(traitable);
             if (trait.traitOverrideFunctionIdentifiers != null && trait.traitOverrideFunctionIdentifiers.Count > 0) {
                 for (int i = 0; i < trait.traitOverrideFunctionIdentifiers.Count; i++) {
                     string identifier = trait.traitOverrideFunctionIdentifiers[i];
@@ -66,9 +68,10 @@ namespace Traits {
         protected bool DefaultProcessOnStackStatus(ITraitable traitable, Status status, Character characterResponsible, ActualGoapNode gainedFromDoing, int overrideDuration) {
             int duration = overrideDuration;
             if(duration == -1) { duration = status.ticksDuration; }
+            GameDate removeDate = default;
             if (duration > 0) {
                 //traitable.traitContainer.currentDurations[trait] = 0;
-                GameDate removeDate = GameManager.Instance.Today();
+                removeDate = GameManager.Instance.Today();
                 removeDate.AddTicks(duration);
                 string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => traitable.traitContainer.RemoveTraitOnSchedule(traitable, status), this);
                 traitable.traitContainer.AddScheduleTicket(status.name, ticket, removeDate);
@@ -78,6 +81,7 @@ namespace Traits {
                 status.SetGainedFromDoing(gainedFromDoing);
                 status.AddCharacterResponsibleForTrait(characterResponsible);
                 status.OnStackStatus(traitable);
+                status.ApplyStackedMoodEffect(traitable, removeDate);
                 return true;
             } else {
                 status.OnStackStatusAddedButStackIsAtLimit(traitable);
@@ -89,6 +93,7 @@ namespace Traits {
             // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
             if (traitable.traitContainer.stacks[status.name] < status.stackLimit) {
                 status.OnUnstackStatus(traitable);
+                status.UnapplyStackedMoodEffect(traitable);
             }
         }
         private void ApplyPOITraitInteractions(ITraitable traitable, Trait trait) {

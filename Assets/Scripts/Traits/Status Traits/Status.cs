@@ -15,22 +15,35 @@ namespace Traits {
         public float stackModifier;
         public bool isTangible;
 
+        #region Mood Effects
+        public void ApplyStackedMoodEffect(ITraitable addedTo, GameDate expiryDate) {
+            if (addedTo is Character character) {
+                character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this, expiryDate);
+            }
+        }
+        public void UnapplyStackedMoodEffect(ITraitable addedTo) {
+            if (addedTo is Character character) {
+                character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
+            }
+        }
+        #endregion
+        
         #region Virtuals
         public virtual void OnStackStatus(ITraitable addedTo) {
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
-                character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this);
-            }
+            // if (addedTo is Character) {
+            //     Character character = addedTo as Character;
+            //     character.moodComponent.AddMoodEffect(Mathf.RoundToInt(moodEffect * stackModifier), this);
+            // }
         }
         /// <summary>
         /// Called when a stacking trait is added but the max stacks have been reached.
         /// </summary>
         public virtual void OnStackStatusAddedButStackIsAtLimit(ITraitable traitable) { }
         public virtual void OnUnstackStatus(ITraitable addedTo) {
-            if (addedTo is Character) {
-                Character character = addedTo as Character;
-                character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
-            }
+            // if (addedTo is Character) {
+            //     Character character = addedTo as Character;
+            //     character.moodComponent.RemoveMoodEffect(-Mathf.RoundToInt(moodEffect * stackModifier), this);
+            // }
         }
         //public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
         #endregion
