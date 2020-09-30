@@ -56,7 +56,8 @@ public class SaveDataWurmHole : SaveDataTileObject {
         WurmHole wurmHole = tileObject as WurmHole;
         Assert.IsNotNull(wurmHole);
         wurmHoleConnection = wurmHole.wurmHoleConnection.persistentID;
-        SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(wurmHole.wurmHoleConnection);
+        //Moved this to SaveDataCurrentProgress.SaveTileObjectsCoroutine() because this will produce an InvalidCastException and a StackOverflowException
+        // SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub<TileObject>(wurmHole.wurmHoleConnection); 
     }
 }
 #endregion

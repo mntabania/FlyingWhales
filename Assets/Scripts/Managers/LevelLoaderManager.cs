@@ -68,6 +68,9 @@ public class LevelLoaderManager : MonoBehaviour {
     public void UpdateLoadingInfo(string info) {
         loaderInfoText.text = info;
     }
+    public bool IsLoadingScreenActive() {
+        return loaderGO.activeInHierarchy;
+    }
     public void SetLoadingState(bool state) {
         loaderGO.SetActive(state);
         // if (WorldConfigManager.Instance.isDemoBuild) {

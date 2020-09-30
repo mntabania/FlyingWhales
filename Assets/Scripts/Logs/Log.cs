@@ -40,10 +40,16 @@ public struct Log {
         rawText = string.Empty;
         actionID = node?.persistentID ?? string.Empty;
         fillers = new List<LogFillerStruct>();
-        tags = providedTags != null && providedTags.Length > 0 ? new List<LOG_TAG>(providedTags) : new List<LOG_TAG>() { LOG_TAG.Misc }; //always default log to misc if no tags were provided, this is to prevent logs from having no tags
+        tags = new List<LOG_TAG>();
         hasValue = true;
         hasBeenFinalized = false;
         allInvolvedObjectIDs = string.Empty;
+        if (providedTags != null && providedTags.Length > 0) {
+            AddTag(providedTags);
+        } else {
+            //always default log to misc if no tags were provided, this is to prevent logs from having no tags
+            AddTag(LOG_TAG.Misc);
+        }
     }
     public Log(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText) {
         persistentID = id;
@@ -54,11 +60,17 @@ public struct Log {
         _logText = logText;
         actionID = string.Empty;
         fillers = null;
-        tags = providedTags != null && providedTags.Count > 0 ? new List<LOG_TAG>(providedTags) : new List<LOG_TAG>() { LOG_TAG.Misc }; //always default log to misc if no tags were provided, this is to prevent logs from having no tags
+        tags = new List<LOG_TAG>();
         hasValue = true;
         hasBeenFinalized = true;
         allInvolvedObjectIDs = involvedObjects;
         this.rawText = rawText;
+        if (providedTags != null && providedTags.Count > 0) {
+            AddTag(providedTags);
+        } else {
+            //always default log to misc if no tags were provided, this is to prevent logs from having no tags
+            AddTag(LOG_TAG.Misc);
+        }
     }
 
     #region Fillers
@@ -167,6 +179,13 @@ public struct Log {
     public void AddTag(LOG_TAG[] tags) {
         if (tags != null) {
             for (int i = 0; i < tags.Length; i++) {
+                AddTag(tags[i]);
+            }    
+        }
+    }
+    public void AddTag(List<LOG_TAG> tags) {
+        if (tags != null) {
+            for (int i = 0; i < tags.Count; i++) {
                 AddTag(tags[i]);
             }    
         }

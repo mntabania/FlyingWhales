@@ -160,6 +160,10 @@ namespace Ruinarch {
                 }
             }
             
+            if (LevelLoaderManager.Instance.isLoadingNewScene || LevelLoaderManager.Instance.IsLoadingScreenActive()) {
+                //Do not allow any hotkeys while loading
+                return;
+            }
             if (Input.GetMouseButtonDown(0)) {
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse0);
             } else if (Input.GetMouseButtonDown(1)) {
@@ -221,7 +225,11 @@ namespace Ruinarch {
                 //Do not allow hotkeys while saving
                 return;
             }
-            if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
+            if (LevelLoaderManager.Instance.isLoadingNewScene || LevelLoaderManager.Instance.IsLoadingScreenActive()) {
+                //Do not allow hotkeys while loading
+                return;
+            }
+            if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
             Messenger.Broadcast(Signals.HOTKEY_CLICK, buttonToActivate);
         }
         #endregion
