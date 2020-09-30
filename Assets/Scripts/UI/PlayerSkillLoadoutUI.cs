@@ -30,6 +30,8 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     private SkillSlotItem pickedSlotItem;
     private List<SPELL_TYPE> loadoutChoices;
 
+    public bool moreLoadoutOptions { get; set; }
+
     public void Initialize() {
         spellsSkillSlotItems = new GroupedSkillSlotItems();
         afflictionsSkillSlotItems = new GroupedSkillSlotItems();
@@ -138,53 +140,56 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
         if (archetype != loadout.archetype) { return; }
         pickedSlotItem = slotItem;
         loadoutChoices.Clear();
+        SPELL_TYPE[] availableSkills = null;
+        List<SPELL_TYPE> fixedSkills = null;
+        GroupedSkillSlotItems groupedSkillSlotItems = null;
         if (spellsTab.isOn) {
-            for (int i = 0; i < loadout.availableSpells.Length; i++) {
-                SPELL_TYPE skillType = loadout.availableSpells[i];
-                if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.spells.fixedSkills.Contains(skillType) && !spellsSkillSlotItems.HasExtraSkill(skillType)) {
-                        loadoutChoices.Add(skillType);
-                    }
-                }
+            availableSkills = loadout.availableSpells;
+            if (moreLoadoutOptions) {
+                availableSkills = PlayerSkillManager.Instance.allSpells;
             }
+            fixedSkills = loadout.spells.fixedSkills;
+            groupedSkillSlotItems = spellsSkillSlotItems;
         } else if (afflictionsTab.isOn) {
-            for (int i = 0; i < loadout.availableAfflictions.Length; i++) {
-                SPELL_TYPE skillType = loadout.availableAfflictions[i];
-                if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.afflictions.fixedSkills.Contains(skillType) && !afflictionsSkillSlotItems.HasExtraSkill(skillType)) {
-                        loadoutChoices.Add(skillType);
-                    }
-                }
+            availableSkills = loadout.availableAfflictions;
+            if (moreLoadoutOptions) {
+                availableSkills = PlayerSkillManager.Instance.allAfflictions;
             }
+            fixedSkills = loadout.afflictions.fixedSkills;
+            groupedSkillSlotItems = afflictionsSkillSlotItems;
         } else if (minionsTab.isOn) {
-            for (int i = 0; i < loadout.availableMinions.Length; i++) {
-                SPELL_TYPE skillType = loadout.availableMinions[i];
-                if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.minions.fixedSkills.Contains(skillType) && !minionsSkillSlotItems.HasExtraSkill(skillType)) {
-                        loadoutChoices.Add(skillType);
-                    }
-                }
+            availableSkills = loadout.availableMinions;
+            if (moreLoadoutOptions) {
+                availableSkills = PlayerSkillManager.Instance.allMinionPlayerSkills;
             }
+            fixedSkills = loadout.minions.fixedSkills;
+            groupedSkillSlotItems = minionsSkillSlotItems;
         } else if (structuresTab.isOn) {
-            for (int i = 0; i < loadout.availableStructures.Length; i++) {
-                SPELL_TYPE skillType = loadout.availableStructures[i];
-                if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.structures.fixedSkills.Contains(skillType) && !structuresSkillSlotItems.HasExtraSkill(skillType)) {
-                        loadoutChoices.Add(skillType);
-                    }
-                }
+            availableSkills = loadout.availableStructures;
+            if (moreLoadoutOptions) {
+                availableSkills = PlayerSkillManager.Instance.allDemonicStructureSkills;
             }
+            fixedSkills = loadout.structures.fixedSkills;
+            groupedSkillSlotItems = structuresSkillSlotItems;
         } else if (miscsTab.isOn) {
-            for (int i = 0; i < loadout.availableMiscs.Length; i++) {
-                SPELL_TYPE skillType = loadout.availableMiscs[i];
+            availableSkills = loadout.availableMiscs;
+            if (moreLoadoutOptions) {
+                availableSkills = PlayerSkillManager.Instance.allPlayerActions;
+            }
+            fixedSkills = loadout.miscs.fixedSkills;
+            groupedSkillSlotItems = miscsSkillSlotItems;
+        }
+        if(availableSkills != null) {
+            for (int i = 0; i < availableSkills.Length; i++) {
+                SPELL_TYPE skillType = availableSkills[i];
                 if (PlayerSkillManager.Instance.playerSkillDataDictionary.ContainsKey(skillType)) {
-                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !loadout.miscs.fixedSkills.Contains(skillType) && !miscsSkillSlotItems.HasExtraSkill(skillType)) {
+                    if (!PlayerSkillManager.Instance.constantSkills.Contains(skillType) && !fixedSkills.Contains(skillType) && !groupedSkillSlotItems.HasExtraSkill(skillType)) {
                         loadoutChoices.Add(skillType);
                     }
                 }
             }
         }
-        if(loadoutChoices.Count > 0) {
+        if (loadoutChoices.Count > 0) {
             objectPicker.ShowLoadoutPicker(loadoutChoices, OnConfirmSkill, OnHoverEnterSkill, OnHoverExitSkill);
         }
     }
@@ -206,6 +211,33 @@ public class PlayerSkillLoadoutUI : MonoBehaviour {
     }
     private void OnHoverExitSkillSlotItem(PlayerSkillData skillData) {
         skillDetailsTooltip.HidePlayerSkillDetails();
+    }
+    public void ClearExtraSlotItems() {
+        for (int i = 0; i < spellsSkillSlotItems.extraSkillSlotItems.Count; i++) {
+            spellsSkillSlotItems.extraSkillSlotItems[i].ClearData();
+        }
+        for (int i = 0; i < afflictionsSkillSlotItems.extraSkillSlotItems.Count; i++) {
+            afflictionsSkillSlotItems.extraSkillSlotItems[i].ClearData();
+        }
+        for (int i = 0; i < minionsSkillSlotItems.extraSkillSlotItems.Count; i++) {
+            minionsSkillSlotItems.extraSkillSlotItems[i].ClearData();
+        }
+        for (int i = 0; i < structuresSkillSlotItems.extraSkillSlotItems.Count; i++) {
+            structuresSkillSlotItems.extraSkillSlotItems[i].ClearData();
+        }
+        for (int i = 0; i < miscsSkillSlotItems.extraSkillSlotItems.Count; i++) {
+            miscsSkillSlotItems.extraSkillSlotItems[i].ClearData();
+        }
+    }
+    public void SetMoreLoadoutOptions(bool state, bool doEffect) {
+        if(moreLoadoutOptions != state) {
+            moreLoadoutOptions = state;
+            if (doEffect) {
+                if (!moreLoadoutOptions) {
+                    ClearExtraSlotItems();
+                }
+            }
+        }
     }
     #endregion
 

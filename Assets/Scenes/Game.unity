@@ -52586,7 +52586,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883206538}
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -111497,18 +111497,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 85761049}
     m_Modifications:
-    - target: {fileID: 5547779612091208032, guid: 13aebadf56d790d4daf6e22037dffcfb,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: -3361069329983075161, guid: c1f181a5dea82774190fe0bd546371d8,
-        type: 2}
-    - target: {fileID: 5547779612091208032, guid: 13aebadf56d790d4daf6e22037dffcfb,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: -3361069329983075161, guid: c1f181a5dea82774190fe0bd546371d8,
-        type: 2}
     - target: {fileID: 7758469948393651568, guid: 13aebadf56d790d4daf6e22037dffcfb,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -111618,6 +111606,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Loadout and Skill Tree Selector
+      objectReference: {fileID: 0}
+    - target: {fileID: 7758469948393651575, guid: 13aebadf56d790d4daf6e22037dffcfb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 13aebadf56d790d4daf6e22037dffcfb, type: 3}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using Quests;
-using Ruinarch;
+using Ruinarch.Custom_UI;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
@@ -15,6 +15,8 @@ public class SkillTreeSelector : MonoBehaviour {
 
     [SerializeField] private Toggle[] archetypeToggles;
 
+    public RuinarchToggle moreLoadoutOptionsToggle;
+
     public PlayerSkillLoadoutUI[] playerLoadoutUI;
 
     public void Initialize() {
@@ -22,6 +24,7 @@ public class SkillTreeSelector : MonoBehaviour {
         _horizontalScrollSnap.Awake();
         for (int i = 0; i < playerLoadoutUI.Length; i++) {
             playerLoadoutUI[i].Initialize();
+            playerLoadoutUI[i].SetMoreLoadoutOptions(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions, false);
         }
         // if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Oona) {
         //     //if second world then disable ravager and lich builds, and go to puppet master build
@@ -38,9 +41,9 @@ public class SkillTreeSelector : MonoBehaviour {
         //         }
         //     }
         // } else {
-            //disable other non main loadouts
-            //Second World
-            for (int i = 0; i < archetypeToggles.Length; i++) {
+        //disable other non main loadouts
+        //Second World
+        for (int i = 0; i < archetypeToggles.Length; i++) {
                 Toggle toggle = archetypeToggles[i];
                 PlayerSkillLoadoutUI loadoutUI = playerLoadoutUI[i];
                 if (toggle.gameObject.name == "Second World") {
@@ -50,6 +53,7 @@ public class SkillTreeSelector : MonoBehaviour {
                 }
             }
         // }
+        moreLoadoutOptionsToggle.SetIsOnWithoutNotify(SaveManager.Instance.currentSaveDataPlayer.moreLoadoutOptions);
         this.gameObject.SetActive(false);
     }
     public void Show() {
@@ -59,6 +63,16 @@ public class SkillTreeSelector : MonoBehaviour {
 
     public void Hide() {
         this.gameObject.SetActive(false);
+    }
+
+    public void OnToggleMoreLoadoutOptions(bool state) {
+        MoreLoadoutOptions(state);
+    }
+
+    private void MoreLoadoutOptions(bool state) {
+        for (int i = 0; i < playerLoadoutUI.Length; i++) {
+            playerLoadoutUI[i].SetMoreLoadoutOptions(state, true);
+        }
     }
 
     public void OnClickContinue() {
@@ -72,7 +86,7 @@ public class SkillTreeSelector : MonoBehaviour {
             //Set undead faction as friendly with player faction
             PlayerManager.Instance.player.playerFaction.SetRelationshipFor(FactionManager.Instance.undeadFaction, FACTION_RELATIONSHIP_STATUS.Friendly);
         }
-        
+        SaveManager.Instance.currentSaveDataPlayer.SetMoreLoadoutOptions(moreLoadoutOptionsToggle.isOn);
         Messenger.Broadcast(Signals.START_GAME_AFTER_LOADOUT_SELECT);
         GameManager.Instance.StartProgression();
         UIManager.Instance.initialWorldSetupMenu.Hide();

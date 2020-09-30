@@ -24,7 +24,8 @@ public class PartyInfoUI : InfoUIBase {
     [Header("Characters")]
     [SerializeField] private Toggle membersToggle;
     [SerializeField] private GameObject characterItemPrefab;
-    [SerializeField] private ScrollRect membersScrollView;
+    [SerializeField] private ScrollRect activeMembersScrollView;
+    [SerializeField] private ScrollRect inactiveMembersScrollView;
     [SerializeField] private GameObject membersGO;
 
     [Space(10)] [Header("Logs")] 
@@ -103,13 +104,24 @@ public class PartyInfoUI : InfoUIBase {
         }
     }
     private void UpdateMembers() {
-        UtilityScripts.Utilities.DestroyChildren(membersScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(activeMembersScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(inactiveMembersScrollView.content);
+        for (int i = 0; i < activeParty.membersThatJoinedQuest.Count; i++) {
+            Character character = activeParty.membersThatJoinedQuest[i];
+            if (character != null) {
+                GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, activeMembersScrollView.content);
+                CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+                item.SetObject(character);
+                item.SetAsDefaultBehaviour();
+            }
+        }
+
         List<Character> members = activeParty.members;
         if (members != null && members.Count > 0) {
             for (int i = 0; i < members.Count; i++) {
                 Character character = members[i];
-                if(character != null) {
-                    GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, membersScrollView.content);
+                if(character != null && !activeParty.membersThatJoinedQuest.Contains(character)) {
+                    GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, inactiveMembersScrollView.content);
                     CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
                     item.SetObject(character);
                     item.SetAsDefaultBehaviour();
