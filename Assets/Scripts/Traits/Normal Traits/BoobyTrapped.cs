@@ -102,13 +102,13 @@ namespace Traits {
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();
-                DamageTargetByTrap(target);
+                DamageTargetByTrap(actor, target);
                 willStillContinueAction = false;
                 return true;
             }
             return false;
         }
-        public void DamageTargetByTrap(IPointOfInterest target) {
+        public void DamageTargetByTrap(Character actor, IPointOfInterest target) {
             List<LocationGridTile> tiles = target.gridTileLocation.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile currTile = tiles[i];
@@ -119,6 +119,7 @@ namespace Traits {
                 }
             }
             target.traitContainer.RemoveTrait(target, this);
+            actor.traitContainer.AddTrait(actor, "Unconscious");    
         }
 
         public void SetElementType(ELEMENTAL_TYPE element) {

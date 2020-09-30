@@ -590,7 +590,7 @@ namespace Inner_Maps {
                         //Should not activate booby trap if character is removing it
                     } else {
                         BoobyTrapped boobyTrapped = rug.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
-                        boobyTrapped.DamageTargetByTrap(character);
+                        boobyTrapped.DamageTargetByTrap(character, rug);
                     }
                 }
             }
