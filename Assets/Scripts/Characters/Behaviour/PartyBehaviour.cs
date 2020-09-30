@@ -37,7 +37,7 @@ public class PartyBehaviour : CharacterBehaviourComponent {
                             if (party.targetDestination != null && !party.targetDestination.hasBeenDestroyed) {
                                 if (party.targetDestination.IsAtTargetDestination(character)) {
                                     if(party.targetDestination == party.partySettlement) {
-                                        party.currentQuest.EndQuest();
+                                        party.currentQuest.EndQuest("Finished quest");
                                     } else {
                                         party.SetPartyState(PARTY_STATE.Working);
                                     }
