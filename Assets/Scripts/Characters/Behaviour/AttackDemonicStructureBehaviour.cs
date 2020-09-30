@@ -20,9 +20,11 @@ public class AttackDemonicStructureBehaviour : CharacterBehaviourComponent {
                 if(party.currentQuest.target != null) {
                     targetStructure = party.currentQuest.target as LocationStructure;
                 }
-                if(targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.objectsThatContributeToDamage.Count <= 0) {
-                    party.GoBackHomeAndEndQuest();
-                    return true;
+                if (targetStructure == null || targetStructure.hasBeenDestroyed || targetStructure.objectsThatContributeToDamage.Count <= 0) {
+                    if (party.targetDestination != party.partySettlement) {
+                        party.GoBackHomeAndEndQuest();
+                        return true;
+                    }
                 }
                 if (party.partyState == PARTY_STATE.Working) {
                     log += $"\n-Party is working";
