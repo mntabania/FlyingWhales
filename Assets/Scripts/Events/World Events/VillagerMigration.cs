@@ -14,7 +14,7 @@ namespace Events.World_Events {
         #region Listeners
         private void OnHourStarted() {
             var hoursBasedOnTicks = GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick);
-            if (hoursBasedOnTicks == 9 || hoursBasedOnTicks == 1) {
+            if (hoursBasedOnTicks == 9 || hoursBasedOnTicks == 13) {
                 string debugLog = $"{GameManager.Instance.TodayLogString()}Checking for villager migration:";
                 NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveVillageSettlement();
                 int unoccupiedDwellings = GetUnoccupiedDwellingCount(randomSettlement);
