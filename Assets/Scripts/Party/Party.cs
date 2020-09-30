@@ -168,6 +168,7 @@ public class Party : ILogFiller, ISavable {
         }
     }
     private void PerTickEndedWhileInactive() {
+        //Note: Commented this because we no longer have a fixed take quest schedule, the new algo for taking quest is every [X] hours after creation of party so that the party will often take quests
         //if (takeQuestSchedule == GameManager.Instance.currentTick && canAcceptQuests) {
         //    TryAcceptQuest();
         //}
@@ -189,6 +190,7 @@ public class Party : ILogFiller, ISavable {
         ScheduleNextDateToCheckQuest();
     }
     private void ScheduleNextDateToCheckQuest() {
+        //This schedules the next time when the party will try to take a quest
         nextQuestCheckDate = GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
         SchedulingManager.Instance.AddEntry(nextQuestCheckDate, TryAcceptQuest, null);
     }
@@ -211,6 +213,9 @@ public class Party : ILogFiller, ISavable {
     public void SetTargetDestination(IPartyTargetDestination target) {
         if(targetDestination != target) {
             targetDestination = target;
+
+            //This is used so that every time the party changes destination and it is in the Working state, the party will switch to Moving state, if this is switched on
+            //The reason for this is so the party will move to the new destination, since they will not go there if we do not switch the state to Moving
             SetHasChangedTargetDestination(true);
         }
     }
@@ -257,6 +262,8 @@ public class Party : ILogFiller, ISavable {
 
     #region Waiting State
     private void OnSwitchToWaitingState(PARTY_STATE prevState) {
+        //Cancel all tiredness recovery upon switching to waiting state, so that the members of the party must go to the waiting place immediately
+        //Only tiredness recovery are cancelled because typically they take around 8 hours which by then the quest will be dropped already if all members are asleep
         CancelAllTirednessRecoveryJobsOfMembers();
         SetMeetingPlace();
         StartWaitTimer();
@@ -268,6 +275,7 @@ public class Party : ILogFiller, ISavable {
         SchedulingManager.Instance.AddEntry(waitingEndDate, WaitingEndedDecisionMaking, this);
     }
     private void WaitingPerHour() {
+        //Every hour after 2 hours, we must check if the members that joined is already enough so that the party will start the quest immediately, so we do not need to wait for the end of waiting period if the minimum party size of the quest is already met
         perHourElapsedInWaiting++;
         if(perHourElapsedInWaiting > 2) {
             if (isActive && membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
@@ -304,9 +312,12 @@ public class Party : ILogFiller, ISavable {
 
     #region Moving State
     private void OnSwitchToMovingState(PARTY_STATE prevState) {
+        //Every time we switch to moving state we must set the target destination so that the members will know where to go
         SetTargetDestination(currentQuest.GetTargetDestination());
-        if(prevState == PARTY_STATE.Waiting) {
-            //DistributeQuestToMembersThatJoinedParty();
+
+        //If the Moving state came from Waiting state, we must cancel all jobs of the members that joined the quest because this is the start of the quest
+        //But if it is not, it means that the party is already in the middle of the quest and we must only cancel the jobs of those who are still active
+        if (prevState == PARTY_STATE.Waiting) {
             CancelAllJobsOfMembersThatJoinedQuest();
         } else {
             CancelAllJobsOfMembersThatJoinedQuestThatAreStillActive();
@@ -398,6 +409,7 @@ public class Party : ILogFiller, ISavable {
 
     #region Working State
     private void OnSwitchToWorkingState(PARTY_STATE prevState) {
+        //When the party switches to Working state always switch off the changed target destination because this means that the party has already reached the destination and must not switch to Moving state at the start of Working state
         SetHasChangedTargetDestination(false);
     }
     #endregion
@@ -445,6 +457,7 @@ public class Party : ILogFiller, ISavable {
             meetingPlace = null;
             targetCamp = null;
             targetDestination = null;
+            SetHasChangedTargetDestination(false);
         }
     }
     private void OnAcceptQuest(PartyQuest quest) {
@@ -470,6 +483,7 @@ public class Party : ILogFiller, ISavable {
 
         //Do not start the 12-hour cooldown if party is already disbanded
         if (!isDisbanded) {
+            //After a party drops quest, the party must not take quest for 12 hours, so that they can recupirate
             StartNoQuestCooldown();
         }
     }
@@ -512,13 +526,14 @@ public class Party : ILogFiller, ISavable {
     }
     public void ClearMembersThatJoinedQuest() {
         while (membersThatJoinedQuest.Count > 0) {
-            RemoveMemberThatJoinedQuest(membersThatJoinedQuest[0]);
+            RemoveMemberThatJoinedQuest(membersThatJoinedQuest[0], false);
         }
         membersThatJoinedQuest.Clear();
+        Messenger.Broadcast(Signals.CLEAR_MEMBERS_THAT_JOINED_QUEST, this);
     }
-    public bool RemoveMemberThatJoinedQuest(Character character) {
+    public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true) {
         if (membersThatJoinedQuest.Remove(character)) {
-            OnRemoveMemberThatJoinedQuest(character);
+            OnRemoveMemberThatJoinedQuest(character, broadcastSignal);
             return true;
         }
         return false;
@@ -527,13 +542,17 @@ public class Party : ILogFiller, ISavable {
         character.movementComponent.SetEnableDigging(true);
         character.traitContainer.AddTrait(character, "Travelling");
         character.behaviourComponent.AddBehaviourComponent(currentQuest.relatedBehaviour);
+        Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY_QUEST, this, character);
     }
-    private void OnRemoveMemberThatJoinedQuest(Character character) {
+    private void OnRemoveMemberThatJoinedQuest(Character character, bool broadcastSignal) {
         character.movementComponent.SetEnableDigging(false);
         character.traitContainer.RemoveTrait(character, "Travelling");
         character.behaviourComponent.RemoveBehaviourComponent(currentQuest.relatedBehaviour);
         if (isActive) {
             currentQuest.OnRemoveMemberThatJoinedQuest(character);
+        }
+        if (broadcastSignal) {
+            Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY_QUEST, this, character);
         }
     }
     private void OnAddMember(Character character) {

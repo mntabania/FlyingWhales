@@ -21,6 +21,7 @@ namespace Inner_Maps.Location_Structures {
             if (character.isNormalCharacter) {
                 character.traitContainer.AddTrait(character, "Restrained");
                 if (character.partyComponent.hasParty) {
+                    //We remove the character from the party quest if he is put in the defiler so he will not dig out of it and do the quest
                     character.partyComponent.currentParty.RemoveMemberThatJoinedQuest(character);
                 }
                 if (character.gridTileLocation != null && !character.gridTileLocation.charactersHere.Contains(character)) {

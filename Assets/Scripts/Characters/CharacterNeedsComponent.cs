@@ -551,6 +551,10 @@ public class CharacterNeedsComponent : CharacterComponent {
         return false;
     }
     public bool PlanExtremeTirednessRecoveryActionsForCannotPerform() {
+        //This is to prevent the character from creating tiredness recovery when he/she is in an active party
+        //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
+        //If the character is in an active party and must create a needs recovery, we bypass this checking, meaning the PlanFullnessRecoveryBase is called directly, see CheckExtremeNeedsWhileInActiveParty
+        //Note: This part is outside the normal function of planning tiredness recovery because we force the character to do Sleep Outside action instead of going through the normal planning
         if (owner.partyComponent.isActiveMember) {
             return false;
         }
@@ -603,26 +607,15 @@ public class CharacterNeedsComponent : CharacterComponent {
                 if (isExhausted) {
                     jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 }
-                bool triggerSpooked = false;
-                Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
-                if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
-                }
-                if (!triggerSpooked) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), base.owner, base.owner);
-                    //job.SetCancelOnFail(true);
-                    sleepScheduleJobID = job.persistentID;
-                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                    //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                    owner.jobQueue.AddJobInQueue(job); //!willNotProcess
-                } else {
-                    spooked.TriggerFeelingSpooked();
-                }
+                PlanTirednessRecovery(jobType, true);
             }
             SetHasCancelledSleepSchedule(false);
         }
     }
     private GoapPlanJob PlanTirednessRecovery(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
+        //This is to prevent the character from creating tiredness recovery when he/she is in an active party
+        //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
+        //If the character is in an active party and must create a needs recovery, we bypass this checking, meaning the PlanFullnessRecoveryBase is called directly, see CheckExtremeNeedsWhileInActiveParty
         if (owner.partyComponent.isActiveMember) {
             return null;
         }
@@ -781,6 +774,9 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetBored = Math.Max(doNotGetBored, 0);
     }
     public bool PlanHappinessRecoveryActions() {
+        //This is to prevent the character from creating happiness recovery when he/she is in an active party
+        //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
+        //If the character is in an active party and must create a needs recovery, we bypass this checking, meaning the PlanFullnessRecoveryBase is called directly, see CheckExtremeNeedsWhileInActiveParty
         if (owner.partyComponent.isActiveMember) {
             return false;
         }
@@ -1107,12 +1103,18 @@ public class CharacterNeedsComponent : CharacterComponent {
         }
     }
     private GoapPlanJob PlanFullnessRecovery(JOB_TYPE jobType) {
+        //This is to prevent the character from creating fullness recovery when he/she is in an active party
+        //because when a character is in an active party the party controls the needs recovery that is why we must be sure that he/she will not create its own needs recovery
+        //If the character is in an active party and must create a needs recovery, we bypass this checking, meaning the PlanFullnessRecoveryBase is called directly, see CheckExtremeNeedsWhileInActiveParty
         if (owner.partyComponent.isActiveMember) {
             return null;
         }
         return PlanFullnessRecoveryBase(jobType);
     }
     private GoapPlanJob PlanFullnessRecoveryBase(JOB_TYPE jobType) {
+        //This base recovery creation function is different from tiredness/happiness because instead of adding the job in the job queue we only return the created job
+        //The reason for this is the Glutton behaviour
+        //Since our behaviours always had a function that adds the created job in queue after processing, we must not add them prematurely so as to avoid duplicates, hence, the reason we only return the created job
         bool triggerGrieving = false;
         Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
         if (griefstricken != null) {
@@ -1367,26 +1369,10 @@ public class CharacterNeedsComponent : CharacterComponent {
     /// fullness level. NOTE: This will also cancel any existing fullness recovery jobs
     /// </summary>
     public void TriggerFlawFullnessRecovery(Character character) {
-        //if (jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
-        //    jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
-        //}
-        bool triggerGrieving = false;
-        Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
-        if (griefstricken != null) {
-            triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
-        }
-        if (!triggerGrieving) {
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), owner, owner);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { 12 });
-            //if (traitContainer.GetNormalTrait<Trait>("Vampiric") != null) {
-            //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-            //}
-            //else if (GetNormalTrait<Trait>("Cannibal") != null) {
-            //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-            //}
+        //In trigger flaw, we bypass if the character is in an active party checking because whether or not he/she is in an active party, trigger flaw must always happen
+        GoapPlanJob job = PlanFullnessRecoveryBase(JOB_TYPE.TRIGGER_FLAW);
+        if(job != null){
             character.jobQueue.AddJobInQueue(job);
-        } else {
-            griefstricken.TriggerGrieving();
         }
     }
     #endregion

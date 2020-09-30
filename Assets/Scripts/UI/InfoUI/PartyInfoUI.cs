@@ -40,6 +40,10 @@ public class PartyInfoUI : InfoUIBase {
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateLogsFromSignal);
         Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY, UpdateMembersFromSignal);
         Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(Signals.CHARACTER_JOINED_PARTY_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Party, Character>(Signals.CHARACTER_LEFT_PARTY_QUEST, UpdateMembersFromSignal);
+        Messenger.AddListener<Party>(Signals.CLEAR_MEMBERS_THAT_JOINED_QUEST, UpdateMembersFromSignal);
+
         Messenger.AddListener<Party>(Signals.DISBAND_PARTY, UpdateMembersFromSignal);
 
         homeSettlementNameplate.SetAsButton();

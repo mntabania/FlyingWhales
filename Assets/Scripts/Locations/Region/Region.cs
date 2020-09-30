@@ -346,30 +346,83 @@ public class Region : ISavable, ILogFiller {
                     if(this != currRegion) {
                         Vector3 direction = (currRegion.coreTile.transform.position - coreTile.transform.position).normalized;
                         GridNeighbourDirection neighbourDir = GridNeighbourDirection.East;
-                        if(direction.x > 0 && direction.y > 0) {
-                            neighbourDir = GridNeighbourDirection.North_East;
-                        } else if (direction.x > 0 && direction.y < 0) {
-                            neighbourDir = GridNeighbourDirection.South_East;
-                        } else if (direction.x < 0 && direction.y > 0) {
-                            neighbourDir = GridNeighbourDirection.North_West;
-                        } else if (direction.x < 0 && direction.y < 0) {
-                            neighbourDir = GridNeighbourDirection.South_West;
-                        } else if (direction.x < 0) {
-                            neighbourDir = GridNeighbourDirection.West;
-                        } else if (direction.x > 0) {
-                            neighbourDir = GridNeighbourDirection.East;
-                        } else if (direction.y > 0) {
+                        if (direction.y > 0) {
                             neighbourDir = GridNeighbourDirection.North;
+                            if(direction.x > 0) {
+                                neighbourDir = GridNeighbourDirection.North_East;
+                            } else if (direction.x < 0) {
+                                neighbourDir = GridNeighbourDirection.North_West;
+                            }
                         } else if (direction.y < 0) {
                             neighbourDir = GridNeighbourDirection.South;
+                            if (direction.x > 0) {
+                                neighbourDir = GridNeighbourDirection.South_East;
+                            } else if (direction.x < 0) {
+                                neighbourDir = GridNeighbourDirection.South_West;
+                            }
+                        } else {
+                            if (direction.x < 0) {
+                                neighbourDir = GridNeighbourDirection.West;
+                            } else if (direction.x > 0) {
+                                neighbourDir = GridNeighbourDirection.East;
+                            }
                         }
+                        //if (direction.x > 0 && direction.y > 0) {
+                        //    neighbourDir = GridNeighbourDirection.North_East;
+                        //} else if (direction.x > 0 && direction.y < 0) {
+                        //    neighbourDir = GridNeighbourDirection.South_East;
+                        //} else if (direction.x < 0 && direction.y > 0) {
+                        //    neighbourDir = GridNeighbourDirection.North_West;
+                        //} else if (direction.x < 0 && direction.y < 0) {
+                        //    neighbourDir = GridNeighbourDirection.South_West;
+                        //} else if (direction.x < 0) {
+                        //    neighbourDir = GridNeighbourDirection.West;
+                        //} else if (direction.x > 0) {
+                        //    neighbourDir = GridNeighbourDirection.East;
+                        //} else if (direction.y > 0) {
+                        //    neighbourDir = GridNeighbourDirection.North;
+                        //} else if (direction.y < 0) {
+                        //    neighbourDir = GridNeighbourDirection.South;
+                        //}
                         if (!neighboursWithDirection.ContainsKey(neighbourDir)) {
                             neighboursWithDirection.Add(neighbourDir, currRegion);
                         }
-                        if (neighbours.Contains(currRegion)) {
+                        if (!neighbours.Contains(currRegion)) {
                             neighbours.Add(currRegion);
                         }
                     }
+                }
+            }
+        }
+
+        //If region has no West neighbour, we must not have a North West/South West Neighbours because we cannot have diagonal only neighbours
+        //So if there is a North/South West neighbours they are probably just North/South, so we must change the key to North/South
+        //Same as East
+        if (!neighboursWithDirection.ContainsKey(GridNeighbourDirection.West)) {
+            if (!neighboursWithDirection.ContainsKey(GridNeighbourDirection.North)) {
+                if (neighboursWithDirection.ContainsKey(GridNeighbourDirection.North_West)) {
+                    neighboursWithDirection.Add(GridNeighbourDirection.North, neighboursWithDirection[GridNeighbourDirection.North_West]);
+                    neighboursWithDirection.Remove(GridNeighbourDirection.North_West);
+                }
+            }
+            if (!neighboursWithDirection.ContainsKey(GridNeighbourDirection.South)) {
+                if (neighboursWithDirection.ContainsKey(GridNeighbourDirection.South_West)) {
+                    neighboursWithDirection.Add(GridNeighbourDirection.South, neighboursWithDirection[GridNeighbourDirection.South_West]);
+                    neighboursWithDirection.Remove(GridNeighbourDirection.South_West);
+                }
+            }
+        }
+        if (!neighboursWithDirection.ContainsKey(GridNeighbourDirection.East)) {
+            if (!neighboursWithDirection.ContainsKey(GridNeighbourDirection.North)) {
+                if (neighboursWithDirection.ContainsKey(GridNeighbourDirection.North_East)) {
+                    neighboursWithDirection.Add(GridNeighbourDirection.North, neighboursWithDirection[GridNeighbourDirection.North_East]);
+                    neighboursWithDirection.Remove(GridNeighbourDirection.North_East);
+                }
+            }
+            if (!neighboursWithDirection.ContainsKey(GridNeighbourDirection.South)) {
+                if (neighboursWithDirection.ContainsKey(GridNeighbourDirection.South_East)) {
+                    neighboursWithDirection.Add(GridNeighbourDirection.South, neighboursWithDirection[GridNeighbourDirection.South_East]);
+                    neighboursWithDirection.Remove(GridNeighbourDirection.South_East);
                 }
             }
         }
