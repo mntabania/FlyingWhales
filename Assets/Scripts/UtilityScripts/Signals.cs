@@ -476,6 +476,7 @@ public static class Signals {
     /// Parameters: IIntel setIntel
     /// </summary>
     public static string ACTIVE_INTEL_SET = "OnPlayerActiveIntelSet";
+    public static string ACTIVE_INTEL_REMOVED = "OnPlayerRemovedActiveIntel";
     public static string HARASS_ACTIVATED = "OnHarassActivated";
     public static string DEFEND_ACTIVATED = "OnDefendActivated";
     public static string INVADE_ACTIVATED = "OnInvadeActivated";

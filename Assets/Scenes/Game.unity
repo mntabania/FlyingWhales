@@ -52586,7 +52586,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883206538}
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -124720,16 +124720,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ObjectPicker
       objectReference: {fileID: 0}
-    - target: {fileID: 4072576682649937864, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 1444868644}
-    - target: {fileID: 4072576682649937864, guid: ffdeb35aa1f01c64099694e746a15fa1,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 1444868644}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffdeb35aa1f01c64099694e746a15fa1, type: 3}
 --- !u!114 &4073557046567178940 stripped

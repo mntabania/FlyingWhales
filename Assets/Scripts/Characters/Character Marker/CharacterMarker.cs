@@ -295,6 +295,47 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //only process hover tooltips if character is not the currently selected character
             ShowThoughtsAndNameplate();    
         }
+        if (PlayerManager.Instance.player.currentActiveIntel != null) {
+            string message = string.Empty;
+            if (PlayerManager.Instance.player.currentActiveIntel.actor != character) {
+                if (character.relationshipContainer.HasRelationshipWith(PlayerManager.Instance.player.currentActiveIntel.actor)) {
+                    string relationshipName = character.relationshipContainer.GetRelationshipNameWith(PlayerManager.Instance.player.currentActiveIntel.actor);
+                    message = $"{message}{PlayerManager.Instance.player.currentActiveIntel.actor.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName}\n";
+                }
+            } else {
+                message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the actor of this intel.\n";
+            }
+            if (PlayerManager.Instance.player.currentActiveIntel.target is Character targetCharacter) {
+                if (targetCharacter != character) {
+                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+                        string relationshipName = character.relationshipContainer.GetRelationshipNameWith(targetCharacter);
+                        message = $"{message}{targetCharacter.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName}\n";
+                    }
+                } else {
+                    message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the target of this intel.\n";
+                }  
+            }
+            if (!string.IsNullOrEmpty(message)) {
+                _nameplate.ShowIntelHelper(message);
+            }
+        }
+    }
+    private bool HasRelationshipWithIntel(IIntel intel) {
+        if (intel.actor != character) {
+            if (character.relationshipContainer.HasRelationshipWith(intel.actor)) {
+                return true;
+            }
+            if (intel.target is Character targetCharacter) {
+                if (targetCharacter != character) {
+                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter)) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     protected override void OnPointerExit(Character poi) {
         base.OnPointerExit(poi);
@@ -306,6 +347,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             //only process hover tooltips if character is not the currently selected character
             HideThoughtsAndNameplate();
         }
+        _nameplate.HideIntelHelper();
     }
     #endregion
 
@@ -319,6 +361,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
         Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
+        Messenger.AddListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
+        Messenger.AddListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
@@ -329,6 +373,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
+        Messenger.RemoveListener<IIntel>(Signals.ACTIVE_INTEL_SET, OnActiveIntelSet);
+        Messenger.RemoveListener(Signals.ACTIVE_INTEL_REMOVED, OnActiveIntelRemoved);
     }
     private void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         if (characterThatGainedTrait == this.character) {
@@ -423,6 +469,15 @@ public class CharacterMarker : MapObjectVisual<Character> {
         character.combatComponent.RemoveAvoidInRange(obj);
         RemovePOIFromInVisionRange(obj);
         RemovePOIAsInRangeButDifferentStructure(obj);
+    }
+    private void OnActiveIntelSet(IIntel intel) {
+        if (HasRelationshipWithIntel(intel)) {
+            _nameplate.SetHighlighterState(true);    
+        }
+    }
+    private void OnActiveIntelRemoved() {
+        _nameplate.HideIntelHelper();
+        _nameplate.SetHighlighterState(false);
     }
     #endregion
 
