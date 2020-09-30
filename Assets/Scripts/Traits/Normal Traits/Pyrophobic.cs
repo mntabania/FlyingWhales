@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Traits;
+using UnityEngine;
 using UnityEngine.Assertions;
 namespace Traits {
     public class Pyrophobic : Trait {
@@ -69,6 +70,10 @@ namespace Traits {
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
         public bool AddKnownBurningSource(BurningSource burningSource, IPointOfInterest burningPOI) {
+            if (burningSource == null) {
+                Debug.LogWarning($"{owner.name} saw the fire of {burningPOI?.nameWithID} but it has no burning source!");
+                return false;
+            }
             if (!seenBurningSources.Contains(burningSource)) {
                 seenBurningSources.Add(burningSource);
                 TriggerReactionToFireOnFirstTimeSeeing(burningPOI);
@@ -128,7 +133,9 @@ public class SaveDataPyrophobic : SaveDataTrait {
         seenBurningSources = new List<string>();
         for (int i = 0; i < pyrophobic.seenBurningSources.Count; i++) {
             BurningSource burningSource = pyrophobic.seenBurningSources[i];
-            seenBurningSources.Add(burningSource.persistentID);
+            if (burningSource != null) {
+                seenBurningSources.Add(burningSource.persistentID);    
+            }
         }
     }
 }
