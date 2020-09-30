@@ -12,6 +12,8 @@ public class HealingPotion : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
         AddAdvertisedAction(INTERACTION_TYPE.BOOBY_TRAP);
+
+        // traitContainer.AddTrait(this, "Poisoned", overrideDuration: 0); //NOTE:THIS IS FOR TESTING PURPOSES ONLY AND SHOULD BE REMOVED ONCE TESTING IS DONE!
     }
     public HealingPotion(SaveDataTileObject data) { }
 }
