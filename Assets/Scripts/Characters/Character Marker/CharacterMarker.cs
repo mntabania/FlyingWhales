@@ -300,7 +300,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             if (PlayerManager.Instance.player.currentActiveIntel.actor != character) {
                 if (character.relationshipContainer.HasRelationshipWith(PlayerManager.Instance.player.currentActiveIntel.actor)) {
                     string relationshipName = character.relationshipContainer.GetRelationshipNameWith(PlayerManager.Instance.player.currentActiveIntel.actor);
-                    message = $"{message}{PlayerManager.Instance.player.currentActiveIntel.actor.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName}\n";
+                    message = $"{message}{PlayerManager.Instance.player.currentActiveIntel.actor.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName} of {character.visuals.GetCharacterNameWithIconAndColor()}\n";
                 }
             } else {
                 message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the actor of this intel.\n";
@@ -309,7 +309,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 if (targetCharacter != character) {
                     if (character.relationshipContainer.HasRelationshipWith(targetCharacter)) {
                         string relationshipName = character.relationshipContainer.GetRelationshipNameWith(targetCharacter);
-                        message = $"{message}{targetCharacter.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName}\n";
+                        message = $"{message}{targetCharacter.visuals.GetCharacterNameWithIconAndColor()} - {relationshipName} of {character.visuals.GetCharacterNameWithIconAndColor()}\n";
                     }
                 } else {
                     message = $"{message}{character.visuals.GetCharacterNameWithIconAndColor()} is the target of this intel.\n";

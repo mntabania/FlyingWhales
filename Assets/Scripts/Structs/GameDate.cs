@@ -250,7 +250,7 @@ public struct GameDate {
     
     public string ConvertToContinuousDaysWithTime(bool nextLineTime = false) {
         if (!hasValue) {
-            return "Indefinite";
+            return "???";
         }
         if (nextLineTime) {
             return $"Day {ConvertToContinuousDays()}\n{GameManager.ConvertTickToTime(this.tick)}";

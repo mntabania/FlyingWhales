@@ -1034,25 +1034,34 @@ public class CharacterInfoUI : InfoUIBase {
             if (index < _activeCharacter.moodComponent.allMoodModifications.Count) {
                 var kvp = _activeCharacter.moodComponent.allMoodModifications.ElementAt(index);
                 MoodModification modifications = kvp.Value;
-                string summary = string.Empty;
-                int dateIndex = modifications.expiryDates.Count - 1;
-                for (int i = 0; i < modifications.modifications.Count; i++) {
-                    int modificationValue = modifications.modifications[i];
-                    if (modificationValue != 0) { //do not show 0 values
-                        GameDate date = modifications.expiryDates[dateIndex];
-                        string modificationSign = string.Empty;
-                        if (modificationValue > 0) {
-                            modificationSign = "+";
-                        }
-                        string color = "green";
-                        if (modificationValue < 0) {
-                            color = "red";
-                        }
-                        summary = $"{summary} <color={color}>{modificationSign}{modificationValue.ToString()}</color> - {date.ConvertToContinuousDaysWithTime()}\n";
-                    }
-                    dateIndex--;
+                int total = _activeCharacter.moodComponent.moodModificationsSummary[kvp.Key];
+                string modificationSign = string.Empty;
+                if (total > 0) {
+                    modificationSign = "+";
                 }
-                UIManager.Instance.ShowSmallInfo(summary, "Mood Modifications", false);    
+                string color = "green";
+                if (total < 0) {
+                    color = "red";
+                }
+                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> Lasts until: {modifications.expiryDates.Last().ConvertToContinuousDaysWithTime()}";
+                // int dateIndex = modifications.expiryDates.Count - 1;
+                // for (int i = 0; i < modifications.modifications.Count; i++) {
+                //     int modificationValue = modifications.modifications[i];
+                //     if (modificationValue != 0) { //do not show 0 values
+                //         GameDate date = modifications.expiryDates[dateIndex];
+                //         string modificationSign = string.Empty;
+                //         if (modificationValue > 0) {
+                //             modificationSign = "+";
+                //         }
+                //         string color = "green";
+                //         if (modificationValue < 0) {
+                //             color = "red";
+                //         }
+                //         summary = $"{summary} <color={color}>{modificationSign}{modificationValue.ToString()}</color> - {date.ConvertToContinuousDaysWithTime()}\n";
+                //     }
+                //     dateIndex--;
+                // }
+                UIManager.Instance.ShowSmallInfo(summary, autoReplaceText: false);    
             }
         }
     }
