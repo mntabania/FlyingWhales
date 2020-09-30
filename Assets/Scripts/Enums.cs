@@ -557,6 +557,7 @@ public enum INTERRUPT {
     Create_Party,
     Join_Party,
     Leave_Party,
+    Morale_Boost,
 }
 
 public enum TRAIT_TYPE {
@@ -1040,6 +1041,7 @@ public enum SETTLEMENT_TYPE { Default_Human, Default_Elf, Capital }
 public enum RELATIONS_FILTER {
     Enemies, Rivals, Acquaintances, Friends, Close_Friends, Relatives, Lovers,
 }
+public enum OVERLAP_UI_TAG { Top, Bottom, }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
