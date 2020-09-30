@@ -280,6 +280,10 @@ public class Party : ILogFiller, ISavable {
             Messenger.RemoveListener(Signals.HOUR_STARTED, WaitingPerHour);
             //PopulateMembersThatJoinedQuest();
             if(membersThatJoinedQuest.Count >= currentQuest.minimumPartySize) {
+                for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+                    Character member = membersThatJoinedQuest[i];
+                    member.interruptComponent.TriggerInterrupt(INTERRUPT.Morale_Boost, member);
+                }
                 SetPartyState(PARTY_STATE.Moving);
             } else {
                 //Drop quest only instead of ending quest so that the quest can still be taken by other parties
