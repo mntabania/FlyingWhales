@@ -67,10 +67,12 @@ public class ExterminationPartyQuest : PartyQuest {
 
     #region General
     private void ProcessExterminationOrDisbandment() {
-        if (!HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner, targetStructure.settlementLocation)) {
-            assignedParty.GoBackHomeAndEndQuest();
-        } else {
-            StartExterminationTimer();
+        if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
+            if (!HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner, targetStructure.settlementLocation)) {
+                assignedParty.GoBackHomeAndEndQuest();
+            } else {
+                StartExterminationTimer();
+            }
         }
     }
     public void SetTargetStructure(LocationStructure structure) {

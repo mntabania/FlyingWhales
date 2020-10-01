@@ -88,15 +88,17 @@ public class ExplorationPartyQuest : PartyQuest {
 
     #region General
     private void ProcessExplorationOrDisbandment() {
-        if (GameUtilities.RollChance(currentChance)) {
-            ProcessSettingTargetStructure();
-            if(targetStructure == null) {
-                assignedParty.GoBackHomeAndEndQuest();
+        if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
+            if (GameUtilities.RollChance(currentChance)) {
+                ProcessSettingTargetStructure();
+                if (targetStructure == null) {
+                    assignedParty.GoBackHomeAndEndQuest();
+                } else {
+                    assignedParty.SetPartyState(PARTY_STATE.Moving);
+                }
             } else {
-                assignedParty.SetPartyState(PARTY_STATE.Moving);
+                assignedParty.GoBackHomeAndEndQuest();
             }
-        } else {
-            assignedParty.GoBackHomeAndEndQuest();
         }
     }
     public void SetRegionRefForGettingNewStructure(Region region) {

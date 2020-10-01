@@ -831,15 +831,15 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     #region Jobs
     public void AddToAvailableJobs(JobQueueItem job, int position = -1) {
         if (position == -1) {
-            availableJobs.Add(job);    
+            availableJobs.Add(job);
         } else {
             availableJobs.Insert(position, job);
         }
         if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI} was added to {name}'s available jobs");
         } else {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");    
-        }    
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was added to {name}'s available jobs");
+        }
     }
     public bool RemoveFromAvailableJobs(JobQueueItem job) {
         if (availableJobs.Remove(job)) {
@@ -847,7 +847,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob} targeting {goapJob.targetPOI?.name} was removed from {name}'s available jobs");
             } else {
-                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");    
+                Debug.Log($"{GameManager.Instance.TodayLogString()}{job} was removed from {name}'s available jobs");
             }
             OnJobRemovedFromAvailableJobs(job);
             return true;
@@ -936,7 +936,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     public bool AddFirstUnassignedJobToCharacterJob(Character character) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if(job.assignedCharacter == null && character.jobQueue.AddJobInQueue(job)) {
+            if (job.assignedCharacter == null && character.jobQueue.AddJobInQueue(job)) {
                 return true;
             }
         }
@@ -950,9 +950,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
             if (job.assignedCharacter == null && character.jobQueue.CanJobBeAddedToQueue(job)) {
-                if(job.jobType == character.jobComponent.primaryJob) {
+                if (job.jobType == character.jobComponent.primaryJob) {
                     return job;
-                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null 
+                } else if (chosenPriorityJob == null && character.characterClass.priorityJobs != null
                     && (character.characterClass.priorityJobs.Contains(job.jobType) || character.jobComponent.priorityJobs.Contains(job.jobType))) {
                     chosenPriorityJob = job;
                 } else if (chosenSecondaryJob == null && character.characterClass.secondaryJobs != null && character.characterClass.secondaryJobs.Contains(job.jobType)) {
@@ -962,7 +962,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 }
             }
         }
-        if(chosenPriorityJob != null) {
+        if (chosenPriorityJob != null) {
             return chosenPriorityJob;
         } else if (chosenSecondaryJob != null) {
             return chosenSecondaryJob;
@@ -1015,8 +1015,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         return null;
     }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
-        if (affectedStructure == mainStorage && 
-            (objectThatTriggeredChange == null || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION 
+        if (affectedStructure == mainStorage &&
+            (objectThatTriggeredChange == null || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION
                                                || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL
                                                || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.ANTIDOTE)) {
             //brew potion
@@ -1030,7 +1030,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 job.SetCanTakeThisJobChecker(JobManager.Can_Brew_Potion);
                 AddToAvailableJobs(job);
             }
-            
+
             //craft tool
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) < 2) {
                 if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
@@ -1044,7 +1044,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                     AddToAvailableJobs(job);
                 }
             }
-            
+
             //brew antidote
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.ANTIDOTE) < 2) {
                 if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
@@ -1069,10 +1069,10 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     private void ForceCancelAllJobsTargetingCharacter(IPointOfInterest target, string reason) {
         for (int i = 0; i < availableJobs.Count; i++) {
             JobQueueItem job = availableJobs[i];
-            if(job is GoapPlanJob) {
+            if (job is GoapPlanJob) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if(goapJob.targetPOI == target) {
-                    if(goapJob.ForceCancelJob(false, reason)) {
+                if (goapJob.targetPOI == target) {
+                    if (goapJob.ForceCancelJob(false, reason)) {
                         i--;
                     }
                 }

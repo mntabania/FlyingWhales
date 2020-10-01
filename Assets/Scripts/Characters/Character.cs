@@ -623,7 +623,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     private void ProcessBeforeDeath(string cause, Character responsibleCharacter) {
         if(cause == "attacked" && responsibleCharacter != null) {
             //Death by attacked
-            if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction) {
+            if(responsibleCharacter.isNormalCharacter && responsibleCharacter.faction != null && responsibleCharacter.faction.isMajorNonPlayer && responsibleCharacter.faction != faction
+                && faction != null && faction.isMajorNonPlayer && (faction.factionType.type == FACTION_TYPE.Human_Empire || faction.factionType.type == FACTION_TYPE.Elven_Kingdom)) {
                 //Killed by a character from another villager faction
                 if (IsInHomeSettlement() && !homeSettlement.HasAliveResident()) {
                     GameDate dueDate = GameManager.Instance.Today();
@@ -2376,7 +2377,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             //Each non lethal attack has a 15% chance of unconscious
             //https://trello.com/c/qxXVulZl/1126-each-non-lethal-attack-has-a-15-chance-of-making-target-unconscious
-            if(UnityEngine.Random.Range(0, 100) < 15) {
+            if(GameUtilities.RollChance(15)) {
                 if (!characterThatAttacked.combatComponent.IsLethalCombatForTarget(this)) {
                     traitContainer.AddTrait(this, "Unconscious", responsibleCharacter);
                 }
@@ -3879,6 +3880,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //AddAdvertisedAction(INTERACTION_TYPE.RAID);
             //AddAdvertisedAction(INTERACTION_TYPE.COUNTERATTACK_ACTION);
             AddAdvertisedAction(INTERACTION_TYPE.EVANGELIZE);
+            AddAdvertisedAction(INTERACTION_TYPE.BUILD_CAMPFIRE);
         }
         if (race == RACE.HUMANS || race == RACE.ELVES) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
@@ -4028,7 +4030,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     //}
                     if(traitContainer.HasTrait("Lazy")) {
                         log = $"{log}\n - Character is lazy, has 30% chance to not perform job if it is a settlement job...";
-                        if (currentTopPrioJob.originalOwner != null && currentTopPrioJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT) {
+                        //Note: Changed the checker from "Just settlement jobs" to "anything other than personal jobs", because non personal jobs are treated as work jobs
+                        if (currentTopPrioJob.originalOwner != null && currentTopPrioJob.originalOwner.ownerType != JOB_OWNER.CHARACTER) { //currentTopPrioJob.originalOwner.ownerType == JOB_OWNER.SETTLEMENT
                             int chance = UnityEngine.Random.Range(0, 100);
                             log = $"{log}\n - Roll: {chance.ToString()}";
                             if (chance < 30) {

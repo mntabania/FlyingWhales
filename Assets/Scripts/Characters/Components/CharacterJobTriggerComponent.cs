@@ -2113,6 +2113,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         //         settlementToGoTo = null;
         //     }
         // }
+        if (owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.DidMemberJoinQuest(owner)) {
+            return false;
+        }
         NPCSettlement settlementToGoTo = null;
         if (owner.homeSettlement != null) {
 	        if (owner.currentSettlement != null) {
@@ -2805,20 +2808,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    owner.jobQueue.AddJobInQueue(job);
 		    Debug.Log($"{owner.name} will do snatch job towards {targetCharacter.name}. Will drop at {structure.name}, ({targetLocation.localPlace.ToString()})");
 	    }
-    }
-    #endregion
-
-    #region Haul
-    public void TryCreateHaulForCampJob(ResourcePile target, HexTile hex) {
-        if (owner.jobQueue.HasJob(JOB_TYPE.HAUL, target) == false && target.gridTileLocation.parentMap.region == owner.currentRegion) {
-            if(target.gridTileLocation.collectionOwner.isPartOfParentRegionMap && target.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner == hex) {
-                //Only create haul job for camp if resource pile is not in camp
-            } else {
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAUL, new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), target, owner);
-                job.AddOtherData(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, new object[] { hex });
-                owner.jobQueue.AddJobInQueue(job);
-            }
-        }
     }
     #endregion
 
