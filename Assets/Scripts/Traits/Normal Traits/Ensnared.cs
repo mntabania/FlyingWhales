@@ -15,6 +15,7 @@ namespace Traits {
             hindersMovement = true;
             hindersPerform = true;
             moodEffect = -5;
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_ENSNARED };
         }
     }
 }

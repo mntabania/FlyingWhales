@@ -900,12 +900,30 @@ public class ReactionComponent : CharacterComponent {
 
                             //Add personal Remove Status - Restrained job when seeing a restrained non-enemy villager
                             //https://trello.com/c/Pe6wuHQc/1197-add-personal-remove-status-restrained-job-when-seeing-a-restrained-non-enemy-villager
-                            if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && targetCharacter.traitContainer.HasTrait("Restrained") && !disguisedTarget.traitContainer.HasTrait("Criminal")) {
+                            bool isRestrained = targetCharacter.traitContainer.HasTrait("Restrained");
+                            bool isEnsnared = targetCharacter.traitContainer.HasTrait("Ensnared");
+                            bool isFrozen = targetCharacter.traitContainer.HasTrait("Frozen");
+                            bool isUnconscious = targetCharacter.traitContainer.HasTrait("Unconscious");
+                            if (disguisedActor.isNormalCharacter && disguisedTarget.isNormalCharacter && (isRestrained || isEnsnared || isFrozen || isUnconscious) && !disguisedTarget.traitContainer.HasTrait("Criminal")) {
                                 if (!targetCharacter.HasJobTargetingThis(JOB_TYPE.REMOVE_STATUS)) {
-                                    actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");
+                                    if (isRestrained) {
+                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Restrained");    
+                                    }
+                                    if (isEnsnared) {
+                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Ensnared");    
+                                    }
+                                    if (isFrozen) {
+                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Frozen");    
+                                    }
+                                    if (isUnconscious) {
+                                        actor.jobComponent.TriggerRemoveStatusTarget(targetCharacter, "Unconscious");    
+                                    }
+                                } else {
+                                    if (!disguisedTarget.defaultCharacterTrait.HasReactedToThis(disguisedActor)) {
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, targetCharacter);    
+                                    }
                                 }
                             }
-
                         }
                     }
                 } else {

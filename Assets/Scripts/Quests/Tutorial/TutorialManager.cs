@@ -118,6 +118,11 @@ namespace Tutorial {
         #region Monobehaviours
         private void Awake() {
             Instance = this;
+            _activeImportantTutorials = new List<ImportantTutorial>();
+            _waitingImportantTutorials = new List<ImportantTutorial>();
+            _activeBonusTutorials = new List<BonusTutorial>();
+            _instantiatedTutorials = new List<TutorialQuest>();
+            _completedImportantTutorials = new List<Tutorial>();
         }
         protected override void OnDestroy() {
             base.OnDestroy();
@@ -132,11 +137,6 @@ namespace Tutorial {
 
         #region Initialization
         public void Initialize() {
-            _activeImportantTutorials = new List<ImportantTutorial>();
-            _waitingImportantTutorials = new List<ImportantTutorial>();
-            _activeBonusTutorials = new List<BonusTutorial>();
-            _instantiatedTutorials = new List<TutorialQuest>();
-            _completedImportantTutorials = new List<Tutorial>();
             hasCompletedImportantTutorials = WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial;
             if (WorldSettings.Instance.worldSettingsData.worldType != WorldSettingsData.World_Type.Tutorial) {
                 // Instantiate all pending bonus tutorials. NOTE: In tutorial world this is called after Start Popup is hidden
