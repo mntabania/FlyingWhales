@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,7 +7,7 @@ using Inner_Maps;
 
 public class Rock : TileObject{
     public int yield { get; private set; }
-
+    public override Type serializedData => typeof(SaveDataRock);
     public Rock() {
         Initialize(TILE_OBJECT_TYPE.ROCK, false);
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -30,3 +31,20 @@ public class Rock : TileObject{
         yield = amount;
     }
 }
+#region Save Data
+public class SaveDataRock : SaveDataTileObject {
+    public int yield;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Rock obj = tileObject as Rock;
+        yield = obj.yield;
+    }
+
+    public override TileObject Load() {
+        Rock obj = base.Load() as Rock;
+        obj.SetYield(yield);
+        return obj;
+    }
+}
+#endregion

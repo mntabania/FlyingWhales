@@ -5369,7 +5369,7 @@ GameObject:
   - component: {fileID: 2501975359432772233}
   - component: {fileID: 1275778378388501258}
   m_Layer: 5
-  m_Name: Overview
+  m_Name: Faction Overview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8793,7 +8793,7 @@ GameObject:
   - component: {fileID: 8110434952566363860}
   - component: {fileID: 8217178205633435378}
   m_Layer: 5
-  m_Name: Locations
+  m_Name: Faction Owned Locations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9464,7 +9464,7 @@ GameObject:
   - component: {fileID: 8110421535396038452}
   - component: {fileID: 8217111578011458284}
   m_Layer: 5
-  m_Name: Logs
+  m_Name: Faction Logs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9560,7 +9560,7 @@ GameObject:
   - component: {fileID: 8109882340923443092}
   - component: {fileID: 8215759924846769538}
   m_Layer: 5
-  m_Name: Relations
+  m_Name: Faction Relations
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

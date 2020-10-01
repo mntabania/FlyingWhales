@@ -2,11 +2,11 @@
 namespace Locations.Settlements.Settlement_Types {
     public class DefaultElf : SettlementType {
         public DefaultElf() : base(SETTLEMENT_TYPE.Default_Elf) {
-            maxDwellings = 8;
+            maxDwellings = 10;
             maxFacilities = 6;
         }
         public DefaultElf(SaveDataSettlementType saveData) : base(saveData) { 
-            maxDwellings = 8;
+            maxDwellings = 10;
             maxFacilities = 6;
         }
         public override void ApplyDefaultSettings() {

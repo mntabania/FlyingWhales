@@ -29,9 +29,9 @@ namespace Tutorial {
                     new ToggleTurnedOnStep("Faction Overview", "Open its Overview tab")
                         .SetCompleteAction(OnClickOverview)
                         .SetOnTopmostActions(OnTopMostFactionInfo, OnNoLongerTopMostFactionInfo),
-                    new ToggleTurnedOnStep("Faction Characters", "Open its Members tab")
-                        .SetCompleteAction(OnClickFactionCharacters)
-                        .SetOnTopmostActions(OnTopMostCharacters, OnNoLongerTopMostCharacters),
+                    // new ToggleTurnedOnStep("Faction Characters", "Open its Members tab")
+                    //     .SetCompleteAction(OnClickFactionCharacters)
+                    //     .SetOnTopmostActions(OnTopMostCharacters, OnNoLongerTopMostCharacters),
                     new ToggleTurnedOnStep("Faction Owned Locations", "Open its Locations tab")
                         .SetCompleteAction(OnClickLocations)
                         .SetOnTopmostActions(OnTopMostLocations, OnNoLongerTopMostLocations),

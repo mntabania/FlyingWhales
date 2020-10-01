@@ -119,6 +119,12 @@ public class Region : ISavable, ILogFiller {
             neighbours.Add(DatabaseManager.Instance.regionDatabase.GetRegionByPersistentID(saveDataRegion.neighbours[i]));
         }
 
+        for (int i = 0; i < saveDataRegion.factionsHereIDs.Length; i++) {
+            string factionHereID = saveDataRegion.factionsHereIDs[i];
+            Faction faction = DatabaseManager.Instance.factionDatabase.GetFactionBasedOnPersistentID(factionHereID);
+            factionsHere.Add(faction);
+        }
+        
         Debug.Log(summary);
     }
     #endregion
