@@ -191,6 +191,17 @@ namespace UnityEngine.UI.Extensions
             if (MaskArea) UpdateVisible();
         }
 
+
+        public void UpdateChildrenAndPagination() {
+            InitialiseChildObjectsFromScene();
+            DistributePages();
+            if (MaskArea) UpdateVisible();
+
+            if (JumpOnEnable || !RestartOnEnable) SetScrollContainerPosition();
+            if (RestartOnEnable) GoToScreen(StartingScreen);
+            if (Pagination) { Pagination.GetComponent<PaginationManager>().ReInitializeChildren(); }
+        }
+
         private void SetScrollContainerPosition()
         {
             _scrollStartPosition = _screensContainer.localPosition.x;

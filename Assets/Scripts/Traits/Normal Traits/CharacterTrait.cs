@@ -131,6 +131,9 @@ namespace Traits {
                             int chance = 100;
                             if (characterThatWillDoJob.HasItem(item.name)) {
                                 chance = 10;
+                                if (characterThatWillDoJob.GetItemCount(item.name) >= 2) {
+                                    chance = 0;
+                                }
                             }
                             if (UnityEngine.Random.Range(0, 100) < chance) {
                                 characterThatWillDoJob.jobComponent.CreateTakeItemJob(item);

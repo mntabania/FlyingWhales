@@ -3,6 +3,7 @@ using System.Globalization;
 using Interrupts;
 using Traits;
 using UnityEngine;
+using UtilityScripts;
 using Random = System.Random;
 
 public class CharacterNeedsComponent : CharacterComponent {
@@ -642,6 +643,13 @@ public class CharacterNeedsComponent : CharacterComponent {
     public void ExhaustCharacter(Character character) {
         if (!isExhausted) {
             SetTiredness(EXHAUSTED_UPPER_LIMIT);
+        }
+    }
+    public void WakeUpFromNoise() {
+        if (owner.traitContainer.HasTrait("Resting")) {
+            if (GameUtilities.RollChance(50)) {
+                owner.interruptComponent.TriggerInterrupt(INTERRUPT.Noise_Wake_Up, owner);
+            }
         }
     }
     #endregion

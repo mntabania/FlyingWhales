@@ -99,7 +99,6 @@ MonoBehaviour:
   - {fileID: 7346978857189099377, guid: 1a69e1de4de7ab2458a414891a424c8f, type: 3}
   - {fileID: 3965943092383270792, guid: 720d9ea00fd940947bbe55f41ac63c1b, type: 3}
   - {fileID: 8067694972909822107, guid: d8fc0c6293f9ab942867b9b0ae03cd2e, type: 3}
-  - {fileID: 1423033083927115798, guid: 49fd8dcf8b65e1c4296ff62eb4c36fc0, type: 3}
   - {fileID: 6494979195601032250, guid: ab194426254c9054582e9361a84f4d07, type: 3}
   - {fileID: 6494979195601032250, guid: 4c6fb0b381c9b9b48ae6a409ba9d8aa2, type: 3}
   otherPrefabs:

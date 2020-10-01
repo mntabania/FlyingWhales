@@ -551,6 +551,7 @@ public enum INTERRUPT {
     Join_Party,
     Leave_Party,
     Morale_Boost,
+    Noise_Wake_Up,
 }
 
 public enum TRAIT_TYPE {

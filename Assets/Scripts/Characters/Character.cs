@@ -2387,6 +2387,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
                 Character inVision = characterThatAttacked.marker.inVisionCharacters[i];
                 inVision.reactionComponent.ReactToCombat(combat, this);
+                inVision.needsComponent.WakeUpFromNoise();
             }
         }
         Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
@@ -3466,6 +3467,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public bool HasItem() {
         return items.Count > 0;
+    }
+    public int GetItemCount(string name) {
+        int count = 0;
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].name == name) {
+                count++;
+            }
+        }
+        return count;
     }
     public bool IsInventoryAtFullCapacity() {
         return items.Count >= characterClass.inventoryCapacity;

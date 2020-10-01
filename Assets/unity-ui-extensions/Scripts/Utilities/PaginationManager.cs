@@ -44,14 +44,7 @@ namespace UnityEngine.UI.Extensions
             scrollSnap.OnSelectionPageChangedEvent.AddListener(SetToggleGraphics);
             scrollSnap.OnSelectionChangeEndEvent.AddListener(OnPageChangeEnd);
 
-            // add selectables to list
-            m_PaginationChildren = GetComponentsInChildren<Toggle>().ToList<Toggle>();
-            for (int i = 0; i < m_PaginationChildren.Count; i++)
-            {
-                m_PaginationChildren[i].onValueChanged.AddListener(ToggleClick);
-                m_PaginationChildren[i].group = this;
-                m_PaginationChildren[i].isOn = false;
-            }
+            ReInitializeChildren();
 
             // set toggles on start
             SetToggleGraphics(CurrentPage);
@@ -61,6 +54,15 @@ namespace UnityEngine.UI.Extensions
                 Debug.LogWarning("Uneven pagination icon to page count");
         }
 
+        public void ReInitializeChildren() {
+            // add selectables to list
+            m_PaginationChildren = GetComponentsInChildren<Toggle>().ToList<Toggle>();
+            for (int i = 0; i < m_PaginationChildren.Count; i++) {
+                m_PaginationChildren[i].onValueChanged.AddListener(ToggleClick);
+                m_PaginationChildren[i].group = this;
+                m_PaginationChildren[i].isOn = false;
+            }
+        }
 
         /// <summary>
         /// Calling from other scripts if you need to change screens progamatically
