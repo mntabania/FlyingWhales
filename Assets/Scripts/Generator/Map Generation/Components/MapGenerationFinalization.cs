@@ -185,22 +185,16 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			WorldConfigManager.Instance.worldWideItemGenerationSetting;
 		List<ItemSetting> itemChoices = itemGenerationSetting.GetItemChoicesForBiome(region.coreTile.biomeType);
 		if (itemChoices != null) {
-			int iterations = itemGenerationSetting.iterations.Random();
-			for (int j = 0; j < iterations; j++) {
+			ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
+			int randomAmount = Random.Range(1, 5);
+			for (int k = 0; k < randomAmount; k++) {
 				if (locationChoices.Count == 0) {
 					break;
 				} //no more location choices
-				ItemSetting randomMonsterSetting = CollectionUtilities.GetRandomElement(itemChoices);
-				int randomAmount = randomMonsterSetting.minMaxRange.Random();
-				for (int k = 0; k < randomAmount; k++) {
-					if (locationChoices.Count == 0) {
-						break;
-					} //no more location choices
-					TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
-					LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
-					chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), chosenTile);
-					locationChoices.Remove(chosenTile);
-				}
+				TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
+				LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(locationChoices);
+				chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType), chosenTile);
+				locationChoices.Remove(chosenTile);
 			}
 		}
 	}
@@ -212,8 +206,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 				LocationStructure structure = landmark.tileLocation.GetMostImportantStructureOnTile();
 				LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
 				if (landmarkData.itemGenerationSetting != null) {
-					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.
-						GetItemChoicesForBiome(landmark.tileLocation.biomeType);
+					List<ItemSetting> itemChoices = landmarkData.itemGenerationSetting.GetItemChoicesForBiome(landmark.tileLocation.biomeType);
 					if (itemChoices != null) {
 						int iterations = landmarkData.itemGenerationSetting.iterations.Random();
 						for (int j = 0; j < iterations; j++) {
@@ -221,8 +214,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 							int randomAmount = itemSetting.minMaxRange.Random();
 							for (int k = 0; k < randomAmount; k++) {
 								TILE_OBJECT_TYPE tileObjectType = CollectionUtilities.GetRandomElement(itemChoices).itemType;
-								structure.AddPOI(
-									InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType));
+								structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObjectType));
 							}
 						}
 						yield return null;
@@ -355,16 +347,19 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(ARTIFACT_TYPE.Berserk_Orb);
 			structure.AddPOI(artifact);
 		} else {
+			int artifactCount = GridMap.Instance.allRegions.Length <= 2 ? 1 : 2;
 			List<ARTIFACT_TYPE> artifactChoices = WorldConfigManager.Instance.initialArtifactChoices;
-			//randomly generate 3 Artifacts
-			for (int i = 0; i < 3; i++) {
+			//randomly generate Artifacts
+			for (int i = 0; i < artifactCount; i++) {
 				if (artifactChoices.Count == 0) { break; }
 				Region randomRegion = CollectionUtilities.GetRandomElement(GridMap.Instance.allRegions);
-				LocationStructure wilderness = randomRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-				ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
-				Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
-				wilderness.AddPOI(artifact);
-				artifactChoices.Remove(randomArtifact);
+				LocationStructure specialStructure = randomRegion.GetRandomSpecialStructure();
+				if (specialStructure != null) {
+					ARTIFACT_TYPE randomArtifact = CollectionUtilities.GetRandomElement(artifactChoices);
+					Artifact artifact = InnerMapManager.Instance.CreateNewArtifact(randomArtifact);
+					specialStructure.AddPOI(artifact);
+					artifactChoices.Remove(randomArtifact);	
+				}
 			}
 		}
 		yield return null;

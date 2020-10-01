@@ -10,32 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5de90f00e05b47b8b76228a1fec7383a, type: 3}
-  m_Name: Cave
+  m_Name: Ancient Ruin
   m_EditorClassIdentifier: 
   _iterations:
-    lowerBound: 1
-    upperBound: 1
+    lowerBound: 2
+    upperBound: 2
   _itemChoices:
     m_keys: 06000000
     m_values:
     - data:
-      - itemType: 14
-        minMaxRange:
-          lowerBound: 6
-          upperBound: 8
       - itemType: 87
         minMaxRange:
           lowerBound: 2
-          upperBound: 4
+          upperBound: 3
       - itemType: 76
         minMaxRange:
           lowerBound: 2
-          upperBound: 4
-      - itemType: 25
-        minMaxRange:
-          lowerBound: 2
-          upperBound: 4
-      - itemType: 26
-        minMaxRange:
-          lowerBound: 2
-          upperBound: 4
+          upperBound: 3
