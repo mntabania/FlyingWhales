@@ -139,6 +139,8 @@ public class UIManager : BaseMonoBehaviour {
     private List<RaycastResult> _raycastResults;
     
     public bool tempDisableShowInfoUI { get; private set; }
+
+    public List<UnallowOverlaps> unallowOverlaps;
     
     #region Monobehaviours
     private void Awake() {
@@ -164,6 +166,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     internal void InitializeUI() {
         _pointer = new PointerEventData(EventSystem.current);
+        unallowOverlaps = new List<UnallowOverlaps>();
         _raycastResults = new List<RaycastResult>();
         allMenus = transform.GetComponentsInChildren<InfoUIBase>(true);
         for (int i = 0; i < allMenus.Length; i++) {
@@ -1635,9 +1638,27 @@ public class UIManager : BaseMonoBehaviour {
         }
     }
     public void OnHoverOutRegionTransitionBtn(string direction) {
-        if (InnerMapManager.Instance.currentlyShowingLocation != null) {
-            HideSmallInfo();
+        HideSmallInfo();
+    }
+    #endregion
+
+    #region Overlap UI
+    public void AddUnallowOverlapUI(UnallowOverlaps overlap) {
+        unallowOverlaps.Add(overlap);
+    }
+    public bool DoesUIOverlap(UnallowOverlaps overlap) {
+        return GetOverlappedUI(overlap) != null;
+    }
+    public UnallowOverlaps GetOverlappedUI(UnallowOverlaps overlap) {
+        for (int i = 0; i < unallowOverlaps.Count; i++) {
+            UnallowOverlaps currOverlap = unallowOverlaps[i];
+            if (currOverlap != overlap && currOverlap.gameObject.activeInHierarchy) {
+                if (currOverlap.rectTransform.RectOverlaps(overlap.rectTransform)) {
+                    return currOverlap;
+                }
+            }
         }
+        return null;
     }
     #endregion
 }
