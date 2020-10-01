@@ -29,12 +29,12 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Check chance to build dwelling if not yet at max.";
                 int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
                 if (dwellingCount < character.homeSettlement.settlementType.maxDwellings) {
-                    int chance = 4;
+                    int chance = 2;
                     if (dwellingCount < (character.homeSettlement.settlementType.maxDwellings/2)) {
-                        chance = 8;
+                        chance = 4;
                     }
                     if (character.homeSettlement.HasHomelessResident()) {
-                        chance = 12;
+                        chance = 6;
                     }
                     if (GameUtilities.RollChance(chance, ref log)) {
                         log += $"\n-Chance met and dwellings not yet at maximum.";
@@ -49,9 +49,9 @@ public class SettlementRulerBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Check chance to build a missing facility.";
                 int facilityCount = character.homeSettlement.GetFacilityCount();
                 if (facilityCount < character.homeSettlement.settlementType.maxFacilities) {
-                    int chance = 4;
+                    int chance = 2;
                     if (facilityCount < (character.homeSettlement.settlementType.maxFacilities/2)) {
-                        chance = 6;
+                        chance = 3;
                     }
                     if (GameUtilities.RollChance(chance, ref log)) {
                         log += $"\n-Chance to build facility met.";

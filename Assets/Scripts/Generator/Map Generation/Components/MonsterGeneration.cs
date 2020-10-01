@@ -30,11 +30,11 @@ public class MonsterGeneration : MapGenerationComponent {
 	}
 	#endregion
 	
-	#region Saved World
-	public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
-		yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
-	}
-	#endregion
+	// #region Saved World
+	// public override IEnumerator LoadSavedData(MapGenerationData data, SaveDataCurrentProgress saveData) {
+	// 	yield return MapGenerator.Instance.StartCoroutine(ExecuteRandomGeneration(data));
+	// }
+	// #endregion
 
 	#region Helpers
 	private void CreateMonster(SUMMON_TYPE summonType, BaseSettlement settlementOnTile, BaseLandmark monsterLair, LocationStructure monsterLairStructure, Faction faction = null) {
@@ -143,8 +143,7 @@ public class MonsterGeneration : MapGenerationComponent {
 					}
 				} else {
 					//spawn monsters base on provided regional settings
-					MonsterGenerationSetting monsterGenerationSetting =
-						WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
+					MonsterGenerationSetting monsterGenerationSetting = WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
 					WeightedDictionary<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
 					if (monsterChoices != null) {
 						int iterations = monsterGenerationSetting.iterations.Random();

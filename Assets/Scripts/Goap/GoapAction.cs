@@ -56,7 +56,6 @@ public class GoapAction {
     }
 
     #region States
-
     public void SetState(string stateName, ActualGoapNode actionNode) {
         actionNode.OnActionStateSet(stateName);
         Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, stateName, actionNode);
@@ -235,7 +234,6 @@ public class GoapAction {
         if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {
             return true;
         }
-
         if (actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET) {
             //if the action type is NEAR_TARGET, then check if the actor is near the target, if not, this action is invalid.
             if (actor.gridTileLocation != poiTarget.gridTileLocation && actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) == false) {
@@ -277,8 +275,14 @@ public class GoapAction {
                     requirementActionSatisfied = false;    
                 }    
             }
-            
         }
+        
+        //https://trello.com/c/Pj6zRg3O/2404-paralyzed-vampire
+        if (!actor.canPerform && actionLocationType != ACTION_LOCATION_TYPE.NEARBY && actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE) {
+            //Cannot perform characters can only perform NEARBY and IN PLACE actions
+            requirementActionSatisfied = true;
+        }
+        
         if (requirementActionSatisfied) {
             requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
         }

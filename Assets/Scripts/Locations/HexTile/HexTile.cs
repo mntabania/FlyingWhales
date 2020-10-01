@@ -1261,7 +1261,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
                 }
                 
                 // if (structure is Cave cave) {
-                //     if (cave.occupiedHexTile != null && cave.occupiedHexTiles.Contains(innerMapHexTile)) {
+                //     if (cave.occupiedHexTile != null && cave.caveHexTiles.Contains(innerMapHexTile)) {
                 //         int value = pair.Key.StructurePriority(); 
                 //         if (value > mostImportant.structureType.StructurePriority()) {
                 //             mostImportant = structure;

@@ -2,11 +2,11 @@
 namespace Locations.Settlements.Settlement_Types {
     public class Capital : SettlementType {
         public Capital() : base(SETTLEMENT_TYPE.Capital) {
-            maxDwellings = 20;
+            maxDwellings = 24;
             maxFacilities = 12;
         }
         public Capital(SaveDataSettlementType data) : base(data) {
-            maxDwellings = 20;
+            maxDwellings = 24;
             maxFacilities = 12;
         }
         public override void ApplyDefaultSettings() {

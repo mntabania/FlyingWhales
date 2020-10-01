@@ -45,6 +45,7 @@ namespace Inner_Maps.Location_Structures {
         /// no need to count the number of tiles that occupy a hextile, when trying to remove that hextile from the list
         /// so it is safe to assume that number of tiles = length of this list.
         /// NOTE: This is not filled out in wilderness structure! Because it is not needed.
+        /// NOTE: This isn't saved because this is filled out anytime a tile is added to this structure, and since those tiles are saved, there is no need to save this.
         /// </summary>
         public List<HexTile> occupiedHexTiles { get; private set; }
         

@@ -2,11 +2,11 @@
 namespace Locations.Settlements.Settlement_Types {
     public class DefaultHuman : SettlementType {
         public DefaultHuman() : base(SETTLEMENT_TYPE.Default_Human) {
-            maxDwellings = 10;
+            maxDwellings = 12;
             maxFacilities = 6;
         }
         public DefaultHuman(SaveDataSettlementType saveData) : base(saveData) {
-            maxDwellings = 10;
+            maxDwellings = 12;
             maxFacilities = 6;
         }
         public override void ApplyDefaultSettings() {
