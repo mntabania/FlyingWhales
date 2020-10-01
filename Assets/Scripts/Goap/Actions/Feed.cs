@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Goap.Unique_Action_Data;
 using UnityEngine;  
 using Traits;
 
 public class Feed : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
+    public override Type uniqueActionDataType => typeof(FeedUAD);
     public Feed() : base(INTERACTION_TYPE.FEED) {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -51,39 +53,50 @@ public class Feed : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
-        ActualGoapNode node, REACTION_STATUS status) {
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        if(target is Character) {
-            Character targetCharacter = target as Character;
-            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-            if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
-                if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status, node);
+        if(target is Character targetCharacter) {
+            FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
+            string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
+            if (uniqueData.usedPoisonedFood) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
+                if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status, node);    
                 }
-            } else if (opinionLabel == RelationshipManager.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+            } else {
+                if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
+                    if (!witness.traitContainer.HasTrait("Psychopath")) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status, node);
+                    }
+                } else if (opinionOfTarget == RelationshipManager.Rival) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);
+                }    
             }
         }
         return response;
     }
-    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node,
-        REACTION_STATUS status) {
+    public override string ReactionOfTarget(Character actor, IPointOfInterest target, ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
-        if (target is Character) {
-            Character targetCharacter = target as Character;
-            if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
-                if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
-                    if (UnityEngine.Random.Range(0, 100) < 30) {
+        if (target is Character targetCharacter) {
+            FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
+            if (uniqueData.usedPoisonedFood) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
+            } else {
+                if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
+                    if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
+                        if (UnityEngine.Random.Range(0, 100) < 30) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
+                        }
+                        if (UnityEngine.Random.Range(0, 100) < 20) {
+                            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status, node);
+                        }
+                    } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
                     }
-                    if (UnityEngine.Random.Range(0, 100) < 30) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status, node);
-                    }
-                } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status, node);
-                }
+                }    
             }
+            
         }
         return response;
     }
@@ -97,31 +110,58 @@ public class Feed : GoapAction {
         }
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
+        FeedUAD uniqueData = node.GetConvertedUniqueActionData<FeedUAD>();
+        if (uniqueData.usedPoisonedFood) {
+            return REACTABLE_EFFECT.Negative;
+        }
         return REACTABLE_EFFECT.Positive;
     }
     #endregion
 
     #region Effects
     public void PreFeedSuccess(ActualGoapNode goapNode) {
-        Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
-        if(goapNode.actor.carryComponent.carriedPOI != null) {
-            ResourcePile carriedPile = goapNode.actor.carryComponent.carriedPOI as ResourcePile;
-            carriedPile.AdjustResourceInPile(-12);
-            targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
+        if (goapNode.poiTarget is Character targetCharacter) {
+            targetCharacter.needsComponent.AdjustDoNotGetHungry(1);
+            if(goapNode.actor.carryComponent.carriedPOI is ResourcePile carriedPile) {
+                FeedUAD uniqueData = goapNode.GetConvertedUniqueActionData<FeedUAD>();
+                if (carriedPile.traitContainer.HasTrait("Poisoned")) {
+                    uniqueData.SetUsedPoisonedFood(true);
+                    Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Feed", "used_poison", goapNode, logTags);
+                    log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    goapNode.OverrideDescriptionLog(log);
+                }
+                carriedPile.AdjustResourceInPile(-12);
+                targetCharacter.AdjustResource(RESOURCE.FOOD, 12);
+            }    
         }
-        //goapNode.actor.AdjustFood(-20);
     }
     public void PerTickFeedSuccess(ActualGoapNode goapNode) {
-        Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.needsComponent.AdjustFullness(8.5f);
-        targetCharacter.AdjustResource(RESOURCE.FOOD, -1);
+        if (goapNode.poiTarget is Character targetCharacter) {
+            FeedUAD uniqueData = goapNode.GetConvertedUniqueActionData<FeedUAD>();
+            if (uniqueData.usedPoisonedFood) {
+                targetCharacter.AdjustHP(-100, ELEMENTAL_TYPE.Normal, triggerDeath: true);  
+            }
+            targetCharacter.needsComponent.AdjustFullness(8.5f);
+            targetCharacter.AdjustResource(RESOURCE.FOOD, -1);
+        }
+        
+        
     }
     public void AfterFeedSuccess(ActualGoapNode goapNode) {
-        Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
-        if(goapNode.actor != targetCharacter) {
-            targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
+        if (goapNode.poiTarget is Character targetCharacter) {
+            FeedUAD uniqueData = goapNode.GetConvertedUniqueActionData<FeedUAD>();
+            targetCharacter.needsComponent.AdjustDoNotGetHungry(-1);
+            if(goapNode.actor != targetCharacter) {
+                if (uniqueData.usedPoisonedFood) {
+                    targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Poisoned me.", -10);
+                } else {
+                    targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Helped me.", 5);    
+                }
+            }
+            if (uniqueData.usedPoisonedFood) {
+                targetCharacter.traitContainer.AddTrait(targetCharacter, "Poisoned", goapNode.actor, bypassElementalChance: true);
+            }
         }
     }
     #endregion
@@ -137,77 +177,6 @@ public class Feed : GoapAction {
         return false;
     }
     #endregion
-
-    //#region Intel Reactions
-    //private List<string> FeedSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
-    //    List<string> reactions = new List<string>();
-    //    Character targetCharacter = poiTarget as Character;
-
-    //    if (isOldNews) {
-    //        //Old News
-    //        reactions.Add("This is old news.");
-    //    } else {
-    //        //Not Yet Old News
-    //        if (awareCharactersOfThisAction.Contains(recipient)) {
-    //            //- If Recipient is Aware
-    //            reactions.Add("I know that already.");
-    //        } else {
-    //            //- Recipient is Actor
-    //            if (recipient == actor) {
-    //                reactions.Add("I know what I did.");
-    //            }
-    //            //- Recipient is Target
-    //            else if (recipient == targetCharacter) {
-    //                if(targetCharacter.isAtHomeRegion) {
-    //                    reactions.Add("I am paying for my mistakes.");
-    //                } else {
-    //                    reactions.Add("Please help me!");
-    //                }
-    //            }
-    //            //- Recipient Has Positive Relationship with Target
-    //            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.POSITIVE) {
-    //                if (targetCharacter.isAtHomeRegion) {
-    //                    reactions.Add(string.Format("{0} is paying for {1} mistakes.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)));
-    //                } else {
-    //                    reactions.Add(string.Format("I've got to figure out how to save {0}!", targetCharacter.name));
-    //                    recipient.CreateSaveCharacterJob(targetCharacter);
-    //                }
-    //            }
-    //            //- Recipient Has Negative Relationship with Target
-    //            else if (recipient.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) == RELATIONSHIP_EFFECT.NEGATIVE) {
-    //                //if (targetCharacter.isAtHomeArea) {
-    //                //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-    //                //    AddTraitTo(recipient, "Satisfied");
-    //                //} else {
-    //                //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-    //                //    AddTraitTo(recipient, "Satisfied");
-    //                //}
-    //                reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-    //                AddTraitTo(recipient, "Satisfied");
-    //            }
-    //            //- Recipient Has No Relationship with Target
-    //            else {
-    //                if(recipient.faction.id == targetCharacter.faction.id) {
-    //                    if (targetCharacter.isAtHomeRegion) {
-    //                        reactions.Add(string.Format("{0} is a criminal!", targetCharacter.name));
-    //                    } else {
-    //                        reactions.Add(string.Format("I've got to figure out how to save {0}!", targetCharacter.name));
-    //                        recipient.CreateSaveCharacterJob(targetCharacter);
-    //                    }
-    //                } else {
-    //                    //if (targetCharacter.isAtHomeArea) {
-    //                    //    reactions.Add("This isn't relevant to me.");
-    //                    //} else {
-    //                    //    reactions.Add("This isn't relevant to me.");
-    //                    //}
-    //                    reactions.Add("This isn't relevant to me.");
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return reactions;
-    //}
-    //#endregion
 
     #region Preconditions
     private bool ActorHasFood(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {

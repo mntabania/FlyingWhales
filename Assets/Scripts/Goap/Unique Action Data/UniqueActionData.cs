@@ -5,7 +5,7 @@
     /// i.e. If a poisoned healing potion was used for curing a character, or if a poisoned food pile was used when trying to feed a character.
     /// Basically anything unique per action that we want to store, we put here.
     /// This is stored per ActualGoapNode.
-    /// Naming convention is: Action Enum + UniqueActionData (i.e. CureCharacterUniqueActionData)
+    /// Naming convention is: Action Enum + UAD (i.e. CureCharacterUAD)
     /// </summary>
     public abstract class UniqueActionData {
         

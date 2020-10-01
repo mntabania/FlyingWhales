@@ -1,1 +1,1 @@
-{"items":[{"key":"thought_bubble","value":"%00@ is healing %86b."},{"key":"thought_bubble_m","value":"%00@ is going to heal %86b."},{"key":"heal success_description","value":"%00@ healed %86b."}]}
+{"items":[{"key":"thought_bubble","value":"%00@ is healing %86b."},{"key":"thought_bubble_m","value":"%00@ is going to heal %86b."},{"key":"heal success_description","value":"%00@ healed %86b."},{"key":"used_poison","value":"%00@ accidentally poisoned %86b."}]}

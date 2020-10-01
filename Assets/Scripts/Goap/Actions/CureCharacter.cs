@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Goap.Unique_Action_Data;
 
 public class CureCharacter : GoapAction {
-    public override Type uniqueActionDataType => typeof(CureCharacterUniqueActionData);
+    public override Type uniqueActionDataType => typeof(CureCharacterUAD);
     
     public CureCharacter() : base(INTERACTION_TYPE.CURE_CHARACTER) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -52,7 +52,7 @@ public class CureCharacter : GoapAction {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
         string opinionOfTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
-        CureCharacterUniqueActionData data = node.GetConvertedUniqueActionData<CureCharacterUniqueActionData>();
+        CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();
         if (data.usedPoisonedHealingPotion) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status, node);
             if (opinionOfTarget == RelationshipManager.Friend || opinionOfTarget == RelationshipManager.Close_Friend) {
@@ -74,7 +74,7 @@ public class CureCharacter : GoapAction {
         string response = base.ReactionOfTarget(actor, target, node, status);
         Character targetCharacter = target as Character;
         Debug.Assert(targetCharacter != null, nameof(targetCharacter) + " != null");
-        CureCharacterUniqueActionData data = node.GetConvertedUniqueActionData<CureCharacterUniqueActionData>();
+        CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();
         if (data.usedPoisonedHealingPotion) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status, node);
@@ -96,7 +96,7 @@ public class CureCharacter : GoapAction {
     }
     public override REACTABLE_EFFECT GetReactableEffect(ActualGoapNode node, Character witness) {
         if (node.poiTarget is Character character) {
-            CureCharacterUniqueActionData data = node.GetConvertedUniqueActionData<CureCharacterUniqueActionData>();
+            CureCharacterUAD data = node.GetConvertedUniqueActionData<CureCharacterUAD>();
             if (witness.IsHostileWith(character) || data.usedPoisonedHealingPotion) {
                 return REACTABLE_EFFECT.Negative;
             }    
@@ -109,7 +109,7 @@ public class CureCharacter : GoapAction {
     public void PreCureSuccess(ActualGoapNode goapNode) {
         TileObject chosenHealingPotion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
         if (chosenHealingPotion != null && chosenHealingPotion.traitContainer.HasTrait("Poisoned")) {
-            CureCharacterUniqueActionData data = goapNode.GetConvertedUniqueActionData<CureCharacterUniqueActionData>();
+            CureCharacterUAD data = goapNode.GetConvertedUniqueActionData<CureCharacterUAD>();
             data.SetUsedPoisonedHealingPotion(true);
             Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Cure Character", "used_poison", goapNode, logTags);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -118,7 +118,7 @@ public class CureCharacter : GoapAction {
         }
     }
     public void AfterCureSuccess(ActualGoapNode goapNode) {
-        CureCharacterUniqueActionData data = goapNode.GetConvertedUniqueActionData<CureCharacterUniqueActionData>();
+        CureCharacterUAD data = goapNode.GetConvertedUniqueActionData<CureCharacterUAD>();
         if(goapNode.poiTarget is Character targetCharacter && goapNode.actor != targetCharacter) {
             if (data.usedPoisonedHealingPotion) {
                 targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Poisoned me.", -10);
