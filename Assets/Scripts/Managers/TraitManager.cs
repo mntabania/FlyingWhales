@@ -73,6 +73,7 @@ public class TraitManager : BaseMonoBehaviour {
     public List<string> removeStatusTraits = new List<string> {
         "Unconscious", "Injured", "Poisoned", "Plagued",
         "Infected", "Freezing", "Frozen", "Burning",
+        "Ensnared"
     };
     public List<string> specialIllnessTraits = new List<string> {
         "Poisoned", "Plagued", "Infected"

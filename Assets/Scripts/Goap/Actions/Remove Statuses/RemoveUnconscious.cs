@@ -5,8 +5,7 @@ using Traits;
 
 public class RemoveUnconscious : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
     public RemoveUnconscious() : base(INTERACTION_TYPE.REMOVE_UNCONSCIOUS) {
         actionIconString = GoapActionStateDB.Cure_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
@@ -17,7 +16,7 @@ public class RemoveUnconscious : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Water Flask", target = GOAP_EFFECT_TARGET.ACTOR }, HasWaterFlask);
+        // AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Water Flask", target = GOAP_EFFECT_TARGET.ACTOR }, HasWaterFlask);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -46,15 +45,10 @@ public class RemoveUnconscious : GoapAction {
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Unconscious");
         //**Effect 2**: Remove Tool from Actor's inventory
-        TileObject tool = goapNode.actor.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
-        if (tool != null) {
-            goapNode.actor.UnobtainItem(tool);
-        } else {
-            //the actor does not have a tool, log for now
-            goapNode.actor.logComponent.PrintLogErrorIfActive(
-                $"{goapNode.actor.name} does not have a tool for removing unconscious! Unconscious was still removed, but thought you should know.");
+        TileObject item = goapNode.actor.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
+        if (item != null) {
+            goapNode.actor.UnobtainItem(item);
         }
-       
     }
     #endregion
 

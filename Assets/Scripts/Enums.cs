@@ -488,6 +488,7 @@ public enum INTERACTION_TYPE {
     FLEE_TO_TILE = 195,
     HUNT_HEIRLOOM = 196,
     REMOVE_TRAP = 197,
+    REMOVE_ENSNARED
 }
 public enum INTERRUPT {
     None,

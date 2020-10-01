@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 
-public class RemoveFreezing : GoapAction {
+public class RemoveEnsnared : GoapAction {
 
-    public override ACTION_CATEGORY actionCategory { get { return ACTION_CATEGORY.DIRECT; } }
-
-    public RemoveFreezing() : base(INTERACTION_TYPE.REMOVE_FREEZING) {
+    public override ACTION_CATEGORY actionCategory => ACTION_CATEGORY.DIRECT;
+    
+    public RemoveEnsnared() : base(INTERACTION_TYPE.REMOVE_ENSNARED) {
         actionIconString = GoapActionStateDB.Cure_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -17,9 +17,7 @@ public class RemoveFreezing : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        // AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = "Water Flask", target = GOAP_EFFECT_TARGET.ACTOR }, HasEmber);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Freezing", target = GOAP_EFFECT_TARGET.TARGET });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Frozen", target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Ensnared", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -41,20 +39,7 @@ public class RemoveFreezing : GoapAction {
 
     #region State Effects
     public void AfterRemoveSuccess(ActualGoapNode goapNode) {
-        //**Effect 1**: Remove Poisoned Trait from target table
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Freezing");
-        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Frozen");
-
-        //**Effect 2**: Remove Tool from Actor's inventory
-        TileObject ember = goapNode.actor.GetItem(TILE_OBJECT_TYPE.WATER_FLASK);
-        if (ember != null) {
-            goapNode.actor.UnobtainItem(ember);
-        } else {
-            //the actor does not have a tool, log for now
-            goapNode.actor.logComponent.PrintLogErrorIfActive(
-                $"{goapNode.actor.name} does not have a tool for removing freezing! Freezing was still removed, but thought you should know.");
-        }
-       
+        goapNode.poiTarget.traitContainer.RemoveStatusAndStacks(goapNode.poiTarget, "Ensnared");
     }
     #endregion
 
@@ -65,15 +50,9 @@ public class RemoveFreezing : GoapAction {
             if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
                 return false;
             }
-            return poiTarget.traitContainer.HasTrait("Freezing", "Frozen");
+            return poiTarget.traitContainer.HasTrait("Ensnared");
         }
         return false;
-    }
-    #endregion
-
-    #region Preconditions
-    private bool HasEmber(Character actor, IPointOfInterest poiTarget, object[] otherData, JOB_TYPE jobType) {
-        return actor.HasItem(TILE_OBJECT_TYPE.WATER_FLASK);
     }
     #endregion
 }

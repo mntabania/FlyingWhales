@@ -1,0 +1,16 @@
+﻿{
+  "items": [
+    {
+      "key": "remove success_description",
+      "value": "%00@ released %10@ from being ensnared."
+    },
+    {
+      "key": "thought_bubble",
+      "value": "%00@ is releasing %10@."
+    },
+    {
+      "key": "thought_bubble_m",
+      "value": "%00@ is going to release %10@."
+    }
+  ]
+}

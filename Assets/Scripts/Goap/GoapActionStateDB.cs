@@ -591,6 +591,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.HUNT_HEIRLOOM, new[]{
             new StateNameAndDuration(){ name = "Hunt Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.REMOVE_ENSNARED, new[]{
+            new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 
