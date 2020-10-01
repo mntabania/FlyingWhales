@@ -1375,9 +1375,17 @@
         {
           "resource": "WOOD",
           "structureType": "DWELLING"
-        }
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "WOOD",
+          "structureType": "DWELLING"
+        },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 14,
       "factionRace": "ELVES",
       "settlementType": "Default_Elf"
     }

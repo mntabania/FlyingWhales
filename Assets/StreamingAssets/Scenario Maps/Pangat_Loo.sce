@@ -850,10 +850,6 @@
         },
         {
           "resource": "STONE",
-          "structureType": "TAVERN"
-        },
-        {
-          "resource": "STONE",
           "structureType": "DWELLING"
         },
         {
@@ -916,8 +912,24 @@
           "resource": "STONE",
           "structureType": "DWELLING"
         },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
+        },
       ],
-      "minimumVillagerCount": 0,
+      "minimumVillagerCount": 24,
       "factionRace": "HUMANS",
       "settlementType": "Capital"
     }
