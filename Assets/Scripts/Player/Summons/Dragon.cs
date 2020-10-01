@@ -14,6 +14,7 @@ public class Dragon : Summon {
     public bool willLeaveWorld { get; private set; }
     public LocationStructure targetStructure { get; private set; }
     public int leaveWorldCounter { get; private set; }
+    public List<Character> charactersThatAreWary { get; private set; }
     private readonly int _leaveWorldTimer;
 
     public override bool defaultDigMode => true;
@@ -25,6 +26,7 @@ public class Dragon : Summon {
         traitContainer.AddTrait(this, "Fireproof");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
+        charactersThatAreWary = new List<Character>();
     }
     public Dragon(string className) : base(SUMMON_TYPE.Dragon, className, RACE.DRAGON, UtilityScripts.Utilities.GetRandomGender()) {
         //SetMaxHPMod(1000);
@@ -33,8 +35,10 @@ public class Dragon : Summon {
         traitContainer.AddTrait(this, "Fireproof");
         //traitContainer.AddTrait(this, "Indestructible");
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
+        charactersThatAreWary = new List<Character>();
     }
     public Dragon(SaveDataDragon data) : base(data) {
+        charactersThatAreWary = new List<Character>();
         _leaveWorldTimer = GameManager.Instance.GetTicksBasedOnHour(8);
 
         isAwakened = data.isAwakened;
@@ -63,6 +67,11 @@ public class Dragon : Summon {
         if(data is SaveDataDragon savedData) {
             if(!string.IsNullOrEmpty(savedData.targetStructure)) {
                 targetStructure = DatabaseManager.Instance.structureDatabase.GetStructureByPersistentID(savedData.targetStructure);
+            }
+            if(savedData.charactersThatAreWary != null) {
+                for (int i = 0; i < savedData.charactersThatAreWary.Count; i++) {
+                    charactersThatAreWary.Add(CharacterManager.Instance.GetCharacterByPersistentID(savedData.charactersThatAreWary[i]));
+                }
             }
         }
         base.LoadReferences(data);
@@ -124,6 +133,9 @@ public class Dragon : Summon {
     public void ResetTargetStructure() {
         targetStructure = null;
     }
+    public void AddCharacterThatWary(Character character) {
+        charactersThatAreWary.Add(character);
+    }
 
     //private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
     //    if (character != this && combatComponent.isInCombat && homeStructure != null) {
@@ -153,6 +165,7 @@ public class SaveDataDragon : SaveDataSummon {
     public bool isAttackingPlayer;
     public bool willLeaveWorld;
     public int leaveWorldCounter;
+    public List<string> charactersThatAreWary;
 
     public string targetStructure;
 
@@ -166,6 +179,12 @@ public class SaveDataDragon : SaveDataSummon {
 
             if(summon.targetStructure != null) {
                 targetStructure = summon.targetStructure.persistentID;
+            }
+            if(summon.charactersThatAreWary.Count > 0) {
+                charactersThatAreWary = new List<string>();
+                for (int i = 0; i < summon.charactersThatAreWary.Count; i++) {
+                    charactersThatAreWary.Add(summon.charactersThatAreWary[i].persistentID);
+                }
             }
         }
     }

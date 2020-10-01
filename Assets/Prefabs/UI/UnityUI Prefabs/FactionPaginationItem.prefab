@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3310806866719385827}
   - component: {fileID: 3284711500609587882}
   - component: {fileID: 5839475417368384308}
-  - component: {fileID: 1090359936763475379}
+  - component: {fileID: -4457193844365773998}
   m_Layer: 5
   m_Name: FactionPaginationItem
   m_TagString: Untagged
@@ -76,7 +76,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1090359936763475379
+--- !u!114 &-4457193844365773998
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1423033083927115798}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92ec3dbf358b46509d3fe727fb7ca9d2, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -104,7 +104,7 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 21300000, guid: 3c1623e45b0eca248a31dc39b63c1c0c,
+    m_HighlightedSprite: {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890,
       type: 3}
     m_PressedSprite: {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890, type: 3}
     m_SelectedSprite: {fileID: 21300000, guid: fe1a591c45577164caffea0071e2c890, type: 3}
@@ -113,7 +113,7 @@ MonoBehaviour:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
-    m_SelectedTrigger: Highlighted
+    m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 0
   m_TargetGraphic: {fileID: 5839475417368384308}
@@ -123,7 +123,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_IsOn: 1
+  m_IsOn: 0
 --- !u!1 &8333137409791890515
 GameObject:
   m_ObjectHideFlags: 0

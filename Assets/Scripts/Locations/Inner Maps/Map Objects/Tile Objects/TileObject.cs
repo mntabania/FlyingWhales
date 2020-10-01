@@ -574,6 +574,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             for (int i = 0; i < characterThatAttacked.marker.inVisionCharacters.Count; i++) {
                 Character inVision = characterThatAttacked.marker.inVisionCharacters[i];
                 inVision.reactionComponent.ReactToCombat(combat, this);
+                inVision.needsComponent.WakeUpFromNoise();
             }
         }
         if(characterThatAttacked is Dragon && this is GenericTileObject) {

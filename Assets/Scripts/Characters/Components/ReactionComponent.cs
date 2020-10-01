@@ -557,7 +557,14 @@ public class ReactionComponent : CharacterComponent {
             debugLog = $"{debugLog}\n-Is dazed do not react!";
             return;
         }
-        
+        if(disguisedTarget is Dragon dragon && (!disguisedTarget.canMove || !disguisedTarget.canPerform) && actor.isNormalCharacter) {
+            debugLog += $"{debugLog}\n-Target is dragon and Actor is normal character, will wary if has not yet wary";
+            if (!dragon.charactersThatAreWary.Contains(actor)) {
+                debugLog += $"{debugLog}\n-Will wary to dragon";
+                actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, dragon);
+                dragon.AddCharacterThatWary(actor);
+            }
+        }
         if (isHostile) {
             debugLog = $"{debugLog}\n-Target is hostile";
             if(disguisedActor is Troll && disguisedTarget.isNormalCharacter && disguisedActor.homeStructure != null && !targetCharacter.isDead) {
