@@ -57,8 +57,7 @@ public class MineStone : GoapAction {
         // stonePile.SetResourceInPile(stone);
         // tile.structure.AddPOI(stonePile, tile);
         
-        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<StonePile>(TILE_OBJECT_TYPE.STONE_PILE, stone,
-            goapNode.actor, tile);
+        InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<StonePile>(TILE_OBJECT_TYPE.STONE_PILE, stone, goapNode.actor, tile);
     }
     #endregion
 }

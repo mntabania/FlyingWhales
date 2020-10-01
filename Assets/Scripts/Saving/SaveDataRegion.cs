@@ -18,6 +18,7 @@ public class SaveDataRegion : SaveData<Region> {
     public SaveDataInnerMap innerMapSave;
     public Dictionary<GridNeighbourDirection, string> neighboursWithDirection;
     public List<string> neighbours;
+    public string[] factionsHereIDs;
 
     public override void Save(Region region) {
         persistentID = region.persistentID;
@@ -53,5 +54,11 @@ public class SaveDataRegion : SaveData<Region> {
 
         innerMapSave = new SaveDataInnerMap();
         innerMapSave.Save(region.innerMap);
+        
+        factionsHereIDs = new string[region.factionsHere.Count];
+        for (int i = 0; i < region.factionsHere.Count; i++) {
+            Faction factionHere = region.factionsHere[i];
+            factionsHereIDs[i] = factionHere.persistentID;
+        }
     }
 }

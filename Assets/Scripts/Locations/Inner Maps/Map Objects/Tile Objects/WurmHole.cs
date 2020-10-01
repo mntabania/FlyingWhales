@@ -27,11 +27,22 @@ public class WurmHole : TileObject{
 
     public void TravelThroughWurmHole(Character character) {
         character.movementComponent.SetCameFromWurmHole(true);
+        
+        Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Wurm Hole", "teleported", null, LOG_TAG.Misc);
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(wurmHoleConnection, wurmHoleConnection.name, LOG_IDENTIFIER.CHARACTER_3);
+        log.AddLogToDatabase();
+        if (gridTileLocation != null) {
+            GameManager.Instance.CreateParticleEffectAt(gridTileLocation, PARTICLE_EFFECT.Teleport);    
+        }
+
         CharacterManager.Instance.Teleport(character, wurmHoleConnection.gridTileLocation);
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, character as IPointOfInterest, "");
         character.jobQueue.CancelAllJobs();
         character.combatComponent.ClearHostilesInRange();
         character.combatComponent.ClearAvoidInRange();
+        
     }
 
     #region Loading

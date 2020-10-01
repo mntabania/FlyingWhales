@@ -25,7 +25,7 @@ public class VaporVent : TileObject {
     #region Overrides
     public override void ConstructDefaultActions() {
         base.ConstructDefaultActions();
-        AddPlayerAction(SPELL_TYPE.ACTIVATE);
+        // AddPlayerAction(SPELL_TYPE.ACTIVATE);
         RemovePlayerAction(SPELL_TYPE.SEIZE_OBJECT);
     }
     public override void OnPlacePOI() {
