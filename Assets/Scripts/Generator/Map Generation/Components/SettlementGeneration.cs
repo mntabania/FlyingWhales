@@ -90,17 +90,21 @@ public class SettlementGeneration : MapGenerationComponent {
 			} else {
 				structureSettings = GenerateFacilities(npcSettlement, faction, Random.Range(2, 4));
 				int generatedFacilities = structureSettings.Count;
-				for (int i = 0; i < generatedFacilities; i++) {
-					StructureSetting structureSetting = structureSettings[i];
-					if (structureSetting.structureType.IsFacilityStructure()) {
-						var dwellingCount = structureSetting.structureType == STRUCTURE_TYPE.CITY_CENTER ? 2 : Random.Range(1, 3);
-						//add 1 or 2 dwellings per facility
-						for (int j = 0; j < dwellingCount; j++) {
-							structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, faction.factionType.mainResource));	
-						}
-						
-					}
+				int randomDwellings = Random.Range(4, 11);
+				for (int i = 0; i < randomDwellings; i++) {
+					structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, faction.factionType.mainResource));
 				}
+				// for (int i = 0; i < generatedFacilities; i++) {
+				// 	StructureSetting structureSetting = structureSettings[i];
+				// 	if (structureSetting.structureType.IsFacilityStructure()) {
+				// 		var dwellingCount = structureSetting.structureType == STRUCTURE_TYPE.CITY_CENTER ? 2 : Random.Range(1, 3);
+				// 		//add 1 or 2 dwellings per facility
+				// 		for (int j = 0; j < dwellingCount; j++) {
+				// 			structureSettings.Add(new StructureSetting(STRUCTURE_TYPE.DWELLING, faction.factionType.mainResource));	
+				// 		}
+				// 		
+				// 	}
+				// }
 				// structureSettings = new List<StructureSetting>() {
 				// 	new StructureSetting(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE),
 				// 	new StructureSetting(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE),

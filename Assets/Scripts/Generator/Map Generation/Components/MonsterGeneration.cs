@@ -88,10 +88,8 @@ public class MonsterGeneration : MapGenerationComponent {
 				continue; //do not generate monsters in region wilderness if region is Teeming
 			}
 			List<LocationGridTile> locationChoices = new List<LocationGridTile>();
-			region.tiles.Where(h => h.landmarkOnTile == null && 
-                (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && 
-                h.HasOwnedSettlementNeighbour() == false).ToList().
-				ForEach(h => locationChoices.AddRange(h.locationGridTiles));
+			region.tiles.Where(h => h.landmarkOnTile == null && (h.elevationType == ELEVATION.PLAIN || h.elevationType == ELEVATION.TREES) && h.HasOwnedSettlementNeighbour() == false).
+				ToList().ForEach(h => locationChoices.AddRange(h.locationGridTiles));
 			if (locationChoices.Count == 0) {
 				Debug.LogWarning($"Could not find valid tiles to place monsters at {region.name}");
 				continue;
@@ -146,19 +144,17 @@ public class MonsterGeneration : MapGenerationComponent {
 					MonsterGenerationSetting monsterGenerationSetting = WorldConfigManager.Instance.worldWideMonsterGenerationSetting;
 					WeightedDictionary<MonsterSetting> monsterChoices = monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
 					if (monsterChoices != null) {
-						int iterations = monsterGenerationSetting.iterations.Random();
-						for (int j = 0; j < iterations; j++) {
-							MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-							int randomAmount = randomMonsterSetting.minMaxRange.Random();
-							for (int k = 0; k < randomAmount; k++) {
-								Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
-								locationChoices.Remove(summon.gridTileLocation);
-							}
-							if (locationChoices.Count == 0) {
-								Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
-								break;
-							}
-						}	
+						MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
+						int randomAmount = Random.Range(3, 9);
+						for (int k = 0; k < randomAmount; k++) {
+							Summon summon = CreateMonster(randomMonsterSetting.monsterType, locationChoices);
+							locationChoices.Remove(summon.gridTileLocation);
+						}
+						if (locationChoices.Count == 0) {
+							Debug.LogWarning($"Ran out of grid tiles to place monsters at region {region.name}");
+							break;
+						}
+							
 					}	
 				}
 			}
@@ -183,14 +179,11 @@ public class MonsterGeneration : MapGenerationComponent {
 					LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType);
 					if (landmarkData.monsterGenerationSetting != null) {
 						WeightedDictionary<MonsterSetting> monsterChoices = landmarkData.monsterGenerationSetting.GetMonsterChoicesForBiome(landmark.tileLocation.biomeType);
-						if (monsterChoices != null) {
-							int iterations = landmarkData.monsterGenerationSetting.iterations.Random();
-							for (int j = 0; j < iterations; j++) {
-								MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
-								int randomAmount = randomMonsterSetting.minMaxRange.Random();
-								for (int k = 0; k < randomAmount; k++) {
-									CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
-								}
+						if (monsterChoices != null && GameUtilities.RollChance(landmarkData.monsterGenerationChance)) {
+							MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
+							int randomAmount = randomMonsterSetting.minMaxRange.Random();
+							for (int k = 0; k < randomAmount; k++) {
+								CreateMonster(randomMonsterSetting.monsterType, landmark.tileLocation.settlementOnTile, landmark, structure);	
 							}
 							yield return null;
 						}
@@ -283,19 +276,25 @@ public class MonsterGeneration : MapGenerationComponent {
 				} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Custom) {
 					if (region.regionFeatureComponent.HasFeature<HauntedFeature>()) {
 						for (int j = 0; j < caves.Count; j++) {
-							LocationStructure cave = caves[j];
-							//spawn 2-4 ghosts
-							int ghosts = Random.Range(2, 5);
-							for (int k = 0; k < ghosts; k++) {
-								CreateMonster(SUMMON_TYPE.Ghost, cave.unoccupiedTiles.ToList());
+							if (GameUtilities.RollChance(40)) {
+								LocationStructure cave = caves[j];
+								if (GameUtilities.RollChance(50)) {
+									//spawn 2-4 ghosts
+									int ghosts = Random.Range(2, 5);
+									for (int k = 0; k < ghosts; k++) {
+										CreateMonster(SUMMON_TYPE.Ghost, cave.unoccupiedTiles.ToList());
+									}	
+								} else {
+									//spawn 2-4 to Skeletons
+									List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
+									int skeletons = Random.Range(2, 5);
+									for (int k = 0; k < skeletons; k++) {
+										CreateMonster(SUMMON_TYPE.Skeleton, cave.unoccupiedTiles.ToList(), 
+											className: CollectionUtilities.GetRandomElement(randomClassChoices));
+									}	
+								}
 							}
-							//spawn 2-4 to Skeletons
-							List<string> randomClassChoices = CharacterManager.Instance.GetNormalCombatantClasses().Select(x => x.className).ToList();
-							int skeletons = Random.Range(2, 5);
-							for (int k = 0; k < skeletons; k++) {
-								CreateMonster(SUMMON_TYPE.Skeleton, cave.unoccupiedTiles.ToList(), 
-									className: CollectionUtilities.GetRandomElement(randomClassChoices));
-							}
+							
 						}
 					} else {
 						WeightedDictionary<MonsterSetting> monsterChoices = caveData.monsterGenerationSetting.GetMonsterChoicesForBiome(region.coreTile.biomeType);
@@ -305,13 +304,12 @@ public class MonsterGeneration : MapGenerationComponent {
 								//if cave already has occupants, then do not generate monsters for that cave
 								continue;
 							}
-							List<HexTile> hexTilesOfCave = GetHexTileCountOfCave(cave);
-							for (int k = 0; k < hexTilesOfCave.Count; k++) {
+							if (GameUtilities.RollChance(caveData.monsterGenerationChance)) {
 								MonsterSetting randomMonsterSetting = monsterChoices.PickRandomElementGivenWeights();
 								int randomAmount = randomMonsterSetting.minMaxRange.Random();
 								for (int l = 0; l < randomAmount; l++) {
-									CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave, territories: hexTilesOfCave.ToArray());	
-								}
+									CreateMonster(randomMonsterSetting.monsterType, cave.unoccupiedTiles.ToList(), cave);	
+								}	
 							}
 						}	
 					}

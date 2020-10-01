@@ -35,12 +35,12 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				new WorldMapTemplate()
 				{
 					regionCount = 2,
-					worldMapWidth = 10,
+					worldMapWidth = 12,
 					worldMapHeight = 10,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(5, 10),
-								new RegionTemplate(5, 10),  
+								new RegionTemplate(6, 10),
+								new RegionTemplate(6, 10),  
 							}
 						}	
 					}	
@@ -53,13 +53,13 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				new WorldMapTemplate()
 				{
 					regionCount = 3,
-					worldMapWidth = 15,
-					worldMapHeight = 8,
+					worldMapWidth = 18,
+					worldMapHeight = 10,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{ 0, new [] {
-								new RegionTemplate(5, 8),
-								new RegionTemplate(5, 8),
-								new RegionTemplate(5, 8),  
+								new RegionTemplate(6, 10),
+								new RegionTemplate(6, 10),
+								new RegionTemplate(6, 10),  
 							}
 						}	
 					}	
@@ -119,18 +119,18 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				new WorldMapTemplate()
 				{
 					regionCount = 6,
-					worldMapWidth = 20,
+					worldMapWidth = 21,
 					worldMapHeight = 12,
 					regions = new Dictionary<int, RegionTemplate[]>() {
 						{0, new[] {
 								new RegionTemplate(6, 6),
 								new RegionTemplate(8, 6),
-								new RegionTemplate(6, 6),
+								new RegionTemplate(7, 6),
 							}
 						},
 						{1, new[] {
 								new RegionTemplate(8, 6),
-								new RegionTemplate(6, 6),
+								new RegionTemplate(7, 6),
 								new RegionTemplate(6, 6),
 							}
 						}
