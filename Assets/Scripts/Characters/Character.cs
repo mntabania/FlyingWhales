@@ -2861,23 +2861,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (isNormalCharacter) {
             //try to take settlement job that this character can see the target of.
-            string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
             if (CanTryToTakeSettlementJobInVision(out var invalidReason)) {
+                string debugLog = $"{GameManager.Instance.TodayLogString()}{name} will try to take settlement job in vision";
                 debugLog = $"{debugLog}\n{name} Can take settlement job in vision.";
                 JobQueueItem jobToAssign = homeSettlement?.GetFirstJobBasedOnVisionExcept(this, JOB_TYPE.CRAFT_OBJECT);
                 debugLog = $"{debugLog}\nJob to assign is:{jobToAssign?.ToString() ?? "None"}";
-                if (jobToAssign != null && 
-                    ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
-                     (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
+                if (jobToAssign != null && ((jobQueue.jobsInQueue.Count <= 0 && behaviourComponent.GetHighestBehaviourPriority() < jobToAssign.priority) || 
+                    (jobQueue.jobsInQueue.Count > 0 && jobToAssign.priority > jobQueue.jobsInQueue[0].priority))) {
                     jobQueue.AddJobInQueue(jobToAssign);
                     debugLog = $"{debugLog}\nJob was added to queue!";
-                } else {
-                    debugLog = $"{debugLog}\nCouldn't assign job!";
-                }    
-            } else {
-                debugLog = $"{debugLog}\n{name} Cannot take settlement job in vision because \n{invalidReason}";
-            }
-            logComponent.PrintLogIfActive(debugLog);
+                    logComponent.PrintLogIfActive(debugLog);
+                } 
+                // else {
+                //     debugLog = $"{debugLog}\nCouldn't assign job!";
+                // }    
+            } 
+            // else {
+            //     debugLog = $"{debugLog}\n{name} Cannot take settlement job in vision because \n{invalidReason}";
+            // }
         }
         if (CanPlanGoap()) {
             PerStartTickActionPlanning();
