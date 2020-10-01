@@ -73,7 +73,8 @@ public class Fish : GoapAction {
             foodPile.SetResourceInPile(50);
             tile.structure.AddPOI(foodPile, tile);
             if (goapNode.actor.partyComponent.hasParty && goapNode.actor.partyComponent.currentParty.targetCamp != null) {
-                goapNode.actor.jobComponent.TryCreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
+                goapNode.actor.partyComponent.currentParty.jobComponent.CreateHaulForCampJob(foodPile, goapNode.actor.partyComponent.currentParty.targetCamp);
+                goapNode.actor.marker.AddPOIAsInVisionRange(foodPile); //automatically add pile to character's vision so he/she can take haul job immediately after
             }
         } else {
             InnerMapManager.Instance.CreateNewResourcePileAndTryCreateHaulJob<FoodPile>(TILE_OBJECT_TYPE.FISH_PILE, 50, goapNode.actor, tile);

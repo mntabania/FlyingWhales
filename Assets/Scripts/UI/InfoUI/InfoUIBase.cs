@@ -69,7 +69,7 @@ public abstract class InfoUIBase : MonoBehaviour {
         if (_playerActionTarget != null) {
             LoadActions(_playerActionTarget);    
         }
-        FactionInfoHubUI.Instance.OnClickClose();
+        //FactionInfoHubUI.Instance.OnClickClose();
     }
     public virtual void CloseMenu() {
         isShowing = false;

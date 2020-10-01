@@ -21,7 +21,7 @@ public class PartyQuestBoard {
         PartyQuest chosenSecondaryQuest = null; //The quest that is not made in the location. Party must prioritize quest that is made in their settlement, if there is none, just get the first unassigned, i.e the secondary quest
         for (int i = 0; i < availablePartyQuests.Count; i++) {
             PartyQuest quest = availablePartyQuests[i];
-            if (!quest.isAssigned) {
+            if (!quest.isAssigned && party.members.Count >= quest.minimumPartySize) {
                 if(quest.madeInLocation != null && quest.madeInLocation == party.partySettlement) {
                     return quest;
                 } else {

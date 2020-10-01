@@ -76,7 +76,9 @@ public class RescuePartyQuest : PartyQuest {
     #region General
     private void ProcessDisbandment() {
         if (isReleasing) { return; }
-        assignedParty.GoBackHomeAndEndQuest();
+        if(assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
+            assignedParty.GoBackHomeAndEndQuest();
+        }
     }
     public void SetTargetCharacter(Character character) {
         targetCharacter = character;

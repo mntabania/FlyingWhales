@@ -44,8 +44,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
     [SerializeField] private RuinarchToggle aliveToggle;
     [SerializeField] private GameObject traitFilterItemPrefab;
     [SerializeField] private GameObject regionFilterItemPrefab;
-    [SerializeField] private ScrollRect traitFilterColumn1ScrollRect;
-    [SerializeField] private ScrollRect traitFilterColumn2ScrollRect;
+    [SerializeField] private ScrollRect traitFilterScrollRect;
     [SerializeField] private ScrollRect regionFilterScrollRect;
     [SerializeField] private TMP_InputField searchTraitFilterField;
     [SerializeField] private TMP_InputField searchRegionFilterField;
@@ -56,7 +55,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
 
     private List<string> filteredTraits; //Characters must NOT have the traits inside this list
     private List<Region> filteredRegions;
-    private int traitFilterHalfCount;
+    //private int traitFilterHalfCount;
 
     public Faction activeFaction { get; private set; }
 
@@ -375,7 +374,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         return false;
     }
     private void PopulateFilterTraits() {
-        traitFilterHalfCount = Mathf.RoundToInt(TraitManager.Instance.unhiddenTraitsNotStatuses.Count * 0.5f);
+        //traitFilterHalfCount = Mathf.RoundToInt(TraitManager.Instance.unhiddenTraitsNotStatuses.Count * 0.5f);
         for (int i = 0; i < TraitManager.Instance.unhiddenTraitsNotStatuses.Count; i++) {
             string traitName = TraitManager.Instance.unhiddenTraitsNotStatuses[i];
             CreateFactionTraitFilterItem(traitName);
@@ -460,10 +459,10 @@ public class FactionInfoUIV2 : MonoBehaviour {
         }
     }
     private FactionTraitFilterItem CreateFactionTraitFilterItem(string traitName) {
-        Transform content = traitFilterColumn1ScrollRect.content;
-        if(_traitFilterItems.Count > traitFilterHalfCount) {
-            content = traitFilterColumn2ScrollRect.content;
-        }
+        Transform content = traitFilterScrollRect.content;
+        //if(_traitFilterItems.Count > traitFilterHalfCount) {
+        //    content = traitFilterColumn2ScrollRect.content;
+        //}
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(traitFilterItemPrefab.name, Vector3.zero, Quaternion.identity, content);
         FactionTraitFilterItem item = go.GetComponent<FactionTraitFilterItem>();
         item.SetTraitName(traitName);

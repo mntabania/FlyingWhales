@@ -203,6 +203,8 @@ public class Gathering : ISavable {
             jobOwner = FactionManager.Instance.GetFactionByPersistentID(data.jobOwner);
         } else if (jobQueueOwnerType == JOB_OWNER.SETTLEMENT) {
             jobOwner = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(data.jobOwner) as NPCSettlement;
+        } else if (jobQueueOwnerType == JOB_OWNER.PARTY) {
+            jobOwner = DatabaseManager.Instance.partyDatabase.GetPartyByPersistentID(data.jobOwner);
         }
         for (int i = 0; i < data.attendees.Count; i++) {
             Character character = CharacterManager.Instance.GetCharacterByPersistentID(data.attendees[i]);

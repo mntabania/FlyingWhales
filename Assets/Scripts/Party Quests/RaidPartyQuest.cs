@@ -72,8 +72,9 @@ public class RaidPartyQuest : PartyQuest {
 
     #region General
     private void ProcessRaidOrDisbandment() {
-        assignedParty.GoBackHomeAndEndQuest();
-
+        if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
+            assignedParty.GoBackHomeAndEndQuest();
+        }
         //if (!HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner, targetSettlement)) {
         //    assignedParty.GoBackHomeAndEndQuest();
         //} else {

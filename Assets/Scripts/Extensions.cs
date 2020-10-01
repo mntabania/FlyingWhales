@@ -394,9 +394,12 @@ public static class Extensions {
             case JOB_TYPE.FLEE_CRIME:
             case JOB_TYPE.BERSERK_ATTACK:
             case JOB_TYPE.BERSERK_STROLL:
-                priority = 1088;
+                priority = 1089;
                 break;
             case JOB_TYPE.NO_PATH_IDLE:
+                priority = 1088;
+                break;
+            case JOB_TYPE.BUILD_CAMP:
                 priority = 1087;
                 break;
             case JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT:
@@ -572,7 +575,6 @@ public static class Extensions {
             case JOB_TYPE.PARTY_GO_TO:
             case JOB_TYPE.GO_TO_WAITING:
             case JOB_TYPE.PARTYING:
-            case JOB_TYPE.IDLE_CAMP:
                 priority = 490;
                 break;
             case JOB_TYPE.PATROL:
@@ -774,6 +776,7 @@ public static class Extensions {
             case JOB_TYPE.RESTRAIN:
             case JOB_TYPE.KIDNAP_RAID:
             case JOB_TYPE.CAPTURE_CHARACTER:
+            case JOB_TYPE.BERSERK_ATTACK:
                 return false;
             default:
                 return true;
@@ -1027,6 +1030,7 @@ public static class Extensions {
     }
     public static Rect WorldRect(this RectTransform rectTransform) {
         Rect r = rectTransform.rect;
+        //r.position = rectTransform.TransformPoint(rectTransform.localPosition);
         r.center = rectTransform.TransformPoint(r.center);
         r.size = rectTransform.TransformVector(r.size);
         return r;
