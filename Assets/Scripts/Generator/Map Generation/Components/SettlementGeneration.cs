@@ -556,7 +556,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 		
 		//spawn singles
-		for (int i = 0; i < coupleCharacters; i++) {
+		for (int i = 0; i < singleCharacters; i++) {
 			List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
 			if (availableDwellings.Count == 0) {
 				break; //no more dwellings
