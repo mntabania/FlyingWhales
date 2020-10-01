@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,7 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener<Character, ILeader>(Signals.ON_SET_AS_FACTION_LEADER, OnFactionLeaderChanged);
         Messenger.AddListener<Faction, ILeader>(Signals.ON_FACTION_LEADER_REMOVED, OnFactionLeaderRemoved);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
@@ -113,6 +115,11 @@ public class FactionInfoUIV2 : MonoBehaviour {
     //}
 
     #region Overview
+    private void OnCharacterDied(Character character) {
+        if (activeFaction != null && character.faction == activeFaction) {
+            FilterCharacters();
+        }
+    }
     private void OnFactionLeaderChanged(Character character, ILeader previousLeader) {
         if (activeFaction != null) {
             UpdateOverview();

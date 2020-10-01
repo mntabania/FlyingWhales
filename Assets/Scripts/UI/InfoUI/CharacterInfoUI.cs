@@ -562,7 +562,7 @@ public class CharacterInfoUI : InfoUIBase {
         allRelationshipFiltersToggle.SetIsOnWithoutNotify(true);
         allFilters = CollectionUtilities.GetEnumValues<RELATIONS_FILTER>();
         filters = new List<RELATIONS_FILTER>(allFilters);
-        aliveRelationsOnly = false;
+        aliveRelationsOnly = true;
     }
     public void OnToggleShowOnlyAliveRelations(bool isOn) {
         aliveRelationsOnly = isOn;
