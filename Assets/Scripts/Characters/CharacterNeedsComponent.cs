@@ -208,19 +208,11 @@ public class CharacterNeedsComponent : CharacterComponent {
         string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} will check his/her needs.";
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
             summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
-            if (!owner.traitContainer.HasTrait("Burning")) {
-                PlanFullnessRecoveryActions();
-            } else {
-                summary += $"\n{owner.name} is poisoned or burning will not plan fullness recovery...";
-            }
+            PlanFullnessRecoveryActions();
         }
         if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
             summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
-            if (!owner.traitContainer.HasTrait("Burning", "Poisoned")) {
-                PlanTirednessRecoveryActions();
-            } else {
-                summary += $"\n{owner.name} is poisoned or burning will not plan tiredness recovery...";
-            }
+            PlanTirednessRecoveryActions();
         }
         if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
             summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
@@ -233,19 +225,11 @@ public class CharacterNeedsComponent : CharacterComponent {
         string summary = $"{GameManager.Instance.TodayLogString()}{owner.name} will check his/her needs.";
         if ((isStarving || isHungry) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Grieving)) {
             summary += $"\n{owner.name} is starving. Planning fullness recovery actions...";
-            if (!owner.traitContainer.HasTrait("Burning")) {
-                PlanFullnessRecoveryActionsWhileInActiveParty();
-            } else {
-                summary += $"\n{owner.name} is poisoned or burning will not plan fullness recovery...";
-            }
+            PlanFullnessRecoveryActionsWhileInActiveParty();
         }
         if ((isExhausted || isTired) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Spooked)) {
             summary += $"\n{owner.name} is exhausted. Planning tiredness recovery actions...";
-            if (!owner.traitContainer.HasTrait("Burning", "Poisoned")) {
-                PlanTirednessRecoveryActionsWhileInActiveParty();
-            } else {
-                summary += $"\n{owner.name} is poisoned or burning will not plan tiredness recovery...";
-            }
+            PlanTirednessRecoveryActionsWhileInActiveParty();
         }
         if ((isSulking || isBored ) && (interruptThatTriggered == null || interruptThatTriggered.type != INTERRUPT.Feeling_Brokenhearted)) {
             summary += $"\n{owner.name} is sulking. Planning happiness recovery actions...";
@@ -622,6 +606,11 @@ public class CharacterNeedsComponent : CharacterComponent {
         return PlanTirednessRecoveryBase(jobType, shouldSetScheduleJobID);
     }
     private GoapPlanJob PlanTirednessRecoveryBase(JOB_TYPE jobType, bool shouldSetScheduleJobID) {
+        //No matter what happens, we do not allow characters to sleep if they are burning/poisoned because it does not make sense
+        if (owner.traitContainer.HasTrait("Burning", "Poisoned")) {
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is poisoned or burning will not plan tiredness recovery...");
+            return null;
+        }
         bool triggerSpooked = false;
         Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
         if (spooked != null) {
@@ -1112,6 +1101,11 @@ public class CharacterNeedsComponent : CharacterComponent {
         return PlanFullnessRecoveryBase(jobType);
     }
     private GoapPlanJob PlanFullnessRecoveryBase(JOB_TYPE jobType) {
+        //No matter what happens if the character is burning, he/she wil not trigger fullness recovery
+        if (owner.traitContainer.HasTrait("Burning")) {
+            owner.logComponent.PrintLogIfActive($"\n{owner.name} is burning will not plan fullness recovery...");
+            return null;
+        }
         //This base recovery creation function is different from tiredness/happiness because instead of adding the job in the job queue we only return the created job
         //The reason for this is the Glutton behaviour
         //Since our behaviours always had a function that adds the created job in queue after processing, we must not add them prematurely so as to avoid duplicates, hence, the reason we only return the created job

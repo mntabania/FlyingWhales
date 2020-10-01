@@ -44,7 +44,11 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                 //Will perform Fullness Recovery.
-                character.needsComponent.TriggerFlawFullnessRecovery(character);
+                if (!character.traitContainer.HasTrait("Burning")) {
+                    character.needsComponent.TriggerFlawFullnessRecovery(character);
+                } else {
+                    return "burning";
+                }
             } else {
                 return "has_trigger_flaw";
             }
