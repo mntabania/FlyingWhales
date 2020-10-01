@@ -39,11 +39,13 @@ public class UnallowOverlaps : MonoBehaviour
         if(overlappedUI != null) {
             if (overlappedUI.tag == OVERLAP_UI_TAG.Top && tag == OVERLAP_UI_TAG.Bottom) {
                 Reposition(overlappedUI);
-            }   
+            } else if(overlappedUI.tag == OVERLAP_UI_TAG.Bottom && tag == OVERLAP_UI_TAG.Top) {
+                overlappedUI.Reposition(this);
+            }
         }
     }
 
-    private void Reposition(UnallowOverlaps overlappedTop) {
+    public void Reposition(UnallowOverlaps overlappedTop) {
         //Get the new x position for the bottom UI
         //If the difference between anchoredOffsetMin.x of the overlappedTop and the this bottom UI width is less than zero (i.e. overlappedTop.anchoredOffsetMin.x - rectTransform.rect.width < 0f) then it means that the bottom UI will go off screen to the left
         //meaning, that it is not fit to the left, it must be automatically be put to the right of the overlappedTop, the right of the overlappedTop is overlappedTop.anchoredOffsetMax.x
