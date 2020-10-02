@@ -1578,7 +1578,7 @@ public class UIManager : BaseMonoBehaviour {
     private void UpdateTransitionRegionUI() {
         if (InnerMapManager.Instance.currentlyShowingLocation != null) {
             transitionRegionUIGO.SetActive(true);
-            if (InnerMapCameraMove.Instance.HasReachedMapMinXBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMinXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinXBounds()) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.West)) {
                     leftTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1587,7 +1587,7 @@ public class UIManager : BaseMonoBehaviour {
             } else {
                 leftTransitionBtn.gameObject.SetActive(false);
             }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxXBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMaxXBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxXBounds()) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.East)) {
                     rightTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1596,7 +1596,7 @@ public class UIManager : BaseMonoBehaviour {
             } else {
                 rightTransitionBtn.gameObject.SetActive(false);
             }
-            if (InnerMapCameraMove.Instance.HasReachedMapMinYBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMinYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMinYBounds()) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.South)) {
                     downTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1605,7 +1605,7 @@ public class UIManager : BaseMonoBehaviour {
             } else {
                 downTransitionBtn.gameObject.SetActive(false);
             }
-            if (InnerMapCameraMove.Instance.HasReachedMapMaxYBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMaxYBoundOf(InnerMapManager.Instance.currentlyShowingLocation) || InnerMapCameraMove.Instance.HasReachedMaxYBounds()) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.North)) {
                     upTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1637,7 +1637,7 @@ public class UIManager : BaseMonoBehaviour {
             }
         }
     }
-    public void OnHoverOutRegionTransitionBtn(string direction) {
+    public void OnHoverOutRegionTransitionBtn() {
         HideSmallInfo();
     }
     #endregion
