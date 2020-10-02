@@ -50659,6 +50659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 706cea5054341e84987e39607d290221, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 930355349}
   MIN_X: 0
   MAX_X: 0
   MIN_Y: 0
@@ -52712,7 +52713,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883206538}
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -97319,6 +97320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01de04ca87fe46443864e9dbbeca4e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 1713567858}
   MIN_X: -185.8
   MAX_X: -124.3
   MIN_Y: 0
@@ -97337,7 +97339,6 @@ MonoBehaviour:
   allowSmoothCameraFollow: 1
   smoothFollowSpeed: 0.5
   zoomSensitivity: 25
-  innerMapsCamera: {fileID: 1713567858}
   allowZoom: 1
   cameraShake: {fileID: 1713567862}
   cameraControlEnabled: 0

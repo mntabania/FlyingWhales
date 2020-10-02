@@ -88,7 +88,7 @@ public class MeteorParticleEffect : BaseParticleEffect {
     }
     private void OnTweenComplete() {
         //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
-        InnerMapCameraMove.Instance.innerMapsCamera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
+        InnerMapCameraMove.Instance.camera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
     }
     private IEnumerator ExpireCoroutine(GameObject go) {
         yield return new WaitForSeconds(2f);

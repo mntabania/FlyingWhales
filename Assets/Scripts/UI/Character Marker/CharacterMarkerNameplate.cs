@@ -43,7 +43,7 @@ public class CharacterMarkerNameplate : PooledObject {
 
     #region Listeners
     private void OnCameraZoomChanged(Camera camera, float amount) {
-        if (camera == InnerMapCameraMove.Instance.innerMapsCamera) {
+        if (camera == InnerMapCameraMove.Instance.camera) {
             UpdateSizeBasedOnZoom();
         }
     }
@@ -77,7 +77,7 @@ public class CharacterMarkerNameplate : PooledObject {
     }
     private void LateUpdate() {
         Vector3 markerScreenPosition =
-            InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(_parentMarker.transform.position);
+            InnerMapCameraMove.Instance.camera.WorldToScreenPoint(_parentMarker.transform.position);
         markerScreenPosition.z = 0f;
         if (_parentMarker.character != null && _parentMarker.character.grave != null) {
             markerScreenPosition.y += 15f;

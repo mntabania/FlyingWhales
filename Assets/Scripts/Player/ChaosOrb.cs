@@ -74,7 +74,7 @@ public class ChaosOrb : PooledObject {
 		}
 		_collider.enabled = false;
 		_trail.enabled = true;
-		Vector3 manaContainerPos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(PlayerUI.Instance.manaLbl.transform.position);
+		Vector3 manaContainerPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(PlayerUI.Instance.manaLbl.transform.position);
 
 		Vector3 controlPointA = transform.position;
 		controlPointA.x += 5f;

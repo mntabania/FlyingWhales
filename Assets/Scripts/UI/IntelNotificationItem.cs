@@ -20,13 +20,13 @@ public class IntelNotificationItem : PlayerNotificationItem {
         base.Initialize(intel.log, onDestroyAction);
     }
     public void GetIntel() {
-        Vector3 pos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(getIntelBtn.transform.position);
+        Vector3 pos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(getIntelBtn.transform.position);
         pos.z = 0f;
         GameObject effectGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(effectPrefab.name,
             pos, Quaternion.identity, InnerMapManager.Instance.transform, true);
         effectGO.transform.position = pos;
 
-        Vector3 intelTabPos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(PlayerUI.Instance.intelToggle.transform.position);
+        Vector3 intelTabPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(PlayerUI.Instance.intelToggle.transform.position);
 
         Vector3 controlPointA = effectGO.transform.position;
         controlPointA.x -= 5f;
