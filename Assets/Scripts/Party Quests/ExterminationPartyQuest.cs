@@ -19,7 +19,7 @@ public class ExterminationPartyQuest : PartyQuest {
     #endregion
 
     public ExterminationPartyQuest() : base(PARTY_QUEST_TYPE.Extermination) {
-        minimumPartySize = 4;
+        minimumPartySize = 3;
         //waitTimeInTicks = GameManager.Instance.GetTicksBasedOnHour(1) + GameManager.Instance.GetTicksBasedOnMinutes(30);
         relatedBehaviour = typeof(ExterminateBehaviour);
         //jobQueueOwnerType = JOB_OWNER.FACTION;

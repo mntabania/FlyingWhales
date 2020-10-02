@@ -278,6 +278,30 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         }
         return false;
     }
+    public bool HasReachedMinXBounds() {
+        if (transform.position.x <= MIN_X) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMaxXBounds() {
+        if (transform.position.x >= MAX_X) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMinYBounds() {
+        if (transform.position.y <= MIN_Y) {
+            return true;
+        }
+        return false;
+    }
+    public bool HasReachedMaxYBounds() {
+        if (transform.position.y >= MAX_Y) {
+            return true;
+        }
+        return false;
+    }
     public bool HasReachedMapMinXBoundOf(Region region) {
         float regionMinXPos = region.innerMap.transform.position.x;
         float cameraMinXPos = camera.transform.position.x - (camera.orthographicSize * 2);

@@ -13,6 +13,9 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(3); //144
             advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMOVE_UNCONSCIOUS };
+
+            //The reason why unconscious does not hinder movement is so that the actor will restrain the character first if it is going to apprehend him
+            //If the unconscious will hinder movement the plan will no longer include restraining the target, so it means that while the target is being carried, there is a high possibility the he will wake up, this will result into other issues
             hindersWitness = true;
             hindersPerform = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Death_Trait);
