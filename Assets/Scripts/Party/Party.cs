@@ -223,8 +223,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         return structure;
     }
     public void GoBackHomeAndEndQuest() {
-        SetPartyState(PARTY_STATE.Moving);
-        SetTargetDestination(partySettlement);
+        SetPartyState(PARTY_STATE.Moving, true);
     }
     public void SetTargetDestination(IPartyTargetDestination target) {
         if(targetDestination != target) {
@@ -244,12 +243,12 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #endregion
 
     #region States
-    public void SetPartyState(PARTY_STATE state) {
+    public void SetPartyState(PARTY_STATE state, bool goHome = false) {
         if (partyState != state) {
             PARTY_STATE prevState = partyState;
             partyState = state;
             OnSwitchFromState(prevState);
-            OnSwitchToState(state, prevState);
+            OnSwitchToState(state, prevState, goHome);
             if (isActive) {
                 currentQuest.OnAssignedPartySwitchedState(prevState, partyState);
             }
@@ -268,7 +267,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             OnSwitchFromWorkingState(prevState);
         }
     }
-    private void OnSwitchToState(PARTY_STATE state, PARTY_STATE prevState) {
+    private void OnSwitchToState(PARTY_STATE state, PARTY_STATE prevState, bool goHome) {
         CancellAllPartyGoToJobsOfMembers();
 
         //Every switch of state we must cancel all jobs currently in the party, because we assume that the jobs in list is just relevant to the previous state
@@ -278,7 +277,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         } else if (state == PARTY_STATE.Waiting) {
             OnSwitchToWaitingState(prevState);
         } else if (state == PARTY_STATE.Moving) {
-            OnSwitchToMovingState(prevState);
+            OnSwitchToMovingState(prevState, goHome);
         } else if (state == PARTY_STATE.Resting) {
             OnSwitchToRestingState(prevState);
         } else if (state == PARTY_STATE.Working) {
@@ -352,16 +351,36 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #endregion
 
     #region Moving State
-    private void OnSwitchToMovingState(PARTY_STATE prevState) {
+    private void OnSwitchToMovingState(PARTY_STATE prevState, bool goHome) {
         //Every time we switch to moving state we must set the target destination so that the members will know where to go
-        SetTargetDestination(currentQuest.GetTargetDestination());
+        if (goHome) {
+            SetTargetDestination(partySettlement);
+        } else {
+            SetTargetDestination(currentQuest.GetTargetDestination());
+        }
 
         //If the Moving state came from Waiting state, we must cancel all jobs of the members that joined the quest because this is the start of the quest
         //But if it is not, it means that the party is already in the middle of the quest and we must only cancel the jobs of those who are still active
         if (prevState == PARTY_STATE.Waiting) {
             CancelAllJobsOfMembersThatJoinedQuest();
         } else {
-            CancelAllJobsOfMembersThatJoinedQuestThatAreStillActive();
+            //Will no longer cancel all jobs when switching to moving state
+            //Reason: Raid party problem - when a character is being kidnap by a raid member, when the raid party quest timer runs out they will all switch to moving, so even the one doing to kidnap job will be stopped
+            //CancelAllJobsOfMembersThatJoinedQuestThatAreStillActive();
+
+            if (targetDestination != null && !targetDestination.hasBeenDestroyed) {
+                for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+                    Character member = membersThatJoinedQuest[i];
+                    if (IsMemberActive(member)) {
+                        if (!targetDestination.IsAtTargetDestination(member) && (member.currentJob == null || (member.currentJob.jobType != JOB_TYPE.KIDNAP_RAID && member.currentJob.jobType != JOB_TYPE.STEAL_RAID))) {
+                            LocationGridTile tile = targetDestination.GetRandomPassableTile();
+                            if (tile != null) {
+                                member.jobComponent.CreatePartyGoToJob(tile);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     private void OnSwitchFromMovingState(PARTY_STATE prevState) {
