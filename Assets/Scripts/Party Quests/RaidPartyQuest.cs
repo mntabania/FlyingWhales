@@ -35,6 +35,9 @@ public class RaidPartyQuest : PartyQuest {
         base.OnAssignedPartySwitchedState(fromState, toState);
         if(toState == PARTY_STATE.Working) {
             StartRaidTimer();
+            Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+        } else if (fromState == PARTY_STATE.Working) {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
         }
     }
     public override string GetPartyQuestTextInLog() {
@@ -71,6 +74,26 @@ public class RaidPartyQuest : PartyQuest {
     #endregion
 
     #region General
+    private void OnCharacterCanNoLongerMove(Character character) {
+        if(assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
+            if (character.homeSettlement == targetSettlement) {
+                if (character.marker) {
+                    for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                        Character inVision = character.marker.inVisionCharacters[i];
+                        if (inVision.marker) {
+                            if (inVision.partyComponent.isActiveMember) {
+                                if (inVision.partyComponent.currentParty.currentQuest == this) {
+                                    inVision.marker.AddPOIAsInVisionRange(character);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
+        }
+    }
     private void ProcessRaidOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
             assignedParty.GoBackHomeAndEndQuest();
@@ -131,6 +154,9 @@ public class RaidPartyQuest : PartyQuest {
         if (data is SaveDataRaidPartyQuest subData) {
             if (!string.IsNullOrEmpty(subData.targetSettlement)) {
                 targetSettlement = DatabaseManager.Instance.settlementDatabase.GetSettlementByPersistentID(subData.targetSettlement);
+            }
+            if(assignedParty != null && assignedParty.isActive && assignedParty.partyState == PARTY_STATE.Working) {
+                Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
             }
             //if (!string.IsNullOrEmpty(subData.waitingArea)) {
             //    waitingArea = DatabaseManager.Instance.hexTileDatabase.GetHextileByPersistentID(subData.waitingArea);

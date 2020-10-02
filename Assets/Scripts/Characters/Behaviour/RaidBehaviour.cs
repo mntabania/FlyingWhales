@@ -37,8 +37,20 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 //    character.combatComponent.Fight(target, CombatManager.Hostility, isLethal: false);
                 //    return true;
                 //} else {
+                if(party.targetDestination is BaseSettlement settlement) {
                     log += $"\n-Roam around";
-                    hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    LocationStructure structure = settlement.GetRandomStructure();
+                    if(structure != null) {
+                        LocationGridTile tile = structure.GetRandomPassableTile();
+                        if(tile != null) {
+                            hasJob = character.jobComponent.CreatePartyGoToJob(tile, out producedJob);
+                        } else {
+                            hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                        }
+                    } else {
+                        hasJob = character.jobComponent.TriggerRoamAroundStructure(out producedJob);
+                    }
+                }
                 //}
             } 
             //else {

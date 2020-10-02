@@ -1118,7 +1118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1615751482416934444
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10997,7 +10997,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartingScreen: 0
   PageStep: 1
-  Pagination: {fileID: 1353913193511849923}
+  Pagination: {fileID: 0}
   PrevButton: {fileID: 4782955961417744558}
   NextButton: {fileID: 7405958407317207575}
   transitionSpeed: 20

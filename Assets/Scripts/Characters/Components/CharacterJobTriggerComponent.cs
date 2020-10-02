@@ -87,6 +87,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         Messenger.RemoveListener<JobQueueItem, Character>(Signals.JOB_REMOVED_FROM_QUEUE, OnJobRemovedFromQueue);
         TryStopScreamCheck();
 	}
+    public bool CanDoJob(JOB_TYPE jobType) {
+        return owner.jobComponent.primaryJob == jobType || owner.characterClass.CanDoJob(jobType) || owner.jobComponent.priorityJobs.Contains(jobType);
+    }
 	private void OnCharacterCanPerformAgain(Character character) {
 		if (character == owner) {
 			// if (_owner.currentSettlement is NPCSettlement npcSettlement && npcSettlement.isUnderSiege) {
@@ -2130,18 +2133,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		        }
 	        }    
         }
-        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && settlementToGoTo != null;
-        if (target.traitContainer.HasTrait("Criminal") && canDoJob) {
-            if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
-                if (criminalTrait.IsWantedBy(owner.faction)) {
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
-                    job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
-                    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
-                    return owner.jobQueue.AddJobInQueue(job);
+        canDoJob = InteractionManager.Instance.CanCharacterTakeApprehendJob(owner, target) && settlementToGoTo != null && CanDoJob(JOB_TYPE.APPREHEND);
+        if (canDoJob) {
+            if (target.traitContainer.HasTrait("Criminal")) {
+                if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
+                    Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    if (criminalTrait.IsWantedBy(owner.faction)) {
+                        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
+                        job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
+                        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { settlementToGoTo.prison });
+                        return owner.jobQueue.AddJobInQueue(job);
+                    }
                 }
             }
-
         }
         return false;
     }

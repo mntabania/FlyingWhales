@@ -342,6 +342,7 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.TREASURE_CHEST:
             case TILE_OBJECT_TYPE.EXCALIBUR:
             case TILE_OBJECT_TYPE.HEIRLOOM:
+            case TILE_OBJECT_TYPE.GUITAR:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();

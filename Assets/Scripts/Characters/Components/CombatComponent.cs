@@ -796,6 +796,12 @@ public class CombatComponent : CharacterComponent {
                         key = "Brawl";
                         break;
                     case JOB_TYPE.DESTROY:
+                        if(target is Guitar guitar && guitar.IsOwnedBy(owner)) {
+                            if (owner.traitContainer.HasTrait("Music Hater")) {
+                                key = "Destroy_Music_Hater";
+                                break;
+                            }
+                        }
                         if (owner.traitContainer.HasTrait("Angry")) {
                             key = "Destroy_Angry";
                         } else if (owner.traitContainer.HasTrait("Suspicious")) {

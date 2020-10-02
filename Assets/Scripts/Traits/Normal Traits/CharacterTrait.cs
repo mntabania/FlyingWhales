@@ -7,6 +7,8 @@ using UnityEngine;
 using Locations.Settlements;
 using Traits;
 using UnityEngine.Assertions;
+using UtilityScripts;
+
 namespace Traits {
     //This trait is present in all characters
     //A dummy trait in order for some jobs to be created
@@ -162,7 +164,7 @@ namespace Traits {
                 }
             }
             if(targetPOI is Character targetCharacter) {
-                if (characterThatWillDoJob.canMove) {
+                if (characterThatWillDoJob.canMove && characterThatWillDoJob.canPerform) {
                     if (!targetCharacter.isDead) {
                         if (!targetCharacter.isNormalCharacter) {
                             string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
@@ -201,15 +203,15 @@ namespace Traits {
                                     }
                                 }
                             }
-                            if (!targetCharacter.canMove && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
+                            if ((!targetCharacter.canPerform || !targetCharacter.canMove) && !owner.combatComponent.isInCombat && owner.partyComponent.hasParty && owner.partyComponent.currentParty.isActive && owner.partyComponent.currentParty.partyState == PARTY_STATE.Working) {
                                 if (owner.partyComponent.currentParty.currentQuest is RaidPartyQuest raidParty
                                     && targetCharacter.homeSettlement == raidParty.targetSettlement
-                                    /*&& (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter))*/) {
-                                    if (UnityEngine.Random.Range(0, 100) < 15) {
+                                    && (targetCharacter.faction == null || owner.faction == null || owner.faction.IsHostileWith(targetCharacter.faction))) {
+                                    //if (GameUtilities.RollChance(15)) {
                                         if (!owner.jobQueue.HasJob(JOB_TYPE.STEAL_RAID)) {
                                             owner.jobComponent.TriggerKidnapRaidJob(targetCharacter);
                                         }
-                                    }
+                                    //}
                                 }
                             }
                         }

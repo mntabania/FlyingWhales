@@ -1027,6 +1027,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
+        HideHPBar();
         if (character.minion != null || character.destroyMarkerOnDeath) {
             character.DestroyMarker();
         } else {

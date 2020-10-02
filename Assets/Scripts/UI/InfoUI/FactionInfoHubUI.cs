@@ -71,13 +71,13 @@ public class FactionInfoHubUI : MonoBehaviour {
         }
         InitialFactionItemStates();
     }
-    private IEnumerator RepopulateFactions() {
+    private IEnumerator RepopulateFactions() { //IEnumerator
         //int currentPage = factionScrollSnap.CurrentPage;
         UtilityScripts.Utilities.DestroyChildren(factionScrollSnapContent);
         UtilityScripts.Utilities.DestroyChildren(factionScrollSnapPagination);
         factionPaginationGOs.Clear();
         factionItems.Clear();
-        yield return null;
+        //yield return null;
         for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
             Faction faction = FactionManager.Instance.allFactions[i];
             if (faction.isMajorNonPlayer) {
@@ -97,7 +97,8 @@ public class FactionInfoHubUI : MonoBehaviour {
         //    currentPage = 0;
         //}
         factionScrollSnap.UpdateChildrenAndPagination();
-        factionScrollSnap.CurrentPage = 0;
+        yield return null;
+        factionScrollSnap.GoToScreen(0);
     }
     private void InitializeUI() {
         Messenger.AddListener<Faction>(Signals.FACTION_CREATED, OnFactionCreated);
@@ -139,7 +140,7 @@ public class FactionInfoHubUI : MonoBehaviour {
         int index = GetFactionItemIndex(faction);
         if(index != -1) {
             PlayerUI.Instance.SetVillagerTabIsOn(true);
-            factionScrollSnap.CurrentPage = index;
+            factionScrollSnap.GoToScreen(index);
         }
     }
     #endregion
@@ -150,7 +151,7 @@ public class FactionInfoHubUI : MonoBehaviour {
             if (faction.isMajorNonPlayer || faction.factionType.type == FACTION_TYPE.Vagrants || faction.factionType.type == FACTION_TYPE.Undead) {
                 //FactionItem item = AddFactionItem(faction);
                 //SetFactionSelection(item, false);
-
+                //RepopulateFactions();
                 StartCoroutine(RepopulateFactions());
             }
         }
@@ -181,7 +182,7 @@ public class FactionInfoHubUI : MonoBehaviour {
         int index = GetFactionItemIndex(faction);
         if (index != -1) {
             if(factionScrollSnap.CurrentPage == index) {
-                factionScrollSnap.CurrentPage = 0;
+                factionScrollSnap.GoToScreen(0);
             }
             
             FactionItem item = factionItems[index];
