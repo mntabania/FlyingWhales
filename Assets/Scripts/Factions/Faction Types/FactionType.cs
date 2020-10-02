@@ -8,6 +8,7 @@ namespace Factions.Faction_Types {
         public readonly List<FactionIdeology> ideologies;
         public readonly List<StructureSetting> neededStructures;
         public readonly List<string> combatantClasses;
+        public readonly List<string> civilianClasses;
         public readonly Dictionary<CRIME_TYPE, CRIME_SEVERITY> crimes;
         public bool hasCrimes { get; protected set; }
 
@@ -21,6 +22,7 @@ namespace Factions.Faction_Types {
             ideologies = new List<FactionIdeology>();
             neededStructures = new List<StructureSetting>();
             combatantClasses = new List<string>();
+            civilianClasses = new List<string>();
             crimes = new Dictionary<CRIME_TYPE, CRIME_SEVERITY>();
         }
 
@@ -120,6 +122,15 @@ namespace Factions.Faction_Types {
         }
         public void RemoveCombatantClass(string className) {
             combatantClasses.Remove(className);
+        }
+        #endregion
+        
+        #region Civilians
+        public void AddCivilianClass(string className) {
+            civilianClasses.Add(className);
+        }
+        public void RemoveCivilianClass(string className) {
+            civilianClasses.Remove(className);
         }
         #endregion
         

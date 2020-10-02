@@ -34,6 +34,11 @@
             AddCombatantClass("Hunter");
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
+            
+            //TODO:
+            AddCivilianClass("Peasant");
+            AddCivilianClass("Miner");
+            AddCivilianClass("Craftsman");
 
             //crimes
             hasCrimes = true;
@@ -67,6 +72,11 @@
             AddCombatantClass("Hunter");
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
+            
+            //TODO:
+            AddCivilianClass("Peasant");
+            AddCivilianClass("Miner");
+            AddCivilianClass("Craftsman");
 
             //crimes
             hasCrimes = true;

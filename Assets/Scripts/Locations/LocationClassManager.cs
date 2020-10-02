@@ -13,12 +13,13 @@ public class LocationClassManager {
     public Dictionary<string, int> civilianClasses { get; }
     public LocationClassManager() {
         currentIndex = 0;
-        startLoopIndex = 5;
+        startLoopIndex = 3;
         numberOfRotations = 0;
         combatantClasses = new Dictionary<string, int>();
         civilianClasses = new Dictionary<string, int>() {
             {"Peasant", 1},
             {"Craftsman", 1},
+            {"Miner", 1},
         };
             
         CreateCharacterClassOrderAndGuide();

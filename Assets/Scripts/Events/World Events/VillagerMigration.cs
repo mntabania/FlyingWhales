@@ -32,8 +32,14 @@ namespace Events.World_Events {
                         PreCharacterData characterToSpawn = CollectionUtilities.GetRandomElement(unspawnedCharacters);
                         characterToSpawn.hasBeenSpawned = true;
                         unspawnedCharacters.Remove(characterToSpawn);
-                        
-                        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, randomSettlement.classManager.GetCurrentClassToCreate(), randomSettlement.owner, randomSettlement);
+
+                        string classToCreate;
+                        if (GameUtilities.RollChance(50)) {
+                            classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.combatantClasses);
+                        } else {
+                            classToCreate = CollectionUtilities.GetRandomElement(randomSettlement.owner.factionType.civilianClasses);
+                        }
+                        Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, randomSettlement.owner, randomSettlement);
                         RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
                         newCharacter.CreateMarker();
                         newCharacter.InitialCharacterPlacement(edgeTile);

@@ -34,6 +34,12 @@
             AddCombatantClass("Barbarian");
             AddCombatantClass("Mage");
             AddCombatantClass("Stalker");
+            
+            //TODO:
+            AddCivilianClass("Peasant");
+            AddCivilianClass("Miner");
+            AddCivilianClass("Craftsman");
+
 
             //crimes
             hasCrimes = true;
@@ -67,6 +73,12 @@
             AddCombatantClass("Barbarian");
             AddCombatantClass("Mage");
             AddCombatantClass("Stalker");
+            
+            //TODO:
+            AddCivilianClass("Peasant");
+            AddCivilianClass("Miner");
+            AddCivilianClass("Craftsman");
+
 
             //crimes
             hasCrimes = true;
