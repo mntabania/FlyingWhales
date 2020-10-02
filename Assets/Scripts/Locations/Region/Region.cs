@@ -443,8 +443,8 @@ public class Region : ISavable, ILogFiller {
         //compute north, south, east and west region neighbours
         int width = hexTileMap.GetUpperBound(0);
         int height = hexTileMap.GetUpperBound(1);
-        int midX = (height + 1) / 2;
-        int midY = (width + 1) / 2;
+        int midX = (width) / 2;
+        int midY = (height) / 2;
         HexTile leftMostCenter = hexTileMap[0, midY];
         HexTile rightMostCenter = hexTileMap[width, midY];
         HexTile bottomMostCenter = hexTileMap[midX, 0];
