@@ -200,20 +200,25 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         }
     }
     //Returns true if character left the faction, otherwise return false
-    public bool CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
+    public void CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
         if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
             if (willLog) {
-                return character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
             } else {
-                return character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
+                character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
             }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                Debug.LogError($"{character.name} still has a home village {character.homeSettlement.name} even though it is already a vagrant!");
+            }
+#endif
+            
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
             //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
-        return false;
     }
     public bool IsCharacterBannedFromJoining(Character character) {
         return HasCharacterBeenBanned(character);
@@ -280,6 +285,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         int chance = Random.Range(0, 100);
         debugLog += $"\n-Roll: {chance.ToString()}";
         Debug.Log(debugLog);
+        // chance = 0;
         if (chance < newLeaderDesignationChance) {
             DesignateNewLeader();
         } else {
