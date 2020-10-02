@@ -1511,6 +1511,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 Messenger.Broadcast(Signals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
             }
         }
+        // Debug.Log($"Set current structure location of {name} to {newStructure}");
     }
     public void SetGridTileLocation(LocationGridTile tile) {
         //NOTE: Tile location is being computed every time.

@@ -63,7 +63,7 @@ namespace Tutorial {
             PlayerUI.Instance.ShowGeneralConfirmation("Afflictions",
                 $"Afflictions are {UtilityScripts.Utilities.ColorizeAction("Flaws")} that you may apply to a " +
                 $"\nVillager that will affect their behavior. " +
-                "Afflictions have a limited number of Charges." +
+                "Afflictions have a limited number of Charges. " +
                 "Once you've exhausted its Charges, there is a long cooldown before it is replenished.\n\n" +
                 "There are a vast number of different types of Afflictions you may experiment with. " +
                 "You can turn someone into a Psychopath or a Vampire, or you can afflict one with a Zombie Virus."

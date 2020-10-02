@@ -804,6 +804,9 @@ public class CharacterManager : BaseMonoBehaviour {
         if (character.currentRegion != tile.structure.region) {
             character.currentRegion?.RemoveCharacterFromLocation(character);
         }
+        // character.DestroyMarker();
+        // Debug.Log($"Will teleport to tile {tile.structure}");
+        
         if (!character.marker) {
             character.CreateMarker();
             character.marker.InitialPlaceMarkerAt(tile);
