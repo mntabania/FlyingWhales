@@ -350,7 +350,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         regions = new List<Region>();
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.region != region) {
+            if (currNeighbour.region != region && !regions.Contains(currNeighbour.region)) {
                 regions.Add(currNeighbour.region);
             }
         }
