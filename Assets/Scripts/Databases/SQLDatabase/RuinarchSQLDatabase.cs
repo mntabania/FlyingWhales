@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Logs;
 using UtilityScripts;
 using Debug = UnityEngine.Debug;
@@ -171,14 +172,43 @@ namespace Databases.SQLDatabase {
                 valuesStr = $"{valuesStr})"; //closing parenthesis if no tags were provided
             }
             
+           
             
             string commandStr = $"{insertStr} {valuesStr}";
             Debug.Log($"Insert command was {commandStr}");
+            
+            var thread = new Thread(() => ExecuteInsertCommand(commandStr));
+            thread.Start();
+            
+            // command.CommandType = CommandType.Text;
+            // command.CommandText = commandStr;
+            // command.ExecuteNonQuery();
+            
+            Messenger.Broadcast(Signals.LOG_ADDED, log);
+            
+            // //check if row limit has been reached, if so then delete oldest log that is not an intel.
+            // command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
+            // IDataReader dataReader = command.ExecuteReader();
+            // int rowCount = 0;
+            // while (dataReader.Read()) {
+            //     rowCount = dataReader.GetInt32(0);
+            // }
+            // dataReader.Close();
+            //
+            // if (rowCount > Log_Row_Limit) {
+            //     //row limit has been reached, will delete oldest entry
+            //     DeleteOldestLog();
+            // }
+            // command.Dispose();
+            
+            timer.Stop();
+            Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
+        }
+        private void ExecuteInsertCommand(string commandStr) {
+            SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
             command.CommandText = commandStr;
             command.ExecuteNonQuery();
-            
-            Messenger.Broadcast(Signals.LOG_ADDED, log);
             
             //check if row limit has been reached, if so then delete oldest log that is not an intel.
             command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
@@ -194,9 +224,8 @@ namespace Databases.SQLDatabase {
                 DeleteOldestLog();
             }
             command.Dispose();
-            timer.Stop();
-            Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         }
+
         public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags, int limit = -1) {
 #if UNITY_EDITOR
             Stopwatch timer = new Stopwatch();
