@@ -390,9 +390,6 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.METAL_PILE:
             case TILE_OBJECT_TYPE.WOOD_PILE:
             case TILE_OBJECT_TYPE.STONE_PILE:
-            case TILE_OBJECT_TYPE.CORN_CROP:
-            case TILE_OBJECT_TYPE.MUSHROOM:
-            case TILE_OBJECT_TYPE.BERRY_SHRUB:
                 return true;
             default:
                 return false;

@@ -38,7 +38,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
                         bool hasAddedJob = false;
                         log += "\n-Inside territory or home structure";
                         int fiftyPercentOfMaxHP = Mathf.RoundToInt(summon.maxHP * 0.5f);
-                        if (summon.currentHP < fiftyPercentOfMaxHP) {
+                        if (summon.currentHP < fiftyPercentOfMaxHP && !summon.traitContainer.HasTrait("Poisoned") && !summon.traitContainer.HasTrait("Burning")) {
                             log += "\n-Less than 50% of Max HP, Sleep";
                             hasAddedJob = summon.jobComponent.TriggerMonsterSleep(out producedJob);
                         } else {
