@@ -472,7 +472,7 @@ public class Region : ISavable, ILogFiller {
             neighboursWithDirection.Add(GridNeighbourDirection.North, top.region);
             summary = $"{summary}\nNorth - {top.xCoordinate.ToString()}, {top.yCoordinate.ToString()}";
         }
-        Debug.Log(summary);
+        Debug.Log(summary); //Test
     }
     public bool HasNeighbourInDirection(GridNeighbourDirection direction) {
         return GetNeighbourInDirection(direction) != null;
