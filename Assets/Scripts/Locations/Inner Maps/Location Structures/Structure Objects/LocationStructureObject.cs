@@ -233,7 +233,7 @@ public class LocationStructureObject : PooledObject {
                     tombstone.SetRespawnCorpseOnDestroy(false);
                 }
                 bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
-                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall) {
+                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall || structureType == STRUCTURE_TYPE.THE_PORTAL) {
                     tile.structure.RemovePOI(tile.objHere);    
                 }
             }
