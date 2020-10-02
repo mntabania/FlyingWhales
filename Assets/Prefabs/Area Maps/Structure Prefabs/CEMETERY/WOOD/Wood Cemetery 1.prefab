@@ -2842,9 +2842,10 @@ MonoBehaviour:
   _blockWallsTilemap: {fileID: 0}
   _size: {x: 10, y: 12}
   _center: {x: 5, y: 6, z: 0}
+  _craftCost: 50
   objectsParent: {fileID: 7697105796615309343}
   _blockWallType: 0
-  _thinWallResource: 0
+  _thinWallResource: 1
   _predeterminedOccupiedCoordinates: []
   _connectors:
   - {fileID: 485176602863717930}
