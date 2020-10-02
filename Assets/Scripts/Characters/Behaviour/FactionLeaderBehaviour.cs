@@ -59,12 +59,12 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Check chance to build dwelling if not yet at max.";
                 int dwellingCount = character.homeSettlement.GetStructureCount(STRUCTURE_TYPE.DWELLING);
                 if (dwellingCount < character.homeSettlement.settlementType.maxDwellings) {
-                    int chance = 2;
+                    int chance = 3;
                     if (dwellingCount < (character.homeSettlement.settlementType.maxDwellings/2)) {
-                        chance = 4;
+                        chance = 5;
                     }
                     if (character.homeSettlement.HasHomelessResident()) {
-                        chance = 6;
+                        chance = 7;
                     }
                     if (GameUtilities.RollChance(chance, ref log)) {
                         log += $"\n-Chance met and dwellings not yet at maximum.";

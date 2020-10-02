@@ -214,8 +214,12 @@ namespace Ruinarch {
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.F9);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
                 if (!CanUseHotkeys()) return;
-                if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
+                if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Tab);
+            } else if (Input.GetKeyDown(KeyCode.R)) {
+                if (!CanUseHotkeys()) return;
+                if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
+                Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.R);
             }
         }
         private void BroadcastHotkeyPress(string buttonToActivate) {

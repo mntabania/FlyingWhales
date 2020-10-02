@@ -687,7 +687,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private bool DoesRelationshipMeetAnyFilter(IRelationshipData data) {
         if (filters.Count == 0) {
-            return true; //if no filters were provided, then show all relationships
+            return false; //if no filters were provided, then HIDE all relationships
         }
         //loop through enabled filters, if relationships meets any filter then return true.
         bool hasMetAFilter = false;
