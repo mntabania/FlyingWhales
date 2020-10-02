@@ -123,6 +123,14 @@ public class SkillTreeSelector : MonoBehaviour {
         StartCoroutine(_horizontalScrollSnap.UpdateLayoutCoroutine());
     }
     
+    public void OnHoverMoreLoadoutOptions() {
+        string text = "Unlock all available optional abilities regardless of Archetype.";
+        text += $"\n<color=red>Warning: Toggling this off will reset all optional loadouts.</color>";
+        UIManager.Instance.ShowSmallInfo(text);
+    }
+    public void OnHoverOutMoreLoadoutOptions() {
+        UIManager.Instance.HideSmallInfo();
+    }
     // #region Monobehaviours
     // private Vector2Int currentResolution;
     // private void Start () {
