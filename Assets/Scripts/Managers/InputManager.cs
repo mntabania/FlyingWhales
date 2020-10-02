@@ -210,27 +210,35 @@ namespace Ruinarch {
             } else if (Input.GetKeyDown(KeyCode.M)) {
                 BroadcastHotkeyPress("ToggleMapBtn");
             } else if (Input.GetKeyDown(KeyCode.F9)) {
+                if (!CanUseHotkeys()) return;
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.F9);
             } else if (Input.GetKeyDown(KeyCode.Tab)) {
-                if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
-                    //Do not allow hotkeys while saving
-                    return;
-                }
+                if (!CanUseHotkeys()) return;
                 if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
                 Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Tab);
             }
         }
         private void BroadcastHotkeyPress(string buttonToActivate) {
+            if (!CanUseHotkeys()) return;
+            if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
+            Messenger.Broadcast(Signals.HOTKEY_CLICK, buttonToActivate);
+        }
+        public bool CanUseHotkeys() {
             if (SaveManager.Instance.saveCurrentProgressManager.isSaving) {
                 //Do not allow hotkeys while saving
-                return;
+                return false;
             }
             if (LevelLoaderManager.Instance.isLoadingNewScene || LevelLoaderManager.Instance.IsLoadingScreenActive()) {
                 //Do not allow hotkeys while loading
-                return;
+                return false;
             }
-            if (HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
-            Messenger.Broadcast(Signals.HOTKEY_CLICK, buttonToActivate);
+            if (PlayerUI.Instance != null && PlayerUI.Instance.IsMajorUIShowing()) {
+                return false;
+            }
+            if (UIManager.Instance != null && UIManager.Instance.IsObjectPickerOpen()) {
+                return false;
+            }
+            return true;
         }
         #endregion
 

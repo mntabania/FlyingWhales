@@ -162,9 +162,12 @@ public class TreeObject : TileObject {
     }
     private void AwakenOccupant(LocationGridTile location) {
         Assert.IsNotNull(ent);
-        ent.marker.SetVisualState(true);
-        ent.marker.PlaceMarkerAt(location);
-        ent.SetIsTree(false);
+        if (!ent.isDead) {
+            ent.CreateMarker();
+            ent.marker.SetVisualState(true);
+            ent.marker.PlaceMarkerAt(location);
+            ent.SetIsTree(false);    
+        }
         location.structure.RemovePOI(this);
         TraitManager.Instance.CopyStatuses(this, ent);
     }

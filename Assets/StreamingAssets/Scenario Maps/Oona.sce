@@ -1714,19 +1714,11 @@
         },
         {
           "resource": "STONE",
-          "structureType": "HUNTER_LODGE"
-        },
-        {
-          "resource": "STONE",
           "structureType": "DWELLING"
         },
         {
           "resource": "STONE",
           "structureType": "DWELLING"
-        },
-        {
-          "resource": "STONE",
-          "structureType": "BARRACKS"
         },
         {
           "resource": "STONE",

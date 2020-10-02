@@ -434,21 +434,21 @@ public class TileFeatureGeneration : MapGenerationComponent {
 			//region 1 (big forest region)
 			//first settlement
 			GridMap.Instance.map[1, 2],
-			GridMap.Instance.map[1, 3],
-			GridMap.Instance.map[2, 3],
-			GridMap.Instance.map[2, 2],
+			// GridMap.Instance.map[1, 3],
+			// GridMap.Instance.map[2, 3],
+			// GridMap.Instance.map[2, 2],
 			//second settlement
-			GridMap.Instance.map[7, 2],
-			GridMap.Instance.map[7, 3],
-			GridMap.Instance.map[6, 1],
-			GridMap.Instance.map[5, 3],
-			GridMap.Instance.map[6, 2],
+			GridMap.Instance.map[8, 1],
+			// GridMap.Instance.map[8, 3],
+			// GridMap.Instance.map[7, 1],
+			// GridMap.Instance.map[6, 3],
+			// GridMap.Instance.map[7, 2],
 			//region 4 (snow region)
 			GridMap.Instance.map[3, 6],
-			GridMap.Instance.map[2, 6],
-			GridMap.Instance.map[2, 7],
-			GridMap.Instance.map[3, 7],
-			GridMap.Instance.map[4, 6],
+			// GridMap.Instance.map[2, 6],
+			// GridMap.Instance.map[2, 7],
+			// GridMap.Instance.map[3, 7],
+			// GridMap.Instance.map[4, 6],
 		};
 
 		for (int i = 0; i < chosenTiles.Count; i++) {

@@ -1353,6 +1353,9 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         if (HasBlueprintOnTile()) {
             return false;
         }
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.isCurrentlyBuildingDemonicStructure) {
+            return false;
+        }
         if (settlementOnTile != null || landmarkOnTile != null) {
             return false;
         }
@@ -1374,6 +1377,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.OnExecuteSpellActionAffliction();
         StartCoroutine(BuildCoroutine(structureType));
+        PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(true);
     }
     private IEnumerator BuildCoroutine(SPELL_TYPE structureType) {
         yield return new WaitForSeconds(3f);
@@ -1381,6 +1385,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         DemonicStructurePlayerSkill demonicStructureSkill = PlayerSkillManager.Instance.GetDemonicStructureSkillData(structureType);
         demonicStructureSkill.BuildDemonicStructureAt(this);
         _buildParticles = null;
+        PlayerManager.Instance.player.SetIsCurrentlyBuildingDemonicStructure(false);
     }
     #endregion
 

@@ -315,8 +315,6 @@ namespace Inner_Maps {
                 if (to.structure == null) {
                     return; //quick fix for when the character is pushed to a tile with no structure
                 }
-                from.RemoveCharacterHere(character);
-                to.AddCharacterHere(character);
                 if (from.structure != to.structure) {
                     from.structure?.RemoveCharacterAtLocation(character);
                     if (to.structure != null) {
@@ -343,6 +341,8 @@ namespace Inner_Maps {
                         to.collectionOwner.partOfHextile.hexTileOwner.OnPlacePOIInHex(character);
                     }
                 }
+                from.RemoveCharacterHere(character);
+                to.AddCharacterHere(character);
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, character as IPointOfInterest);
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, character as IPointOfInterest);

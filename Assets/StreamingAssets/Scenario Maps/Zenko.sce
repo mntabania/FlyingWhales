@@ -2903,7 +2903,7 @@
         },
         {
           "resource": "STONE",
-          "structureType": "MINE_SHACK"
+          "structureType": "CEMETERY"
         },
         {
           "resource": "STONE",
@@ -2924,6 +2924,10 @@
         {
           "resource": "STONE",
           "structureType": "MINE_SHACK"
+        },
+        {
+          "resource": "STONE",
+          "structureType": "DWELLING"
         },
         {
           "resource": "STONE",

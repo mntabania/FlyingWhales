@@ -361,6 +361,32 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool IsTileObjectImportant(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.BED:
+            case TILE_OBJECT_TYPE.TABLE:
+            case TILE_OBJECT_TYPE.DESK:
+            case TILE_OBJECT_TYPE.GUITAR:
+            case TILE_OBJECT_TYPE.WATER_WELL:
+            case TILE_OBJECT_TYPE.TREASURE_CHEST:
+            case TILE_OBJECT_TYPE.HEALING_POTION:
+            case TILE_OBJECT_TYPE.TOOL:
+            case TILE_OBJECT_TYPE.ARTIFACT:
+            case TILE_OBJECT_TYPE.CULTIST_KIT:
+            case TILE_OBJECT_TYPE.ANTIDOTE:
+            case TILE_OBJECT_TYPE.WATER_FLASK:
+            case TILE_OBJECT_TYPE.EMBER:
+            case TILE_OBJECT_TYPE.POISON_FLASK:
+            case TILE_OBJECT_TYPE.ICE:
+            case TILE_OBJECT_TYPE.EXCALIBUR:
+            case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
+            case TILE_OBJECT_TYPE.BLOCK_WALL:
+            case TILE_OBJECT_TYPE.DESERT_ROSE:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Jobs

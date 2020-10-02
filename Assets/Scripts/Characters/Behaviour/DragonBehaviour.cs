@@ -18,7 +18,11 @@ public class DragonBehaviour : CharacterBehaviourComponent {
                 log += $"\n-Will leave world";
                 if (dragon.gridTileLocation.IsAtEdgeOfMap()) {
                     dragon.SetDestroyMarkerOnDeath(true);
-                    dragon.Death();
+                    dragon.SetShowNotificationOnDeath(false);
+                    Log deathLog = new Log(GameManager.Instance.Today(), "Summon", "Dragon", "left", providedTags: LOG_TAG.Life_Changes);
+                    deathLog.AddToFillers(dragon, dragon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    deathLog.AddLogToDatabase();
+                    dragon.Death(_deathLog: deathLog);
                     if(UIManager.Instance.monsterInfoUI.isShowing && UIManager.Instance.monsterInfoUI.activeMonster == dragon) {
                         UIManager.Instance.monsterInfoUI.CloseMenu();
                     }

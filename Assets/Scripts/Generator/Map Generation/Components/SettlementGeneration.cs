@@ -296,110 +296,118 @@ public class SettlementGeneration : MapGenerationComponent {
 		}
 
 		if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Pangat_Loo) {
-			List<string> elfClassesInOrder = new List<string> {"Craftsman", "Craftsman", "Peasant", "Peasant", "Miner", "Miner"};
-			List<string> humanClassesPriority = new List<string>() { "Knight", "Shaman", "Knight", "Shaman", "Knight",  "Shaman" };
 			List<Character> createdCharacters = new List<Character>();
 			int citizenCount = 0;
-			for (int i = 0; i < dwellingCount; i++) {
+			List<string> elfClassesInOrder = new List<string> {"Craftsman", "Craftsman", "Peasant", "Peasant", "Miner", "Miner"};
+			List<string> humanClassesPriority = new List<string>() { "Knight", "Shaman", "Knight", "Shaman", "Knight",  "Shaman" };
+			GenerateResidentConfiguration(providedCitizenCount, dwellingCount, out var coupleCharacters, out var singleCharacters);
+			int neededElves = elfClassesInOrder.Count;
+			//spawn couples
+			for (int i = 0; i < coupleCharacters; i++) {
 				List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
 				if (availableDwellings.Count == 0) {
 					break; //no more dwellings
 				}
 				Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
-				if (i >= 0 && i < 9) {
-					int coupleChance = 35;
-					int afterCoupleGenerationAmount = citizenCount + 2;
-					if (afterCoupleGenerationAmount <= 18) {
-						coupleChance = 100;
-					}
-
-					if (GameUtilities.RollChance(coupleChance)) {
-						//spawn human couples
-						//couple
-						List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
-						if (couples.Count > 0) {
-							Couple couple = CollectionUtilities.GetRandomElement(couples);
-							createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement, 
-								humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty,
-								humanClassesPriority.Count > 1 ? humanClassesPriority[1] : string.Empty));
-							if (humanClassesPriority.Count > 1) {
-								humanClassesPriority.RemoveRange(0, 2);	
-							} else if (humanClassesPriority.Count > 0) {
-								humanClassesPriority.RemoveAt(0);	
-							}
-							citizenCount += 2;
-						} else {
-							//no more couples left	
-							List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(faction.race, data);
-							if (siblingCouples.Count > 0) {
-								Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
-								createdCharacters.AddRange( SpawnCouple(couple, dwelling, faction, npcSettlement, 
-									humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty,
-									humanClassesPriority.Count > 1 ? humanClassesPriority[1] : string.Empty));
-								if (humanClassesPriority.Count > 1) {
-									humanClassesPriority.RemoveRange(0, 2);	
-								} else if (humanClassesPriority.Count > 0) {
-									humanClassesPriority.RemoveAt(0);	
-								}
-								citizenCount += 2;
-							} else {
-								//no more sibling Couples	
-								//spawn single
-								TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty);
-								if (humanClassesPriority.Count > 0) {
-									humanClassesPriority.RemoveAt(0);	
-								}
-							}
-						}
-					} else {
-						//spawn single
-						TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, humanClassesPriority.Count > 0 ? humanClassesPriority.First() : string.Empty);
-						if (humanClassesPriority.Count > 0) {
-							humanClassesPriority.RemoveAt(0);	
-						}
-					}
-				} else {
-					if (citizenCount >= 24) {
-						break;
-					}
-					//spawn peasant elves couple
-					if (elfClassesInOrder.Count == 0) {
-						elfClassesInOrder.Add("Craftsman");
-						elfClassesInOrder.Add("Craftsman");
-						elfClassesInOrder.Add("Peasant");
-						elfClassesInOrder.Add("Peasant");
-						elfClassesInOrder.Add("Miner");
-						elfClassesInOrder.Add("Miner");
-					}
+				bool createElves = false;
+				if (neededElves >= 2) {
+					createElves = GameUtilities.RollChance(50);
+				}
+				if (createElves) {
 					List<Couple> couples = GetAvailableCouplesToBeSpawned(RACE.ELVES, data);
 					if (couples.Count > 0) {
 						Couple couple = CollectionUtilities.GetRandomElement(couples);
-						createdCharacters.Add(SpawnCharacter(couple.character1, elfClassesInOrder.First(), dwelling, faction, npcSettlement));
-						createdCharacters.Add(SpawnCharacter(couple.character2, elfClassesInOrder[1], dwelling, faction, npcSettlement));
-						elfClassesInOrder.RemoveRange(0, 2);
+						string class1 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+						elfClassesInOrder.Remove(class1);
+						string class2 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+						elfClassesInOrder.Remove(class2);
+						createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement, class1, class2));
 						citizenCount += 2;
+						neededElves -= 2;
 					} else {
 						//no more couples left	
 						List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(RACE.ELVES, data);
 						if (siblingCouples.Count > 0) {
 							Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
-							createdCharacters.Add(SpawnCharacter(couple.character1, elfClassesInOrder.First(), dwelling, faction, npcSettlement));
-							createdCharacters.Add(SpawnCharacter(couple.character2, elfClassesInOrder[1], dwelling, faction, npcSettlement));
-							elfClassesInOrder.RemoveRange(0, 2);
+							string class1 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+							elfClassesInOrder.Remove(class1);
+							string class2 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+							elfClassesInOrder.Remove(class2);
+							createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement, class1, class2));
 							citizenCount += 2;
+							neededElves -= 2;
 						} else {
 							//no more sibling Couples	
-							//spawn single
-							TrySpawnSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, elfClassesInOrder.First());
-							elfClassesInOrder.RemoveAt(0);
+							PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(RACE.ELVES, data, npcSettlement);
+							if (singleCharacter != null) {
+								string class1 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+								elfClassesInOrder.Remove(class1);
+								createdCharacters.Add(SpawnCharacter(singleCharacter, class1, dwelling, faction, npcSettlement));
+								citizenCount += 1;
+								neededElves -= 1;
+							} else {
+								//no more characters to spawn
+								Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
+								FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(RACE.ELVES);
+								DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
+								singleCharacter = GetAvailableSingleCharacterForSettlement(RACE.ELVES, data, npcSettlement);
+								Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
+								string class1 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+								elfClassesInOrder.Remove(class1);
+								createdCharacters.Add(SpawnCharacter(singleCharacter, class1, dwelling, faction, npcSettlement));
+								citizenCount += 1;
+								neededElves -= 1;
+							}
 						}
 					}
+				} else {
+					//spawn human couple
+					string class1 = CollectionUtilities.GetRandomElement(humanClassesPriority);
+					humanClassesPriority.Remove(class1);
+					string class2 = CollectionUtilities.GetRandomElement(humanClassesPriority);
+					humanClassesPriority.Remove(class2);
+					CreateCouple(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, class1, class2);
 				}
 			}
+			
+			//spawn singles
+			for (int i = 0; i < singleCharacters; i++) {
+				List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
+				if (availableDwellings.Count == 0) {
+					break; //no more dwellings
+				}
+				Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
+				if (neededElves > 0) {
+					//spawn an elf
+					PreCharacterData singleCharacter = GetAvailableSingleCharacterForSettlement(RACE.ELVES, data, npcSettlement);
+					if (singleCharacter != null) {
+						string class1 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+						elfClassesInOrder.Remove(class1);
+						createdCharacters.Add(SpawnCharacter(singleCharacter, class1, dwelling, faction, npcSettlement));
+						citizenCount += 1;
+						neededElves -= 1;
+					} else {
+						//no more characters to spawn
+						Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
+						FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(RACE.ELVES);
+						DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
+						singleCharacter = GetAvailableSingleCharacterForSettlement(RACE.ELVES, data, npcSettlement);
+						Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
+						string class1 = CollectionUtilities.GetRandomElement(elfClassesInOrder);
+						elfClassesInOrder.Remove(class1);
+						createdCharacters.Add(SpawnCharacter(singleCharacter, class1, dwelling, faction, npcSettlement));
+						citizenCount += 1;
+						neededElves -= 1;
+					}
+				} else {
+					string class1 = CollectionUtilities.GetRandomElement(humanClassesPriority);
+					humanClassesPriority.Remove(class1);
+					//spawn human
+					CreateSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount, class1);
+				}
+			}
+			
 			return createdCharacters;
-		} else if (WorldSettings.Instance.worldSettingsData.worldType == WorldSettingsData.World_Type.Icalawa) {
-			//always spawn couples for Icalawa since there are always 6 dwellings and citizen count needs to be always 12
-			return GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, providedCitizenCount, coupleChanceOverride: 100);
 		} else {
 			return GenerateSettlementResidents(dwellingCount, npcSettlement, faction, data, providedCitizenCount);	
 		}
@@ -497,93 +505,122 @@ public class SettlementGeneration : MapGenerationComponent {
 	#endregion
 
 	#region Residents
-	private List<Character> GenerateSettlementResidents(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data, int providedCitizenCount = -1, int coupleChanceOverride = -1) {
-		List<Character> createdCharacters = new List<Character>();
-		int citizenCount = 0;
-		for (int i = 0; i < dwellingCount; i++) {
-			int roll = Random.Range(0, 100);
-			int coupleChance;
-			if (coupleChanceOverride != -1) {
-				coupleChance = coupleChanceOverride;
-			} else {
-				coupleChance = 35; //35
+	private void GenerateResidentConfiguration(int providedCitizenCount, int dwellingCount, out int coupleCharacters, out int singleCharacters) {
+		singleCharacters = 0;
+		coupleCharacters = 0;
+		if (providedCitizenCount != -1 && dwellingCount < providedCitizenCount) {
+			int remainingCharacters = providedCitizenCount;
+			int remainingDwellings = dwellingCount;
+			for (int i = 0; i < dwellingCount; i++) {
+				if (remainingDwellings >= remainingCharacters) {
+					singleCharacters++;
+					remainingCharacters -= 1;
+				}
+				else {
+					coupleCharacters++;
+					remainingCharacters -= 2;
+				}
+				remainingDwellings--;
+			}
+		} else {
+			for (int i = 0; i < dwellingCount; i++) {
+				if (GameUtilities.RollChance(35)) {
+					coupleCharacters++;
+				} else {
+					singleCharacters++;
+				}
 				if (providedCitizenCount > 0) {
-					if (citizenCount >= providedCitizenCount) {
+					int totalCharacters = singleCharacters + (coupleCharacters * 2);
+					if (totalCharacters >= providedCitizenCount) {
 						break;
 					}
-				
-					//if number of citizens are provided, check if the current citizen count + 2 (Couple), is still less than the given amount
-					//if it is, then increase chance to spawn a couple
-					int afterCoupleGenerationAmount = citizenCount + 2;
-					if (afterCoupleGenerationAmount < providedCitizenCount) {
-						coupleChance = 70;
-					}
-				}	
+				}
 			}
-
+		}
+	}
+	private List<Character> GenerateSettlementResidents(int dwellingCount, NPCSettlement npcSettlement, Faction faction, MapGenerationData data, int providedCitizenCount = -1) {
+		GenerateResidentConfiguration(providedCitizenCount, dwellingCount, out var coupleCharacters, out var singleCharacters);
+		Debug.Log($"Provided citizen count is {providedCitizenCount.ToString()}. Singles: {singleCharacters.ToString()}. Couples: {coupleCharacters.ToString()}");
+		
+		List<Character> createdCharacters = new List<Character>();
+		int citizenCount = 0;
+		
+		//spawn couples
+		for (int i = 0; i < coupleCharacters; i++) {
 			List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
 			if (availableDwellings.Count == 0) {
 				break; //no more dwellings
 			}
-
 			Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
-			if (roll < coupleChance) {
-				//couple
-				List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
-				if (couples.Count > 0) {
-					Couple couple = CollectionUtilities.GetRandomElement(couples);
-					createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement));
-					citizenCount += 2;
-				} else {
-					//no more couples left	
-					List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(faction.race, data);
-					if (siblingCouples.Count > 0) {
-						Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
-						createdCharacters.AddRange( SpawnCouple(couple, dwelling, faction, npcSettlement));
-						citizenCount += 2;
-					} else {
-						//no more sibling Couples	
-						PreCharacterData singleCharacter =
-							GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
-						if (singleCharacter != null) {
-							createdCharacters.Add(SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
-								dwelling, faction, npcSettlement));
-							citizenCount += 1;
-						} else {
-							//no more characters to spawn
-							Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
-							FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
-							DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
-							singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
-							Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-							createdCharacters.Add(SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
-								dwelling, faction, npcSettlement));
-							citizenCount += 1;
-						}
-					}
-				}
-			} else {
-				//single
+			CreateCouple(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount);
+		}
+		
+		//spawn singles
+		for (int i = 0; i < singleCharacters; i++) {
+			List<Dwelling> availableDwellings = GetAvailableDwellingsAtSettlement(npcSettlement);
+			if (availableDwellings.Count == 0) {
+				break; //no more dwellings
+			}
+			Dwelling dwelling = CollectionUtilities.GetRandomElement(availableDwellings);
+			CreateSingleCharacter(npcSettlement, faction, data, dwelling, ref createdCharacters, ref citizenCount);
+		}
+		
+		
+		return createdCharacters;
+	}
+	private void CreateSingleCharacter(NPCSettlement npcSettlement, Faction faction, MapGenerationData data, Dwelling dwelling, ref List<Character> createdCharacters, ref int citizenCount, string providedClass = "") {
+		//single
+		PreCharacterData singleCharacter =
+			GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
+		if (singleCharacter != null) {
+			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.classManager.GetCurrentClassToCreate() : providedClass, dwelling, faction, npcSettlement));
+			citizenCount += 1;
+		}
+		else {
+			//no more characters to spawn
+			Debug.LogWarning("Could not find any more characters to spawn");
+			FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
+			DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
+			singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
+			Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
+			createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass) ? npcSettlement.classManager.GetCurrentClassToCreate() : providedClass, dwelling, faction, npcSettlement));
+			citizenCount += 1;
+		}
+	}
+	private void CreateCouple(NPCSettlement npcSettlement, Faction faction, MapGenerationData data, Dwelling dwelling, ref List<Character> createdCharacters, ref int citizenCount, string providedClass1 = "", string providedClass2 = "") {
+		List<Couple> couples = GetAvailableCouplesToBeSpawned(faction.race, data);
+		if (couples.Count > 0) {
+			Couple couple = CollectionUtilities.GetRandomElement(couples);
+			createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement, providedClass1, providedClass2));
+			citizenCount += 2;
+		} else {
+			//no more couples left	
+			List<Couple> siblingCouples = GetAvailableSiblingCouplesToBeSpawned(faction.race, data);
+			if (siblingCouples.Count > 0) {
+				Couple couple = CollectionUtilities.GetRandomElement(siblingCouples);
+				createdCharacters.AddRange(SpawnCouple(couple, dwelling, faction, npcSettlement, providedClass1, providedClass2));
+				citizenCount += 2;
+			}
+			else {
+				//no more sibling Couples	
 				PreCharacterData singleCharacter =
 					GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 				if (singleCharacter != null) {
-					createdCharacters.Add(SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
-						dwelling, faction, npcSettlement));
+					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.classManager.GetCurrentClassToCreate() : providedClass1, dwelling, faction, npcSettlement));
 					citizenCount += 1;
-				} else {
+				}
+				else {
 					//no more characters to spawn
-					Debug.LogWarning("Could not find any more characters to spawn");
+					Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
 					FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
 					DatabaseManager.Instance.familyTreeDatabase.AddFamilyTree(newFamily);
 					singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, npcSettlement);
 					Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
-					createdCharacters.Add(SpawnCharacter(singleCharacter, npcSettlement.classManager.GetCurrentClassToCreate(), 
-						dwelling, faction, npcSettlement));
+					createdCharacters.Add(SpawnCharacter(singleCharacter, string.IsNullOrEmpty(providedClass1) ? npcSettlement.classManager.GetCurrentClassToCreate() : providedClass1, dwelling, faction, npcSettlement));
 					citizenCount += 1;
 				}
 			}
 		}
-		return createdCharacters;
 	}
 	private List<Couple> GetAvailableCouplesToBeSpawned(RACE race, MapGenerationData data) {
 		List<Couple> couples = new List<Couple>();

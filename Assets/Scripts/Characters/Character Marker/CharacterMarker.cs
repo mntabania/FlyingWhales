@@ -246,8 +246,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateAnimation();
         pathfindingAI.Teleport(tile.centeredWorldLocation);
         UpdatePosition();
-        character.currentStructure?.RemoveCharacterAtLocation(character);
-        tile.structure.AddCharacterAtLocation(character);
+        if (!(tile.objHere is WurmHole)) {
+            //NOTE: SPECIAL CASE only set structure if character the target tile does not have a wurm hole. Because this will cause conflicts in structure location when the character is teleported
+            //but this will set the structure location of the character to th target tile instead
+            character.currentStructure?.RemoveCharacterAtLocation(character);
+            tile.structure.AddCharacterAtLocation(character);    
+        }
 //#if UNITY_EDITOR || DEVELOPMENT_BUILD
 //        Assert.IsTrue(character.currentStructure == tile.structure,
 //            $"{character.name} updated its position but the structure is not the same as the tile's structure. Current structure: { character.currentStructure?.name }, Tile structure: { tile.structure.name }");

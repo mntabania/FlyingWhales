@@ -40,6 +40,7 @@ public class Player : ILeader, IObjectManipulator {
     public List<SPELL_TYPE> unlearnedSpells { get; }
     public List<SPELL_TYPE> unlearnedAfflictions { get; }
     public TILE_OBJECT_TYPE currentActiveItem { get; private set; }
+    public bool isCurrentlyBuildingDemonicStructure { get; private set; }
 
     //Components
     public SeizeComponent seizeComponent { get; }
@@ -847,6 +848,12 @@ public class Player : ILeader, IObjectManipulator {
             data.allChaosOrbs[i].Load();
         }
         PlayerUI.Instance.UpdateUI();
+    }
+    #endregion
+
+    #region Building
+    public void SetIsCurrentlyBuildingDemonicStructure(bool state) {
+        isCurrentlyBuildingDemonicStructure = state;
     }
     #endregion
 }

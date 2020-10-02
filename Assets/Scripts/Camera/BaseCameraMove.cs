@@ -71,6 +71,7 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
     #region Movement
     protected void ArrowKeysMovement() {
         if (isMovementDisabled) { return; }
+        if (!InputManager.Instance.CanUseHotkeys()) { return; }
         if (InputManager.Instance.HasSelectedUIObject()) { return; } //if currently selecting a UI object, ignore (This is mostly for Input fields)
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
             if (!UIManager.Instance.IsConsoleShowing()) {
