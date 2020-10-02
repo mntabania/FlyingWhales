@@ -196,7 +196,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
                 Messenger.RemoveListener(Signals.HOUR_STARTED, CheckIfStillUnderSiege);
                 if(exterminateTargetStructure != null) {
                     if(owner != null && !owner.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, exterminateTargetStructure)) {
-                        owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
+                        if(exterminateTargetStructure.settlementLocation == null || exterminateTargetStructure.settlementLocation.HasAliveResidentThatIsHostileWith(owner)) {
+                            owner.partyQuestBoard.CreateExterminatePartyQuest(null, this, exterminateTargetStructure, this);
+                        }
                     }
                     //settlementJobTriggerComponent.TriggerExterminationJob(exterminateTargetStructure);
                 }

@@ -259,6 +259,48 @@ namespace Locations.Settlements {
             }
             return false;
         }
+        public bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && resident.gridTileLocation.IsPartOfSettlement(this)
+                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool HasAliveResidentThatIsHostileWith(Faction faction) {
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (!resident.isDead
+                    && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Character character) {
+            List<Character> choices = null;
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (character != resident
+                    && !resident.isDead
+                    && resident.gridTileLocation != null
+                    && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    && resident.gridTileLocation.IsPartOfSettlement(this)
+                    && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
+                    if (choices == null) { choices = new List<Character>(); }
+                    choices.Add(resident);
+                }
+            }
+            if (choices != null && choices.Count > 0) {
+                return choices[UnityEngine.Random.Range(0, choices.Count)];
+            }
+            return null;
+        }
         #endregion
 
         #region Faction

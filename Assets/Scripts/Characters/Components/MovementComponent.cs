@@ -448,7 +448,9 @@ public class MovementComponent : CharacterComponent {
             expiryDate.AddDays(1);
             SchedulingManager.Instance.AddEntry(expiryDate, () => RemoveStructureToAvoid(locationStructure), this);
             if (owner.homeSettlement != null && GameUtilities.RollChance(25) && owner.faction != null && !owner.faction.partyQuestBoard.HasPartyQuestWithTarget(PARTY_QUEST_TYPE.Extermination, locationStructure)) {
-                owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
+                if (locationStructure.settlementLocation == null || locationStructure.settlementLocation.HasAliveResidentThatIsHostileWith(owner.faction)) {
+                    owner.faction.partyQuestBoard.CreateExterminatePartyQuest(owner, owner.homeSettlement, locationStructure, owner.homeSettlement);
+                }
                 //owner.homeSettlement.settlementJobTriggerComponent.TriggerExterminationJob(locationStructure);
             }
         }

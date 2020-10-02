@@ -16,7 +16,7 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
             log += $"\n-Party is working";
             if (party.targetDestination.IsAtTargetDestination(character)) {
                 log += $"\n-Character is at target destination, do work";
-                Character target = GetRandomAliveResidentInsideSettlementThatIsHostileWith(character, character.currentStructure.settlementLocation);
+                Character target = character.currentStructure.settlementLocation.GetRandomAliveResidentInsideSettlementThatIsHostileWith(character);
                 if (target != null) {
                     log += $"\n-Chosen target is {target.name}";
                     character.combatComponent.Fight(target, CombatManager.Hostility);
@@ -79,23 +79,5 @@ public class ExterminateBehaviour : CharacterBehaviourComponent {
         return false;
     }
 
-    private Character GetRandomAliveResidentInsideSettlementThatIsHostileWith(Character character, BaseSettlement settlement) {
-        List<Character> choices = null;
-        for (int i = 0; i < settlement.residents.Count; i++) {
-            Character resident = settlement.residents[i];
-            if (character != resident 
-                && !resident.isDead
-                && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && resident.gridTileLocation.IsPartOfSettlement(settlement)
-                && (resident.faction == null || character.faction == null || character.faction.IsHostileWith(resident.faction))) {
-                if (choices == null) { choices = new List<Character>(); }
-                choices.Add(resident);
-            }
-        }
-        if (choices != null && choices.Count > 0) {
-            return choices[UnityEngine.Random.Range(0, choices.Count)];
-        }
-        return null;
-    }
+
 }

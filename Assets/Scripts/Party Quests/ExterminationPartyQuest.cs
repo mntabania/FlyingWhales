@@ -68,7 +68,7 @@ public class ExterminationPartyQuest : PartyQuest {
     #region General
     private void ProcessExterminationOrDisbandment() {
         if (assignedParty != null && assignedParty.isActive && assignedParty.currentQuest == this) {
-            if (!HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner, targetStructure.settlementLocation)) {
+            if (!targetStructure.settlementLocation.HasAliveResidentInsideSettlementThatIsHostileWith(assignedParty.partySettlement.owner)) {
                 assignedParty.GoBackHomeAndEndQuest();
             } else {
                 StartExterminationTimer();
@@ -89,19 +89,6 @@ public class ExterminationPartyQuest : PartyQuest {
     //private void SetWaitingArea() {
     //    waitingArea = targetStructure.settlementLocation.GetAPlainAdjacentHextile();
     //}
-    private bool HasAliveResidentInsideSettlementThatIsHostileWith(Faction faction, BaseSettlement settlement) {
-        for (int i = 0; i < settlement.residents.Count; i++) {
-            Character resident = settlement.residents[i];
-            if (!resident.isDead
-                && resident.gridTileLocation != null
-                && resident.gridTileLocation.collectionOwner.isPartOfParentRegionMap
-                && resident.gridTileLocation.IsPartOfSettlement(settlement)
-                && (resident.faction == null || faction == null || faction.IsHostileWith(resident.faction))) {
-                return true;
-            }
-        }
-        return false;
-    }
     #endregion
 
     #region Extermination Timer
