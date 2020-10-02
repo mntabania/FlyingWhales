@@ -80,8 +80,10 @@ public class TreasureChest : TileObject {
                 }
             } else if (objectInside is Mimic summon) {
                 //if there is an object inside the chest and it is a mimic, awaken it
-                summon.marker.PlaceMarkerAt(location);
-                summon.SetIsTreasureChest(false);
+                if (!summon.isDead) {
+                    summon.marker.PlaceMarkerAt(location);
+                    summon.SetIsTreasureChest(false);    
+                }
                 location.structure.RemovePOI(this);
                 TraitManager.Instance.CopyStatuses(this, summon);
             }
