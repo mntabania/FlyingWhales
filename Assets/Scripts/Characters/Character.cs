@@ -2620,6 +2620,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
             homeSettlement = settlement;
+            Debug.Log($"Set home settlement of {name} to {homeSettlement?.name}");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_faction == FactionManager.Instance.vagrantFaction && homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                Debug.LogError($"{name} has assigned itself a home village {homeSettlement.name} but it is a vagrant!");
+            }
+#endif
             if (isNormalCharacter) {
                 behaviourComponent.UpdateDefaultBehaviourSet();
             }
@@ -2940,6 +2946,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
         if (partyComponent.isActiveMember) {
             invalidReason = "Character is in an active party";
+            return false;
+        }
+        //NOTE: ONLY ADDED FACTION CHECKING BECAUSE OF BUG THAT VAGRANTS ARE STILL PART OF A VILLAGE
+        if (homeSettlement != null && homeSettlement.owner != faction) {
+            invalidReason = "Character is not part of settlement faction!";
             return false;
         }
         invalidReason = "No reason";
