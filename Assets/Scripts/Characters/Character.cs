@@ -5680,7 +5680,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
             SetHP(0);
 
-            marker.OnDeath(deathTile);
+            marker?.OnDeath(deathTile);
 
             if (interruptComponent.isInterrupted && interruptComponent.currentInterrupt.interrupt != interrupt) {
                 interruptComponent.ForceEndNonSimultaneousInterrupt();
