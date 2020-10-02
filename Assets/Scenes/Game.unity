@@ -52712,7 +52712,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883206538}
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -86918,7 +86918,7 @@ MonoBehaviour:
   - {fileID: 1659849664}
   - {fileID: 1659849663}
   showAllToggle: {fileID: 1659849681}
-  maxPlayerNotif: 20
+  maxPlayerNotif: 100
   playerNotifScrollRect: {fileID: 1659849662}
   activeNotifications: []
   yesNoConfirmation: {fileID: 3323795518612042519}

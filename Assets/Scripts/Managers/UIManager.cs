@@ -1234,8 +1234,8 @@ public class UIManager : BaseMonoBehaviour {
             activeNotifications[0].DeleteOldestNotification();
         }
         UpdateSearchFieldsState();
-        if (HasSearchCriteria()) {
-            List<string> filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters);
+        // if (HasSearchCriteria()) {
+            List<string> filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters, 30);
             if (filteredLogIDs.Contains(newNotif.logPersistentID)) {
                 newNotif.DoTweenHeight();
                 newNotif.TweenIn();    
@@ -1243,10 +1243,10 @@ public class UIManager : BaseMonoBehaviour {
                 newNotif.QueueAdjustHeightOnEnable();
             }
             FilterNotifications(filteredLogIDs);
-        } else {
-            newNotif.DoTweenHeight();
-            newNotif.TweenIn();    
-        }
+        // } else {
+        //     newNotif.DoTweenHeight();
+        //     newNotif.TweenIn();    
+        // }
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
@@ -1255,7 +1255,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void FilterNotifications(List<string> filteredLogIDs = null) {
         if (filteredLogIDs == null) {
-            filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters);
+            filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters, 30);
         }
         for (int i = 0; i < activeNotifications.Count; i++) {
             PlayerNotificationItem item = activeNotifications[i];
