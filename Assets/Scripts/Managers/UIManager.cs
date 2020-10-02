@@ -1234,8 +1234,8 @@ public class UIManager : BaseMonoBehaviour {
             activeNotifications[0].DeleteOldestNotification();
         }
         UpdateSearchFieldsState();
-        // if (HasSearchCriteria()) {
-            List<string> filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters, 30);
+        if (HasSearchCriteria()) {
+            List<string> filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters);
             if (filteredLogIDs.Contains(newNotif.logPersistentID)) {
                 newNotif.DoTweenHeight();
                 newNotif.TweenIn();    
@@ -1243,10 +1243,10 @@ public class UIManager : BaseMonoBehaviour {
                 newNotif.QueueAdjustHeightOnEnable();
             }
             FilterNotifications(filteredLogIDs);
-        // } else {
-        //     newNotif.DoTweenHeight();
-        //     newNotif.TweenIn();    
-        // }
+        } else {
+            newNotif.DoTweenHeight();
+            newNotif.TweenIn();    
+        }
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
@@ -1255,7 +1255,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     private void FilterNotifications(List<string> filteredLogIDs = null) {
         if (filteredLogIDs == null) {
-            filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters, 30);
+            filteredLogIDs = DatabaseManager.Instance.mainSQLDatabase.GetLogIDsThatMatchCriteria(activeNotificationIDs, notificationSearchField.text, notificationFilters);
         }
         for (int i = 0; i < activeNotifications.Count; i++) {
             PlayerNotificationItem item = activeNotifications[i];
@@ -1578,7 +1578,7 @@ public class UIManager : BaseMonoBehaviour {
     private void UpdateTransitionRegionUI() {
         if (InnerMapManager.Instance.currentlyShowingLocation != null) {
             transitionRegionUIGO.SetActive(true);
-            if (InnerMapCameraMove.Instance.HasReachedMinXBound()) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMinXBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.West)) {
                     leftTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1587,7 +1587,7 @@ public class UIManager : BaseMonoBehaviour {
             } else {
                 leftTransitionBtn.gameObject.SetActive(false);
             }
-            if (InnerMapCameraMove.Instance.HasReachedMaxXBound()) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMaxXBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.East)) {
                     rightTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1596,7 +1596,7 @@ public class UIManager : BaseMonoBehaviour {
             } else {
                 rightTransitionBtn.gameObject.SetActive(false);
             }
-            if (InnerMapCameraMove.Instance.HasReachedMinYBound()) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMinYBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.South)) {
                     downTransitionBtn.gameObject.SetActive(true);
                 } else {
@@ -1605,7 +1605,7 @@ public class UIManager : BaseMonoBehaviour {
             } else {
                 downTransitionBtn.gameObject.SetActive(false);
             }
-            if (InnerMapCameraMove.Instance.HasReachedMaxYBound()) {
+            if (InnerMapCameraMove.Instance.HasReachedMapMaxYBoundOf(InnerMapManager.Instance.currentlyShowingLocation)) {
                 if (InnerMapManager.Instance.currentlyShowingLocation.HasNeighbourInDirection(GridNeighbourDirection.North)) {
                     upTransitionBtn.gameObject.SetActive(true);
                 } else {

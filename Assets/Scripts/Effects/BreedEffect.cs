@@ -18,7 +18,7 @@ public class BreedEffect : PooledObject {
     public void PlayEffect(Sprite sprite) {
         trailEffect.gameObject.SetActive(true);
         monsterSprite.sprite = sprite;
-        Vector3 targetPos = InnerMapCameraMove.Instance.innerMapsCamera.ScreenToWorldPoint(PlayerUI.Instance.monsterToggle.transform.position);
+        Vector3 targetPos = InnerMapCameraMove.Instance.camera.ScreenToWorldPoint(PlayerUI.Instance.monsterToggle.transform.position);
         // Vector3 targetPos = target.transform.position;
         
         Vector3 controlPointA = transform.position;

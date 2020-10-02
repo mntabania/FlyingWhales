@@ -12,7 +12,7 @@ public class InnerMapCameraMove : BaseCameraMove {
 	public static InnerMapCameraMove Instance;
     
 	[SerializeField] private float zoomSensitivity;
-    [FormerlySerializedAs("areaMapsCamera")] public Camera innerMapsCamera;
+    //[FormerlySerializedAs("areaMapsCamera")] public Camera camera;
     [SerializeField] private bool allowZoom = true;
 
     [Header("Shaking")]
@@ -26,7 +26,7 @@ public class InnerMapCameraMove : BaseCameraMove {
     public Tweener innerMapCameraShakeMeteorTween { get; private set; }
 
     #region getters/setters
-    public float currentFOV => innerMapsCamera.orthographicSize;
+    public float currentFOV => camera.orthographicSize;
     public float maxFOV => _maxFov;
     public float minFOV => _minFov;
     #endregion
@@ -43,11 +43,11 @@ public class InnerMapCameraMove : BaseCameraMove {
             return;
         }
         ArrowKeysMovement();
-        Dragging(innerMapsCamera);
+        Dragging(camera);
         Edging();
         Zooming();
-        Targeting(innerMapsCamera);
-        ConstrainCameraBounds(innerMapsCamera);
+        Targeting(camera);
+        ConstrainCameraBounds(camera);
     }
 
     public override void Initialize() {
@@ -63,15 +63,15 @@ public class InnerMapCameraMove : BaseCameraMove {
         gameObject.SetActive(true);
         SetCameraControlState(true);
         SetCameraBordersForMap(location.innerMap);
-        ConstrainCameraBounds(innerMapsCamera);
-        innerMapsCamera.depth = 2;
+        ConstrainCameraBounds(camera);
+        camera.depth = 2;
         // AudioManager.Instance.SetCameraParent(this);
     }
     private void OnInnerMapClosed(Region location) {
         // AudioManager.Instance.SetCameraParent(WorldMapCameraMove.Instance);
         gameObject.SetActive(false);
         SetCameraControlState(false);
-        innerMapsCamera.depth = 0;
+        camera.depth = 0;
     }
     #endregion
 
@@ -112,18 +112,18 @@ public class InnerMapCameraMove : BaseCameraMove {
             if (Input.GetKeyDown(KeyCode.Z)) {
                 axis = 0.1f;
             }
-            float fov = innerMapsCamera.orthographicSize;
+            float fov = camera.orthographicSize;
             float adjustment = axis * (zoomSensitivity);
             if (adjustment != 0f) {
                 fov -= adjustment;
                 fov = Mathf.Clamp(fov, _minFov, _maxFov);
-                innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera, adjustment));
+                camera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(camera, adjustment));
             }
         } else {
             Rect screenRect = new Rect(0, 0, Screen.width, Screen.height);
             if (screenRect.Contains(Input.mousePosition)) {
                 //camera scrolling code
-                float fov = innerMapsCamera.orthographicSize;
+                float fov = camera.orthographicSize;
                 float axis = Input.GetAxis("Mouse ScrollWheel");
                 float adjustment = axis * (zoomSensitivity);
                 if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
@@ -132,7 +132,7 @@ public class InnerMapCameraMove : BaseCameraMove {
                     //fov = Mathf.Round(fov * 100f) / 100f;
                     fov = Mathf.Clamp(fov, _minFov, _maxFov);
 
-                    innerMapsCamera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(innerMapsCamera, adjustment));
+                    camera.DOOrthoSize(fov, 0.5f).OnUpdate(() => OnZoom(camera, adjustment));
 
                     //if (!Mathf.Approximately(previousCameraFOV, fov)) {
                     //    previousCameraFOV = fov;
@@ -161,7 +161,7 @@ public class InnerMapCameraMove : BaseCameraMove {
 
     #region Bounds
     public bool CanSee(LocationGridTile gridTile) {
-        Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(gridTile.centeredWorldLocation);
+        Vector3 viewPos = camera.WorldToViewportPoint(gridTile.centeredWorldLocation);
         return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
     }
     public bool CanSee(DemonicStructure demonicStructure) {
@@ -169,7 +169,7 @@ public class InnerMapCameraMove : BaseCameraMove {
             //if ever demonic structures' object has been destroyed, then return false.
             return false;
         }
-        Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(demonicStructure.structureObj.transform.position);
+        Vector3 viewPos = camera.WorldToViewportPoint(demonicStructure.structureObj.transform.position);
         return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
     }
     #endregion
@@ -185,8 +185,8 @@ public class InnerMapCameraMove : BaseCameraMove {
 
     #region Meteor
     public void MeteorShake() {
-        if (!DOTween.IsTweening(innerMapsCamera)) {
-            innerMapCameraShakeMeteorTween = innerMapsCamera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 35, fadeOut: false);
+        if (!DOTween.IsTweening(camera)) {
+            innerMapCameraShakeMeteorTween = camera.DOShakeRotation(0.8f, new Vector3(8f, 8f, 0f), 35, fadeOut: false);
             innerMapCameraShakeMeteorTween.OnComplete(OnTweenComplete);
         } 
         //else {
@@ -197,7 +197,7 @@ public class InnerMapCameraMove : BaseCameraMove {
     }
     private void OnTweenComplete() {
         //InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
-        innerMapsCamera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
+        camera.transform.DORotate(new Vector3(0f, 0f, 0f), 0.2f);
         innerMapCameraShakeMeteorTween = null;
     }
     #endregion

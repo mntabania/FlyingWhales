@@ -206,7 +206,7 @@ public class HexTileSpellsComponent {
         }
     }
     private void CameraShake() {
-        InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(1f, new Vector3(2f, 2f, 2f), 15, fadeOut: false);
+        InnerMapCameraMove.Instance.camera.DOShakeRotation(1f, new Vector3(2f, 2f, 2f), 15, fadeOut: false);
         //tween.OnComplete(OnCompleteCameraShake);
     }
     private void StopCameraShake() {
@@ -214,8 +214,8 @@ public class HexTileSpellsComponent {
     }
     private IEnumerator StopCameraShakeCoroutine() {
         yield return null;
-        InnerMapCameraMove.Instance.innerMapsCamera.DOKill();
-        InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+        InnerMapCameraMove.Instance.camera.DOKill();
+        InnerMapCameraMove.Instance.camera.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
     }
 
     private void OnCompleteCameraShake() {
@@ -251,11 +251,11 @@ public class HexTileSpellsComponent {
     private void PerTickEarthquake() {
         if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingLocation == owner.region) {
             if (InnerMapCameraMove.Instance.CanSee(_centerEarthquakeTile)) {
-                if (!DOTween.IsTweening(InnerMapCameraMove.Instance.innerMapsCamera)) {
+                if (!DOTween.IsTweening(InnerMapCameraMove.Instance.camera)) {
                     CameraShake();
                 }
             } else {
-                if (DOTween.IsTweening(InnerMapCameraMove.Instance.innerMapsCamera)) {
+                if (DOTween.IsTweening(InnerMapCameraMove.Instance.camera)) {
                     StopCameraShake();
                 }
             }

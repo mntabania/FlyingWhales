@@ -29,7 +29,7 @@ public class BedMarkerNameplate : PooledObject {
 
     #region Listeners
     private void OnCameraZoomChanged(Camera camera, float amount) {
-        if (camera == InnerMapCameraMove.Instance.innerMapsCamera) {
+        if (camera == InnerMapCameraMove.Instance.camera) {
             UpdateSizeBasedOnZoom();
         }
     }
@@ -48,7 +48,7 @@ public class BedMarkerNameplate : PooledObject {
     #region Monobehaviours
     private void LateUpdate() {
         Vector3 markerScreenPosition =
-            InnerMapCameraMove.Instance.innerMapsCamera.WorldToScreenPoint(bedGO.transform.position);
+            InnerMapCameraMove.Instance.camera.WorldToScreenPoint(bedGO.transform.position);
         markerScreenPosition.z = 0f;
         transform.position = markerScreenPosition;
     }

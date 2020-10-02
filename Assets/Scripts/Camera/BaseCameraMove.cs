@@ -7,6 +7,8 @@ using UnityEngine.EventSystems;
 
 public abstract class BaseCameraMove : BaseMonoBehaviour{
 
+    public Camera camera;
+
     [Header("Bounds")]
     private const float MIN_Z = -10f;
     private const float MAX_Z = -10f;
@@ -276,26 +278,34 @@ public abstract class BaseCameraMove : BaseMonoBehaviour{
         }
         return false;
     }
-    public bool HasReachedMinXBound() {
-        if (Mathf.Approximately(transform.position.x, MIN_X)) {
+    public bool HasReachedMapMinXBoundOf(Region region) {
+        float regionMinXPos = region.innerMap.transform.position.x;
+        float cameraMinXPos = camera.transform.position.x - (camera.orthographicSize * 2);
+        if (cameraMinXPos <= regionMinXPos) {
             return true;
         }
         return false;
     }
-    public bool HasReachedMaxXBound() {
-        if (Mathf.Approximately(transform.position.x, MAX_X)) {
+    public bool HasReachedMapMaxXBoundOf(Region region) {
+        float regionMaxXPos = region.innerMap.transform.position.x + region.innerMap.width;
+        float cameraMaxXPos = camera.transform.position.x + (camera.orthographicSize * 2);
+        if (cameraMaxXPos >= regionMaxXPos) {
             return true;
         }
         return false;
     }
-    public bool HasReachedMinYBound() {
-        if (Mathf.Approximately(transform.position.y, MIN_Y)) {
+    public bool HasReachedMapMinYBoundOf(Region region) {
+        float regionMinYPos = region.innerMap.transform.position.y;
+        float cameraMinYPos = camera.transform.position.y - camera.orthographicSize;
+        if (cameraMinYPos <= regionMinYPos) {
             return true;
         }
         return false;
     }
-    public bool HasReachedMaxYBound() {
-        if (Mathf.Approximately(transform.position.y, MAX_Y)) {
+    public bool HasReachedMapMaxYBoundOf(Region region) {
+        float regionMaxYPos = region.innerMap.transform.position.y + region.innerMap.height;
+        float cameraMaxYPos = camera.transform.position.y + camera.orthographicSize;
+        if (cameraMaxYPos >= regionMaxYPos) {
             return true;
         }
         return false;

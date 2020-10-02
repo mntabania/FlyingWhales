@@ -386,8 +386,8 @@ namespace Inner_Maps {
             name = $"{region.name}'s Inner Map";
             groundTilemap.CompressBounds();
             _boundDrawer.ManualUpdateBounds(groundTilemap.localBounds);
-            worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
-            var orthographicSize = InnerMapCameraMove.Instance.innerMapsCamera.orthographicSize;
+            worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.camera;
+            var orthographicSize = InnerMapCameraMove.Instance.camera.orthographicSize;
             cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
             cameraBounds.y = orthographicSize;
             cameraBounds.z = (cameraBounds.x + width) - 28.5f;
