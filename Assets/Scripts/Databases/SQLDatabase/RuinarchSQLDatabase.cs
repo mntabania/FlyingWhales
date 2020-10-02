@@ -177,8 +177,9 @@ namespace Databases.SQLDatabase {
             string commandStr = $"{insertStr} {valuesStr}";
             Debug.Log($"Insert command was {commandStr}");
             
-            var thread = new Thread(() => ExecuteInsertCommand(commandStr));
-            thread.Start();
+            // var thread = new Thread(() => ExecuteInsertCommand(commandStr));
+            // thread.Start();
+            DatabaseThreadPool.Instance.AddToThreadPool(commandStr);
             
             // command.CommandType = CommandType.Text;
             // command.CommandText = commandStr;
@@ -204,26 +205,28 @@ namespace Databases.SQLDatabase {
             timer.Stop();
             Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         }
-        private void ExecuteInsertCommand(string commandStr) {
-            SQLiteCommand command = dbConnection.CreateCommand();
-            command.CommandType = CommandType.Text;
-            command.CommandText = commandStr;
-            command.ExecuteNonQuery();
+        public void ExecuteInsertCommand(string commandStr) {
+            if (dbConnection != null) {
+                SQLiteCommand command = dbConnection.CreateCommand();
+                command.CommandType = CommandType.Text;
+                command.CommandText = commandStr;
+                command.ExecuteNonQuery();
             
-            //check if row limit has been reached, if so then delete oldest log that is not an intel.
-            command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
-            IDataReader dataReader = command.ExecuteReader();
-            int rowCount = 0;
-            while (dataReader.Read()) {
-                rowCount = dataReader.GetInt32(0);
-            }
-            dataReader.Close();
+                //check if row limit has been reached, if so then delete oldest log that is not an intel.
+                command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
+                IDataReader dataReader = command.ExecuteReader();
+                int rowCount = 0;
+                while (dataReader.Read()) {
+                    rowCount = dataReader.GetInt32(0);
+                }
+                dataReader.Close();
             
-            if (rowCount > Log_Row_Limit) {
-                //row limit has been reached, will delete oldest entry
-                DeleteOldestLog();
+                if (rowCount > Log_Row_Limit) {
+                    //row limit has been reached, will delete oldest entry
+                    DeleteOldestLog();
+                }
+                command.Dispose();
             }
-            command.Dispose();
         }
 
         public List<Log> GetLogsThatMatchCriteria(string persistentID, string textLike, List<LOG_TAG> tags, int limit = -1) {
