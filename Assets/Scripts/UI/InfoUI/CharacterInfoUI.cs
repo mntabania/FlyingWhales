@@ -1043,7 +1043,14 @@ public class CharacterInfoUI : InfoUIBase {
                 if (total < 0) {
                     color = "red";
                 }
-                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> Lasts until: {modifications.expiryDates.Last().ConvertToContinuousDaysWithTime()}";
+                GameDate expiryDate = modifications.expiryDates.Last();
+                string expiryText = string.Empty;
+                if (expiryDate.hasValue) {
+                    expiryText = expiryDate.ConvertToContinuousDaysWithTime();
+                } else {
+                    expiryText = "Linked to Needs";
+                }
+                string summary = $"<color={color}>{modificationSign}{total.ToString()}</color> Lasts until: {expiryText}";
                 // int dateIndex = modifications.expiryDates.Count - 1;
                 // for (int i = 0; i < modifications.modifications.Count; i++) {
                 //     int modificationValue = modifications.modifications[i];
