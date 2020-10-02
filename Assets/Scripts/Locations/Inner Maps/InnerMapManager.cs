@@ -76,43 +76,52 @@ namespace Inner_Maps {
                 }
             }
         }
-        private void OnClickMapObject(KeyCode keyCode) {
+        private void OnKeyDown(KeyCode keyCode) {
             if (keyCode == KeyCode.Mouse0) {
-                //TODO: Create system that disables normal clicks.
-                if (UIManager.Instance.IsMouseOnUI() == false 
-                    && ReferenceEquals(currentlyShowingMap, null) == false 
-                    && PlayerManager.Instance.player.IsPerformingPlayerAction() == false) {
-                    LocationGridTile clickedTile = GetTileFromMousePosition();
-                    if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
-                        if (selectables.Count > 0) {
-                            ISelectable objToSelect = null;
-                            if (lastClickedTile != clickedTile) {
-                                //if last tile that was clicked is not the tile that has been clicked, then instead of 
-                                //looping through the selectables, just select the first one.
-                                objToSelect = selectables[0];
-                            } else {
-                                for (int i = 0; i < selectables.Count; i++) {
-                                    ISelectable currentSelectable = selectables[i];
-                                    if (currentSelectable.IsCurrentlySelected()) {
-                                        //set next selectable in list to be selected.
-                                        objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
-                                        break;
-                                    }
+                OnClickMapObject();
+            } else if (keyCode == KeyCode.Mouse1) {
+                OnRightClick();
+            } else if (keyCode == KeyCode.R) {
+                CycleRegions();
+            }
+        }
+        private void OnRightClick() {
+            if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+                LocationGridTile clickedTile = GetTileFromMousePosition();
+                ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
+                selectable?.RightSelectAction();
+            }
+        }
+        private void OnClickMapObject() {
+            //TODO: Create system that disables normal clicks.
+            if (UIManager.Instance.IsMouseOnUI() == false
+                && ReferenceEquals(currentlyShowingMap, null) == false
+                && PlayerManager.Instance.player.IsPerformingPlayerAction() == false) {
+                LocationGridTile clickedTile = GetTileFromMousePosition();
+                if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                    if (selectables.Count > 0) {
+                        ISelectable objToSelect = null;
+                        if (lastClickedTile != clickedTile) {
+                            //if last tile that was clicked is not the tile that has been clicked, then instead of 
+                            //looping through the selectables, just select the first one.
+                            objToSelect = selectables[0];
+                        }
+                        else {
+                            for (int i = 0; i < selectables.Count; i++) {
+                                ISelectable currentSelectable = selectables[i];
+                                if (currentSelectable.IsCurrentlySelected()) {
+                                    //set next selectable in list to be selected.
+                                    objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                                    break;
                                 }
                             }
-                            if (objToSelect == null) {
-                                objToSelect = selectables[0];
-                            }
-                            InputManager.Instance.Select(objToSelect);
                         }
-                        lastClickedTile = clickedTile;    
+                        if (objToSelect == null) {
+                            objToSelect = selectables[0];
+                        }
+                        InputManager.Instance.Select(objToSelect);
                     }
-                }
-            } else if (keyCode == KeyCode.Mouse1) {
-                if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
-                    LocationGridTile clickedTile = GetTileFromMousePosition();
-                    ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
-                    selectable?.RightSelectAction();
+                    lastClickedTile = clickedTile;
                 }
             }
         }
@@ -231,7 +240,7 @@ namespace Inner_Maps {
             worldKnownDemonicStructures = new List<LocationStructure>();
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
-            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnClickMapObject);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyDown);
         }
         /// <summary>
         /// Try and show the npcSettlement map of an npcSettlement. If it does not have one, this will generate one instead.
@@ -836,6 +845,25 @@ namespace Inner_Maps {
 			    }
 		    }
 	    }
+        #endregion
+
+        #region Cycle Regions
+        private void CycleRegions() {
+            if (currentlyShowingLocation == null) {
+                TryShowLocationMap(GridMap.Instance.allRegions[0]);
+            }
+            else {
+                for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                    Region region = GridMap.Instance.allRegions[i];
+                    if (currentlyShowingLocation == region) {
+                        Region nextRegion = CollectionUtilities.GetNextElementCyclic(GridMap.Instance.allRegions, i);
+                        ShowInnerMap(nextRegion, true, true);
+                        break;
+                    }
+                }
+               
+            }
+        }
         #endregion
 
         protected override void OnDestroy() {

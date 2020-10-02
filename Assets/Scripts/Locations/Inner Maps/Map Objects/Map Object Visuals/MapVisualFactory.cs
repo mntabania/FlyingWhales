@@ -75,6 +75,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.EXCALIBUR:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("ExcaliburGameObject", Vector3.zero, Quaternion.identity);
                 break;
+            case TILE_OBJECT_TYPE.CAMPFIRE:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("CampfireGameObject", Vector3.zero, Quaternion.identity);
+                break; 
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity);
                 break;
