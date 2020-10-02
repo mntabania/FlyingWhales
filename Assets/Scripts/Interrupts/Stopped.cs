@@ -21,7 +21,7 @@ namespace Interrupts {
             Character targetCharacter = interruptHolder.target as Character;
             if (node != null) {
                 node.action.OnStoppedInterrupt(node);
-                if(node.associatedJob != null && !node.associatedJob.hasBeenReset) {
+                if(node.associatedJob != null && !node.associatedJob.hasBeenReset && node.associatedJob.originalOwner != null) {
                     node.associatedJob.CancelJob(false);
                 }
                 executed = true;
