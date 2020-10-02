@@ -51,6 +51,7 @@ public class LocationStructureObject : PooledObject {
 
     public bool wallsContributeToDamage = true;
     private StructureTemplate _parentTemplate;
+    private StructureTemplateObjectData[] _preplacedObjs;
 
     #region Properties
     private Tilemap[] allTilemaps;
@@ -191,9 +192,23 @@ public class LocationStructureObject : PooledObject {
             
         }
     }
+    private StructureTemplateObjectData GetStructureTemplateObjectData(LocationGridTile tile, InnerTileMap areaMap) {
+        StructureTemplateObjectData[] preplacedObjs = GetPreplacedObjects();
+        for (int i = 0; i < preplacedObjs.Length; i++) {
+            StructureTemplateObjectData preplacedObj = preplacedObjs[i];
+            Vector3Int tileCoords = areaMap.groundTilemap.WorldToCell(preplacedObj.transform.position);
+            if (tileCoords.x == tile.localPlace.x && tileCoords.y == tile.localPlace.y) {
+                return preplacedObj;
+            }
+        }
+        return null;
+    }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
         if (objectsParent != null) {
-            return UtilityScripts.GameUtilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(objectsParent.gameObject);    
+            if (_preplacedObjs == null) {
+                _preplacedObjs = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(objectsParent.gameObject);
+            }
+            return _preplacedObjs;
         }
         return null;
     }
@@ -212,14 +227,17 @@ public class LocationStructureObject : PooledObject {
         bool isDemonicStructure = structureType.GetLandmarkType().IsPlayerLandmark();
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
-            if (tile.objHere != null && (tile.objHere is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
+            StructureTemplateObjectData preplacedObj = GetStructureTemplateObjectData(tile, tile.parentMap);
+            if (tile.objHere != null && tile.objHere is TileObject tileObject && (tileObject is StructureTileObject) == false) { //TODO: Remove tight coupling with Build Spot Tile object
                 if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
                     tombstone.SetRespawnCorpseOnDestroy(false);
                 }
-                tile.structure.RemovePOI(tile.objHere);
+                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null) {
+                    tile.structure.RemovePOI(tile.objHere);    
+                }
             }
+            
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
-
             tile.parentMap.northEdgeTilemap.SetTile(tile.localPlace, null);
             tile.parentMap.southEdgeTilemap.SetTile(tile.localPlace, null);
             tile.parentMap.eastEdgeTilemap.SetTile(tile.localPlace, null);
@@ -270,18 +288,18 @@ public class LocationStructureObject : PooledObject {
     /// <param name="structure">The structure that was placed.</param>
     /// <param name="buildAllTileObjects">Should all preplaced objects be built</param>
     public void OnBuiltStructureObjectPlaced(InnerTileMap innerMap, LocationStructure structure, bool buildAllTileObjects = true) {
-        bool isDemonicStructure = structure is DemonicStructure;
+        // bool isDemonicStructure = structure is DemonicStructure;
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
             //set the ground asset of the parent npcSettlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
-            if (tile.objHere != null) {
-                if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
-                    tombstone.SetRespawnCorpseOnDestroy(false);
-                }
-                tile.structure.RemovePOI(tile.objHere);
-            }
+            // if (tile.objHere != null) {
+            //     if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
+            //         tombstone.SetRespawnCorpseOnDestroy(false);
+            //     }
+            //     tile.structure.RemovePOI(tile.objHere);
+            // }
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }
         ProcessConnectors(structure);
@@ -434,6 +452,7 @@ public class LocationStructureObject : PooledObject {
         }
         SetWallCollidersState(true);
         tiles = null;
+        _preplacedObjs = null;
         for (int i = 0; i < connectors.Length; i++) {
             connectors[i].Reset();
         }
@@ -669,7 +688,6 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
     
-
     #region Helpers
     [Header("Wall Converter")]
     [SerializeField] private Tilemap wallTileMap;

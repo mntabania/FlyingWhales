@@ -13,7 +13,7 @@ public class WallData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        if(targetTile.objHere != null) {
+        if(targetTile.objHere != null && targetTile.objHere is TileObject tileObject && !tileObject.tileObjectType.IsTileObjectImportant()) {
             targetTile.structure.RemovePOI(targetTile.objHere);
         }
         BlockWall wall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
@@ -28,9 +28,12 @@ public class WallData : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
-            return targetTile.structure != null/*&& targetTile.objHere == null*/;
+            if (targetTile.objHere is TileObject tileObject && tileObject.tileObjectType.IsTileObjectImportant()) {
+                return false;
+            }
+            return targetTile.structure != null && targetTile.structure.structureType != STRUCTURE_TYPE.OCEAN;
         }
-        return canPerform;
+        return false;
     }
     public override void HighlightAffectedTiles(LocationGridTile tile) {
         TileHighlighter.Instance.PositionHighlight(0, tile);
