@@ -202,8 +202,11 @@ namespace Databases.SQLDatabase {
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #endif
+            if (tags.Count == 0) {
+                return null;
+            }
             //if no tags were passed then default to use all tags instead. Since we found it weird that if not filters were checked it would result in no logs being shown.
-            var tagsToUse = tags.Count > 0 ? tags : allLogTags;
+            var tagsToUse = tags;//tags.Count > 0 ? tags : allLogTags;
             
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
@@ -246,13 +249,16 @@ namespace Databases.SQLDatabase {
 #endif
             return logs;    
         }
-        public List<string> GetLogIDsThatMatchCriteria(List<string> pool, string textLike, List<LOG_TAG> tags) {
+        public List<string> GetLogIDsThatMatchCriteria(List<string> pool, string textLike, List<LOG_TAG> tags, int limit = -1) {
 #if UNITY_EDITOR
             Stopwatch timer = new Stopwatch();
             timer.Start();
 #endif
+            if (tags.Count == 0) {
+                return null;
+            }
             //if no tags were passed then default to use all tags instead. Since we found it weird that if not filters were checked it would result in no logs being shown.
-            var tagsToUse = tags.Count > 0 ? tags : allLogTags;
+            var tagsToUse = tags;//tags.Count > 0 ? tags : allLogTags;
             
             SQLiteCommand command = dbConnection.CreateCommand();
             command.CommandType = CommandType.Text;
@@ -286,7 +292,10 @@ namespace Databases.SQLDatabase {
                     }
                 }
             }
-            commandStr = $"{commandStr} ORDER BY date_year ASC, date_month ASC, date_day ASC, date_tick ASC";
+            commandStr = $"{commandStr} ORDER BY date_year DESC, date_month DESC, date_day DESC, date_tick DESC";
+            if (limit != -1) {
+                commandStr = $"{commandStr} LIMIT {limit.ToString()}";
+            }
             Debug.Log($"Trying to get notifications that match criteria, full query command is {commandStr}");
             command.CommandText = commandStr;
             IDataReader dataReader = command.ExecuteReader();
