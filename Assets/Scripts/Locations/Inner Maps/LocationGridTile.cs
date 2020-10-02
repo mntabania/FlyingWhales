@@ -1359,10 +1359,16 @@ namespace Inner_Maps {
                     blockWall.SetWallType(WALL_TYPE.Demon_Stone);
                     blockWall.UpdateVisual(this);
                 } else {
-                    if (objHere is Tombstone tombstone) {
-                        tombstone.SetRespawnCorpseOnDestroy(false);
+                    if (objHere is TileObject tileObject) {
+                        if (objHere is Tombstone tombstone) {
+                            tombstone.SetRespawnCorpseOnDestroy(false);
+                        }
+                        if (!tileObject.tileObjectType.IsTileObjectImportant()) {
+                            structure.RemovePOI(objHere);    
+                        }    
                     }
-                    structure.RemovePOI(objHere);
+                    
+                    // structure.RemovePOI(objHere);
                 }
             }
         }

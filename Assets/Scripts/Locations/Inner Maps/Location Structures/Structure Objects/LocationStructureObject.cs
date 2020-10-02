@@ -232,7 +232,8 @@ public class LocationStructureObject : PooledObject {
                 if (isDemonicStructure && tile.objHere is Tombstone tombstone) {
                     tombstone.SetRespawnCorpseOnDestroy(false);
                 }
-                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null) {
+                bool hasBlockWall = _blockWallsTilemap == null ? false : _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                if (!tileObject.tileObjectType.IsTileObjectImportant() || preplacedObj != null || hasBlockWall) {
                     tile.structure.RemovePOI(tile.objHere);    
                 }
             }
