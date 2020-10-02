@@ -69,9 +69,14 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnGameLoaded() {
 		Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
-		CheckIfFarmShouldBeTended(true);
-		ScheduledCheckResource();
-		TryCreateMiningJob();
+		if (SaveManager.Instance.useSaveData) {
+			LoadTendFarmCheck();
+			LoadCheckResource();
+		} else {
+			CheckIfFarmShouldBeTended(true);
+			ScheduledCheckResource();
+			TryCreateMiningJob();	
+		}
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
@@ -282,6 +287,21 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		GameDate dueDate = GameManager.Instance.Today();
 		dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(12));
 		SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
+	}
+	private void LoadCheckResource() {
+		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(20)) {
+			//schedule check at 8pm
+			GameDate dueDate = GameManager.Instance.Today();
+			dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(20));
+			SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);
+		} else {
+			//schedule check at 8am the next day
+			GameDate dueDate = GameManager.Instance.Today();
+			dueDate.AddDays(1);
+			dueDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(12));
+			SchedulingManager.Instance.AddEntry(dueDate, ScheduledCheckResource, this);	
+		}
+		
 	}
 	private void CheckAllResources() {
 		CheckResource(RESOURCE.FOOD);
@@ -777,6 +797,16 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		checkDate.AddDays(1);
 		checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
 		SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+	}
+	private void LoadTendFarmCheck() {
+		if (GameManager.Instance.Today().tick < GameManager.Instance.GetTicksBasedOnHour(6)) {
+			//if current tick is before check time, then schedule check for today at the specified check time.
+			GameDate checkDate = GameManager.Instance.Today();
+			checkDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(6));
+			SchedulingManager.Instance.AddEntry(checkDate, () => CheckIfFarmShouldBeTended(true), this);
+		} else {
+			ScheduleTendFarmCheck();
+		}
 	}
 	public void CheckIfFarmShouldBeTended(bool reschedule) {
 		if (GameManager.Instance.GetHoursBasedOnTicks(GameManager.Instance.Today().tick) > 16) {

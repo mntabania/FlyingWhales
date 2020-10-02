@@ -24,7 +24,7 @@ public class SnatchData : PlayerAction {
                 List<LocationStructure> validStructures = PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.KENNEL);
                 UIManager.Instance.ShowClickableObjectPicker(validStructures, o => OnPickTargetStructure(o, targetCharacter) , title: "Select Affliction", 
                     portraitGetter: null, showCover: true, layer: 25, shouldShowConfirmationWindowOnPick: true, asButton: true);
-            } else if (targetCharacter.isNormalCharacter) {
+            } else {
                 List<LocationStructure> validStructures = new List<LocationStructure>();
                 if (PlayerManager.Instance.player.playerSettlement.HasStructure(STRUCTURE_TYPE.DEFILER)) {
                     validStructures.AddRange(PlayerManager.Instance.player.playerSettlement.GetStructuresOfType(STRUCTURE_TYPE.DEFILER));    
