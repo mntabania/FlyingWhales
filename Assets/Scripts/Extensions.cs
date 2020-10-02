@@ -343,6 +343,10 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.EXCALIBUR:
             case TILE_OBJECT_TYPE.HEIRLOOM:
             case TILE_OBJECT_TYPE.GUITAR:
+            case TILE_OBJECT_TYPE.FISH_PILE:
+            case TILE_OBJECT_TYPE.METAL_PILE:
+            case TILE_OBJECT_TYPE.STONE_PILE:
+            case TILE_OBJECT_TYPE.WOOD_PILE:
                 return true;
             default:
                 return tileObjectType.IsTileObjectAnItem();
@@ -382,14 +386,6 @@ public static class Extensions {
             case TILE_OBJECT_TYPE.MAGIC_CIRCLE:
             case TILE_OBJECT_TYPE.BLOCK_WALL:
             case TILE_OBJECT_TYPE.DESERT_ROSE:
-            case TILE_OBJECT_TYPE.ANIMAL_MEAT:
-            case TILE_OBJECT_TYPE.ELF_MEAT:
-            case TILE_OBJECT_TYPE.FISH_PILE:
-            case TILE_OBJECT_TYPE.HUMAN_MEAT:
-            case TILE_OBJECT_TYPE.VEGETABLES:
-            case TILE_OBJECT_TYPE.METAL_PILE:
-            case TILE_OBJECT_TYPE.WOOD_PILE:
-            case TILE_OBJECT_TYPE.STONE_PILE:
                 return true;
             default:
                 return false;
