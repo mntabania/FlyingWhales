@@ -665,18 +665,22 @@ public class ReactionComponent : CharacterComponent {
                         return;
                     }
                     
-                    //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal
-                    if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
-                        //Determine whether to fight or flight.
-                        CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
-                        if (combatReaction.reaction == COMBAT_REACTION.Flight) {
-                            //if flight was decided
-                            //if target is restrained or resting, do nothing
-                            if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
-                                actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
+                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.currentSettlement != null && targetCharacter.currentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
+                        //Do nothing
+                    } else {
+                        //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal
+                        if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
+                            //Determine whether to fight or flight.
+                            CombatReaction combatReaction = actor.combatComponent.GetFightOrFlightReaction(targetCharacter, CombatManager.Hostility);
+                            if (combatReaction.reaction == COMBAT_REACTION.Flight) {
+                                //if flight was decided
+                                //if target is restrained or resting, do nothing
+                                if (targetCharacter.traitContainer.HasTrait("Restrained", "Resting") == false) {
+                                    actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
+                                }
+                            } else {
+                                actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);
                             }
-                        } else {
-                            actor.combatComponent.FightOrFlight(targetCharacter, combatReaction, isLethal: isLethal);    
                         }
                     }
                 }
