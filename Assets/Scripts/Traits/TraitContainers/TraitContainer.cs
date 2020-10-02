@@ -289,7 +289,7 @@ namespace Traits {
                 }
             } else if (traitName == "Freezing") {
                 chance = bypassElementalChance ? 100 : 20;
-                if (HasTrait("Cold Blooded", "Burning")) {
+                if (HasTrait("Cold Blooded", "Burning", "Frozen Immune")) {
                     chance = 0;
                 } else if (HasTrait("Wet")) {
                     chance = 100;
@@ -311,7 +311,7 @@ namespace Traits {
                 }
             } else if (traitName == "Frozen") {
                 chance = 100;
-                if (HasTrait("Cold Blooded", "Burning")) {
+                if (HasTrait("Cold Blooded", "Burning", "Frozen Immune")) {
                     chance = 0;
                 }
             }

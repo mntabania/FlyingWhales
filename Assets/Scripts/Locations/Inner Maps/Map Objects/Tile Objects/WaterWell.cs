@@ -10,6 +10,7 @@ public class WaterWell : TileObject {
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
         traitContainer.RemoveTrait(this, "Flammable");
         traitContainer.AddTrait(this, "Immovable");
+        traitContainer.AddTrait(this, "Frozen Immune");
         for (int i = 0; i < 10; i++) {
             traitContainer.AddTrait(this, "Wet", overrideDuration: 0);
         }
