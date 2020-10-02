@@ -12,7 +12,7 @@ namespace Interrupts {
             //isSimulateneous = true;
             interruptIconString = GoapActionStateDB.Sad_Icon;
             //isIntel = true;
-            logTags = new[] {LOG_TAG.Life_Changes, LOG_TAG.Needs};
+            logTags = new[] {LOG_TAG.Social};
         }
 
         #region Overrides
