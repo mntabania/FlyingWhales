@@ -522,7 +522,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             OnDropQuest(currentQuest);
-            ClearMembersThatJoinedQuest();
+            ClearMembersThatJoinedQuest(shouldDropQuest: false);
             partyFaction.partyQuestBoard.RemovePartyQuest(currentQuest);
             SetPartyState(PARTY_STATE.None);
             currentQuest.SetAssignedParty(null);
@@ -606,16 +606,22 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             OnAddMemberThatJoinedQuest(character);
         }
     }
-    public void ClearMembersThatJoinedQuest() {
+    public void ClearMembersThatJoinedQuest(bool shouldDropQuest = true) {
         while (membersThatJoinedQuest.Count > 0) {
-            RemoveMemberThatJoinedQuest(membersThatJoinedQuest[0], false);
+            RemoveMemberThatJoinedQuest(membersThatJoinedQuest[0], false, shouldDropQuest);
         }
         membersThatJoinedQuest.Clear();
         Messenger.Broadcast(Signals.CLEAR_MEMBERS_THAT_JOINED_QUEST, this);
     }
-    public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true) {
+    public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
         if (membersThatJoinedQuest.Remove(character)) {
             OnRemoveMemberThatJoinedQuest(character, broadcastSignal);
+            if(membersThatJoinedQuest.Count <= 0 && shouldDropQuest){
+                //All members that joined the quest has left the quest, if there is still a quest, drop quest
+                if (isActive) {
+                    currentQuest.EndQuest("Finished quest");
+                }
+            }
             return true;
         }
         return false;
@@ -1033,7 +1039,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         canAcceptQuests = false;
         perHourElapsedInWaiting = 0;
         members.Clear();
-        ClearMembersThatJoinedQuest();
+        ClearMembersThatJoinedQuest(shouldDropQuest: false);
         _activeMembers.Clear();
         ForceCancelAllJobsImmediately();
         forcedCancelJobsOnTickEnded.Clear();
