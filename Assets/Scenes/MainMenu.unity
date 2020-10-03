@@ -24530,7 +24530,6 @@ MonoBehaviour:
   worldWideItemGenerationSetting: {fileID: 11400000, guid: acfbe38be903c424aa99c568054c1231,
     type: 2}
   initialArtifactChoices: 010000000200000003000000
-  _isDemoBuild: 0
   _disableLogs: 1
   useRandomGenerationForScenarioMaps: 0
 --- !u!1 &1665094242

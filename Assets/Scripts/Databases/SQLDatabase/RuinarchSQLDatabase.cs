@@ -5,9 +5,8 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
-using Logs;
 using UtilityScripts;
+using Mono.Data.Sqlite;
 using Debug = UnityEngine.Debug;
 namespace Databases.SQLDatabase {
     public class RuinarchSQLDatabase : IDisposable {
@@ -18,6 +17,8 @@ namespace Databases.SQLDatabase {
         private string BareBonesLogFields = "persistentID, date_tick, date_day, date_month, date_year, logText, category, key, file, involvedObjects, rawText";
 
         public List<LOG_TAG> allLogTags { get; private set; }
+
+        private string In_File_Database_Location;
         
         #region Clean Up
         ~RuinarchSQLDatabase() {
@@ -46,7 +47,8 @@ namespace Databases.SQLDatabase {
             //This will either create or get the current gameDB database located at the Temp folder
             //so it is essential that if game came from save data, that it's relevant data be placed inside the Temp folder.
             OpenConnection();
-
+            In_File_Database_Location = $@"{UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db";
+                
             allLogTags = CollectionUtilities.GetEnumValues<LOG_TAG>().ToList();
             for (int i = 0; i < allLogTags.Count; i++) {
                 LOG_TAG logTag = allLogTags[i];
@@ -117,8 +119,12 @@ namespace Databases.SQLDatabase {
             dbConnection = null;
         }
         public void OpenConnection() {
-            dbConnection = new SQLiteConnection($@"Data Source={UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db;Version=3;");
+            // dbConnection = new SQLiteConnection($@"Data Source={UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db;Version=3;");
+            dbConnection = new SQLiteConnection($@"Data Source=:memory:;");
             dbConnection.Open();
+            if (SaveManager.Instance.useSaveData) {
+                LoadDatabaseFromFileToMemory($"{UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db");
+            }
         }
         // public ConnectionState GetConnectionState() {
         //     return dbConnection.isD dbConnection.State;
@@ -177,30 +183,27 @@ namespace Databases.SQLDatabase {
             string commandStr = $"{insertStr} {valuesStr}";
             Debug.Log($"Insert command was {commandStr}");
             
-            // var thread = new Thread(() => ExecuteInsertCommand(commandStr));
-            // thread.Start();
-            DatabaseThreadPool.Instance.AddToThreadPool(commandStr);
+            // DatabaseThreadPool.Instance.AddToThreadPool(commandStr);
             
-            // command.CommandType = CommandType.Text;
-            // command.CommandText = commandStr;
-            // command.ExecuteNonQuery();
+            command.CommandType = CommandType.Text;
+            command.CommandText = commandStr;
+            command.ExecuteNonQuery();
+
+            //check if row limit has been reached, if so then delete oldest log that is not an intel.
+            command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
+            IDataReader dataReader = command.ExecuteReader();
+            int rowCount = 0;
+            while (dataReader.Read()) {
+                rowCount = dataReader.GetInt32(0);
+            }
+            dataReader.Close();
             
+            if (rowCount > Log_Row_Limit) {
+                //row limit has been reached, will delete oldest entry
+                DeleteOldestLog();
+            }
+            command.Dispose();
             Messenger.Broadcast(Signals.LOG_ADDED, log);
-            
-            // //check if row limit has been reached, if so then delete oldest log that is not an intel.
-            // command.CommandText = $"SELECT COUNT(*) FROM 'Logs'";
-            // IDataReader dataReader = command.ExecuteReader();
-            // int rowCount = 0;
-            // while (dataReader.Read()) {
-            //     rowCount = dataReader.GetInt32(0);
-            // }
-            // dataReader.Close();
-            //
-            // if (rowCount > Log_Row_Limit) {
-            //     //row limit has been reached, will delete oldest entry
-            //     DeleteOldestLog();
-            // }
-            // command.Dispose();
             
             timer.Stop();
             Debug.Log($"Total log insert time was {timer.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
@@ -422,8 +425,24 @@ namespace Databases.SQLDatabase {
             command.Dispose();
             //Fire signal that log was deleted.
             Messenger.Broadcast(Signals.LOG_REMOVED_FROM_DATABASE, deletedLog);
+            
         }
         #endregion
-        
+
+
+        #region Utilities
+        public void SaveInMemoryDatabaseToFile(string filePath) {
+            using (SQLiteConnection databaseInFile = new SQLiteConnection($"Data Source={filePath};Version=3;")) {
+                databaseInFile.Open();
+                dbConnection.BackupDatabase(databaseInFile, "main", "main", -1, null, -1);
+            }
+        }
+        public void LoadDatabaseFromFileToMemory(string filePath) {
+            using (SQLiteConnection databaseInFile = new SQLiteConnection($"Data Source={filePath};Version=3;")) {
+                databaseInFile.Open();
+                databaseInFile.BackupDatabase(dbConnection, "main", "main", -1, null, -1);
+            }
+        }
+        #endregion
     }
 }

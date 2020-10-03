@@ -87,10 +87,11 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         Debug.Log($"Saved new game at {savePath}");
         
         //Need to close connection to database so .db file can be zipped.
-        DatabaseManager.Instance.mainSQLDatabase.CloseConnection();
-        yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure database connection has been fully closed.
+        // DatabaseManager.Instance.mainSQLDatabase.CloseConnection();
+        DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
+        yield return GameUtilities.waitFor2Seconds; //put buffer in between to ensure database has been fully backed-up.
         
-        File.Copy($"{UtilityScripts.Utilities.tempPath}gameDB.db", $"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
+        // File.Copy($"{UtilityScripts.Utilities.tempPath}gameDB.db", $"{UtilityScripts.Utilities.tempZipPath}gameDB.db");
         
         //zip files
         string zipPath = $"{UtilityScripts.Utilities.gameSavePath}/{fileName}.zip";
@@ -104,14 +105,15 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         loadingWatch.Stop();
         Debug.Log($"\nTotal saving time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
         yield return null;
+        
         UIManager.Instance.optionsMenu.HideSaveLoading();
         isSaving = false;
         WorldMapCameraMove.Instance.EnableMovement();
         InnerMapCameraMove.Instance.EnableMovement();
         saveCallback?.Invoke();
         
-        //Reopen db connection.
-        DatabaseManager.Instance.mainSQLDatabase.OpenConnection();
+        // //Reopen db connection.
+        // DatabaseManager.Instance.mainSQLDatabase.OpenConnection();
     }
     private string filePath;
     private void SaveCurrentDataToFile() {
