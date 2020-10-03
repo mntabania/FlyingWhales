@@ -35,7 +35,7 @@ public class AssumptionComponent : CharacterComponent {
             }
         }
 
-        Log assumptionLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction, LOG_TAG.Social);
+        Log assumptionLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "assumed_event", newAssumption.assumedAction, LOG_TAG.Social);
         if (reactionStatus == REACTION_STATUS.INFORMED) {
             assumptionLog.AddTag(LOG_TAG.Informed);
         } else if (reactionStatus == REACTION_STATUS.WITNESSED) {

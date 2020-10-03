@@ -29,7 +29,7 @@ namespace Interrupts {
             targetCharacter.currentJob?.CancelJob(false);
             targetCharacter.currentJob?.StopJobNotDrop();
             if(interruptHolder.actor != targetCharacter && node != null) {
-                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action", null, logTags);
+                overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect_with_action", null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 overrideEffectLog.AddToFillers(null, node.action.name, LOG_IDENTIFIER.STRING_1);

@@ -26,7 +26,7 @@ namespace Interrupts {
                 } else {
                     targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, chosenEnemyOrRival, "Base", 15);
                 }
-                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey, null, logTags);
+                overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 overrideEffectLog.AddToFillers(chosenEnemyOrRival, chosenEnemyOrRival.name, LOG_IDENTIFIER.CHARACTER_3);

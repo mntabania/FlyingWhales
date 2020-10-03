@@ -28,7 +28,7 @@ public class WurmHole : TileObject{
     public void TravelThroughWurmHole(Character character) {
         character.movementComponent.SetCameFromWurmHole(true);
         
-        Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Wurm Hole", "teleported", null, LOG_TAG.Misc);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Wurm Hole", "teleported", null, LOG_TAG.Misc);
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(wurmHoleConnection, wurmHoleConnection.name, LOG_IDENTIFIER.CHARACTER_3);

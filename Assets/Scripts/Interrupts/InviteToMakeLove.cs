@@ -33,7 +33,7 @@ namespace Interrupts {
                 //    actor.logComponent.PrintLogIfActive(debugLog);
 
 
-                //    overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", "Reject");
+                //    overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", "Reject");
                 //    overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //    overrideEffectLog.AddToFillers(target, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //    actor.currentJob.CancelJob(false);
@@ -120,7 +120,7 @@ namespace Interrupts {
                 interruptHolder.actor.logComponent.PrintLogIfActive(debugLog);
 
 
-                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen, null, logTags);
+                overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen, null, logTags);
                 overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

@@ -64,7 +64,7 @@ public class TheFingersUI : MonoBehaviour {
             // newFaction.SetLeader(chosenLeader, false);
 
             Region regionLocation = chosenLeader.currentRegion;
-            // Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
+            // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
             // log.AddToFillers(chosenLeader, chosenLeader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             // log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             // log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -318,7 +318,7 @@ public class TheFingersUI : MonoBehaviour {
 
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
         //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_normal");
+        //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_normal");
         //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
         //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -359,7 +359,7 @@ public class TheFingersUI : MonoBehaviour {
 
         character.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
         //character.ChangeFactionTo(faction);
-        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
+        //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "join_faction_normal");
         //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
         //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

@@ -62,13 +62,13 @@ public class PartyQuestBoard {
             availablePartyQuests.Add(quest);
 
             if(questCreator == null) {
-                Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "post_quest_no_creator", providedTags: LOG_TAG.Party);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "post_quest_no_creator", providedTags: LOG_TAG.Party);
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
                 log.AddToFillers(null, quest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
             } else {
-                Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "post_quest", providedTags: LOG_TAG.Party);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "post_quest", providedTags: LOG_TAG.Party);
                 log.AddToFillers(questCreator, questCreator.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.FACTION_1);
                 log.AddToFillers(null, quest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);

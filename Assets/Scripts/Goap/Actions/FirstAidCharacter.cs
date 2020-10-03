@@ -115,7 +115,7 @@ public class FirstAidCharacter : GoapAction {
         if (chosenHealingPotion != null && chosenHealingPotion.traitContainer.HasTrait("Poisoned")) {
             FirstAidCharacterUAD data = goapNode.GetConvertedUniqueActionData<FirstAidCharacterUAD>();
             data.SetUsedPoisonedHealingPotion(true);
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", "First Aid Character", "used_poison", goapNode, logTags);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "First Aid Character", "used_poison", goapNode, logTags);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(goapNode.poiTarget, goapNode.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             goapNode.OverrideDescriptionLog(log);

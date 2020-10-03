@@ -214,7 +214,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 #endif
             
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
+            //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
             //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -245,7 +245,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
 
             character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "kick_out_faction_character");
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "kick_out_faction_character");
+            //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "kick_out_faction_character");
             //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -951,7 +951,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                     debugLog += $"\nChance for war met, setting {name} and {targetFaction.name} as Hostile.";
                     if (SetRelationshipFor(targetFaction, FACTION_RELATIONSHIP_STATUS.Hostile)) {
                         debugLog += $"\nSuccessfully set {name} and {targetFaction.name} as Hostile.";
-                        Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", providedTags: LOG_TAG.Life_Changes);
+                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", providedTags: LOG_TAG.Life_Changes);
                         log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                         log.AddToFillers(targetFaction, targetFaction.name, LOG_IDENTIFIER.FACTION_2);
                         log.AddToFillers(crime.descriptionLog.fillers);

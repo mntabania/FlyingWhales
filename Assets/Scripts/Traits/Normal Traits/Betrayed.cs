@@ -32,7 +32,7 @@ namespace Traits {
             ghost.SetName(character.name);
             (ghost as Ghost).SetBetrayedBy(responsibleCharacter);
             CharacterManager.Instance.PlaceSummon(ghost, character.gridTileLocation);
-            Log log = new Log(GameManager.Instance.Today(), "Trait", this.name, "spawn_ghost", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "spawn_ghost", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
             log.AddToFillers(ghost, ghost.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             // ghost.logComponent.AddHistory(log);

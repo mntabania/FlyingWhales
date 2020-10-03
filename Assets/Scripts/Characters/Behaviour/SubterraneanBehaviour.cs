@@ -34,7 +34,7 @@ public class SubterraneanBehaviour : CharacterBehaviourComponent {
                             LeaveWurmHoles(character.gridTileLocation);
 
                             CharacterManager.Instance.Teleport(character, chosenTile);
-                            Log historyLog = new Log(GameManager.Instance.Today(), "Trait", "Subterranean", "burrow", providedTags: LOG_TAG.Misc);
+                            Log historyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "Subterranean", "burrow", providedTags: LOG_TAG.Misc);
                             historyLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             historyLog.AddToFillers(chosenCave, chosenCave.GetNameRelativeTo(character), LOG_IDENTIFIER.LANDMARK_1);
                             historyLog.AddLogToDatabase();

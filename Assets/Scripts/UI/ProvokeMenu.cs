@@ -115,7 +115,7 @@ public class ProvokeMenu : PopupMenuBase {
                 succeedUndermine = true;
                 targetCharacter.jobComponent.CreateUndermineJob(chosenCharacter, "provoke");
 
-                //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
+                //Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
                 //addLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //addLog.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 //addLog.AddLogToInvolvedObjects();
@@ -125,13 +125,13 @@ public class ProvokeMenu : PopupMenuBase {
         }
 
         // if (succeedUndermine) {
-        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke");
+        //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke");
         //     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //     log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //     log.AddLogToInvolvedObjects();
         //     PlayerManager.Instance.player.ShowNotification(log);
         // } else {
-        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke_fail");
+        //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke_fail");
         //     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //     log.AddLogToInvolvedObjects();
         //     PlayerManager.Instance.player.ShowNotification(log);

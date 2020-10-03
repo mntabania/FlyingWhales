@@ -38,7 +38,7 @@ namespace Traits {
                 //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(5);
 
                 if (gainedFromDoing == null || gainedFromDoing.goapType != INTERACTION_TYPE.ASSAULT) {
-                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Misc);
+                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing, LOG_TAG.Misc);
                     // if(gainedFromDoing != null) {
                     //     addLog.SetLogType(LOG_TYPE.Action);
                     // }
@@ -55,7 +55,7 @@ namespace Traits {
                 character.movementComponent.AdjustSpeedModifier(0.15f);
                 character.RemoveTraitNeededToBeRemoved(this);
                 //_sourceCharacter.needsComponent.AdjustStaminaDecreaseRate(-5);
-                Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Misc);
+                Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "remove_trait", null, LOG_TAG.Misc);
                 addLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 addLog.AddToFillers(null, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 addLog.AddLogToDatabase();

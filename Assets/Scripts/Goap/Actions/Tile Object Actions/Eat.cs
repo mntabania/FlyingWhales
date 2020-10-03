@@ -206,7 +206,7 @@ public class Eat : GoapAction {
         if (goapNode.actor.traitContainer.HasTrait("Cannibal") == false && 
             (goapNode.poiTarget is ElfMeat || goapNode.poiTarget is HumanMeat)) {
             goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Cannibal");
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LOG_TAG.Life_Changes, LOG_TAG.Needs, LOG_TAG.Crimes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "became_cannibal", goapNode, LOG_TAG.Life_Changes, LOG_TAG.Needs, LOG_TAG.Crimes);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, goapNode.poiTarget.name, LOG_IDENTIFIER.STRING_1);
             log.AddLogToDatabase();

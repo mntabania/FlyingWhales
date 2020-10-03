@@ -398,7 +398,7 @@ namespace Databases.SQLDatabase {
                 }
                 startingTagIndex++;
             }
-            return new Log(id, new GameDate(month, day, year, tick), logText, category, key, file, involvedObjects, logTags, rawText);
+            return GameManager.CreateNewLog(id, new GameDate(month, day, year, tick), logText, category, key, file, involvedObjects, logTags, rawText);
         }
         private void DeleteOldestLog() {
             SQLiteCommand command = dbConnection.CreateCommand();

@@ -128,7 +128,7 @@ public class Minion {
 
             Log deathLog;
             if (!_deathLog.hasValue) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
+                deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}", providedTags: LOG_TAG.Life_Changes);
                 deathLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

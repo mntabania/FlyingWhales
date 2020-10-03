@@ -19,7 +19,7 @@ public class DragonBehaviour : CharacterBehaviourComponent {
                 if (dragon.gridTileLocation.IsAtEdgeOfMap()) {
                     dragon.SetDestroyMarkerOnDeath(true);
                     dragon.SetShowNotificationOnDeath(false);
-                    Log deathLog = new Log(GameManager.Instance.Today(), "Summon", "Dragon", "left", providedTags: LOG_TAG.Life_Changes);
+                    Log deathLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Summon", "Dragon", "left", providedTags: LOG_TAG.Life_Changes);
                     deathLog.AddToFillers(dragon, dragon.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     deathLog.AddLogToDatabase();
                     dragon.Death(_deathLog: deathLog);

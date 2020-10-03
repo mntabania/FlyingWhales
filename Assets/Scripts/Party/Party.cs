@@ -495,7 +495,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             currentQuest.SetAssignedParty(this);
             SetPartyState(PARTY_STATE.Waiting);
 
-            Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", providedTags: LOG_TAG.Party);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "accept_quest", providedTags: LOG_TAG.Party);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_2);
             log.AddLogToDatabase();
@@ -514,7 +514,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     //}
     public void DropQuest(string reason) {
         if (isActive) {
-            Log log = new Log(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "Quest", "drop_quest", providedTags: LOG_TAG.Party);
             log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
             log.AddToFillers(null, currentQuest.GetPartyQuestTextInLog(), LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
@@ -845,7 +845,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     #region Disbandment
     public void DisbandParty() {
         if (isDisbanded) { return; }
-        Log log = new Log(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Party", "General", "disband", providedTags: LOG_TAG.Party);
         log.AddToFillers(this, partyName, LOG_IDENTIFIER.PARTY_1);
         log.AddLogToDatabase();
 

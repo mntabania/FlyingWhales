@@ -118,10 +118,10 @@ public class Drink : GoapAction {
     //            poisonedResult = "Robust";
     //            logKey = "drink poisoned_robust";
     //        }
-    //        log = new Log(GameManager.Instance.Today(), "GoapAction", "Drink", logKey, this);
+    //        log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Drink", logKey, this);
     //        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     //    } else if (res == "Death") {
-    //        log = new Log(GameManager.Instance.Today(), "GoapAction", "Drink", "drink poisoned_killed", this);
+    //        log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Drink", "drink poisoned_killed", this);
     //        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     //        poisonedResult = "Death";
     //    }

@@ -98,7 +98,7 @@ namespace Traits {
 
         private bool ActivateTrap(Character actor, IPointOfInterest target, ref bool willStillContinueAction) {
             if (target.gridTileLocation != null) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", this.name, "trap_activated", null, LOG_TAG.Life_Changes);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", this.name, "trap_activated", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddLogToDatabase();

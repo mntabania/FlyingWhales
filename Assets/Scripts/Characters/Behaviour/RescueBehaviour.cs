@@ -31,7 +31,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                         return true;
                     }
                     log += $"\n-Roam around";
-                    hasJob = RoamAroundStructureOrHex (character, party.currentQuest.target, out producedJob);
+                    hasJob = RoamAroundStructureOrHex(character, party.currentQuest.target, out producedJob);
                     //character.jobComponent.TriggerRoamAroundStructure(out producedJob);
                 } else {
                     log += $"\n-Roam around";
@@ -125,8 +125,8 @@ public class RescueBehaviour : CharacterBehaviourComponent {
     }
 
     private bool RoamAroundStructureOrHex(Character actor, IPartyQuestTarget target, out JobQueueItem producedJob) {
-        if(target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
-            if(target is Character targetCharacter && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
+        if(target != null && target.currentStructure != null && target.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS) {
+            if(target is Character targetCharacter && targetCharacter.gridTileLocation != null && targetCharacter.gridTileLocation.collectionOwner.isPartOfParentRegionMap) {
                 HexTile targetHex = targetCharacter.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
                 return actor.jobComponent.TriggerRoamAroundTile(out producedJob, targetHex.GetRandomTile());
             }

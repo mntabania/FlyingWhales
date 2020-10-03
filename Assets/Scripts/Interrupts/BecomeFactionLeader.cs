@@ -75,11 +75,11 @@ namespace Interrupts {
                             if (interruptHolder.actor.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
                                 //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
                                 if (factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile)) {
-                                    Log dislikeLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "dislike_leader", null, LOG_TAG.Life_Changes);
+                                    Log dislikeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "dislike_leader", null, LOG_TAG.Life_Changes);
                                     dislikeLog.AddToFillers(faction.leader as Character, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                     dislikeLog.AddToFillers(otherFaction.leader as Character, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                     
-                                    Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", null, LOG_TAG.Life_Changes);
+                                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_war", null, LOG_TAG.Life_Changes);
                                     log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
                                     log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
                                     log.AddToFillers(dislikeLog.fillers);
@@ -90,11 +90,11 @@ namespace Interrupts {
                             } else if (interruptHolder.actor.relationshipContainer.IsFriendsWith(otherFactionLeader)) {
                                 //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
                                 if (factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly)) {
-                                    Log likeLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "like_leader", null, LOG_TAG.Life_Changes);
+                                    Log likeLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "like_leader", null, LOG_TAG.Life_Changes);
                                     likeLog.AddToFillers(faction.leader as Character, faction.leader.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                     likeLog.AddToFillers(otherFaction.leader as Character, otherFaction.leader.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                     
-                                    Log log = new Log(GameManager.Instance.Today(), "Faction", "Generic", "declare_peace", null, LOG_TAG.Life_Changes);
+                                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "declare_peace", null, LOG_TAG.Life_Changes);
                                     log.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
                                     log.AddToFillers(otherFaction, otherFaction.name, LOG_IDENTIFIER.FACTION_2);
                                     log.AddToFillers(likeLog.fillers);
@@ -111,11 +111,11 @@ namespace Interrupts {
                     }
                 }
 
-                Log changeIdeologyLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
+                Log changeIdeologyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "ideology_change", null, LOG_TAG.Life_Changes);
                 changeIdeologyLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
                 changeIdeologyLog.AddLogToDatabase();
 
-                // Log changeRelationsLog = new Log(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
+                // Log changeRelationsLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Faction", "Generic", "relation_change");
                 // changeRelationsLog.AddToFillers(faction, faction.name, LOG_IDENTIFIER.FACTION_1);
                 // changeRelationsLog.AddLogToInvolvedObjects();
                 
@@ -128,7 +128,7 @@ namespace Interrupts {
                 }
             }
 
-            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Life_Changes);
+            overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Become Faction Leader", "became_leader", null, LOG_TAG.Life_Changes);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(interruptHolder.actor.faction, interruptHolder.actor.faction.name, LOG_IDENTIFIER.FACTION_1);
             return true;

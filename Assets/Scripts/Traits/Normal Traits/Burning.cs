@@ -272,7 +272,7 @@ namespace Traits {
                 character.traitContainer.AddTrait(character, "Traumatized");
                 character.traitContainer.AddTrait(character, "Unconscious");
 
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn", null, LOG_TAG.Life_Changes);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "pyrophobic_burn", null, LOG_TAG.Life_Changes);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
             }

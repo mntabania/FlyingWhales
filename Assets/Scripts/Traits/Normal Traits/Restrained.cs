@@ -78,7 +78,7 @@ namespace Traits {
                 //But if he/she was a criminal, he/she cannot go back to being the ruler
                 //if (isLeader && !isCriminal) {
                 //    _sourceCharacter.faction.SetLeader(character);
-                //    Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "return_faction_leader");
+                //    Log logNotif = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "return_faction_leader");
                 //    logNotif.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //    logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 //    _sourceCharacter.AddHistory(logNotif);

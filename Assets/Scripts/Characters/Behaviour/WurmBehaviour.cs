@@ -34,7 +34,7 @@ public class WurmBehaviour : CharacterBehaviourComponent {
         //                LocationGridTile chosenTile = chosenHex.GetRandomTile();
         //                if(chosenTile != character.gridTileLocation) {
         //                    CharacterManager.Instance.Teleport(character, chosenTile);
-        //                    Log historyLog = new Log(GameManager.Instance.Today(), "Summon", "Wurm", "burrow");
+        //                    Log historyLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Summon", "Wurm", "burrow");
         //                    historyLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //                    historyLog.AddLogToInvolvedObjects();
         //                }

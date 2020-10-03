@@ -55,7 +55,7 @@ public class PlaceBlueprint : GoapAction {
                 goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);
                 goapNode.descriptionLog.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
             } else {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Place Blueprint", "fail", goapNode, LOG_TAG.Work);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Place Blueprint", "fail", goapNode, LOG_TAG.Work);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureSetting.structureType.ToString()), LOG_IDENTIFIER.STRING_1);
                 goapNode.OverrideDescriptionLog(log);

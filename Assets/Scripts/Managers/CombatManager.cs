@@ -185,7 +185,7 @@ public class CombatManager : BaseMonoBehaviour {
             tile.PerformActionOnTraitables((traitable) => PoisonExplosionEffect(traitable, damagePercentage, characterResponsible, ref bs));
         }
         // if(!(target is GenericTileObject)) {
-        //     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
+        //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         //     log.AddLogToInvolvedObjects();
@@ -230,7 +230,7 @@ public class CombatManager : BaseMonoBehaviour {
         }
 
         // if (!(target is GenericTileObject)) {
-        //     Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
+        //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //     PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         //     log.AddLogToInvolvedObjects();

@@ -31,7 +31,7 @@ namespace Traits {
                     adult.InitialCharacterPlacement(summon.gridTileLocation);
                     adult.ClearTerritory();
                     
-                    Log growUpLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
+                    Log growUpLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "become_giant_spider", null, LOG_TAG.Life_Changes);
                     growUpLog.AddToFillers(adult, adult.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     growUpLog.AddLogToDatabase();
                     

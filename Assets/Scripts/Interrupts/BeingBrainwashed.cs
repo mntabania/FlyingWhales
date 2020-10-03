@@ -22,10 +22,10 @@ namespace Interrupts {
                 if (defilerRoom.WasBrainwashSuccessful(interruptHolder.actor)) {
                     //successfully converted
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Cultist");
-                    log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "converted", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
+                    log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "converted", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
                 } else {
                     interruptHolder.actor.traitContainer.AddTrait(interruptHolder.actor, "Unconscious");
-                    log = new Log(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "not_converted", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
+                    log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Being Brainwashed", "not_converted", null, LOG_TAG.Life_Changes, LOG_TAG.Player);
                 }
                 log.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();

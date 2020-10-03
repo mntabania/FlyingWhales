@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Inner_Maps;
 using Ruinarch;
 using Traits;
@@ -684,4 +685,14 @@ public class GameManager : MonoBehaviour {
         return false;
     }
     #endregion
+
+    public static Log CreateNewLog() {
+        return new Log();
+    }
+    public static Log CreateNewLog(GameDate date, string category, string file, string key, ActualGoapNode node = null, params LOG_TAG[] providedTags) {
+        return new Log(date, category, file, key, node, providedTags);
+    }
+    public static Log CreateNewLog(string id, GameDate date, string logText, string category, string key, string file, string involvedObjects, List<LOG_TAG> providedTags, string rawText) {
+        return new Log(id, date, logText, category, key, file, involvedObjects, providedTags, rawText);
+    }
 }
