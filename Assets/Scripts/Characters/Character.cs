@@ -5771,6 +5771,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
+    #region Prison
+    public bool IsInPrison() {
+        BaseSettlement currSettlement = currentSettlement;
+        return currSettlement != null && currSettlement is NPCSettlement settlement && currentStructure == settlement.prison;
+    }
+    public bool IsInPrisonOf(NPCSettlement settlement) {
+        BaseSettlement currSettlement = currentSettlement;
+        return currSettlement != null && currSettlement == settlement && currentStructure == settlement.prison;
+    }
+    public bool IsInPrisonOf(BaseSettlement settlement) {
+        if(settlement is NPCSettlement npcSettlement) {
+            return IsInPrisonOf(npcSettlement);
+        }
+        return false;
+    }
+    #endregion
+
     #region Loading
     public virtual void LoadReferences(SaveDataCharacter data) {
         ConstructDefaultActions();

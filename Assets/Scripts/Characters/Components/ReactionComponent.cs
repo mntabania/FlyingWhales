@@ -665,11 +665,18 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\nActor is part of player faction and target character is dazed, do not combat!.";
                         return;
                     }
-
-                    BaseSettlement targetCurrentSettlement = targetCharacter.currentSettlement;
-                    
-                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCurrentSettlement != null && targetCurrentSettlement is NPCSettlement settlement && targetCharacter.currentStructure == settlement.prison) {
-                        //Do nothing
+                    if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.IsInPrison()) {
+                        bool targetIsRestrainedInPrison = actor.homeSettlement != null && targetCharacter.IsInPrisonOf(actor.homeSettlement);
+                        if (targetIsRestrainedInPrison) {
+                            if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampiric")) {
+                                debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
+                                if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
+                                    actor.jobComponent.TryTriggerFeed(targetCharacter);
+                                } else {
+                                    debugLog = $"{debugLog}\n-Already has a feed job targeting character";
+                                }
+                            }
+                        }
                     } else {
                         //If the target is already unconscious/restrained (it cannot fight back), attack it again only if this character's top priority job is considered lethal
                         if (!targetCharacter.traitContainer.HasTrait("Unconscious", "Restrained") || (isLethal && isTopPrioJobLethal)) {
@@ -846,7 +853,7 @@ public class ReactionComponent : CharacterComponent {
                         } else if (!disguisedActor.traitContainer.HasTrait("Psychopath")) {
                             debugLog = $"{debugLog}\n-Character is not Psychopath and does not consider Target as Enemy or Rival";
                             bool targetIsParalyzedOrEnsnared = targetCharacter.traitContainer.HasTrait("Paralyzed", "Ensnared");
-                            bool targetIsRestrainedCriminal = (targetCharacter.traitContainer.HasTrait("Restrained") && disguisedTarget.traitContainer.HasTrait("Criminal"));
+                            bool targetIsRestrainedCriminal = targetCharacter.traitContainer.HasTrait("Restrained") && disguisedTarget.traitContainer.HasTrait("Criminal");
                             bool targetIsCatatonic = targetCharacter.traitContainer.HasTrait("Catatonic");
                             if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
                                 debugLog =

@@ -42,6 +42,7 @@ namespace Settings {
 
         #region getters
         public Settings settings => _settings;
+        public bool doNotShowVideos => true; // settings.doNotShowVideos;
         #endregion
 
         #region Monobehaviours

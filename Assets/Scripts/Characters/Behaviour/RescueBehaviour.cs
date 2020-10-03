@@ -131,6 +131,7 @@ public class RescueBehaviour : CharacterBehaviourComponent {
                 return actor.jobComponent.TriggerRoamAroundTile(out producedJob, targetHex.GetRandomTile());
             }
         }
+        //When roaming around structure or hex relative to the target and the target is not in a tile that we expect him to be, just roam aroung current structure to avoid null refs
         return actor.jobComponent.TriggerRoamAroundStructure(out producedJob);
     }
 }
