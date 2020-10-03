@@ -166,24 +166,28 @@ public class CarryComponent : CharacterComponent {
         //owner.specificLocation.AddCharacterToLocation(character);
         carriedPOI = null;
         character.carryComponent.SetIsBeingCarriedBy(null);
-        if (dropLocation == null) {
-            character.marker.PlaceMarkerAt(owner.gridTileLocation);
-            //if (owner.gridTileLocation.isOccupied) {
-            //    LocationGridTile chosenTile = owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-            //    if (chosenTile != null) {
-            //        character.marker.PlaceMarkerAt(chosenTile);
-            //    } else {
-            //        Debug.LogWarning(
-            //            $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-            //        character.marker.PlaceMarkerAt(owner.gridTileLocation);
-            //    }
-            //} else {
-            //    character.marker.PlaceMarkerAt(owner.gridTileLocation);
-            //}
-        } else {
-            character.marker.PlaceMarkerAt(dropLocation);
+        
+        //TODO: Find out why characters marker can be null while it is being carried! (https://trello.com/c/ZKPLZXjx/2485-nullreference-removecharacter)
+        if (character.marker != null) {
+            if (dropLocation == null) {
+                character.marker.PlaceMarkerAt(owner.gridTileLocation);
+                //if (owner.gridTileLocation.isOccupied) {
+                //    LocationGridTile chosenTile = owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                //    if (chosenTile != null) {
+                //        character.marker.PlaceMarkerAt(chosenTile);
+                //    } else {
+                //        Debug.LogWarning(
+                //            $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+                //        character.marker.PlaceMarkerAt(owner.gridTileLocation);
+                //    }
+                //} else {
+                //    character.marker.PlaceMarkerAt(owner.gridTileLocation);
+                //}
+            } else {
+                character.marker.PlaceMarkerAt(dropLocation);
+            }
+            character.marker.transform.eulerAngles = Vector3.zero;
         }
-        character.marker.transform.eulerAngles = Vector3.zero;
         // character.marker.SetNameState(true);
         // Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
