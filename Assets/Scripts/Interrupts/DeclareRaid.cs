@@ -25,7 +25,7 @@ namespace Interrupts {
         }
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
+                Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
                 effectLog.AddToFillers(actor.faction, actor.faction.name, LOG_IDENTIFIER.FACTION_1);
                 effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 effectLog.AddToFillers(actor.interruptComponent.raidTargetSettlement, actor.interruptComponent.raidTargetSettlement.name, LOG_IDENTIFIER.LANDMARK_1);

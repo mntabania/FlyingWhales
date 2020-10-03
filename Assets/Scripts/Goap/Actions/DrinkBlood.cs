@@ -234,7 +234,7 @@ public class DrinkBlood : GoapAction {
         } else {
             Vampiric vampiric = TraitManager.Instance.CreateNewInstancedTraitClass<Vampiric>("Vampiric");
             goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, vampiric, goapNode.actor);
-            Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
             // if(goapNode != null) {
             //     log.SetLogType(LOG_TYPE.Action);
             // }

@@ -35,7 +35,7 @@ namespace Traits {
                         characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Angered, targetCharacter);
                         //character.traitContainer.AddTrait(character, "Angry");
-                        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
+                        //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
                         //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         //log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
@@ -56,7 +56,7 @@ namespace Traits {
             //                + " Hothead Assault Chance: 2, Roll: " + chance);
             //            if (characterThatWillDoJob.combatComponent.AddHostileInRange(targetCharacter, false, false, false)) {
             //                if (!characterThatWillDoJob.combatComponent.avoidInRange.Contains(targetCharacter)) {
-            //                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
+            //                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
             //                    log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //                    //log.AddLogToInvolvedObjects();

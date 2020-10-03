@@ -589,7 +589,7 @@ public class CharacterManager : BaseMonoBehaviour {
 
                 if (deadCharacter != null && createLog) {
                     //add log if food pile came from character
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "became_food_pile", providedTags: LOG_TAG.Life_Changes);
                     log.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(foodPile, foodPile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToDatabase();

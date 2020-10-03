@@ -140,7 +140,7 @@ public class RelationshipManager : BaseMonoBehaviour {
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
         if (rel == RELATIONSHIP_TYPE.AFFAIR) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "Generic", "Affair", null, LOG_TAG.Social, LOG_TAG.Life_Changes);
             log.AddToFillers(rel1 as Character, rel1.relatableName, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(rel2 as Character, rel2.relatableName, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddLogToDatabase();
@@ -198,7 +198,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         //     summary += "\nRoll is " + roll.ToString();
         //     if (roll < 25) {
         //         if (target.traitContainer.GetNormalTrait<Trait>("Psychopath") == null) {
-        //             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
+        //             log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
         //             summary += target.name + " now considers " + actor.name + " an enemy.";
         //             RemoveOneWayRelationship(target, actor, RELATIONSHIP_TYPE.ENEMY);
         //             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
@@ -211,7 +211,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         //     hasImproved = true;
         // } else if (!target.relationshipContainer.HasRelationshipWith(actor)) {
         //     if (target.traitContainer.GetNormalTrait<Trait>("Psychopath") == null) {
-        //         log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
+        //         log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
         //         summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
         //         //If Target has no relationship with Actor, Target now considers Actor a Friend.
         //         CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TYPE.FRIEND);
@@ -268,7 +268,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         actor.relationshipContainer.AdjustOpinion(actor, target, opinionText, -10);
         target.relationshipContainer.AdjustOpinion(target, actor, opinionText, -10);
         
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade", null, LOG_TAG.Social);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade", null, LOG_TAG.Social);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToDatabase();
@@ -291,7 +291,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         //        summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
         //        target.CreateBreakupJob(actorAlterEgo.owner);
 
-        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+        //        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
         //        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //        log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
@@ -307,7 +307,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         //        summary += "\n" + target.name + " created break up job targetting " + actorAlterEgo.owner.name;
         //        target.CreateBreakupJob(actorAlterEgo.owner);
 
-        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
+        //        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "break_up");
         //        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //        log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
@@ -321,13 +321,13 @@ public class RelationshipManager : BaseMonoBehaviour {
         //     RemoveOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.FRIEND);
         //     if (target.currentMoodType == CHARACTER_MOOD.BAD || target.currentMoodType == CHARACTER_MOOD.DARK) {
         //         CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
-        //         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
+        //         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "friend_now_enemy");
         //         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //         log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //         PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
         //         hasDegraded = true;
         //     } else {
-        //         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_friend");
+        //         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_friend");
         //         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //         log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //         PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
@@ -343,7 +343,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         //     summary += "\n" + target.name + " and " + actorAlterEgo.owner.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.owner.name + " an enemy.";
         //     CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TYPE.ENEMY);
         //
-        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
+        //     Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");
         //     log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //     log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //     PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);

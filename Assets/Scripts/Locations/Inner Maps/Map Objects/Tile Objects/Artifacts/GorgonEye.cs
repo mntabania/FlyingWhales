@@ -37,7 +37,7 @@ public class GorgonEye : Artifact {
     public override void OnInspect(Character inspector) {
         base.OnInspect(inspector);
         inspector.traitContainer.AddTrait(inspector, "Paralyzed");
-        Log log = new Log(GameManager.Instance.Today(), "Tile Object", "Gorgon Eye", "inspect", providedTags: LOG_TAG.Life_Changes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Tile Object", "Gorgon Eye", "inspect", providedTags: LOG_TAG.Life_Changes);
         log.AddToFillers(inspector, inspector.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToDatabase();

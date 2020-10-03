@@ -193,7 +193,7 @@ namespace Traits {
         #region Utilities
         public string GetTriggerFlawEffectDescription(Character character, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, key, null, LOG_TAG.Player);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, key, null, LOG_TAG.Player);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.FinalizeText();
                 return log.logText;

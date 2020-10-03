@@ -24,7 +24,7 @@ public class IgniteData : PlayerAction {
         burning.InitializeInstancedTrait();
         burning.SetSourceOfBurning(bs, targetPOI);
         targetPOI.traitContainer.AddTrait(targetPOI, burning, bypassElementalChance: true);
-        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         base.ActivateAbility(targetPOI);

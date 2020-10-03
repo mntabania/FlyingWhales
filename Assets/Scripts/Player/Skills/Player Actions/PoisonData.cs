@@ -16,7 +16,7 @@ public class PoisonData : PlayerAction {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         //IncreaseThreatForEveryCharacterThatSeesPOI(targetPOI, 5);
         targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
-        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "InterventionAbility", name, "activated", null, LOG_TAG.Player);
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToDatabase();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);

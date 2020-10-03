@@ -1526,7 +1526,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Booby Trapped", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
         owner.jobQueue.AddJobInQueue(job);
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine", null, LOG_TAG.Social, LOG_TAG.Crimes);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", $"{reason}_and_undermine", null, LOG_TAG.Social, LOG_TAG.Crimes);
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToDatabase();
@@ -1672,7 +1672,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
 	    owner.jobQueue.AddJobInQueue(job);
 
-	    // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
+	    // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
 	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 	    // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 	    // _owner.logComponent.AddHistory(log);
@@ -1721,7 +1721,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.POISON_FOOD, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET), chosenObject, owner);
 	    producedJob = job;
 
-	    // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
+	    // Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "poison_undermine");
 	    // log.AddToFillers(_owner, _owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 	    // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 	    // _owner.logComponent.AddHistory(log);
@@ -1770,7 +1770,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if(owner.crimeComponent.CanCreateReportCrimeJob(actor, target, crimeData, crime)) {
             return CreateReportCrimeJob(crimeData, crime);
         } else {
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing", null, LOG_TAG.Crimes);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing", null, LOG_TAG.Crimes);
             addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);

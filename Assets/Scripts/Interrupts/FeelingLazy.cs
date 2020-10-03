@@ -27,7 +27,7 @@ namespace Interrupts {
                 //if (!triggerBrokenhearted) {
                 //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, target = GOAP_EFFECT_TARGET.ACTOR }, owner, owner);
                 //    owner.jobQueue.AddJobInQueue(job);
-                //    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "trigger_lazy");
+                //    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "trigger_lazy");
                 //    log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //    owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                 //} else {

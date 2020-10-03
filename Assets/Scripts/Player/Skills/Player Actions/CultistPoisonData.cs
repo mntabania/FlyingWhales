@@ -51,14 +51,14 @@ public class CultistPoisonData : PlayerAction {
         if (obj is Character targetCharacter) {
             UIManager.Instance.HideObjectPicker();
             
-            Log instructedLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_poison", null, LOG_TAG.Player, LOG_TAG.Crimes);
+            Log instructedLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "instructed_poison", null, LOG_TAG.Player, LOG_TAG.Crimes);
             instructedLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             instructedLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             instructedLog.AddLogToDatabase();
             PlayerManager.Instance.player.ShowNotificationFromPlayer(instructedLog);
             
             if (actor.jobComponent.CreatePoisonFoodJob(targetCharacter, JOB_TYPE.CULTIST_POISON) == false) {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cultist_no_poison_target", null, LOG_TAG.Player);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "cultist_no_poison_target", null, LOG_TAG.Player);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);

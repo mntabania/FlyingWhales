@@ -269,7 +269,7 @@ namespace Traits {
             //                              && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
             //            deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
                     
-            //            // Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
+            //            // Log sawDeadLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
             //            // sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //            // sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //            // characterThatWillDoJob.logComponent.AddHistory(sawDeadLog);

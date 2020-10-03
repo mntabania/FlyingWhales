@@ -29,7 +29,7 @@ namespace Interrupts {
 						}
 					}
 					
-					overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick", null, logTags);
+					overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Ingested Poison", "sick", null, logTags);
 					overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
 					//log.AddLogToInvolvedObjects();
 				}

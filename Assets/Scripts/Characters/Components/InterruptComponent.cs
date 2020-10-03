@@ -113,7 +113,7 @@ public class InterruptComponent : CharacterComponent {
         }
     }
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
-        Log effectLog = new Log();
+        Log effectLog = GameManager.CreateNewLog();
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} is null!");
         Assert.IsNotNull(interruptHolder.interrupt, $"Interrupt in interrupt holder {interruptHolder} used by {owner.name} is null!");
         INTERRUPT interruptType = interruptHolder.interrupt.type;
@@ -217,7 +217,7 @@ public class InterruptComponent : CharacterComponent {
     }
     private void CreateThoughtBubbleLog(Interrupt interrupt) {
         if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble", providedTags: interrupt.logTags);
+            thoughtBubbleLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "thought_bubble", providedTags: interrupt.logTags);
             thoughtBubbleLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             thoughtBubbleLog.AddToFillers(currentInterrupt.target, currentInterrupt.target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             interrupt.AddAdditionalFillersToThoughtLog(thoughtBubbleLog, owner);
@@ -251,7 +251,7 @@ public class InterruptComponent : CharacterComponent {
             }
         }
         //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
-        //    Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");
+        //    Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");
         //    effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //    effectLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //    effectLog.AddLogToInvolvedObjects();
@@ -263,7 +263,7 @@ public class InterruptComponent : CharacterComponent {
     }
     //private void CreateAndAddEffectLog(Interrupt interrupt, IPointOfInterest target) {
     //    if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", interrupt.name, "effect")) {
-    //        Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", interrupt.name, "effect");
+    //        Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", interrupt.name, "effect");
     //        effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     //        effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //        effectLog.AddLogToInvolvedObjects();

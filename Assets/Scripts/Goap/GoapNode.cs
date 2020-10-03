@@ -579,7 +579,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
 
         if (isStealth && target.traitContainer.HasTrait("Vigilant") && target.traitContainer.HasTrait("Resting", "Unconscious") == false) {
             //trigger vigilant, only if character is NOT resting or unconscious
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Misc);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this, LOG_TAG.Misc);
             // descriptionLog.SetLogType(LOG_TYPE.Action);
             action.AddFillersToLog(ref log, this);
             log.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
@@ -808,7 +808,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private void CreateThoughtBubbleLog() {
         if(!thoughtBubbleLog.hasValue) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble")) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this, LOG_TAG.Misc);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble", this, LOG_TAG.Misc);
                 // thoughtBubbleLog.SetLogType(LOG_TYPE.Action);
                 action.AddFillersToLog(ref log, this);
                 thoughtBubbleLog = log;
@@ -816,7 +816,7 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
         }
         if (!thoughtBubbleMovingLog.hasValue) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.goapName, "thought_bubble_m")) {
-                Log log = new Log(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this, LOG_TAG.Misc);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", action.goapName, "thought_bubble_m", this, LOG_TAG.Misc);
                 // log.SetLogType(LOG_TYPE.Action);
                 action.AddFillersToLog(ref log, this);
                 thoughtBubbleMovingLog = log;

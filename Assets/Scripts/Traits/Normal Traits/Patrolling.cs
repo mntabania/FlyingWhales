@@ -42,7 +42,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 _owner = null;
-                Log endLog = new Log(GameManager.Instance.Today(), "Behaviour", "PatrolBehaviour", "end", null, LOG_TAG.Work);
+                Log endLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Behaviour", "PatrolBehaviour", "end", null, LOG_TAG.Work);
                 endLog.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 endLog.AddLogToDatabase();    
                 

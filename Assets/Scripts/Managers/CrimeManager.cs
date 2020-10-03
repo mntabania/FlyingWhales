@@ -80,7 +80,7 @@ public class CrimeManager : BaseMonoBehaviour {
             existingCrimeData = criminalTrait.AddCrime(crimeType, crimeSeverity, crime, criminal, criminalTrait, target, targetFaction, reactionStatus);
             CrimeType crimeTypeObj = existingCrimeData.crimeTypeObj;
 
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "become_criminal", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(null, crimeTypeObj.accuseText, LOG_IDENTIFIER.STRING_1);
             //addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_2);
@@ -144,7 +144,7 @@ public class CrimeManager : BaseMonoBehaviour {
         }
 
         if (key != string.Empty) {
-            Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+            Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", key, null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
             addLog.AddToFillers(authority, authority.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             addLog.AddToFillers(null, crimeData.crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
@@ -265,7 +265,7 @@ public class CrimeManager : BaseMonoBehaviour {
                             witness.logComponent.PrintLogErrorIfActive(error);
                         } else {
                             //add log of emotions felt
-                            Log log = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "emotions_crime_" + reactionStatus.ToString().ToLower(), null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                             if (reactionStatus == REACTION_STATUS.INFORMED) {
                                 log.AddTag(LOG_TAG.Informed);
                             } else if (reactionStatus == REACTION_STATUS.WITNESSED) {
@@ -490,7 +490,7 @@ public class CrimeData : ISavable {
                 if (AreAllWitnessesDead()) {
                     criminal.traitContainer.GetNormalTrait<Criminal>("Criminal").RemoveCrime(this);
 
-                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                    Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(null, crimeTypeObj.name, LOG_IDENTIFIER.STRING_1);
                     addLog.AddLogToDatabase();
@@ -595,7 +595,7 @@ public class CrimeData : ISavable {
             if (criminal.isSettlementRuler) {
                 if(criminal.ruledSettlement.owner == faction) {
                     criminal.ruledSettlement.SetRuler(null);
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_settlement_ruler", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
                 }
@@ -603,7 +603,7 @@ public class CrimeData : ISavable {
 
             if (faction.leader == criminal) {
                 faction.SetLeader(null);
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_faction_leader", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                 log.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
             }

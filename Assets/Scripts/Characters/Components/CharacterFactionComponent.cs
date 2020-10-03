@@ -28,7 +28,7 @@ public class CharacterFactionComponent {
             owner.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, owner, "left_faction_no_loyalty");
             //Faction prevFaction = owner.faction;
             //owner.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
-            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_no_loyalty");
+            //Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_no_loyalty");
             //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(prevFaction, prevFaction.name, LOG_IDENTIFIER.FACTION_1);
             //owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);

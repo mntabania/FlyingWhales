@@ -224,7 +224,7 @@ public class PlayGuitar : GoapAction {
     //        recipient.traitContainer.AddTrait(recipient, "Annoyed");
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            if (recipient.CreateBreakupJob(actor) != null) {
-    //                Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
+    //                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
     //                log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     //                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //                log.AddLogToInvolvedObjects();
@@ -232,7 +232,7 @@ public class PlayGuitar : GoapAction {
     //            }
     //        } else if (!recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
     //            //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
-    //            Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
+    //            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
     //            log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
     //            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //            log.AddLogToInvolvedObjects();

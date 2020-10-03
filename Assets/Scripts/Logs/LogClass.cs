@@ -249,7 +249,7 @@ using System.Linq;
 //     }
 //
 //     public override Log Load() {
-//         return new Log(this);
+//         return GameManager.CreateNewLog(this);
 //     }
 //     #endregion
 // }

@@ -36,7 +36,7 @@ namespace Interrupts {
         public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, InterruptHolder interrupt, REACTION_STATUS status) { return string.Empty; }
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
+                Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, "effect", null, logTags);
                 if (isIntel) {
                     effectLog.AddTag(LOG_TAG.Intel);
                 }
@@ -48,7 +48,7 @@ namespace Interrupts {
         }
         public virtual Log CreateEffectLog(Character actor, IPointOfInterest target, string key) {
             if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, key)) {
-                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, key, null, logTags);
+                Log effectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", name, key, null, logTags);
                 if (isIntel) {
                     effectLog.AddTag(LOG_TAG.Intel);
                 }

@@ -42,13 +42,13 @@ namespace Interrupts {
         public override Log CreateEffectLog(Character actor, IPointOfInterest target) {
             Log log = default;
             if (actor.homeStructure != null) {
-                log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure", null, logTags);
+                log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure", null, logTags);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, actor.homeStructure.name, LOG_IDENTIFIER.STRING_1);    
             } else if (actor.HasTerritory()) {
                 //NO LOG YET IF NEW HOME IS TERRITORY
 
-                //log = new Log(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
+                //log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Set Home", "set_new_home_structure");
                 //log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 //log.AddToFillers(null, actor.homeStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.STRING_1);
             }

@@ -23,7 +23,7 @@ public class AgitateData : PlayerAction {
                 targetCharacter.behaviourComponent.AddBehaviourComponent(typeof(AttackVillageBehaviour));
                 targetCharacter.behaviourComponent.SetIsAgitated(true);
 
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LOG_TAG.Player, LOG_TAG.Combat);
+                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "agitated", null, LOG_TAG.Player, LOG_TAG.Combat);
                 log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFromPlayer(log);

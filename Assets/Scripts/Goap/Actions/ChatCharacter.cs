@@ -207,12 +207,12 @@ public class ChatCharacter : GoapAction {
     private void Argument(ActualGoapNode goapNode, Character targetCharacter) {
         GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         if (goapNode.actor.traitContainer.HasTrait("Angry")) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat", providedTags: LOG_TAG.Social);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat", providedTags: LOG_TAG.Social);
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             goapNode.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
         if (targetCharacter.traitContainer.HasTrait("Angry")) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat", providedTags: LOG_TAG.Social);
+            Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat", providedTags: LOG_TAG.Social);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             targetCharacter.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
@@ -244,7 +244,7 @@ public class ChatCharacter : GoapAction {
     #endregion
 
     private void CreateChatLog(ActualGoapNode goapNode, string logKey) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode, LOG_TAG.Social);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, logKey, goapNode, LOG_TAG.Social);
         // if (goapNode != null) {
         //     log.SetLogType(LOG_TYPE.Action);
         // }

@@ -36,7 +36,7 @@ public class GoapActionState {
     //     string actionName = parentAction.goapName;
     //     string stateNameLowercase = name.ToLower();
     //     if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, $"{stateNameLowercase}_description")) {
-    //         Log _descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode);
+    //         Log _descriptionLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode);
     //         if (goapNode != null) {
     //             _descriptionLog.SetLogType(LOG_TYPE.Action);
     //         }
@@ -51,7 +51,7 @@ public class GoapActionState {
         string actionName = parentAction.goapName;
         string stateNameLowercase = name.ToLower();
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, $"{stateNameLowercase}_description")) {
-            Log _descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode, goapNode.logTags);
+            Log _descriptionLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", actionName, $"{stateNameLowercase}_description", goapNode, goapNode.logTags);
             goapNode.action.AddFillersToLog(ref _descriptionLog, goapNode);
             return _descriptionLog;
         } else {

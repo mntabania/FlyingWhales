@@ -185,7 +185,7 @@ public class JudgeCharacter : GoapAction {
     #endregion
 
     private void CreateJudgeLog(ActualGoapNode goapNode, string result) {
-        Log log = new Log(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, LOG_TAG.Crimes, LOG_TAG.Life_Changes, LOG_TAG.Work);
+        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "judge result", goapNode, LOG_TAG.Crimes, LOG_TAG.Life_Changes, LOG_TAG.Work);
         // if (goapNode != null) {
         //     log.SetLogType(LOG_TYPE.Action);
         // }
