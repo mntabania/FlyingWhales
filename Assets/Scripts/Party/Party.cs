@@ -459,7 +459,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                             }
                         }
                     } else {
-                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER) {
+                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER && (hex.settlementOnTile == null || hex.settlementOnTile.locationType != LOCATION_TYPE.SETTLEMENT)) {
                             activeMemberCurrentHex = hex;
                         }
                     }
