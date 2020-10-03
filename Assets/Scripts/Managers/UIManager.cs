@@ -464,7 +464,7 @@ public class UIManager : BaseMonoBehaviour {
     }
     public void ShowSmallInfo(string info, [NotNull]VideoClip videoClip, string header = "", UIHoverPosition pos = null) {
         Assert.IsNotNull(videoClip, "Small info with visual was called but no video clip was provided");
-        if (Settings.SettingsManager.Instance.settings.doNotShowVideos) {
+        if (Settings.SettingsManager.Instance.doNotShowVideos) {
             ShowSmallInfo(info, pos, header);
         } else {
             _smallInfoWithVisual.ShowSmallInfo(info, videoClip, header, pos);

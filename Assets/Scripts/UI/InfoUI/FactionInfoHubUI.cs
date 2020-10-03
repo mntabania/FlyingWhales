@@ -140,10 +140,16 @@ public class FactionInfoHubUI : MonoBehaviour {
         int index = GetFactionItemIndex(faction);
         if(index != -1) {
             PlayerUI.Instance.SetVillagerTabIsOn(true);
-            factionScrollSnap.GoToScreen(index);
+            StartCoroutine(GoToScreen(index));
         }
     }
+    private IEnumerator GoToScreen(int index) {
+        yield return null;
+        factionScrollSnap.GoToScreen(index);
+    }
     #endregion
+
+
 
     #region Listeners
     private void OnFactionCreated(Faction faction) {

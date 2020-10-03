@@ -63,6 +63,8 @@ namespace Interrupts {
                     faction.factionType.AddIdeology(divineWorship);
                 }
 
+                Messenger.Broadcast(Signals.FACTION_IDEOLOGIES_CHANGED, faction);
+
                 //create relationships
                 for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
                     Faction otherFaction = FactionManager.Instance.allFactions[i];
