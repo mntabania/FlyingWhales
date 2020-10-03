@@ -53,8 +53,23 @@ public class Dragon : Summon {
         movementComponent.SetEnableDigging(true);
         behaviourComponent.ChangeDefaultBehaviourSet(CharacterManager.Dragon_Behaviour);
     }
-    protected override void OnTickStarted() {
-        base.OnTickStarted();
+    public override void SubscribeToSignals() {
+        base.SubscribeToSignals();
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener(Signals.TICK_STARTED, TryLeaveWorld);
+    }
+    public override void UnsubscribeSignals() {
+        base.UnsubscribeSignals();
+        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);
+    }
+    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass newClass) {
+        if (character == this && newClass.className == "Zombie") {
+            //when dragon becomes a zombie it should no longer try to leave the world, because if it does it will become permanently passive.
+            Messenger.RemoveListener(Signals.TICK_STARTED, TryLeaveWorld);
+        }
+    }
+    private void TryLeaveWorld() {
         if (isAwakened && !willLeaveWorld) {
             CheckLeaveWorld();
         }

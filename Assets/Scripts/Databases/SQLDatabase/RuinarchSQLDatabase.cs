@@ -13,7 +13,7 @@ namespace Databases.SQLDatabase {
 
         private SQLiteConnection dbConnection;
 
-        private const int Log_Row_Limit = 2000;
+        private const int Log_Row_Limit = 1000;
         private string BareBonesLogFields = "persistentID, date_tick, date_day, date_month, date_year, logText, category, key, file, involvedObjects, rawText";
 
         public List<LOG_TAG> allLogTags { get; private set; }
