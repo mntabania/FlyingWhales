@@ -10,6 +10,11 @@ using UnityEngine.Assertions;
 
 public static class SaveUtilities {
 
+
+    public static string[] compatibleSaveFileVersions = new[] {
+        "0.33.21"
+    };
+    
     #region Character States
     /// <summary>
     /// Convenience function to create a new Save Data instance for a character state.

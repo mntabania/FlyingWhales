@@ -92,6 +92,7 @@ public class ConsoleBase : InfoUIBase {
             {"/save_manual", SaveManual },
             {"/set_party_state", SwitchPartyState },
             {"/raid", StartRaid },
+            {"/save_db", SaveDatabaseInMemory}
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1536,6 +1537,9 @@ public class ConsoleBase : InfoUIBase {
         }
         
         SaveManager.Instance.saveCurrentProgressManager.DoManualSave(customFileName);
+    }
+    private void SaveDatabaseInMemory(string[] parameters) {
+        DatabaseManager.Instance.mainSQLDatabase.SaveInMemoryDatabaseToFile($"{UtilityScripts.Utilities.gameSavePath}/Temp/gameDB.db");
     }
     #endregion
 }

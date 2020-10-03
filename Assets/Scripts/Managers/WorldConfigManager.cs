@@ -16,9 +16,6 @@ public class WorldConfigManager : MonoBehaviour {
     public ItemGenerationSetting worldWideItemGenerationSetting;
     public List<ARTIFACT_TYPE> initialArtifactChoices;
 
-    [Header("Demo")]
-    [SerializeField] private bool _isDemoBuild = false;
-
     [Header("Testing")] 
     [SerializeField] private bool _disableLogs;
     public bool useRandomGenerationForScenarioMaps;
@@ -32,7 +29,6 @@ public class WorldConfigManager : MonoBehaviour {
 #else
     public bool disableLogs => true;
 #endif
-    public bool isDemoBuild => _isDemoBuild;
     #endregion
     
     private void Awake() {

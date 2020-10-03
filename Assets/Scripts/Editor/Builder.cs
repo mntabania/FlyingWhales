@@ -4,7 +4,7 @@ public class Builder {
     [MenuItem("Build/Build Release Windows 32-Bit")]
     public static void BuildWindows32Bit() {
         //get the path
-        string path = $"{Application.dataPath}/../bin/Ruinarch v{Application.version}/Ruinarch 32-Bit"; 
+        string path = $"{Application.dataPath}/../bin/Ruinarch v{Application.version}/32-Bit"; 
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows, BuildOptions.None);
         // Do other things with the build folder
@@ -13,7 +13,7 @@ public class Builder {
     [MenuItem("Build/Build Release Windows 64-Bit")]
     public static void BuildWindows64Bit() {
         //get the path
-        string path = $"{Application.dataPath}/../bin/Ruinarch v{Application.version}/Ruinarch 64-Bit"; 
+        string path = $"{Application.dataPath}/../bin/Ruinarch v{Application.version}/64-Bit"; 
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
         // Do other things with the build folder
@@ -29,7 +29,7 @@ public class Builder {
     public static void BuildDevelopmentBuildWindows64Bit() {
         BuildOptions buildOptions = BuildOptions.Development | BuildOptions.AllowDebugging;
         //get the path
-        string path = $"{Application.dataPath}/../bin/Ruinarch v{Application.version} Development Build/Ruinarch"; 
+        string path = $"{Application.dataPath}/../bin/Ruinarch v{Application.version}/Ruinarch v{Application.version} Development Build/Ruinarch"; 
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows64, buildOptions);
         // Do other things with the build folder

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ public class SaveItem : MonoBehaviour {
             }
         }
         string saveFileVersion = SaveUtilities.GetGameVersionOfSaveFile(json);
-        if (saveFileVersion != Application.version) {
+        if (saveFileVersion != Application.version && !SaveUtilities.compatibleSaveFileVersions.Contains(saveFileVersion)) {
             //TODO: Make a system for incompatible saves?
             //no longer compatible
             if (MainMenuUI.Instance != null) {

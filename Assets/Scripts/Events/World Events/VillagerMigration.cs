@@ -19,7 +19,11 @@ namespace Events.World_Events {
                 NPCSettlement randomSettlement = LandmarkManager.Instance.GetRandomActiveVillageSettlement();
                 int unoccupiedDwellings = GetUnoccupiedDwellingCount(randomSettlement);
                 debugLog = $"{debugLog}\n{randomSettlement.name} was chosen. It has {unoccupiedDwellings.ToString()} unoccupied dwellings.";
-                int chance = 7 * unoccupiedDwellings;
+                int baseChance = 5;
+                if (GameManager.Instance.Today().day >= 15) {
+                    baseChance = 3;
+                }
+                int chance = baseChance * unoccupiedDwellings;
                 if (GameUtilities.RollChance(chance, ref debugLog)) { //7
                     int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
                     int randomAmount = UnityEngine.Random.Range(1, 4);
