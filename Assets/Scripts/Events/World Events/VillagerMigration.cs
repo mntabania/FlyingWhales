@@ -25,6 +25,12 @@ namespace Events.World_Events {
                         baseChance = 3;
                     }
                     int chance = baseChance * unoccupiedDwellings;
+                    //cap chance to 20% before day 15 and 10% after day 15
+                    if (GameManager.Instance.Today().day < 15) {
+                        chance = Mathf.Min(chance, 20);
+                    } else {
+                        chance = Mathf.Min(chance, 10);
+                    }
                     if (GameUtilities.RollChance(chance, ref debugLog)) { //7
                         int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
                         int randomAmount = UnityEngine.Random.Range(1, 4);
