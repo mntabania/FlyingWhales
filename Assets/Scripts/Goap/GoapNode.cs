@@ -369,10 +369,17 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             } else {
                 JobQueueItem job = associatedJob;
                 if(job != null) {
-                    if (job.invalidCounter > 0) {
+                    //Special case for Invite action for Make Love
+                    //Once the invite action became invalid because the target rejected the invite, it must be cancelled immediately, so that the actor will not try to invite again
+                    //Maybe create a system for this?
+                    if(goapActionInvalidity.stateName == "Invite Rejected" && action.goapType == INTERACTION_TYPE.INVITE) {
                         job.CancelJob(false);
                     } else {
-                        job.IncreaseInvalidCounter();
+                        if (job.invalidCounter > 0) {
+                            job.CancelJob(false);
+                        } else {
+                            job.IncreaseInvalidCounter();
+                        }
                     }
                 }
             }

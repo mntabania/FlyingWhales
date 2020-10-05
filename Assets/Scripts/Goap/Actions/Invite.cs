@@ -40,27 +40,107 @@ public class Invite : GoapAction {
 
                 goapActionInvalidity.isInvalid = true;
                 goapActionInvalidity.stateName = "Invite Fail";
-            }
+            } else {
+                string debugLog = $"{actor.name} invite to make love with {targetCharacter.name}";
+                if (actor.reactionComponent.disguisedCharacter != null) {
+                    actor = actor.reactionComponent.disguisedCharacter;
+                }
+                if (targetCharacter.reactionComponent.disguisedCharacter != null) {
+                    targetCharacter = targetCharacter.reactionComponent.disguisedCharacter;
+                }
+                string chosen = "Reject";
+                if (!targetCharacter.traitContainer.HasTrait("Unconscious")) {
+                    WeightedDictionary<string> weights = new WeightedDictionary<string>();
+                    int acceptWeight = 20;
+                    int rejectWeight = 10;
+                    Character targetLover = targetCharacter.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+                    if (targetLover != null && targetLover != actor) {
+                        //Target has a different lover
+                        debugLog += $"\n-Target has different lover";
+                        acceptWeight = 0;
+                        rejectWeight = 50;
+                        debugLog += $"\n-Base accept weight: {acceptWeight}";
+                        debugLog += $"\n-Base reject weight: {rejectWeight}";
 
-            //if (actor is SeducerSummon) {
-            //    SeducerSummon seducer = actor as SeducerSummon;
-            //    if (UnityEngine.Random.Range(0, 100) > seducer.seduceChance || targetCharacter.ownParty.isCarryingAnyPOI
-            //         || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
-            //        goapActionInvalidity.isInvalid = true;
-            //        goapActionInvalidity.stateName = "Invite Fail";
-            //    }
-            //} else {
-            //    int acceptChance = 100;
-            //    if (targetCharacter.traitContainer.HasTrait("Chaste")) {
-            //        acceptChance = 25;
-            //    }
-            //    if (UnityEngine.Random.Range(0, 100) > acceptChance || targetCharacter.needsComponent.isStarving || targetCharacter.needsComponent.isExhausted
-            //    || targetCharacter.traitContainer.HasTrait("Annoyed") || targetCharacter.ownParty.isCarryingAnyPOI
-            //    || targetCharacter.stateComponent.currentState != null || targetCharacter.IsAvailable() == false) {
-            //        goapActionInvalidity.isInvalid = true;
-            //        goapActionInvalidity.stateName = "Invite Fail";
-            //    }
-            //}
+                        if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
+                            acceptWeight += 200;
+                            debugLog += $"\n-Target is unfaithful: +200 to Accept Weight";
+                            if (targetCharacter.traitContainer.HasTrait("Drunk")) {
+                                acceptWeight += 100;
+                                debugLog += $"\n-Target is drunk: +100 to Accept Weight";
+                            }
+                        } else {
+                            if (targetCharacter.traitContainer.HasTrait("Treacherous", "Psychopath")) {
+                                acceptWeight += 50;
+                                debugLog += $"\n-Target is not unfaithful but treacherous/psychopath: +50 to Accept Weight";
+                            } else {
+                                rejectWeight += 100;
+                                debugLog += $"\n-Target is not unfaithful/treacherous/psychopath: +100 to Reject Weight";
+                            }
+                            if (targetCharacter.traitContainer.HasTrait("Drunk")) {
+                                acceptWeight += 50;
+                                debugLog += $"\n-Target is drunk: +50 to Accept Weight";
+                            }
+                        }
+                    } else {
+                        debugLog += $"\n-Base accept weight: {acceptWeight}";
+                        debugLog += $"\n-Base reject weight: {rejectWeight}";
+
+                        //int targetOpinionToActor = 0;
+                        //if (targetCharacter.relationshipContainer.HasRelationshipWith(actor)) {
+                        //    targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(actor);
+                        //}
+                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(targetCharacter, actor);
+                        acceptWeight += (10 * compatibility);
+                        debugLog += $"\n-Target compatibility towards Actor: +(10 x {compatibility}) to Accept Weight";
+
+                        if (targetCharacter.traitContainer.HasTrait("Drunk")) {
+                            acceptWeight += 100;
+                            debugLog += $"\n-Target is drunk: +100 to Accept Weight";
+                        }
+                    }
+
+                    if (targetCharacter.traitContainer.HasTrait("Lustful")) {
+                        acceptWeight += 100;
+                        debugLog += "\n-Target is Lustful: +100 to Accept Weight";
+                    } else if (targetCharacter.traitContainer.HasTrait("Chaste")) {
+                        rejectWeight += 300;
+                        debugLog += "\n-Target is Chaste: +300 to Reject Weight";
+                    }
+
+                    if (targetCharacter.moodComponent.moodState == MOOD_STATE.Bad) {
+                        rejectWeight += 50;
+                        debugLog += "\n-Target is Low mood: +50 to Reject Weight";
+                    } else if (targetCharacter.moodComponent.moodState == MOOD_STATE.Critical) {
+                        rejectWeight += 200;
+                        debugLog += "\n-Target is Crit mood: +200 to Reject Weight";
+                    }
+
+                    weights.AddElement("Accept", acceptWeight);
+                    weights.AddElement("Reject", rejectWeight);
+
+                    debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
+
+                    chosen = weights.PickRandomElementGivenWeights();
+                } else {
+                    debugLog += "\n-Target is Unconscious: SURE REJECT";
+                }
+                debugLog += $"\n\nCHOSEN RESPONSE: {chosen}";
+
+                if (chosen == "Reject") {
+                    goapActionInvalidity.isInvalid = true;
+                    goapActionInvalidity.stateName = "Invite Rejected";
+
+                    actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
+                    actor.traitContainer.AddTrait(actor, "Annoyed");
+                    if (actor.faction == FactionManager.Instance.disguisedFaction) {
+                        actor.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+                        if (targetCharacter.marker && !targetCharacter.marker.HasUnprocessedPOI(actor)) {
+                            targetCharacter.marker.AddUnprocessedPOI(actor);
+                        }
+                    }
+                }
+            }
         }
         return goapActionInvalidity;
     }
@@ -70,6 +150,34 @@ public class Invite : GoapAction {
             Character target = node.poiTarget as Character;
             target.combatComponent.Fight(node.actor, CombatManager.Hostility);
         }
+    }
+    public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(actor, target, witness, node, status);
+        if (target != witness && target is Character targetCharacter) {
+            bool isActorLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+            bool isTargetLoverOrAffairOfWitness = witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR);
+
+            if (isActorLoverOrAffairOfWitness) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+            } else if (isTargetLoverOrAffairOfWitness) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Rage, witness, actor, status);
+                //response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.IsFamilyMember(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                }
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status);
+                Character loverOfActor = actor.relationshipContainer.GetFirstCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+                if (loverOfActor != null && loverOfActor != targetCharacter) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor, status);
+                } else if (witness.relationshipContainer.IsFriendsWith(actor)) {
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
+                }
+            }
+        }
+        return response;
     }
     #endregion
 
