@@ -53,7 +53,7 @@ public class SummonPlayerSkill : SpellData {
                     return false;
                 }
             }
-            if (!targetTile.collectionOwner.isPartOfParentRegionMap) {
+            if (!targetTile.collectionOwner.isPartOfParentRegionMap || !targetTile.IsPassable()) {
                 //only allow summoning on linked tiles
                 return false;
             }

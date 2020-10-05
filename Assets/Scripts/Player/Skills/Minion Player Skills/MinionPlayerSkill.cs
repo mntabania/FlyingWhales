@@ -41,7 +41,7 @@ public class MinionPlayerSkill : SpellData {
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         bool canPerform = base.CanPerformAbilityTowards(targetTile);
         if (canPerform) {
-            if (!targetTile.collectionOwner.isPartOfParentRegionMap) {
+            if (!targetTile.collectionOwner.isPartOfParentRegionMap || !targetTile.IsPassable()) {
                 //only allow summoning on linked tiles
                 return false;
             }
