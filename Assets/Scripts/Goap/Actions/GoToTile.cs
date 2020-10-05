@@ -25,7 +25,7 @@
     }
     public override void OnMoveToDoAction(ActualGoapNode node) {
         base.OnMoveToDoAction(node);
-        if(node.associatedJobType == JOB_TYPE.GO_TO_WAITING) {
+        if(node.associatedJobType == JOB_TYPE.GO_TO_WAITING && node.actor.partyComponent.hasParty) {
             node.actor.partyComponent.currentParty.AddMemberThatJoinedQuest(node.actor);
         }
     }

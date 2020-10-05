@@ -601,9 +601,11 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         return false;
     }
     public void AddMemberThatJoinedQuest(Character character) {
-        if (!membersThatJoinedQuest.Contains(character)) {
-            membersThatJoinedQuest.Add(character);
-            OnAddMemberThatJoinedQuest(character);
+        if (isActive) {
+            if (!membersThatJoinedQuest.Contains(character)) {
+                membersThatJoinedQuest.Add(character);
+                OnAddMemberThatJoinedQuest(character);
+            }
         }
     }
     public void ClearMembersThatJoinedQuest(bool shouldDropQuest = true) {
