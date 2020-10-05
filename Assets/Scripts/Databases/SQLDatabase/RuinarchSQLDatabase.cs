@@ -4,9 +4,11 @@ using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using UnityEngine;
 using UtilityScripts;
-using Mono.Data.Sqlite;
 using Debug = UnityEngine.Debug;
 namespace Databases.SQLDatabase {
     public class RuinarchSQLDatabase : IDisposable {
@@ -429,7 +431,6 @@ namespace Databases.SQLDatabase {
         }
         #endregion
 
-
         #region Utilities
         public void SaveInMemoryDatabaseToFile(string filePath) {
             using (SQLiteConnection databaseInFile = new SQLiteConnection($"Data Source={filePath};Version=3;")) {
@@ -442,6 +443,27 @@ namespace Databases.SQLDatabase {
                 databaseInFile.Open();
                 databaseInFile.BackupDatabase(dbConnection, "main", "main", -1, null, -1);
             }
+        }
+        #endregion
+
+        #region Plugins
+        // static Constructor
+        static RuinarchSQLDatabase() {
+            var currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
+#if UNITY_EDITOR_32
+            var dllPath = Application.dataPath
+                + Path.DirectorySeparatorChar + "Plugins"
+                + Path.DirectorySeparatorChar + "x86";
+#elif UNITY_EDITOR_64
+            var dllPath = Application.dataPath
+                          + Path.DirectorySeparatorChar + "Plugins"
+                          + Path.DirectorySeparatorChar + "x86_64";
+#else // Player
+            var dllPath = Application.dataPath
+                + Path.DirectorySeparatorChar + "Plugins";
+#endif
+            if (currentPath != null && currentPath.Contains(dllPath) == false)
+                Environment.SetEnvironmentVariable("PATH", currentPath + Path.PathSeparator + dllPath, EnvironmentVariableTarget.Process);
         }
         #endregion
     }
