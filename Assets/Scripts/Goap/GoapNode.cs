@@ -157,8 +157,14 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
     private void SetTargetToGoTo() {
         if (targetStructure == null) {
             targetStructure = action.GetTargetStructure(this);
-            if (targetStructure == null) { throw new System.Exception(
-                $"{actor.name} target structure of job {associatedJobType.ToString()} with action {action.goapName} targeting {poiTarget} is null."); }
+            if (targetStructure == null) {
+                //If target structure is null, instead of throwing an exception we just need to return the target tile as null
+                //This would trigger the job to be cancelled because there is no target tile set
+                //We are doing this to avoid game crashes, because when we throw an exception the game will be unplayable
+                //But since we still do not allow actions with no target structure to continue, we need the job to be cancelled, hence, why we set the target tile to null
+                targetTile = null;
+                return;
+            }
         }
         if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);

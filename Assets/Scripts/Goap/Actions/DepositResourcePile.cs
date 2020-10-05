@@ -73,10 +73,15 @@ public class DepositResourcePile : GoapAction {
                 LocationGridTile centerTile = hex.GetCenterLocationGridTile();
                 return centerTile.structure;
             }
-            return node.actor.homeSettlement.mainStorage;
+            if(node.actor.homeSettlement != null) {
+                return node.actor.homeSettlement.mainStorage;
+            }
         } else {
-            return node.actor.homeSettlement.mainStorage;
+            if (node.actor.homeSettlement != null) {
+                return node.actor.homeSettlement.mainStorage;
+            }
         }
+        return null;
         //return base.GetTargetStructure(node);
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
