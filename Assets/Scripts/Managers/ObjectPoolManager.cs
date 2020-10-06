@@ -22,6 +22,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     public List<CombatData> combatDataPool { get; private set; }
     public List<InterruptHolder> interruptPool { get; private set; }
     public List<Party> partyPool { get; private set; }
+    public List<GoapThread> goapThreadPool { get; private set; }
 
     private void Awake() {
         Instance = this;
@@ -51,6 +52,7 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         ConstructCombatDataPool();
         ConstructInterruptPool();
         ConstructPartyPool();
+        ConstructGoapThreadPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null, bool isWorldPosition = false) {
@@ -262,6 +264,28 @@ public class ObjectPoolManager : BaseMonoBehaviour {
     }
     #endregion
 
+    #region Goap Thread
+    private void ConstructGoapThreadPool() {
+        goapThreadPool = new List<GoapThread>();
+    }
+    public GoapThread CreateNewGoapThread() {
+        GoapThread data = GetGoapThreadFromPool();
+        return data;
+    }
+    public void ReturnGoapThreadToPool(GoapThread data) {
+        data.Reset();
+        goapThreadPool.Add(data);
+    }
+    private GoapThread GetGoapThreadFromPool() {
+        if (goapThreadPool.Count > 0) {
+            GoapThread data = goapThreadPool[0];
+            goapThreadPool.RemoveAt(0);
+            return data;
+        }
+        return new GoapThread();
+    }
+    #endregion
+
     protected override void OnDestroy() {
         if (allObjectPools != null) {
             foreach (KeyValuePair<string,EZObjectPool> pool in allObjectPools) {
@@ -280,6 +304,8 @@ public class ObjectPoolManager : BaseMonoBehaviour {
         combatDataPool = null;
         interruptPool?.Clear();
         interruptPool = null;
+        goapThreadPool?.Clear();
+        goapThreadPool = null;
         base.OnDestroy();
         Instance = null;
     }

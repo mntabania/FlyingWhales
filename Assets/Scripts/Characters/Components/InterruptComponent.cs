@@ -21,7 +21,7 @@ public class InterruptComponent : CharacterComponent {
 
     public Log thoughtBubbleLog { get; private set; }
 
-    private List<System.Action> _pendingSimultaneousInterrupts;
+    //private List<System.Action> _pendingSimultaneousInterrupts;
 
     #region getters
     public bool isInterrupted => currentInterrupt != null;
@@ -30,12 +30,12 @@ public class InterruptComponent : CharacterComponent {
     #endregion
 
     public InterruptComponent() {
-        _pendingSimultaneousInterrupts = new List<Action>();
+        //_pendingSimultaneousInterrupts = new List<Action>();
         //identifier = string.Empty;
         //simultaneousIdentifier = string.Empty;
     }
     public InterruptComponent(SaveDataInterruptComponent data) {
-        _pendingSimultaneousInterrupts = new List<Action>();
+        //_pendingSimultaneousInterrupts = new List<Action>();
         currentDuration = data.currentDuration;
         currentSimultaneousInterruptDuration = data.currentSimultaneousInterruptDuration;
     }
@@ -86,12 +86,12 @@ public class InterruptComponent : CharacterComponent {
     }
     private void TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier, ActualGoapNode actionThatTriggered, string reason) {
         owner.logComponent.PrintLogIfActive($"{owner.name} triggered a simultaneous interrupt: {interrupt.name}");
-        if (hasTriggeredSimultaneousInterrupt) {
-            //character is currently running a simultaneous interrupt.
-            AddPendingSimultaneousInterrupt(() => TriggeredSimultaneousInterrupt(interrupt, targetPOI, identifier, actionThatTriggered, reason));
-            return;
-        }
-        // bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
+        //if (hasTriggeredSimultaneousInterrupt) {
+        //    //character is currently running a simultaneous interrupt.
+        //    AddPendingSimultaneousInterrupt(() => TriggeredSimultaneousInterrupt(interrupt, targetPOI, identifier, actionThatTriggered, reason));
+        //    return;
+        //}
+        bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
         InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
         interruptHolder.Initialize(interrupt, owner, targetPOI, identifier, reason);
         SetSimultaneousInterrupt(interruptHolder);
@@ -99,19 +99,24 @@ public class InterruptComponent : CharacterComponent {
         AddEffectLog(triggeredSimultaneousInterrupt);
         interrupt.ExecuteInterruptEndEffect(triggeredSimultaneousInterrupt);
         currentSimultaneousInterruptDuration = 0;
-        // if (!alreadyHasSimultaneousInterrupt) {
+        if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
-        // }
-    }
-    private void AddPendingSimultaneousInterrupt(System.Action pendingSimultaneousInterrupt) {
-        _pendingSimultaneousInterrupts.Add(pendingSimultaneousInterrupt);
-    }
-    private void TryExecutePendingSimultaneousInterrupt() {
-        if (_pendingSimultaneousInterrupts.Count > 0) {
-            _pendingSimultaneousInterrupts.First().Invoke();
-            _pendingSimultaneousInterrupts.RemoveAt(0);
+        } else {
+            currentSimultaneousInterruptDuration = 0;
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
         }
     }
+    //private void AddPendingSimultaneousInterrupt(System.Action pendingSimultaneousInterrupt) {
+    //    _pendingSimultaneousInterrupts.Add(pendingSimultaneousInterrupt);
+    //}
+    //private void TryExecutePendingSimultaneousInterrupt() {
+    //    if (_pendingSimultaneousInterrupts.Count > 0) {
+    //        _pendingSimultaneousInterrupts.First().Invoke();
+    //        _pendingSimultaneousInterrupts.RemoveAt(0);
+    //    }
+    //}
     private void ExecuteStartInterrupt(InterruptHolder interruptHolder, ActualGoapNode actionThatTriggered) {
         Log effectLog = GameManager.CreateNewLog();
         Assert.IsNotNull(interruptHolder, $"Interrupt Holder of {owner.name} is null!");
@@ -154,7 +159,7 @@ public class InterruptComponent : CharacterComponent {
                 if (owner.marker) {
                     owner.marker.UpdateActionIcon();
                 }
-                TryExecutePendingSimultaneousInterrupt();
+                //TryExecutePendingSimultaneousInterrupt();
             }
         }
     }

@@ -150,6 +150,12 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void StrangleSelf() {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE, INTERACTION_TYPE.STRANGLE,
+                        activeCharacter, activeCharacter);
+        activeCharacter.jobQueue.AddJobInQueue(job);
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing
