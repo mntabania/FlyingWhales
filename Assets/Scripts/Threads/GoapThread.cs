@@ -595,7 +595,8 @@ public class GoapThread : Multithread {
     public void ReturnPlanFromGoapThread() {
         if (timer != null) {
             timer.Change(Timeout.Infinite, Timeout.Infinite);
-            timer.Dispose();    
+            timer.Dispose();
+            timer = null;
         }
         actor.planner.ReceivePlanFromGoapThread(this);
     }
@@ -605,6 +606,7 @@ public class GoapThread : Multithread {
         try {
             timer.Change(Timeout.Infinite, Timeout.Infinite);
             timer.Dispose();
+            timer = null;
             if (Application.isPlaying) {
                 throw new Exception();    
             }
