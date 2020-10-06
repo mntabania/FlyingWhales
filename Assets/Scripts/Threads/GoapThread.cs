@@ -593,8 +593,10 @@ public class GoapThread : Multithread {
     //}
 
     public void ReturnPlanFromGoapThread() {
-        timer.Change(Timeout.Infinite, Timeout.Infinite);
-        timer.Dispose();
+        if (timer != null) {
+            timer.Change(Timeout.Infinite, Timeout.Infinite);
+            timer.Dispose();    
+        }
         actor.planner.ReceivePlanFromGoapThread(this);
     }
 
@@ -611,8 +613,7 @@ public class GoapThread : Multithread {
                                                 $"\nJob is {(job?.jobType.ToString() ?? "None")}" +
                                                 $"\nTarget is {target.name}" +
                                                 $"\nTarget action is {goalType.ToString()}" +
-                                                $"\nTarget effect is {goalEffect.ToString()}");    
-            
+                                                $"\nTarget effect is {goalEffect.ToString()}");
         }
     }
     #endregion
