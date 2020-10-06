@@ -91,18 +91,27 @@ public class InterruptComponent : CharacterComponent {
         //    AddPendingSimultaneousInterrupt(() => TriggeredSimultaneousInterrupt(interrupt, targetPOI, identifier, actionThatTriggered, reason));
         //    return;
         //}
+        InterruptHolder newTriggeredInterrupt = ObjectPoolManager.Instance.CreateNewInterrupt();
+        newTriggeredInterrupt.Initialize(interrupt, owner, targetPOI, identifier, reason);
+        ExecuteStartInterrupt(newTriggeredInterrupt, actionThatTriggered);
+        AddEffectLog(newTriggeredInterrupt);
+        interrupt.ExecuteInterruptEndEffect(newTriggeredInterrupt);
+
+        //Note: The stored triggeredSimultaneousInterrupt is only used for the thought bubble action icon, for the character to show the current interrupt action icon, like when chatting or flirting
+        //It should not be used for anything else because the simultaneous interrupt has no duration so that means it will only go through the process once and then it is over, so there is no need for it to be stored in any way other than this
+        //The reason why we moved the setting of simultaneous interrupt here because since the stored simultaneous interrupt has no connection with the actual processing of it, it is best to process it first then set the simultaneous interrupt to avoid conflicts
+        //In the previous code, there are a lot of issues because once we set the simultaneous interrupt we access the triggeredSimultaneousInterrupt instead of just accessing the newTriggeredInterrupt
+        //Accessing the triggeredSimultaneousInterrupt will have a lot of issues because there can have many simultaneous interrupts triggerring at the same time so the value of it can change many times in 1 frame
+        //There will also be times that when a simultaneous interrupt is triggered, another simultaneous interrupt will be triggered while the other interrupt is being processed, hence, this solution
+        //Example: When the Leave Faction interrupt is triggered the character that left the faction will also leave the home settlement, and when a character leaves a home settlement and he has a party, he will also leave the party triggering another simultaneous interrupt: Leave Party
+        //So this means that in the process of Leave Faction interrupt, the Leave Party interrupt is triggered, causing errors in our previoud code, that is why we did this solution
         bool alreadyHasSimultaneousInterrupt = hasTriggeredSimultaneousInterrupt;
-        InterruptHolder interruptHolder = ObjectPoolManager.Instance.CreateNewInterrupt();
-        interruptHolder.Initialize(interrupt, owner, targetPOI, identifier, reason);
-        SetSimultaneousInterrupt(interruptHolder);
-        ExecuteStartInterrupt(triggeredSimultaneousInterrupt, actionThatTriggered);
-        AddEffectLog(triggeredSimultaneousInterrupt);
-        interrupt.ExecuteInterruptEndEffect(triggeredSimultaneousInterrupt);
+        SetSimultaneousInterrupt(newTriggeredInterrupt);
+
         currentSimultaneousInterruptDuration = 0;
         if (!alreadyHasSimultaneousInterrupt) {
             Messenger.AddListener(Signals.TICK_ENDED, PerTickSimultaneousInterrupt);
         } else {
-            currentSimultaneousInterruptDuration = 0;
             if (owner.marker) {
                 owner.marker.UpdateActionIcon();
             }
