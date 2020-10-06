@@ -333,12 +333,12 @@ namespace Traits {
             return false;
         }
         public override bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) {
-            if(node.action.goapType == INTERACTION_TYPE.INVITE) {
-                bool triggered = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
-                willStillContinueAction = node.actor.interruptComponent.triggeredSimultaneousInterrupt.identifier == "Accept";
-                //node.actor.interruptComponent.triggeredSimultaneousInterrupt.SetIdentifier(string.Empty);
-                return triggered;
-            }
+            //if(node.action.goapType == INTERACTION_TYPE.INVITE) {
+            //    bool triggered = node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Invite_To_Make_Love, node.poiTarget);
+            //    willStillContinueAction = node.actor.interruptComponent.triggeredSimultaneousInterrupt.identifier == "Accept";
+            //    //node.actor.interruptComponent.triggeredSimultaneousInterrupt.SetIdentifier(string.Empty);
+            //    return triggered;
+            //}
             if (node.poiTarget.traitContainer.HasTrait("Booby Trapped")) {
                 BoobyTrapped targetBoobyTrap = node.poiTarget.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
                 bool triggered = targetBoobyTrap.OnPerformGoapAction(node, ref willStillContinueAction);
