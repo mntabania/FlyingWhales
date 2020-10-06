@@ -31,7 +31,7 @@ public class Invite : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
             Character targetCharacter = poiTarget as Character;
-            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null
+            if (targetCharacter.traitContainer.HasTrait("Unconscious")
                     || targetCharacter.combatComponent.isInCombat
                     || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)
                     || (targetCharacter.interruptComponent.isInterrupted && targetCharacter.interruptComponent.currentInterrupt.interrupt.type == INTERRUPT.Cowering)) {
