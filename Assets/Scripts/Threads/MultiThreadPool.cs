@@ -1,8 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 public class MultiThreadPool : BaseMonoBehaviour {
     public static MultiThreadPool Instance;
@@ -15,6 +13,8 @@ public class MultiThreadPool : BaseMonoBehaviour {
     private Thread newThread;
     //private ManualResetEventSlim exitHandle = new ManualResetEventSlim();
     private bool isRunning;
+
+    private Timer timer;
 
     void Awake() {
         Instance = this;
@@ -52,14 +52,31 @@ public class MultiThreadPool : BaseMonoBehaviour {
                 //Thread.Sleep(20);
                 Multithread newFunction = this.functionsToBeRunInThread.Dequeue();
                 if (newFunction != null) {
+                    timer = new System.Threading.Timer(new TimerCallback(TimerCallback), newFunction, 1000, 1000);
                     lock (THREAD_LOCKER) {
                         newFunction.DoMultithread();
                     }
+                    elapsedTime = 0;
+                    timer.Dispose();
                     this.functionsToBeResolved.Enqueue(newFunction);
                 }
             }
         }
-        
+    }
+
+    private int elapsedTime;
+    private void TimerCallback(object state) {
+        elapsedTime++;
+        if (elapsedTime == 20) {
+            GoapThread goapThread = state as GoapThread;
+            if (goapThread != null) {
+                Debug.unityLogger.LogError("Error", $"{goapThread.actor.name}'s GoapThread has exceeded 20 seconds! " +
+                                                    $"\nJob is {(goapThread.job?.jobType.ToString() ?? "None")}" +
+                                                    $"\nTarget is {goapThread.target.name}" +
+                                                    $"\nTarget action is {goapThread.goalType.ToString()}" +
+                                                    $"\nTarget effect is {goapThread.goalEffect.ToString()}");    
+            }
+        }
     }
     private void Stop() {
         ////exitHandle.Set();
