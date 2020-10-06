@@ -24,7 +24,7 @@ public class GoapThread : Multithread {
     public GoapPlan recalculationPlan;
 
     private Character owner;
-    // private Timer timer;
+    private Timer timer;
 
     public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, bool isPersonalPlan, GoapPlanJob job) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
@@ -137,7 +137,7 @@ public class GoapThread : Multithread {
         try {
             CreatePlan();
         } catch(System.Exception e) {
-            throw new Exception($"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
+            Debug.unityLogger.LogError("Error", $"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
         }
     }
     public override void FinishMultithread() {
@@ -147,7 +147,7 @@ public class GoapThread : Multithread {
     #endregion
 
     public void CreatePlan() {
-        // timer = new Timer(TimerCallback, null, 1000, 10000);
+        timer = new Timer(TimerCallback, null, 1000, 20000);
         if(recalculationPlan != null) {
             RecalculatePlan();
         } else {
@@ -593,14 +593,27 @@ public class GoapThread : Multithread {
     //}
 
     public void ReturnPlanFromGoapThread() {
-        // timer.Change(Timeout.Infinite, Timeout.Infinite);
-        // timer.Dispose();
+        timer.Change(Timeout.Infinite, Timeout.Infinite);
+        timer.Dispose();
         actor.planner.ReceivePlanFromGoapThread(this);
     }
 
     #region Timer
     private void TimerCallback(object state) {
-        throw new Exception($"{actor.name}'s GoapThread has exceeded 10 seconds! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}");
+        try {
+            timer.Change(Timeout.Infinite, Timeout.Infinite);
+            timer.Dispose();
+            if (Application.isPlaying) {
+                throw new Exception();    
+            }
+        } catch {
+            Debug.unityLogger.LogError("Error", $"{actor.name}'s GoapThread has exceeded 20 seconds! " +
+                                                $"\nJob is {(job?.jobType.ToString() ?? "None")}" +
+                                                $"\nTarget is {target.name}" +
+                                                $"\nTarget action is {goalType.ToString()}" +
+                                                $"\nTarget effect is {goalEffect.ToString()}");    
+            
+        }
     }
     #endregion
 }
