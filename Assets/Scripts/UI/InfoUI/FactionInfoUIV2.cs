@@ -90,6 +90,8 @@ public class FactionInfoUIV2 : MonoBehaviour {
         Messenger.AddListener<Log>(Signals.LOG_ADDED, UpdateHistory);
         Messenger.AddListener<Log>(Signals.LOG_IN_DATABASE_UPDATED, UpdateHistory);
         Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
+        Messenger.AddListener<Faction>(Signals.FACTION_IDEOLOGIES_CHANGED, OnFactionIdeologiesChanged);
+        Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
         logsWindow.Initialize();
     }
     public void SetFaction(Faction faction) {
@@ -264,6 +266,20 @@ public class FactionInfoUIV2 : MonoBehaviour {
     #endregion
 
     #region Characters
+    private void OnCharacterSwitchFromLimbo(Character toLimbo, Character fromLimbo) {
+        if(toLimbo.lycanData != null) {
+            Faction factionToBeFollowed = toLimbo.lycanData.originalForm.faction;
+            if(activeFaction == factionToBeFollowed) {
+                CharacterNameplateItem nameplate = GetItem(toLimbo);
+                if(nameplate != null) {
+                    nameplate.UpdateObject(fromLimbo);
+                }
+            }
+        } else {
+            //TODO: Which faction should be followed the one from the limbo or the one going to limbo?
+            //If both forms are from diff factions, the nameplate of each one will be shown at each faction UI, this will cause problems because only one must exist in the world at the same time
+        }
+    }
     private void UpdateAllCharacters() {
         UtilityScripts.Utilities.DestroyChildren(charactersScrollView.content);
         _characterItems.Clear();
@@ -278,6 +294,9 @@ public class FactionInfoUIV2 : MonoBehaviour {
                 continue;
             }
             if(currCharacter.race != RACE.ANGEL) {
+                if(currCharacter.lycanData != null) {
+                    currCharacter = currCharacter.lycanData.activeForm;
+                }
                 CreateNewCharacterItem(currCharacter, false);
             }
         }
