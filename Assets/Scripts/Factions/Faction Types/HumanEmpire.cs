@@ -13,8 +13,7 @@
             exclusive.SetRequirement(RACE.HUMANS);
             AddIdeology(exclusive);
 
-            DivineWorship divineWorship =
-                FactionManager.Instance.CreateIdeology<DivineWorship>(FACTION_IDEOLOGY.Divine_Worship);
+            DivineWorship divineWorship = FactionManager.Instance.CreateIdeology<DivineWorship>(FACTION_IDEOLOGY.Divine_Worship);
             AddIdeology(divineWorship);
             
             //structures

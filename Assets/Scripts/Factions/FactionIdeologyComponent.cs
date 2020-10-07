@@ -42,6 +42,16 @@ public class FactionIdeologyComponent {
         }
         return true;
     }
+    public bool DoesCharacterFitCurrentIdeologies(PreCharacterData character) {
+        if(currentIdeologies == null) { return true; }
+        for (int i = 0; i < currentIdeologies.Count; i++) {
+            FactionIdeology ideology = currentIdeologies[i]; ;
+            if(ideology != null && !ideology.DoesCharacterFitIdeology(character)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     // private void ReEvaluateFactionMembers(bool willLog = true) {
     //     for (int i = 0; i < owner.characters.Count; i++) {
