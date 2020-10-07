@@ -67,7 +67,7 @@ public class MultiThreadPool : BaseMonoBehaviour {
     private int elapsedTime;
     private void TimerCallback(object state) {
         elapsedTime++;
-        if (elapsedTime == 20) {
+        if (elapsedTime == 10) {
             GoapThread goapThread = state as GoapThread;
             if (goapThread != null) {
                 Debug.unityLogger.LogError("Error", $"{goapThread.actor.name}'s GoapThread has exceeded 20 seconds! " +
