@@ -451,16 +451,11 @@ namespace Databases.SQLDatabase {
         static RuinarchSQLDatabase() {
             var currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
 #if UNITY_EDITOR_32
-            var dllPath = Application.dataPath
-                + Path.DirectorySeparatorChar + "Plugins"
-                + Path.DirectorySeparatorChar + "x86";
+            var dllPath = Application.dataPath + "/Plugins"/x86";
 #elif UNITY_EDITOR_64
-            var dllPath = Application.dataPath
-                          + Path.DirectorySeparatorChar + "Plugins"
-                          + Path.DirectorySeparatorChar + "x86_64";
+            var dllPath = Application.dataPath + "/Plugins/x86_64";
 #else // Player
-            var dllPath = Application.dataPath
-                + Path.DirectorySeparatorChar + "Plugins";
+            var dllPath = Application.dataPath + "/Plugins";
 #endif
             if (currentPath != null && currentPath.Contains(dllPath) == false)
                 Environment.SetEnvironmentVariable("PATH", currentPath + Path.PathSeparator + dllPath, EnvironmentVariableTarget.Process);
