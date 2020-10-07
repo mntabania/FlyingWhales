@@ -35,7 +35,7 @@ namespace Events.World_Events {
                         int availableCapacity = unoccupiedDwellings; //to get available capacity, get all unoccupied dwellings multiplied by the maximum number of residents per dwelling (2)
                         int randomAmount = UnityEngine.Random.Range(1, 4);
                         randomAmount = Mathf.Min(randomAmount, availableCapacity);
-                        List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharacters(randomSettlement.owner.race);
+                        List<PreCharacterData> unspawnedCharacters = DatabaseManager.Instance.familyTreeDatabase.ForceGetAllUnspawnedCharactersThatFitFaction(randomSettlement.owner.race, randomSettlement.owner);
                         LocationGridTile edgeTile = CollectionUtilities.GetRandomElement(randomSettlement.region.innerMap.allEdgeTiles);
                         debugLog = $"{debugLog}\nWill spawn {randomAmount.ToString()} characters at {edgeTile}";
                         for (int i = 0; i < randomAmount; i++) {
@@ -52,6 +52,7 @@ namespace Events.World_Events {
                             }
                             Character newCharacter = CharacterManager.Instance.CreateNewCharacter(characterToSpawn, classToCreate, randomSettlement.owner, randomSettlement);
                             RelationshipManager.Instance.ApplyPreGeneratedRelationships(WorldConfigManager.Instance.mapGenerationData, characterToSpawn, newCharacter);
+                            newCharacter.CreateRandomInitialTraits();
                             newCharacter.CreateMarker();
                             newCharacter.InitialCharacterPlacement(edgeTile);
                             newCharacter.MigrateHomeStructureTo(null, affectSettlement: false);

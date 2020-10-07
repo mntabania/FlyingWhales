@@ -20,6 +20,14 @@ public class Exclusive : FactionIdeology {
         }
         return true;
     }
+    public override bool DoesCharacterFitIdeology(PreCharacterData character) {
+        if(category == EXCLUSIVE_IDEOLOGY_CATEGORIES.GENDER) {
+            return character.gender == genderRequirement;
+        } else if (category == EXCLUSIVE_IDEOLOGY_CATEGORIES.RACE) {
+            return character.race == raceRequirement;
+        }
+        return true;
+    }
     public override string GetRequirementsForJoiningAsString() {
         return $"{category.ToString()}: {GetRequirementAsString()}";
     }

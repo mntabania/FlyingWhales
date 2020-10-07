@@ -33,21 +33,21 @@ public class FamilyTreeDatabase {
         }
         return null;
     }
-    
     /// <summary>
     /// Get a list of unspawned characters. If there are no unspawned characters left, this will
     /// generate a new family tree and return all newly generated characters
     /// </summary>
     /// <param name="race">Race to check.</param>
+    /// <param name="faction">Faction to check</param>
     /// <returns>List of character data.</returns>
-    public List<PreCharacterData> ForceGetAllUnspawnedCharacters(RACE race) {
+    public List<PreCharacterData> ForceGetAllUnspawnedCharactersThatFitFaction(RACE race, Faction faction) {
         List<PreCharacterData> availableCharacters = new List<PreCharacterData>();
         List<FamilyTree> familyTrees = allFamilyTreesDictionary[race];
         for (int i = 0; i < familyTrees.Count; i++) {
             FamilyTree familyTree = familyTrees[i];
             for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
                 PreCharacterData familyMember = familyTree.allFamilyMembers[j];
-                if (familyMember.hasBeenSpawned == false) {
+                if (familyMember.hasBeenSpawned == false && faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(familyMember)) {
                     availableCharacters.Add(familyMember);
                 }
             }
@@ -57,7 +57,12 @@ public class FamilyTreeDatabase {
         } else {
             FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(race);
             AddFamilyTree(newFamily);
-            availableCharacters.AddRange(newFamily.allFamilyMembers);
+            for (int i = 0; i < newFamily.allFamilyMembers.Count; i++) {
+                PreCharacterData familyMember = newFamily.allFamilyMembers[i];
+                if (faction.ideologyComponent.DoesCharacterFitCurrentIdeologies(familyMember)) {
+                    availableCharacters.Add(familyMember);
+                }
+            }
             return availableCharacters;
         }
     }

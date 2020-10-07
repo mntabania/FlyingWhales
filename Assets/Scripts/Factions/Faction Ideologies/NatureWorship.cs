@@ -14,6 +14,9 @@ public class NatureWorship : FactionIdeology {
         //Inclusive ideology accepts all characters
         return true;
     }
+    public override bool DoesCharacterFitIdeology(PreCharacterData character) {
+        return true;
+    }
     public override string GetIdeologyDescription() {
         return "Worships Father Nature.";
     }
