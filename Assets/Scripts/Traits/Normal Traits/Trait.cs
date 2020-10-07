@@ -134,6 +134,9 @@ namespace Traits {
         public virtual void OnOwnerInitiallyPlaced(Character owner) { }
         public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
         public virtual bool OnStartPerformGoapAction(ActualGoapNode node, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+        public virtual void OnBeforeStartFlee(ITraitable traitable) { }
+        public virtual void OnAfterExitingCombat(ITraitable traitable) { }
+
         //Returns the string of the log key that's supposed to be logged
         public virtual string TriggerFlaw(Character character) {
             if (character.trapStructure.IsTrapped()) {

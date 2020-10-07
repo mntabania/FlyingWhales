@@ -125,11 +125,20 @@ public class CharacterVisuals {
 
     #region Animations
     private void UpdateMarkerAnimations(Character character) {
+        bool isInBatForm = character.behaviourComponent.isInVampireBatForm;
         if (character.reactionComponent.disguisedCharacter != null) {
             character = character.reactionComponent.disguisedCharacter;
+            //If a character is only disguising, do not copy bat form of the original character in case the original one is currently in bat form
+            isInBatForm = false;
         }
-        CharacterClassAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.visuals.classToUseForVisuals);
+        CharacterClassAsset assets = null;
+        if (!isInBatForm) {
+            assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender, character.visuals.classToUseForVisuals);
+        } else {
+            assets = CharacterManager.Instance.GetAdditionalMarkerAsset("Vampire Bat");
+        }
         defaultSprite = assets.defaultSprite;
+
         float size = defaultSprite.rect.width / 100f;
         if (character is Troll) {
             size = 0.8f;

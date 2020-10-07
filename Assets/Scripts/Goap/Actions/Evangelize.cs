@@ -147,7 +147,7 @@ public class Evangelize : GoapAction {
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 goapNode.OverrideDescriptionLog(log);
-            } else if (CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship, goapNode) > CRIME_SEVERITY.Infraction) {
+            } else if (CrimeManager.Instance.GetCrimeSeverity(targetCharacter, goapNode.actor, targetCharacter, CRIME_TYPE.Demon_Worship) > CRIME_SEVERITY.Infraction) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", "Evangelize", "crime", goapNode, LOG_TAG.Crimes, LOG_TAG.Work, LOG_TAG.Social);
                 log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

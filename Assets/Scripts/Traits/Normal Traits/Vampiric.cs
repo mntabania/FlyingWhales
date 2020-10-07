@@ -7,6 +7,8 @@ namespace Traits {
     public class Vampiric : Trait {
         public override bool isSingleton => true;
 
+        //public bool isInBatForm { get; private set; } //Moved bat form switch to BehaviourComponent so that this trait can stay as Singleton, and the access for the switch will be more performant because it will not loop through traits anymore
+
         public Vampiric() {
             name = "Vampiric";
             description = "Sustains itself by drinking other's blood.";
@@ -16,6 +18,9 @@ namespace Traits {
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
+            AddTraitOverrideFunctionIdentifier(TraitManager.After_Exiting_Combat);
+            //AddTraitOverrideFunctionIdentifier(TraitManager.Tick_Ended_Trait);
         }
 
         #region Overrides
@@ -104,6 +109,40 @@ namespace Traits {
             }
             return base.OnSeePOI(targetPOI, characterThatWillDoJob);
         }
+        public override void OnBeforeStartFlee(ITraitable traitable) {
+            base.OnBeforeStartFlee(traitable);
+            if(traitable is Character character) {
+                if (!character.behaviourComponent.isInVampireBatForm) {
+                    if (!character.HasNonHostileVillagerInRangeThatConsidersVampirismACrime()) {
+                        //TransformToBat(character);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Transform_To_Bat, character);
+                    }
+                }
+            }
+        }
+        public override void OnAfterExitingCombat(ITraitable traitable) {
+            base.OnAfterExitingCombat(traitable);
+            if (traitable is Character character) {
+                if (character.behaviourComponent.isInVampireBatForm) {
+                    if (!character.HasNonHostileVillagerInRangeThatConsidersVampirismACrime()) {
+                        //RevertToNormal(character);
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Revert_From_Bat, character);
+                    } else {
+                        FleeToAllNonHostileVillagerInRangeThatConsidersVampirismACrime(character);
+                    }
+                }
+            }
+        }
+        //public override void OnTickEnded(ITraitable traitable) {
+        //    base.OnTickEnded(traitable);
+        //    if (traitable is Character character) {
+        //        if (character.behaviourComponent.isInVampireBatForm) {
+        //            if (!HasNonHostileVillagerInRangeThatConsidersVampirismACrime(character)) {
+        //                RevertToNormal(character);
+        //            }
+        //        }
+        //    }
+        //}
         #endregion
 
         private Character GetDrinkBloodTarget(Character vampire) {
@@ -124,6 +163,44 @@ namespace Traits {
                 return UtilityScripts.CollectionUtilities.GetRandomElement(targets);  
             }
             return null;
+        }
+
+        //private void TransformToBat(Character character) {
+        //    if (!character.behaviourComponent.isInVampireBatForm) {
+        //        character.behaviourComponent.SetIsInVampireBatForm(true);
+        //        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "transform", null, LOG_TAG.Misc);
+        //        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        log.AddLogToDatabase();
+        //        if (character.visuals != null) {
+        //            character.visuals.UpdateAllVisuals(character);
+        //        }
+        //    }
+        //}
+        //private void RevertToNormal(Character character) {
+        //    if (character.behaviourComponent.isInVampireBatForm) {
+        //        character.behaviourComponent.SetIsInVampireBatForm(false);
+        //        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "revert", null, LOG_TAG.Misc);
+        //        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        log.AddLogToDatabase();
+        //        if (character.visuals != null) {
+        //            character.visuals.UpdateAllVisuals(character);
+        //        }
+        //    }
+        //}
+        private void FleeToAllNonHostileVillagerInRangeThatConsidersVampirismACrime(Character character) {
+            if (character.marker) {
+                for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                    Character inVision = character.marker.inVisionCharacters[i];
+                    if (inVision != character) {
+                        if (!character.IsHostileWith(inVision)) {
+                            CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(inVision, character, character, CRIME_TYPE.Vampire);
+                            if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
+                                character.combatComponent.Flight(inVision, CombatManager.Vampire_Bat);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

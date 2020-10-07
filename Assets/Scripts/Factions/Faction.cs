@@ -971,8 +971,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     #endregion
 
     #region Crime
-    public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
-        return factionType.GetCrimeSeverity(witness, actor, target, crimeType, crime);
+    public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
+        return factionType.GetCrimeSeverity(witness, actor, target, crimeType);
     }
     #endregion
 

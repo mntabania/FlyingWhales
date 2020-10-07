@@ -79,7 +79,8 @@ public class CharacterManager : BaseMonoBehaviour {
     [SerializeField] private Sprite[] maleKnockoutHairSprite;
     [SerializeField] private Sprite[] femaleKnockoutHairSprite;
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
-    
+    [SerializeField] private List<AdditionalMarkerAsset> additionalMarkerAssets;
+
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
     [Header("Artifact Settings")]
@@ -1131,6 +1132,15 @@ public class CharacterManager : BaseMonoBehaviour {
             }
         }
         throw new Exception($"There are no race assets for {characterClassName} {gender.ToString()} {race.ToString()}");
+    }
+    public CharacterClassAsset GetAdditionalMarkerAsset(string identifier) {
+        for (int i = 0; i < additionalMarkerAssets.Count; i++) {
+            AdditionalMarkerAsset asset = additionalMarkerAssets[i];
+            if(asset.identifier == identifier) {
+                return asset.asset;
+            }
+        }
+        throw new Exception($"There are no additional assets for {identifier}");
     }
     public Sprite GetMarkerHairSprite(GENDER gender) {
         switch (gender) {

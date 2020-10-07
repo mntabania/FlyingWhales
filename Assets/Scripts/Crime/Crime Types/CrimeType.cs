@@ -17,7 +17,7 @@ namespace Crime_System {
         }
 
         #region Virtuals
-        public virtual CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, ICrimeable crime) {
+        public virtual CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target) {
             if(witness.traitContainer.HasTrait("Cultist") && actor.traitContainer.HasTrait("Cultist")) {
                 return CRIME_SEVERITY.None;
             }

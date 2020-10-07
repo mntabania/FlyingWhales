@@ -87,13 +87,16 @@ public class CombatComponent : CharacterComponent {
                     } else {
                         log += "\n-Has existing combat job, no combat job added";
                     }
-                } else {
-                    log += "\n-Combat job not added";
-                    if (owner.marker != null && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
-                        CombatState combatState = owner.stateComponent.currentState as CombatState;
-                        combatState.CheckFlee(ref log);
-                    }
                 }
+                //Removed this because this part will not be called because we are checking here if owner.combatComponent.isInCombat and we are already in the else condition of owner.combatComponent.isInCombat from the code above
+                //So this part is useless
+                //else {
+                //    log += "\n-Combat job not added";
+                //    if (owner.marker != null && owner.marker.hasFleePath && owner.combatComponent.isInCombat) {
+                //        CombatState combatState = owner.stateComponent.currentState as CombatState;
+                //        combatState.CheckFlee(ref log);
+                //    }
+                //}
             }
             //avoidReason = string.Empty;
         }
@@ -116,6 +119,14 @@ public class CombatComponent : CharacterComponent {
             SetWillProcessCombat(false); //Moved this up here, because ProcessCombatBehavior can set process combat to true again, and we don't want to overwrite that.
             ProcessCombatBehavior();
         }
+        //else {
+        //    if (owner.marker && owner.marker.hasFleePath) {
+        //        if (owner.combatComponent.isInCombat) {
+        //            CombatState combatState = owner.stateComponent.currentState as CombatState;
+        //            combatState.CheckFlee();
+        //        }
+        //    }
+        //}
     }
     public void SetCombatMode(COMBAT_MODE mode) {
         combatMode = mode;
@@ -194,6 +205,8 @@ public class CombatComponent : CharacterComponent {
     #region Fight or Flight
     public CombatReaction GetFightOrFlightReaction(IPointOfInterest target, string fightReason) {
         string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
+        //return new CombatReaction(COMBAT_REACTION.Flight);
+
         if (!owner.canPerform || !owner.canMove) {
             debugLog += "\n-Character cannot move/perform, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);

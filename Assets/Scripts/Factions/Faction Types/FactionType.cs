@@ -66,7 +66,7 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Crimes
-        public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+        public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
             if (hasCrimes) {
                 if (crimes.ContainsKey(crimeType)) {
                     return crimes[crimeType];

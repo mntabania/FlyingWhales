@@ -30,6 +30,8 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Hour_Started_Trait = "Hour_Started_Trait";
     public const string See_Poi_Trait = "See_Poi_Trait";
     public const string See_Poi_Cannot_Witness_Trait = "See_Poi_Cannot_Witness_Trait";
+    public const string Before_Start_Flee = "Before_Start_Flee";
+    public const string After_Exiting_Combat = "After_Exiting_Combat";
 
     public static string[] instancedTraitsAndStatuses = new string[] {
         "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
