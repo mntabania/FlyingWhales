@@ -624,11 +624,17 @@ namespace Inner_Maps {
                         && (!character.partyComponent.hasParty || !character.partyComponent.currentParty.isActive || (character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Counterattack && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Rescue && character.partyComponent.currentParty.currentQuest.partyQuestType != PARTY_QUEST_TYPE.Heirloom_Hunt)) 
                         && character.isAlliedWithPlayer == false 
                         && character.necromancerTrait == null
-                        && !    character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
+                        && !character.jobQueue.HasJob(JOB_TYPE.REPORT_CORRUPTED_STRUCTURE)) {
                         if (!character.movementComponent.hasMovedOnCorruption) {
                             character.movementComponent.SetHasMovedOnCorruption(true);
                             if (character.isNormalCharacter) {
-                                genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+                                //Instead of fleeing when character steps on a corrupted tile, trigger Shocked interrupt only
+                                //The reason for this is to eliminate the bug wherein the character will flee from the corrupted tile, then after fleeing, he will again move across it, thus triggering flee again, which results in unending loop of fleeing and moving
+                                //So to eliminate this behaviour we will not let the character flee, but will trigger Shocked interrupt only and then go on with his job/action
+                                //https://trello.com/c/yiW344Sb/2499-villagers-fleeing-from-demonic-area-can-get-stuck-repeating-it
+                                character.interruptComponent.TriggerInterrupt(INTERRUPT.Shocked, character);
+                                //genericTileObject.traitContainer.AddTrait(genericTileObject, "Danger Remnant");
+
                                 //if (character.characterClass.IsCombatant()) {
                                 //    character.behaviourComponent.SetIsAttackingDemonicStructure(true, demonicStructure);
                                 //} else {
