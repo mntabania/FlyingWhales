@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 public class Builder {
     [MenuItem("Build/Build Release Windows 32-Bit")]
@@ -8,6 +9,7 @@ public class Builder {
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows, BuildOptions.None);
         // Do other things with the build folder
+        RelocateDLLs(path, "x86");
     }
     
     [MenuItem("Build/Build Release Windows 64-Bit")]
@@ -17,9 +19,10 @@ public class Builder {
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
         // Do other things with the build folder
+        RelocateDLLs(path, "x86_64");
     }
-    
-    [MenuItem("Build/Build Release Windows 64 & 32 Bit")]
+
+    [MenuItem("Build/Build Release Windows 64 and 32 Bit")]
     public static void BuildWindows64And32Bit() {
         BuildWindows32Bit();
         BuildWindows64Bit();
@@ -33,5 +36,15 @@ public class Builder {
         // Build player
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path + "/Ruinarch.exe", BuildTarget.StandaloneWindows64, buildOptions);
         // Do other things with the build folder
+        RelocateDLLs(path, "x86_64");
     }
+
+    #region Utilities
+    private static void RelocateDLLs(string buildPath, string pluginsFolder) {
+        string sqliteDLL = $"{buildPath}/Ruinarch_Data/Plugins/{pluginsFolder}/SQLite.Interop.dll";
+        FileUtil.CopyFileOrDirectory(sqliteDLL, $"{buildPath}/SQLite.Interop.dll");
+        Directory.CreateDirectory($"{buildPath}/Ruinarch_Data/Mono/");
+        FileUtil.CopyFileOrDirectory(sqliteDLL, $"{buildPath}/Ruinarch_Data/Mono/SQLite.Interop.dll");
+    }
+    #endregion
 }
