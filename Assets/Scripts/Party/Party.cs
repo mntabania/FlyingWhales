@@ -352,6 +352,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
 
     #region Moving State
     private void OnSwitchToMovingState(PARTY_STATE prevState, bool goHome) {
+        //Currently if the party switches to moving state, we must check if the previous target destination is already the home settlement of the party, if it is, all moving state of the party must be to go home
+        //So that the party member will not go to the working destination again
+        //This is also because once the party decides to go home, it means that the party is done with the quest so they must always go home every time the party switches to moving state
+        if(targetDestination == partySettlement) {
+            goHome = true;
+        }
+        
         //Every time we switch to moving state we must set the target destination so that the members will know where to go
         if (goHome) {
             SetTargetDestination(partySettlement);
