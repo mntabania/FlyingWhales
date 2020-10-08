@@ -146,8 +146,12 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure();
         }
         protected override void AfterStructureDestruction() {
-            structureObj.OnOwnerStructureDestroyed(region.innerMap); 
+            structureObj.OnOwnerStructureDestroyed(region.innerMap);
+            InnerMapHexTile innerMapHexTile = occupiedHexTile;
             base.AfterStructureDestruction();
+            if (innerMapHexTile != null && innerMapHexTile.hexTileOwner != null) {
+                innerMapHexTile.hexTileOwner.CheckIfSettlementIsStillOnTile();
+            }
         }
         #endregion
 
