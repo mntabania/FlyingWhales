@@ -34,6 +34,18 @@ namespace Inner_Maps {
         public const int Starting_Tag_Index = 9;
         public uint currentTagIndex = Starting_Tag_Index;
    
+        //tags
+        public const int All_Tags = -1;
+        public const int Ground_Tag = 1;
+        public const int Obstacle_Tag = 2;
+        public const int Demonic_Faction = 3;
+        public const int Demonic_Faction_Doors = 4;
+        public const int Undead_Faction = 5;
+        public const int Undead_Faction_Doors = 6;
+        public const int Roads = 7;
+        public const int Caves = 8;
+        public const int Special_Structures = 9;
+        
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
 

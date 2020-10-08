@@ -38,8 +38,8 @@ public class MovementComponent : CharacterComponent {
     public MovementComponent() {
         structuresToAvoid = new List<LocationStructure>();
         tagPenalties = new int[32];
-        traversableTags = -1; //enable all tags for now //by default all units cannot traverse obstacle tag
-        SetTagAsUnTraversable(2);
+        traversableTags = InnerMapManager.All_Tags; //enable all tags for now 
+        SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag); //by default all units cannot traverse obstacle tag
     }
     public MovementComponent(SaveDataMovementComponent data) {
         structuresToAvoid = new List<LocationStructure>();
