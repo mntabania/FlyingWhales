@@ -29,6 +29,9 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
 
     public SaveDataPartyQuestBoard partyQuestBoard;
 
+    public uint pathfindingTag;
+    public uint pathfindingDoorTag;
+
     #region getters
     public OBJECT_TYPE objectType => OBJECT_TYPE.Faction;
     #endregion
@@ -92,6 +95,8 @@ public class SaveDataFaction : SaveData<Faction>, ISavableCounterpart {
         //     SaveManager.Instance.saveCurrentProgressManager.AddToSaveHub(log);
         // }
         newLeaderDesignationChance = data.newLeaderDesignationChance;
+        pathfindingTag = data.pathfindingTag;
+        pathfindingDoorTag = data.pathfindingDoorTag;
     }
 
     public override Faction Load() {

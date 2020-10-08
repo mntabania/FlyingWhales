@@ -2,12 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Pathfinding;
 using TMPro;
 using UnityEngine;
 
 public class LocationGridTileCollectionItem : BaseMonoBehaviour {
 
     [SerializeField] private Collider2D boundsCollider;
+
+    private InnerTileMap _innerTileMap;
+
+    public void Initialize(InnerTileMap innerTileMap) {
+        _innerTileMap = innerTileMap;
+    }
     
     void OnDrawGizmos() {
         Gizmos.color = Color.blue;
@@ -18,8 +25,12 @@ public class LocationGridTileCollectionItem : BaseMonoBehaviour {
 
     [ContextMenu("Update Pathfinding Graphs")]
     public void UpdatePathfindingGraph() {
-        AstarPath.active.UpdateGraphs(boundsCollider.bounds);
+        GraphUpdateObject graphUpdateObject = new TagGraphUpdateObject(boundsCollider.bounds) {nnConstraint = _innerTileMap.onlyPathfindingGraph, updatePhysics = true, modifyWalkability = false};
+        PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(graphUpdateObject);
+        // AstarPath.active.UpdateGraphs(boundsCollider.bounds);
     }
-    
-    
+    protected override void OnDestroy() {
+        base.OnDestroy();
+        _innerTileMap = null;
+    }
 }

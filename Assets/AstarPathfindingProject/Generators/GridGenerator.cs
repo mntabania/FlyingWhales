@@ -2002,7 +2002,7 @@ namespace Pathfinding {
 		/// <summary>Internal function to update an area of the graph</summary>
 		void IUpdatableGraph.UpdateArea (GraphUpdateObject o) {
 			if (nodes == null || nodes.Length != width*depth) {
-				Debug.LogWarning("The Grid Graph is not scanned, cannot update area");
+				// Debug.LogWarning("The Grid Graph is not scanned, cannot update area");
 				//Not scanned
 				return;
 			}

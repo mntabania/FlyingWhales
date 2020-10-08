@@ -50,7 +50,7 @@ public class BlockWall : TileObject {
         } else if (wallType == WALL_TYPE.Demon_Stone) {
             size = new Vector2(1.2f, 1.2f);
         }
-        mapVisual.InitializeGUS(Vector2.zero, size);
+        mapVisual.InitializeGUS(Vector2.zero, size, tile);
 
         base.OnPlaceTileObjectAtTile(tile);
     }

@@ -52893,7 +52893,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883206538}
   m_HandleRect: {fileID: 883206537}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -84313,6 +84313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19859e4ff2f9ee74e99426d52b76b328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentTagIndex: 9
   characterCollisionTriggerPrefab: {fileID: 1745477595920248, guid: b561293b149dfb44a8798a971c7596c6,
     type: 3}
   pathfinder: {fileID: 1536722385}
@@ -84850,7 +84851,7 @@ MonoBehaviour:
     cacheStartup: 0
   showNavGraphs: 1
   showUnwalkableNodes: 1
-  debugMode: 0
+  debugMode: 6
   debugFloor: 0
   debugRoof: 1
   manualDebugFloorRoof: 0
@@ -84872,14 +84873,14 @@ MonoBehaviour:
     _AreaColors: []
   tagNames:
   - Basic Ground
-  - 1
-  - 2
-  - 3
-  - 4
-  - 5
-  - 6
-  - 7
-  - 8
+  - Obstacles
+  - Demonic Faction
+  - Demonic Doors
+  - Undead Faction
+  - Undead Doors
+  - Roads
+  - Caves
+  - Special Structures
   - 9
   - 10
   - 11

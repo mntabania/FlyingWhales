@@ -27,6 +27,12 @@ namespace Inner_Maps {
         public const int DetailsTilemapSortingOrder = 40;
         public const int SelectedSortingOrder = 900;
         public const int Big_Tree_Yield = 300;
+
+        /// <summary>
+        /// At what tag index should randomly generated stuff start. i.e. tags per faction.
+        /// </summary>
+        public const int Starting_Tag_Index = 9;
+        public uint currentTagIndex = Starting_Tag_Index;
    
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
@@ -359,12 +365,17 @@ namespace Inner_Maps {
             if (showingCharacter?.gridTileLocation != null) {
                 isPathPossible = PathUtilities.IsPathPossible(showingCharacter.gridTileLocation.graphNode, tile.graphNode);
             }
+            string binary = string.Empty;
+            if (tile.graphNode != null) {
+                binary = Convert.ToString(tile.graphNode.Tag, 2);    
+            }
             
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
             summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
+            summary = $"{summary}\n<b>Node Tags:</b>{binary}";
             summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
             summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
@@ -876,6 +887,18 @@ namespace Inner_Maps {
         }
         #endregion
 
+        #region Tags
+        public uint ClaimNextTag() {
+            if (currentTagIndex > 31) {
+                Debug.LogError("Max Tag limit has been reached! Could not claim new tags!");
+                return 0; //always return 0 if ever tags run out, this should rarely happen!
+            }
+            uint claimedTag = currentTagIndex;
+            currentTagIndex++;
+            return claimedTag;
+        }
+        #endregion
+        
         protected override void OnDestroy() {
             Debug.Log("Cleaning up inner maps...");
             if (innerMaps != null) {
