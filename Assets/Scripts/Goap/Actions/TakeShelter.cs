@@ -81,11 +81,11 @@ public class TakeShelter : GoapAction {
             || goapNode.actor.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.featureComponent.HasFeature(TileFeatureDB.Heat_Wave_Feature));
         if (shouldSetShelter) {
             if (goapNode.actor.traitContainer.HasTrait("Freezing")) {
-                Freezing freezing = goapNode.actor.traitContainer.GetNormalTrait<Freezing>("Freezing");
+                Freezing freezing = goapNode.actor.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
                 freezing.SetCurrentShelterStructure(goapNode.targetStructure);
             }
             if (goapNode.actor.traitContainer.HasTrait("Overheating")) {
-                Overheating overheating = goapNode.actor.traitContainer.GetNormalTrait<Overheating>("Overheating");
+                Overheating overheating = goapNode.actor.traitContainer.GetTraitOrStatus<Overheating>("Overheating");
                 overheating.SetCurrentShelterStructure(goapNode.targetStructure);
             }
             goapNode.actor.trapStructure.SetForcedStructure(goapNode.targetStructure);

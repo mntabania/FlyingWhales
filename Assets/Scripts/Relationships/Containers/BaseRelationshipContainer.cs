@@ -243,7 +243,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         string opinionLabelBeforeChange = GetOpinionLabel(target);
         if (owner.traitContainer.HasTrait("Psychopath")) {
-            Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+            Psychopath psychopath = owner.traitContainer.GetTraitOrStatus<Psychopath>("Psychopath");
             psychopath.AdjustOpinion(target, opinionText, opinionValue);
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(

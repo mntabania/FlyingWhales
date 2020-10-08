@@ -33,7 +33,7 @@ public class Whip : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character targetCharacter = target as Character;
-        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+        Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
         if (criminalTrait != null && criminalTrait.HasWantedCrime() && criminalTrait.IsTargetOfACrime(witness)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, node.actor, status, node);
         } else {
@@ -87,7 +87,7 @@ public class Whip : GoapAction {
     public void AfterWhipSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
-            Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             criminalTrait.SetIsImprisoned(false);
             criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         }

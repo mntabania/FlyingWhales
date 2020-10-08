@@ -227,7 +227,7 @@ public class PoisonCloudMapObjectVisual : MovingMapObjectVisual<TileObject> {
             //normal characters that are not in combat, but are in range of a poison cloud should flee
             character.combatComponent.Flight(_poisonCloud, "inside a poison cloud");
         }
-        if (obj.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+        if (obj.traitContainer.GetTraitOrStatus<Trait>("Burning") != null) {
             Explode();
         }
     }

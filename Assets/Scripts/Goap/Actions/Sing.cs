@@ -36,7 +36,7 @@ public class Sing : GoapAction {
             cost += timesCost;
             costLog += $" +{timesCost}(10 x Times Played)";
         }
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        Trait trait = actor.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
                 cost += 2000;
@@ -57,7 +57,7 @@ public class Sing : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status, node);

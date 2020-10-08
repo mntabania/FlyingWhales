@@ -82,7 +82,8 @@ namespace Inner_Maps {
         public OBJECT_TYPE objectType => OBJECT_TYPE.Gridtile;
         public System.Type serializedData => typeof(SaveDataLocationGridTile); 
         public bool isOccupied => tileState == Tile_State.Occupied;
-        public List<Trait> normalTraits => genericTileObject.traitContainer.allTraitsAndStatuses;
+        public List<Trait> traits => genericTileObject.traitContainer.traits;
+        public List<Status> statuses => genericTileObject.traitContainer.statuses;
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
         #endregion
         
@@ -589,7 +590,7 @@ namespace Inner_Maps {
                     if(character.currentActionNode != null && character.currentActionNode.target == rug && character.currentActionNode.goapType == INTERACTION_TYPE.REMOVE_TRAP) {
                         //Should not activate booby trap if character is removing it
                     } else {
-                        BoobyTrapped boobyTrapped = rug.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                        BoobyTrapped boobyTrapped = rug.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                         boobyTrapped.DamageTargetByTrap(character, rug);
                     }
                 }

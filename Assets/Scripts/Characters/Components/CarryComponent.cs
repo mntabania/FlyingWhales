@@ -86,7 +86,7 @@ public class CarryComponent : CharacterComponent {
             //We added isFromSave checker, because if the carrying happens because we loaded the game from save data, infecting should not happen
             if (!isFromSave) {
                 if (!owner.traitContainer.HasTrait("Plagued") && character.traitContainer.HasTrait("Plagued")) {
-                    Traits.Plagued targetPlagued = character.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
+                    Traits.Plagued targetPlagued = character.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
                     if (targetPlagued != null) {
                         string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
                         int roll = UnityEngine.Random.Range(0, 100);

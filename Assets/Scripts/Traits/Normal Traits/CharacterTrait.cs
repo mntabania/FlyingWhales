@@ -340,7 +340,7 @@ namespace Traits {
             //    return triggered;
             //}
             if (node.poiTarget.traitContainer.HasTrait("Booby Trapped")) {
-                BoobyTrapped targetBoobyTrap = node.poiTarget.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                BoobyTrapped targetBoobyTrap = node.poiTarget.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                 bool triggered = targetBoobyTrap.OnPerformGoapAction(node, ref willStillContinueAction);
                 if (triggered && node.actor.jobQueue.jobsInQueue.Count > 0) {
                     node.actor.jobQueue.jobsInQueue[0].CancelJob();

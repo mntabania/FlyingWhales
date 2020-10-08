@@ -170,14 +170,14 @@ public class DouseFireState : CharacterState {
         Profiler.BeginSample("DouseNearestFire");
         ITraitable nearestFire = null;
         float nearest = 99999f;
-        if (currentTarget != null && currentTarget.worldObject != null && currentTarget.traitContainer.GetNormalTrait<Burning>("Burning") != null) {
+        if (currentTarget != null && currentTarget.worldObject != null && currentTarget.traitContainer.GetTraitOrStatus<Burning>("Burning") != null) {
             nearest = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currentTarget.worldObject.transform.position);
             nearestFire = currentTarget;
         }
 
         for (int i = 0; i < _fires.Count; i++) {
             ITraitable currFire = _fires[i];
-            Burning burning = currFire.traitContainer.GetNormalTrait<Burning>("Burning");
+            Burning burning = currFire.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burning != null && burning.douser == null) {
                 //only consider dousing fire that is not yet assigned
                 float dist = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currFire.worldObject.transform.position);
@@ -190,7 +190,7 @@ public class DouseFireState : CharacterState {
         if (nearestFire != null) {
             isDousingFire = true;
             currentTarget = nearestFire;
-            Burning burning = nearestFire.traitContainer.GetNormalTrait<Burning>("Burning"); 
+            Burning burning = nearestFire.traitContainer.GetTraitOrStatus<Burning>("Burning"); 
             Assert.IsNotNull(burning, $"Burning of {nearestFire} is null.");
             burning.SetDouser(stateComponent.owner);
             stateComponent.owner.marker.GoTo(nearestFire, DouseFire);
@@ -212,7 +212,7 @@ public class DouseFireState : CharacterState {
         currentTarget = null;
     }
     private bool AddFire(IPointOfInterest poi) {
-        Burning burning = poi.traitContainer.GetNormalTrait<Burning>("Burning");
+        Burning burning = poi.traitContainer.GetTraitOrStatus<Burning>("Burning");
         if (burning != null) {
             if (_fires.Contains(poi) == false) {
                 _fires.Add(poi);

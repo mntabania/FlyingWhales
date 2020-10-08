@@ -751,7 +751,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                     }
-                    Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     
                     //Wanted Criminal Reaction Code:
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && targetCriminalTrait.IsWantedBy(disguisedActor.faction)

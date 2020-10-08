@@ -89,7 +89,7 @@ namespace Generator.Map_Generation.Components {
                 }
                 
                 character.traitContainer.AddTrait(character, chosenBuffOrNeutralTraitName);
-                Trait buffOrNeutralTrait = character.traitContainer.GetNormalTrait<Trait>(chosenBuffOrNeutralTraitName);
+                Trait buffOrNeutralTrait = character.traitContainer.GetTraitOrStatus<Trait>(chosenBuffOrNeutralTraitName);
                 if (buffOrNeutralTrait.mutuallyExclusive != null) {
                     buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
                     neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait

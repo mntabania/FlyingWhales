@@ -141,7 +141,7 @@ namespace Traits {
             }
             
             //pyrophobic handling
-            Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Pyrophobic>("Pyrophobic");
+            Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetTraitOrStatus<Pyrophobic>("Pyrophobic");
             pyrophobic?.AddKnownBurningSource(sourceOfBurning, traitOwner);
             
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

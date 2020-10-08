@@ -259,18 +259,18 @@ public class GoapAction {
             }
             if (actionCategory == ACTION_CATEGORY.CONSUME) {
                 //if action is consume type and actor knows that the object is poisoned, do not advertise this action.
-                Poisoned poisoned = tileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+                Poisoned poisoned = tileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
                 if (poisoned != null && poisoned.awareCharacters.Contains(actor)) {
                     requirementActionSatisfied = false;    
                 }    
                 //if action is consume type and actor knows that the object is booby trapped, do not advertise this action.
-                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                 if (boobyTrapped != null && boobyTrapped.awareCharacters.Contains(actor)) {
                     requirementActionSatisfied = false;    
                 }    
             } else if (actionCategory == ACTION_CATEGORY.DIRECT) {
                 //if action is direct type and actor knows that the object is booby trapped, do not advertise this action.
-                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                BoobyTrapped boobyTrapped = tileObject.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                 if (boobyTrapped != null && boobyTrapped.awareCharacters.Contains(actor)) {
                     requirementActionSatisfied = false;    
                 }    

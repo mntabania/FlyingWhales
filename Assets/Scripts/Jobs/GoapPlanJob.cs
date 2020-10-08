@@ -203,7 +203,7 @@ public class GoapPlanJob : JobQueueItem {
             Character target = targetPOI as Character;
             return target.carryComponent.IsNotBeingCarried();
         }
-        if(jobType == JOB_TYPE.REMOVE_STATUS && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetNormalTrait<Trait>((string) goal.conditionKey).IsResponsibleForTrait(character)) {
+        if(jobType == JOB_TYPE.REMOVE_STATUS && !string.IsNullOrEmpty(goal.conditionKey) && targetPOI.traitContainer.GetTraitOrStatus<Trait>((string) goal.conditionKey).IsResponsibleForTrait(character)) {
             return false;
         }
         return base.CanTakeJob(character);

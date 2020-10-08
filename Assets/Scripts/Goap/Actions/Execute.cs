@@ -28,7 +28,7 @@ public class Execute : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
         Character poiTarget = target as Character;
-        Criminal criminalTrait = poiTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
+        Criminal criminalTrait = poiTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
         if (criminalTrait != null && criminalTrait.HasWantedCrime() && criminalTrait.IsTargetOfACrime(witness)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, node.actor, status, node);
         } else {
@@ -91,7 +91,7 @@ public class Execute : GoapAction {
     public void AfterExecuteSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
-            Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             criminalTrait.SetIsImprisoned(false);
         }
         target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);

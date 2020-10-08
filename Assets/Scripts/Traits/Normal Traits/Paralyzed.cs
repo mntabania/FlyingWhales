@@ -153,7 +153,7 @@ namespace Traits {
         }
         private void CreateActualHappinessRecoveryJob(INTERACTION_TYPE actionType) {
             bool triggerBrokenhearted = false;
-            Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
+            Heartbroken heartbroken = owner.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
             if (heartbroken != null) {
                 triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
             }
@@ -195,7 +195,7 @@ namespace Traits {
                 jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             }
             bool triggerSpooked = false;
-            Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
+            Spooked spooked = owner.traitContainer.GetTraitOrStatus<Spooked>("Spooked");
             if (spooked != null) {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
             }

@@ -830,7 +830,7 @@ public class CombatComponent : CharacterComponent {
             } else {
                 if(key == CombatManager.Anger) {
                     if (owner.traitContainer.HasTrait("Angry")) {
-                        Trait trait = owner.traitContainer.GetNormalTrait<Trait>("Angry");
+                        Trait trait = owner.traitContainer.GetTraitOrStatus<Trait>("Angry");
                         if(trait.responsibleCharacter == target) {
                             key = "Anger_Target";
                         }

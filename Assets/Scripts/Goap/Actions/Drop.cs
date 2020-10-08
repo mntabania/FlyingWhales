@@ -147,7 +147,7 @@ public class Drop : GoapAction {
         if(goapNode.poiTarget is Character targetCharacter) {
             if (goapNode.associatedJobType == JOB_TYPE.APPREHEND && goapNode.poiTarget.gridTileLocation.structure == goapNode.actor.homeSettlement.prison) {
                 if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                    Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     criminalTrait.SetIsImprisoned(true);
                 }    
             } else if (goapNode.associatedJobType == JOB_TYPE.SNATCH) {

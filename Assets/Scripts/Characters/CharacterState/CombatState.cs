@@ -500,7 +500,7 @@ public class CombatState : CharacterState {
             } else if (!stateComponent.owner.marker) {
                 log = $"{log}\n-Has no marker!";
             }
-            Trait taunted = stateComponent.owner.traitContainer.GetNormalTrait<Trait>("Taunted");
+            Trait taunted = stateComponent.owner.traitContainer.GetTraitOrStatus<Trait>("Taunted");
             if (forcedTarget != null) {
                 log = $"{log}\n{stateComponent.owner.name} has a forced target. Setting {forcedTarget.name} as target.";
                 SetClosestHostile(forcedTarget);

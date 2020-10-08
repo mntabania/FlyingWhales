@@ -32,7 +32,7 @@ public class BoobyTrap : GoapAction {
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
 
-        BoobyTrapped boobyTrapped = target.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+        BoobyTrapped boobyTrapped = target.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
         boobyTrapped?.AddAwareCharacter(witness);
         
         if (target is TileObject tileObject) {

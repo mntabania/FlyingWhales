@@ -43,7 +43,7 @@ namespace Traits {
             if (addedTo is Character character) {
                 owner = character;
                 if (character.traitContainer.HasTrait("Burning")) {
-                    Burning burning = character.traitContainer.GetNormalTrait<Burning>("Burning");
+                    Burning burning = character.traitContainer.GetTraitOrStatus<Burning>("Burning");
                     burning.CharacterBurningProcess(character);
                 }
                 Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
@@ -63,7 +63,7 @@ namespace Traits {
             }
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            Burning burning = targetPOI.traitContainer.GetNormalTrait<Burning>("Burning");
+            Burning burning = targetPOI.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burning != null) {
                 AddKnownBurningSource(burning.sourceOfBurning, targetPOI);
             }

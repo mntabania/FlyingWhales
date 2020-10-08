@@ -376,13 +376,20 @@ namespace Inner_Maps {
             summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
             summary = $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
             summary = $"{summary}\nTile Traits: ";
-            if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
+            if (tile.genericTileObject != null && tile.traits.Count > 0) {
                 summary = $"{summary}\n";
-                summary = tile.normalTraits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
+                summary = tile.traits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
             } else {
                 summary = $"{summary}None";
             }
-            
+            summary = $"{summary}\nTile Statuses: ";
+            if (tile.genericTileObject != null && tile.statuses.Count > 0) {
+                summary = $"{summary}\n";
+                summary = tile.statuses.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
+            } else {
+                summary = $"{summary}None";
+            }
+
             IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
             summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
@@ -401,8 +408,11 @@ namespace Inner_Maps {
                 summary = poi.advertisedActions != null && poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
                 
                 summary = $"{summary}\n\tObject Traits: ";
-                summary = poi.traitContainer.allTraitsAndStatuses.Count > 0 ? poi.traitContainer.allTraitsAndStatuses.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
-                
+                summary = poi.traitContainer.traits.Count > 0 ? poi.traitContainer.traits.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
+
+                summary = $"{summary}\n\tObject Statuses: ";
+                summary = poi.traitContainer.statuses.Count > 0 ? poi.traitContainer.statuses.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData(poi)}") : $"{summary}None";
+
                 summary = $"{summary}\n\tJobs Targeting this: ";
                 summary = poi.allJobsTargetingThis.Count > 0 ? poi.allJobsTargetingThis.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t}") : $"{summary}None";
             }

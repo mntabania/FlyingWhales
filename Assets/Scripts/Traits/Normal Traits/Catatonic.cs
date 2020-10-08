@@ -134,7 +134,7 @@ namespace Traits {
                 jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             }
             bool triggerSpooked = false;
-            Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
+            Spooked spooked = owner.traitContainer.GetTraitOrStatus<Spooked>("Spooked");
             if (spooked != null) {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
             }

@@ -20,6 +20,7 @@ namespace Traits {
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
         #region Loading

@@ -599,7 +599,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateRemoveStatusJob() {
 		if (owner.homeSettlement != null && owner.gridTileLocation.IsNextToOrPartOfSettlement(owner.homeSettlement)
 		    && owner.traitContainer.HasTrait("Criminal") == false) {
-			List<Trait> statusTraits = owner.traitContainer.GetNormalTraits<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
+			List<Trait> statusTraits = owner.traitContainer.GetTraitsOrStatuses<Trait>(TraitManager.Instance.removeStatusTraits.ToArray());
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];
 				TryCreateRemoveStatusJob(trait);
@@ -2145,7 +2145,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (canDoJob) {
             if (target.traitContainer.HasTrait("Criminal")) {
                 if (owner.jobQueue.HasJob(JOB_TYPE.APPREHEND, target) == false) {
-                    Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     if (criminalTrait.IsWantedBy(owner.faction)) {
                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, target, owner);
                         job.SetStillApplicableChecker(JobManager.Apprehend_Applicability);
@@ -2322,10 +2322,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         if (!owner.jobQueue.HasJob(JOB_TYPE.SEEK_SHELTER) && owner.gridTileLocation != null) {
             List<LocationStructure> exclusions = null;
             if (owner.traitContainer.HasTrait("Freezing")) {
-                Freezing freezing = owner.traitContainer.GetNormalTrait<Freezing>("Freezing");
+                Freezing freezing = owner.traitContainer.GetTraitOrStatus<Freezing>("Freezing");
                 exclusions = freezing.excludedStructuresInSeekingShelter;
             } else if (owner.traitContainer.HasTrait("Overheating")) {
-                Overheating overheating = owner.traitContainer.GetNormalTrait<Overheating>("Overheating");
+                Overheating overheating = owner.traitContainer.GetTraitOrStatus<Overheating>("Overheating");
                 exclusions = overheating.excludedStructuresInSeekingShelter;
             }
             LocationStructure nearestInteriorStructure = owner.gridTileLocation.GetNearestInteriorStructureFromThisExcept(exclusions);
