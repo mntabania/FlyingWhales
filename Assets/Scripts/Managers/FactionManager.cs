@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Factions.Faction_Types;
+using Inner_Maps;
 using UnityEngine.UI;
 
 public class FactionManager : BaseMonoBehaviour {
@@ -106,18 +107,30 @@ public class FactionManager : BaseMonoBehaviour {
     public Faction CreateNewFaction(FACTION_TYPE factionType, string factionName = "") {
         Faction newFaction = new Faction(factionType);
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
+        newFaction.SetIsMajorFaction(true);
         if (factionType == FACTION_TYPE.Demons) {
             newFaction.SetEmblem(playerFactionEmblem);
+            //NOTE: This is always reserved!
+            newFaction.SetPathfindingTag(2);
+            newFaction.SetPathfindingDoorTag(3);
         } else if (factionType == FACTION_TYPE.Undead) {
             newFaction.SetEmblem(undeadFactionEmblem);
+            //NOTE: This is always reserved!
+            newFaction.SetPathfindingTag(4);
+            newFaction.SetPathfindingDoorTag(5);
         } else {
             newFaction.SetEmblem(GenerateFactionEmblem(newFaction));
+            if (newFaction.isMajorNonPlayer) {
+                //claim new tags per new MAJOR faction.
+                newFaction.SetPathfindingTag(InnerMapManager.Instance.ClaimNextTag());
+                newFaction.SetPathfindingDoorTag(InnerMapManager.Instance.ClaimNextTag());    
+            }
         }
         CreateRelationshipsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
         }
-        newFaction.SetIsMajorFaction(true);
+        
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         }
@@ -141,6 +154,11 @@ public class FactionManager : BaseMonoBehaviour {
             SetNeutralFaction(newFaction);
         } else if (data.factionType.type == FACTION_TYPE.Vagrants) {
             SetVagrantFaction(newFaction);
+        }
+        if (newFaction.isMajorNonPlayer) {
+            //claim 2 tags per MAJOR non Player faction, this is so that the last tag is still accurate.
+            InnerMapManager.Instance.ClaimNextTag();
+            InnerMapManager.Instance.ClaimNextTag();
         }
         DatabaseManager.Instance.factionDatabase.RegisterFaction(newFaction);
         if (!newFaction.isPlayerFaction) {

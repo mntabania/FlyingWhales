@@ -435,7 +435,12 @@ public class BehaviourComponent : CharacterComponent {
                 //if target is self, target is null or target is an unbuilt tile object, job is valid.
                 return true;
             }
-            return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation, PathfindingManager.Instance.onlyWalkableConstraint);
+            if (goapPlanJob.targetPOI.gridTileLocation != null) {
+                return character.movementComponent.HasPathToEvenIfDiffRegion(goapPlanJob.targetPOI.gridTileLocation, goapPlanJob.targetPOI.gridTileLocation.parentMap.onlyUnwalkableGraph);    
+            } else {
+                return false;
+            }
+            
         }
         return false;
     }

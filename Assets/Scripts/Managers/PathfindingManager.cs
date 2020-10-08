@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using PathFinding;
 using UnityEngine;
 
 public class PathfindingManager : BaseMonoBehaviour {
@@ -13,9 +14,7 @@ public class PathfindingManager : BaseMonoBehaviour {
 
     private GridGraph mainGraph;
     private List<CharacterAIPath> _allAgents;
-
-    public NNConstraint onlyWalkableConstraint;
-
+    
     #region getters/setters
     public List<CharacterAIPath> allAgents => _allAgents;
     #endregion
@@ -23,9 +22,6 @@ public class PathfindingManager : BaseMonoBehaviour {
     private void Awake() {
         Instance = this;
         _allAgents = new List<CharacterAIPath>();
-        onlyWalkableConstraint = NNConstraint.Default;
-        onlyWalkableConstraint.constrainWalkability = true;
-        onlyWalkableConstraint.walkable = true;
     }
     void Start() {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -46,28 +42,32 @@ public class PathfindingManager : BaseMonoBehaviour {
         yield return null;
         AstarPath.active.UpdateGraphs(bounds);
     }
-    public void UpdatePathfindingGraphPartial(GraphUpdateObject guo) {
+    public void UpdatePathfindingGraphPartialCoroutine(GraphUpdateObject guo) {
+        StartCoroutine(UpdatePathfindingGraphPartial(guo));
+    }
+    private IEnumerator UpdatePathfindingGraphPartial(GraphUpdateObject guo) {
+        yield return null;
         AstarPath.active.UpdateGraphs(guo);
     }
     public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
-        return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
-            AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+        return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, fromTile.parentMap.onlyUnwalkableGraph).node,
+            AstarPath.active.GetNearest(toTile.centeredWorldLocation, toTile.parentMap.onlyUnwalkableGraph).node);
     }
     public bool HasPathEvenDiffRegion(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == null || toTile == null) { return false; }
         if (fromTile == toTile) { return true; }
         if(fromTile.structure.region == toTile.structure.region) {
-            return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
-                    AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node);
+            return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, fromTile.parentMap.onlyUnwalkableGraph).node,
+                    AstarPath.active.GetNearest(toTile.centeredWorldLocation, toTile.parentMap.onlyUnwalkableGraph).node);
         } else {
             LocationGridTile nearestEdgeFrom = fromTile.GetNearestEdgeTileFromThis();
-            if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, NNConstraint.Default).node,
-                    AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, NNConstraint.Default).node)) {
+            if(PathUtilities.IsPathPossible(AstarPath.active.GetNearest(fromTile.centeredWorldLocation, fromTile.parentMap.onlyUnwalkableGraph).node,
+                    AstarPath.active.GetNearest(nearestEdgeFrom.centeredWorldLocation, nearestEdgeFrom.parentMap.onlyUnwalkableGraph).node)) {
                 LocationGridTile nearestEdgeTo = toTile.GetNearestEdgeTileFromThis();
-                return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, NNConstraint.Default).node,
-                    AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, NNConstraint.Default).node);
+                return PathUtilities.IsPathPossible(AstarPath.active.GetNearest(toTile.centeredWorldLocation, toTile.parentMap.onlyUnwalkableGraph).node,
+                    AstarPath.active.GetNearest(nearestEdgeTo.centeredWorldLocation, nearestEdgeTo.parentMap.onlyUnwalkableGraph).node);
             }
         }
         return false;
@@ -92,7 +92,15 @@ public class PathfindingManager : BaseMonoBehaviour {
 
     #region Map Creation
     public void CreatePathfindingGraphForLocation(InnerTileMap newMap) {
-        GridGraph gg = aStarPath.data.AddGraph(typeof(GridGraph)) as GridGraph;
+        var pathfindingGraph = CreatePathfindingGraph(newMap, typeof(RuinarchGridGraph), $"{newMap.region.name} Main Map");
+        newMap.pathfindingGraph = pathfindingGraph;
+        
+        var unwalkableGraph = CreatePathfindingGraph(newMap, typeof(GridGraph), $"{newMap.region.name} UnWalkable Map");
+        newMap.unwalkableGraph = unwalkableGraph;
+    }
+    private GridGraph CreatePathfindingGraph(InnerTileMap newMap, System.Type graphType, string name) {
+        GridGraph gg = aStarPath.data.AddGraph(graphType) as GridGraph;
+        gg.name = name;
         gg.cutCorners = false;
         gg.rotation = new Vector3(-90f, 0f, 0f);
         gg.nodeSize = nodeSize;
@@ -104,20 +112,13 @@ public class PathfindingManager : BaseMonoBehaviour {
         Vector3 pos = InnerMapManager.Instance.transform.position;
         pos.x += (newMap.width / 2f);
         pos.y += (newMap.height / 2f) + newMap.transform.localPosition.y;
-        // pos.x += (InnerTileMap.WestEdge / 2f) - 0.5f;
 
         gg.center = pos;
         gg.collision.use2D = true;
         gg.collision.type = ColliderType.Sphere;
         gg.collision.diameter = 0.7f;
-        // if (newMap.region.locationType == LOCATION_TYPE.DUNGEON) {
-        //     gg.collision.diameter = 2f;
-        // } else {
-        //     gg.collision.diameter = 0.9f;
-        // }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
-        AstarPath.active.Scan(gg);
-        newMap.pathfindingGraph = gg;
+        return gg;
     }
     #endregion
 
@@ -154,9 +155,6 @@ public class PathfindingManager : BaseMonoBehaviour {
     #region Graph Updates
     public void ApplyGraphUpdateSceneCoroutine(GraphUpdateScene gus) {
         StartCoroutine(UpdateGraph(gus));
-    }
-    public void ApplyGraphUpdateScene(GraphUpdateScene gus) {
-        gus.Apply();
     }
     private IEnumerator UpdateGraph(GraphUpdateScene gus) {
         yield return null;

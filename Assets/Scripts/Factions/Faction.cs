@@ -34,8 +34,10 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     public FactionIdeologyComponent ideologyComponent { get; }
     public FactionJobTriggerComponent factionJobTriggerComponent { get; private set; }
     public PartyQuestBoard partyQuestBoard { get; private set; }
-    
     public int newLeaderDesignationChance { get; private set; }
+    public uint pathfindingTag { get; private set; }
+    public uint pathfindingDoorTag { get; private set; }
+    
     private readonly WeightedDictionary<Character> newLeaderDesignationWeights;
 
     public Heirloom factionHeirloom { get; private set; }
@@ -103,7 +105,8 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
         isActive = data.isActive;
         isMajorFaction = data.isMajorFaction;
         newLeaderDesignationChance = data.newLeaderDesignationChance;
-
+        pathfindingTag = data.pathfindingTag;
+        pathfindingDoorTag = data.pathfindingDoorTag;
 
         characters = new List<Character>();
         relationships = new Dictionary<Faction, FactionRelationship>();
@@ -1005,6 +1008,15 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
     }
     #endregion
 
+    #region Pathfinding
+    public void SetPathfindingTag(uint tag) {
+        pathfindingTag = tag;
+    }
+    public void SetPathfindingDoorTag(uint tag) {
+        pathfindingDoorTag = tag;
+    }
+    #endregion
+    
     #region Loading
     public void LoadReferences(SaveDataFaction data) {
         if (!data.isLeaderPlayer) {

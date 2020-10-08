@@ -139,6 +139,7 @@ public class CharacterAIPath : AILerp {
         p.SetNotAllowedStructures(notAllowedStructures);
         p.SetOnlyAllowedStructures(onlyAllowedStructures);
         p.SetAvoidSettlements(marker.character.movementComponent.avoidSettlements);
+        p.calculatePartial = true;
         seeker.StartPath(p);
 
         // This is where we should search to

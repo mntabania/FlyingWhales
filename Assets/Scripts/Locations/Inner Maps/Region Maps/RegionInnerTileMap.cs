@@ -81,8 +81,8 @@ namespace Inner_Maps {
                     collectionGO.transform.localPosition = new Vector2(xPos, yPos);
                     
                     LocationGridTileCollectionItem locationGridTileCollectionItem = collectionGO.GetComponent<LocationGridTileCollectionItem>();
-                    LocationGridTileCollection collection =
-                        new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
+                    LocationGridTileCollection collection = new LocationGridTileCollection(new Vector2Int(x, y), locationGridTileCollectionItem);
+                    locationGridTileCollectionItem.Initialize(this);
                     locationGridTileCollections[x, y] = collection;
 
                     // spotItem.SetBuildingSpot(newSpot);

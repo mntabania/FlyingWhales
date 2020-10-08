@@ -189,7 +189,7 @@ public class GenericTileObject : TileObject {
                 LocationGridTile tile = occupiedTiles[j];
                 tile.SetHasBlueprint(true);
             }
-            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
+            structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
             structureObject.SetTilesInStructure(occupiedTiles.ToArray());
             blueprintOnTile = structureObject;
             gridTileLocation.SetIsDefault(false);
@@ -202,7 +202,7 @@ public class GenericTileObject : TileObject {
         HexTile hexTile = gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
         npcSettlement.AddTileToSettlement(hexTile);
         
-        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built);
+        blueprintOnTile.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Built, gridTileLocation.parentMap);
         LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(gridTileLocation.parentMap.region, blueprintOnTile.structureType, npcSettlement);
         blueprintOnTile.ClearOutUnimportantObjectsBeforePlacement();
     
@@ -247,7 +247,7 @@ public class GenericTileObject : TileObject {
             LocationGridTile tile = occupiedTiles[j];
             tile.SetHasBlueprint(true);
         }
-        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint);
+        structureObject.SetVisualMode(LocationStructureObject.Structure_Visual_Mode.Blueprint, gridTileLocation.parentMap);
         structureObject.SetTilesInStructure(occupiedTiles.ToArray());
         blueprintOnTile = structureObject;
     }

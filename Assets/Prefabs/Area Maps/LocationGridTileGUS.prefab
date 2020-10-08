@@ -66,7 +66,7 @@ MonoBehaviour:
   convex: 1
   minBoundsHeight: 1
   penaltyDelta: 0
-  modifyWalkability: 1
+  modifyWalkability: 0
   setWalkability: 0
   applyOnStart: 0
   applyOnScan: 1

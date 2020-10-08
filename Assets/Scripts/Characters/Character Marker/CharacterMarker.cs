@@ -146,6 +146,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 trait.OnInitiateMapObjectVisual(character);
             }
         }
+        UpdateTraversableTags();
+        UpdateTagPenalties();
         // UpdateNameplatePosition();
     }
 
@@ -1912,5 +1914,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
         
     }
     public void OnConstantPathComputed(ConstantPath constantPath) { }
+    #endregion
+
+    #region Tags
+    public void UpdateTraversableTags() {
+        seeker.traversableTags = character.movementComponent.traversableTags;
+    }
+    public void UpdateTagPenalties() {
+        seeker.tagPenalties = character.movementComponent.tagPenalties;
+    }
     #endregion
 }

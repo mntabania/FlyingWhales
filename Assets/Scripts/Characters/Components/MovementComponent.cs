@@ -23,9 +23,10 @@ public class MovementComponent : CharacterComponent {
     public bool isTravellingInWorld { get; private set; }
     public Region targetRegionToTravelInWorld { get; private set; }
     public List<LocationStructure> structuresToAvoid { get; }
-
     public int enableDiggingCounter { get; private set; }
     public int avoidSettlementsCounter { get; private set; }
+    public int traversableTags { get; private set; } 
+    public int[] tagPenalties { get; private set; }
 
     #region getters
     public float walkSpeed => owner.raceSetting.walkSpeed + (owner.raceSetting.walkSpeed * walkSpeedModifier);
@@ -36,6 +37,9 @@ public class MovementComponent : CharacterComponent {
 
     public MovementComponent() {
         structuresToAvoid = new List<LocationStructure>();
+        tagPenalties = new int[32];
+        traversableTags = -1; //enable all tags for now //by default all units cannot traverse obstacle tag
+        SetTagAsUnTraversable(2);
     }
     public MovementComponent(SaveDataMovementComponent data) {
         structuresToAvoid = new List<LocationStructure>();
@@ -53,6 +57,8 @@ public class MovementComponent : CharacterComponent {
         isTravellingInWorld = data.isTravellingInWorld;
         enableDiggingCounter = data.enableDiggingCounter;
         avoidSettlementsCounter = data.avoidSettlementsCounter;
+        traversableTags = data.traversableTags;
+        tagPenalties = data.tagPenalties;
     }
 
     public void UpdateSpeed() {
@@ -457,6 +463,27 @@ public class MovementComponent : CharacterComponent {
     }
     #endregion
 
+    #region Tags
+    public void SetTagAsTraversable(int tag) {
+        traversableTags = traversableTags | tag;
+        if (owner != null && owner.marker != null) {
+            owner.marker.UpdateTraversableTags();
+        }
+    }
+    public void SetTagAsUnTraversable(int tag) {
+        traversableTags = traversableTags & ~tag;
+        if (owner != null && owner.marker != null) {
+            owner.marker.UpdateTraversableTags();
+        }
+    }
+    public void SetPenaltyForTag(int tag, int penalty) {
+        tagPenalties[tag] = penalty;
+        if (owner != null && owner.marker != null) {
+            owner.marker.UpdateTagPenalties();
+        }
+    }
+    #endregion
+    
     #region Loading
     public void LoadReferences(SaveDataMovementComponent data) {
         if (!string.IsNullOrEmpty(data.targetRegionToTravelInWorld)) {
@@ -490,6 +517,8 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
 
     public int enableDiggingCounter;
     public int avoidSettlementsCounter;
+    public int traversableTags;
+    public int[] tagPenalties;
 
     #region Overrides
     public override void Save(MovementComponent data) {
@@ -516,6 +545,8 @@ public class SaveDataMovementComponent : SaveData<MovementComponent> {
 
         enableDiggingCounter = data.enableDiggingCounter;
         avoidSettlementsCounter = data.avoidSettlementsCounter;
+        traversableTags = data.traversableTags;
+        tagPenalties = data.tagPenalties;
     }
 
     public override MovementComponent Load() {

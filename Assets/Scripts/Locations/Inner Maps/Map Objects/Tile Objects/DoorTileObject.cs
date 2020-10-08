@@ -34,7 +34,7 @@ public class DoorTileObject : TileObject {
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         base.OnPlaceTileObjectAtTile(tile);
-        mapVisual.InitializeGUS(Vector2.zero, Vector2.one);
+        mapVisual.InitializeGUS(Vector2.zero, Vector2.one, tile);
     }
 
     public void Open() {
@@ -49,7 +49,7 @@ public class DoorTileObject : TileObject {
         Debug.Log($"Closed door {this} at {structureLocation} {gridTileLocation}");
         isOpen = false;
         mapVisual.SetVisualAlpha(1f);
-        mapVisual.InitializeGUS(Vector2.zero, Vector2.one);
+        mapVisual.InitializeGUS(Vector2.zero, Vector2.one, gridTileLocation);
     }
 }
 
