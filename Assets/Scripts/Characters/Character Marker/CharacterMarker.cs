@@ -148,6 +148,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         UpdateTraversableTags();
         UpdateTagPenalties();
+        seeker.graphMask = InnerMapManager.Instance.mainGraphMask;
         // UpdateNameplatePosition();
     }
 

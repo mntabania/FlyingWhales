@@ -63,13 +63,15 @@ namespace Inner_Maps {
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         public List<LocationStructure> worldKnownDemonicStructures { get; private set; }
-        
+        public GraphMask mainGraphMask { get; private set; }
+
         public bool isAnInnerMapShowing => currentlyShowingMap != null;
         private LocationGridTile lastClickedTile;
         
         #region Monobehaviours
         private void Awake() {
             Instance = this;
+            mainGraphMask = 0;
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
@@ -289,6 +291,7 @@ namespace Inner_Maps {
             newMap.transform.localPosition = _nextMapPos;
             newMap.UpdateTilesWorldPosition();
             PathfindingManager.Instance.CreatePathfindingGraphForLocation(newMap);
+            mainGraphMask = mainGraphMask | GraphMask.FromGraph(newMap.pathfindingGraph);
             _nextMapPos = new Vector3(_nextMapPos.x, _nextMapPos.y + newMap.height + 50, _nextMapPos.z);
             newMap.OnMapGenerationFinished();
         }
