@@ -5,6 +5,7 @@ using Inner_Maps.Location_Structures;
 using Tutorial;
 using UnityEngine;
 using UtilityScripts;
+using Traits;
 namespace Inner_Maps.Location_Structures {
     public class DefilerRoom : StructureRoom {
         
@@ -170,7 +171,10 @@ namespace Inner_Maps.Location_Structures {
                     BrainwashDone();
                 } else {
                     chosenTarget.traitContainer.AddTrait(chosenTarget, "Restrained");
-
+                    Prisoner prisonerTrait = chosenTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner"); 
+                    if(prisonerTrait != null) {
+                        prisonerTrait.SetPrisonerOfFaction(PlayerManager.Instance.player.playerFaction);
+                    }
                     //spawn skeleton to carry target
                     skeleton = CharacterManager.Instance.CreateNewSummon(SUMMON_TYPE.Skeleton, FactionManager.Instance.vagrantFaction, null, chosenTarget.currentRegion, className: "Archer");
                     skeleton.SetIsVolatile(true);
