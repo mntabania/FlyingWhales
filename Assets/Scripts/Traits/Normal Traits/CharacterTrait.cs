@@ -249,7 +249,20 @@ namespace Traits {
                         if (willReact) {
                             if (owner.marker) {
                                 if (!targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
-                                    owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                    //If character considers the target a prisoner, do not assume trespassing
+                                    //This might happen because if there is still no prison, the designated prison of the settlement is the city center
+                                    //When a prisoner is seen in there the other characters might assume that he is trespassing when in fact he is not because he is imprisoned
+                                    //So if the character that saw him considers him a prisoner, he must never assume that the character is imprisoned
+                                    bool willCreateAssumption = true;
+                                    if (targetCharacter.traitContainer.HasTrait("Prisoner")) {
+                                        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                                        if (prisoner.IsPrisonerOf(owner)) {
+                                            willCreateAssumption = false;
+                                        }
+                                    }
+                                    if (willCreateAssumption) {
+                                        owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                    }
                                 }
                             }
                         }

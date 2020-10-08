@@ -184,6 +184,14 @@ public class RestrainCharacter : GoapAction {
     public void AfterRestrainSuccess(ActualGoapNode goapNode) {
         //**Effect 1**: Target gains Restrained trait.
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Restrained", goapNode.actor);
+        if (goapNode.poiTarget.traitContainer.HasTrait("Prisoner")) {
+            Prisoner prisoner = goapNode.poiTarget.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+            if(goapNode.associatedJobType == JOB_TYPE.APPREHEND || goapNode.associatedJobType == JOB_TYPE.KIDNAP_RAID) {
+                prisoner.SetPrisonerOfFaction(goapNode.actor.faction);
+            } else {
+                prisoner.SetPrisonerOfCharacter(goapNode.actor);
+            }
+        }
     }
     #endregion
 

@@ -1052,7 +1052,18 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\n-Target is carrying a character";
                         if(carriedCharacter.traitContainer.HasTrait("Restrained", "Unconscious") && !carriedCharacter.isDead && !carriedCharacter.IsWantedBy(actor.faction)) {
                             debugLog = debugLog + ("\n-Will create Assault assumption on " + targetCharacter.name);
-                            actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.ASSAULT, REACTION_STATUS.WITNESSED);
+
+                            //If carried character is a prisoner, and the reactor considers that carried character as a prisoner also, do not create assumption
+                            bool willCreateAssumption = true;
+                            if (carriedCharacter.traitContainer.HasTrait("Prisoner")) {
+                                Prisoner prisoner = carriedCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                                if (prisoner.IsPrisonerOf(actor)) {
+                                    willCreateAssumption = false;
+                                }
+                            }
+                            if (willCreateAssumption) {
+                                actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.ASSAULT, REACTION_STATUS.WITNESSED);
+                            }
                         } else if (targetCharacter.currentJob != null && targetCharacter.currentJob.jobType == JOB_TYPE.BURY_SERIAL_KILLER_VICTIM) {
                             debugLog = debugLog + ("\n-Will create Murder assumption on " + targetCharacter.name);
                             actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);
