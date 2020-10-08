@@ -14,7 +14,7 @@ namespace Traits {
             //trait.SetOnRemoveAction(onRemoveAction);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             ApplyPOITraitInteractions(traitable, trait);
-            traitable.traitContainer.SwitchOnTrait(trait.name);
+            //traitable.traitContainer.SwitchOnTrait(trait.name);
             trait.OnAddTrait(traitable);
 
             int duration = overrideDuration;
@@ -46,7 +46,7 @@ namespace Traits {
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
             // traitable.traitContainer.RemoveScheduleTicket(trait.name, bySchedule);
             //trait.RemoveExpiryTicket(traitable);
-            traitable.traitContainer.SwitchOffTrait(trait.name);
+            //traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
             trait.UnapplyMoodEffects(traitable);

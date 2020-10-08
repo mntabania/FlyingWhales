@@ -892,7 +892,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateTriggerFlawConfirmation(object o) {
         string traitName = (string) o;
-        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string question = "Are you sure you want to trigger " + traitName + "?";
         string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
         string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
@@ -922,14 +922,14 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
     }
     private bool CanActivateTriggerFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         if (trait != null) {
             return trait.CanFlawBeTriggered(activeCharacter);
         }
         return false;
     }
     private void OnHoverEnterFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
             traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
             manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost

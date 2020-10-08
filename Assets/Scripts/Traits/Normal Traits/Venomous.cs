@@ -20,7 +20,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            Poisoned poisoned = addedTo.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+            Poisoned poisoned = addedTo.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
             if(poisoned != null) {
                 poisoned.SetIsVenomous();
             }

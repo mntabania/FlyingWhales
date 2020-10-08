@@ -33,6 +33,7 @@ namespace Traits {
             weights = new WeightedDictionary<string>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Initiate_Map_Visual_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Destroy_Map_Visual_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
         #region Loading

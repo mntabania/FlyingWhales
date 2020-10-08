@@ -69,7 +69,7 @@ public class Assault : GoapAction {
                     if (node.associatedJobType == JOB_TYPE.APPREHEND) {
                         bool targetHasHeinousOrSeriousCrime = false;
                         if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                            targetHasHeinousOrSeriousCrime = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal").HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
+                            targetHasHeinousOrSeriousCrime = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal").HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
                             //targetHasHeinousOrSeriousCrime = crimeData.crimeSeverity == CRIME_SEVERITY.Serious || crimeData.crimeSeverity == CRIME_SEVERITY.Heinous;
                         }
                         if (targetHasHeinousOrSeriousCrime) {
@@ -165,7 +165,7 @@ public class Assault : GoapAction {
                     bool targetHasHeinousOrSeriousCrime = false;
                     bool targetHasMisdemeanour = false;
                     if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                        Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                         targetHasHeinousOrSeriousCrime = criminalTrait.HasCrime(CRIME_SEVERITY.Serious, CRIME_SEVERITY.Heinous);
                         targetHasMisdemeanour = criminalTrait.HasCrime(CRIME_SEVERITY.Misdemeanor);
 

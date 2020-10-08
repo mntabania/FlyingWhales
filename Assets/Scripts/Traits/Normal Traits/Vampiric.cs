@@ -73,7 +73,7 @@ namespace Traits {
                 Character targetCharacter = GetDrinkBloodTarget(character);
                 if(targetCharacter != null) {
                     bool triggerGrieving = false;
-                    Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+                    Griefstricken griefstricken = character.traitContainer.GetTraitOrStatus<Griefstricken>("Griefstricken");
                     if (griefstricken != null) {
                         triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                     }

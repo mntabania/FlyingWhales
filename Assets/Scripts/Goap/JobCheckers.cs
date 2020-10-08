@@ -50,7 +50,7 @@ public partial class InteractionManager {
             && character.homeSettlement != null 
             && character.homeSettlement.prison != null
             /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/) {
-            Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             if (criminalTrait == null || !criminalTrait.isImprisoned) {
                 if (character.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     return false;

@@ -40,7 +40,7 @@ public class MakeLove : GoapAction {
         }
         int cost = UtilityScripts.Utilities.Rng.Next(80, 121);
         costLog += $" +{cost}(Initial)";
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
+        Trait trait = actor.traitContainer.GetTraitOrStatus<Trait>("Chaste", "Lustful");
         if (trait != null && trait.name == "Chaste") {
             cost += 2000;
             costLog += " +2000(Chaste)";

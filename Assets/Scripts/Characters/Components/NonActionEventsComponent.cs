@@ -219,8 +219,8 @@ public class NonActionEventsComponent : CharacterComponent {
             strLog += "\n\nTarget is unsociable";
         }
 
-        Trait angryActor = disguisedActor.traitContainer.GetNormalTrait<Trait>("Angry");
-        Trait angryTarget = disguisedTarget.traitContainer.GetNormalTrait<Trait>("Angry");
+        Trait angryActor = disguisedActor.traitContainer.GetTraitOrStatus<Trait>("Angry");
+        Trait angryTarget = disguisedTarget.traitContainer.GetTraitOrStatus<Trait>("Angry");
         
         if (angryActor != null && angryActor.responsibleCharacters != null && angryActor.responsibleCharacters.Contains(disguisedTarget)) {
             //actor is angry with target
@@ -307,10 +307,10 @@ public class NonActionEventsComponent : CharacterComponent {
         Traits.Plagued ownerPlague = null;
         Traits.Plagued targetPlague = null;
         if (owner.traitContainer.HasTrait("Plagued")) {
-            ownerPlague = owner.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
+            ownerPlague = owner.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
         }
         if (target.traitContainer.HasTrait("Plagued")) {
-            targetPlague = target.traitContainer.GetNormalTrait<Traits.Plagued>("Plagued");
+            targetPlague = target.traitContainer.GetTraitOrStatus<Traits.Plagued>("Plagued");
         }
         if (ownerPlague != null && targetPlague == null) {
             ownerPlague.ChatInfection(target);
@@ -425,7 +425,7 @@ public class NonActionEventsComponent : CharacterComponent {
             }
         }
         if(chance < 70) {
-            Trait angry = disguisedTarget.traitContainer.GetNormalTrait<Trait>("Angry");
+            Trait angry = disguisedTarget.traitContainer.GetTraitOrStatus<Trait>("Angry");
             if (angry?.responsibleCharacters != null && angry.responsibleCharacters.Contains(disguisedActor)) {
                 //target is angry at actor
                 owner.relationshipContainer.AdjustOpinion(owner, disguisedTarget, "Rebuffed courtship", -8, "engaged in disastrous flirting");

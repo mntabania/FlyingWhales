@@ -238,7 +238,7 @@ public class CrimeManager : BaseMonoBehaviour {
                 bool hasAlreadyReacted = false;
                 Criminal existingCriminalTrait = null; 
                 if (actor.traitContainer.HasTrait("Criminal")) {
-                    existingCriminalTrait = actor.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    existingCriminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     hasAlreadyReacted = existingCriminalTrait.IsCrimeAlreadyWitnessedBy(witness, crime);
                 }
                 if (hasAlreadyReacted) {
@@ -488,7 +488,7 @@ public class CrimeData : ISavable {
         if (IsWitness(character)) {
             if (!HasWanted()) {
                 if (AreAllWitnessesDead()) {
-                    criminal.traitContainer.GetNormalTrait<Criminal>("Criminal").RemoveCrime(this);
+                    criminal.traitContainer.GetTraitOrStatus<Criminal>("Criminal").RemoveCrime(this);
 
                     Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

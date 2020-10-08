@@ -469,9 +469,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.InitialPlaceMarkerAt(tile); //since normal characters are already placed in their areas.
         //AddInitialAwareness();
         SubscribeToSignals();
-        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-            traitContainer.allTraitsAndStatuses[i].OnOwnerInitiallyPlaced(this);
-        }
+
+        //Removed this because, it is no longer used
+        //for (int i = 0; i < traitContainer.traits.Count; i++) {
+        //    traitContainer.traits[i].OnOwnerInitiallyPlaced(this);
+        //}
+        //for (int i = 0; i < traitContainer.statuses.Count; i++) {
+        //    traitContainer.statuses[i].OnOwnerInitiallyPlaced(this);
+        //}
     }
 
     #region Signals
@@ -750,12 +755,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public virtual void PerTickDuringMovement() {
-        for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
-            Trait trait = traitContainer.allTraitsAndStatuses[i];
-            if (trait.PerTickOwnerMovement()) {
-                break;
+        List<Trait> traitOverrideFunctions = traitContainer.GetTraitOverrideFunctions(TraitManager.Per_Tick_Movement);
+        if (traitOverrideFunctions != null) {
+            for (int i = 0; i < traitOverrideFunctions.Count; i++) {
+                Trait trait = traitOverrideFunctions[i];
+                if (trait.PerTickOwnerMovement()) {
+                    break;
+                }
             }
         }
+        //for (int i = 0; i < traitContainer.allTraitsAndStatuses.Count; i++) {
+        //    Trait trait = traitContainer.allTraitsAndStatuses[i];
+        //    if (trait.PerTickOwnerMovement()) {
+        //        break;
+        //    }
+        //}
     }
     #endregion
 
@@ -775,7 +789,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void RemoveClass() {
         if (_characterClass == null) { return; }
-        traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait<Trait>(_characterClass.traitNames)); //Remove traits from class
+        traitContainer.RemoveTrait(this, traitContainer.GetTraitOrStatus<Trait>(_characterClass.traitNames)); //Remove traits from class
         _characterClass = null;
     }
     public void AssignClass(string className, bool isInitial = false) {
@@ -2681,7 +2695,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void CreateDefaultTraits() {
         traitContainer.AddTrait(this, "Character Trait");
         traitContainer.AddTrait(this, "Flammable");
-        defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+        defaultCharacterTrait = traitContainer.GetTraitOrStatus<CharacterTrait>("Character Trait");
     }
     public void CreateRandomInitialTraits(List<string> buffPool = null, List<string> neutralPool = null, List<string> flawPool = null) {
         if (minion == null && race != RACE.DEMON && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
@@ -2714,7 +2728,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 throw new Exception("There are no buff traits!");
             }
             traitContainer.AddTrait(this, chosenBuffTraitName);
-            Trait buffTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffTraitName);
+            Trait buffTrait = traitContainer.GetTraitOrStatus<Trait>(chosenBuffTraitName);
             if (buffTrait.mutuallyExclusive != null) {
                 buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
                 neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
@@ -2737,7 +2751,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 
                 traitContainer.AddTrait(this, chosenBuffOrNeutralTraitName);
-                Trait buffOrNeutralTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffOrNeutralTraitName);
+                Trait buffOrNeutralTrait = traitContainer.GetTraitOrStatus<Trait>(chosenBuffOrNeutralTraitName);
                 if (buffOrNeutralTrait.mutuallyExclusive != null) {
                     buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
                     neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
@@ -4058,7 +4072,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                             int chance = UnityEngine.Random.Range(0, 100);
                             log = $"{log}\n - Roll: {chance.ToString()}";
                             if (chance < 30) {
-                                Lazy lazy = traitContainer.GetNormalTrait<Lazy>("Lazy");
+                                Lazy lazy = traitContainer.GetTraitOrStatus<Lazy>("Lazy");
                                 if (lazy.TriggerLazy()) {
                                     log = $"{log}\n - Character triggered lazy, not going to do job, and cancel it";
                                     logComponent.PrintLogIfActive(log);
@@ -5764,7 +5778,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Crimes
     public bool IsWantedBy(Faction faction) {
         if (traitContainer.HasTrait("Criminal") && faction != null) {
-            Criminal criminalTrait = traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             return criminalTrait.IsWantedBy(faction);
         }
         return false;
@@ -5991,10 +6005,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         moodComponent.SetSaveDataMoodComponent(data.moodComponent);
 
         if (traitContainer.HasTrait("Character Trait")) {
-            defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
+            defaultCharacterTrait = traitContainer.GetTraitOrStatus<CharacterTrait>("Character Trait");
         }
         if (traitContainer.HasTrait("Necromancer")) {
-            necromancerTrait = traitContainer.GetNormalTrait<Necromancer>("Necromancer");
+            necromancerTrait = traitContainer.GetTraitOrStatus<Necromancer>("Necromancer");
         }
     }
     #endregion

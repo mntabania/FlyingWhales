@@ -65,7 +65,7 @@ namespace Inner_Maps.Location_Structures {
                 ConfirmJoin, "Join Faction");
         }
         private bool CanChooseCharacterToJoin(Character character) {
-            return character.traitContainer.GetNormalTrait<Trait>("Blessed") == null 
+            return character.traitContainer.GetTraitOrStatus<Trait>("Blessed") == null 
                    && PlayerManager.Instance.player.mana >= GetJoinManaCostForCharacter(character);
         }
         private void OnPickCharacter(object obj) {
@@ -127,7 +127,7 @@ namespace Inner_Maps.Location_Structures {
                 UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Character");
         }
         private bool CanChooseCharacterToLeave(Character character) {
-            return character.traitContainer.GetNormalTrait<Trait>("Blessed") == null 
+            return character.traitContainer.GetTraitOrStatus<Trait>("Blessed") == null 
                    && PlayerManager.Instance.player.mana >= GetLeaveManaCostForCharacter(character);
         }
         private void ConfirmLeave(object obj1, object obj2) {

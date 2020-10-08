@@ -200,7 +200,7 @@ public class CombatManager : BaseMonoBehaviour {
         int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
         traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire, true, characterResponsible, showHPBar: true);
         if (traitable.traitContainer.HasTrait("Burning")) {
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+            Burning burningTrait = traitable.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
                     bs = new BurningSource();

@@ -67,14 +67,14 @@ public class CleanseTilesState : CharacterState {
         }
         LocationGridTile nearestTile = null;
         float nearest = 99999f;
-        if (currentTarget != null && currentTarget.genericTileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned") != null) {
+        if (currentTarget != null && currentTarget.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned") != null) {
             nearest = Vector2.Distance(stateComponent.owner.worldObject.transform.position, currentTarget.worldLocation);
             nearestTile = currentTarget;
         }
 
         for (int i = 0; i < stateComponent.owner.homeSettlement.settlementJobTriggerComponent.poisonedTiles.Count; i++) {
             LocationGridTile tile = stateComponent.owner.homeSettlement.settlementJobTriggerComponent.poisonedTiles[i];
-            Poisoned poisoned = tile.genericTileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
+            Poisoned poisoned = tile.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned");
             if (poisoned != null && poisoned.cleanser == null) {
                 float dist = Vector2.Distance(stateComponent.owner.worldObject.transform.position, tile.worldLocation);
                 if (dist < nearest) {
@@ -86,7 +86,7 @@ public class CleanseTilesState : CharacterState {
         if (nearestTile != null) {
             _isCleansingTile = true;
             currentTarget = nearestTile;
-            Poisoned poisoned = nearestTile.genericTileObject.traitContainer.GetNormalTrait<Poisoned>("Poisoned"); 
+            Poisoned poisoned = nearestTile.genericTileObject.traitContainer.GetTraitOrStatus<Poisoned>("Poisoned"); 
             Assert.IsNotNull(poisoned, $"Poisoned of {nearestTile} is null.");
             poisoned.SetCleanser(stateComponent.owner);
             stateComponent.owner.marker.GoTo(nearestTile, TryCleanse);

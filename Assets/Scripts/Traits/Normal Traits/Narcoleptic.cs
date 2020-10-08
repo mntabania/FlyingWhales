@@ -13,6 +13,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
         #region Overrides
