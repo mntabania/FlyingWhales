@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Traits;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -67,8 +68,11 @@ namespace Interrupts {
                     validTraits.Add(traitName);
                 }   
             }
-            Assert.IsTrue(validTraits.Count > 0, $"Trying to add random negative trait to {target.name}, but could not find any traits to add to him/her!");
-            return CollectionUtilities.GetRandomElement(validTraits);
+            // Assert.IsTrue(validTraits.Count > 0, $"Trying to add random negative trait to {target.name}, but could not find any traits to add to him/her!");
+            if (validTraits.Count > 0) {
+                return CollectionUtilities.GetRandomElement(validTraits);    
+            }
+            return string.Empty;
         }
         private string GetRandomValidNegativeStatus(Character target) {
             List<string> validTraits = new List<string>();
@@ -78,8 +82,11 @@ namespace Interrupts {
                     validTraits.Add(traitName);
                 }   
             }
-            Assert.IsTrue(validTraits.Count > 0, $"Trying to add random negative status to {target.name}, but could not find any traits to add to him/her!");
-            return CollectionUtilities.GetRandomElement(validTraits);
+            // Assert.IsTrue(validTraits.Count > 0, $"Trying to add random negative status to {target.name}, but could not find any traits to add to him/her!");
+            if (validTraits.Count > 0) {
+                return CollectionUtilities.GetRandomElement(validTraits);    
+            }
+            return string.Empty;
         }
     }
 }
