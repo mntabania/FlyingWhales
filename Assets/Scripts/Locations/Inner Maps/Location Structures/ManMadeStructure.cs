@@ -17,7 +17,7 @@ namespace Inner_Maps.Location_Structures {
         
         protected ManMadeStructure(STRUCTURE_TYPE structureType, Region location) : base(structureType, location) { }
         protected ManMadeStructure(Region location, SaveDataLocationStructure data) : base(location, data) { }
-
+        
         #region Listeners
         protected override void SubscribeListeners() {
             if (hasBeenDestroyed) { return; }
@@ -64,7 +64,6 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void OnWallDamaged(StructureWallObject structureWall, int amount) {
-            Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
             if (structureWalls != null && structureWalls.Contains(structureWall)) {
                 //create repair job
                 structureObj.RescanPathfindingGridOfStructure();
