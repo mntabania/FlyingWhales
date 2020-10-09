@@ -13,6 +13,7 @@ public class VampiricEmbrace : GoapAction {
         actionIconString = GoapActionStateDB.Drink_Blood_Icon;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
         isNotificationAnIntel = true;
+        canBeAdvertisedEvenIfTargetIsUnavailable = true;
         logTags = new[] {LOG_TAG.Life_Changes};
     }
 
