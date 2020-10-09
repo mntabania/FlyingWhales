@@ -9,7 +9,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
 
     private SpriteRenderer[] _spriteRenderers;
     private BoxCollider2D _unpassableCollider;
-
+    
     public SpriteRenderer[] spriteRenderers {
         get {
             if (_spriteRenderers == null) {
@@ -55,7 +55,21 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
             } else {
                 spriteRenderer.sprite = wallAsset.damaged;
             }
-            
+        }
+    }
+    public void ResetWallAssets(RESOURCE resource) {
+        for (int i = 0; i < spriteRenderers.Length; i++) {
+            SpriteRenderer spriteRenderer = spriteRenderers[i];
+            string orientation;
+            if (spriteRenderer.sprite.name.Contains("vertical")) {
+                orientation = "vertical";
+            } else if (spriteRenderer.sprite.name.Contains("horizontal")) {
+                orientation = "horizontal";
+            } else {
+                orientation = "corner";
+            }
+            WallAsset wallAsset = InnerMapManager.Instance.GetWallAsset(resource, orientation);
+            spriteRenderer.sprite = wallAsset.undamaged;
         }
     }
     /// <summary>
@@ -104,6 +118,7 @@ public class WallVisual : MapObjectVisual<StructureWallObject> {
         base.Reset();
         _unpassableCollider.enabled = true;
         visionTrigger.gameObject.SetActive(false);
+        gameObject.SetActive(true);
     }
 
     public override void UpdateTileObjectVisual(StructureWallObject obj) { }

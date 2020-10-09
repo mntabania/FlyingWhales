@@ -457,6 +457,11 @@ public class LocationStructureObject : PooledObject {
         for (int i = 0; i < connectors.Length; i++) {
             connectors[i].Reset();
         }
+        for (int i = 0; i < wallVisuals.Length; i++) {
+            WallVisual wallVisual = wallVisuals[i];
+            wallVisual.ResetWallAssets(_thinWallResource);
+            wallVisual.Reset();
+        }    
     }
     #endregion
 
