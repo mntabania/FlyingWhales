@@ -4,9 +4,9 @@ using Inner_Maps.Location_Structures;
 using Logs;
 using UnityEngine;
 
-public class BuildStructure : GoapAction {
+public class BuildBlueprint : GoapAction {
 
-    public BuildStructure() : base(INTERACTION_TYPE.BUILD_STRUCTURE) {
+    public BuildBlueprint() : base(INTERACTION_TYPE.BUILD_BLUEPRINT) {
         actionIconString = GoapActionStateDB.Build_Icon;
         showNotification = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };

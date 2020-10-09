@@ -6,6 +6,7 @@ using System.Linq;
 using Factions.Faction_Types;
 using Inner_Maps;
 using UnityEngine.UI;
+using UtilityScripts;
 
 public class FactionManager : BaseMonoBehaviour {
 
@@ -336,6 +337,34 @@ public class FactionManager : BaseMonoBehaviour {
     //    int totalFactionLvl = allFactions.Where(x => x.isActive).Sum(x => x.level);
     //    return totalFactionLvl / activeFactionsCount;
     //}
+    public void RerollFactionRelationships(Faction faction, Character leader, bool defaultToNeutral, Action<FACTION_RELATIONSHIP_STATUS, Faction, Faction> onSetRelationshipAction = null) {
+        for (int i = 0; i < allFactions.Count; i++) {
+            Faction otherFaction = allFactions[i];
+            if(otherFaction.id != faction.id) {
+                FactionRelationship factionRelationship = faction.GetRelationshipWith(otherFaction);
+                if (otherFaction.isPlayerFaction) {
+                    //If Demon Worshipper, friendly with player faction
+                    factionRelationship.SetRelationshipStatus(faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship) ? 
+                        FACTION_RELATIONSHIP_STATUS.Friendly : FACTION_RELATIONSHIP_STATUS.Hostile);
+                } else if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
+                    //Check each Faction Leader of other existing factions if available:
+                    if (leader.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
+                        //If this one's Faction Leader considers that an Enemy or Rival, war with that faction
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                    } else if (leader.relationshipContainer.IsFriendsWith(otherFactionLeader)) {
+                        //If this one's Faction Leader considers that a Friend or Close Friend, friendly with that faction
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Friendly);
+                    } else {
+                        if (defaultToNeutral) {
+                            //The rest should be set as neutral
+                            factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);    
+                        }
+                    }
+                }
+                onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
+            }
+        }
+    }
     #endregion
 
     #region Faction Ideologies
@@ -348,6 +377,46 @@ public class FactionManager : BaseMonoBehaviour {
             return data;
         } else {
             throw new System.Exception($"{ideologyStr} has no data!");
+        }
+    }
+    public void RerollPeaceTypeIdeology(Faction faction, Character leader) {
+        if (leader.traitContainer.HasTrait("Hothead", "Treacherous", "Evil")) {
+            Warmonger warmonger = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+            faction.factionType.AddIdeology(warmonger);
+        } else {
+            Peaceful peaceful = CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
+            faction.factionType.AddIdeology(peaceful);
+        }
+    }
+    public void RerollInclusiveTypeIdeology(Faction faction, Character leader) {
+        if (GameUtilities.RollChance(60)) {
+            Inclusive inclusive = CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
+            faction.factionType.AddIdeology(inclusive);
+        } else {
+            Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
+            if (GameUtilities.RollChance(60)) {
+                exclusive.SetRequirement(leader.race);
+            } else {
+                exclusive.SetRequirement(leader.gender);
+            }
+            faction.factionType.AddIdeology(exclusive);
+        }
+    }
+    public void RerollReligionTypeIdeology(Faction faction, Character leader) {
+        if (leader.traitContainer.HasTrait("Cultist")) {
+            DemonWorship inclusive = CreateIdeology<DemonWorship>(FACTION_IDEOLOGY.Demon_Worship);
+            faction.factionType.AddIdeology(inclusive);
+        } else if (leader.race == RACE.ELVES) {
+            NatureWorship natureWorship = CreateIdeology<NatureWorship>(FACTION_IDEOLOGY.Nature_Worship);
+            faction.factionType.AddIdeology(natureWorship);
+        } else if (leader.race == RACE.HUMANS) {
+            DivineWorship divineWorship = CreateIdeology<DivineWorship>(FACTION_IDEOLOGY.Divine_Worship);
+            faction.factionType.AddIdeology(divineWorship);
+        }
+    }
+    public void RevalidateFactionCrimes(Faction faction, Character leader) {
+        if (leader.traitContainer.HasTrait("Vampire")) {
+            faction.factionType.RemoveCrime(CRIME_TYPE.Vampire);
         }
     }
     #endregion

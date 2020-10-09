@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using Logs;
 using UnityEngine;
 using UtilityScripts;
@@ -19,6 +20,7 @@ namespace Interrupts {
             if (actor.behaviourComponent.isInVampireBatForm) {
                 actor.behaviourComponent.SetIsInVampireBatForm(false);
                 actor.movementComponent.AdjustSpeedModifier(-0.20f);
+                actor.movementComponent.SetTagAsUnTraversable(InnerMapManager.Obstacle_Tag);
                 if (actor.visuals != null) {
                     actor.visuals.UpdateAllVisuals(actor);
                 }

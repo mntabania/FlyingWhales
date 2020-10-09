@@ -261,7 +261,7 @@ namespace Traits {
                 }
             }
             if (!hasCreatedPersonalApprehend) {
-                if (owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.SETTLEMENT)) {
+                if (owner.currentSettlement != null && owner.currentSettlement is NPCSettlement settlement && (settlement.locationType == LOCATION_TYPE.VILLAGE)) {
                     settlement.settlementJobTriggerComponent.TryCreateApprehend(owner);
                 }
             }

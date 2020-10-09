@@ -38,6 +38,7 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
                 DetermineIfDesireOrDislike(character);
+                character.behaviourComponent.AddBehaviourComponent(typeof(VampireBehaviour));
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -48,6 +49,7 @@ namespace Traits {
                 character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
+                character.behaviourComponent.RemoveBehaviourComponent(typeof(VampireBehaviour));
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }

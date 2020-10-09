@@ -386,7 +386,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private bool HasSettlementNeighbour() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile neighbour = AllNeighbours[i];
-            if (neighbour.settlementOnTile != null && neighbour.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if (neighbour.settlementOnTile != null && neighbour.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
                 return true;
             }
         }
@@ -463,11 +463,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return IsPartOfVillage() || IsNextToVillage();
     }
     public bool IsPartOfVillage() {
-        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
+        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
     }
     public bool IsPartOfVillage(out BaseSettlement settlement) {
         settlement = settlementOnTile;
-        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
+        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
     }
     public bool IsNextToVillage() {
         for (int i = 0; i < AllNeighbours.Count; i++) {

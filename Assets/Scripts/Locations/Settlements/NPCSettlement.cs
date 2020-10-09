@@ -116,7 +116,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         }
     }
     private void LoadRuler(string rulerID) {
-        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+        if (locationType == LOCATION_TYPE.VILLAGE) {
             //only load rulers if location type is settlement
             if (!string.IsNullOrEmpty(rulerID)) {
                 ruler = DatabaseManager.Instance.characterDatabase.GetCharacterByPersistentID(rulerID);
@@ -158,7 +158,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+        if (locationType == LOCATION_TYPE.VILLAGE) {
             settlementJobTriggerComponent.SubscribeToListeners();    
         }
     }
@@ -175,7 +175,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+        if (locationType == LOCATION_TYPE.VILLAGE) {
             settlementJobTriggerComponent.UnsubscribeListeners();
         }
     }
@@ -255,7 +255,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             //region.AddResident(character);
             character.SetHomeSettlement(this);
             if (character.race == RACE.DEMON || character is Summon) { return true; }
-            if (character.isNormalCharacter && locationType == LOCATION_TYPE.SETTLEMENT) {
+            if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 classManager.OnAddResident(character);
                 jobPriorityComponent.OnAddResident(character);    
             }
@@ -267,7 +267,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         if (base.RemoveResident(character)) {
             //region.RemoveResident(character);
             character.SetHomeSettlement(null);
-            if (character.isNormalCharacter && locationType == LOCATION_TYPE.SETTLEMENT) {
+            if (character.isNormalCharacter && locationType == LOCATION_TYPE.VILLAGE) {
                 classManager.OnRemoveResident(character);
                 jobPriorityComponent.OnRemoveResident(character);
             }
@@ -1161,7 +1161,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
 
     #region Settlement Type
     public void SetSettlementType(SETTLEMENT_TYPE settlementType) {
-        if (locationType == LOCATION_TYPE.SETTLEMENT) {
+        if (locationType == LOCATION_TYPE.VILLAGE) {
             //Only set settlement type for villages. Do not include Dungeons. NOTE: Might be better to separate villages and dungeons into their own classes.
             this.settlementType = LandmarkManager.Instance.CreateSettlementType(settlementType);
             //NOTE: For now always apply default settings. This will change in the future.

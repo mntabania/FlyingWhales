@@ -315,7 +315,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         List<NPCSettlement> villages = null;
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if(settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if(settlement.locationType == LOCATION_TYPE.VILLAGE) {
                 if(villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }
@@ -329,7 +329,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         List<NPCSettlement> villages = null;
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if(settlement.locationType == LOCATION_TYPE.SETTLEMENT && settlement.owner != null && settlement.residents.Count > 0) {
+            if(settlement.locationType == LOCATION_TYPE.VILLAGE && settlement.owner != null && settlement.residents.Count > 0) {
                 if(villages == null) { villages = new List<NPCSettlement>(); }
                 villages.Add(settlement);
             }
@@ -342,7 +342,7 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     public NPCSettlement GetFirstVillageSettlementInRegionWithAliveResident(Region region, Faction faction) {
         for (int i = 0; i < allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = allNonPlayerSettlements[i];
-            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.SETTLEMENT)
+            if (settlement.region == region && (settlement.locationType == LOCATION_TYPE.VILLAGE)
                 && settlement.HasAliveResident()
                 && (settlement.owner == null || faction == null || !faction.IsFriendlyWith(settlement.owner))
                 && (settlement.owner != faction || (settlement.owner == null && faction == null))) {
@@ -446,22 +446,6 @@ public partial class LandmarkManager : BaseMonoBehaviour {
             HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
             Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureType.ToString()} for settlement {settlement.name}");
             PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureType, structureResource);
-            yield return null;
-        }
-    }
-    /// <summary>
-    /// Place structures for settlement. This requires that the settlement has enough unoccupied hex tiles.
-    /// NOTE: This function also creates the LocationStructure instances.
-    /// </summary>
-    /// <param name="settlement">The settlement to create structures for.</param>
-    /// <param name="innerTileMap">The Inner map that the settlement is part of.</param>
-    /// <param name="structureSettings">The list of structures with provided settings to place.</param>
-    public IEnumerator PlaceBuiltStructuresForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, params StructureSetting[] structureSettings) {
-        for (int i = 0; i < structureSettings.Length; i++) {
-            StructureSetting structureSetting = structureSettings[i];
-            HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
-            Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
-            PlaceBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
             yield return null;
         }
     }

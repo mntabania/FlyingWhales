@@ -741,7 +741,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		switch (race) {
 			case RACE.HUMANS:
 			case RACE.ELVES:
-				return LOCATION_TYPE.SETTLEMENT;
+				return LOCATION_TYPE.VILLAGE;
 			default:
 				throw new Exception($"There was no location type provided for race {race.ToString()}");
 		}

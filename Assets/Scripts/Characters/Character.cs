@@ -2629,7 +2629,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             homeSettlement = settlement;
             Debug.Log($"Set home settlement of {name} to {homeSettlement?.name}");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (_faction == FactionManager.Instance.vagrantFaction && homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if (_faction == FactionManager.Instance.vagrantFaction && homeSettlement != null && homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                 Debug.LogError($"{name} has assigned itself a home village {homeSettlement.name} but it is a vagrant!");
             }
 #endif

@@ -344,7 +344,7 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.PLACE_BLUEPRINT, new[]{
             new StateNameAndDuration(){ name = "Place Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
-        {INTERACTION_TYPE.BUILD_STRUCTURE, new[]{
+        {INTERACTION_TYPE.BUILD_BLUEPRINT, new[]{
             new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
         {INTERACTION_TYPE.STEALTH_TRANSFORM, new[]{

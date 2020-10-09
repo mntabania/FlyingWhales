@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
-    // [ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class InnerMapManager : BaseMonoBehaviour {
 
         public static InnerMapManager Instance;
@@ -34,6 +34,18 @@ namespace Inner_Maps {
         public const int Starting_Tag_Index = 9;
         public uint currentTagIndex = Starting_Tag_Index;
    
+        //tags
+        public const int All_Tags = -1;
+        public const int Ground_Tag = 1;
+        public const int Obstacle_Tag = 2;
+        public const int Demonic_Faction = 3;
+        public const int Demonic_Faction_Doors = 4;
+        public const int Undead_Faction = 5;
+        public const int Undead_Faction_Doors = 6;
+        public const int Roads = 7;
+        public const int Caves = 8;
+        public const int Special_Structures = 9;
+        
         private Vector3 _nextMapPos = Vector3.zero;
         public GameObject characterCollisionTriggerPrefab;
 
@@ -368,17 +380,11 @@ namespace Inner_Maps {
             if (showingCharacter?.gridTileLocation != null) {
                 isPathPossible = PathUtilities.IsPathPossible(showingCharacter.gridTileLocation.graphNode, tile.graphNode);
             }
-            string binary = string.Empty;
-            if (tile.graphNode != null) {
-                binary = Convert.ToString(tile.graphNode.Tag, 2);    
-            }
-            
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
             summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
-            summary = $"{summary}\n<b>Node Tags:</b>{binary}";
             summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
             summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
