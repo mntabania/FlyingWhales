@@ -2,20 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UtilityScripts;
+using Traits;
+using UnityEngine.Assertions;
 
 namespace Traits {
-    public class Vampiric : Trait {
-        public override bool isSingleton => true;
+    public class Vampire : Trait {
+        //public override bool isSingleton => true;
+        public bool dislikedBeingVampire { get; private set; }
+        public List<Character> awareCharacters { get; private set; }
 
-        //public bool isInBatForm { get; private set; } //Moved bat form switch to BehaviourComponent so that this trait can stay as Singleton, and the access for the switch will be more performant because it will not loop through traits anymore
-
-        public Vampiric() {
-            name = "Vampiric";
+        public Vampire() {
+            name = "Vampire";
             description = "Sustains itself by drinking other's blood.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
             canBeTriggered = true;
+            awareCharacters = new List<Character>();
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_Expected_Effect_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.See_Poi_Trait);
             AddTraitOverrideFunctionIdentifier(TraitManager.Before_Start_Flee);
@@ -33,6 +37,7 @@ namespace Traits {
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
+                DetermineIfDesireOrDislike(character);
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -51,7 +56,7 @@ namespace Traits {
         //        //In Vampiric, the parameter traitOwner is the target character, that's why you must pass the target character in this parameter not the actual owner of the trait, the actual owner of the trait is the characterThatWillDoJob
         //        //Character targetCharacter = targetPOI as Character;
         //        //if (characterThatWillDoJob.currentActionNode.action != null && characterThatWillDoJob.currentActionNode.action.goapType == INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD && !characterThatWillDoJob.currentActionNode.isDone) {
-        //        //    if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Vampiric") == null && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
+        //        //    if (characterThatWillDoJob.relationshipContainer.GetRelationshipEffectWith(targetCharacter.currentAlterEgo) != RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.traitContainer.GetNormalTrait<Trait>("Vampire") == null && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
         //        //        //TODO: GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(characterThatWillDoJob.currentJobNode.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
         //        //        //job.SetIsStealth(true);
         //        //        //characterThatWillDoJob.currentActionNode.action.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.action.parentPlan.job);
@@ -66,10 +71,6 @@ namespace Traits {
         public override string TriggerFlaw(Character character) {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-                //if (character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
-                //    character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-                //}
-
                 Character targetCharacter = GetDrinkBloodTarget(character);
                 if(targetCharacter != null) {
                     bool triggerGrieving = false;
@@ -78,10 +79,7 @@ namespace Traits {
                         triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                     }
                     if (!triggerGrieving) {
-                        // GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD, character, character);
                         character.jobComponent.CreateDrinkBloodJob(JOB_TYPE.TRIGGER_FLAW, targetCharacter);
-                        //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), character, character);
-                        //character.jobQueue.AddJobInQueue(job);
                     } else {
                         griefstricken.TriggerGrieving();
                     }
@@ -144,14 +142,71 @@ namespace Traits {
         //    }
         //}
         #endregion
-
+        
+        #region Loading
+        public override void LoadFirstWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadFirstWaveInstancedTrait(saveDataTrait);
+            SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
+            Debug.Assert(saveDataVampire != null, nameof(saveDataVampire) + " != null");
+            dislikedBeingVampire = saveDataVampire.dislikedBeingVampire;
+        }
+        public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
+            base.LoadSecondWaveInstancedTrait(saveDataTrait);
+            SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
+            Assert.IsNotNull(saveDataVampire);
+            awareCharacters.AddRange(SaveUtilities.ConvertIDListToCharacters(saveDataVampire.awareCharacters));
+        }
+        #endregion
+        private void DetermineIfDesireOrDislike(Character character) {
+            if(character.traitContainer.HasTrait("Hemophobic", "Chaste")) {
+                dislikedBeingVampire = true;
+                return;
+            }
+            if (character.traitContainer.HasTrait("Hemophiliac")) {
+                dislikedBeingVampire = false;
+                return;
+            }
+            if (character.traitContainer.HasTrait("Cultist") && GameUtilities.RollChance(75)) {
+                dislikedBeingVampire = false;
+                return;
+            }
+            if (character.characterClass.className == "Hero" && GameUtilities.RollChance(75)) {
+                dislikedBeingVampire = true;
+                return;
+            }
+            if (character.characterClass.className == "Shaman" && GameUtilities.RollChance(80)) {
+                dislikedBeingVampire = true;
+                return;
+            }
+            if (character.traitContainer.HasTrait("Lycanthrope") && GameUtilities.RollChance(80)) {
+                dislikedBeingVampire = true;
+                return;
+            }
+            if (character.traitContainer.HasTrait("Evil", "Treacherous") && GameUtilities.RollChance(75)) {
+                dislikedBeingVampire = false;
+                return;
+            }
+            if (GameUtilities.RollChance(50)) {
+                dislikedBeingVampire = false;
+            } else {
+                dislikedBeingVampire = true;
+            }
+        }
+        public void AddAwareCharacter(Character character) {
+            if (!awareCharacters.Contains(character)) {
+                awareCharacters.Add(character);
+            }
+        }
+        public bool DoesCharacterKnowThisVampire(Character character) {
+            return awareCharacters.Contains(character);
+        }
         private Character GetDrinkBloodTarget(Character vampire) {
             List<Character> targets = null;
             if(vampire.currentRegion != null) {
                 for (int i = 0; i < vampire.currentRegion.charactersAtLocation.Count; i++) {
                     Character character = vampire.currentRegion.charactersAtLocation[i];
                     if(vampire != character) {
-                        if(!character.traitContainer.HasTrait("Vampiric") && character.isNormalCharacter && character.carryComponent.IsNotBeingCarried() && character.Advertises(INTERACTION_TYPE.DRINK_BLOOD) && !character.isDead && !vampire.relationshipContainer.IsFriendsWith(character)
+                        if(!character.traitContainer.HasTrait("Vampire") && character.isNormalCharacter && character.carryComponent.IsNotBeingCarried() && character.Advertises(INTERACTION_TYPE.DRINK_BLOOD) && !character.isDead && !vampire.relationshipContainer.IsFriendsWith(character)
                             && vampire.movementComponent.HasPathToEvenIfDiffRegion(character.gridTileLocation)) {
                             if(targets == null) { targets = new List<Character>(); }
                             targets.Add(character);
@@ -164,29 +219,6 @@ namespace Traits {
             }
             return null;
         }
-
-        //private void TransformToBat(Character character) {
-        //    if (!character.behaviourComponent.isInVampireBatForm) {
-        //        character.behaviourComponent.SetIsInVampireBatForm(true);
-        //        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "transform", null, LOG_TAG.Misc);
-        //        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //        log.AddLogToDatabase();
-        //        if (character.visuals != null) {
-        //            character.visuals.UpdateAllVisuals(character);
-        //        }
-        //    }
-        //}
-        //private void RevertToNormal(Character character) {
-        //    if (character.behaviourComponent.isInVampireBatForm) {
-        //        character.behaviourComponent.SetIsInVampireBatForm(false);
-        //        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "Trait", name, "revert", null, LOG_TAG.Misc);
-        //        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //        log.AddLogToDatabase();
-        //        if (character.visuals != null) {
-        //            character.visuals.UpdateAllVisuals(character);
-        //        }
-        //    }
-        //}
         private void FleeToAllNonHostileVillagerInRangeThatConsidersVampirismACrime(Character character) {
             if (character.marker) {
                 for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
@@ -205,3 +237,17 @@ namespace Traits {
     }
 }
 
+#region Save Data
+public class SaveDataVampire : SaveDataTrait {
+    public bool dislikedBeingVampire;
+    public List<string> awareCharacters;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Vampire vampire = trait as Vampire;
+        Assert.IsNotNull(vampire);
+        awareCharacters = SaveUtilities.ConvertSavableListToIDs(vampire.awareCharacters);
+        dislikedBeingVampire = vampire.dislikedBeingVampire;
+    }
+}
+#endregion

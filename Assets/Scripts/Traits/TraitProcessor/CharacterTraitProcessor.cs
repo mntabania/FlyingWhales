@@ -133,7 +133,7 @@ namespace Traits {
             //else if (trait.name == "Encumbered") {
             //    character.AdjustSpeedModifier(-0.5f);
             //} 
-            //else if (trait.name == "Vampiric") {
+            //else if (trait.name == "Vampire") {
             //    character.needsComponent.AdjustDoNotGetTired(1);
             //} 
             else if (trait.name == "Unconscious") {
@@ -256,7 +256,7 @@ namespace Traits {
             //else if (trait.name == "Encumbered") {
             //    character.AdjustSpeedModifier(0.5f);
             //} 
-            //else if (trait.name == "Vampiric") {
+            //else if (trait.name == "Vampire") {
             //    character.needsComponent.AdjustDoNotGetTired(-1);
             //} 
             else if (trait.name == "Unconscious") {

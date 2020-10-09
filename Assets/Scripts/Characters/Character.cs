@@ -215,18 +215,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _isAlliedWithPlayer;
         }
     }
-    /// <summary>
-    /// Is the character part of the neutral faction? or no faction?
-    /// </summary>
-    public bool isFriendlyFactionless { //is the character part of the friendly neutral faction? or no faction?
-        get {
-            if (faction == null || FactionManager.Instance.vagrantFaction == faction) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
     public Region currentRegion {
         get {
             if (!carryComponent.IsNotBeingCarried()) {
@@ -270,6 +258,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return _currentStructure;
         }
     }
+    public bool isVagrant => faction != null && faction == FactionManager.Instance.vagrantFaction;
+    /// <summary>
+    /// Is the character part of the neutral faction? or no faction?
+    /// </summary>
+    public bool isVagrantOrFactionless => faction == null || FactionManager.Instance.vagrantFaction == faction; //is the character part of the friendly neutral faction? or no faction?
     #endregion
 
     public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
@@ -3217,10 +3210,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //    _isFlirting = state;
     //}
     public void AddAdvertisedAction(INTERACTION_TYPE type, bool allowDuplicates = false) {
-        //if (allowDuplicates || advertisedActions.Contains(type) == false) {
-        //    advertisedActions.Add(type);
-        //}
-        advertisedActions.Add(type);
+        if (allowDuplicates || advertisedActions.Contains(type) == false) {
+            advertisedActions.Add(type);
+        }
+        //advertisedActions.Add(type);
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         advertisedActions.Remove(type);
@@ -3882,6 +3875,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (this is Animal) {
             AddAdvertisedAction(INTERACTION_TYPE.BUTCHER);
             AddAdvertisedAction(INTERACTION_TYPE.EAT_CORPSE);
+            AddAdvertisedAction(INTERACTION_TYPE.DRINK_BLOOD);
         }
         if (isNormalCharacter) {
             AddAdvertisedAction(INTERACTION_TYPE.DAYDREAM);
@@ -3919,7 +3913,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             AddAdvertisedAction(INTERACTION_TYPE.EVANGELIZE);
             AddAdvertisedAction(INTERACTION_TYPE.BUILD_CAMPFIRE);
         }
-        if (race == RACE.HUMANS || race == RACE.ELVES) {
+        if (race.IsSapient()) {
             AddAdvertisedAction(INTERACTION_TYPE.REPORT_CORRUPTED_STRUCTURE);
             AddAdvertisedAction(INTERACTION_TYPE.HEAL_SELF);
         }

@@ -151,7 +151,7 @@ namespace Locations.Settlements {
             character.ChangeHomeStructure(chosenDwelling);
         }
         private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
-            if(character.isFriendlyFactionless || character.isFactionless || (character.faction != null && !character.faction.isMajorFaction)) {
+            if(character.isVagrantOrFactionless || character.isFactionless || (character.faction != null && !character.faction.isMajorFaction)) {
                 if(owner == null) {
                     return true;
                 }

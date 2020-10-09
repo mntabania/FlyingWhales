@@ -86,7 +86,7 @@ namespace Interrupts {
                 }
             } else {
                 //Character is not a summon
-                if (actor.isFriendlyFactionless) {
+                if (actor.isVagrantOrFactionless) {
                     log += "\n-Character is a vagrant";
                     if (actor.homeStructure == null || actor.homeStructure.hasBeenDestroyed) {
                         log += "\n-Character has no home structure";

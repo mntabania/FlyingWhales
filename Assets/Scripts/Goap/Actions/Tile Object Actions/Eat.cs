@@ -234,7 +234,7 @@ public class Eat : GoapAction {
             if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.collectionOwner.isPartOfParentRegionMap && actor.trapStructure.IsTrappedAndTrapHexIsNot(poiTarget.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner)) {
                 return false;
             }
-            if (actor.traitContainer.HasTrait("Vampiric")) {
+            if (actor.traitContainer.HasTrait("Vampire")) {
                 return false;
             }
             if(poiTarget is BerryShrub && !actor.needsComponent.isStarving) {
