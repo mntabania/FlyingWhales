@@ -415,7 +415,7 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     public void RevalidateFactionCrimes(Faction faction, Character leader) {
-        if (leader.traitContainer.HasTrait("Vampiric")) {
+        if (leader.traitContainer.HasTrait("Vampire")) {
             faction.factionType.RemoveCrime(CRIME_TYPE.Vampire);
         }
     }

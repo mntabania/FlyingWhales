@@ -45,7 +45,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                 foreach (var relationships in character.relationshipContainer.relationships) {
                     Character otherCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByID(relationships.Key);
                     if (otherCharacter != null) {
-                        if (!otherCharacter.traitContainer.HasTrait("Vampiric") && relationships.Value.awareness.state != AWARENESS_STATE.Presumed_Dead && 
+                        if (!otherCharacter.traitContainer.HasTrait("Vampire") && relationships.Value.awareness.state != AWARENESS_STATE.Presumed_Dead && 
                             relationships.Value.awareness.state != AWARENESS_STATE.Missing && !otherCharacter.partyComponent.isActiveMember) {
                             var opinionLabel = relationships.Value.opinions.GetOpinionLabel();
                             if (relationships.Value.IsLover() && (opinionLabel == RelationshipManager.Close_Friend || opinionLabel == RelationshipManager.Friend)) {
