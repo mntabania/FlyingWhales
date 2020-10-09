@@ -323,7 +323,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         OnRefreshed(wasRefreshed, wasTired, wasExhausted);
     }
     public void AdjustTiredness(float adjustment) {
-        if(adjustment < 0 && owner.traitContainer.HasTrait("Vampiric")) {
+        if(adjustment < 0 && owner.traitContainer.HasTrait("Vampire")) {
             owner.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
             return;
         }
@@ -866,7 +866,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         //    _character.Death("starvation");
         //} else if (isStarving) {
         //    _character.traitContainer.RemoveTrait(_character, "Hungry");
-        //    if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
+        //    if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampire") == null) { //only characters that are not vampires will flee when they are starving
         //        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "starving");
         //    }
         //} else if (isHungry) {
@@ -1049,7 +1049,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
-        if (owner.traitContainer.HasTrait("Vampiric")) {
+        if (owner.traitContainer.HasTrait("Vampire")) {
             return false;
         }
         if (isStarving) {

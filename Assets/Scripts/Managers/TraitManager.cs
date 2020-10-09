@@ -35,7 +35,7 @@ public class TraitManager : BaseMonoBehaviour {
     public const string Per_Tick_Movement = "Per_Tick_Movement";
 
     public static string[] instancedTraitsAndStatuses = new string[] {
-        "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampiric",
+        "Restrained", "Injured", "Kleptomaniac", "Lycanthrope", "Vampire",
         "Poisoned", "Resting", "Sick", "Unconscious", "Zapped", "Spooked", "Cannibal", "Lethargic",
         "Dead", "Unfaithful", "Drunk", "Burning", "Burnt", "Agoraphobic", "Infected", "Music Lover", "Music Hater", 
         "Psychopath", "Plagued", "Vigilant", "Diplomatic", "Wet", "Character Trait", "Nocturnal", "Glutton", 
@@ -51,7 +51,7 @@ public class TraitManager : BaseMonoBehaviour {
     };
 
     //public static string[] unhiddenInstancedTraits = new string[] {
-    //    "Kleptomaniac", "Lycanthrope", "Vampiric", "Cannibal", "Unfaithful", "Agoraphobic", "Music Lover", "Music Hater",
+    //    "Kleptomaniac", "Lycanthrope", "Vampire", "Cannibal", "Unfaithful", "Agoraphobic", "Music Lover", "Music Hater",
     //    "Psychopath", "Vigilant", "Diplomatic", "Nocturnal", "Glutton",
     //    "Suspicious", "Narcoleptic", "Hothead", "Inspiring", "Pyrophobic", "Alcoholic", "Pessimist", "Lazy",
     //    "Coward", "Chaste", "Lustful", "Edible", "Accident Prone",

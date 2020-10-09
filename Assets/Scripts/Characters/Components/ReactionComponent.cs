@@ -668,7 +668,7 @@ public class ReactionComponent : CharacterComponent {
                     if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.IsInPrison()) {
                         bool targetIsRestrainedInPrison = actor.homeSettlement != null && targetCharacter.IsInPrisonOf(actor.homeSettlement);
                         if (targetIsRestrainedInPrison) {
-                            if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampiric")) {
+                            if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampire")) {
                                 debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
                                 if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
                                     actor.jobComponent.TryTriggerFeed(targetCharacter);
@@ -858,7 +858,7 @@ public class ReactionComponent : CharacterComponent {
                             if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
                                 debugLog =
                                     $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
-                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetCharacter.traitContainer.HasTrait("Vampiric")) {
+                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetCharacter.traitContainer.HasTrait("Vampire")) {
                                     debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
                                     if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);

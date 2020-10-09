@@ -978,6 +978,15 @@ public static class Extensions {
                 return true;
         }
     }
+    public static bool IsSapient(this RACE race) {
+        switch (race) {
+            case RACE.HUMANS:
+            case RACE.ELVES:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Faction

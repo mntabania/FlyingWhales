@@ -35,7 +35,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            if (character.isFactionless || character.isFriendlyFactionless) {
+            if (character.isFactionless || character.isVagrantOrFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
                        !targetCharacter.relationshipContainer.IsEnemiesWith(character);
             }

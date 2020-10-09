@@ -16,7 +16,7 @@ namespace Crime_System {
             if (witness.traitContainer.HasTrait("Cultist") && actor.traitContainer.HasTrait("Cultist")) {
                 return CRIME_SEVERITY.None;
             }
-            if (witness.traitContainer.HasTrait("Vampiric")) {
+            if (witness.traitContainer.HasTrait("Vampire")) {
                 return CRIME_SEVERITY.None;
             }
             return base.GetCrimeSeverity(witness, actor, target);
