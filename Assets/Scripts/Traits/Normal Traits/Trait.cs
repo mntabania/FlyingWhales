@@ -119,7 +119,7 @@ namespace Traits {
         /// returns to life.
         /// </summary>
         /// <param name="character">The character that returned to life.</param>
-        public virtual void OnReturnToLife(Character character) { }
+        //public virtual void OnReturnToLife(Character character) { } //Removed temporarily since this is not being used
         public virtual string GetTestingData(ITraitable traitable = null) {
             return string.Empty;
         }

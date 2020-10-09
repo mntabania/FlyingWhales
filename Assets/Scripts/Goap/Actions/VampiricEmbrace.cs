@@ -29,6 +29,10 @@ public class VampiricEmbrace : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
+        Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        if (vampire != null) {
+            vampire.AddAwareCharacter(witness);
+        }
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
@@ -65,8 +69,6 @@ public class VampiricEmbrace : GoapAction {
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status, node);
                 }
-            } else if (witness.traitContainer.HasTrait("Hemophobic")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status, node);
             }
         }
         return response;
@@ -75,13 +77,18 @@ public class VampiricEmbrace : GoapAction {
         REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character targetCharacter) {
+            Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if (vampire != null) {
+                vampire.AddAwareCharacter(targetCharacter);
+            }
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
 
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);
             if (severity != CRIME_SEVERITY.None && severity != CRIME_SEVERITY.Unapplicable) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor, status, node);
+
                 string opinionLabel = targetCharacter.relationshipContainer.GetOpinionLabel(actor);
-                if (targetCharacter.traitContainer.HasTrait("Coward", "Hemophobic")) {
+                if (targetCharacter.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor, status, node);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status, node);
@@ -96,8 +103,6 @@ public class VampiricEmbrace : GoapAction {
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, targetCharacter, actor, status, node);
                     }
-                } else if (targetCharacter.traitContainer.HasTrait("Hemophobic")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor, status, node);
                 }
             }
         }
@@ -127,8 +132,6 @@ public class VampiricEmbrace : GoapAction {
     #region Effects
     public void AfterEmbraceSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;
-        actor.needsComponent.AdjustDoNotGetHungry(-1);
-
         if (goapNode.poiTarget is Character targetCharacter) {
             if (targetCharacter.HasItem("Phylactery")) {
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "activate_phylactery", goapNode, LOG_TAG.Misc);
@@ -144,6 +147,10 @@ public class VampiricEmbrace : GoapAction {
                     actor.traitContainer.AddTrait(actor, "Unconscious", targetCharacter, goapNode);
                 }
             } else {
+                if (targetCharacter.isDead) {
+                    targetCharacter.ReturnToLife();
+                }
+
                 Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
                 targetCharacter.traitContainer.AddTrait(targetCharacter, vampire, actor);
                 Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
@@ -151,6 +158,11 @@ public class VampiricEmbrace : GoapAction {
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddLogToDatabase();
                 PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+
+                targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Injured");
+                targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Infected");
+                targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Plagued");
+
             }
         }
 

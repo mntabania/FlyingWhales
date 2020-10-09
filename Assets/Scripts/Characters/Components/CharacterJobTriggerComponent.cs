@@ -1344,15 +1344,34 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
             }
         }
     }
+    #endregion
+
+    #region Vampire
     public bool CreateDrinkBloodJob(JOB_TYPE jobType, IPointOfInterest target) {
-	    if (!owner.jobQueue.HasJob(jobType)) {
-		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
-		    if (owner.jobQueue.AddJobInQueue(job)) {
-			    owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
-		    }
-		    return true;
-	    }
-	    return false;
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.DRINK_BLOOD, target, owner);
+            if (owner.jobQueue.AddJobInQueue(job)) {
+                owner.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
+            }
+            return true;
+        }
+        return false;
+    }
+    public bool CreateVampiricEmbraceJob(JOB_TYPE jobType, IPointOfInterest target) {
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.VAMPIRIC_EMBRACE, target, owner);
+            return owner.jobQueue.AddJobInQueue(job);
+        }
+        return false;
+    }
+    public bool CreateVampiricEmbraceJob(JOB_TYPE jobType, IPointOfInterest target, out JobQueueItem producedJob) {
+        producedJob = null;
+        if (!owner.jobQueue.HasJob(jobType)) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.VAMPIRIC_EMBRACE, target, owner);
+            producedJob = job;
+            return true;
+        }
+        return false;
     }
     #endregion
 

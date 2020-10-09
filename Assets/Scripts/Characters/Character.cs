@@ -107,7 +107,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public int sociableValue { get; private set; } //if this is >= 0 then character wants to socialize
 
     //misc
-    public bool returnedToLife { get; private set; }
+    public bool raisedFromDeadAsSkeleton { get; private set; }
     public Tombstone grave { get; private set; }
 
     //For Testing
@@ -401,7 +401,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         canPerformValue = data.canPerformValue;
         canTakeJobsValue = data.canTakeJobsValue;
         sociableValue = data.sociableValue;
-        returnedToLife = data.returnedToLife;
+        raisedFromDeadAsSkeleton = data.raisedFromDeadAsSkeleton;
         previousClassName = data.previousClassName;
         isPreplaced = data.isPreplaced;
 
@@ -5443,10 +5443,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //}
         }
     }
-    public void RaiseFromDeath(Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
+    public void RaiseFromDeath(Action<Character> onRaisedFromDeadAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
         GameManager.Instance.StartCoroutine(faction == null
-            ? Raise(this, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className)
-            : Raise(this, onReturnToLifeAction, faction, race, className));
+            ? Raise(this, onRaisedFromDeadAction, FactionManager.Instance.neutralFaction, race, className)
+            : Raise(this, onRaisedFromDeadAction, faction, race, className));
     }
     private IEnumerator Raise(Character target, Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
         if (className == "Zombie") {
@@ -5458,27 +5458,34 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             target.marker.PlayAnimation("Raise Dead");
             yield return new WaitForSeconds(0.7f);
         }
-        target.ReturnToLife(faction, race, className);
+        target.RaiseFromDeadAsSkeleton(faction, race, className);
         target.combatComponent.UpdateMaxHPAndReset();
         yield return null;
         onReturnToLifeAction?.Invoke(this);
     }
-    private void ReturnToLife(Faction faction, RACE race, string className) {
+    private void RaiseFromDeadAsSkeleton(Faction faction, RACE race, string className) {
         if (_isDead) {
-            returnedToLife = true;
+            raisedFromDeadAsSkeleton = true;
+            ChangeFactionTo(faction);
+            AssignRace(race);
+            AssignClass(className);
+
+            ReturnToLife();
+
+            MigrateHomeStructureTo(null);
+            needsComponent.SetTirednessForcedTick(0);
+            needsComponent.SetFullnessForcedTick(0);
+            if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))) {
+                behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
+            }
+        }
+    }
+    public bool ReturnToLife() {
+        if (_isDead) {
             SetIsDead(false);
             SubscribeToSignals();
             ResetToFullHP();
             SetPOIState(POI_STATE.ACTIVE);
-            ChangeFactionTo(faction);
-            AssignRace(race);
-            // AssignRole(CharacterRole.SOLDIER);
-            // if (string.IsNullOrEmpty(className)) {
-            //     AssignClassByRole(this.role);
-            // } else {
-            //     AssignClass(className);
-            // }
-            AssignClass(className);
             needsComponent.ResetFullnessMeter();
             needsComponent.ResetTirednessMeter();
             needsComponent.ResetHappinessMeter();
@@ -5490,27 +5497,25 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 marker.PlaceMarkerAt(tombstone.previousTile);
             }
             traitContainer.RemoveTrait(this, "Dead");
-            for (int i = 0; i < traitContainer.traits.Count; i++) {
-                traitContainer.traits[i].OnReturnToLife(this);
-            }
+            //for (int i = 0; i < traitContainer.traits.Count; i++) {
+            //    traitContainer.traits[i].OnReturnToLife(this);
+            //}
             //RemoveAllNonPersistentTraits();
             //ClearAllAwareness();
             //NPCSettlement gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             //ChangeHomeStructure(null);
-            MigrateHomeStructureTo(null);
-            needsComponent.SetTirednessForcedTick(0);
-            needsComponent.SetFullnessForcedTick(0);
+            needsComponent.SetTirednessForcedTick();
+            needsComponent.SetFullnessForcedTick();
             needsComponent.SetHasCancelledSleepSchedule(false);
             needsComponent.ResetSleepTicks();
             ConstructDefaultActions();
-            if (!behaviourComponent.HasBehaviour(typeof(ZombieBehaviour))){
-                behaviourComponent.AddBehaviourComponent(typeof(ZombieBehaviour));
-            }
             Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
+            return true;
         }
+        return false;
     }
     public virtual void Death(string cause = "normal", ActualGoapNode deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = default, LogFillerStruct[] deathLogFillers = null, Interrupt interrupt = null) {
         if (minion != null) {
