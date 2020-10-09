@@ -92,7 +92,7 @@ public class MapGenerator : MonoBehaviour {
             }
             for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
                 NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
-                if (settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
                     if(settlement.ruler == null) {
                         settlement.DesignateNewRuler(false);
                     }
@@ -193,7 +193,7 @@ public class MapGenerator : MonoBehaviour {
             }
             for (int j = 0; j < DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements.Count; j++) {
                 NPCSettlement settlement = DatabaseManager.Instance.settlementDatabase.allNonPlayerSettlements[j];
-                if (settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+                if (settlement.locationType == LOCATION_TYPE.VILLAGE) {
                     if(settlement.ruler == null) {
                         settlement.DesignateNewRuler(false);
                     }

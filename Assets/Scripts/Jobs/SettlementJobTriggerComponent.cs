@@ -411,7 +411,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
             //Should not create haul jobs if the target resource pile is in another village
             BaseSettlement settlement; 
-            if(target.gridTileLocation.IsPartOfSettlement(out settlement) && _owner != settlement && settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if(target.gridTileLocation.IsPartOfSettlement(out settlement) && _owner != settlement && settlement.locationType == LOCATION_TYPE.VILLAGE) {
                 return;
             }
 			ResourcePile chosenPileToDepositTo = _owner.mainStorage.GetResourcePileObjectWithLowestCount(target.tileObjectType);

@@ -19,7 +19,7 @@ public class SummonPlayerSkill : SpellData {
         summon.OnSummonAsPlayerMonster();
         CharacterManager.Instance.PlaceSummon(summon, targetTile);
         if (targetTile.structure?.settlementLocation != null && 
-            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.SETTLEMENT) {
+            targetTile.structure.settlementLocation.locationType != LOCATION_TYPE.VILLAGE) {
             summon.MigrateHomeStructureTo(targetTile.structure);	
         } else {
             summon.AddTerritory(targetTile.collectionOwner.partOfHextile.hexTileOwner, false);    

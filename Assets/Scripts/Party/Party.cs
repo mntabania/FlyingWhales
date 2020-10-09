@@ -435,7 +435,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         }
         if (firstActiveMember != null) {
             HexTile activeMemberCurrentHex = firstActiveMember.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner;
-            if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if(activeMemberCurrentHex != null && activeMemberCurrentHex.settlementOnTile != null && activeMemberCurrentHex.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
                 //Hex tile within a village cannot be a camp
                 activeMemberCurrentHex = null;
             }
@@ -459,7 +459,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
                             }
                         }
                     } else {
-                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER && (hex.settlementOnTile == null || hex.settlementOnTile.locationType != LOCATION_TYPE.SETTLEMENT)) {
+                        if(activeMemberCurrentHex == null && hex.elevationType != ELEVATION.WATER && (hex.settlementOnTile == null || hex.settlementOnTile.locationType != LOCATION_TYPE.VILLAGE)) {
                             activeMemberCurrentHex = hex;
                         }
                     }

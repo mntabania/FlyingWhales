@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
-    // [ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class InnerMapManager : BaseMonoBehaviour {
 
         public static InnerMapManager Instance;
@@ -380,17 +380,11 @@ namespace Inner_Maps {
             if (showingCharacter?.gridTileLocation != null) {
                 isPathPossible = PathUtilities.IsPathPossible(showingCharacter.gridTileLocation.graphNode, tile.graphNode);
             }
-            string binary = string.Empty;
-            if (tile.graphNode != null) {
-                binary = Convert.ToString(tile.graphNode.Tag, 2);    
-            }
-            
             HexTile hexTile = tile.collectionOwner.partOfHextile?.hexTileOwner;
             string summary = tile.localPlace.ToString();
             summary = $"{summary}\n<b>Tile Persistent ID:</b>{tile.persistentID}";
             summary = $"{summary}\n<b>Is Tile Default:</b>{tile.isDefault.ToString()}";
             summary = $"{summary}\n<b>Path Area:</b>{tile.graphNode?.Area.ToString()}";
-            summary = $"{summary}\n<b>Node Tags:</b>{binary}";
             summary = $"{summary}\n<b>Is Path Possible to Selected Character:</b>{isPathPossible.ToString()}";
             summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
             summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";

@@ -268,7 +268,7 @@ public enum BASE_AREA_TYPE {
     PLAYER,
 }
 public enum LOCATION_TYPE {
-    SETTLEMENT,
+    VILLAGE,
     DEMONIC_INTRUSION,
     DUNGEON,
     EMPTY,
@@ -554,6 +554,7 @@ public enum INTERRUPT {
     Noise_Wake_Up,
     Transform_To_Bat,
     Revert_From_Bat,
+    Become_Vampire_Lord
 }
 
 public enum TRAIT_TYPE {
@@ -643,6 +644,7 @@ public enum STRUCTURE_TYPE {
     ANCIENT_GRAVEYARD = 42,
     TEMPLE = 43,
     RUINED_ZOO = 44,
+    VAMPIRE_CASTLE = 45,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,

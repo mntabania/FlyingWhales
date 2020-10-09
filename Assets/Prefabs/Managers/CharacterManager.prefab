@@ -1302,6 +1302,7 @@ MonoBehaviour:
         - Peasant
         - Shaman
         - Stalker
+        - Vampire Lord
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 6fa17c55df341c347bd6e4e05695235d,
             type: 3}
@@ -1639,6 +1640,27 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 4c50aba7bebe53b43b30e2de1d02a957, type: 3}
           - {fileID: 21300000, guid: d4e562a9b4269f043abc2e3829be037c, type: 3}
           - {fileID: 21300000, guid: 242bc3d8f7e1d7443a0364bacf3acaa3, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 796e84b6f35f34d439bff96fb398a811,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: 91c1bb47e5ae78d4d846efee6d6d4059, type: 3}
+          - {fileID: 21300000, guid: 29f84147db01fcd4d86cd7a7ee718dbb, type: 3}
+          - {fileID: 21300000, guid: 601a19dffb917004a92609ad62d7c0ab, type: 3}
+          - {fileID: 21300000, guid: 7eface3b7d1a09144849fd5f007d248a, type: 3}
+          - {fileID: 21300000, guid: 077f9cfc1b449f64098ff4385fc2a131, type: 3}
+          - {fileID: 21300000, guid: 796e84b6f35f34d439bff96fb398a811, type: 3}
+          - {fileID: 21300000, guid: 6f7b563d469d77b4abfc7217125dc9b9, type: 3}
+          - {fileID: 21300000, guid: fded891219b2f76488b6f98b5d5ae40b, type: 3}
+          - {fileID: 21300000, guid: 79f59a45c0a0d304380086220b17e701, type: 3}
+          - {fileID: 21300000, guid: 8247a993a713f2544b5d9b65f0d52842, type: 3}
+          - {fileID: 21300000, guid: f861f0cda2394514f8e786172477a5d9, type: 3}
+          - {fileID: 21300000, guid: 3e793259b3aa3da44a36df454dc0e901, type: 3}
+          - {fileID: 21300000, guid: 446aa37fe2e21fe489b7765377df4947, type: 3}
+          - {fileID: 21300000, guid: 70587aea2f345314c8d70bf2419747cc, type: 3}
+          - {fileID: 21300000, guid: 6b6d656a313dd5549a75d937b16388f9, type: 3}
+          - {fileID: 21300000, guid: ef41db8c645dcd740b7e6ab4be2dabd3, type: 3}
+          - {fileID: 21300000, guid: f81850b4341bf274ca1eecf7531eba7c, type: 3}
+          - {fileID: 21300000, guid: 74fc6e3860c624e46b4c3f9a6ae7e224, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []
@@ -1766,6 +1788,7 @@ MonoBehaviour:
         - Peasant
         - Shaman
         - Stalker
+        - Vampire Lord
         m_values:
         - defaultSprite: {fileID: 21300000, guid: 04a0a584933fd734a95e8c2842d829b9,
             type: 3}
@@ -2103,6 +2126,27 @@ MonoBehaviour:
           - {fileID: 21300000, guid: f76c86552b17bef4c8c323dfd13838f4, type: 3}
           - {fileID: 21300000, guid: bfe1fc0b406489644befa13862e5282d, type: 3}
           - {fileID: 21300000, guid: e89c694b84381334982ebe8af4c2fa44, type: 3}
+        - defaultSprite: {fileID: 21300000, guid: 46b6baee3774ed9418919546bd1ba1a8,
+            type: 3}
+          animationSprites:
+          - {fileID: 21300000, guid: fcf661e7c447dbd4a93e9bf9dd66d7c5, type: 3}
+          - {fileID: 21300000, guid: 48425a953f5968741abfbe187fcd1550, type: 3}
+          - {fileID: 21300000, guid: 5e53a05dbe3dd0c4b826f2be4501208d, type: 3}
+          - {fileID: 21300000, guid: 28ecdde41e7b3964fb3bd2b8d1395099, type: 3}
+          - {fileID: 21300000, guid: 7fc56e78e463c4a4c946c0b5ba3d5c8f, type: 3}
+          - {fileID: 21300000, guid: 46b6baee3774ed9418919546bd1ba1a8, type: 3}
+          - {fileID: 21300000, guid: f6af4de49ca1ee743abfea5faf4593bc, type: 3}
+          - {fileID: 21300000, guid: 3c68c3c6849f9c04aa55259d97c0caf5, type: 3}
+          - {fileID: 21300000, guid: 52ee58c0f81641f47b9f5ad9acda8674, type: 3}
+          - {fileID: 21300000, guid: b0dd9dfc73e01e34484a01d2352db775, type: 3}
+          - {fileID: 21300000, guid: 81bb2e232d5a01f49bc244bf739c3469, type: 3}
+          - {fileID: 21300000, guid: 74fcb7f4064edd4438d3c66ecc6241d3, type: 3}
+          - {fileID: 21300000, guid: 2893b6c0d24848943bcb32ffa26c13f9, type: 3}
+          - {fileID: 21300000, guid: ac17b86de1cdaa34b92768efe828ac3f, type: 3}
+          - {fileID: 21300000, guid: 126924d5defbcef49974b1fddf9125ac, type: 3}
+          - {fileID: 21300000, guid: 2eb030c6ee9be944b8e5e9cad0d252ab, type: 3}
+          - {fileID: 21300000, guid: 9134d52085ea968489096415b268c79f, type: 3}
+          - {fileID: 21300000, guid: c01fd58a632f87b4cba3878ea411f9d4, type: 3}
     maleAssets:
       characterClassAssets:
         m_keys: []

@@ -396,6 +396,18 @@ namespace Locations.Settlements {
             }
             return null;
         }
+        public LocationStructure GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE type) {
+            if (HasStructure(type)) {
+                List<LocationStructure> structuresOfType = structures[type];
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    LocationStructure structure = structuresOfType[i];
+                    if (structure.residents.Count == 0) {
+                        return structure;
+                    }
+                }
+            }
+            return null;
+        }
         public bool HasStructure(STRUCTURE_TYPE type) {
             return structures.ContainsKey(type);
         }

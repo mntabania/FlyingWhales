@@ -222,7 +222,7 @@ namespace Traits {
                         if (owner.isNormalCharacter
                             && targetCharacter.isNormalCharacter
                             && targetCharacter.gridTileLocation != null
-                            && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
+                            && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE))
                             && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
                             //If a villager is dead and is seen outside the village, bury it
                             if (owner.partyComponent.isActiveMember) {

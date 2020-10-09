@@ -211,7 +211,7 @@ public class Faction : IJobOwner, ISavable, ILogFiller {
                 character.ChangeFactionTo(FactionManager.Instance.vagrantFaction);
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if (character.homeSettlement != null && character.homeSettlement.locationType == LOCATION_TYPE.VILLAGE) {
                 Debug.LogError($"{character.name} still has a home village {character.homeSettlement.name} even though it is already a vagrant!");
             }
 #endif

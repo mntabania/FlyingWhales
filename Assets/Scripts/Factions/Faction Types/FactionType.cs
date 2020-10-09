@@ -89,7 +89,7 @@ namespace Factions.Faction_Types {
                 crimes.Add(type, severity);
             }
         }
-        public void RemoveCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
+        public void RemoveCrime(CRIME_TYPE type) {
             if (crimes.ContainsKey(type)) {
                 crimes.Remove(type);
             }

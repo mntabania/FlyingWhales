@@ -1237,7 +1237,7 @@ namespace Inner_Maps {
             return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null;
         }
         public bool IsPartOfHumanElvenSettlement() {
-            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
+            return collectionOwner.isPartOfParentRegionMap && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
         }
         public bool IsPartOfActiveHumanElvenSettlement() {
             return IsPartOfHumanElvenSettlement() && collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.residents.Count > 0;

@@ -60,7 +60,7 @@ public class PangatLooVillageInvaderBehaviour : CharacterBehaviourComponent {
     public NPCSettlement GetMainVillageSettlement() {
         for (int i = 0; i < LandmarkManager.Instance.allNonPlayerSettlements.Count; i++) {
             NPCSettlement settlement = LandmarkManager.Instance.allNonPlayerSettlements[i];
-            if(settlement.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if(settlement.locationType == LOCATION_TYPE.VILLAGE) {
                 return settlement;
             }
         }

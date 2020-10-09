@@ -84730,6 +84730,9 @@ MonoBehaviour:
     - resource: 1
       structureType: 9
       hasValue: 0
+    - resource: 2
+      structureType: 45
+      hasValue: 0
     m_values:
     - data:
       - {fileID: 1961635413776408567, guid: ef4bd84d533038243bed6140dfcacdcb, type: 3}
@@ -84790,6 +84793,8 @@ MonoBehaviour:
       - {fileID: 6826873561072680606, guid: 377f26eeacc0ed84196436b3718f7a1c, type: 3}
     - data:
       - {fileID: 3518506434238835524, guid: e70ede3228326a54d8e8df1ef93f2b45, type: 3}
+    - data:
+      - {fileID: 1947060716518138, guid: ad0fe2a6dd903e44199ab389ecf07e3e, type: 3}
   assetManager: {fileID: 1536722386}
   wallResourceAssets:
     m_keys: 010000000200000003000000
