@@ -284,15 +284,25 @@ public class GoapPlanJob : JobQueueItem {
 
     #region Misc
     public void SetAssignedPlan(GoapPlan plan) {
-        GoapPlan prevPlan = assignedPlan;
-        assignedPlan = plan;
-        if(plan != null) {
-            plan.OnAttachPlanToJob(this);
-        } else {
-            if(prevPlan != null) {
+        if(assignedPlan != plan) {
+            GoapPlan prevPlan = assignedPlan;
+            assignedPlan = plan;
+            if (prevPlan != null) {
                 prevPlan.OnUnattachPlanToJob(this);
             }
+            if (plan != null) {
+                plan.OnAttachPlanToJob(this);
+            }
         }
+        //GoapPlan prevPlan = assignedPlan;
+        //assignedPlan = plan;
+        //if(plan != null) {
+        //    plan.OnAttachPlanToJob(this);
+        //} else {
+        //    if(prevPlan != null) {
+        //        prevPlan.OnUnattachPlanToJob(this);
+        //    }
+        //}
     }
     /// <summary>
     /// Helper function to get what this job is trying to do.
