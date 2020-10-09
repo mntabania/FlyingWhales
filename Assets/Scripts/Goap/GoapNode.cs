@@ -1069,6 +1069,22 @@ public class ActualGoapNode : IRumorable, ICrimeable, ISavable {
             uniqueActionData = data.uniqueActionData.Load();
         }
     }
+    /// <summary>
+    /// Load other references, because there are some components in the action that depends on other actions being fully loaded
+    /// i.e RumorOtherData that needs to have had all actions rumor data to be loaded since it will reference it.
+    /// </summary>
+    /// <param name="data">The save data of this action.</param>
+    public void LoadAdditionalReferences(SaveDataActualGoapNode data) {
+        if (otherData != null) {
+            for (int i = 0; i < otherData.Length; i++) {
+                OtherData d = otherData[i];
+                SaveDataOtherData saveDataOtherData = data.otherData.ElementAtOrDefault(i);
+                if (d != null && saveDataOtherData != null) {
+                    d.LoadAdditionalData(saveDataOtherData);
+                }
+            }
+        }
+    }
     #endregion
 }
 

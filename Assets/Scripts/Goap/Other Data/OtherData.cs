@@ -2,6 +2,7 @@
     public abstract object obj { get; }
 
     public abstract SaveDataOtherData Save();
+    public virtual void LoadAdditionalData(SaveDataOtherData data) {}
 }
 
 #region Save Data

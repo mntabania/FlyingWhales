@@ -374,6 +374,12 @@ public class SaveDataCurrentProgress {
             item.Value.LoadReferences(saveData);
         }
     }
+    public void LoadAdditionalActionReferences() {
+        foreach (KeyValuePair<string, ActualGoapNode> item in DatabaseManager.Instance.actionDatabase.allActions) {
+            SaveDataActualGoapNode saveData = GetFromSaveHub<SaveDataActualGoapNode>(OBJECT_TYPE.Action, item.Key);
+            item.Value.LoadAdditionalReferences(saveData);
+        }
+    }
     public void LoadInterruptReferences() {
         foreach (KeyValuePair<string, InterruptHolder> item in DatabaseManager.Instance.interruptDatabase.allInterrupts) {
             SaveDataInterruptHolder saveData = GetFromSaveHub<SaveDataInterruptHolder>(OBJECT_TYPE.Interrupt, item.Key);
