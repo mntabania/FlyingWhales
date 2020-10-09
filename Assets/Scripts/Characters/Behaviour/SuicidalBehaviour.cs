@@ -115,8 +115,9 @@ public class SuicidalBehaviour : CharacterBehaviourComponent {
                     return true;
                 }
                 log += "\n-Otherwise, Create Commit Suicide Job";
-                producedJob = character.jobComponent.TriggerSuicideJob();
-                return true;
+                if (character.jobComponent.TriggerSuicideJob(out producedJob)) {
+                    return true;
+                }
             }
         }
         producedJob = null;

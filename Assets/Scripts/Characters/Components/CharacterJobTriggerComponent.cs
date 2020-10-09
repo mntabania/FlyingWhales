@@ -728,7 +728,19 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		return null;
 	}
-	#endregion
+    public bool TriggerSuicideJob(out JobQueueItem producedJob) {
+        producedJob = null;
+        if (owner.jobQueue.HasJob(JOB_TYPE.COMMIT_SUICIDE) == false) {
+            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.COMMIT_SUICIDE,
+                new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty,
+                    false, GOAP_EFFECT_TARGET.ACTOR),
+                owner, owner);
+            producedJob = job;
+            return true;
+        }
+        return false;
+    }
+    #endregion
 
     #region Actions
     public void IncreaseNumOfTimesActionDone(GoapAction action) {
