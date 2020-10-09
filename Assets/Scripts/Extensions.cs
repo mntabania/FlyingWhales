@@ -598,6 +598,7 @@ public static class Extensions {
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
+            case JOB_TYPE.VAMPIRIC_EMBRACE:
                 priority = 500;
                 break;
             case JOB_TYPE.DROP_ITEM_PARTY:

@@ -594,6 +594,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REMOVE_ENSNARED, new[]{
             new StateNameAndDuration(){ name = "Remove Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.VAMPIRIC_EMBRACE, new[]{
+            new StateNameAndDuration(){ name = "Embrace Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 
