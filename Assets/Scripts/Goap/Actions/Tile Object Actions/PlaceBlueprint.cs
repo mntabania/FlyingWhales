@@ -49,7 +49,7 @@ public class PlaceBlueprint : GoapAction {
         if (goapNode.poiTarget is GenericTileObject genericTileObject) {
             if (genericTileObject.PlaceBlueprintOnTile(prefabName)) {
                 //create new build job at npcSettlement
-                GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_STRUCTURE, goapNode.poiTarget, goapNode.actor.homeSettlement);
+                GoapPlanJob buildJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_BLUEPRINT, INTERACTION_TYPE.BUILD_BLUEPRINT, goapNode.poiTarget, goapNode.actor.homeSettlement);
                 buildJob.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { genericTileObject.blueprintOnTile.craftCost });
                 // buildJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildJob);
                 goapNode.actor.homeSettlement.AddToAvailableJobs(buildJob);

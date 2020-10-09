@@ -10,7 +10,7 @@ public class StructureTileObject : TileObject {
     
     public StructureTileObject() {
         Initialize(TILE_OBJECT_TYPE.STRUCTURE_TILE_OBJECT, false);
-        AddAdvertisedAction(INTERACTION_TYPE.BUILD_STRUCTURE);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_BLUEPRINT);
         traitContainer.RemoveTrait(this, "Flammable");
     }
     public StructureTileObject(SaveDataTileObject data) { }
