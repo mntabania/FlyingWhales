@@ -1003,7 +1003,18 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery() {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.Today().tick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
+            hasForcedFullness = true;
+            if (owner.traitContainer.HasTrait("Vampire")) {
+                TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    //Vampires will only recover fullness after midnight, no matter how hungry they are
+                    //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
+                    //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
+                    //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
+                    return;
+                }
+            }
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {
@@ -1014,7 +1025,6 @@ public class CharacterNeedsComponent : CharacterComponent {
                     owner.jobQueue.AddJobInQueue(job);
                 }
             }
-            hasForcedFullness = true;
             SetFullnessForcedTick();
         }
     }

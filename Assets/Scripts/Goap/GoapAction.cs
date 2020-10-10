@@ -228,7 +228,8 @@ public class GoapAction {
     private bool IsTargetMissing(ActualGoapNode node) {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        if (poiTarget.IsAvailable() == false || poiTarget.gridTileLocation == null) {
+        //Action is invalid if the target is unavailable and the action cannot be advertised if target is unavailable
+        if ((poiTarget.IsAvailable() == false && !canBeAdvertisedEvenIfTargetIsUnavailable) || poiTarget.gridTileLocation == null) {
             return true;
         }
         if (actionLocationType != ACTION_LOCATION_TYPE.IN_PLACE && actor.currentRegion != poiTarget.gridTileLocation.structure.region) {

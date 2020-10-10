@@ -122,7 +122,7 @@ public class VampiricEmbrace : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             if(poiTarget is Character targetCharacter) {
-                return actor != targetCharacter && actor.traitContainer.HasTrait("Vampire") && !targetCharacter.isDead && targetCharacter.carryComponent.IsNotBeingCarried();
+                return actor != targetCharacter && actor.traitContainer.HasTrait("Vampire") && targetCharacter.carryComponent.IsNotBeingCarried();
             }
             return actor != poiTarget && actor.traitContainer.HasTrait("Vampire");
         }

@@ -544,6 +544,7 @@ public static class Extensions {
             case JOB_TYPE.CULTIST_BOOBY_TRAP:
             case JOB_TYPE.EVANGELIZE:
             case JOB_TYPE.SNATCH:
+            case JOB_TYPE.VAMPIRIC_EMBRACE:
                 priority = 830;
                 break;
             case JOB_TYPE.BURY:
@@ -598,7 +599,6 @@ public static class Extensions {
             case JOB_TYPE.ENERGY_RECOVERY_NORMAL:
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
             case JOB_TYPE.HAPPINESS_RECOVERY:
-            case JOB_TYPE.VAMPIRIC_EMBRACE:
                 priority = 500;
                 break;
             case JOB_TYPE.DROP_ITEM_PARTY:
