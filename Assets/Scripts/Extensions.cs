@@ -532,6 +532,7 @@ public static class Extensions {
             case JOB_TYPE.BUILD_BLUEPRINT:
             case JOB_TYPE.PLACE_BLUEPRINT:
             case JOB_TYPE.SPAWN_LAIR:
+            case JOB_TYPE.BUILD_VAMPIRE_CASTLE:
                 priority = 850;
                 break;
             case JOB_TYPE.SABOTAGE_NEIGHBOUR:

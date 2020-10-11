@@ -190,7 +190,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		for (int i = 0; i < structureSettings.Count; i++) {
 			StructureSetting structureSetting = structureSettings[i];
 			if (structureSetting.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, structureSetting));
+				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
 			} else {
 				List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
 				availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);

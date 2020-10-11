@@ -442,6 +442,8 @@ public class FactionManager : BaseMonoBehaviour {
             case RACE.ELVES:
                 return FACTION_TYPE.Elven_Kingdom;
             default:
+                //will always default to human empire for now, so if any other race will create a faction
+                //it is expected that it will have the Human Empire faction type.
                 return FACTION_TYPE.Human_Empire;
         }
     }

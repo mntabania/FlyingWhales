@@ -70,7 +70,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Chance met and dwellings not yet at maximum.";
                         //place dwelling blueprint
                         StructureSetting structureToPlace = new StructureSetting(STRUCTURE_TYPE.DWELLING, character.faction.factionType.mainResource);
-                        if (CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureToPlace, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
                             return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, structureToPlace, targetTile, out producedJob);    
                         }    
@@ -87,7 +87,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                         log += $"\n-Chance to build facility met.";
                         //place random facility based on weights
                         StructureSetting targetFacility = character.homeSettlement.GetMissingFacilityToBuildBasedOnWeights();
-                        if (targetFacility.hasValue && CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                        if (targetFacility.hasValue && LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, targetFacility, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place blueprint {structurePrefabName} at {targetTile}.";
                             return character.jobComponent.TriggerPlaceBlueprint(structurePrefabName, connectorToUse, targetFacility, targetTile, out producedJob);    
                         }
@@ -96,28 +96,6 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
             }
         }
         producedJob = null;
-        return false;
-    }
-
-    private bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
-        List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
-        availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
-        List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
-        prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
-        for (int j = 0; j < prefabChoices.Count; j++) {
-            GameObject prefabGO = prefabChoices[j];
-            LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
-            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
-            if (validConnector != null) {
-                targetTile = tileToPlaceStructure;
-                structurePrefabName = prefabGO.name;
-                connectorToUse = connectorIndex;
-                return true;
-            }
-        }
-        targetTile = null;
-        structurePrefabName = string.Empty;
-        connectorToUse = -1;
         return false;
     }
 }

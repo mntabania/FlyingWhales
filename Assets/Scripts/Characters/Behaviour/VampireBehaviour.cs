@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using UnityEngine;
 using UtilityScripts;
 
 public class VampireBehaviour : CharacterBehaviourComponent {
@@ -9,21 +12,45 @@ public class VampireBehaviour : CharacterBehaviourComponent {
     }
     
     public override bool TryDoBehaviour(Character character, ref string log, out JobQueueItem producedJob) {
+        log += $"\n-{character.name} is a vampire";
         if (character.characterClass.className == "Vampire Lord") {
+            log += $"\n-{character.name} is a Vampire Lord";
             if (character.homeStructure == null || character.homeStructure.structureType != STRUCTURE_TYPE.VAMPIRE_CASTLE) {
+                log += $"\n-{character.name} does not have a home structure or does not live at a vampire castle";
+                var structureSetting = new StructureSetting(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE); //character.faction.factionType.mainResource
                 if (character.homeSettlement != null) {
+                    log += $"\n-{character.name} has a home settlement {character.homeSettlement.name}";
                     LocationStructure unoccupiedCastle = character.homeSettlement.GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE.VAMPIRE_CASTLE);
                     if (unoccupiedCastle != null) {
-                        //TODO: Transfer home    
-                    } else if (GameUtilities.RollChance(15)){
-                        //TODO: Build vampire castle
+                        log += $"\n-{character.homeSettlement.name} has an unoccupied vampire castle {unoccupiedCastle.name}. Setting home to that.";
+                        //Transfer home
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
+                        producedJob = null;
+                        return true;
+                    } else if (GameUtilities.RollChance(15, ref log)){ //15
+                        log += $"\n-{character.homeSettlement.name} does not have an unoccupied vampire castle, and successfully rolled to build a new one";
+                        //Build vampire castle
+                        if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureSetting, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
+                            log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
+                            return character.jobComponent.TriggerBuildVampireCastle(targetTile, structureSetting, out producedJob, structurePrefabName);    
+                        }    
                     }
                 } else {
+                    log += $"\n-{character.name} does not have a home settlement. Will try to find unoccupied vampire castles in the wild.";
                     LocationStructure unoccupiedCastle = GetFirstNonSettlementVampireCastles(character);
                     if (unoccupiedCastle != null) {
-                        //TODO: Transfer home
-                    } else if (GameUtilities.RollChance(15)){
-                        //TODO: Build vampire castle
+                        log += $"\n-Found unoccupied castle {unoccupiedCastle.name}";
+                        //Transfer home
+                        character.interruptComponent.TriggerInterrupt(INTERRUPT.Set_Home, unoccupiedCastle.tiles.First().genericTileObject);
+                        producedJob = null;
+                        return true;
+                    } else if (GameUtilities.RollChance(15, ref log)){ //15
+                        HexTile targetTile = GetNoStructurePlainHexInAllRegions();
+                        log += $"\n-Could not find valid castle in wild, and successfully rolled to build a new castle at {targetTile}";
+                        //Build vampire castle
+                        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+                        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+                        return character.jobComponent.TriggerBuildVampireCastle(targetTile.GetCenterLocationGridTile(), structureSetting, out producedJob, chosenStructurePrefab.name);
                     }
                 }
             }
@@ -33,7 +60,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
             }
         } else {
             //TODO: Add checking for number of embraced characters
-            // //Become vampire lord
+            //Become vampire lord
             // character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Vampire_Lord, character);
             // producedJob = null;
             // return true;
@@ -90,5 +117,19 @@ public class VampireBehaviour : CharacterBehaviourComponent {
             }
         }
         return null;
+    }
+    private HexTile GetNoStructurePlainHexInAllRegions() {
+        HexTile chosenHex = null;
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            chosenHex = GetNoStructurePlainHexInRegion(region);
+            if (chosenHex != null) {
+                return chosenHex;
+            }
+        }
+        return chosenHex;
+    }
+    private HexTile GetNoStructurePlainHexInRegion(Region region) {
+        return region.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
     }
 }

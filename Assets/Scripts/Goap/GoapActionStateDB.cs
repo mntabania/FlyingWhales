@@ -597,6 +597,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.VAMPIRIC_EMBRACE, new[]{
             new StateNameAndDuration(){ name = "Embrace Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, new[]{
+            new StateNameAndDuration(){ name = "Build Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(45) },
+        } },
     };
 }
 

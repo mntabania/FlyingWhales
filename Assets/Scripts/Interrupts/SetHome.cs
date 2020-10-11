@@ -4,6 +4,7 @@ using UnityEngine;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
 using Logs;
+using UnityEngine.Assertions;
 namespace Interrupts {
     public class SetHome : Interrupt {
         public SetHome() : base(INTERRUPT.Set_Home) {
@@ -14,12 +15,14 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder,
-            ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
+        public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
             if(interruptHolder.target != null) {
                 //This means that the new home is predetermined
                 if(interruptHolder.target is Character targetCharacter) {
                     interruptHolder.actor.MigrateHomeStructureTo(targetCharacter.homeStructure);
+                } else if(interruptHolder.target is GenericTileObject genericTileObject) {
+                    Assert.IsFalse(genericTileObject.gridTileLocation.structure is Wilderness, $"Set home interrupt of {interruptHolder.actor.name} will set home to wilderness! Provided tile object is {genericTileObject} at {genericTileObject.gridTileLocation}");
+                    interruptHolder.actor.MigrateHomeStructureTo(genericTileObject.gridTileLocation.structure);
                 }
             } else {
                 SetNewHomeSettlement(interruptHolder.actor);
