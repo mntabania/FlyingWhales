@@ -156,6 +156,12 @@ public class DrinkBlood : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
+
+        Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+        if(vampire != null) {
+            vampire.AddAwareCharacter(witness);
+        }
+
         CrimeManager.Instance.ReactToCrime(witness, actor, target, target.factionOwner, node.crimeType, node, status);
 
         CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(witness, actor, target, CRIME_TYPE.Vampire);
@@ -233,6 +239,11 @@ public class DrinkBlood : GoapAction {
         REACTION_STATUS status) {
         string response = base.ReactionOfTarget(actor, target, node, status);
         if (target is Character targetCharacter) {
+            Vampire vampire = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if (vampire != null) {
+                vampire.AddAwareCharacter(targetCharacter);
+            }
+
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, targetCharacter, target.factionOwner, node.crimeType, node, status);
 
             CRIME_SEVERITY severity = CrimeManager.Instance.GetCrimeSeverity(targetCharacter, actor, target, CRIME_TYPE.Vampire);

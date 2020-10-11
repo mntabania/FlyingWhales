@@ -185,7 +185,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         if (actor.race == RACE.DEMON || target.race == RACE.DEMON || actor is Summon || target is Summon) {
             return false; //do not let demons and summons have relationships
         }
-        if (actor.returnedToLife || target.returnedToLife) {
+        if (actor.raisedFromDeadAsSkeleton || target.raisedFromDeadAsSkeleton) {
             return false; //do not let zombies or skeletons develop other relationships
         }
         string summary = $"Relationship improvement between {actor.name} and {target.name}";
@@ -241,7 +241,7 @@ public class RelationshipManager : BaseMonoBehaviour {
         if (actor.race == RACE.DEMON || target.race == RACE.DEMON || actor is Summon || target is Summon) {
             return false; //do not let demons and summons have relationships
         }
-        if (actor.returnedToLife || target.returnedToLife) {
+        if (actor.raisedFromDeadAsSkeleton || target.raisedFromDeadAsSkeleton) {
             return false; //do not let zombies or skeletons develop other relationships
         }
 

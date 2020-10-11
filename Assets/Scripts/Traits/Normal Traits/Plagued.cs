@@ -16,7 +16,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, INTERACTION_TYPE.VAMPIRIC_EMBRACE };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -4;
             AddTraitOverrideFunctionIdentifier(TraitManager.Execute_After_Effect_Trait);

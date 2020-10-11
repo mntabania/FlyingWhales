@@ -612,6 +612,18 @@ public class CrimeData : ISavable {
                 faction.CheckForWar(criminal.faction, severityOfCrime, criminal, targetCharacter, crimeAction);    
             }
             
+            if(crimeType == CRIME_TYPE.Vampire) {
+                //when a Vampire becomes Wanted in a Faction, all current members of the Faction will immediately know of his Vampirism
+                Traits.Vampire vampire = criminal.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
+                if (vampire != null) {
+                    for (int i = 0; i < faction.characters.Count; i++) {
+                        Character factionMember = faction.characters[i];
+                        if(factionMember != criminal) {
+                            vampire.AddAwareCharacter(factionMember);
+                        }
+                    }
+                }
+            }
         }
     }
     public bool IsWantedBy(Faction faction) {
