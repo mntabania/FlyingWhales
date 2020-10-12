@@ -55,6 +55,12 @@ namespace Traits {
                 owner = sourceCharacter as Character;
             }
         }
+        public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
+            data = $"{data}Prisoner of faction: {prisonerOfFaction?.name}";
+            data = $"{data}\nPrisoner of character: {prisonerOfCharacter?.name}";
+            return data;
+        }
         //public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         //    if (sourceCharacter is Character character) {
         //        character.ForceCancelAllJobsTargetingThisCharacter(JOB_TYPE.FEED);

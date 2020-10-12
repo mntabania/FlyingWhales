@@ -13,10 +13,10 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptEndEffect(InterruptHolder interruptHolder) {
             interruptHolder.actor.AssignClass("Vampire Lord");
-            if (interruptHolder.actor.faction != null && 
-                interruptHolder.actor.faction.GetCrimeSeverity(null, interruptHolder.actor, interruptHolder.actor, CRIME_TYPE.Vampire) != CRIME_SEVERITY.None) {
+            if (interruptHolder.actor.faction != null && interruptHolder.actor.faction.GetCrimeSeverity(null, interruptHolder.actor, interruptHolder.actor, CRIME_TYPE.Vampire) != CRIME_SEVERITY.None) {
                 interruptHolder.actor.MigrateHomeStructureTo(null);
-                interruptHolder.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, interruptHolder.actor);
+                interruptHolder.actor.faction.AddBannedCharacter(interruptHolder.actor);
+                interruptHolder.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, interruptHolder.actor, "left_faction_vampire");
             }
             return base.ExecuteInterruptEndEffect(interruptHolder);
         }

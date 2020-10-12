@@ -346,6 +346,7 @@ public class FactionManager : BaseMonoBehaviour {
                     //If Demon Worshipper, friendly with player faction
                     factionRelationship.SetRelationshipStatus(faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship) ? 
                         FACTION_RELATIONSHIP_STATUS.Friendly : FACTION_RELATIONSHIP_STATUS.Hostile);
+                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
                 } else if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
                     //Check each Faction Leader of other existing factions if available:
                     if (leader.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
@@ -360,8 +361,9 @@ public class FactionManager : BaseMonoBehaviour {
                             factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);    
                         }
                     }
+                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
                 }
-                onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
+                
             }
         }
     }
@@ -433,8 +435,12 @@ public class FactionManager : BaseMonoBehaviour {
             throw new Exception($"{typeName} has no data!");
         }
     }
-    #endregion
-
+    public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
+        if (character.traitContainer.HasTrait("Vampire")) {
+            return FACTION_TYPE.Vampire_Clan;
+        }
+        return GetFactionTypeForRace(character.race);
+    }
     public FACTION_TYPE GetFactionTypeForRace(RACE race) {
         switch (race) {
             case RACE.HUMANS:
@@ -447,6 +453,8 @@ public class FactionManager : BaseMonoBehaviour {
                 return FACTION_TYPE.Human_Empire;
         }
     }
+    #endregion
+    
     public int GetActiveVillagerFactionCount() {
         int count = 0;
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {

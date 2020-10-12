@@ -2,6 +2,7 @@
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using Traits;
 using UnityEngine;
 using UtilityScripts;
 
@@ -32,7 +33,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         //Build vampire castle
                         if (LandmarkManager.Instance.CanPlaceStructureBlueprint(character.homeSettlement, structureSetting, out var targetTile, out var structurePrefabName, out var connectorToUse)) {
                             log += $"\n-Will place dwelling blueprint {structurePrefabName} at {targetTile}.";
-                            return character.jobComponent.TriggerBuildVampireCastle(targetTile, structureSetting, out producedJob, structurePrefabName);    
+                            return character.jobComponent.TriggerBuildVampireCastle(targetTile, out producedJob, structurePrefabName);    
                         }    
                     }
                 } else {
@@ -50,13 +51,31 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         //Build vampire castle
                         List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
                         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-                        return character.jobComponent.TriggerBuildVampireCastle(targetTile.GetCenterLocationGridTile(), structureSetting, out producedJob, chosenStructurePrefab.name);
+                        return character.jobComponent.TriggerBuildVampireCastle(targetTile.GetCenterLocationGridTile(), out producedJob, chosenStructurePrefab.name);
                     }
                 }
             }
 
             if (character.homeStructure != null) {
-                //TODO: Prisoner
+                log += $"\n-{character.name} has a home. Will check if it has a prisoner there.";
+                bool hasPrisonerAtHome = false;
+                for (int i = 0; i < character.homeStructure.charactersHere.Count; i++) {
+                    Character otherCharacter = character.homeStructure.charactersHere[i];
+                    Prisoner prisoner = otherCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                    if (otherCharacter != character && prisoner != null && !otherCharacter.isDead) {
+                        log += $"\n-{character.name} found a prisoner at home: {otherCharacter.name}. Will not create Imprison blood source.";
+                        hasPrisonerAtHome = true;
+                        break;
+                    }
+                }
+                if (!hasPrisonerAtHome) {
+                    Vampire vampire = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                    if (!vampire.dislikedBeingVampire || character.traitContainer.GetTraitsOrStatuses<Trait>("Evil", "Treacherous", "Glutton").Count > 0) {
+                        if (GameUtilities.RollChance(15)) { //15
+                            return character.jobComponent.TriggerImprisonBloodSource(out producedJob, ref log);
+                        }
+                    }
+                }
             }
         } else {
             //TODO: Add checking for number of embraced characters
@@ -101,7 +120,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         return false;
     }
 
-    private LocationStructure GetFirstNonSettlementVampireCastles(Character character) {
+    public static LocationStructure GetFirstNonSettlementVampireCastles(Character character) {
         List<Region> regionsToCheck = new List<Region> {character.currentRegion};
         regionsToCheck.AddRange(character.currentRegion.neighbours);
         for (int i = 0; i < regionsToCheck.Count; i++) {
@@ -118,7 +137,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
         return null;
     }
-    private HexTile GetNoStructurePlainHexInAllRegions() {
+    public static HexTile GetNoStructurePlainHexInAllRegions() {
         HexTile chosenHex = null;
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region region = GridMap.Instance.allRegions[i];
@@ -129,7 +148,7 @@ public class VampireBehaviour : CharacterBehaviourComponent {
         }
         return chosenHex;
     }
-    private HexTile GetNoStructurePlainHexInRegion(Region region) {
+    public static HexTile GetNoStructurePlainHexInRegion(Region region) {
         return region.GetRandomNoStructureUncorruptedNotPartOrNextToVillagePlainHex();
     }
 }

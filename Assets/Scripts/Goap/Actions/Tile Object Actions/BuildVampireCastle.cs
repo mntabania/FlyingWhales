@@ -123,7 +123,7 @@ public class BuildVampireCastle : GoapAction {
                 NPCSettlement settlement = goapNode.actor.homeSettlement;
                 //create new settlement if vampire has no home settlement yet
                 if (goapNode.actor.homeSettlement == null) {
-                    settlement = LandmarkManager.Instance.CreateNewSettlement(goapNode.actor.currentRegion, LOCATION_TYPE.VILLAGE);
+                    settlement = LandmarkManager.Instance.CreateNewSettlement(goapNode.actor.currentRegion, LOCATION_TYPE.DUNGEON);
                     LandmarkManager.Instance.OwnSettlement(goapNode.actor.faction, settlement);
                     if (goapNode.actor.faction.race == RACE.HUMANS) {
                         settlement.SetSettlementType(SETTLEMENT_TYPE.Default_Human);
@@ -139,7 +139,6 @@ public class BuildVampireCastle : GoapAction {
                 }
                 
                 List<LocationStructure> createdStructures = new List<LocationStructure>();
-                
                 createdStructures.Add(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(settlement, goapNode.actor.currentRegion.innerMap, genericTileObject.gridTileLocation, prefabName));
 
                 LocationStructure castle = createdStructures[0];

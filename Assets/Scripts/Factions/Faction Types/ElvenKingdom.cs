@@ -35,7 +35,6 @@
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
             
-            //TODO:
             AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");
@@ -73,7 +72,6 @@
             AddCombatantClass("Druid");
             AddCombatantClass("Shaman");
             
-            //TODO:
             AddCivilianClass("Peasant");
             AddCivilianClass("Miner");
             AddCivilianClass("Craftsman");

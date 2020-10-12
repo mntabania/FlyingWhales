@@ -260,6 +260,10 @@ namespace Traits {
                                             willCreateAssumption = false;
                                         }
                                     }
+                                    if (targetCharacter.isVagrant) {
+                                        //removed vagrant trespassing because it causes an issue whenever a character leaves its current faction while it is still inside its previous settlement.
+                                        willCreateAssumption = false;
+                                    }
                                     if (willCreateAssumption) {
                                         owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
                                     }

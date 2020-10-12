@@ -546,6 +546,7 @@ public static class Extensions {
             case JOB_TYPE.EVANGELIZE:
             case JOB_TYPE.SNATCH:
             case JOB_TYPE.VAMPIRIC_EMBRACE:
+            case JOB_TYPE.IMPRISON_BLOOD_SOURCE:
                 priority = 830;
                 break;
             case JOB_TYPE.BURY:

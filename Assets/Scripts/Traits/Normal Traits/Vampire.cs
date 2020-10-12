@@ -143,6 +143,11 @@ namespace Traits {
         //        }
         //    }
         //}
+        public override string GetTestingData(ITraitable traitable = null) {
+            string data = base.GetTestingData(traitable);
+            data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
+            return data;
+        }
         #endregion
         
         #region Loading

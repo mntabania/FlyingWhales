@@ -5,6 +5,7 @@ using UnityEngine;
 using UtilityScripts;
 using Inner_Maps.Location_Structures;
 using Locations.Settlements;
+using Traits;
 
 public class FactionLeaderBehaviour : CharacterBehaviourComponent {
     public FactionLeaderBehaviour() {
@@ -48,7 +49,7 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
                 int roll = Random.Range(0, 100);
                 log += $"\n-Roll: {roll}";
                 if (roll < 15) {
-                    Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => x.traitContainer.HasTrait("Restrained") && x.faction != character.faction && !x.HasJobTargetingThis(JOB_TYPE.RECRUIT));
+                    Character targetCharacter = structure.GetRandomCharacterThatMeetCriteria(x => CanCharacterBeRecruited(x, character));
                     if(targetCharacter != null) {
                         log += $"\n-Chosen target: {targetCharacter.name}";
                         return character.jobComponent.TriggerRecruitJob(targetCharacter, out producedJob);
@@ -97,5 +98,24 @@ public class FactionLeaderBehaviour : CharacterBehaviourComponent {
         }
         producedJob = null;
         return false;
+    }
+
+    private bool CanCharacterBeRecruited(Character targetCharacter, Character recruiter) {
+        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
+            return false;
+        }
+        if (targetCharacter.faction == recruiter.faction) {
+            return false;
+        }
+        if (targetCharacter.HasJobTargetingThis(JOB_TYPE.RECRUIT)) {
+            return false;
+        }
+        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+        if (prisoner == null || !prisoner.IsPrisonerOf(recruiter.faction)) {
+            //Only recruit characters that are prisoners of the recruiters faction.
+            //This was added because sometimes vampire lords will recruit their imprisoned blood sources
+            return false;
+        }
+        return true;
     }
 }
