@@ -48,7 +48,7 @@ public class BlockWall : TileObject {
         if (wallType == WALL_TYPE.Flesh) {
             size = new Vector2(0.5f, 0.5f);
         } else if (wallType == WALL_TYPE.Demon_Stone) {
-            size = new Vector2(1.2f, 1.2f);
+            size = new Vector2(1f, 1f);
         }
         mapVisual.InitializeGUS(Vector2.zero, size, tile);
 

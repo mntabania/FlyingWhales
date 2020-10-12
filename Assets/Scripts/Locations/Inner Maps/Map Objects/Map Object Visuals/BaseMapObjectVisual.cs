@@ -66,7 +66,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
             hoverObject.transform.localRotation = rotation;    
         }
     }
-    public void SetVisual(Sprite sprite) {
+    public virtual void SetVisual(Sprite sprite) {
         objectVisual.sprite = sprite;
         hoverObject.sprite = sprite;
     }
