@@ -55,9 +55,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.7, y: 0.7}
+  m_Size: {x: 0.3, y: 0.3}
   m_EdgeRadius: 0
---- !u!114 &7651739779740449605
+--- !u!114 &4429293896846009598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7670396982659589804}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e777a22aebb4458c870a40388b09f18d, type: 3}
+  m_Script: {fileID: 11500000, guid: c3974f70ff114e71b099c78d964101fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
@@ -87,7 +87,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1340829586555444, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_Name
-      value: DoorGameObject
+      value: TableGameObject
       objectReference: {fileID: 0}
     - target: {fileID: 4932280101310078, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -134,8 +134,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 114310401727755460, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
     - {fileID: 3372984904546784189, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
+    - {fileID: 114310401727755460, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d9d549510a4f590468f27e4140b34e5e, type: 3}
 --- !u!1 &7670396982659589804 stripped
 GameObject:

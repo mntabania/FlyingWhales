@@ -292,6 +292,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustHappinessDecreaseRate(float amount) {
         happinessDecreaseRate += amount;
+        Debug.Log($"Adjusted happiness decrease rate of {owner.name} by {amount.ToString(CultureInfo.InvariantCulture)} new decrease rate is {happinessDecreaseRate.ToString(CultureInfo.InvariantCulture)}");
     }
     public void AdjustStaminaDecreaseRate(float amount) {
         staminaDecreaseRate += amount;
