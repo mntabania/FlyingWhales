@@ -351,8 +351,7 @@ public class DrinkBlood : GoapAction {
                     targetCharacter.traitContainer.AddTrait(targetCharacter, "Lethargic", actor, goapNode);
                 } else {
                     //Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
-                    Trait trait = null;
-                    if(targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", out trait, actor)) {
+                    if(targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", actor)) {
                         Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
                         // if(goapNode != null) {
                         //     log.SetLogType(LOG_TYPE.Action);
@@ -361,11 +360,12 @@ public class DrinkBlood : GoapAction {
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddLogToDatabase();
                         PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                    }
 
-                        if (targetCharacter.isNormalCharacter) {
-                            if(trait != null && trait is Vampire vampireTrait) {
-                                vampireTrait.AdjustNumOfConvertedVillagers(1);
-                            }
+                    if (targetCharacter.isNormalCharacter) {
+                        Vampire vampireTrait = actor.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                        if(vampireTrait != null) {
+                            vampireTrait.AdjustNumOfConvertedVillagers(1);
                         }
                     }
                 }
