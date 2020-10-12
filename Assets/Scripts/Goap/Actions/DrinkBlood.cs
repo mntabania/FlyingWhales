@@ -347,19 +347,27 @@ public class DrinkBlood : GoapAction {
                     actor.traitContainer.AddTrait(actor, "Poor Meal", targetCharacter);
                 }
                 if (GameUtilities.RollChance(98)) {
-                    Lethargic lethargic = TraitManager.Instance.CreateNewInstancedTraitClass<Lethargic>("Lethargic");
-                    targetCharacter.traitContainer.AddTrait(targetCharacter, lethargic, actor, goapNode);
+                    //Lethargic lethargic = TraitManager.Instance.CreateNewInstancedTraitClass<Lethargic>("Lethargic");
+                    targetCharacter.traitContainer.AddTrait(targetCharacter, "Lethargic", actor, goapNode);
                 } else {
-                    Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
-                    targetCharacter.traitContainer.AddTrait(targetCharacter, vampire, actor);
-                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
-                    // if(goapNode != null) {
-                    //     log.SetLogType(LOG_TYPE.Action);
-                    // }
-                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddLogToDatabase();
-                    PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+                    //Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
+                    Trait trait = null;
+                    if(targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", out trait, actor)) {
+                        Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
+                        // if(goapNode != null) {
+                        //     log.SetLogType(LOG_TYPE.Action);
+                        // }
+                        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddLogToDatabase();
+                        PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+
+                        if (targetCharacter.isNormalCharacter) {
+                            if(trait != null && trait is Vampire vampireTrait) {
+                                vampireTrait.AdjustNumOfConvertedVillagers(1);
+                            }
+                        }
+                    }
                 }
             }
         }

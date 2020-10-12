@@ -152,18 +152,24 @@ public class VampiricEmbrace : GoapAction {
                     targetCharacter.ReturnToLife();
                 }
 
-                Vampire vampire = TraitManager.Instance.CreateNewInstancedTraitClass<Vampire>("Vampire");
-                targetCharacter.traitContainer.AddTrait(targetCharacter, vampire, actor);
-                Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
-                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddLogToDatabase();
-                PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
-
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Injured");
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Infected");
                 targetCharacter.traitContainer.RemoveStatusAndStacks(targetCharacter, "Plagued");
 
+                Trait trait = null;
+                if (targetCharacter.traitContainer.AddTrait(targetCharacter, "Vampire", out trait, actor)) {
+                    Log log = GameManager.CreateNewLog(GameManager.Instance.Today(), "GoapAction", goapName, "contracted", goapNode, LOG_TAG.Life_Changes);
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddLogToDatabase();
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, log);
+
+                    if (targetCharacter.isNormalCharacter) {
+                        if (trait != null && trait is Vampire vampireTrait) {
+                            vampireTrait.AdjustNumOfConvertedVillagers(1);
+                        }
+                    }
+                }
             }
         }
 

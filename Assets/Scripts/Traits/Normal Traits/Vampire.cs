@@ -10,6 +10,7 @@ namespace Traits {
     public class Vampire : Trait {
         //public override bool isSingleton => true;
         public bool dislikedBeingVampire { get; private set; }
+        public int numOfConvertedVillagers { get; private set; }
         public List<Character> awareCharacters { get; private set; }
 
         public Vampire() {
@@ -151,6 +152,7 @@ namespace Traits {
             SaveDataVampire saveDataVampire = saveDataTrait as SaveDataVampire;
             Debug.Assert(saveDataVampire != null, nameof(saveDataVampire) + " != null");
             dislikedBeingVampire = saveDataVampire.dislikedBeingVampire;
+            numOfConvertedVillagers = saveDataVampire.numOfConvertedVillagers;
         }
         public override void LoadSecondWaveInstancedTrait(SaveDataTrait saveDataTrait) {
             base.LoadSecondWaveInstancedTrait(saveDataTrait);
@@ -193,6 +195,9 @@ namespace Traits {
             } else {
                 dislikedBeingVampire = true;
             }
+        }
+        public void AdjustNumOfConvertedVillagers(int amount) {
+            numOfConvertedVillagers += amount;
         }
         public void AddAwareCharacter(Character character) {
             if (!awareCharacters.Contains(character)) {
@@ -242,6 +247,7 @@ namespace Traits {
 #region Save Data
 public class SaveDataVampire : SaveDataTrait {
     public bool dislikedBeingVampire;
+    public int numOfConvertedVillagers;
     public List<string> awareCharacters;
 
     public override void Save(Trait trait) {
@@ -250,6 +256,7 @@ public class SaveDataVampire : SaveDataTrait {
         Assert.IsNotNull(vampire);
         awareCharacters = SaveUtilities.ConvertSavableListToIDs(vampire.awareCharacters);
         dislikedBeingVampire = vampire.dislikedBeingVampire;
+        numOfConvertedVillagers = vampire.numOfConvertedVillagers;
     }
 }
 #endregion
