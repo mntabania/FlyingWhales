@@ -7,6 +7,7 @@ using Factions.Faction_Types;
 using Inner_Maps;
 using UnityEngine.UI;
 using UtilityScripts;
+using Traits;
 
 public class FactionManager : BaseMonoBehaviour {
 
@@ -347,6 +348,28 @@ public class FactionManager : BaseMonoBehaviour {
                     factionRelationship.SetRelationshipStatus(faction.factionType.HasIdeology(FACTION_IDEOLOGY.Demon_Worship) ? 
                         FACTION_RELATIONSHIP_STATUS.Friendly : FACTION_RELATIONSHIP_STATUS.Hostile);
                     onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
+                } else if (otherFaction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                    //If the other faction is a Vampire Clan
+                    //And this faction is a Vampire Clan - Neutral, but if this facton is Lycan Clan - Hostile
+                    if (faction.factionType.type == FACTION_TYPE.Lycan_Clan) {
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                    } else if (faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                    } else {
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                    }
+                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
+                } else if (otherFaction.factionType.type == FACTION_TYPE.Lycan_Clan) {
+                    //If the other faction is a Lycan Clan
+                    //And this faction is a Lycan Clan - Neutral, but if this facton is Vampire Clan - Hostile
+                    if (faction.factionType.type == FACTION_TYPE.Vampire_Clan) {
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Hostile);
+                    } else if (faction.factionType.type == FACTION_TYPE.Lycan_Clan) {
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                    } else {
+                        factionRelationship.SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS.Neutral);
+                    }
+                    onSetRelationshipAction?.Invoke(factionRelationship.relationshipStatus, faction, otherFaction);
                 } else if (otherFaction.leader != null && otherFaction.leader is Character otherFactionLeader){
                     //Check each Faction Leader of other existing factions if available:
                     if (leader.relationshipContainer.IsEnemiesWith(otherFactionLeader)) {
@@ -382,21 +405,38 @@ public class FactionManager : BaseMonoBehaviour {
         }
     }
     public void RerollPeaceTypeIdeology(Faction faction, Character leader) {
-        if (leader.traitContainer.HasTrait("Hothead", "Treacherous", "Evil")) {
+        if (leader.traitContainer.HasTrait("Hothead", "Treacherous", "Evil", "Cultist")) {
             Warmonger warmonger = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
             faction.factionType.AddIdeology(warmonger);
-        } else {
-            Peaceful peaceful = CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
-            faction.factionType.AddIdeology(peaceful);
+            return;
+        } else if (leader.traitContainer.HasTrait("Vampire")) {
+            Vampire vampireTrait = leader.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+            if (!vampireTrait.dislikedBeingVampire) {
+                Warmonger warmonger = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+                faction.factionType.AddIdeology(warmonger);
+                return;
+            }
+        } else if (leader.traitContainer.HasTrait("Lycanthrope")) {
+            //TODO: Checking if desires being lycan, see above checking for vampire
+            Warmonger warmonger = CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+            faction.factionType.AddIdeology(warmonger);
+            return;
         }
+        Peaceful peaceful = CreateIdeology<Peaceful>(FACTION_IDEOLOGY.Peaceful);
+        faction.factionType.AddIdeology(peaceful);
     }
     public void RerollInclusiveTypeIdeology(Faction faction, Character leader) {
+        //TODO: If Demon Cult, 100% chance Demon Worshipper Exclusive
         if (GameUtilities.RollChance(60)) {
             Inclusive inclusive = CreateIdeology<Inclusive>(FACTION_IDEOLOGY.Inclusive);
             faction.factionType.AddIdeology(inclusive);
         } else {
             Exclusive exclusive = CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
-            if (GameUtilities.RollChance(60)) {
+            if(faction.factionType.type == FACTION_TYPE.Vampire_Clan && GameUtilities.RollChance(35)) {
+                exclusive.SetRequirement("Vampire");
+            } else if (faction.factionType.type == FACTION_TYPE.Lycan_Clan && GameUtilities.RollChance(35)) {
+                exclusive.SetRequirement("Lycanthrope");
+            } else if (GameUtilities.RollChance(60)) {
                 exclusive.SetRequirement(leader.race);
             } else {
                 exclusive.SetRequirement(leader.gender);
@@ -438,7 +478,10 @@ public class FactionManager : BaseMonoBehaviour {
     public FACTION_TYPE GetFactionTypeForCharacter(Character character) {
         if (character.traitContainer.HasTrait("Vampire")) {
             return FACTION_TYPE.Vampire_Clan;
+        } else if (character.traitContainer.HasTrait("Cultist")) {
+            return FACTION_TYPE.Demon_Cult;
         }
+        //TODO: Mastered Lycanthrope
         return GetFactionTypeForRace(character.race);
     }
     public FACTION_TYPE GetFactionTypeForRace(RACE race) {

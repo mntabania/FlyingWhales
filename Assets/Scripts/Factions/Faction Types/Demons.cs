@@ -6,6 +6,6 @@
         public Demons() : base(FACTION_TYPE.Demons) { }
         
         public override void SetAsDefault() { }
-        public override void SetFromSaveData() { }
+        public override void SetFixedData() { }
     }
 }

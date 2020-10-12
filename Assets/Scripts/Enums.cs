@@ -311,7 +311,9 @@ public enum FACTION_TYPE {
     Bandits,
     Undead,
     Disguised,
-    Vampire_Clan
+    Vampire_Clan,
+    Lycan_Clan,
+    Demon_Cult
 }
 
 public enum INTERACTION_TYPE {
@@ -991,10 +993,10 @@ public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 public enum RESOURCE { FOOD, WOOD, STONE, METAL, NONE }
 public enum MAP_OBJECT_STATE { BUILT, UNBUILT, BUILDING }
 public enum FACTION_IDEOLOGY { Inclusive = 0, Exclusive = 1, Warmonger = 2, Peaceful = 3, Divine_Worship = 4, Nature_Worship = 5, Demon_Worship = 6,
-    Reveres_Vampires = 7,
+    Reveres_Vampires = 7, Reveres_Werewolves = 8, Hates_Vampires = 9, Hates_Werewolves = 10,
 }
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
-public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, }
+public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened,
     Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, Rage, Plague_Hysteria, Distraught,
 }

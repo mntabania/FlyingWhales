@@ -17,9 +17,9 @@ namespace Interrupts {
 
             FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForCharacter(interruptHolder.actor);
             Faction faction = FactionManager.Instance.CreateNewFaction(factionType);
-            if (factionType == FACTION_TYPE.Vampire_Clan) {
-                faction.factionType.SetAsDefault(); //NOTE: This is only a special case for vampire clan for now, while create faction hasn't been updated yet
-            }
+
+            //Sets the default data of faction type
+            faction.factionType.SetAsDefault();
             
             //Set Peace-Type Ideology:
             FactionManager.Instance.RerollPeaceTypeIdeology(faction, interruptHolder.actor);
@@ -38,7 +38,6 @@ namespace Interrupts {
             
             //create relationships
             FactionManager.Instance.RerollFactionRelationships(faction, interruptHolder.actor, true);
-            
 
             overrideEffectLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction", null, LOG_TAG.Life_Changes);
             overrideEffectLog.AddToFillers(interruptHolder.actor, interruptHolder.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

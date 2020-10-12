@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Factions.Faction_Types;
 
 [System.Serializable]
 public class ReveresVampires : FactionIdeology {
@@ -17,7 +18,10 @@ public class ReveresVampires : FactionIdeology {
         return true;
     }
     public override string GetIdeologyDescription() {
-        return "Loves Vampires.";
+        return "Has a high opinion towards Vampires.";
+    }
+    public override void OnAddIdeology(FactionType factionType) {
+        factionType.RemoveIdeology(FACTION_IDEOLOGY.Hates_Vampires);
     }
     #endregion
 }

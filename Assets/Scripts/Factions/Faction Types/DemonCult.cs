@@ -1,15 +1,23 @@
 ﻿namespace Factions.Faction_Types {
-    public class VampireClan : FactionType {
+    public class DemonCult : FactionType {
         public override RESOURCE mainResource => RESOURCE.STONE;
         
-        public VampireClan() : base(FACTION_TYPE.Vampire_Clan) { }
+        public DemonCult() : base(FACTION_TYPE.Demon_Cult) { }
         
         public override void SetAsDefault() {
-            ReveresVampires reveresVampires = FactionManager.Instance.CreateIdeology<ReveresVampires>(FACTION_IDEOLOGY.Reveres_Vampires);
-            AddIdeology(reveresVampires);
-            
+            Warmonger warmonger = FactionManager.Instance.CreateIdeology<Warmonger>(FACTION_IDEOLOGY.Warmonger);
+            AddIdeology(warmonger);
+
+            DemonWorship demonWorship = FactionManager.Instance.CreateIdeology<DemonWorship>(FACTION_IDEOLOGY.Demon_Worship);
+            AddIdeology(demonWorship);
+
+            //TODO: Demon Worshipper Exclusive Ideology
+            //Exclusive exclusive = FactionManager.Instance.CreateIdeology<Exclusive>(FACTION_IDEOLOGY.Exclusive);
+            //exclusive.SetRequirement(RACE.ELVES);
+            //AddIdeology(exclusive);
+
+            //TODO: Corrupted Resource?
             //structures
-            AddNeededStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
@@ -33,19 +41,15 @@
 
             //crimes
             hasCrimes = true;
-            AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
             AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
             AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
+            AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Misdemeanor);
             AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
+            AddCrime(CRIME_TYPE.Nature_Worship, CRIME_SEVERITY.Heinous);
+            AddCrime(CRIME_TYPE.Divine_Worship, CRIME_SEVERITY.Heinous);
         }
         public override void SetFixedData() {
             //structures
-            AddNeededStructure(STRUCTURE_TYPE.VAMPIRE_CASTLE, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.CITY_CENTER, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.DWELLING, RESOURCE.STONE);
             AddNeededStructure(STRUCTURE_TYPE.MINE_SHACK, RESOURCE.STONE);
@@ -69,15 +73,12 @@
 
             //crimes
             hasCrimes = true;
-            AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);
             AddCrime(CRIME_TYPE.Theft, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Disturbances, CRIME_SEVERITY.Misdemeanor);
             AddCrime(CRIME_TYPE.Assault, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Arson, CRIME_SEVERITY.Misdemeanor);
-            AddCrime(CRIME_TYPE.Trespassing, CRIME_SEVERITY.Misdemeanor);
+            AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Misdemeanor);
             AddCrime(CRIME_TYPE.Murder, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Cannibalism, CRIME_SEVERITY.Serious);
-            AddCrime(CRIME_TYPE.Werewolf, CRIME_SEVERITY.Heinous);
+            AddCrime(CRIME_TYPE.Nature_Worship, CRIME_SEVERITY.Heinous);
+            AddCrime(CRIME_TYPE.Divine_Worship, CRIME_SEVERITY.Heinous);
         }
     }
 }
