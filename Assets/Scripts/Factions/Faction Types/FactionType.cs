@@ -28,12 +28,15 @@ namespace Factions.Faction_Types {
 
         #region Initialization
         public abstract void SetAsDefault();
-        public abstract void SetFromSaveData();
+        public abstract void SetFixedData();
         #endregion
 
         #region Ideologies
         public void AddIdeology(FactionIdeology ideology) {
-            ideologies.Add(ideology);
+            if (!HasIdeology(ideology.ideologyType)) {
+                ideologies.Add(ideology);
+                ideology.OnAddIdeology(this);
+            }
         }
         public void RemoveIdeology(FACTION_IDEOLOGY ideology) {
             if (HasIdeology(ideology, out var factionIdeology)) {

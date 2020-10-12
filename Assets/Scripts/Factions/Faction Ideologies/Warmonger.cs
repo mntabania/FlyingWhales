@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Factions.Faction_Types;
 
 [System.Serializable]
 public class Warmonger : FactionIdeology {
@@ -16,6 +17,9 @@ public class Warmonger : FactionIdeology {
     }
     public override string GetIdeologyDescription() {
         return "Likely to declare war at its Leader's behest.";
+    }
+    public override void OnAddIdeology(FactionType factionType) {
+        factionType.RemoveIdeology(FACTION_IDEOLOGY.Peaceful);
     }
     #endregion
 }

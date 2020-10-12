@@ -4,8 +4,8 @@ using UnityEngine;
 using Factions.Faction_Types;
 
 [System.Serializable]
-public class DivineWorship : FactionIdeology {
-    public DivineWorship() : base(FACTION_IDEOLOGY.Divine_Worship) {
+public class ReveresWerewolves : FactionIdeology {
+    public ReveresWerewolves() : base(FACTION_IDEOLOGY.Reveres_Werewolves) {
 
     }
 
@@ -18,10 +18,10 @@ public class DivineWorship : FactionIdeology {
         return true;
     }
     public override string GetIdeologyDescription() {
-        return "Worships the Goddess.";
+        return "Has a high opinion towards Werewolves.";
     }
     public override void OnAddIdeology(FactionType factionType) {
-        factionType.RemoveIdeology(FACTION_IDEOLOGY.Demon_Worship);
+        factionType.RemoveIdeology(FACTION_IDEOLOGY.Hates_Werewolves);
     }
     #endregion
 }

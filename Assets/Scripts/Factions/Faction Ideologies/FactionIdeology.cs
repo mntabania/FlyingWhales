@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Factions.Faction_Types;
 
 [System.Serializable]
 public class FactionIdeology {
@@ -18,5 +19,6 @@ public class FactionIdeology {
     public virtual string GetRequirementsForJoiningAsString() { return "None"; }
     public virtual string GetIdeologyDescription() { return name; }
     public virtual string GetIdeologyName() { return name; }
+    public virtual void OnAddIdeology(FactionType factionType) { }
     #endregion
 }
