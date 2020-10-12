@@ -442,10 +442,12 @@ namespace Inner_Maps {
         #endregion
 
         #region Structures
-        public void PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
+        public List<LocationStructure> PlaceBuiltStructureTemplateAt(GameObject structurePrefab, HexTile hexTile, BaseSettlement settlement) {
             GameObject structureTemplateGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, hexTile.GetCenterLocationGridTile().centeredLocalLocation, 
                 Quaternion.identity, structureParent);
         
+            List<LocationStructure> createdStructures = new List<LocationStructure>();
+            
             StructureTemplate structureTemplate = structureTemplateGO.GetComponent<StructureTemplate>();
             structureTemplate.transform.localScale = Vector3.one;
             for (int i = 0; i < structureTemplate.structureObjects.Length; i++) {
@@ -458,6 +460,7 @@ namespace Inner_Maps {
                 structureObject.SetTilesInStructure(occupiedTiles.ToArray());
                 structureObject.ClearOutUnimportantObjectsBeforePlacement();
                 LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(hexTile.region, structureObject.structureType, settlement);
+                createdStructures.Add(structure);
                 for (int j = 0; j < occupiedTiles.Count; j++) {
                     LocationGridTile tile = occupiedTiles[j];
                     tile.SetStructure(structure);
@@ -477,6 +480,7 @@ namespace Inner_Maps {
             }
 
             hexTile.innerMapHexTile.Occupy();
+            return createdStructures;
         }
         /// <summary>
         /// Build a structure object at the given center tile.

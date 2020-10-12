@@ -384,7 +384,11 @@ public class CharacterInfoUI : InfoUIBase {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.traits.ElementAtOrDefault(index);
             if (trait != null) {
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
+                string info = trait.descriptionInUI;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                info += $"\n{trait.GetTestingData(activeCharacter)}";
+#endif
+                UIManager.Instance.ShowSmallInfo(info);    
             }
         }
     }
@@ -393,7 +397,11 @@ public class CharacterInfoUI : InfoUIBase {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.statuses.ElementAtOrDefault(index);
             if (trait != null) {
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
+                string info = trait.descriptionInUI;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                info += $"\n{trait.GetTestingData(activeCharacter)}";
+#endif
+                UIManager.Instance.ShowSmallInfo(info);    
             }
         }
     }

@@ -275,7 +275,9 @@ public partial class LandmarkManager : BaseMonoBehaviour {
     #region Settlements
     public NPCSettlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, params HexTile[] tiles) {
         NPCSettlement newNpcSettlement = new NPCSettlement(region, locationType);
-        newNpcSettlement.AddTileToSettlement(tiles);
+        if (tiles != null) {
+            newNpcSettlement.AddTileToSettlement(tiles);    
+        }
         Messenger.Broadcast(Signals.AREA_CREATED, newNpcSettlement);
         DatabaseManager.Instance.settlementDatabase.RegisterSettlement(newNpcSettlement);
         return newNpcSettlement;
@@ -476,23 +478,58 @@ public partial class LandmarkManager : BaseMonoBehaviour {
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
         innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
-    
-    
-    
-    
-    public IEnumerator PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
+    public IEnumerator PlaceIndividualBuiltStructureForSettlementCoroutine(BaseSettlement settlement, InnerTileMap innerTileMap, StructureSetting structureSetting) {
         HexTile chosenTile = settlement.GetFirstUnoccupiedHexTile();
         Assert.IsNotNull(chosenTile, $"There are no more unoccupied tiles to place structure {structureSetting.ToString()} for settlement {settlement.name}");
         PlaceIndividualBuiltStructureForSettlement(settlement, innerTileMap, chosenTile, structureSetting);
         yield return null;
     }
-    private void PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
+    public List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, StructureSetting structureSetting) {
         List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
         GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
-        innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
+        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
+    }
+    public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, LocationGridTile tileLocation, StructureSetting structureSetting) {
+        List<GameObject> choices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureSetting);
+        GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
+        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
+    }
+    public List<LocationStructure> PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, HexTile tileLocation, string prefabName) {
+        GameObject chosenStructurePrefab = ObjectPoolManager.Instance.GetOriginalObjectFromPool(prefabName);
+        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
+    }
+    public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, LocationGridTile tileLocation, string prefabName) {
+        GameObject chosenStructurePrefab = ObjectPoolManager.Instance.GetOriginalObjectFromPool(prefabName);
+        return innerTileMap.PlaceBuiltStructureTemplateAt(chosenStructurePrefab, tileLocation, settlement);
     }
     public LocationStructure PlaceIndividualBuiltStructureForSettlement(BaseSettlement settlement, InnerTileMap innerTileMap, GameObject chosenPrefab, LocationGridTile centerTile) {
         return innerTileMap.PlaceBuiltStructureTemplateAt(chosenPrefab, centerTile, settlement);
+    }
+    public bool CanPlaceStructureBlueprint(NPCSettlement npcSettlement, StructureSetting structureToPlace, out LocationGridTile targetTile, out string structurePrefabName, out int connectorToUse) {
+        List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
+        availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
+        List<GameObject> prefabChoices = InnerMapManager.Instance.GetIndividualStructurePrefabsForStructure(structureToPlace);
+        prefabChoices = CollectionUtilities.Shuffle(prefabChoices);
+        for (int j = 0; j < prefabChoices.Count; j++) {
+            GameObject prefabGO = prefabChoices[j];
+            LocationStructureObject prefabObject = prefabGO.GetComponent<LocationStructureObject>();
+            StructureConnector validConnector = prefabObject.GetFirstValidConnector(availableStructureConnectors, npcSettlement.region.innerMap, out var connectorIndex, out LocationGridTile tileToPlaceStructure);
+            if (validConnector != null) {
+                targetTile = tileToPlaceStructure;
+                structurePrefabName = prefabGO.name;
+                connectorToUse = connectorIndex;
+                return true;
+            }
+        }
+        targetTile = null;
+        structurePrefabName = string.Empty;
+        connectorToUse = -1;
+        return false;
+    }
+    public bool HasEnoughSpaceForStructure(string structurePrefabName, LocationGridTile tileLocation) {
+        GameObject ogObject = ObjectPoolManager.Instance.GetOriginalObjectFromPool(structurePrefabName);
+        LocationStructureObject locationStructureObject = ogObject.GetComponent<LocationStructureObject>();
+        return locationStructureObject.HasEnoughSpaceIfPlacedOn(tileLocation);
     }
     #endregion
 

@@ -2874,6 +2874,87 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     }
     #endregion
 
+    #region Build Vampire Castle
+    public bool TriggerBuildVampireCastle(LocationGridTile targetTile, out JobQueueItem producedJob, string structurePrefabName = "") {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
+		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.genericTileObject, owner);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetAssignedPlan(goapPlan);
+		    producedJob = job;
+		    return true;
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    public void TriggerBuildVampireCastle(LocationGridTile targetTile, string structurePrefabName = "") {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE)) {
+		    var otherData = new OtherData[] {new StringOtherData(structurePrefabName)};
+		    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE], owner, targetTile.genericTileObject, otherData, 0);
+		    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetTile.genericTileObject);
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BUILD_VAMPIRE_CASTLE, INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE, targetTile.genericTileObject, owner);
+		    goapPlan.SetDoNotRecalculate(true);
+		    job.SetAssignedPlan(goapPlan);
+		    owner.jobQueue.AddJobInQueue(job);
+	    }
+    }
+    public bool TriggerImprisonBloodSource(out JobQueueItem producedJob, ref string log) {
+	    if (!owner.jobQueue.HasJob(JOB_TYPE.IMPRISON_BLOOD_SOURCE)) {
+		    log += $"\nWill try to imprison blood source";
+		    WeightedDictionary<Character> choices = new WeightedDictionary<Character>();
+		    foreach (var relationship in owner.relationshipContainer.relationships) {
+			    Character otherCharacter = CharacterManager.Instance.GetCharacterByID(relationship.Key);
+			    if (otherCharacter != null) {
+				    if (otherCharacter.traitContainer.GetTraitOrStatus<Trait>("Vampire") == null) {
+					    string opinion = relationship.Value.opinions.GetOpinionLabel();
+					    if (opinion == RelationshipManager.Acquaintance || opinion == RelationshipManager.Enemy || opinion == RelationshipManager.Rival) {
+						    int weight = 0;
+						    if (opinion == RelationshipManager.Acquaintance) {
+							    weight += 10;
+						    } else if (opinion == RelationshipManager.Enemy) {
+							    weight += 50;
+						    } else if (opinion == RelationshipManager.Rival) {
+							    weight += 100;
+						    }
+						    if (otherCharacter.homeSettlement != owner.homeSettlement) {
+							    weight += 200;
+						    }
+						    if (otherCharacter.faction != owner.faction) {
+							    weight *= 3;
+						    }
+						    if (weight > 0) {
+							    choices.AddElement(otherCharacter, weight);
+						    }    
+					    }
+				    }
+			    }
+		    }
+		    
+		    //Pick random animals
+		    List<Character> animalsInRegion = owner.currentRegion.charactersAtLocation.Where(x => x is Animal).ToList();
+		    for (int i = 0; i < 3; i++) {
+			    if (animalsInRegion.Count == 0) { break; }
+			    Character animal = UtilityScripts.CollectionUtilities.GetRandomElement(animalsInRegion);
+			    choices.AddElement(animal, 100);
+			    animalsInRegion.Remove(animal);
+		    }
+		    log += $"\n{choices.GetWeightsSummary("Weights are:")}";
+		    if (choices.GetTotalOfWeights() > 0) {
+			    Character target = choices.PickRandomElementGivenWeights();
+			    log += $"\nChosen target is {target.name}";
+			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.IMPRISON_BLOOD_SOURCE, INTERACTION_TYPE.DROP, target, owner);
+			    job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { owner.homeStructure });
+			    producedJob = job;
+			    return true;
+		    }
+	    }
+	    producedJob = null;
+	    return false;
+    }
+    #endregion
+
     #region Loading
     public void LoadReferences(SaveDataCharacterJobTriggerComponent data) {
         //Currently N/A

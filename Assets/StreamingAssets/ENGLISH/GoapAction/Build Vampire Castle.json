@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "key": "build success_description",
+      "value": "%00@ built a new Vampire Castle."
+    },
+    {
+      "key": "thought_bubble",
+      "value": "%00@ is building a new Vampire Castle."
+    },
+    {
+      "key": "thought_bubble_m",
+      "value": "%00@ is going to build a new Vampire Castle."
+    }
+  ]
+}

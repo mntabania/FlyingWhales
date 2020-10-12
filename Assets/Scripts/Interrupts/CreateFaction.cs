@@ -15,8 +15,11 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(InterruptHolder interruptHolder, ref Log overrideEffectLog, ActualGoapNode goapNode = null) {
 
-            FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForRace(interruptHolder.actor.race);
+            FACTION_TYPE factionType = FactionManager.Instance.GetFactionTypeForCharacter(interruptHolder.actor);
             Faction faction = FactionManager.Instance.CreateNewFaction(factionType);
+            if (factionType == FACTION_TYPE.Vampire_Clan) {
+                faction.factionType.SetAsDefault(); //NOTE: This is only a special case for vampire clan for now, while create faction hasn't been updated yet
+            }
             
             //Set Peace-Type Ideology:
             FactionManager.Instance.RerollPeaceTypeIdeology(faction, interruptHolder.actor);

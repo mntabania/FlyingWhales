@@ -165,6 +165,7 @@ public class GenericTileObject : TileObject {
         AddAdvertisedAction(INTERACTION_TYPE.FLEE_CRIME);
         AddAdvertisedAction(INTERACTION_TYPE.PLACE_BLUEPRINT);
         AddAdvertisedAction(INTERACTION_TYPE.BUILD_BLUEPRINT);
+        AddAdvertisedAction(INTERACTION_TYPE.BUILD_VAMPIRE_CASTLE);
     }
     public void ManualInitializeLoad(LocationGridTile tile, SaveDataTileObject saveDataTileObject) {
         if (hasBeenInitialized) {

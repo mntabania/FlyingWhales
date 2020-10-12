@@ -820,7 +820,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         traitContainer?.RemoveAllTraitsAndStatuses(this);
     }
     public void UpdateOwners() {
-        if (gridTileLocation.structure is Dwelling dwelling) {
+        if (gridTileLocation.structure is Dwelling || gridTileLocation.structure is VampireCastle) {
+            LocationStructure dwelling = gridTileLocation.structure;
             //update character owner if object's current character owner is null or is not a resident of the dwelling that it is currently in.
             if (dwelling.residents.Count > 0 && (characterOwner == null || (characterOwner != null && dwelling.residents.Contains(characterOwner) == false))) {
                 //Characters that are not part of major factions should not own items inside houses
