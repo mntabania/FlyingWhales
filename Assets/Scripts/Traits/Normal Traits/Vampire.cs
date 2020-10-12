@@ -149,7 +149,7 @@ namespace Traits {
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
-            data = $"{data} Converted Villagers: {numOfConvertedVillagers.ToString()}";
+            data = $"{data}\n Converted Villagers: {numOfConvertedVillagers.ToString()}";
             return data;
         }
         #endregion

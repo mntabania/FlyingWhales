@@ -160,6 +160,8 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
             settlementJobTriggerComponent.SubscribeToListeners();    
+        } else if (locationType == LOCATION_TYPE.DUNGEON) {
+            Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         }
     }
     private void UnsubscribeToSignals() {
@@ -177,6 +179,30 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
         if (locationType == LOCATION_TYPE.VILLAGE) {
             settlementJobTriggerComponent.UnsubscribeListeners();
+        } else if (locationType == LOCATION_TYPE.DUNGEON) {
+            Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
+        }
+    }
+    private void OnCharacterAddedToFaction(Character character, Faction faction) {
+        Assert.IsTrue(locationType == LOCATION_TYPE.DUNGEON, $"{character.name} was added to faction {faction.name} and is trying to change settlement owner of {name}, but {name} is not a dungeon type settlement!");
+        //once a resident character changes its faction, check if all the residents of this settlement share the same faction,
+        //if it does, then update the owner of this settlement to use the new faction.
+        //NOTE: This only applies to dungeon settlements.
+        //This was added because vampire lords start off as vagrants and can create vampire castles while they are vagrants, and we want to
+        //update the castles that they've made to be owned by their new faction.
+        if (residents.Contains(character) && owner != null) {
+            bool areAllResidentsPartOfNewFaction = true;
+            for (int i = 0; i < residents.Count; i++) {
+                Character resident = residents[i];
+                if (resident.faction != faction) {
+                    areAllResidentsPartOfNewFaction = false;
+                    break;
+                }
+            }
+            if (areAllResidentsPartOfNewFaction) {
+                LandmarkManager.Instance.OwnSettlement(faction, this);    
+            }
+            
         }
     }
     #endregion
