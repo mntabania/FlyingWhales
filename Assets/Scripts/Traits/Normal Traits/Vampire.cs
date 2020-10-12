@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,7 +13,8 @@ namespace Traits {
         public bool dislikedBeingVampire { get; private set; }
         public int numOfConvertedVillagers { get; private set; }
         public List<Character> awareCharacters { get; private set; }
-
+        public override Type serializedData => typeof(SaveDataVampire);
+        
         public Vampire() {
             name = "Vampire";
             description = "Sustains itself by drinking other's blood.";
@@ -147,6 +149,7 @@ namespace Traits {
         public override string GetTestingData(ITraitable traitable = null) {
             string data = base.GetTestingData(traitable);
             data = $"{data} Dislikes Being Vampire: {dislikedBeingVampire.ToString()}";
+            data = $"{data} Converted Villagers: {numOfConvertedVillagers.ToString()}";
             return data;
         }
         #endregion

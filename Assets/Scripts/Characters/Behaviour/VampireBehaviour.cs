@@ -78,15 +78,23 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                 }
             }
         } else {
-            //TODO: Add checking for number of embraced characters
-            //Become vampire lord
-            // character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Vampire_Lord, character);
-            // producedJob = null;
-            // return true;
+            log += $"\n-{character.name} is not yet a vampire lord. Rolling for chance to check converted villagers.";
+            if (GameUtilities.RollChance(10, ref log)) { //10
+                Vampire vampire = character.traitContainer.GetTraitOrStatus<Vampire>("Vampire");
+                log += $"\n-{character.name} converted villagers are {vampire.numOfConvertedVillagers.ToString()}.";
+                if (vampire.numOfConvertedVillagers >= 3) {
+                    //Become vampire lord
+                    log += $"\n-{character.name} will become a vampire lord.";
+                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Vampire_Lord, character);
+                    producedJob = null;
+                    return true;    
+                }
+            }
         }
 
         if (character.needsComponent.isSulking) {
-            if (GameUtilities.RollChance(3)) {
+            log += $"\n-{character.name} is sulking. Rolling for chance to vampiric embrace.";
+            if (GameUtilities.RollChance(3, ref log)) { //3
                 WeightedDictionary<Character> embraceWeights = new WeightedDictionary<Character>();
                 foreach (var relationships in character.relationshipContainer.relationships) {
                     Character otherCharacter = DatabaseManager.Instance.characterDatabase.GetCharacterByID(relationships.Key);
@@ -108,10 +116,11 @@ public class VampireBehaviour : CharacterBehaviourComponent {
                         }
                     }
                 }
-
+                log += $"\n-{embraceWeights.GetWeightsSummary("Vampiric Embrace weights:")}.";
                 if (embraceWeights.GetTotalOfWeights() > 0) {
                     Character chosenEmbraceTarget = embraceWeights.PickRandomElementGivenWeights();
-                    //TODO: Embrace target
+                    log += $"\n-Chosen target is {chosenEmbraceTarget.name}";
+                    return character.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.VAMPIRIC_EMBRACE, chosenEmbraceTarget, out producedJob);
                 }
             }
         }
