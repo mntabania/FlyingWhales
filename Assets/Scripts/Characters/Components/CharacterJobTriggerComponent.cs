@@ -2909,22 +2909,24 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			    if (otherCharacter != null) {
 				    if (otherCharacter.traitContainer.GetTraitOrStatus<Trait>("Vampire") == null) {
 					    string opinion = relationship.Value.opinions.GetOpinionLabel();
-					    int weight = 0;
-					    if (opinion == RelationshipManager.Acquaintance) {
-						    weight += 10;
-					    } else if (opinion == RelationshipManager.Enemy) {
-						    weight += 50;
-					    } else if (opinion == RelationshipManager.Rival) {
-						    weight += 100;
-					    }
-					    if (otherCharacter.homeSettlement != owner.homeSettlement) {
-						    weight += 200;
-					    }
-					    if (otherCharacter.faction != owner.faction) {
-						    weight *= 3;
-					    }
-					    if (weight > 0) {
-						    choices.AddElement(otherCharacter, weight);
+					    if (opinion == RelationshipManager.Acquaintance || opinion == RelationshipManager.Enemy || opinion == RelationshipManager.Rival) {
+						    int weight = 0;
+						    if (opinion == RelationshipManager.Acquaintance) {
+							    weight += 10;
+						    } else if (opinion == RelationshipManager.Enemy) {
+							    weight += 50;
+						    } else if (opinion == RelationshipManager.Rival) {
+							    weight += 100;
+						    }
+						    if (otherCharacter.homeSettlement != owner.homeSettlement) {
+							    weight += 200;
+						    }
+						    if (otherCharacter.faction != owner.faction) {
+							    weight *= 3;
+						    }
+						    if (weight > 0) {
+							    choices.AddElement(otherCharacter, weight);
+						    }    
 					    }
 				    }
 			    }
