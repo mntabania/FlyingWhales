@@ -41,6 +41,21 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
             }
         }
         if(character.faction != null && character.faction.isMajorNonPlayer && !character.isFactionLeader && !character.isSettlementRuler) {
+            int leaveFactionChance = 0;
+            if(character.moodComponent.moodState == MOOD_STATE.Bad) {
+                leaveFactionChance += 3;
+            } else if (character.moodComponent.moodState == MOOD_STATE.Critical) {
+                leaveFactionChance += 8;
+            }
+            if (character.traitContainer.HasTrait("Betrayed") && character.faction.leader != null) {
+                Betrayed betrayed = character.traitContainer.GetNormalTrait<Betrayed>("Betrayed");
+                if(betrayed.responsibleCharacter == character.faction.leader) {
+                    leaveFactionChance += 30;
+                }
+            }
+            if (GameUtilities.RollChance(leaveFactionChance)) {
+                character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_normal");
+            }
             for (int i = 0; i < character.crimeComponent.witnessedCrimes.Count; i++) {
                 CrimeData crimeData = character.crimeComponent.witnessedCrimes[i];
                 if (!crimeData.isRemoved) {
