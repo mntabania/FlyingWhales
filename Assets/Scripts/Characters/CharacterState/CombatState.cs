@@ -793,7 +793,8 @@ public class CombatState : CharacterState {
                 }
                 _timesHitCurrentTarget++;
 
-                if (damageable.gridTileLocation != null && damageable.gridTileLocation.structure is DemonicStructure demonicStructure) {
+                if (damageable.gridTileLocation != null && damageable.gridTileLocation.structure is DemonicStructure demonicStructure && 
+                    demonicStructure.objectsThatContributeToDamage.Contains(damageable)) {
                     demonicStructure.AddAttacker(stateComponent.owner);
                 }
             }
