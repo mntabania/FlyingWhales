@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Inner_Maps.Location_Structures;
 using Quests.Steps;
@@ -10,10 +11,14 @@ namespace Quests {
 
         #region getters
         public List<Character> angels => _angels;
+        public override Type serializedData => typeof(SaveDataDivineIntervention);
         #endregion
         
         public DivineIntervention(List<Character> angels) : base("Divine Intervention") {
             _angels = angels;
+        }
+        public DivineIntervention(SaveDataDivineIntervention data) : base("Divine Intervention") {
+            _angels = SaveUtilities.ConvertIDListToCharacters(data.angelIDs);
         }
         
         protected override void ConstructSteps() {
@@ -22,7 +27,7 @@ namespace Quests {
                     new EliminateAngelStep(GetStopCharactersDescription, angels)
                         .SetHoverOverAction(OnHoverEliminateItem)
                         .SetHoverOutAction(() => UIManager.Instance.HideSmallInfo())
-                        .SetObjectsToCenter(angels.Select(x => x as ISelectable).ToArray())    
+                        .SetObjectsToCenter(angels.Where(x => !x.isDead).Select(x => x as ISelectable).ToArray())    
                 )
             };
         }
@@ -39,5 +44,18 @@ namespace Quests {
             );
         }
         #endregion
+    }
+    
+    public class SaveDataDivineIntervention : SaveDataReactionQuest {
+        public List<string> angelIDs;
+        public override void Save(ReactionQuest data) {
+            base.Save(data);
+            DivineIntervention divineIntervention = data as DivineIntervention;
+            Debug.Assert(divineIntervention != null, nameof(divineIntervention) + " != null");
+            angelIDs = SaveUtilities.ConvertSavableListToIDs(divineIntervention.angels);
+        }
+        public override ReactionQuest Load() {
+            return new DivineIntervention(this);
+        }
     }
 }

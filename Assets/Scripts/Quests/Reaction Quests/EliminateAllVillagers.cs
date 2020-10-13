@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Quests.Steps;
 using UnityEngine;
@@ -7,6 +8,11 @@ namespace Quests {
 
 
         private EliminateVillagerStep _eliminateVillagerStep;
+
+        #region getters
+        public override Type serializedData => typeof(SaveDataEliminateAllVillagers);
+        #endregion
+        
         
         public EliminateAllVillagers() : base($"Eliminate All Villagers") { }
         protected override void ConstructSteps() {
@@ -41,5 +47,11 @@ namespace Quests {
                    character.isAlliedWithPlayer;
         }
         #endregion
+    }
+    
+    public class SaveDataEliminateAllVillagers : SaveDataReactionQuest {
+        public override ReactionQuest Load() {
+            return new EliminateAllVillagers();
+        }
     }
 }
