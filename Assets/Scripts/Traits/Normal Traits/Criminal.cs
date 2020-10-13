@@ -177,6 +177,17 @@ namespace Traits {
             }
             return false;
         }
+        public bool HasWantedCrimeBy(Faction faction, CRIME_STATUS status) {
+            for (int i = 0; i < activeCrimes.Count; i++) {
+                CrimeData data = activeCrimes[i];
+                if (data.crimeStatus == status) {
+                    if (data.IsWantedBy(faction)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         public bool IsTargetOfACrime(IPointOfInterest poi) {
             for (int i = 0; i < activeCrimes.Count; i++) {
                 CrimeData data = activeCrimes[i];
@@ -197,11 +208,11 @@ namespace Traits {
             }
             return dataList;
         }
-        public List<CrimeData> GetListOfUnpunishedCrimesWantedBy(Faction faction) {
+        public List<CrimeData> GetListOfCrimesWantedBy(Faction faction, CRIME_STATUS status) {
             List<CrimeData> dataList = null;
             for (int i = 0; i < activeCrimes.Count; i++) {
                 CrimeData data = activeCrimes[i];
-                if(data.crimeStatus == CRIME_STATUS.Unpunished) {
+                if(data.crimeStatus == status) {
                     if (data.IsWantedBy(faction)) {
                         if (dataList == null) { dataList = new List<CrimeData>(); }
                         dataList.Add(data);
@@ -209,6 +220,28 @@ namespace Traits {
                 }
             }
             return dataList;
+        }
+        public CrimeData GetFirstCrimeWantedBy(Faction faction, CRIME_STATUS status) {
+            for (int i = 0; i < activeCrimes.Count; i++) {
+                CrimeData data = activeCrimes[i];
+                if (data.crimeStatus == status) {
+                    if (data.IsWantedBy(faction)) {
+                        return data;
+                    }
+                }
+            }
+            return null;
+        }
+        public void SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(Faction faction, CRIME_STATUS status, Character judge) {
+            for (int i = 0; i < activeCrimes.Count; i++) {
+                CrimeData data = activeCrimes[i];
+                if (data.crimeStatus == CRIME_STATUS.Unpunished) {
+                    if (data.IsWantedBy(faction)) {
+                        data.SetCrimeStatus(status);
+                        data.SetJudge(judge);
+                    }
+                }
+            }
         }
         public bool IsCrimeAlreadyWitnessedBy(Character character, ICrimeable crime) {
             for (int i = 0; i < activeCrimes.Count; i++) {

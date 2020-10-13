@@ -155,6 +155,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.AddListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.AddListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.AddListener(Signals.HOUR_STARTED, OnHourStarted);
         //Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         //Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
@@ -174,6 +175,7 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
         Messenger.RemoveListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         Messenger.RemoveListener(Signals.DAY_STARTED, OnDayStarted);
+        Messenger.RemoveListener(Signals.HOUR_STARTED, OnHourStarted);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
         // Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
@@ -251,6 +253,9 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
     }
     private void OnDayStarted() {
         ClearAllBlacklistToAllExistingJobs();
+    }
+    private void OnHourStarted() {
+        CheckForJudgePrisoners();
     }
     #endregion
 
@@ -562,6 +567,14 @@ public class NPCSettlement : BaseSettlement, IJobOwner {
             }
         }
         return false;
+    }
+    private void CheckForJudgePrisoners() {
+        if(prison != null) {
+            for (int i = 0; i < prison.charactersHere.Count; i++) {
+                Character character = prison.charactersHere[i];
+                settlementJobTriggerComponent.TryCreateJudgePrisoner(character);
+            }
+        }
     }
     #endregion
 

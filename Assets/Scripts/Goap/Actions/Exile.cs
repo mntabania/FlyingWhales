@@ -29,6 +29,7 @@ public class Exile : GoapAction {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
             Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
+            criminalTrait.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Exiled, goapNode.actor);
             criminalTrait.SetIsImprisoned(false);
             criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         }
