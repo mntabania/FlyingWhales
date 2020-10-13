@@ -559,9 +559,9 @@ public class ReactionComponent : CharacterComponent {
             return;
         }
         if(disguisedTarget is Dragon dragon && (!disguisedTarget.canMove || !disguisedTarget.canPerform) && actor.isNormalCharacter) {
-            debugLog += $"{debugLog}\n-Target is dragon and Actor is normal character, will wary if has not yet wary";
+            debugLog = $"{debugLog}\n-Target is dragon and Actor is normal character, will wary if has not yet wary";
             if (!dragon.charactersThatAreWary.Contains(actor)) {
-                debugLog += $"{debugLog}\n-Will wary to dragon";
+                debugLog = $"{debugLog}\n-Will wary to dragon";
                 actor.interruptComponent.TriggerInterrupt(INTERRUPT.Wary, dragon);
                 dragon.AddCharacterThatWary(actor);
             }
@@ -668,7 +668,7 @@ public class ReactionComponent : CharacterComponent {
                     if(!targetCharacter.isDead && targetCharacter.traitContainer.HasTrait("Restrained") && targetCharacter.IsInPrison()) {
                         bool targetIsRestrainedInPrison = actor.homeSettlement != null && targetCharacter.IsInPrisonOf(actor.homeSettlement);
                         if (targetIsRestrainedInPrison) {
-                            if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampiric")) {
+                            if (targetCharacter.needsComponent.isStarving && !targetCharacter.traitContainer.HasTrait("Vampire")) {
                                 debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
                                 if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
                                     actor.jobComponent.TryTriggerFeed(targetCharacter);
@@ -751,7 +751,7 @@ public class ReactionComponent : CharacterComponent {
                             }
                         }
                     }
-                    Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    Criminal targetCriminalTrait = disguisedTarget.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     
                     //Wanted Criminal Reaction Code:
                     if (disguisedTarget.isNormalCharacter && disguisedActor.isNormalCharacter && disguisedActor.faction != null && targetCriminalTrait != null && targetCriminalTrait.IsWantedBy(disguisedActor.faction)
@@ -858,7 +858,7 @@ public class ReactionComponent : CharacterComponent {
                             if (targetIsParalyzedOrEnsnared || targetIsRestrainedCriminal || targetIsCatatonic) {
                                 debugLog =
                                     $"{debugLog}\n-Target is Restrained Criminal({targetIsRestrainedCriminal.ToString()}) or is Paralyzed or Ensnared({targetIsParalyzedOrEnsnared.ToString()}) or is Catatonic {targetIsCatatonic.ToString()}";
-                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetCharacter.traitContainer.HasTrait("Vampiric")) {
+                                if ((targetCharacter.needsComponent.isHungry || targetCharacter.needsComponent.isStarving) && !targetCharacter.traitContainer.HasTrait("Vampire")) {
                                     debugLog = $"{debugLog}\n-Target is hungry or starving, will create feed job";
                                     if (!IsPOICurrentlyTargetedByAPerformingAction(JOB_TYPE.FEED, targetCharacter)) {
                                         actor.jobComponent.TryTriggerFeed(targetCharacter);
@@ -969,12 +969,18 @@ public class ReactionComponent : CharacterComponent {
                             string opinionLabel = disguisedActor.relationshipContainer.GetOpinionLabel(disguisedTarget);
                             if (opinionLabel == RelationshipManager.Friend || opinionLabel == RelationshipManager.Close_Friend) {
                                 debugLog = $"{debugLog}\n-Target is Friend/Close Friend";
-                                if (UnityEngine.Random.Range(0, 2) == 0) {
-                                    debugLog = $"{debugLog}\n-Target will Cry";
+                                if (actor.traitContainer.HasTrait("Vampire") && targetCharacter.grave == null && GameUtilities.RollChance(15)) {
+                                    debugLog = $"{debugLog}\n-Actor is Vampire and Target has no grave, will Cry and add Vampiric Embrace Job";
+                                    actor.jobComponent.CreateVampiricEmbraceJob(JOB_TYPE.VAMPIRIC_EMBRACE, targetCharacter);
                                     actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
                                 } else {
-                                    debugLog = $"{debugLog}\n-Target will Puke";
-                                    actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {disguisedTarget.name}");
+                                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                                        debugLog = $"{debugLog}\n-Target will Cry";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Cry, targetCharacter, $"saw dead {disguisedTarget.name}");
+                                    } else {
+                                        debugLog = $"{debugLog}\n-Target will Puke";
+                                        actor.interruptComponent.TriggerInterrupt(INTERRUPT.Puke, targetCharacter, $"saw dead {disguisedTarget.name}");
+                                    }
                                 }
                             } else if ((disguisedActor.relationshipContainer.IsFamilyMember(disguisedTarget) ||
                                         disguisedActor.relationshipContainer.HasRelationshipWith(disguisedTarget, RELATIONSHIP_TYPE.AFFAIR)) &&
@@ -1052,7 +1058,18 @@ public class ReactionComponent : CharacterComponent {
                         debugLog = $"{debugLog}\n-Target is carrying a character";
                         if(carriedCharacter.traitContainer.HasTrait("Restrained", "Unconscious") && !carriedCharacter.isDead && !carriedCharacter.IsWantedBy(actor.faction)) {
                             debugLog = debugLog + ("\n-Will create Assault assumption on " + targetCharacter.name);
-                            actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.ASSAULT, REACTION_STATUS.WITNESSED);
+
+                            //If carried character is a prisoner, and the reactor considers that carried character as a prisoner also, do not create assumption
+                            bool willCreateAssumption = true;
+                            if (carriedCharacter.traitContainer.HasTrait("Prisoner")) {
+                                Prisoner prisoner = carriedCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                                if (prisoner.IsPrisonerOf(actor)) {
+                                    willCreateAssumption = false;
+                                }
+                            }
+                            if (willCreateAssumption) {
+                                actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.ASSAULT, REACTION_STATUS.WITNESSED);
+                            }
                         } else if (targetCharacter.currentJob != null && targetCharacter.currentJob.jobType == JOB_TYPE.BURY_SERIAL_KILLER_VICTIM) {
                             debugLog = debugLog + ("\n-Will create Murder assumption on " + targetCharacter.name);
                             actor.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, carriedCharacter, INTERACTION_TYPE.MURDER, REACTION_STATUS.WITNESSED);

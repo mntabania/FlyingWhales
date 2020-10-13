@@ -245,7 +245,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
 
     public bool HasNeeds() {
-        return owner.race != RACE.SKELETON && owner.characterClass.className != "Zombie" && owner.characterClass.className != "Necromancer" && !owner.returnedToLife && owner.minion == null && !(owner is Summon)
+        return owner.race != RACE.SKELETON && owner.characterClass.className != "Zombie" && owner.characterClass.className != "Necromancer" && !owner.raisedFromDeadAsSkeleton && owner.minion == null && !(owner is Summon)
             && !owner.traitContainer.HasTrait("Fervor")
             /*&& _character.isAtHomeRegion && _character.homeNpcSettlement != null*/; //Characters living on a region without a npcSettlement must not decrease needs
     }
@@ -292,6 +292,7 @@ public class CharacterNeedsComponent : CharacterComponent {
     }
     public void AdjustHappinessDecreaseRate(float amount) {
         happinessDecreaseRate += amount;
+        Debug.Log($"Adjusted happiness decrease rate of {owner.name} by {amount.ToString(CultureInfo.InvariantCulture)} new decrease rate is {happinessDecreaseRate.ToString(CultureInfo.InvariantCulture)}");
     }
     public void AdjustStaminaDecreaseRate(float amount) {
         staminaDecreaseRate += amount;
@@ -323,7 +324,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         OnRefreshed(wasRefreshed, wasTired, wasExhausted);
     }
     public void AdjustTiredness(float adjustment) {
-        if(adjustment < 0 && owner.traitContainer.HasTrait("Vampiric")) {
+        if(adjustment < 0 && owner.traitContainer.HasTrait("Vampire")) {
             owner.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
             return;
         }
@@ -557,7 +558,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             }
             JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             bool triggerSpooked = false;
-            Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
+            Spooked spooked = owner.traitContainer.GetTraitOrStatus<Spooked>("Spooked");
             if (spooked != null) {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
             }
@@ -613,7 +614,7 @@ public class CharacterNeedsComponent : CharacterComponent {
             return null;
         }
         bool triggerSpooked = false;
-        Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
+        Spooked spooked = owner.traitContainer.GetTraitOrStatus<Spooked>("Spooked");
         if (spooked != null) {
             triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
         }
@@ -804,7 +805,7 @@ public class CharacterNeedsComponent : CharacterComponent {
                 }
                 if (chance < value || isSulking) {
                     bool triggerBrokenhearted = false;
-                    Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
+                    Heartbroken heartbroken = owner.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
                     if (heartbroken != null) {
                         triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[heartbroken.name]);
                     }
@@ -866,7 +867,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         //    _character.Death("starvation");
         //} else if (isStarving) {
         //    _character.traitContainer.RemoveTrait(_character, "Hungry");
-        //    if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
+        //    if (_character.traitContainer.AddTrait(_character, "Starving") && _character.traitContainer.GetNormalTrait<Trait>("Vampire") == null) { //only characters that are not vampires will flee when they are starving
         //        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _character, "starving");
         //    }
         //} else if (isHungry) {
@@ -1003,7 +1004,18 @@ public class CharacterNeedsComponent : CharacterComponent {
         doNotGetHungry = Math.Max(doNotGetHungry, 0);
     }
     public void PlanScheduledFullnessRecovery() {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.Today().tick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.currentTick >= fullnessForcedTick && owner.canPerform && doNotGetHungry <= 0) {
+            hasForcedFullness = true;
+            if (owner.traitContainer.HasTrait("Vampire")) {
+                TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                    //Vampires will only recover fullness after midnight, no matter how hungry they are
+                    //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
+                    //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
+                    //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
+                    return;
+                }
+            }
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_URGENT)) {
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
                 if (isStarving) {
@@ -1014,13 +1026,22 @@ public class CharacterNeedsComponent : CharacterComponent {
                     owner.jobQueue.AddJobInQueue(job);
                 }
             }
-            hasForcedFullness = true;
             SetFullnessForcedTick();
         }
     }
     public bool PlanFullnessRecoveryActions() {
         if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
+        }
+        if (owner.traitContainer.HasTrait("Vampire")) {
+            TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+            if(currentTime != TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                //Vampires will only recover fullness after midnight, no matter how hungry they are
+                //https://trello.com/c/f0ICyIAj/2475-vampires-only-drink-blood-at-night
+                //The reason why the checking only happens here is because this is the one being called every hour, every time the character becomes starving, etc.
+                //Some fullness recovery actions especially the ones forced by the player (ex. Glutton trigger flaw) must still occur even if it is After Midnight
+                return false;
+            }
         }
         if (this.isStarving) {
             if (!owner.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, JOB_TYPE.FULLNESS_RECOVERY_ON_SIGHT)) {
@@ -1049,7 +1070,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         if (!owner.canPerform) { //character.doNotDisturb > 0 || !character.canWitness
             return false;
         }
-        if (owner.traitContainer.HasTrait("Vampiric")) {
+        if (owner.traitContainer.HasTrait("Vampire")) {
             return false;
         }
         if (isStarving) {
@@ -1118,7 +1139,7 @@ public class CharacterNeedsComponent : CharacterComponent {
         //The reason for this is the Glutton behaviour
         //Since our behaviours always had a function that adds the created job in queue after processing, we must not add them prematurely so as to avoid duplicates, hence, the reason we only return the created job
         bool triggerGrieving = false;
-        Griefstricken griefstricken = owner.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
+        Griefstricken griefstricken = owner.traitContainer.GetTraitOrStatus<Griefstricken>("Griefstricken");
         if (griefstricken != null) {
             triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[griefstricken.name]);
         }

@@ -190,7 +190,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		for (int i = 0; i < structureSettings.Count; i++) {
 			StructureSetting structureSetting = structureSettings[i];
 			if (structureSetting.structureType == STRUCTURE_TYPE.CITY_CENTER) {
-				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlement(npcSettlement, region.innerMap, structureSetting));
+				yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.PlaceIndividualBuiltStructureForSettlementCoroutine(npcSettlement, region.innerMap, structureSetting));
 			} else {
 				List<StructureConnector> availableStructureConnectors = npcSettlement.GetAvailableStructureConnectors();
 				availableStructureConnectors = CollectionUtilities.Shuffle(availableStructureConnectors);
@@ -741,7 +741,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		switch (race) {
 			case RACE.HUMANS:
 			case RACE.ELVES:
-				return LOCATION_TYPE.SETTLEMENT;
+				return LOCATION_TYPE.VILLAGE;
 			default:
 				throw new Exception($"There was no location type provided for race {race.ToString()}");
 		}

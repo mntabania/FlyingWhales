@@ -258,7 +258,7 @@ public class PlayerManager : BaseMonoBehaviour {
         if (character.isNormalCharacter) {
             if (actionNode.action.goapType == INTERACTION_TYPE.ASSAULT || actionNode.action.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
                 //https://trello.com/c/koET4MUl/2167-assault-should-not-produce-chaos-orbs-if-part-of-drink-blood-or-psychopathic-ritual
-                if (actionNode.actor.traitContainer.HasTrait("Vampiric")) {
+                if (actionNode.actor.traitContainer.HasTrait("Vampire")) {
                     if (actionNode.associatedJob is GoapPlanJob goapPlanJob && goapPlanJob.assignedPlan != null && goapPlanJob.assignedPlan.HasNodeWithAction(INTERACTION_TYPE.DRINK_BLOOD)) {
                         //first check if actions associated job has drink blood as part of the plan, if it does then do no create chaos orbs for it.
                         return;

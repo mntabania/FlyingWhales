@@ -24,8 +24,11 @@ namespace Traits {
                 Character aliveAffair = null;
                 for (int i = 0; i < affairIDs.Count; i++) {
                     int affairID = affairIDs[i];
-                    aliveAffair = CharacterManager.Instance.GetCharacterByID(affairID);
-                    if (aliveAffair != null && aliveAffair.isDead == false) { break; }
+                    Character affair = CharacterManager.Instance.GetCharacterByID(affairID);
+                    if (affair != null && !affair.isDead) {
+                        aliveAffair = affair;
+                        break;
+                    }
                 }
                 if (aliveAffair == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {

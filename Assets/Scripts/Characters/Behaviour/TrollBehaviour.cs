@@ -45,7 +45,7 @@ public class TrollBehaviour : CharacterBehaviourComponent {
                                     characterThatCanBeKidnapped = potentialCharacter;
                                 }
                                 if (potentialCharacter.traitContainer.HasTrait("Unconscious")) {
-                                    Unconscious unconsciousTrait = potentialCharacter.traitContainer.GetNormalTrait<Unconscious>("Unconscious");
+                                    Unconscious unconsciousTrait = potentialCharacter.traitContainer.GetTraitOrStatus<Unconscious>("Unconscious");
                                     if (unconsciousTrait.responsibleCharacter == character) {
                                         chosenCharacter = potentialCharacter;
                                         break;

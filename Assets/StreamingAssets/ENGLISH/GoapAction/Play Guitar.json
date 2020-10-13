@@ -1,1 +1,24 @@
-{"items":[{"key":"thought_bubble","value":"%00@ is playing some tunes with a guitar."},{"key":"play success_description","value":"%00@ played some tunes with a guitar."},{"key":"play fail_description","value":"%00@ wanted to play some tunes with a guitar but it was unavailable."},{"key":"target missing_description","value":"%00@ wanted to play some tunes with a guitar but it was no longer there."},{"key":"thought_bubble_m","value":"%00@ is going to play some tunes with a guitar."}]}
+{
+  "items": [
+    {
+      "key": "thought_bubble",
+      "value": "%00@ is playing some tunes with a guitar."
+    },
+    {
+      "key": "play success_description",
+      "value": "%00@ played some tunes with a guitar."
+    },
+    {
+      "key": "play fail_description",
+      "value": "%00@ wanted to play some tunes with a guitar but it was unavailable."
+    },
+    {
+      "key": "target missing_description",
+      "value": "%00@ wanted to play some tunes with a guitar but it was no longer there."
+    },
+    {
+      "key": "thought_bubble_m",
+      "value": "%00@ is going to play some tunes with a guitar."
+    }
+  ]
+}

@@ -133,7 +133,7 @@ namespace Traits {
             //else if (trait.name == "Encumbered") {
             //    character.AdjustSpeedModifier(-0.5f);
             //} 
-            //else if (trait.name == "Vampiric") {
+            //else if (trait.name == "Vampire") {
             //    character.needsComponent.AdjustDoNotGetTired(1);
             //} 
             else if (trait.name == "Unconscious") {
@@ -141,9 +141,9 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(1);
                 character.needsComponent.AdjustDoNotGetBored(1);
             } else if (trait.name == "Optimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(-Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+                character.needsComponent.AdjustHappinessDecreaseRate(-(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
             } else if (trait.name == "Pessimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+                character.needsComponent.AdjustHappinessDecreaseRate((EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
             } else if (trait.name == "Fast") {
                 character.movementComponent.AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
             }
@@ -256,7 +256,7 @@ namespace Traits {
             //else if (trait.name == "Encumbered") {
             //    character.AdjustSpeedModifier(0.5f);
             //} 
-            //else if (trait.name == "Vampiric") {
+            //else if (trait.name == "Vampire") {
             //    character.needsComponent.AdjustDoNotGetTired(-1);
             //} 
             else if (trait.name == "Unconscious") {
@@ -264,9 +264,9 @@ namespace Traits {
                 character.needsComponent.AdjustDoNotGetHungry(-1);
                 character.needsComponent.AdjustDoNotGetBored(-1);
             } else if (trait.name == "Optimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+                character.needsComponent.AdjustHappinessDecreaseRate((EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
             } else if (trait.name == "Pessimist") {
-                character.needsComponent.AdjustHappinessDecreaseRate(-Mathf.CeilToInt(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+                character.needsComponent.AdjustHappinessDecreaseRate(-(EditableValuesManager.Instance.baseHappinessDecreaseRate * 0.5f)); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
             } else if (trait.name == "Fast") {
                 character.movementComponent.AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
             } 

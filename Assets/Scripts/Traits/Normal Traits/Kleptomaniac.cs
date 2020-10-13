@@ -33,7 +33,7 @@ namespace Traits {
             //The character will begin Hunt for Blood.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                 bool triggerBrokenhearted = false;
-                Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
+                Heartbroken heartbroken = character.traitContainer.GetTraitOrStatus<Heartbroken>("Heartbroken");
                 if (heartbroken != null) {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[heartbroken.name]);
                 }

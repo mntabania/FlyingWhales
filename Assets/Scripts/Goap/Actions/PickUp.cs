@@ -81,7 +81,7 @@ public class PickUp : GoapAction {
                         int randomCost = UtilityScripts.Utilities.Rng.Next(80, 91);
                         cost += randomCost;
                         costLog = $"{costLog} +{randomCost.ToString()}(No personal owner, object inside actor home settlement)";
-                    } else if (!actor.isFactionless && !actor.isFriendlyFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
+                    } else if (!actor.isFactionless && !actor.isVagrantOrFactionless && targetTileObject.gridTileLocation != null && targetTileObject.gridTileLocation.collectionOwner.isPartOfParentRegionMap
                          && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile != null
                          && targetTileObject.gridTileLocation.collectionOwner.partOfHextile.hexTileOwner.settlementOnTile.owner == actor.faction) {
                         int randomCost = UtilityScripts.Utilities.Rng.Next(100, 121);

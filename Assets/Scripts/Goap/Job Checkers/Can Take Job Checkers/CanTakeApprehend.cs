@@ -10,7 +10,7 @@ namespace Goap.Job_Checkers {
             Assert.IsNotNull(targetCharacter);
             if (character.isAtHomeRegion && !character.traitContainer.HasTrait("Criminal") && !character.traitContainer.HasTrait("Coward") && 
                 character.homeSettlement != null && character.homeSettlement.prison != null) {
-                Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                 if (criminalTrait == null || !criminalTrait.isImprisoned) {
                     if (character.relationshipContainer.IsFriendsWith(targetCharacter)) {
                         return false;

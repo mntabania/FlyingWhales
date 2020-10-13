@@ -28,12 +28,15 @@ namespace Factions.Faction_Types {
 
         #region Initialization
         public abstract void SetAsDefault();
-        public abstract void SetFromSaveData();
+        public abstract void SetFixedData();
         #endregion
 
         #region Ideologies
         public void AddIdeology(FactionIdeology ideology) {
-            ideologies.Add(ideology);
+            if (!HasIdeology(ideology.ideologyType)) {
+                ideologies.Add(ideology);
+                ideology.OnAddIdeology(this);
+            }
         }
         public void RemoveIdeology(FACTION_IDEOLOGY ideology) {
             if (HasIdeology(ideology, out var factionIdeology)) {
@@ -66,7 +69,7 @@ namespace Factions.Faction_Types {
         #endregion
 
         #region Crimes
-        public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+        public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
             if (hasCrimes) {
                 if (crimes.ContainsKey(crimeType)) {
                     return crimes[crimeType];
@@ -89,7 +92,7 @@ namespace Factions.Faction_Types {
                 crimes.Add(type, severity);
             }
         }
-        public void RemoveCrime(CRIME_TYPE type, CRIME_SEVERITY severity) {
+        public void RemoveCrime(CRIME_TYPE type) {
             if (crimes.ContainsKey(type)) {
                 crimes.Remove(type);
             }

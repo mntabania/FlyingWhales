@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Factions.Faction_Types;
 
 [System.Serializable]
 public class DivineWorship : FactionIdeology {
@@ -18,6 +19,9 @@ public class DivineWorship : FactionIdeology {
     }
     public override string GetIdeologyDescription() {
         return "Worships the Goddess.";
+    }
+    public override void OnAddIdeology(FactionType factionType) {
+        factionType.RemoveIdeology(FACTION_IDEOLOGY.Demon_Worship);
     }
     #endregion
 }

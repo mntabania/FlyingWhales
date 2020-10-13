@@ -107,7 +107,7 @@ public class PlayGuitar : GoapAction {
     public override string ReactionToActor(Character actor, IPointOfInterest target, Character witness,
         ActualGoapNode node, REACTION_STATUS status) {
         string response = base.ReactionToActor(actor, target, witness, node, status);
-        Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        Trait trait = witness.traitContainer.GetTraitOrStatus<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
                 if (witness.moodComponent.moodState == MOOD_STATE.Bad) {

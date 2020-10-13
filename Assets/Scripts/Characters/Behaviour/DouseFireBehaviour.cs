@@ -43,7 +43,7 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
 
         for (int i = 0; i < character.behaviourComponent.dousingFireForSettlement.firesInSettlement.Count; i++) {
             IPointOfInterest currFire = character.behaviourComponent.dousingFireForSettlement.firesInSettlement[i];
-            Burning burning = currFire.traitContainer.GetNormalTrait<Burning>("Burning");
+            Burning burning = currFire.traitContainer.GetTraitOrStatus<Burning>("Burning");
             if (burning != null && burning.douser == null && currFire.worldObject != null) {
                 //only consider dousing fire that is not yet assigned
                 float dist = Vector2.Distance(character.worldObject.transform.position, currFire.worldObject.transform.position);
@@ -54,7 +54,7 @@ public class DouseFireBehaviour : CharacterBehaviourComponent {
             }
         }
         if (nearestFire != null) {
-            Burning burning = nearestFire.traitContainer.GetNormalTrait<Burning>("Burning"); 
+            Burning burning = nearestFire.traitContainer.GetTraitOrStatus<Burning>("Burning"); 
             Assert.IsNotNull(burning, $"Burning of {nearestFire} is null.");
             burning.SetDouser(character);
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DOUSE_FIRE, INTERACTION_TYPE.DOUSE_FIRE,

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Factions.Faction_Types;
 
 [System.Serializable]
 public class Inclusive : FactionIdeology {
@@ -19,6 +20,9 @@ public class Inclusive : FactionIdeology {
     }
     public override string GetIdeologyDescription() {
         return "Open to everyone.";
+    }
+    public override void OnAddIdeology(FactionType factionType) {
+        factionType.RemoveIdeology(FACTION_IDEOLOGY.Exclusive);
     }
     #endregion
 }

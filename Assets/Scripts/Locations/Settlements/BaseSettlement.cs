@@ -151,7 +151,7 @@ namespace Locations.Settlements {
             character.ChangeHomeStructure(chosenDwelling);
         }
         private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
-            if(character.isFriendlyFactionless || character.isFactionless || (character.faction != null && !character.faction.isMajorFaction)) {
+            if(character.isVagrantOrFactionless || character.isFactionless || (character.faction != null && !character.faction.isMajorFaction)) {
                 if(owner == null) {
                     return true;
                 }
@@ -392,6 +392,18 @@ namespace Locations.Settlements {
                 List<LocationStructure> structuresOfType = structures[type];
                 if(structuresOfType != null && structuresOfType.Count > 0) {
                     return structuresOfType[0];
+                }
+            }
+            return null;
+        }
+        public LocationStructure GetFirstUnoccupiedStructureOfType(STRUCTURE_TYPE type) {
+            if (HasStructure(type)) {
+                List<LocationStructure> structuresOfType = structures[type];
+                for (int i = 0; i < structuresOfType.Count; i++) {
+                    LocationStructure structure = structuresOfType[i];
+                    if (structure.residents.Count == 0) {
+                        return structure;
+                    }
                 }
             }
             return null;

@@ -7,7 +7,6 @@ namespace Traits {
         private Character owner;
         //private bool _createdFeedJob;
 
-        //public bool isPrisoner { get; private set; }
         //public bool isCriminal { get; private set; }
         //public bool isLeader { get; private set; }
 
@@ -59,6 +58,7 @@ namespace Traits {
                 //if (isLeader) {
                 //    _sourceCharacter.faction.SetNewLeader();
                 //}
+                owner.traitContainer.AddTrait(owner, "Prisoner");
             }
         }
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -89,6 +89,7 @@ namespace Traits {
                 //always set character as un-abducted by anyone after they lose restrain trait. 
                 character.defaultCharacterTrait.SetHasBeenAbductedByWildMonster(false);
                 character.defaultCharacterTrait.SetHasBeenAbductedByPlayerMonster(false);
+                owner.traitContainer.RemoveTrait(owner, "Prisoner");
             }
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
@@ -129,7 +130,7 @@ namespace Traits {
             return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
         }
         #endregion
-        
+
         // private void CreateJudgementJob() {
         //     if (!owner.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
         //         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.JUDGE_CHARACTER, owner, owner.currentNpcSettlement);

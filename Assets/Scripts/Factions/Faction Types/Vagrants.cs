@@ -19,7 +19,7 @@
             AddCrime(CRIME_TYPE.Vampire, CRIME_SEVERITY.Heinous);
             AddCrime(CRIME_TYPE.Demon_Worship, CRIME_SEVERITY.Heinous);
         }
-        public override void SetFromSaveData() {
+        public override void SetFixedData() {
             //crimes
             hasCrimes = true;
             AddCrime(CRIME_TYPE.Infidelity, CRIME_SEVERITY.Infraction);

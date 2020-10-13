@@ -16,6 +16,7 @@ namespace Traits {
             ticksDuration = 0;
             canBeTriggered = true;
             AddTraitOverrideFunctionIdentifier(TraitManager.Start_Perform_Trait);
+            AddTraitOverrideFunctionIdentifier(TraitManager.Per_Tick_Movement);
         }
 
         #region Overrides

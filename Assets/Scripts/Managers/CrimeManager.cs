@@ -198,7 +198,7 @@ public class CrimeManager : BaseMonoBehaviour {
                     LocationStructure structureLocation = targetTileObject.gridTileLocation != null ? targetTileObject.structureLocation : targetTileObject.previousTile.structure;
                     if(structureLocation != null) {
                         if (structureLocation.settlementLocation != null
-                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.SETTLEMENT)) {
+                        && (structureLocation.settlementLocation.locationType == LOCATION_TYPE.VILLAGE)) {
                             return CRIME_SEVERITY.Misdemeanor;
                         }
                     }
@@ -238,7 +238,7 @@ public class CrimeManager : BaseMonoBehaviour {
                 bool hasAlreadyReacted = false;
                 Criminal existingCriminalTrait = null; 
                 if (actor.traitContainer.HasTrait("Criminal")) {
-                    existingCriminalTrait = actor.traitContainer.GetNormalTrait<Criminal>("Criminal");
+                    existingCriminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
                     hasAlreadyReacted = existingCriminalTrait.IsCrimeAlreadyWitnessedBy(witness, crime);
                 }
                 if (hasAlreadyReacted) {
@@ -250,7 +250,7 @@ public class CrimeManager : BaseMonoBehaviour {
 
                 //Check if personal decision on crime severity takes precendence over faction's decision
                 //Default is YES
-                CRIME_SEVERITY finalCrimeSeverity = GetCrimeSeverity(witness, actor, target, crimeType, crime);
+                CRIME_SEVERITY finalCrimeSeverity = GetCrimeSeverity(witness, actor, target, crimeType);
 
                 if(finalCrimeSeverity != CRIME_SEVERITY.None && finalCrimeSeverity != CRIME_SEVERITY.Unapplicable) {
                     CrimeSeverity crimeSeverityObj = GetCrimeSeverity(finalCrimeSeverity);
@@ -286,7 +286,7 @@ public class CrimeManager : BaseMonoBehaviour {
             }
         }
     }
-    public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType, ICrimeable crime) {
+    public CRIME_SEVERITY GetCrimeSeverity(Character witness, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
         if (!actor.isNormalCharacter) {
             //Non villagers should not be criminals that is why the severity is None
             return CRIME_SEVERITY.None;
@@ -294,9 +294,9 @@ public class CrimeManager : BaseMonoBehaviour {
         CrimeType crimeTypeObj = GetCrimeType(crimeType);
         CRIME_SEVERITY factionCrimeSeverity = CRIME_SEVERITY.Unapplicable;
         if (witness.faction != null) {
-            factionCrimeSeverity = witness.faction.GetCrimeSeverity(witness, actor, target, crimeType, crime);
+            factionCrimeSeverity = witness.faction.GetCrimeSeverity(witness, actor, target, crimeType);
         }
-        CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target, crime);
+        CRIME_SEVERITY witnessCrimeSeverity = crimeTypeObj.GetCrimeSeverity(witness, actor, target);
         CRIME_SEVERITY finalCrimeSeverity = witnessCrimeSeverity;
         if (witnessCrimeSeverity == CRIME_SEVERITY.Unapplicable) {
             finalCrimeSeverity = factionCrimeSeverity;
@@ -488,7 +488,7 @@ public class CrimeData : ISavable {
         if (IsWitness(character)) {
             if (!HasWanted()) {
                 if (AreAllWitnessesDead()) {
-                    criminal.traitContainer.GetNormalTrait<Criminal>("Criminal").RemoveCrime(this);
+                    criminal.traitContainer.GetTraitOrStatus<Criminal>("Criminal").RemoveCrime(this);
 
                     Log addLog = GameManager.CreateNewLog(GameManager.Instance.Today(), "Character", "CrimeSystem", "dead_witnesses", null, LOG_TAG.Life_Changes, LOG_TAG.Crimes);
                     addLog.AddToFillers(criminal, criminal.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -608,10 +608,22 @@ public class CrimeData : ISavable {
                 criminal.logComponent.RegisterLog(log, onlyClickedCharacter: false);
             }
             if (target is Character targetCharacter && crime is ActualGoapNode crimeAction) {
-                CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(null, criminal, target, crimeType, crime);
+                CRIME_SEVERITY severityOfCrime = faction.GetCrimeSeverity(null, criminal, target, crimeType);
                 faction.CheckForWar(criminal.faction, severityOfCrime, criminal, targetCharacter, crimeAction);    
             }
             
+            if(crimeType == CRIME_TYPE.Vampire) {
+                //when a Vampire becomes Wanted in a Faction, all current members of the Faction will immediately know of his Vampirism
+                Traits.Vampire vampire = criminal.traitContainer.GetTraitOrStatus<Traits.Vampire>("Vampire");
+                if (vampire != null) {
+                    for (int i = 0; i < faction.characters.Count; i++) {
+                        Character factionMember = faction.characters[i];
+                        if(factionMember != criminal) {
+                            vampire.AddAwareCharacter(factionMember);
+                        }
+                    }
+                }
+            }
         }
     }
     public bool IsWantedBy(Faction faction) {

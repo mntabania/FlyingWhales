@@ -126,7 +126,7 @@ public class StateAwarenessComponent : CharacterComponent {
                     owner.traitContainer.AddTrait(owner, "Griefstricken", target);
                 }
             } else {
-                Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+                Psychopath psychopath = owner.traitContainer.GetTraitOrStatus<Psychopath>("Psychopath");
                 if(psychopath.targetVictim == target) {
                     owner.jobQueue.CancelAllJobs(JOB_TYPE.RITUAL_KILLING);
                     psychopath.SetTargetVictim(null);
@@ -139,7 +139,7 @@ public class StateAwarenessComponent : CharacterComponent {
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Worried, target);
                 }
             } else {
-                Psychopath psychopath = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+                Psychopath psychopath = owner.traitContainer.GetTraitOrStatus<Psychopath>("Psychopath");
                 if (psychopath.targetVictim == target) {
                     owner.jobQueue.CancelAllJobs(JOB_TYPE.RITUAL_KILLING);
                     psychopath.SetTargetVictim(null);

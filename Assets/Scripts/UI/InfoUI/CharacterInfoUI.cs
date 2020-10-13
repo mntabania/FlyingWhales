@@ -101,7 +101,8 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
+        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_CREATED, OnRelationshipChanged);
+        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_TYPE_ADDED, OnRelationshipChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
@@ -384,7 +385,11 @@ public class CharacterInfoUI : InfoUIBase {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.traits.ElementAtOrDefault(index);
             if (trait != null) {
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
+                string info = trait.descriptionInUI;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                info += $"\n{trait.GetTestingData(activeCharacter)}";
+#endif
+                UIManager.Instance.ShowSmallInfo(info);    
             }
         }
     }
@@ -393,7 +398,11 @@ public class CharacterInfoUI : InfoUIBase {
             int index = int.Parse(text);
             Trait trait = activeCharacter.traitContainer.statuses.ElementAtOrDefault(index);
             if (trait != null) {
-                UIManager.Instance.ShowSmallInfo(trait.descriptionInUI);    
+                string info = trait.descriptionInUI;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                info += $"\n{trait.GetTestingData(activeCharacter)}";
+#endif
+                UIManager.Instance.ShowSmallInfo(info);    
             }
         }
     }
@@ -762,7 +771,7 @@ public class CharacterInfoUI : InfoUIBase {
             UpdateRelationships();
         }
     }
-    private void OnRelationshipAdded(Relatable owner, Relatable target) {
+    private void OnRelationshipChanged(Relatable owner, Relatable target) {
         if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
             UpdateRelationships();
         }
@@ -892,7 +901,7 @@ public class CharacterInfoUI : InfoUIBase {
     }
     private void ActivateTriggerFlawConfirmation(object o) {
         string traitName = (string) o;
-        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         string question = "Are you sure you want to trigger " + traitName + "?";
         string effect = $"<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
         string manaCost = $"{PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost.ToString()} {UtilityScripts.Utilities.ManaIcon()}";
@@ -922,14 +931,14 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.Broadcast(Signals.FLAW_TRIGGERED_BY_PLAYER, trait);
     }
     private bool CanActivateTriggerFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         if (trait != null) {
             return trait.CanFlawBeTriggered(activeCharacter);
         }
         return false;
     }
     private void OnHoverEnterFlaw(string traitName) {
-        Trait trait = activeCharacter.traitContainer.GetNormalTrait<Trait>(traitName);
+        Trait trait = activeCharacter.traitContainer.GetTraitOrStatus<Trait>(traitName);
         PlayerUI.Instance.skillDetailsTooltip.ShowPlayerSkillDetails(
             traitName, trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect"), 
             manaCost: PlayerSkillManager.Instance.GetPlayerActionData(SPELL_TYPE.TRIGGER_FLAW).manaCost

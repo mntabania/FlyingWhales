@@ -101,7 +101,7 @@ public class SaveManager : MonoBehaviour {
         );
         scenarioSave.worldMapSave = worldMapSave;
 
-        scenarioSave.SaveVillageSettlements(LandmarkManager.Instance.allNonPlayerSettlements.Where(x => x.locationType == LOCATION_TYPE.SETTLEMENT).ToList());
+        scenarioSave.SaveVillageSettlements(LandmarkManager.Instance.allNonPlayerSettlements.Where(x => x.locationType == LOCATION_TYPE.VILLAGE).ToList());
         
         if (string.IsNullOrEmpty(fileName)) {
             fileName = SaveCurrentProgressManager.savedCurrentProgressFileName;

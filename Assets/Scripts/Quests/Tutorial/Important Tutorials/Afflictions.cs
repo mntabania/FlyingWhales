@@ -41,7 +41,7 @@ namespace Tutorial {
                         .SetOnTopmostActions(OnTopMostTriggerFlawButton, OnNoLongerTopMostTriggerFlawButton)
                         .SetCompleteAction(OnCompleteTriggerFlaw)
                         .SetObjectsToCenter(TriggerFlawTargetCenterGetter),
-                    new FlawTriggeredStep("Select Vampirism", "Vampiric")
+                    new FlawTriggeredStep("Select Vampirism", "Vampire")
                         .SetOnTopmostActions(OnTopMostTriggerVampiric, OnNoLongerTopMostTriggerVampiric)
                 )
                 
@@ -120,10 +120,10 @@ namespace Tutorial {
         
         #region Vampiric Trigger Flaw
         private void OnTopMostTriggerVampiric() {
-            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Vampiric");
+            Messenger.Broadcast(Signals.SHOW_SELECTABLE_GLOW, "Vampire");
         }
         private void OnNoLongerTopMostTriggerVampiric() {
-            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampiric");
+            Messenger.Broadcast(Signals.HIDE_SELECTABLE_GLOW, "Vampire");
         }
         private List<ISelectable> TriggerFlawTargetCenterGetter() {
             return new List<ISelectable>() { _afflictedCharacter };

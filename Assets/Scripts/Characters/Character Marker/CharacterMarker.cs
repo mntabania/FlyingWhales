@@ -146,6 +146,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 trait.OnInitiateMapObjectVisual(character);
             }
         }
+        UpdateTraversableTags();
+        UpdateTagPenalties();
+        seeker.graphMask = InnerMapManager.Instance.mainGraphMask;
         // UpdateNameplatePosition();
     }
 
@@ -1144,7 +1147,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.race == RACE.GOLEM || character.race == RACE.ELEMENTAL || character.race == RACE.KOBOLD ||
             character.race == RACE.SPIDER || character.race == RACE.MIMIC || character.race == RACE.ENT || 
             character.race == RACE.PIG || character.race == RACE.CHICKEN || character.race == RACE.SHEEP 
-            || character.race == RACE.ABOMINATION) {
+            || character.race == RACE.ABOMINATION
+            || character.behaviourComponent.isInVampireBatForm) {
             hairImg.gameObject.SetActive(false);
             knockedOutHairImg.gameObject.SetActive(false);
         } else {
@@ -1620,18 +1624,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region Flee
     public void OnStartFlee() {
-        if (character.combatComponent.avoidInRange.Count == 0) {
-            return;
-        }
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
 
         List<HexTile> playerHexes = PlayerManager.Instance.player.playerSettlement.tiles;
-        Vector3[] avoidThisPositions = new Vector3[character.combatComponent.avoidInRange.Count + playerHexes.Count];
+        Vector3[] avoidThisPositions = new Vector3[character.combatComponent.avoidInRange.Count + playerHexes.Count + 1];
+        avoidThisPositions[0] = character.gridTileLocation.worldLocation;
         int lastIndex = 0;
         if (character.combatComponent.avoidInRange.Count > 0) {
-            for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
+            for (int i = 1; i < character.combatComponent.avoidInRange.Count; i++) {
                 avoidThisPositions[i] = character.combatComponent.avoidInRange[i].gridTileLocation.worldLocation;
             }
             lastIndex = character.combatComponent.avoidInRange.Count;
@@ -1639,21 +1641,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
         //Corrupted hexes should also be avoided
         //https://trello.com/c/6WJtivlY/1274-fleeing-should-not-go-to-corrupted-structures
-        if(playerHexes.Count > 0) {
+        if (playerHexes.Count > 0) {
             for (int i = 0; i < playerHexes.Count; i++) {
                 avoidThisPositions[i + lastIndex] = playerHexes[i].GetCenterLocationGridTile().worldLocation;
             }
         }
 
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, 10000);
-        fleePath.aimStrength = 1;
-        fleePath.spread = 2000;
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidThisPositions, CombatManager.Instance.searchLength);
+        fleePath.aimStrength = CombatManager.Instance.aimStrength;
+        fleePath.spread = CombatManager.Instance.spread;
         seeker.StartPath(fleePath);
     }
     public void OnStartFleeToHome() {
-        if (character.combatComponent.avoidInRange.Count == 0) {
-            return;
-        }
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         LocationGridTile chosenTile = null;
@@ -1675,9 +1674,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     public void OnStartFleeToOutside() {
-        if (character.combatComponent.avoidInRange.Count == 0) {
-            return;
-        }
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         LocationGridTile chosenTile = null;
@@ -1919,5 +1915,14 @@ public class CharacterMarker : MapObjectVisual<Character> {
         
     }
     public void OnConstantPathComputed(ConstantPath constantPath) { }
+    #endregion
+
+    #region Tags
+    public void UpdateTraversableTags() {
+        seeker.traversableTags = character.movementComponent.traversableTags;
+    }
+    public void UpdateTagPenalties() {
+        seeker.tagPenalties = character.movementComponent.tagPenalties;
+    }
     #endregion
 }

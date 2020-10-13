@@ -386,7 +386,7 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
     private bool HasSettlementNeighbour() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile neighbour = AllNeighbours[i];
-            if (neighbour.settlementOnTile != null && neighbour.settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT) {
+            if (neighbour.settlementOnTile != null && neighbour.settlementOnTile.locationType == LOCATION_TYPE.VILLAGE) {
                 return true;
             }
         }
@@ -463,11 +463,11 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         return IsPartOfVillage() || IsNextToVillage();
     }
     public bool IsPartOfVillage() {
-        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
+        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
     }
     public bool IsPartOfVillage(out BaseSettlement settlement) {
         settlement = settlementOnTile;
-        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.SETTLEMENT;
+        return settlementOnTile != null && settlementOnTile.locationType == LOCATION_TYPE.VILLAGE;
     }
     public bool IsNextToVillage() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
@@ -1071,6 +1071,21 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
         settlementOnTile = settlement;
         landmarkOnTile?.nameplate.UpdateVisuals();
         region.UpdateSettlementsInRegion();
+        if (GameManager.Instance.gameHasStarted) {
+            UpdatePathfindingGraphOnTile();
+        }
+    }
+    public void CheckIfSettlementIsStillOnTile() {
+        if (settlementOnTile != null) {
+            for (int i = 0; i < settlementOnTile.allStructures.Count; i++) {
+                LocationStructure structure = settlementOnTile.allStructures[i];
+                if (structure.HasTileOnHexTile(this)) {
+                    return; //there is still a structure on this hex tile.
+                }
+            }
+            //if code reaches this, then there is no longer a structure from the settlement on this tile
+            settlementOnTile.RemoveTileFromSettlement(this);
+        }
     }
     #endregion
 
@@ -1093,6 +1108,12 @@ public class HexTile : BaseMonoBehaviour, IHasNeighbours<HexTile>, IPlayerAction
             targetLineParent.transform.localPosition = new Vector3(0f, 0.3f, 0f);
         }
         return travelLine;
+    }
+    private void UpdatePathfindingGraphOnTile() {
+        for (int i = 0; i < innerMapHexTile.gridTileCollections.Length; i++) {
+            LocationGridTileCollection collection = innerMapHexTile.gridTileCollections[i];
+            collection.locationGridTileCollectionItem.UpdatePathfindingGraph();
+        }
     }
     #endregion
 

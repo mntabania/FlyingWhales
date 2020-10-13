@@ -74,7 +74,7 @@ public class TakeResource : GoapAction {
             }
         } else {
             if (target.gridTileLocation != null && target.gridTileLocation.IsPartOfSettlement(out var settlement) && 
-                settlement.locationType == LOCATION_TYPE.SETTLEMENT && settlement != actor.homeSettlement) {
+                settlement.locationType == LOCATION_TYPE.VILLAGE && settlement != actor.homeSettlement) {
                 cost = 2000;
                 costLog += $" +{cost}(Resource pile is at another village)";
             } else {

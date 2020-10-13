@@ -73,7 +73,7 @@ public class AssumptionComponent : CharacterComponent {
     }
     private bool HasAlreadyAssumedTo(INTERACTION_TYPE actionType, Character actor, IPointOfInterest target, CRIME_TYPE crimeType) {
         if (actor.traitContainer.HasTrait("Criminal")) {
-            Criminal criminalTrait = actor.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = actor.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             if (criminalTrait.IsCrimeAlreadyWitnessedBy(actor, crimeType)) {
                 return true;
             }

@@ -15,3 +15,9 @@ public class CharacterClassAsset {
         animationSprites = new List<Sprite>();
     }
 }
+
+[System.Serializable]
+public class AdditionalMarkerAsset {
+    public string identifier;
+    public CharacterClassAsset asset;
+}

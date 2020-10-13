@@ -30,7 +30,7 @@ namespace Inner_Maps.Location_Structures {
             base.DestroyStructure();
         }
         protected override void AfterStructureDestruction() {
-            structureObj.OnOwnerStructureDestroyed(); 
+            structureObj.OnOwnerStructureDestroyed(region.innerMap); 
             HexTile hexTile = occupiedHexTile.hexTileOwner;
             base.AfterStructureDestruction();
             hexTile.RemoveCorruption();

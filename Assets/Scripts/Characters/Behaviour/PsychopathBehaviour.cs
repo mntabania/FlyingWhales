@@ -14,7 +14,7 @@ public class PsychopathBehaviour : CharacterBehaviourComponent {
         int chance = UnityEngine.Random.Range(0, 100);
         log += $"\n  -RNG roll: {chance}";
         if (chance < 15) {
-            Psychopath psychopath = character.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
+            Psychopath psychopath = character.traitContainer.GetTraitOrStatus<Psychopath>("Psychopath");
             psychopath.CheckTargetVictimIfStillAvailable();
             if (psychopath.targetVictim != null) {
                 log += $"\n  -Target victim is {psychopath.targetVictim.name}, will try to Hunt Victim";

@@ -27,7 +27,7 @@ public class Absolve : GoapAction {
     public void AfterAbsolveSuccess(ActualGoapNode goapNode) {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
-            Criminal criminalTrait = target.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             criminalTrait.SetIsImprisoned(false);
             criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         }

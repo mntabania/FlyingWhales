@@ -4,6 +4,6 @@
         public Bandits() : base(FACTION_TYPE.Bandits) { }
         
         public override void SetAsDefault() { }
-        public override void SetFromSaveData() { }
+        public override void SetFixedData() { }
     }
 }

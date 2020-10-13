@@ -9,7 +9,7 @@ namespace Traits {
     /// </summary>
     public interface ITraitContainer {
 
-        List<Trait> allTraitsAndStatuses { get; }
+        Dictionary<string, Trait> allTraitsAndStatuses { get; }
         List<Status> statuses { get; }
         List<Trait> traits { get; }
         //List<Trait> onCollideWithTraits { get; }
@@ -17,7 +17,7 @@ namespace Traits {
         Dictionary<string, List<Trait>> traitOverrideFunctions { get; }
         Dictionary<string, List<TraitRemoveSchedule>> scheduleTickets { get; }
         Dictionary<string, int> stacks { get; }
-        Dictionary<string, bool> traitSwitches { get; }
+        //Dictionary<string, bool> traitSwitches { get; }
         //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
 
@@ -50,14 +50,14 @@ namespace Traits {
         #endregion
 
         #region Getting
-        T GetNormalTrait<T>(params string[] traitNames) where T : Trait;
-        List<T> GetNormalTraits<T>(params string[] traitNames) where T : Trait;
+        T GetTraitOrStatus<T>(params string[] traitNames) where T : Trait;
+        List<T> GetTraitsOrStatuses<T>(params string[] traitNames) where T : Trait;
         bool HasTrait(params string[] traitNames);
         bool HasTraitOf(TRAIT_TYPE traitType);
-        bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
-        bool HasTraitOf(TRAIT_EFFECT traitEffect);
+        //bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
+        bool HasTraitOrStatusOf(TRAIT_EFFECT traitEffect);
         List<Trait> GetAllTraitsOf(TRAIT_TYPE type);
-        List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
+        //List<Trait> GetAllTraitsOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         List<Trait> GetTraitOverrideFunctions(string identifier);
         int GetStacks(string traitName);
         #endregion
@@ -73,10 +73,10 @@ namespace Traits {
         void RemoveScheduleTicket(string traitName, bool bySchedule);
         #endregion
         
-        #region Switches
-        void SwitchOnTrait(string name);
-        void SwitchOffTrait(string name);
-        #endregion
+        //#region Switches
+        //void SwitchOnTrait(string name);
+        //void SwitchOffTrait(string name);
+        //#endregion
 
         #region Inquiry
         bool HasTangibleTrait();

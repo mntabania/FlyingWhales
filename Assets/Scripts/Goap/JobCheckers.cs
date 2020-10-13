@@ -35,7 +35,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
-            if (character.isFactionless || character.isFriendlyFactionless) {
+            if (character.isFactionless || character.isVagrantOrFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
                        !targetCharacter.relationshipContainer.IsEnemiesWith(character);
             }
@@ -50,7 +50,7 @@ public partial class InteractionManager {
             && character.homeSettlement != null 
             && character.homeSettlement.prison != null
             /*&& !character.combatComponent.bannedFromHostileList.Contains(targetCharacter)*/) {
-            Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
+            Criminal criminalTrait = targetCharacter.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
             if (criminalTrait == null || !criminalTrait.isImprisoned) {
                 if (character.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     return false;

@@ -26,7 +26,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
+            advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER };
             mutuallyExclusive = new string[] { "Robust" };
             moodEffect = -5;
             _hasAlreadyDied = false;
@@ -80,6 +80,11 @@ namespace Traits {
                 //owner.needsComponent.AdjustStaminaDecreaseRate(-2);
                 if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
                     Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyCheck);
+                }
+
+                //When this character got rid of infection and its class is still a zombie, transform it back to normal because it means that he was healed of being a zombie
+                if(owner.characterClass.className == "Zombie") {
+                    owner.AssignClass(owner.previousClassName);
                 }
             }
         }

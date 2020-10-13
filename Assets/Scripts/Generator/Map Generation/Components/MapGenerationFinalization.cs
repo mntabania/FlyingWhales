@@ -89,6 +89,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			InnerTileMap map = InnerMapManager.Instance.innerMaps[i];
 			yield return MapGenerator.Instance.StartCoroutine(map.CreateSeamlessEdges());
 			PathfindingManager.Instance.RescanGrid(map.pathfindingGraph);
+			PathfindingManager.Instance.RescanGrid(map.unwalkableGraph);
 			yield return null;
 			map.PredetermineGraphNodes();
 		}

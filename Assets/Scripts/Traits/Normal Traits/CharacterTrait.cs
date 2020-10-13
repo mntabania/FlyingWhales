@@ -123,7 +123,7 @@ namespace Traits {
                         !characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.INSPECT)) {
                         characterThatWillDoJob.jobComponent.TriggerInspect(item);
                     }
-                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && !characterThatWillDoJob.traitContainer.HasTrait("Vampiric") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
+                } else if (item.traitContainer.HasTrait("Edible") && characterThatWillDoJob.needsComponent.isStarving && !characterThatWillDoJob.traitContainer.HasTrait("Vampire") && !characterThatWillDoJob.traitContainer.HasTrait("Paralyzed")) {
                     characterThatWillDoJob.jobComponent.CreateEatJob(item);
                 } else if (!characterThatWillDoJob.IsInventoryAtFullCapacity() && (characterThatWillDoJob.IsItemInteresting(item.name) || item.traitContainer.HasTrait("Treasure"))) {
                     if (!characterThatWillDoJob.jobComponent.HasHigherPriorityJobThan(JOB_TYPE.TAKE_ITEM) && characterThatWillDoJob.traitContainer.HasTrait("Suspicious") == false) {
@@ -222,7 +222,7 @@ namespace Traits {
                         if (owner.isNormalCharacter
                             && targetCharacter.isNormalCharacter
                             && targetCharacter.gridTileLocation != null
-                            && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.SETTLEMENT))
+                            && (!targetCharacter.gridTileLocation.IsPartOfSettlement() || (targetCharacter.gridTileLocation.IsPartOfSettlement(out BaseSettlement settlement) && settlement.locationType != LOCATION_TYPE.VILLAGE))
                             && owner.relationshipContainer.GetOpinionLabel(targetCharacter) != RelationshipManager.Rival) {
                             //If a villager is dead and is seen outside the village, bury it
                             if (owner.partyComponent.isActiveMember) {
@@ -249,7 +249,24 @@ namespace Traits {
                         if (willReact) {
                             if (owner.marker) {
                                 if (!targetCharacter.traitContainer.HasTrait("Restrained", "Unconscious")) {
-                                    owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                    //If character considers the target a prisoner, do not assume trespassing
+                                    //This might happen because if there is still no prison, the designated prison of the settlement is the city center
+                                    //When a prisoner is seen in there the other characters might assume that he is trespassing when in fact he is not because he is imprisoned
+                                    //So if the character that saw him considers him a prisoner, he must never assume that the character is imprisoned
+                                    bool willCreateAssumption = true;
+                                    if (targetCharacter.traitContainer.HasTrait("Prisoner")) {
+                                        Prisoner prisoner = targetCharacter.traitContainer.GetTraitOrStatus<Prisoner>("Prisoner");
+                                        if (prisoner.IsPrisonerOf(owner)) {
+                                            willCreateAssumption = false;
+                                        }
+                                    }
+                                    if (targetCharacter.isVagrant) {
+                                        //removed vagrant trespassing because it causes an issue whenever a character leaves its current faction while it is still inside its previous settlement.
+                                        willCreateAssumption = false;
+                                    }
+                                    if (willCreateAssumption) {
+                                        owner.assumptionComponent.CreateAndReactToNewAssumption(targetCharacter, owner, INTERACTION_TYPE.TRESPASSING, REACTION_STATUS.WITNESSED);
+                                    }
                                 }
                             }
                         }
@@ -340,7 +357,7 @@ namespace Traits {
             //    return triggered;
             //}
             if (node.poiTarget.traitContainer.HasTrait("Booby Trapped")) {
-                BoobyTrapped targetBoobyTrap = node.poiTarget.traitContainer.GetNormalTrait<BoobyTrapped>("Booby Trapped");
+                BoobyTrapped targetBoobyTrap = node.poiTarget.traitContainer.GetTraitOrStatus<BoobyTrapped>("Booby Trapped");
                 bool triggered = targetBoobyTrap.OnPerformGoapAction(node, ref willStillContinueAction);
                 if (triggered && node.actor.jobQueue.jobsInQueue.Count > 0) {
                     node.actor.jobQueue.jobsInQueue[0].CancelJob();
