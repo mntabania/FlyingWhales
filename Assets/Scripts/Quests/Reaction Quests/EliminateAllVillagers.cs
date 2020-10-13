@@ -12,7 +12,7 @@ namespace Quests {
         protected override void ConstructSteps() {
             List<Character> villagers = CharacterManager.Instance.GetAllNormalCharacters();
             _eliminateVillagerStep = new EliminateVillagerStep(GetEliminateAllVillagersDescription, villagers);
-            _eliminateVillagerStep.SetObjectsToCenter(villagers.Where(x => x.isDead == false).Select(x => x as ISelectable).ToList());
+            _eliminateVillagerStep.SetObjectsToCenter(villagers.Where(x => !ShouldConsiderCharacterAsEliminated(x)).Select(x => x as ISelectable).ToList());
             
             steps = new List<QuestStepCollection>() {
                 new QuestStepCollection(_eliminateVillagerStep),
