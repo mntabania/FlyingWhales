@@ -51,7 +51,7 @@ public class OptionsMenu : PopupMenuBase {
         loadWindow.Open();
     }
     public void ExitGame() {
-        Application.Quit();
+        UIManager.Instance.ShowYesNoConfirmation("Exit Game", "Are you sure you want to exit?", Application.Quit, layer: 50, showCover: true);
     }
     public void AbandonWorld() {
         UIManager.Instance.ShowYesNoConfirmation("Abandon World", "Are you sure you want to abandon this world?", Abandon, layer: 50, showCover: true);

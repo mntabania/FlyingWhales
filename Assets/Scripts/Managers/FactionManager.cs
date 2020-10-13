@@ -502,8 +502,7 @@ public class FactionManager : BaseMonoBehaviour {
         int count = 0;
         for (int i = 0; i < DatabaseManager.Instance.factionDatabase.allFactionsList.Count; i++) {
             Faction faction = DatabaseManager.Instance.factionDatabase.allFactionsList[i];
-            if (faction.factionType.type == FACTION_TYPE.Elven_Kingdom || 
-                faction.factionType.type == FACTION_TYPE.Human_Empire) {
+            if (faction.isMajorNonPlayer && !faction.isDestroyed) {
                 count++;
             }
         }
