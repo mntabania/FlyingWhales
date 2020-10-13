@@ -15,13 +15,16 @@ public class BerserkBehaviour : CharacterBehaviourComponent {
             bool hasCreatedJob = false;
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest inVisionPOI = character.marker.inVisionPOIs[i];
-                if (inVisionPOI is MovingTileObject || inVisionPOI is GenericTileObject || (inVisionPOI.mapObjectVisual != null && inVisionPOI.mapObjectVisual.IsInvisibleToPlayer())) {
-                    //should not target moving tile objects and generic tile objects
+                if (inVisionPOI is MovingTileObject || inVisionPOI is GenericTileObject || inVisionPOI is StructureTileObject || (inVisionPOI.mapObjectVisual != null && inVisionPOI.mapObjectVisual.IsInvisibleToPlayer())) {
+                    //should not target moving tile objects and generic tile objects and structure tile objects
                     continue;
                 }
                 if(!character.combatComponent.hostilesInRange.Contains(inVisionPOI) && !character.combatComponent.avoidInRange.Contains(inVisionPOI)) {
                     if (inVisionPOI is Character targetCharacter) {
-                        if (!targetCharacter.isDead) {
+                        //Added checker for "Unconscious", "Paralyzed", "Restrained" because since berserk is no longer lethal.
+                        //Because if we didn't limit this, it can cause berserked characters becoming stuck trying to attack a character that they can no longer attack because of the
+                        //change in lethality (Non lethal combat will stop if the target becomes either "Unconscious", "Paralyzed" or "Restrained")
+                        if (!targetCharacter.isDead && !targetCharacter.traitContainer.HasTrait("Unconscious", "Paralyzed", "Restrained")) {
                             producedJob = CreateBerserkAttackJob(character, targetCharacter);
                             if (producedJob != null) {
                                 hasCreatedJob = true;

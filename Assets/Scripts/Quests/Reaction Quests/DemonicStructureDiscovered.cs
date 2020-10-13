@@ -55,7 +55,8 @@ namespace Quests {
             UIManager.Instance.ShowSmallInfo(
                 $"{reporter.name} has discovered your {targetStructure.name}! " +
                 $"{UtilityScripts.Utilities.GetPronounString(reporter.gender, PRONOUN_TYPE.SUBJECTIVE, true)} " +
-                $"is returning home to report it. If successful, your threat will increase by 100. " +
+                $"is returning home to report it. If successful, your threat will increase by 20, " +
+                $"and {reporter.name} will post a job to attack your {targetStructure.name}. " +
                 $"Find a way to stop {UtilityScripts.Utilities.GetPronounString(reporter.gender, PRONOUN_TYPE.OBJECTIVE, false)}!",
                 pos: item.hoverPosition
             );
