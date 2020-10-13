@@ -666,8 +666,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
                     if (character.combatComponent.RemoveHostileInRange(combatState.currentClosestHostile)) {
                         targetPOI = null;
                     }
+                    return;
                 }
-                return;
             }
         }
 
