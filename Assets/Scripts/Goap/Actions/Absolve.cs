@@ -1,4 +1,5 @@
 ﻿using Traits;
+using System.Collections.Generic;
 
 public class Absolve : GoapAction {
     public Absolve() : base(INTERACTION_TYPE.ABSOLVE) {
@@ -28,6 +29,7 @@ public class Absolve : GoapAction {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
             Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
+            criminalTrait.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Absolved, goapNode.actor);
             criminalTrait.SetIsImprisoned(false);
             criminalTrait.RemoveAllCrimesWantedBy(goapNode.actor.faction);
         }

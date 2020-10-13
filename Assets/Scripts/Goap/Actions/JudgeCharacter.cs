@@ -39,12 +39,14 @@ public class JudgeCharacter : GoapAction {
         //TODO: Loop all through crime and get weight result of each, at the end the highest count result will be the ultimate punishment
         //Right now just get the first crime
         CrimeData crimeData = null;
-        List<CrimeData> allCrimesToFaction = null;
+        //List<CrimeData> allCrimesToFaction = null;
         if (criminalTrait != null) {
-            allCrimesToFaction = criminalTrait.GetListOfUnpunishedCrimesWantedBy(actor.faction);
-            if (allCrimesToFaction != null && allCrimesToFaction.Count > 0) {
-                crimeData = allCrimesToFaction[0];
-            }
+            crimeData = criminalTrait.GetFirstCrimeWantedBy(actor.faction, CRIME_STATUS.Unpunished);
+
+            //allCrimesToFaction = criminalTrait.GetListOfCrimesWantedBy(actor.faction, CRIME_STATUS.Unpunished);
+            //if (allCrimesToFaction != null && allCrimesToFaction.Count > 0) {
+            //    crimeData = allCrimesToFaction[0];
+            //}
         }
 
         if (crimeData != null) {
@@ -138,29 +140,29 @@ public class JudgeCharacter : GoapAction {
             debugLog += $"\n\n{chosen}";
             actor.logComponent.PrintLogIfActive(debugLog);
 
-            goapNode.descriptionLog.AddToFillers(null, chosen.ToLower(), LOG_IDENTIFIER.STRING_1);
+            //goapNode.descriptionLog.AddToFillers(null, chosen.ToLower(), LOG_IDENTIFIER.STRING_1);
             //CreateJudgeLog(goapNode, chosen);
-            CRIME_STATUS decision = CRIME_STATUS.Absolved;
+            //CRIME_STATUS decision = CRIME_STATUS.Absolved;
             if (chosen == "Absolve") {
-                decision = CRIME_STATUS.Absolved;
+                //decision = CRIME_STATUS.Absolved;
                 TargetAbsolved(goapNode);
             } else if (chosen == "Whip") {
-                decision = CRIME_STATUS.Punished;
+                //decision = CRIME_STATUS.Punished;
                 TargetWhip(goapNode);
             } else if (chosen == "Execute") {
-                decision = CRIME_STATUS.Executed;
+                //decision = CRIME_STATUS.Executed;
                 TargetExecuted(goapNode);
             } else if (chosen == "Exile") {
-                decision = CRIME_STATUS.Exiled;
+                //decision = CRIME_STATUS.Exiled;
                 TargetExiled(goapNode);
             }
-            if(allCrimesToFaction != null) {
-                for (int i = 0; i < allCrimesToFaction.Count; i++) {
-                    CrimeData crimeToFaction = allCrimesToFaction[i];
-                    crimeToFaction.SetCrimeStatus(decision);
-                    crimeToFaction.SetJudge(actor);
-                }
-            }
+            //if(allCrimesToFaction != null) {
+            //    for (int i = 0; i < allCrimesToFaction.Count; i++) {
+            //        CrimeData crimeToFaction = allCrimesToFaction[i];
+            //        crimeToFaction.SetCrimeStatus(decision);
+            //        crimeToFaction.SetJudge(actor);
+            //    }
+            //}
         }
 
         //if (crimeData != null) { crimeData.SetCrimeStatus(CRIME_STATUS.Exiled); }
@@ -168,18 +170,26 @@ public class JudgeCharacter : GoapAction {
     }
     private void TargetExecuted(ActualGoapNode goapNode) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.EXECUTE, goapNode.target, goapNode.actor);
+        job.SetCannotBePushedBack(true);
+        job.SetDoNotRecalculate(true);
         goapNode.actor.jobQueue.AddJobInQueue(job);
     }
     private void TargetAbsolved(ActualGoapNode goapNode) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.ABSOLVE, goapNode.target, goapNode.actor);
+        job.SetCannotBePushedBack(true);
+        job.SetDoNotRecalculate(true);
         goapNode.actor.jobQueue.AddJobInQueue(job);
     }
     private void TargetExiled(ActualGoapNode goapNode) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.EXILE, goapNode.target, goapNode.actor);
+        job.SetCannotBePushedBack(true);
+        job.SetDoNotRecalculate(true);
         goapNode.actor.jobQueue.AddJobInQueue(job);
     }
     private void TargetWhip(ActualGoapNode goapNode) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.JUDGE_PRISONER, INTERACTION_TYPE.WHIP, goapNode.target, goapNode.actor);
+        job.SetCannotBePushedBack(true);
+        job.SetDoNotRecalculate(true);
         goapNode.actor.jobQueue.AddJobInQueue(job);
     }
     #endregion

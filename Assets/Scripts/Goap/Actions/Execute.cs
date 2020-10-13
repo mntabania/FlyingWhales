@@ -92,6 +92,7 @@ public class Execute : GoapAction {
         Character target = goapNode.target as Character;
         if (target.traitContainer.HasTrait("Criminal")) {
             Criminal criminalTrait = target.traitContainer.GetTraitOrStatus<Criminal>("Criminal");
+            criminalTrait.SetDecisionAndJudgeToAllUnpunishedCrimesWantedBy(target.faction, CRIME_STATUS.Executed, goapNode.actor);
             criminalTrait.SetIsImprisoned(false);
         }
         target.traitContainer.RemoveTrait(target, "Criminal", goapNode.actor);

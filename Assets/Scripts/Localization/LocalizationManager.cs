@@ -130,9 +130,11 @@ public class LocalizationManager : MonoBehaviour {
                     continue; //proceed to next key
                 }
             }
-            string key =  kvp.Key.Substring(0, kvp.Key.IndexOf('_'));
-            if (key == keyLike) {
-                keys.Add(kvp.Key);
+            if (kvp.Key.Contains(keyLike)) {
+                string key = kvp.Key.Substring(0, kvp.Key.IndexOf('_'));
+                if (key == keyLike) {
+                    keys.Add(kvp.Key);
+                }
             }
         }
         return keys;
