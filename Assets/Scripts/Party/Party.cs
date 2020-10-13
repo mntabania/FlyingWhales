@@ -625,7 +625,7 @@ public class Party : ILogFiller, ISavable, IJobOwner {
     public bool RemoveMemberThatJoinedQuest(Character character, bool broadcastSignal = true, bool shouldDropQuest = true) {
         if (membersThatJoinedQuest.Remove(character)) {
             OnRemoveMemberThatJoinedQuest(character, broadcastSignal);
-            if(membersThatJoinedQuest.Count <= 0 && shouldDropQuest){
+            if((membersThatJoinedQuest.Count <= 0 || !HasActiveMemberThatJoinedQuest()) && shouldDropQuest){
                 //All members that joined the quest has left the quest, if there is still a quest, drop quest
                 if (isActive) {
                     currentQuest.EndQuest("Finished quest");
@@ -814,6 +814,15 @@ public class Party : ILogFiller, ISavable, IJobOwner {
         }
         return false;
     }
+    public bool HasActiveMemberThatJoinedQuest() {
+        for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
+            Character member = membersThatJoinedQuest[i];
+            if (IsMemberActive(member)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public Character GetMemberInCombatExcept(Character character) {
         for (int i = 0; i < membersThatJoinedQuest.Count; i++) {
             Character member = membersThatJoinedQuest[i];
@@ -851,7 +860,13 @@ public class Party : ILogFiller, ISavable, IJobOwner {
             if (GameUtilities.RollChance(15)) {
                 if (membersThatJoinedQuest.Contains(character)) {
                     currentQuest.EndQuest(character.name + " is incapacitated");
+                    return;
                 }
+            }
+        }
+        if (isActive) {
+            if (DidMemberJoinQuest(character) && !HasActiveMemberThatJoinedQuest()) {
+                currentQuest.EndQuest("Members are incapacitated");
             }
         }
     }
