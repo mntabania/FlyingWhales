@@ -33,6 +33,7 @@ public class SaveManager : MonoBehaviour {
     public const int TileObject_Save_Batches = 200;
     public const int Settlement_Save_Batches = 200;
     public const int Structure_Save_Batches = 200;
+    public const int Reaction_Quest_Save_Batches = 200;
     #endregion
 
     #region getters

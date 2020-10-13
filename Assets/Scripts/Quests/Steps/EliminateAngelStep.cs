@@ -6,8 +6,7 @@ namespace Quests.Steps {
         private readonly List<Character> _targets;
         private readonly int _initialCharactersToEliminate;
         
-        public EliminateAngelStep(Func<List<Character>, int, string> descriptionGetter, List<Character> targets) 
-            : base(string.Empty) {
+        public EliminateAngelStep(Func<List<Character>, int, string> descriptionGetter, List<Character> targets) : base(string.Empty) {
             _descriptionGetter = descriptionGetter;
             _targets = new List<Character>(targets);
             _initialCharactersToEliminate = _targets.Count;

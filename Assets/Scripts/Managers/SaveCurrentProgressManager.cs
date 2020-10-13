@@ -58,6 +58,7 @@ public class SaveCurrentProgressManager : MonoBehaviour {
         yield return StartCoroutine(currentSaveDataProgress.SaveFactionsCoroutine());
         yield return StartCoroutine(currentSaveDataProgress.SaveCharactersCoroutine());
         yield return StartCoroutine(currentSaveDataProgress.SaveJobsCoroutine());
+        yield return StartCoroutine(currentSaveDataProgress.SaveReactionQuestsCoroutine());
 
         //save world map
         WorldMapSave worldMapSave = new WorldMapSave();

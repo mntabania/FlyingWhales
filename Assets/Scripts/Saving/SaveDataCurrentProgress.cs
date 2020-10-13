@@ -5,6 +5,7 @@ using Locations.Settlements;
 using Traits;
 using UnityEngine;
 using Interrupts;
+using Quests;
 using UnityEngine.Assertions;
 
 public class SaveDataCurrentProgress {
@@ -53,6 +54,7 @@ public class SaveDataCurrentProgress {
             { OBJECT_TYPE.Trait, new SaveDataTraitHub() },
             { OBJECT_TYPE.Job, new SaveDataJobHub() },
             { OBJECT_TYPE.Gathering, new SaveDataGatheringHub() },
+            { OBJECT_TYPE.Reaction_Quest, new SaveDataReactionQuestHub() },
         };
     }
     #endregion
@@ -158,6 +160,21 @@ public class SaveDataCurrentProgress {
             if (batchCount >= SaveManager.Job_Save_Batches) {
                 batchCount = 0;
                 yield return null;    
+            }
+        }
+    }
+    public IEnumerator SaveReactionQuestsCoroutine() {
+        UIManager.Instance.optionsMenu.UpdateSaveMessage("Saving quests...");
+        int batchCount = 0;
+        for (int i = 0; i < QuestManager.Instance.activeQuests.Count; i++) {
+            Quest quest = QuestManager.Instance.activeQuests[i];
+            if (quest is ReactionQuest reactionQuest) {
+                AddToSaveHub(reactionQuest);
+                batchCount++;
+                if (batchCount >= SaveManager.Reaction_Quest_Save_Batches) {
+                    batchCount = 0;
+                    yield return null;    
+                }   
             }
         }
     }
@@ -437,6 +454,17 @@ public class SaveDataCurrentProgress {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
             character.LoadCurrentlyDoingAction();
+        }
+    }
+    public void LoadReactionQuests() {
+        if (objectHub.ContainsKey(OBJECT_TYPE.Reaction_Quest)){
+            if(objectHub[OBJECT_TYPE.Reaction_Quest] is SaveDataReactionQuestHub hub) {
+                Dictionary<string, SaveDataReactionQuest> saveDataTileObjects = hub.hub;
+                foreach (SaveDataReactionQuest data in saveDataTileObjects.Values) {
+                    ReactionQuest reactionQuest = data.Load();
+                    QuestManager.Instance.ActivateQuest(reactionQuest);
+                }
+            }
         }
     }
     #endregion

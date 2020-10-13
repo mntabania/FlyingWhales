@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Quests;
 using UnityEngine;
 
 [System.Serializable]
@@ -461,6 +462,42 @@ public class SaveDataGatheringHub : BaseSaveDataHub {
     }
     public override bool RemoveFromSave<T>(T data) {
         if (data is SaveDataGathering save) {
+            return _hub.Remove(save.persistentID);
+        }
+        return false;
+    }
+    public override ISavableCounterpart GetData(string persistentID) {
+        if (_hub.ContainsKey(persistentID)) {
+            return _hub[persistentID];
+        }
+        return default;
+    }
+}
+
+[System.Serializable]
+public class SaveDataReactionQuestHub : BaseSaveDataHub {
+    public Dictionary<string, SaveDataReactionQuest> _hub;
+
+    #region getters
+    public Dictionary<string, SaveDataReactionQuest> hub => _hub;
+    #endregion
+
+    public SaveDataReactionQuestHub() {
+        _hub = new Dictionary<string, SaveDataReactionQuest>();
+    }
+
+    public override bool AddToSave<T>(T data) {
+        if (data is SaveDataReactionQuest save) {
+            if (!_hub.ContainsKey(save.persistentID)) {
+                _hub.Add(save.persistentID, save);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool RemoveFromSave<T>(T data) {
+        if (data is SaveDataReactionQuest save) {
             return _hub.Remove(save.persistentID);
         }
         return false;

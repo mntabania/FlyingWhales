@@ -26,9 +26,18 @@ namespace Quests {
             The_Crack,
             The_Necronomicon,
         }
+
+        
+        #region getters
+        /// <summary>
+        /// List of active quests. NOTE: this does not include tutorials.
+        /// </summary>
+        public List<Quest> activeQuests => _activeQuests;
+        #endregion
         
         private void Awake() {
             Instance = this;
+            _activeQuests = new List<Quest>();
         }
         protected override void OnDestroy() {
             base.OnDestroy();
@@ -41,7 +50,6 @@ namespace Quests {
 
         #region Initialization
         public void InitializeAfterGameLoaded() {
-            _activeQuests = new List<Quest>();
             Messenger.AddListener<List<Character>, DemonicStructure>(Signals.CHARACTERS_ATTACKING_DEMONIC_STRUCTURE, OnCharactersAttackingDemonicStructure);
             Messenger.AddListener<LocationStructure, Character, GoapPlanJob>(Signals.DEMONIC_STRUCTURE_DISCOVERED, OnDemonicStructureDiscovered);
             Messenger.AddListener<List<Character>>(Signals.ANGELS_ATTACKING_DEMONIC_STRUCTURE, OnAngelsAttackingDemonicStructure);
@@ -89,8 +97,8 @@ namespace Quests {
 
         #region Inquiry
         public T GetActiveQuest<T>() where T : Quest {
-            for (int i = 0; i < _activeQuests.Count; i++) {
-                Quest quest = _activeQuests[i];
+            for (int i = 0; i < activeQuests.Count; i++) {
+                Quest quest = activeQuests[i];
                 if (quest is T validQuest) {
                     return validQuest;
                 }
@@ -98,8 +106,8 @@ namespace Quests {
             return null;
         }
         public bool IsQuestActive<T>() where T : Quest {
-            for (int i = 0; i < _activeQuests.Count; i++) {
-                Quest quest = _activeQuests[i];
+            for (int i = 0; i < activeQuests.Count; i++) {
+                Quest quest = activeQuests[i];
                 if (quest is T) {
                     return true;
                 }
@@ -107,32 +115,27 @@ namespace Quests {
             return false;
         }
         public int GetActiveQuestsCount() {
-            return _activeQuests.Count;
+            return activeQuests.Count;
         }
         #endregion
         
         #region Activation
         public void ActivateQuest(Quest quest) {
-            _activeQuests.Add(quest);
+            activeQuests.Add(quest);
             quest.Activate();
             if (quest is SteppedQuest steppedQuest) {
                 QuestItem questItem = UIManager.Instance.questUI.ShowQuest(steppedQuest, true);
                 steppedQuest.SetQuestItem(questItem);
             }
+            Messenger.Broadcast(Signals.QUEST_ACTIVATED, quest);
         }
         private void ActivateQuest<T>(params object[] arguments) where T : Quest {
             Quest quest = System.Activator.CreateInstance(typeof(T), arguments) as Quest;
             Debug.Assert(quest != null, nameof(quest) + " != null");
-            _activeQuests.Add(quest);
-            quest.Activate();
-            if (quest is SteppedQuest steppedQuest) {
-                QuestItem questItem = UIManager.Instance.questUI.ShowQuest(steppedQuest, true);
-                steppedQuest.SetQuestItem(questItem);    
-            }
-            Messenger.Broadcast(Signals.QUEST_ACTIVATED, quest);
+            ActivateQuest(quest);
         }
         private void DeactivateQuest(Quest quest) {
-            _activeQuests.Remove(quest);
+            activeQuests.Remove(quest);
             if (quest is SteppedQuest steppedQuest && steppedQuest.questItem != null) {
                 UIManager.Instance.questUI.HideQuestDelayed(steppedQuest);
             }
@@ -168,8 +171,10 @@ namespace Quests {
         }
         private void CreateEliminateAllVillagersQuest() {
             Messenger.RemoveListener(Signals.FINISHED_IMPORTANT_TUTORIALS, OnImportantTutorialsFinished);
-            EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
-            ActivateQuest(eliminateAllVillagers);
+            if (!IsQuestActive<EliminateAllVillagers>()) {
+                EliminateAllVillagers eliminateAllVillagers = new EliminateAllVillagers();
+                ActivateQuest(eliminateAllVillagers);    
+            }
         }
         #endregion
 

@@ -47,7 +47,9 @@ public abstract class BaseVisionTrigger : MonoBehaviour{
     }
     public void Reset() {
         _filterVotes = 0;
-        _mainCollider.enabled = true;
+        if (_mainCollider != null) {
+            _mainCollider.enabled = true;    
+        }
     }
 
     #region Layers
