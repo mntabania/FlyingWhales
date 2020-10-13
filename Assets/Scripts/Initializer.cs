@@ -58,6 +58,7 @@ public class Initializer : MonoBehaviour {
         if (WorldSettings.Instance.worldSettingsData.IsScenarioMap() && !SaveManager.Instance.useSaveData) {
             MapGenerationFinalization.ScenarioItemGenerationAfterPickingLoadout();    
         }
+        AudioManager.Instance.OnLoadoutSelected();
     }
     
 }

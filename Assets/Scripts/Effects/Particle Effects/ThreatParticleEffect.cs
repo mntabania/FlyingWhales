@@ -93,14 +93,20 @@ public class ThreatParticleEffect : MonoBehaviour {
         if (_isPlaying) { return; } //effect is already playing
         _isPlaying = true;
         for (int i = 0; i < threatParticleSystems.Length; i++) {
-            threatParticleSystems[i].Play();
+            var threatParticleSystem = threatParticleSystems[i];
+            if (!threatParticleSystem.isPlaying) {
+                threatParticleSystem.Play();    
+            }
         }
     }
     private void StopEffect() {
         if (_isPlaying == false) { return; } //effect isn't playing
         _isPlaying = false;
         for (int i = 0; i < threatParticleSystems.Length; i++) {
-            threatParticleSystems[i].Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            var threatParticleSystem = threatParticleSystems[i];
+            if (threatParticleSystem.isPlaying) {
+                threatParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);    
+            }
         }
     }
 }

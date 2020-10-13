@@ -117,6 +117,12 @@ public class AudioManager : MonoBehaviour {
         Messenger.AddListener<Quest>(Signals.QUEST_DEACTIVATED, OnQuestDeactivated);
         // SetCameraParent(InnerMapCameraMove.Instance);
     }
+    public void OnLoadoutSelected() {
+        if (QuestManager.Instance.IsQuestActive<DivineIntervention>()) {
+            //if game already loaded into a state that has the divine intervention quest, then check if threat music should be playing
+            CheckThreatMusic();
+        }
+    }
     #endregion
 
     #region Music
