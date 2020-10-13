@@ -703,7 +703,7 @@ MonoBehaviour:
   startEndModifier:
     addPoints: 0
     exactStartPoint: 3
-    exactEndPoint: 4
+    exactEndPoint: 2
     useRaycasting: 0
     mask:
       serializedVersion: 2
