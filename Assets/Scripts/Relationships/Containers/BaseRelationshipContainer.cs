@@ -38,6 +38,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             CreateNewRelationship(owner, relatable);
         }
         relationships[relatable.id].AddRelationship(relType);
+        Messenger.Broadcast(Signals.RELATIONSHIP_TYPE_ADDED, owner, relatable);
     }
     public IRelationshipData CreateNewRelationship(Relatable owner, Relatable relatable) {
         Assert.IsFalse(owner == relatable, $"{owner.relatableName} is trying to add a relationship with itself!");
@@ -48,7 +49,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         if (relatable is Character targetCharacter) {
             charactersWithOpinion.Add(targetCharacter);
         }
-        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, owner, relatable);
+        Messenger.Broadcast(Signals.RELATIONSHIP_CREATED, owner, relatable);
         return data;
     }
     public IRelationshipData CreateNewRelationship(Relatable owner, int id, string name, GENDER gender) {
@@ -61,7 +62,7 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         if (targetCharacter != null) {
             charactersWithOpinion.Add(targetCharacter);
         }
-        Messenger.Broadcast<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, owner, null);
+        Messenger.Broadcast<Relatable, Relatable>(Signals.RELATIONSHIP_CREATED, owner, null);
         return data;
     }
     public IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable) {

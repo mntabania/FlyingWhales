@@ -101,7 +101,8 @@ public class CharacterInfoUI : InfoUIBase {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
+        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_CREATED, OnRelationshipChanged);
+        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_TYPE_ADDED, OnRelationshipChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
         Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
@@ -770,7 +771,7 @@ public class CharacterInfoUI : InfoUIBase {
             UpdateRelationships();
         }
     }
-    private void OnRelationshipAdded(Relatable owner, Relatable target) {
+    private void OnRelationshipChanged(Relatable owner, Relatable target) {
         if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
             UpdateRelationships();
         }

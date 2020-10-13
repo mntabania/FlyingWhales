@@ -702,7 +702,7 @@ MonoBehaviour:
   detailedGizmos: 0
   startEndModifier:
     addPoints: 0
-    exactStartPoint: 4
+    exactStartPoint: 3
     exactEndPoint: 4
     useRaycasting: 0
     mask:
